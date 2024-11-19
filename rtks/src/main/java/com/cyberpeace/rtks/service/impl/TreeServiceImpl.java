@@ -14,15 +14,43 @@ import com.cyberpeace.rtks.dao.mapper.LevelMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.service.TreeService;
 
+/**
+ * 树Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see TreeService
+ * @since 1.0.0
+ */
 @Service
 public class TreeServiceImpl implements TreeService {
 
+	/**
+	 * 岗位Mapper
+	 *
+	 * @see RoleMapper
+	 */
 	@Autowired
 	private RoleMapper roleMapper;
 
+	/**
+	 * 层级Mapper
+	 *
+	 * @see LevelMapper
+	 */
 	@Autowired
 	private LevelMapper levelMapper;
 
+	/**
+	 * 获取最近层级由岗位
+	 *
+	 * @param role 岗位
+	 * @return {@code Level }
+	 * @throws
+	 * @see String
+	 * @see Level
+	 */
 	@Override
 	public Level getNearestLevelByRole(String role) {
 		Role existRole = roleMapper.selectById(role);
@@ -33,12 +61,30 @@ public class TreeServiceImpl implements TreeService {
 		return level;
 	}
 
+	/**
+	 * 获取第一层级
+	 *
+	 * @param frameId 框架id
+	 * @return {@code List<Level> }
+	 * @throws
+	 * @see String
+	 * @see List<Level>
+	 */
 	@Override
 	public List<Level> getFirstLevel(String frameId) {
 		List<Level> levels = levelMapper.getChildLevels(frameId);
 		return levels;
 	}
 
+	/**
+	 * 岗位下层级
+	 *
+	 * @param levelId 层级id
+	 * @return {@code List<Role> }
+	 * @throws
+	 * @see String
+	 * @see List<Role>
+	 */
 	@Override
 	public List<Role> roleUnderLevel(String levelId) {
 		// 遍历当前节点的所有子节点

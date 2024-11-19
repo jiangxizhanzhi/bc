@@ -16,14 +16,33 @@ import com.cyberpeace.rtks.service.CourseNameService;
 import com.google.common.collect.Lists;
 
 /**
+ * 课程名称Service实现
  *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see ServiceImpl
+ * @see CourseNameService
+ * @since 1.0.0
  */
 @Service
 public class CourseNameServiceImpl extends ServiceImpl<CourseNameMapper, CourseName> implements CourseNameService {
 
+	/**
+	 * 课程名称Mapper
+	 *
+	 * @see CourseNameMapper
+	 */
 	@Autowired
 	private CourseNameMapper courseNameMapper;
 
+	/**
+	 * 新增课程名称
+	 *
+	 * @param relatedCourseList 相关课程列表
+	 * @throws
+	 * @see List<RelatedCourse>
+	 */
 	@Override
 	public void addCourseName(List<RelatedCourse> relatedCourseList) {
 
@@ -36,6 +55,15 @@ public class CourseNameServiceImpl extends ServiceImpl<CourseNameMapper, CourseN
 		saveOrUpdateBatch(courseNameList);
 	}
 
+	/**
+	 * 查询由id列表
+	 *
+	 * @param notExistIds 不存在id列表
+	 * @return {@code List<CourseName> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<CourseName>
+	 */
 	@Override
 	public List<CourseName> selectByIds(List<String> notExistIds) {
 		List<CourseName> courseNames = Lists.newArrayList();
@@ -47,6 +75,15 @@ public class CourseNameServiceImpl extends ServiceImpl<CourseNameMapper, CourseN
 		return courseNames;
 	}
 
+	/**
+	 * 过滤器id
+	 *
+	 * @param courseIds 课程id列表
+	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
+	 */
 	@Override
 	public List<String> filterId(List<String> courseIds) {
 		if (CollectionUtils.isEmpty(courseIds)) {

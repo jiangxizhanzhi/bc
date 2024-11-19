@@ -21,19 +21,47 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 
+/**
+ * mybatis 配置
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Configuration
 @MapperScan(basePackages = { "com.cyberpeace.**.mapper" })
 public class MybatisConfig {
 
+	/**
+	 * 数据源
+	 *
+	 * @see DataSource
+	 */
 	@Autowired
 	private DataSource dataSource;
 
-	/** 逻辑删除*/
+	/**
+	 * 逻辑删除
+	 *
+	 * @see String
+	 */
 	private String DELETE_VALUE = "0";
 
-	/** 非删除*/
+	/**
+	 * 非删除
+	 *
+	 * @see String
+	 */
 	private String NOT_DELETE = "1";
 
+	/**
+	 * SQL会话厂
+	 *
+	 * @return {@code SqlSessionFactory }
+	 * @throws @throws Exception 例外
+	 * @see SqlSessionFactory
+	 */
 	@Bean
 	public SqlSessionFactory sqlSessionFactory() throws Exception {
 		MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
@@ -52,6 +80,13 @@ public class MybatisConfig {
 		return sqlSessionFactory.getObject();
 	}
 
+	/**
+	 * 分页拦截器
+	 *
+	 * @return {@code MybatisPlusInterceptor }
+	 * @throws
+	 * @see MybatisPlusInterceptor
+	 */
 	@Bean
 	public MybatisPlusInterceptor paginationInterceptor() {
 		MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
@@ -63,6 +98,13 @@ public class MybatisConfig {
 		return interceptor;
 	}
 
+	/**
+	 * 全局配置
+	 *
+	 * @return {@code GlobalConfig }
+	 * @throws
+	 * @see GlobalConfig
+	 */
 	@Bean
 	public GlobalConfig globalConfig() {
 		GlobalConfig globalConfig = new GlobalConfig();
@@ -74,25 +116,60 @@ public class MybatisConfig {
 		return globalConfig;
 	}
 
+	/**
+	 * SQL会话模板
+	 *
+	 * @return {@code SqlSessionTemplate }
+	 * @throws @throws Exception 例外
+	 * @see SqlSessionTemplate
+	 */
 	@Bean
 	public SqlSessionTemplate sqlSessionTemplate() throws Exception {
 		return new SqlSessionTemplate(sqlSessionFactory());
 	}
 
+	/**
+	 * 演示白色拦截器
+	 *
+	 * @return {@code DemonstrationWhiteInterceptor }
+	 * @throws
+	 * @see DemonstrationWhiteInterceptor
+	 */
 	public DemonstrationWhiteInterceptor demonstrationWhiteInterceptor() {
 		return new DemonstrationWhiteInterceptor();
 	}
 
+	/**
+	 * 元对象处理程序
+	 *
+	 * @return {@code MetaObjectHandler }
+	 * @throws
+	 * @see MetaObjectHandler
+	 */
 	@Bean
 	public MetaObjectHandler metaObjectHandler() {
 		return new MybatisFillHandler();
 	}
 
+	/**
+	 * 事务经理
+	 *
+	 * @return {@code DataSourceTransactionManager }
+	 * @throws
+	 * @see DataSourceTransactionManager
+	 */
 	@Bean
 	public DataSourceTransactionManager transactionManager() {
 		return new DataSourceTransactionManager(dataSource);
 	}
 
+	/**
+	 * 事务模板
+	 *
+	 * @return {@code TransactionTemplate }
+	 * @throws
+	 * @see TransactionTemplate
+	 */
 	@Bean
 	public TransactionTemplate transactionTemplate() {
 		return new TransactionTemplate(transactionManager());

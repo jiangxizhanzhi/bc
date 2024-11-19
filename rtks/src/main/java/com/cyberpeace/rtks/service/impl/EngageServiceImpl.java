@@ -29,20 +29,56 @@ import com.google.common.collect.Sets;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * EngageService实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see EngageService
+ * @since 1.0.0
+ */
 @Service
 @Slf4j
 public class EngageServiceImpl implements EngageService {
 
+	/**
+	 * 锁
+	 *
+	 * @see Object
+	 */
 	private final Object lock = new Object();
 
+	/**
+	 * EngageMapper
+	 *
+	 * @see EngageMapper
+	 */
 	@Autowired
 	private EngageMapper engageMapper;
 
+	/**
+	 * 事务模板
+	 *
+	 * @see TransactionTemplate
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 缓存互动
+	 *
+	 * @see EngageCache
+	 */
 	private volatile EngageCache cachedEngages;
 
+	/**
+	 * 获取从事
+	 *
+	 * @return {@code List<EngageCategoryBo<EngageBackBo>> }
+	 * @throws
+	 * @see List<EngageCategoryBo<EngageBackBo>>
+	 */
 	@Override
 	public List<EngageCategoryBo<EngageBackBo>> getEngages() {
 		ensureEngageCache();
@@ -71,6 +107,15 @@ public class EngageServiceImpl implements EngageService {
 		return res;
 	}
 
+	/**
+	 * 获取详情由id
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code EngageDetail }
+	 * @throws
+	 * @see String
+	 * @see EngageDetail
+	 */
 	@Override
 	public EngageDetail getDetailById(String resourceId) {
 		ensureEngageCache();
@@ -101,6 +146,15 @@ public class EngageServiceImpl implements EngageService {
 		return detail;
 	}
 
+	/**
+	 * 更新关系
+	 *
+	 * @param resourceId          资源id
+	 * @param businessTemplateIds 业务模板id列表
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 */
 	@Override
 	public void updateRelations(String resourceId, List<String> businessTemplateIds) {
 		List<String> oldRel = engageMapper.getRelatedTemplateIds(resourceId);
@@ -121,6 +175,15 @@ public class EngageServiceImpl implements EngageService {
 		});
 	}
 
+	/**
+	 * 获取从事由训练
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code List<EngageCategoryBo<EngageFrontBo>> }
+	 * @throws
+	 * @see String
+	 * @see List<EngageCategoryBo<EngageFrontBo>>
+	 */
 	@Override
 	public List<EngageCategoryBo<EngageFrontBo>> getEngagesByTraining(String businessTemplateId) {
 		ensureEngageCache();
@@ -144,6 +207,13 @@ public class EngageServiceImpl implements EngageService {
 		return res;
 	}
 
+	/**
+	 * 获取缓存
+	 *
+	 * @return {@code List<EngageCategoryBo<FrameItemBase>> }
+	 * @throws
+	 * @see List<EngageCategoryBo<FrameItemBase>>
+	 */
 	@Override
 	public List<EngageCategoryBo<FrameItemBase>> getCache() {
 		ensureEngageCache();
@@ -153,6 +223,11 @@ public class EngageServiceImpl implements EngageService {
 		return cachedEngages.getEn();
 	}
 
+	/**
+	 * 确保Engage缓存
+	 *
+	 * @throws
+	 */
 	private void ensureEngageCache() {
 		if (null == cachedEngages) {
 			synchronized (lock) {
@@ -165,6 +240,8 @@ public class EngageServiceImpl implements EngageService {
 
 	/**
 	 * 读取 Engage 缓存
+	 *
+	 * @throws
 	 */
 	private void initializeEngages() {
 		List<EngageContext> engageContextList = engageMapper.getAll();
@@ -212,6 +289,11 @@ public class EngageServiceImpl implements EngageService {
 
 /**
  * Engage 缓存
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
  */
 @Data
 class EngageCache {
@@ -226,6 +308,11 @@ class EngageCache {
 
 /**
  * Engage 前台中文
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
  */
 @Data
 class EngageFrontZh {
@@ -236,6 +323,11 @@ class EngageFrontZh {
 
 /**
  * Engage 前台英文
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
  */
 @Data
 class EngageFrontEn {
@@ -245,6 +337,11 @@ class EngageFrontEn {
 
 /**
  * Engage 后台中文
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
  */
 @Data
 class EngageBackZh {
@@ -255,6 +352,11 @@ class EngageBackZh {
 
 /**
  * Engage 后台英文
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
  */
 @Data
 class EngageBackEn {

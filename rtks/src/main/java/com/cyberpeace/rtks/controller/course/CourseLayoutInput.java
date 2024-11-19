@@ -10,19 +10,28 @@ import lombok.Data;
 
 /**
  * 课程编排输入
- * */
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Data
 public class CourseLayoutInput {
 
 	/**
 	 * 岗位id
-	 * */
+	 *
+	 * @see String
+	 */
 	@NotBlank
 	@ApiModelProperty("岗位id")
 	String resourceId;
 
 	/**
 	 * knowledge, skill
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(allowableValues = "knowledge, skill")
 	@NotBlank
@@ -30,6 +39,8 @@ public class CourseLayoutInput {
 
 	/**
 	 * 课程id列表
+	 *
+	 * @see List<String>
 	 */
 	@NotNull
 	@ApiModelProperty("课程id列表")

@@ -5,10 +5,23 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 演示异步处理程序
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Slf4j
 @Component
 public class DemoAsyncHandler {
 
+	/**
+	 * 测试异步
+	 *
+	 * @throws
+	 */
 	@Async
 	public void testAsync() {
 		log.info(Thread.currentThread().getName() + " from testAsync!");

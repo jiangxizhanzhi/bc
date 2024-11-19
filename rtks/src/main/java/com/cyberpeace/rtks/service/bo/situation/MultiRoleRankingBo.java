@@ -5,35 +5,54 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 多岗位排名Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see Serializable
+ * @since 1.0.0
+ */
 @Data
 public class MultiRoleRankingBo implements Serializable {
 
 	/**
 	 * 用户id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("用户id")
 	private String userId;
 
 	/**
 	 * 用户名
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("用户名")
 	private String name;
 
 	/**
 	 * 优秀岗位数
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("优秀岗位数")
 	private Integer excellent;
 
 	/**
 	 * 合格岗位数
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("合格岗位数")
 	private Integer qualified;
 
 	/**
 	 * 优秀岗位匹配总数
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("优秀岗位匹配总数")
 	private Integer excellentMatchSum;

@@ -35,8 +35,12 @@ import com.cyberpeace.cs.service.BehaviorRecordService;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * 行为记录方面
+ *
  * @author SN
+ * @version 1.0.0
  * @date 2024/05/21
+ * @since 1.0.0
  */
 @Slf4j
 @Aspect
@@ -44,14 +48,33 @@ import lombok.extern.slf4j.Slf4j;
 @Order(10)
 public class BehaviorRecordAspect {
 
+	/**
+	 * 行为记录Service
+	 *
+	 * @see BehaviorRecordService
+	 */
 	@Autowired
 	private BehaviorRecordService behaviorRecordService;
 
+	/**
+	 * 记录
+	 *
+	 * @throws
+	 */
 	@Pointcut("@annotation(com.cyberpeace.common.annoations.BehaviorRecord)")
 	public void record() {
 		// Do nothing
 	}
 
+	/**
+	 * Web日志周围
+	 *
+	 * @param joinPoint 加入点
+	 * @return {@code Object }
+	 * @throws @throws Throwable 可投掷
+	 * @see ProceedingJoinPoint
+	 * @see Object
+	 */
 	@Around(value = "record()")
 	public Object webLogAround(ProceedingJoinPoint joinPoint) throws Throwable {
 		HttpServletRequest request = ((ServletRequestAttributes) Objects
@@ -70,6 +93,17 @@ public class BehaviorRecordAspect {
 		return object;
 	}
 
+	/**
+	 * 获取目标从请求
+	 *
+	 * @param request 请求
+	 * @param record  记录
+	 * @return {@code String }
+	 * @throws @throws UnsupportedEncodingException 不支持编码异常
+	 * @see HttpServletRequest
+	 * @see BehaviorRecord
+	 * @see String
+	 */
 	private String getTargetFromRequest(HttpServletRequest request, BehaviorRecord record)
 			throws UnsupportedEncodingException {
 		String target;
@@ -91,6 +125,17 @@ public class BehaviorRecordAspect {
 		return target;
 	}
 
+	/**
+	 * 保存记录
+	 *
+	 * @param record   记录
+	 * @param request  请求
+	 * @param response 响应
+	 * @throws @throws Exception 例外
+	 * @see BehaviorRecord
+	 * @see HttpServletRequest
+	 * @see Object
+	 */
 	private void saveRecord(BehaviorRecord record, HttpServletRequest request, Object response)
 			throws Exception {
 		BehaviorModuleEnum module = record.module();
@@ -113,6 +158,17 @@ public class BehaviorRecordAspect {
 		behaviorRecordService.save(entity);
 	}
 
+	/**
+	 * 获取描述
+	 *
+	 * @param record   记录
+	 * @param response 响应
+	 * @return {@code String }
+	 * @throws
+	 * @see BehaviorRecord
+	 * @see Object
+	 * @see String
+	 */
 	private String getDesc(BehaviorRecord record, Object response) {
 		String user = UserInfoContext.getUserContext().getName();
 		String action = record.action().getDesc();
@@ -126,6 +182,15 @@ public class BehaviorRecordAspect {
 
 	}
 
+	/**
+	 * 获取链接
+	 *
+	 * @param request 请求
+	 * @return {@code String }
+	 * @throws
+	 * @see HttpServletRequest
+	 * @see String
+	 */
 	private String getLink(HttpServletRequest request) {
 		String uri = request.getRequestURI();
 		String query = request.getQueryString();
@@ -136,6 +201,17 @@ public class BehaviorRecordAspect {
 		}
 	}
 
+	/**
+	 * 获取结果
+	 *
+	 * @param record   记录
+	 * @param response 响应
+	 * @return {@code Integer }
+	 * @throws
+	 * @see BehaviorRecord
+	 * @see Object
+	 * @see Integer
+	 */
 	private Integer getResult(BehaviorRecord record, Object response) {
 		if (StringUtils.isNotBlank(record.result())) {
 			if (record.module().equals(BehaviorModuleEnum.THEORY)) {
@@ -156,6 +232,19 @@ public class BehaviorRecordAspect {
 		}
 	}
 
+	/**
+	 * 获取从响应
+	 *
+	 * @param response 响应
+	 * @param name     名称
+	 * @param clazz    克拉兹
+	 * @return {@code T }
+	 * @throws
+	 * @see Object
+	 * @see String
+	 * @see Class<T>
+	 * @see T
+	 */
 	private <T> T getFromResponse(Object response, String name, Class<T> clazz) {
 		JSONObject o = JsonUtil.java2JsonObject(response).getJSONObject("data");
 		String[] fields = name.split("\\.");

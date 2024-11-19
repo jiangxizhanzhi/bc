@@ -25,19 +25,60 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 相关课程Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see RelatedCourseService
+ * @since 1.0.0
+ */
 @Slf4j
 @Repository
 public class RelatedCourseServiceImpl implements RelatedCourseService {
 
+	/**
+	 * 课程Service
+	 *
+	 * @see CourseService
+	 */
 	@Autowired
 	private CourseService courseService;
 
+	/**
+	 * 课程名称Service
+	 *
+	 * @see CourseNameService
+	 */
 	@Autowired
 	private CourseNameService courseNameService;
 
+	/**
+	 * 课程统计学Service
+	 *
+	 * @see CourseStatisticsService
+	 */
 	@Autowired
 	private CourseStatisticsService courseStatisticsService;
 
+	/**
+	 * 设置课程结果
+	 *
+	 * @param userInfo          用户信息
+	 * @param courses           课程
+	 * @param relatedCourseList 相关课程列表
+	 * @param processBos        处理 BOS
+	 * @param relatedCourseType 相关课程类型
+	 * @return boolean
+	 * @throws
+	 * @see UserInfo
+	 * @see String
+	 * @see List<RelatedCourse>
+	 * @see List<CourseStudyProcessBo>
+	 * @see String
+	 * @see boolean
+	 */
 	@Override
 	public boolean setCourseResult(UserInfo userInfo, String courses,
 			List<RelatedCourse> relatedCourseList, List<CourseStudyProcessBo> processBos,
@@ -132,6 +173,15 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 		return isDeleted;
 	}
 
+	/**
+	 * 获取全部课程映射
+	 *
+	 * @param courseList 课程列表
+	 * @return {@code Map<String, CourseInfoBo> }
+	 * @throws
+	 * @see List<CourseInfoBo>
+	 * @see Map<String, CourseInfoBo>
+	 */
 	private Map<String, CourseInfoBo> getAllCourseMap(List<CourseInfoBo> courseList) {
 		Map<String, CourseInfoBo> map = Maps.newHashMap();
 

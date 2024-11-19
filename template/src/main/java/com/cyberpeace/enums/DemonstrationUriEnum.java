@@ -7,6 +7,15 @@ import com.cyberpeace.common.util.DateUtil;
 
 import java.util.*;
 
+/**
+ * 演示 URI 枚举
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see Enum
+ * @since 1.0.0
+ */
 public enum DemonstrationUriEnum {
     SITUATION_RANKING("/ojj/rtks/situation/ranking/","/cpms/demonstration/situationRanking.json","classpath:static/demonstration/situationRanking.json",null),
     SITUATION_SITUATION("/ojj/rtks/situation/situation/","/cpms/demonstration/situationSituation.json","classpath:static/demonstration/situationSituation.json",null),
@@ -22,6 +31,19 @@ public enum DemonstrationUriEnum {
 
     private DemonstrationService demonstrationService;
 
+    /**
+     * 演示 URI 枚举
+     *
+     * @param uri                  URI
+     * @param filePath             文件路径
+     * @param systemPath           系统路径
+     * @param demonstrationService 示范Service
+     * @throws
+     * @see String
+     * @see String
+     * @see String
+     * @see DemonstrationService
+     */
     DemonstrationUriEnum(String uri, String filePath, String systemPath, DemonstrationService demonstrationService) {
         this.uri = uri;
         this.filePath = filePath;
@@ -29,23 +51,60 @@ public enum DemonstrationUriEnum {
         this.demonstrationService = demonstrationService;
     }
 
+    /**
+     * 获取示范Service
+     *
+     * @return {@code DemonstrationService }
+     * @throws
+     * @see DemonstrationService
+     */
     public DemonstrationService getDemonstrationService() {
         return demonstrationService;
     }
 
+    /**
+     * 获取URI
+     *
+     * @return {@code String }
+     * @throws
+     * @see String
+     */
     public String getUri() {
         return uri;
     }
 
+    /**
+     * 获取文件路径
+     *
+     * @return {@code String }
+     * @throws
+     * @see String
+     */
     public String getFilePath() {
         return filePath;
     }
 
 
+    /**
+     * 获取系统路径
+     *
+     * @return {@code String }
+     * @throws
+     * @see String
+     */
     public String getSystemPath() {
         return systemPath;
     }
 
+    /**
+     * 获取由URI
+     *
+     * @param uri URI
+     * @return {@code DemonstrationUriEnum }
+     * @throws
+     * @see String
+     * @see DemonstrationUriEnum
+     */
     public static DemonstrationUriEnum getByUri(String uri) {
 
         for (DemonstrationUriEnum demonstrationUriEnum : DemonstrationUriEnum.values()) {

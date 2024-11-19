@@ -9,12 +9,25 @@ import lombok.Data;
  * attack， engage
  *
  * @author SN
+ * @version 1.0.0
  * @date 2023/05/10
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class TechRelation implements Serializable {
 
+	/**
+	 * 业务模板id
+	 *
+	 * @see String
+	 */
 	private String businessTemplateId;
 
+	/**
+	 * 技术id
+	 *
+	 * @see String
+	 */
 	private String techId;
 }

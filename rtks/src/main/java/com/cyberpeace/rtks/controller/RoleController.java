@@ -63,10 +63,28 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 领域
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 interface Fields {
 
+	/**
+	 * 知识点
+	 *
+	 * @see String
+	 */
 	String KNOWLEDGE = "knowledge";
 
+	/**
+	 * 技能
+	 *
+	 * @see String
+	 */
 	String SKILL = "skill";
 }
 
@@ -89,6 +107,14 @@ class RoleListReq<T> extends PageReqBase {
 	private String keyword;
 }
 
+/**
+ * 助手
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Data
 class Helper {
 
@@ -96,69 +122,176 @@ class Helper {
 
 	private String courseStr;
 
+	/**
+	 * 助手
+	 *
+	 * @param idStr     idstr
+	 * @param courseStr 课程str
+	 * @throws
+	 * @see String
+	 * @see String
+	 */
 	public Helper(String idStr, String courseStr) {
 		this.idStr = idStr;
 		this.courseStr = courseStr;
 	}
 
+	/**
+	 * 助手
+	 *
+	 * @throws
+	 */
 	public Helper() {
 		this("[]", "[]");
 	}
 }
 
+/**
+ * TRKS-岗位管理
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Api(tags = "TRKS-岗位管理")
 @RestController
 @RequestMapping("/rtks/role")
 @RequiresAuthentication
 public class RoleController {
 
+	/**
+	 * 任务模板Service
+	 *
+	 * @see MissionTemplateService
+	 */
 	@Autowired
 	MissionTemplateService missionTemplateService;
 
+	/**
+	 * 事务模板
+	 *
+	 * @see TransactionTemplate
+	 */
 	@Autowired
 	TransactionTemplate transactionTemplate;
 
+	/**
+	 * 任务Service
+	 *
+	 * @see TaskService
+	 */
 	@Autowired
 	private TaskService taskService;
 
+	/**
+	 * 知识点Service
+	 *
+	 * @see KnowledgeService
+	 */
 	@Autowired
 	private KnowledgeService knowledgeService;
 
+	/**
+	 * 技能Service
+	 *
+	 * @see SkillService
+	 */
 	@Autowired
 	private SkillService skillService;
 
+	/**
+	 * 能力Service
+	 *
+	 * @see AbilityService
+	 */
 	@Autowired
 	private AbilityService abilityService;
 
+	/**
+	 * 水平Service
+	 *
+	 * @see LevelService
+	 */
 	@Autowired
 	private LevelService levelService;
 
+	/**
+	 * 岗位Service
+	 *
+	 * @see RoleService
+	 */
 	@Autowired
 	private RoleService roleService;
 
+	/**
+	 * 课程名称Service
+	 *
+	 * @see CourseNameService
+	 */
 	@Autowired
 	private CourseNameService courseNameService;
 
+	/**
+	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 单框架
+	 *
+	 * @see Boolean
+	 */
 	private Boolean singleFrame;
 
 
+	/**
+	 * 初始化
+	 *
+	 * @throws
+	 */
 	@PostConstruct
 	public void init() {
 		String singleFrameConfig = ConfigUtil.getContextProperty("singleFrame");
 		singleFrame = Boolean.parseBoolean(singleFrameConfig);
 	}
 
+	/**
+	 * 获取Service
+	 *
+	 * @return {@code RoleService }
+	 * @throws
+	 * @see RoleService
+	 */
 	protected RoleService getService() {
 		return roleService;
 	}
 
+	/**
+	 * 获取OR404
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code Role }
+	 * @throws
+	 * @see String
+	 * @see Role
+	 */
 	protected Role getOr404(String resourceId) {
 		return roleService.getOr404(resourceId);
 	}
 
+	/**
+	 * 创建
+	 *
+	 * @param input 输入
+	 * @return {@code BaseRsp<RoleDetailOutput> }
+	 * @throws
+	 * @see RoleAddInput
+	 * @see BaseRsp<RoleDetailOutput>
+	 */
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -190,6 +323,15 @@ public class RoleController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 更新
+	 *
+	 * @param input 输入
+	 * @return {@code BaseRsp<RoleDetailOutput> }
+	 * @throws
+	 * @see RoleModifyInput
+	 * @see BaseRsp<RoleDetailOutput>
+	 */
 	@ApiOperation("修改")
 	@PutMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -221,6 +363,15 @@ public class RoleController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 取回
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<RoleDetailOutput> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<RoleDetailOutput>
+	 */
 	@ApiOperation("查询")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -229,6 +380,15 @@ public class RoleController {
 		return new BaseRsp<>(getOutputFromEntity(t));
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see DeleteReq
+	 * @see BaseRsp<String>
+	 */
 	@ApiOperation("删除")
 	@DeleteMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -254,10 +414,26 @@ public class RoleController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 执行批量删除
+	 *
+	 * @param ids id列表
+	 * @throws
+	 * @see List<String>
+	 */
 	protected void performBatchDelete(List<String> ids) {
 		getService().removeByIds(ids);
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param listReq 列表请求体
+	 * @return {@code BaseRsp<ListRsp<RoleOutput>> }
+	 * @throws
+	 * @see RoleListReq<Role>
+	 * @see BaseRsp<ListRsp<RoleOutput>>
+	 */
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -295,6 +471,17 @@ public class RoleController {
 		return new BaseRsp<>(listRsp);
 	}
 
+	/**
+	 * 获取技能课程
+	 *
+	 * @param resource_id 资源id
+	 * @param field       田
+	 * @return {@code BaseRsp<List<CourseConfigOutput>> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<List<CourseConfigOutput>>
+	 */
 	@ApiOperation("获取课程列表")
 	@GetMapping("/courses")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -304,6 +491,15 @@ public class RoleController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 设置技能课程
+	 *
+	 * @param courseLayoutInput 课程布局输入
+	 * @return {@code BaseRsp<List<CourseConfigOutput>> }
+	 * @throws
+	 * @see CourseLayoutInput
+	 * @see BaseRsp<List<CourseConfigOutput>>
+	 */
 	@ApiOperation("编排课程列表")
 	@PostMapping("/courses")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -334,6 +530,15 @@ public class RoleController {
 		return new BaseRsp<>(outputList);
 	}
 
+	/**
+	 * 获取技能任务
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<List<MissionTemplateSimple>> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<MissionTemplateSimple>>
+	 */
 	@ApiOperation("获取任务列表")
 	@GetMapping("/missions")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -343,6 +548,15 @@ public class RoleController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 设置技能任务
+	 *
+	 * @param layout 布局
+	 * @return {@code BaseRsp<List<CourseConfigOutput>> }
+	 * @throws
+	 * @see MissionLayout
+	 * @see BaseRsp<List<CourseConfigOutput>>
+	 */
 	@ApiOperation("编排任务列表")
 	@PostMapping("/missions")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -356,6 +570,17 @@ public class RoleController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 获取课程文本
+	 *
+	 * @param role  岗位
+	 * @param field 田
+	 * @return {@code String }
+	 * @throws
+	 * @see Role
+	 * @see String
+	 * @see String
+	 */
 	private String getCourseText(Role role, String field) {
 
 		if (Fields.KNOWLEDGE.equals(field)) {
@@ -364,6 +589,17 @@ public class RoleController {
 		throw new InvalidParamException("Invalid field:" + field);
 	}
 
+	/**
+	 * 更新岗位课程
+	 *
+	 * @param roleId    岗位id
+	 * @param courseIds 课程id列表
+	 * @param field     田
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see String
+	 */
 	private void updateRoleCourse(String roleId, List<String> courseIds, String field) {
 		Role roleToSave = new Role();
 
@@ -379,6 +615,17 @@ public class RoleController {
 		roleService.updateById(roleToSave);
 	}
 
+	/**
+	 * 获取课程id列表从分贝
+	 *
+	 * @param role  岗位
+	 * @param field 田
+	 * @return {@code List<String> }
+	 * @throws
+	 * @see Role
+	 * @see String
+	 * @see List<String>
+	 */
 	private List<String> getCourseIdsFromDb(Role role, String field) {
 		String courseText = getCourseText(role, field);
 
@@ -387,7 +634,12 @@ public class RoleController {
 
 	/**
 	 * 根据课程id列表获取课程的详细信息
+	 *
 	 * @param courseIds 课程id列表 注意 如果有课程找不到 courseIds数组会剔除这些课程id(12.28修改为不再删除课程)
+	 * @return {@code List<CourseConfigOutput> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<CourseConfigOutput>
 	 */
 	private List<CourseConfigOutput> getCourseConfigOutputList(List<String> courseIds) {
 		List<CourseConfigOutput> courseConfigOutputList = new ArrayList<>();
@@ -418,16 +670,47 @@ public class RoleController {
 		return courseConfigOutputList;
 	}
 
+	/**
+	 * 获取实体从新增输入
+	 *
+	 * @param roleAddInput 岗位新增输入
+	 * @return {@code Role }
+	 * @throws
+	 * @see RoleAddInput
+	 * @see Role
+	 */
 	protected Role getEntityFromAddInput(RoleAddInput roleAddInput) {
 		return getRoleFromInput(roleAddInput, null);
 	}
 
+	/**
+	 * 获取实体从修改输入
+	 *
+	 * @param roleModifyInput 岗位修改输入
+	 * @param originEntity    源实体
+	 * @return {@code Role }
+	 * @throws
+	 * @see RoleModifyInput
+	 * @see Role
+	 * @see Role
+	 */
 	protected Role getEntityFromModifyInput(RoleModifyInput roleModifyInput, Role originEntity) {
 		Role role = getRoleFromInput(roleModifyInput, originEntity);
 		role.setResourceId(roleModifyInput.getResourceId());
 		return role;
 	}
 
+	/**
+	 * 获取岗位从输入
+	 *
+	 * @param input        输入
+	 * @param originEntity 源实体
+	 * @return {@code Role }
+	 * @throws
+	 * @see RoleInput
+	 * @see Role
+	 * @see Role
+	 */
 	private Role getRoleFromInput(RoleInput input, Role originEntity) {
 		Role role = new Role();
 		role.setName(input.getName());
@@ -480,6 +763,15 @@ public class RoleController {
 		return role;
 	}
 
+	/**
+	 * 获取输出从实体
+	 *
+	 * @param role 岗位
+	 * @return {@code RoleDetailOutput }
+	 * @throws
+	 * @see Role
+	 * @see RoleDetailOutput
+	 */
 	public RoleDetailOutput getOutputFromEntity(Role role) {
 		RoleDetailOutput output = outputFromRole(role, new RoleDetailOutput());
 
@@ -513,10 +805,28 @@ public class RoleController {
 		return output;
 	}
 
+	/**
+	 * 获取列表输出从实体
+	 *
+	 * @param role 岗位
+	 * @return {@code RoleOutput }
+	 * @throws
+	 * @see Role
+	 * @see RoleOutput
+	 */
 	protected RoleOutput getListOutputFromEntity(Role role) {
 		return outputFromRole(role, new RoleOutput());
 	}
 
+	/**
+	 * 获取分页
+	 *
+	 * @param listReq 列表请求体
+	 * @return {@code IPage<Role> }
+	 * @throws
+	 * @see RoleListReq<Role>
+	 * @see IPage<Role>
+	 */
 	protected IPage<Role> getPage(RoleListReq<Role> listReq) {
 		String frameId;
 		if (singleFrame) {
@@ -528,6 +838,17 @@ public class RoleController {
 		return roleService.listRoles(listReq.toPageParam(), listReq.getKeyword(), frameId);
 	}
 
+	/**
+	 * 输出从岗位
+	 *
+	 * @param role   岗位
+	 * @param output 输出
+	 * @return {@code T }
+	 * @throws
+	 * @see Role
+	 * @see T
+	 * @see T
+	 */
 	private <T extends RoleOutput> T outputFromRole(Role role, T output) {
 		output.setResourceId(role.getResourceId());
 		output.setName(role.getName());
@@ -562,7 +883,13 @@ public class RoleController {
 
 	/**
 	 * json字符串转为列表
-	 * */
+	 *
+	 * @param idString id字符串
+	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 */
 	private List<String> stringToList(String idString) {
 		List<String> ret = JsonUtil.toJsonObjectArray(idString, String.class);
 		if (ret == null) {
@@ -571,11 +898,19 @@ public class RoleController {
 		return ret;
 	}
 
-	/***
+	/**
+	 * *
 	 * 校验输入中的职责ids，能力ids，并转换为字符串
+	 *
 	 * @param isModify 更新/新建 更新时，如果输入为null 将被跳过
 	 * @param inputIds 输入的id列表
 	 * @param checkIds 无返回值函数 输入id的列表 确保所有id对应的对象存在 否则报错
+	 * @return {@code String }
+	 * @throws
+	 * @see Boolean
+	 * @see List<String>
+	 * @see Consumer<List<String>>
+	 * @see String
 	 */
 	private String handlerInput(Boolean isModify, List<String> inputIds,
 			Consumer<List<String>> checkIds) {
@@ -597,10 +932,18 @@ public class RoleController {
 
 	/**
 	 * 校验输入中的知识点ids、技能ids，并输出ids字符串，课程ids字符串
-	 * @param isModify 更新/新建 更新时，如果输入为null 将被跳过
-	 * @param inputIds 输入的id列表
-	 * @param originIdStr 更新时，数据库中既有的id列表的json字符串 用于比较是否发生变化
+	 *
+	 * @param isModify         更新/新建 更新时，如果输入为null 将被跳过
+	 * @param inputIds         输入的id列表
+	 * @param originIdStr      更新时，数据库中既有的id列表的json字符串 用于比较是否发生变化
 	 * @param getCourseConfigs 函数: id，返回其课程配置数组
+	 * @return {@code Helper }
+	 * @throws
+	 * @see Boolean
+	 * @see List<String>
+	 * @see String
+	 * @see Function<String, List<CourseConfig>>
+	 * @see Helper
 	 */
 	private Helper handlerInputWithCourse(Boolean isModify, List<String> inputIds,
 			String originIdStr, Function<String, List<CourseConfig>> getCourseConfigs) {
@@ -638,7 +981,15 @@ public class RoleController {
 
 	/**
 	 * 输出时获取职责、知识点等详细信息
-	 * */
+	 *
+	 * @param relatedIds 相关id列表
+	 * @param service    Service
+	 * @return {@code List<T> }
+	 * @throws
+	 * @see List<String>
+	 * @see IService<T>
+	 * @see List<T>
+	 */
 	private <T> List<T> getRoleRelatedObjects(List<String> relatedIds, IService<T> service) {
 		if (relatedIds.size() == 0) {
 			return new ArrayList<>();
@@ -647,6 +998,14 @@ public class RoleController {
 		}
 
 	}
+
+	/**
+	 * 验证
+	 *
+	 * @param roleInput 岗位输入
+	 * @throws
+	 * @see RoleInput
+	 */
 	public void validate(RoleInput roleInput) {
 		roleInput.getKnowledgeIdWeights().forEach((knowledgeIdWeight) -> {
 			CrCommonValidator.validateRange(knowledgeIdWeight.getWeight(),

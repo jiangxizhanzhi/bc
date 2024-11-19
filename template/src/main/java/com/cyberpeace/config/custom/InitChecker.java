@@ -11,13 +11,22 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 服务启动，依赖的参数校验。
- *
  * 目的在于快速发现可能的配置项错误！
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
  */
 @Slf4j
 @Component
 public class InitChecker {
 
+	/**
+	 * 检查清单
+	 *
+	 * @throws
+	 */
 	@PostConstruct
 	public void checkList() {
 		checkMp();
@@ -31,21 +40,29 @@ public class InitChecker {
 
 	/**
 	 * 靶场启动项检查
+	 *
+	 * @throws
 	 */
 	private void checkCr() {}
 
 	/**
 	 * 实训启动项检查
+	 *
+	 * @throws
 	 */
 	private void checkOj() {}
 
 	/**
 	 * rtks启动项检查
+	 *
+	 * @throws
 	 */
 	private void checkRtks() {}
 
 	/**
 	 * 检查中台配置
+	 *
+	 * @throws
 	 */
 	private void checkMp() {
 		blankCheck("MP_HOST");
@@ -63,6 +80,13 @@ public class InitChecker {
 		}
 	}
 
+	/**
+	 * 空白支票
+	 *
+	 * @param field 田
+	 * @throws
+	 * @see String
+	 */
 	private void blankCheck(String field) {
 		String value = SystemPropUtil.getProp(field);
 

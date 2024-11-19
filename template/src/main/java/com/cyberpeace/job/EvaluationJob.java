@@ -15,15 +15,38 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * 评估任务
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Slf4j
 @Component
 public class EvaluationJob {
+    /**
+     * 测评任务Service
+     *
+     * @see EvalTaskService
+     */
     @Autowired
     private EvalTaskService evalTaskService;
 
+    /**
+     * 测评记录Service
+     *
+     * @see EvalRecordService
+     */
     @Autowired
     private EvalRecordService evalRecordService;
 
+    /**
+     * 检查记录
+     *
+     * @throws
+     */
     @Scheduled(fixedRate = 24 * 60 * 60 * 1000)
     public void checkRecord() {
         List<EvalRecord> evalRecordList = evalRecordService.lambdaQuery().eq(EvalRecord::getStatus, EvalRecord.Status.RUNNING.getCode()).list();

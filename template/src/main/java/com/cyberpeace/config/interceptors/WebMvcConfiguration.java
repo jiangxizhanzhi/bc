@@ -12,16 +12,39 @@ import com.cyberpeace.common.util.CustomExceptionHandlerResolver;
 
 /**
  * 拦截器的配置
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see WebMvcConfigurer
+ * @since 1.0.0
  */
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer {
 
+	/**
+	 * 练习门道路拦截 器
+	 *
+	 * @see PracticeGateWayInterceptor
+	 */
 	@Autowired
 	private PracticeGateWayInterceptor practiceGateWayInterceptor;
 
+	/**
+	 * 请求拦截器
+	 *
+	 * @see RequestInterceptor
+	 */
 	@Autowired
 	private RequestInterceptor requestInterceptor;
 
+	/**
+	 * 新增拦截 器
+	 *
+	 * @param registry 注册表
+	 * @throws
+	 * @see InterceptorRegistry
+	 */
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(practiceGateWayInterceptor).addPathPatterns("/gateway/theory/**",
@@ -29,6 +52,13 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 		registry.addInterceptor(requestInterceptor);
 	}
 
+	/**
+	 * 配置处理程序异常解析程序
+	 *
+	 * @param resolvers 解析 器
+	 * @throws
+	 * @see List<HandlerExceptionResolver>
+	 */
 	@Override
 	public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
 		// 劫持spring的异常处理

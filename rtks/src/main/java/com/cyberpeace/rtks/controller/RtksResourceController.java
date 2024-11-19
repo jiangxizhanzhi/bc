@@ -19,7 +19,9 @@ import io.swagger.annotations.ApiOperation;
  * rtks资源导入相关接口
  *
  * @author SN
+ * @version 1.0.0
  * @date 2023/05/31
+ * @since 1.0.0
  */
 
 @RestController
@@ -28,6 +30,11 @@ import io.swagger.annotations.ApiOperation;
 // @RequiresAuthentication
 public class RtksResourceController {
 
+	/**
+	 * RTKS资源Service
+	 *
+	 * @see RtksResourceService
+	 */
 	@Autowired
 	private RtksResourceService rtksResourceService;
 
@@ -38,6 +45,9 @@ public class RtksResourceController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp}
+	 * @throws
+	 * @see RtksResourceReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("导入岗位")
 	@PostMapping("/role")

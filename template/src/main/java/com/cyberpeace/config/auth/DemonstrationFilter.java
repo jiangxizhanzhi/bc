@@ -16,12 +16,44 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 示范过滤器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see Filter
+ * @since 1.0.0
+ */
 public class DemonstrationFilter implements Filter {
 
 
+    /**
+     * 演示
+     *
+     * @see String
+     */
     private String demo = SystemPropUtil.getProp("Demo");
 
+    /**
+     * 内容缓存
+     *
+     * @see Cache<String, String>
+     */
     private Cache<String,String> contentCache= CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.DAYS).build();
+
+    /**
+     * 做过滤器
+     *
+     * @param servletRequest  Servlet 请求
+     * @param servletResponse Servlet 响应
+     * @param filterChain     过滤器链
+     * @throws @throws          IOException io异常
+     * @throws ServletException Servlet 异常
+     * @see ServletRequest
+     * @see ServletResponse
+     * @see FilterChain
+     */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
@@ -61,10 +93,23 @@ public class DemonstrationFilter implements Filter {
     }
 
 
+    /**
+     * 初始化
+     *
+     * @param filterConfig 过滤器配置
+     * @throws @throws ServletException Servlet 异常
+     * @see javax.servlet.FilterConfig
+     */
     @Override
     public void init(javax.servlet.FilterConfig filterConfig) throws ServletException {
 
     }
+
+    /**
+     * 摧毁
+     *
+     * @throws
+     */
     @Override
     public void destroy() {
         // 销毁过滤器

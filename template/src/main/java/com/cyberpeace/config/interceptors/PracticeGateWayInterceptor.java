@@ -25,13 +25,40 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 练习门道路拦截 器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see HandlerInterceptor
+ * @since 1.0.0
+ */
 @Slf4j
 @Component
 public class PracticeGateWayInterceptor implements HandlerInterceptor {
 
+	/**
+	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 前置处理
+	 *
+	 * @param request  请求
+	 * @param response 响应
+	 * @param handler  处理器
+	 * @return boolean
+	 * @throws @throws Exception 例外
+	 * @see HttpServletRequest
+	 * @see HttpServletResponse
+	 * @see Object
+	 * @see boolean
+	 */
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
 			Object handler) throws Exception {
@@ -72,6 +99,10 @@ public class PracticeGateWayInterceptor implements HandlerInterceptor {
 
 	/**
 	 * 接口认证(key获取方式后续可能调整)
+	 *
+	 * @param request 请求
+	 * @throws
+	 * @see HttpServletRequest
 	 */
 	private void validateKey(HttpServletRequest request) {
 		String key = request.getHeader(WebConstant.OJ_HEADER_KEY);
@@ -83,9 +114,14 @@ public class PracticeGateWayInterceptor implements HandlerInterceptor {
 
 	/**
 	 * 用户认证
+	 *
 	 * @param authUser
 	 * @param request
 	 * @return
+	 * @throws
+	 * @see AuthUser
+	 * @see HttpServletRequest
+	 * @see UserInfo
 	 */
 	private UserInfo validateUser(AuthUser authUser, HttpServletRequest request) {
 		String authName = authUser.name();

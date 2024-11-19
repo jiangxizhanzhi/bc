@@ -33,35 +33,85 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 场景自动关闭定时任务
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
  */
 @Slf4j
 @Component
 public class SceneJob {
 
+	/**
+	 * 当地场景Mapper
+	 *
+	 * @see LocalSceneMapper
+	 */
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
+	/**
+	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * OJ当地场景Mapper
+	 *
+	 * @see OjLocalSceneMapper
+	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
+	/**
+	 * 推送消息处理器
+	 *
+	 * @see PushMessageHandler
+	 */
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
 
+	/**
+	 * 课堂组信息Mapper
+	 *
+	 * @see ClassroomGroupInfoMapper
+	 */
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
+	/**
+	 * 课堂Mapper
+	 *
+	 * @see ClassroomMapper
+	 */
 	@Autowired
 	private ClassroomMapper classroomMapper;
 
+	/**
+	 * 场景缓存
+	 *
+	 * @see Cache<String, String>
+	 */
 	private Cache<String, String> sceneCache = GuavaCacheUtil.newInstance(CommonConstant.FIFTEEN,
 			TimeUnit.MINUTES, String.class, String.class);
 
+	/**
+	 * 关闭场景
+	 *
+	 * @throws
+	 */
 	@Scheduled(fixedRate = 15000)
 	public void closeScene() {
 		log.info("SceneCloseJob start");
@@ -71,6 +121,11 @@ public class SceneJob {
 		log.info("SceneCloseJob end");
 	}
 
+	/**
+	 * 计数下十五最小
+	 *
+	 * @throws
+	 */
 	@Scheduled(fixedRate = 5000)
 	public void countDownFifteenMin() {
 		log.info("CountDownFifteenMin job start");
@@ -80,6 +135,11 @@ public class SceneJob {
 		log.info("CountDownFifteenMin job end");
 	}
 
+	/**
+	 * 做计数下十五最小
+	 *
+	 * @throws
+	 */
 	private void doCountDownFifteenMin() {
 		Date current = new Date();
 		Date fifteenMin = TimeUtil.addMins(current, CommonConstant.FIFTEEN);
@@ -98,6 +158,13 @@ public class SceneJob {
 		}
 	}
 
+	/**
+	 * 计数下
+	 *
+	 * @param localScene 当地场景
+	 * @throws
+	 * @see LocalScene
+	 */
 	private void countDown(LocalScene localScene) {
 
 		// 如果消息已推送 不重复推送
@@ -148,6 +215,11 @@ public class SceneJob {
 		sceneCache.put(localScene.getResourceId(), localScene.getMpSceneId());
 	}
 
+	/**
+	 * 做关闭场景
+	 *
+	 * @throws
+	 */
 	private void doCloseScene() {
 		// 1、获取待关闭的场景
 		List<LocalScene> toCloseScenes = localSceneMapper.selectByCloseTime(new Date());
@@ -165,6 +237,13 @@ public class SceneJob {
 		});
 	}
 
+	/**
+	 * 关闭场景
+	 *
+	 * @param localScene 当地场景
+	 * @throws
+	 * @see LocalScene
+	 */
 	private void closeScene(LocalScene localScene) {
 
 		// 设置当前线程用户

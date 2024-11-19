@@ -20,19 +20,45 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 系统使用状态工作
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Slf4j
 @Component
 public class SystemUseStatusJob {
+	/**
+	 * 系统使用状态Service
+	 *
+	 * @see SystemUseStatusService
+	 */
 	@Autowired
 	private SystemUseStatusService systemUseStatusService;
 
+	/**
+	 * 插入系统使用状态
+	 */
 	private boolean insertSystemUseStatus;
 
+	/**
+	 * 初始化
+	 *
+	 * @throws
+	 */
 	@PostConstruct
 	public void init() {
 		insertSystemUseStatus = Boolean.parseBoolean(ConfigUtil.getContextProperty("ojj.insertSystemUseStatus"));
 	}
 
+	/**
+	 * 插入系统使用状态
+	 *
+	 * @throws
+	 */
 	@Scheduled(fixedRate =  5 * 60 * 1000)
 	public void insertSystemUseStatus() {
 		log.info("insertSystemUseStatus system use status start----------");
@@ -61,6 +87,8 @@ public class SystemUseStatusJob {
 
 	/**
 	 * 清理无用数据定时任务
+	 *
+	 * @throws
 	 */
 	@Scheduled(fixedRate = 24 * 60 * 60 * 1000)
 	public void deleteSystemUseStatus() {
@@ -71,7 +99,11 @@ public class SystemUseStatusJob {
 	/**
 	 * 获取内存的使用率
 	 *
+	 * @param resultInfo 结果信息
 	 * @return 内存使用率 0.36
+	 * @throws
+	 * @see List<String>
+	 * @see double
 	 */
 	public static double getMemoryUsage(List<String> resultInfo) {
 		List<String> infos = resultInfo.subList(0,5);
@@ -90,7 +122,11 @@ public class SystemUseStatusJob {
 	/**
 	 * 获取CPU的使用率
 	 *
+	 * @param cpuInfo CPU信息
 	 * @return CPU使用率 0.36
+	 * @throws
+	 * @see List<String>
+	 * @see Double
 	 */
 	public static Double getCpuUsage(List<String> cpuInfo) {
 		Double id = Double.parseDouble(Arrays.asList(cpuInfo.get(2).split("\\s+")).get(7));
@@ -98,16 +134,29 @@ public class SystemUseStatusJob {
 		df.setRoundingMode(RoundingMode.DOWN);
 		return Double.parseDouble(df.format(100 - id));
 	}
+
 	/**
 	 * 获取disk使用率
 	 *
 	 * @param resultInfo 命令返回信息
 	 * @return 处理后获得的硬盘使用率
+	 * @throws
+	 * @see List<String>
+	 * @see double
 	 */
 	public static double getUnixDiskUsage(List<String> resultInfo) {
 		return Double.parseDouble(resultInfo.get(1).split("\\s+")[4].replace("%", ""));
 	}
 
+	/**
+	 * 执行 shell
+	 *
+	 * @param shell 壳
+	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 */
 	public static List<String> execShell(String shell) {
 		log.info("Start exec shell! command=[{}]", shell);
 

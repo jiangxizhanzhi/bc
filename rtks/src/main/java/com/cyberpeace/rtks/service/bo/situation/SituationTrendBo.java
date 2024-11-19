@@ -10,17 +10,30 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 态势趋势Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see Serializable
+ * @since 1.0.0
+ */
 @Data
 public class SituationTrendBo implements Serializable {
 
 	/**
 	 * 日期
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty("日期")
 	private List<String> xDates;
 
 	/**
 	 * 人-岗数
+	 *
+	 * @see List<Integer>
 	 */
 	@ApiModelProperty("人-岗数")
 	private List<Integer> yNums;

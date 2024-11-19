@@ -11,16 +11,33 @@ import com.cyberpeace.common.util.SpringContextUtil;
 
 /**
  * 自定义配置项
- * @author yinqingrong
+ *
+ * @author yinqingrong@version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
  */
 @Configuration
 public class CustomConf {
 
+	/**
+	 * 获取spring上下文util
+	 *
+	 * @return {@code SpringContextUtil }
+	 * @throws
+	 * @see SpringContextUtil
+	 */
 	@Bean
 	public static SpringContextUtil getSpringContextUtil() {
 		return new SpringContextUtil();
 	}
 
+	/**
+	 * 获取配置util
+	 *
+	 * @return {@code PropertyPlaceholderConfigurer }
+	 * @throws
+	 * @see PropertyPlaceholderConfigurer
+	 */
 	@Bean
 	public static PropertyPlaceholderConfigurer getConfigUtil() {
 		PropertyPlaceholderConfigurer configurer = new ConfigUtil();

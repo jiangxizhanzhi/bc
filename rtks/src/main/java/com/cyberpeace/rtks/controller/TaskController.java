@@ -28,21 +28,53 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 任务Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Api(tags = "RTKS-任务管理")
 @RestController
 @RequestMapping("/rtks")
 @RequiresAuthentication
 public class TaskController {
 
+	/**
+	 * 任务Service
+	 *
+	 * @see TaskService
+	 */
 	@Autowired
 	private TaskService taskService;
 
+	/**
+	 * 岗位Service
+	 *
+	 * @see RoleService
+	 */
 	@Autowired
 	private RoleService roleService;
 
+	/**
+	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 获取任务
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<Task> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<Task>
+	 */
 	@ApiOperation("查询单条任务")
 	@GetMapping("/task")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -52,6 +84,15 @@ public class TaskController {
 		return new BaseRsp<>(task);
 	}
 
+	/**
+	 * 新增任务
+	 *
+	 * @param taskAddReq 任务新增请求体
+	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see TaskAddReq
+	 * @see BaseRsp<String>
+	 */
 	@ApiOperation("新增单条任务")
 	@PostMapping("/task")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -68,6 +109,15 @@ public class TaskController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 修改任务
+	 *
+	 * @param taskAddReq 任务新增请求体
+	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see TaskAddReq
+	 * @see BaseRsp<String>
+	 */
 	@ApiOperation("修改单条任务")
 	@PutMapping("/task")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -85,6 +135,15 @@ public class TaskController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 删除任务
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see DeleteReq
+	 * @see BaseRsp<String>
+	 */
 	@ApiOperation("删除任务")
 	@DeleteMapping("/task")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -104,6 +163,15 @@ public class TaskController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param pageReqBase 分页请求体基础
+	 * @return {@code BaseRsp<ListRsp<Task>> }
+	 * @throws
+	 * @see PageReqBase
+	 * @see BaseRsp<ListRsp<Task>>
+	 */
 	@ApiOperation("分页查询")
 	@GetMapping("/task/list")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)

@@ -19,10 +19,25 @@ import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.ApiSelectorBuilder;
 import springfox.documentation.spring.web.plugins.Docket;
 
+/**
+ * Swagger 配置
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Configuration
 @EnableOpenApi
 public class SwaggerConfig {
 
+	/**
+	 * ApiRTKS
+	 *
+	 * @return {@code Docket }
+	 * @throws
+	 * @see Docket
+	 */
 	@Bean
 	public Docket apiRtks() {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.rtks"))
@@ -30,6 +45,13 @@ public class SwaggerConfig {
 				.groupName("rtks");
 	}
 
+	/**
+	 * Api模板
+	 *
+	 * @return {@code Docket }
+	 * @throws
+	 * @see Docket
+	 */
 	@Bean
 	public Docket apiTemplate() {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.demo"))
@@ -37,6 +59,13 @@ public class SwaggerConfig {
 				.groupName("demo");
 	}
 
+	/**
+	 * Api靶场
+	 *
+	 * @return {@code Docket }
+	 * @throws
+	 * @see Docket
+	 */
 	@Bean
 	public Docket apiCr() {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.cr"))
@@ -44,6 +73,13 @@ public class SwaggerConfig {
 				.groupName("cr");
 	}
 
+	/**
+	 * ApiCS
+	 *
+	 * @return {@code Docket }
+	 * @throws
+	 * @see Docket
+	 */
 	@Bean
 	public Docket apiCs() {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.cs"))
@@ -51,6 +87,13 @@ public class SwaggerConfig {
 				.groupName("cs");
 	}
 
+	/**
+	 * ApiOJ
+	 *
+	 * @return {@code Docket }
+	 * @throws
+	 * @see Docket
+	 */
 	@Bean
 	public Docket apiOj() {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.oj"))
@@ -58,6 +101,13 @@ public class SwaggerConfig {
 				.groupName("oj");
 	}
 
+	/**
+	 * Api地震魔
+	 *
+	 * @return {@code Docket }
+	 * @throws
+	 * @see Docket
+	 */
 	@Bean
 	public Docket apiEs() {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.evaluate"))
@@ -65,6 +115,13 @@ public class SwaggerConfig {
 				.groupName("es");
 	}
 
+	/**
+	 * Api态势
+	 *
+	 * @return {@code Docket }
+	 * @throws
+	 * @see Docket
+	 */
 	@Bean
 	public Docket apiSituation() {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.situation"))
@@ -72,6 +129,13 @@ public class SwaggerConfig {
 				.groupName("situation");
 	}
 
+	/**
+	 * Api网关
+	 *
+	 * @return {@code Docket }
+	 * @throws
+	 * @see Docket
+	 */
 	@Bean
 	public Docket apiGateway() {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.gateway"))
@@ -79,6 +143,13 @@ public class SwaggerConfig {
 				.groupName("outer");
 	}
 
+	/**
+	 * 获取案卷
+	 *
+	 * @return {@code ApiSelectorBuilder }
+	 * @throws
+	 * @see ApiSelectorBuilder
+	 */
 	private ApiSelectorBuilder getDocket() {
 		String apiDoc = ConfigUtil.getContextProperty("ojj.apiDoc");
 
@@ -96,6 +167,13 @@ public class SwaggerConfig {
 				.select();
 	}
 
+	/**
+	 * Api信息
+	 *
+	 * @return {@code ApiInfo }
+	 * @throws
+	 * @see ApiInfo
+	 */
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder().title("网络靶场项目文档").description("有问题请联系朱天尧").version("v1.0")
 				.build();

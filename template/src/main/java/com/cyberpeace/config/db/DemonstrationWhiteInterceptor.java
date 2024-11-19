@@ -13,16 +13,47 @@ import org.apache.ibatis.plugin.*;
 
 import java.util.Properties;
 
+/**
+ * 演示白色拦截器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see Interceptor
+ * @since 1.0.0
+ */
 @Intercepts({ @Signature(type = Executor.class, method = "update",
 		args = { MappedStatement.class, Object.class }) })
 public class DemonstrationWhiteInterceptor implements Interceptor {
 
+	/**
+	 * 演示
+	 *
+	 * @see String
+	 */
 	private String demo = SystemPropUtil.getProp("WHITE_DEMO");
+	/**
+	 * 演示开启
+	 *
+	 * @see Boolean
+	 */
 	private Boolean demoOpen=false;
 
 
+	/**
+	 * 现在
+	 */
 	private long now= 0L;
 
+	/**
+	 * 拦截
+	 *
+	 * @param invocation 调用
+	 * @return {@code Object }
+	 * @throws @throws Throwable 可投掷
+	 * @see Invocation
+	 * @see Object
+	 */
 	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
 		MappedStatement statement = (MappedStatement) invocation.getArgs()[0];
@@ -44,11 +75,27 @@ public class DemonstrationWhiteInterceptor implements Interceptor {
 		return invocation.proceed();
 	}
 
+	/**
+	 * 插件
+	 *
+	 * @param target 目标
+	 * @return {@code Object }
+	 * @throws
+	 * @see Object
+	 * @see Object
+	 */
 	@Override
 	public Object plugin(Object target) {
 		return Plugin.wrap(target, this);
 	}
 
+	/**
+	 * 设置性能
+	 *
+	 * @param properties 性能
+	 * @throws
+	 * @see Properties
+	 */
 	@Override
 	public void setProperties(Properties properties) {
 		// 可以在这里设置插件的属性

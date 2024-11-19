@@ -18,13 +18,37 @@ import com.cyberpeace.rtks.dao.mapper.TaskMapper;
 import com.cyberpeace.rtks.service.TaskService;
 import org.springframework.stereotype.Service;
 
+/**
+ * 任务Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see ServiceImpl
+ * @see TaskService
+ * @since 1.0.0
+ */
 @Service
 @Slf4j
 public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements TaskService {
 
+	/**
+	 * 任务Mapper
+	 *
+	 * @see TaskMapper
+	 */
 	@Autowired
 	private TaskMapper taskMapper;
 
+	/**
+	 * 分页
+	 *
+	 * @param pageReqBase 分页请求体基础
+	 * @return {@code ListRsp<Task> }
+	 * @throws
+	 * @see PageReqBase
+	 * @see ListRsp<Task>
+	 */
 	@Override
 	public ListRsp<Task> page(PageReqBase pageReqBase) {
 		Page page = pageReqBase.toPageParam();
@@ -33,6 +57,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 		return PageUtil.getListResult(result);
 	}
 
+	/**
+	 * 检查id列表
+	 *
+	 * @param ids id列表
+	 * @throws
+	 * @see List<String>
+	 */
 	@Override
 	public void checkIds(List<String> ids) {
 		List<String> existingIds = taskMapper.filterIds(ids);

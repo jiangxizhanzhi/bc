@@ -16,19 +16,47 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * RTKS态势工作
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Slf4j
 @Component
 public class RtksSituationJob {
 
+	/**
+	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 用户岗位Mapper
+	 *
+	 * @see UserRoleMapper
+	 */
 	@Autowired
 	private UserRoleMapper userRoleMapper;
 
+	/**
+	 * RTKS态势Service
+	 *
+	 * @see RtksSituationService
+	 */
 	@Autowired
 	private RtksSituationService rtksSituationService;
 
+	/**
+	 * 算
+	 *
+	 * @throws
+	 */
 	@Scheduled(fixedRate = 1000 * 300)
 	public void calculate() {
 		log.info("start rtks situation job");

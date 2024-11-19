@@ -37,27 +37,69 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 知识点Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Api(tags = "RTKS-知识点管理")
 @RestController
 @RequestMapping("/rtks/knowledge")
 @RequiresAuthentication
 public class KnowledgeController {
 
+	/**
+	 * 知识点Service
+	 *
+	 * @see KnowledgeService
+	 */
 	@Autowired
 	private KnowledgeService knowledgeService;
 
+	/**
+	 * 课程相关Service
+	 *
+	 * @see CourseRelatedService
+	 */
 	@Autowired
 	private CourseRelatedService courseRelatedService;
 
+	/**
+	 * 岗位Service
+	 *
+	 * @see RoleService
+	 */
 	@Autowired
 	private RoleService roleService;
 
+	/**
+	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 事务模板
+	 *
+	 * @see TransactionTemplate
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 获取知识点
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<KnowledgeRes> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<KnowledgeRes>
+	 */
 	@ApiOperation("查询单条")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -69,6 +111,15 @@ public class KnowledgeController {
 		return new BaseRsp<KnowledgeRes>(knowledge);
 	}
 
+	/**
+	 * 新增知识点
+	 *
+	 * @param knowledgeAddReq 知识点新增请求体
+	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see KnowledgeAddReq
+	 * @see BaseRsp<String>
+	 */
 	@ApiOperation("新增单条")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -97,6 +148,15 @@ public class KnowledgeController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 修改知识点
+	 *
+	 * @param knowledgeAddReq 知识点新增请求体
+	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see KnowledgeAddReq
+	 * @see BaseRsp<String>
+	 */
 	@ApiOperation("修改单条")
 	@PutMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -133,6 +193,15 @@ public class KnowledgeController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 删除知识点
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see DeleteReq
+	 * @see BaseRsp<String>
+	 */
 	@ApiOperation("删除")
 	@DeleteMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -154,6 +223,15 @@ public class KnowledgeController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param knowledgeListReq 知识点列表请求体
+	 * @return {@code BaseRsp<ListRsp<KnowledgeRes>> }
+	 * @throws
+	 * @see KnowledgeListReq
+	 * @see BaseRsp<ListRsp<KnowledgeRes>>
+	 */
 	@ApiOperation("分页查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)

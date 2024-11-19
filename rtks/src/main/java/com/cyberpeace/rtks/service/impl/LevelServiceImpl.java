@@ -22,16 +22,45 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * 层级Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see ServiceImpl
+ * @see LevelService
+ * @since 1.0.0
+ */
 @Service
 @Slf4j
 public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements LevelService {
 
+	/**
+	 * 层级Mapper
+	 *
+	 * @see LevelMapper
+	 */
 	@Autowired
 	LevelMapper levelMapper;
 
+	/**
+	 * 岗位Mapper
+	 *
+	 * @see RoleMapper
+	 */
 	@Autowired
 	RoleMapper roleMapper;
 
+	/**
+	 * 获取OR404
+	 *
+	 * @param levelId 层级id
+	 * @return {@code Level }
+	 * @throws
+	 * @see String
+	 * @see Level
+	 */
 	@Override
 	public Level getOr404(String levelId) {
 		Level level = getInternationalById(levelId);
@@ -44,6 +73,15 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 		return level;
 	}
 
+	/**
+	 * 获取国际由id
+	 *
+	 * @param levelId 层级id
+	 * @return {@code Level }
+	 * @throws
+	 * @see String
+	 * @see Level
+	 */
 	private Level getInternationalById(String levelId) {
 		Level level = getById(levelId);
 		if (level != null && "default".equals(level.getResourceId())
@@ -53,17 +91,34 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 		return level;
 	}
 
+	/**
+	 * 删除全部水平
+	 *
+	 * @throws
+	 */
 	@Override
 	public void removeAllLevels() {
 		levelMapper.deleteAllLevels();
 	}
 
+	/**
+	 * 初始化默认从预设
+	 *
+	 * @throws
+	 */
 	@Override
 	public void initDefaultFromPreset() {
 		levelMapper.clearAll();
 		levelMapper.copyFromPreset();
 	}
 
+	/**
+	 * 确保少比二层级
+	 *
+	 * @param level 层级
+	 * @throws
+	 * @see Level
+	 */
 	@Override
 	public void ensureLessThanTwoLevel(Level level) {
 		int maxLoop = 2;
@@ -71,22 +126,64 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 		findFrame(level, maxLoop, collector);
 	}
 
+	/**
+	 * 获取孩子水平由层级id
+	 *
+	 * @param levelId 层级id
+	 * @return {@code List<Level> }
+	 * @throws
+	 * @see String
+	 * @see List<Level>
+	 */
 	@Override
 	public List<Level> getChildLevelsByLevelId(String levelId) {
 		return levelMapper.getChildLevels(levelId);
 	}
 
+	/**
+	 * 获取框架
+	 *
+	 * @param level 层级
+	 * @return {@code Level }
+	 * @throws
+	 * @see Level
+	 * @see Level
+	 */
 	@Override
 	public Level getFrame(Level level) {
 		return findFrame(level, level1 -> {});
 	}
 
+	/**
+	 * 找到框架
+	 *
+	 * @param level     层级
+	 * @param collector 收藏家
+	 * @return {@code Level }
+	 * @throws
+	 * @see Level
+	 * @see Consumer<Level>
+	 * @see Level
+	 */
 	private Level findFrame(Level level, Consumer<Level> collector) {
 		// 最多层级数(不包括顶层框架)
 		int maxLoop = 9;
 		return findFrame(level, maxLoop, collector);
 	}
 
+	/**
+	 * 找到框架
+	 *
+	 * @param level     层级
+	 * @param maxLoop   最大圈
+	 * @param collector 收藏家
+	 * @return {@code Level }
+	 * @throws
+	 * @see Level
+	 * @see int
+	 * @see Consumer<Level>
+	 * @see Level
+	 */
 	private Level findFrame(Level level, int maxLoop, Consumer<Level> collector) {
 		if (maxLoop <= 0) {
 			log.error("level Loop is less than zero！levelId=[{}]", level.getResourceId());
@@ -105,6 +202,15 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 		return findFrame(parentLevel, maxLoop - 1, collector);
 	}
 
+	/**
+	 * 获取层级或框架OR404
+	 *
+	 * @param levelId 层级id
+	 * @return {@code Level }
+	 * @throws
+	 * @see String
+	 * @see Level
+	 */
 	@Override
 	public Level getLevelOrFrameOr404(String levelId) {
 		Level level = getInternationalById(levelId);
@@ -115,6 +221,15 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 		return level;
 	}
 
+	/**
+	 * 获取满路径由id
+	 *
+	 * @param levelId 层级id
+	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 */
 	@Override
 	public String getFullPathById(String levelId) {
 		Level level = getInternationalById(levelId);
@@ -126,6 +241,15 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 		return StringUtils.join(levelNames, "/");
 	}
 
+	/**
+	 * 获取层级id列表由框架id列表
+	 *
+	 * @param frameIds 框架id列表
+	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
+	 */
 	@Override
 	public List<String> getLevelIdsByFrameIds(List<String> frameIds) {
 		if (CollectionUtils.isEmpty(frameIds)) {
@@ -134,6 +258,15 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 		return levelMapper.getLevelIdsByFrameIds(frameIds);
 	}
 
+	/**
+	 * 获取水平由id列表
+	 *
+	 * @param ids id列表
+	 * @return {@code List<Level> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<Level>
+	 */
 	@Override
 	public List<Level> getLevelsByIds(List<String> ids) {
 		List<Level> levels = listByIds(ids);
@@ -143,6 +276,15 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 		return levels;
 	}
 
+	/**
+	 * 改变层级id
+	 *
+	 * @param levelId 层级id
+	 * @param target  目标
+	 * @throws
+	 * @see String
+	 * @see String
+	 */
 	@Override
 	public void changeLevelId(String levelId, String target) {
 		levelMapper.changeLevelId(levelId, target);
@@ -150,6 +292,10 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
 	/**
 	 * 框架的parent和frame均为空
+	 *
+	 * @param frame 框架
+	 * @throws
+	 * @see Level
 	 */
 	private void ensureIsFrame(Level frame) {
 		if (!StringUtils.isBlank(frame.getParent())) {
@@ -165,6 +311,13 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 		}
 	}
 
+	/**
+	 * 确保不框架
+	 *
+	 * @param level 层级
+	 * @throws
+	 * @see Level
+	 */
 	private void ensureNotFrame(Level level) {
 		if (StringUtils.isBlank(level.getParent())) {
 			log.error("parent field of the level should not be empty ,levelId is [{}]",
@@ -178,6 +331,15 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 		}
 	}
 
+	/**
+	 * 检查具有岗位
+	 *
+	 * @param levelTreeChild 层级树孩子
+	 * @return boolean
+	 * @throws
+	 * @see LevelTreeOutput
+	 * @see boolean
+	 */
 	@Override
 	public boolean checkHasRole(LevelTreeOutput levelTreeChild) {
 
@@ -208,6 +370,11 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
 	}
 
+	/**
+	 * 查看完整
+	 *
+	 * @throws
+	 */
 	@Override
 	public void checkFull(){
 		List<Level> childLevels = levelMapper.getChildLevels("default");

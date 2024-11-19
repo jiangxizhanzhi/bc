@@ -25,33 +25,89 @@ import com.cyberpeace.rtks.service.bo.career.*;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+/**
+ * RTKS相关Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see RtksRelatedService
+ * @since 1.0.0
+ */
 @Service
 public class RtksRelatedServiceImpl implements RtksRelatedService {
 
+	/**
+	 * 技能任务关系Mapper
+	 *
+	 * @see SkillMissionRelationMapper
+	 */
 	@Autowired
 	private SkillMissionRelationMapper skillMissionRelationMapper;
 
+	/**
+	 * 攻击Mapper
+	 *
+	 * @see AttackMapper
+	 */
 	@Autowired
 	private AttackMapper attackMapper;
 
+	/**
+	 * 攻击集成电路Mapper
+	 *
+	 * @see AttackIcsMapper
+	 */
 	@Autowired
 	private AttackIcsMapper attackIcsMapper;
 
+	/**
+	 * EngageMapper
+	 *
+	 * @see EngageMapper
+	 */
 	@Autowired
 	private EngageMapper engageMapper;
 
+	/**
+	 * 事务模板
+	 *
+	 * @see TransactionTemplate
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 攻击Service
+	 *
+	 * @see AttackService
+	 */
 	@Autowired
 	private AttackService attackService;
 
+	/**
+	 * 攻击集成电路Service
+	 *
+	 * @see AttackIcsService
+	 */
 	@Autowired
 	private AttackIcsService attackIcsService;
 
+	/**
+	 * EngageService
+	 *
+	 * @see EngageService
+	 */
 	@Autowired
 	private EngageService engageService;
 
+	/**
+	 * 删除技能任务关系
+	 *
+	 * @param missionTemplateIds 任务模板id列表
+	 * @throws
+	 * @see List<String>
+	 */
 	@Override
 	public void deleteSkillMissionRelation(List<String> missionTemplateIds) {
 		if (!missionTemplateIds.isEmpty()) {
@@ -59,6 +115,13 @@ public class RtksRelatedServiceImpl implements RtksRelatedService {
 		}
 	}
 
+	/**
+	 * 清除攻击关联
+	 *
+	 * @param businessTemplateIds 业务模板id列表
+	 * @throws
+	 * @see List<String>
+	 */
 	@Override
 	public void clearAttackRel(List<String> businessTemplateIds) {
 		if (businessTemplateIds == null || businessTemplateIds.isEmpty()) {
@@ -74,6 +137,13 @@ public class RtksRelatedServiceImpl implements RtksRelatedService {
 		});
 	}
 
+	/**
+	 * 清除Engage关联
+	 *
+	 * @param businessTemplateIds 业务模板id列表
+	 * @throws
+	 * @see List<String>
+	 */
 	@Override
 	public void clearEngageRel(List<String> businessTemplateIds) {
 		if (businessTemplateIds == null || businessTemplateIds.isEmpty()) {
@@ -82,6 +152,13 @@ public class RtksRelatedServiceImpl implements RtksRelatedService {
 		engageMapper.clearRel(businessTemplateIds);
 	}
 
+	/**
+	 * 清除攻击Engage关联
+	 *
+	 * @param btId BT系列id
+	 * @throws
+	 * @see String
+	 */
 	@Override
 	public void clearAttackEngageRel(String btId) {
 		List<String> btIds = Lists.newArrayList(btId);
@@ -95,6 +172,15 @@ public class RtksRelatedServiceImpl implements RtksRelatedService {
 		});
 	}
 
+	/**
+	 * 创建攻击Engage关联
+	 *
+	 * @param btId         BT系列id
+	 * @param relatedTechs 相关技术
+	 * @throws
+	 * @see String
+	 * @see Collection<String>
+	 */
 	@Override
 	public void createAttackEngageRel(String btId, Collection<String> relatedTechs) {
 		List<String> attackIds = Lists.newArrayList();
@@ -143,6 +229,15 @@ public class RtksRelatedServiceImpl implements RtksRelatedService {
 		});
 	}
 
+	/**
+	 * 计数攻击关联
+	 *
+	 * @param businessTemplateIds 业务模板id列表
+	 * @return {@code Map<String, List<NameCount>> }
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, List<NameCount>>
+	 */
 	@Override
 	public Map<String, List<NameCount>> countAttackRel(List<String> businessTemplateIds) {
 		Map<String, List<NameCount>> res = Maps.newHashMap();
@@ -159,6 +254,15 @@ public class RtksRelatedServiceImpl implements RtksRelatedService {
 		return res;
 	}
 
+	/**
+	 * 计数Engage关联
+	 *
+	 * @param businessTemplateIds 业务模板id列表
+	 * @return {@code Map<String, List<NameCount>> }
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, List<NameCount>>
+	 */
 	@Override
 	public Map<String, List<NameCount>> countEngageRel(List<String> businessTemplateIds) {
 		Map<String, List<NameCount>> res = Maps.newHashMap();
@@ -201,6 +305,15 @@ public class RtksRelatedServiceImpl implements RtksRelatedService {
 		return res;
 	}
 
+	/**
+	 * 计数集成电路关联
+	 *
+	 * @param businessTemplateIds 业务模板id列表
+	 * @return {@code Map<String, List<NameCount>> }
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, List<NameCount>>
+	 */
 	@Override
 	public Map<String, List<NameCount>> countIcsRel(List<String> businessTemplateIds) {
 		Map<String, List<NameCount>> res = Maps.newHashMap();
@@ -217,6 +330,17 @@ public class RtksRelatedServiceImpl implements RtksRelatedService {
 		return res;
 	}
 
+	/**
+	 * 计数攻击关联
+	 *
+	 * @param res       结果
+	 * @param relations 关系
+	 * @param cache     缓存
+	 * @throws
+	 * @see Map<String, List<NameCount>>
+	 * @see List<TechRelation>
+	 * @see List<AttackCategoryBo<FrameItemBase>>
+	 */
 	private void countAttackRel(Map<String, List<NameCount>> res, List<TechRelation> relations,
 			List<AttackCategoryBo<FrameItemBase>> cache) {
 		for (TechRelation relation : relations) {

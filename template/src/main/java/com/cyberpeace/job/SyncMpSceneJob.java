@@ -27,28 +27,71 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+/**
+ * 同步中台场景工作
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Slf4j
 @Component
 public class SyncMpSceneJob {
 
+	/**
+	 * 远程场景Service
+	 *
+	 * @see RemoteSceneService
+	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	/**
+	 * 当地场景Mapper
+	 *
+	 * @see LocalSceneMapper
+	 */
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
+	/**
+	 * OJ当地场景Service
+	 *
+	 * @see OjLocalSceneService
+	 */
 	@Autowired
 	private OjLocalSceneService ojLocalSceneService;
 
+	/**
+	 * OJ当地场景Mapper
+	 *
+	 * @see OjLocalSceneMapper
+	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
+	/**
+	 * 课堂场景Service
+	 *
+	 * @see ClassroomSceneService
+	 */
 	@Autowired
 	private ClassroomSceneService classroomSceneService;
 
+	/**
+	 * 课堂组信息Mapper
+	 *
+	 * @see ClassroomGroupInfoMapper
+	 */
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
+	/**
+	 * 同步中台场景关闭
+	 *
+	 * @throws
+	 */
 	@Scheduled(initialDelay = 1000, fixedRate = 300000)
 	public void syncMpSceneClose() {
 		log.info("syncMpSceneClose start");
@@ -75,6 +118,13 @@ public class SyncMpSceneJob {
 		log.info("syncMpSceneClose end");
 	}
 
+	/**
+	 * 同步中台场景关闭
+	 *
+	 * @param localScene 当地场景
+	 * @throws
+	 * @see LocalScene
+	 */
 	private void syncMpSceneClose(LocalScene localScene) {
 		if (StringUtils.isBlank(localScene.getMpSceneId())) {
 			log.info("mp_scene_id is null, continue, local_scene id is [{}]", localScene.getResourceId());
@@ -112,16 +162,41 @@ public class SyncMpSceneJob {
 		}
 	}
 
+	/**
+	 * 是否OJ
+	 *
+	 * @param businessCode 业务代号
+	 * @return {@code Boolean }
+	 * @throws
+	 * @see int
+	 * @see Boolean
+	 */
 	private Boolean isOj(int businessCode) {
 		return businessCode == BusinessCode.LESSON.getCode().intValue()
 				|| businessCode == BusinessCode.PRACTICE.getCode().intValue()
 				|| businessCode == BusinessCode.LESSON_PRACTICE.getCode().intValue();
 	}
 
+	/**
+	 * 是否课堂
+	 *
+	 * @param businessCode 业务代号
+	 * @return {@code Boolean }
+	 * @throws
+	 * @see int
+	 * @see Boolean
+	 */
 	private Boolean isClassroom(int businessCode) {
 		return businessCode == BusinessCode.CLASSROOM.getCode().intValue();
 	}
 
+	/**
+	 * 删除类场景
+	 *
+	 * @param localScene 当地场景
+	 * @throws
+	 * @see LocalScene
+	 */
 	private void deleteClassScene(LocalScene localScene) {
 		OjLocalScene ojLocalScene = ojLocalSceneMapper
 				.selectById(localScene.getBusinessInstanceId());

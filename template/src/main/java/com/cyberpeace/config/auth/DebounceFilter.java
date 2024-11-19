@@ -21,19 +21,47 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 防抖
- * @author SN
+ *
+ * @author SN@see Filter
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
  */
 @Slf4j
 public class DebounceFilter implements Filter {
 
+	/**
+	 * 缓存
+	 *
+	 * @see Cache<String, String>
+	 */
 	Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterAccess(3, TimeUnit.SECONDS)
 			.build();
 
+	/**
+	 * 初始化
+	 *
+	 * @param filterConfig 过滤器配置
+	 * @throws @throws ServletException Servlet 异常
+	 * @see FilterConfig
+	 */
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 
 	}
 
+	/**
+	 * 做过滤器
+	 *
+	 * @param servletRequest  Servlet 请求
+	 * @param servletResponse Servlet 响应
+	 * @param filterChain     过滤器链
+	 * @throws @throws          IOException io异常
+	 * @throws ServletException Servlet 异常
+	 * @see ServletRequest
+	 * @see ServletResponse
+	 * @see FilterChain
+	 */
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
 						 FilterChain filterChain) throws IOException, ServletException {
@@ -61,6 +89,14 @@ public class DebounceFilter implements Filter {
 			filterChain.doFilter(servletRequest, servletResponse);
 		}
 	}
+
+	/**
+	 * 本地缓存
+	 *
+	 * @param key 钥匙
+	 * @throws
+	 * @see String
+	 */
 	public synchronized void localCache(String key){
 		if (cache.getIfPresent(key) != null) {
 			throw new BusinessException(ErrorCode.OPERATION_TOO_FREQUENT);
@@ -68,11 +104,25 @@ public class DebounceFilter implements Filter {
 		cache.put(key, "whatever");
 	}
 
+	/**
+	 * 摧毁
+	 *
+	 * @throws
+	 */
 	@Override
 	public void destroy() {
 
 	}
 
+	/**
+	 * 获取SHA256
+	 *
+	 * @param body 身体
+	 * @return {@code String }
+	 * @throws
+	 * @see byte[]
+	 * @see String
+	 */
 	private String getSha256(byte[] body) {
 		try {
 			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");

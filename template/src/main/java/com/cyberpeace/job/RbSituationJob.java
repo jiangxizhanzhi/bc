@@ -35,32 +35,89 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 红蓝对抗态势工作
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Slf4j
 @Component
 public class RbSituationJob {
 
+	/**
+	 * 兔子模板
+	 *
+	 * @see RabbitTemplate
+	 */
 	@Autowired
 	RabbitTemplate rabbitTemplate;
 
+	/**
+	 * 远程场景Service
+	 *
+	 * @see RemoteSceneService
+	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	/**
+	 * 红蓝对抗态势Service
+	 *
+	 * @see RbSituationService
+	 */
 	@Autowired
 	private RbSituationService rbSituationService;
 
+	/**
+	 * 红蓝对抗房间得分Service
+	 *
+	 * @see RbRoomScoreService
+	 */
 	@Autowired
 	private RbRoomScoreService rbRoomScoreService;
 
+	/**
+	 * 日期映射
+	 *
+	 * @see Map<String, Date>
+	 */
 	Map<String, Date> dateMap = new HashMap<>();
 
-	// 该交换机由城市沙盘里面程序创建，监听队列城市沙盘关闭时会自动删除, 交换机创建后不会被删除
+	/**
+	 * rbSituationExchange
+	 *
+	 * @see String
+	 */// 该交换机由城市沙盘里面程序创建，监听队列城市沙盘关闭时会自动删除, 交换机创建后不会被删除
 	private static final String RBSITUATIONEXCHANGE = "situation";
 
+	/**
+	 * 错误计数
+	 *
+	 * @see Integer
+	 */
 	private Integer errorCount = 0;
+	/**
+	 * Exchange URL （交易所 URL）
+	 *
+	 * @see String
+	 */
 	private String exchangeUrl;
 
+	/**
+	 * HTTP 客户端
+	 *
+	 * @see CloseableHttpClient
+	 */
 	private CloseableHttpClient httpClient;
 
+	/**
+	 * 初始化
+	 *
+	 * @throws
+	 */
 	@PostConstruct
 	public void init() {
 		String mqWebPort = SystemPropUtil.getProp("MQ_WEB_PORT");
@@ -80,6 +137,11 @@ public class RbSituationJob {
 	}
 
 
+	/**
+	 * 检查记录
+	 *
+	 * @throws
+	 */
 	@Scheduled(fixedRate = 5000)
 	public void checkRecord() {
 		log.info("checkRecord job is start");
@@ -142,6 +204,17 @@ public class RbSituationJob {
 		log.info("checkRecord job is end");
 	}
 
+	/**
+	 * 分析流量日志
+	 *
+	 * @param channel  渠道
+	 * @param flowLogs 流量日志
+	 * @param sceneId  场景id
+	 * @throws @throws Exception 例外
+	 * @see Channel
+	 * @see List<JSONObject>
+	 * @see String
+	 */
 	public void analysisFlowLogs(Channel channel, List<JSONObject> flowLogs, String sceneId) throws Exception {
 		int count = 1;
 		for(JSONObject flowLog: flowLogs){
@@ -191,6 +264,15 @@ public class RbSituationJob {
 
 	}
 
+	/**
+	 * 得分
+	 *
+	 * @param channel  渠道
+	 * @param flowLogs 流量日志
+	 * @throws @throws IOException io异常
+	 * @see Channel
+	 * @see List<JSONObject>
+	 */
 	public void score(Channel channel, List<JSONObject> flowLogs) throws IOException {
 		String sceneId = rbSituationService.getSceneId();
 		JSONObject score = rbRoomScoreService.getAllRbScoreProgress(sceneId, RbRoleGroup.RED_BLUE.getCode());

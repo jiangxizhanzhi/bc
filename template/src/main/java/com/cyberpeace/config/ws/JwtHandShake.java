@@ -22,16 +22,46 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author yinqingrong
+ * JWT 握手
+ *
+ * @author yinqingrong@see HandshakeInterceptor
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
  */
 @Slf4j
 @Component
 public class JwtHandShake implements HandshakeInterceptor {
 
+	/**
+	 * 令 牌
+	 *
+	 * @see String
+	 */
 	private final String TOKEN = "token";
 
+	/**
+	 * 路径
+	 *
+	 * @see String
+	 */
 	private final String PATH = "path";
 
+	/**
+	 * 握手前
+	 *
+	 * @param serverHttpRequest  服务器 HTTP 请求
+	 * @param serverHttpResponse 服务器 HTTP 响应
+	 * @param webSocketHandler   WebSocket处理器
+	 * @param map                映射
+	 * @return boolean
+	 * @throws @throws Exception 例外
+	 * @see ServerHttpRequest
+	 * @see ServerHttpResponse
+	 * @see WebSocketHandler
+	 * @see Map<String, Object>
+	 * @see boolean
+	 */
 	@Override
 	public boolean beforeHandshake(ServerHttpRequest serverHttpRequest,
 			ServerHttpResponse serverHttpResponse, WebSocketHandler webSocketHandler,
@@ -100,10 +130,16 @@ public class JwtHandShake implements HandshakeInterceptor {
 
 	/**
 	 * 逐个遍历自定义校验器
+	 *
 	 * @param requestParams
 	 * @param servletPath
 	 * @param userId
 	 * @return
+	 * @throws
+	 * @see Map<String, String>
+	 * @see String
+	 * @see String
+	 * @see boolean
 	 */
 	private boolean selfDefinedCheck(Map<String, String> requestParams, String servletPath,
 			String userId) {
@@ -128,12 +164,34 @@ public class JwtHandShake implements HandshakeInterceptor {
 		return true;
 	}
 
+	/**
+	 * 握手后
+	 *
+	 * @param serverHttpRequest  服务器 HTTP 请求
+	 * @param serverHttpResponse 服务器 HTTP 响应
+	 * @param webSocketHandler   WebSocket处理器
+	 * @param e                  e
+	 * @throws
+	 * @see ServerHttpRequest
+	 * @see ServerHttpResponse
+	 * @see WebSocketHandler
+	 * @see Exception
+	 */
 	@Override
 	public void afterHandshake(ServerHttpRequest serverHttpRequest,
 			ServerHttpResponse serverHttpResponse, WebSocketHandler webSocketHandler, Exception e) {
 
 	}
 
+	/**
+	 * 解析参数映射
+	 *
+	 * @param queryString 查询字符串
+	 * @return {@code Map<String, String> }
+	 * @throws
+	 * @see String
+	 * @see Map<String, String>
+	 */
 	public Map<String, String> parseParameterMap(String queryString) {
 		Map<String, String> parameterMap = Maps.newTreeMap();
 		String[] parameters = StringUtils.split(queryString, "&");
@@ -147,6 +205,15 @@ public class JwtHandShake implements HandshakeInterceptor {
 		return parameterMap;
 	}
 
+	/**
+	 * 复制映射
+	 *
+	 * @param origin 起源
+	 * @return {@code Map<String, String> }
+	 * @throws
+	 * @see Map<String, String>
+	 * @see Map<String, String>
+	 */
 	private Map<String, String> copyMap(Map<String, String> origin) {
 		Map<String, String> copy = Maps.newTreeMap();
 
@@ -157,6 +224,15 @@ public class JwtHandShake implements HandshakeInterceptor {
 		return copy;
 	}
 
+	/**
+	 * 映射自字符串
+	 *
+	 * @param params 参数
+	 * @return {@code String }
+	 * @throws
+	 * @see Map<String, String>
+	 * @see String
+	 */
 	private String mapToString(Map<String, String> params) {
 		StringBuilder stringBuilder = new StringBuilder();
 		for (Map.Entry<String, String> item : params.entrySet()) {

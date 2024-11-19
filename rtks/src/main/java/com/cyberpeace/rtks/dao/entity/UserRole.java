@@ -8,33 +8,50 @@ import com.cyberpeace.common.model.BaseTable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 用户岗位
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see BaseTable
+ * @since 1.0.0
+ */
 @Data
 @TableName("rtks_user_role")
 public class UserRole extends BaseTable {
 
 	/**
 	 * 用户ID
+	 *
+	 * @see String
 	 */
-    @TableId(type = IdType.UUID, value = "user_id")
+	@TableId(type = IdType.UUID, value = "user_id")
     @ApiModelProperty("用户ID")
     private String userId;
 
 	/**
 	 * 用户名称
+	 *
+	 * @see String
 	 */
-    @ApiModelProperty("用户名称")
+	@ApiModelProperty("用户名称")
     private String userName;
 
 	/**
 	 * 岗位ID
+	 *
+	 * @see String
 	 */
-    @ApiModelProperty("岗位ID")
+	@ApiModelProperty("岗位ID")
     private String roleId;
 
 	/**
 	 * 岗位名称
+	 *
+	 * @see String
 	 */
-    @ApiModelProperty("岗位名称")
+	@ApiModelProperty("岗位名称")
     private String roleName;
 
 }

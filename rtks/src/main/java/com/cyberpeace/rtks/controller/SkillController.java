@@ -35,24 +35,61 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * RTKS-技能管理Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Api(tags = "RTKS-技能管理")
 @RestController
 @RequestMapping("/rtks/skill")
 @RequiresAuthentication
 public class SkillController {
 
+	/**
+	 * 技能Service
+	 *
+	 * @see SkillService
+	 */
 	@Autowired
 	private SkillService skillService;
 
+	/**
+	 * 事务模板
+	 *
+	 * @see TransactionTemplate
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 岗位Service
+	 *
+	 * @see RoleService
+	 */
 	@Autowired
 	private RoleService roleService;
 
+	/**
+	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 获取技能
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<SkillRes> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<SkillRes>
+	 */
 	@ApiOperation("查询单条")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -63,6 +100,15 @@ public class SkillController {
 		return new BaseRsp<>(skillRes);
 	}
 
+	/**
+	 * 新增技能
+	 *
+	 * @param skillAddReq 技能新增请求体
+	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see SkillAddReq
+	 * @see BaseRsp<String>
+	 */
 	@ApiOperation("新增单条")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -91,6 +137,15 @@ public class SkillController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 修改技能
+	 *
+	 * @param skillAddReq 技能新增请求体
+	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see SkillAddReq
+	 * @see BaseRsp<String>
+	 */
 	@ApiOperation("修改单条")
 	@PutMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -125,6 +180,15 @@ public class SkillController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 删除技能
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see DeleteReq
+	 * @see BaseRsp<String>
+	 */
 	@ApiOperation("删除")
 	@DeleteMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -157,6 +221,15 @@ public class SkillController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param reqBase 请求体基础
+	 * @return {@code BaseRsp<ListRsp<SkillRes>> }
+	 * @throws
+	 * @see PageReqBase
+	 * @see BaseRsp<ListRsp<SkillRes>>
+	 */
 	@ApiOperation("分页查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -164,6 +237,15 @@ public class SkillController {
 		return new BaseRsp<>(skillService.page(reqBase));
 	}
 
+	/**
+	 * 简单列表
+	 *
+	 * @param reqBase 请求体基础
+	 * @return {@code BaseRsp<ListRsp<SkillSimpleRes>> }
+	 * @throws
+	 * @see PageReqBase
+	 * @see BaseRsp<ListRsp<SkillSimpleRes>>
+	 */
 	@ApiOperation("添加技能时分页展示")
 	@GetMapping("/list/simple")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)

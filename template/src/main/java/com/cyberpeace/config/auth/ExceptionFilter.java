@@ -37,21 +37,64 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 例外过滤器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see Filter
+ * @since 1.0.0
+ */
 @Slf4j
 public class ExceptionFilter implements Filter {
 
+	/**
+	 * 缓存
+	 *
+	 * @see Map<String, String>
+	 */
 	private Map<String, String> cache = Maps.newHashMap();
 
+	/**
+	 * 错误前缀
+	 *
+	 * @see String
+	 */
 	private String errorPrefix = null;
 
+	/**
+	 * 初始化
+	 *
+	 * @param filterConfig 过滤器配置
+	 * @throws @throws ServletException Servlet 异常
+	 * @see FilterConfig
+	 */
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		this.errorPrefix = ConfigUtil.getContextProperty("errorPrefix");
 	}
 
+	/**
+	 * 摧毁
+	 *
+	 * @throws
+	 */
 	@Override
 	public void destroy() {}
 
+	/**
+	 * 做过滤器
+	 *
+	 * @param servletRequest  Servlet 请求
+	 * @param servletResponse Servlet 响应
+	 * @param filterChain     过滤器链
+	 * @throws @throws          IOException io异常
+	 * @throws ServletException Servlet 异常
+	 * @see ServletRequest
+	 * @see ServletResponse
+	 * @see FilterChain
+	 */
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
 			FilterChain filterChain) throws IOException, ServletException {
@@ -70,6 +113,15 @@ public class ExceptionFilter implements Filter {
 		}
 	}
 
+	/**
+	 * 交易异常
+	 *
+	 * @param servletResponse Servlet 响应
+	 * @param e               e
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see Exception
+	 */
 	private void dealException(HttpServletResponse servletResponse, Exception e) {
 		log.error("exceptionfilter catch error", e);
 
@@ -113,8 +165,12 @@ public class ExceptionFilter implements Filter {
 
 	/**
 	 * 处理自定义业务异常
+	 *
 	 * @param httpServletResponse
-	 * @param e
+	 * @param e                   e
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see BusinessException
 	 */
 	private void parseBusinessException(HttpServletResponse httpServletResponse,
 			BusinessException e) {
@@ -126,7 +182,12 @@ public class ExceptionFilter implements Filter {
 
 	/**
 	 * 调用第三方服务错误
-	 * @param httpServletResponse
+	 *
+	 * @param httpServletResponse HTTP Servlet 响应
+	 * @param e                   e
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see RemoteServiceException
 	 */
 	private void parseRemoteServiceException(HttpServletResponse httpServletResponse,
 			RemoteServiceException e) {
@@ -143,6 +204,12 @@ public class ExceptionFilter implements Filter {
 
 	/**
 	 * 处理主键重复异常
+	 *
+	 * @param httpServletResponse HTTP Servlet 响应
+	 * @param e                   e
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see DuplicateKeyException
 	 */
 	private void parseDuplicateKeyException(HttpServletResponse httpServletResponse,
 			DuplicateKeyException e) {
@@ -159,6 +226,15 @@ public class ExceptionFilter implements Filter {
 		flushErrorInfo(httpServletResponse, ErrorCode.DUPLICATE_KEY, message);
 	}
 
+	/**
+	 * 获取重复钥匙
+	 *
+	 * @param errorMsg 错误消息
+	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 */
 	private String getDuplicateKey(String errorMsg) {
 		String duplicateKey = "";
 		String rgex = "key '(.*?)'";
@@ -173,13 +249,21 @@ public class ExceptionFilter implements Filter {
 
 	/**
 	 * 登陆失败返回401
+	 *
+	 * @param httpServletResponse HTTP Servlet 响应
+	 * @throws
+	 * @see HttpServletResponse
 	 */
 	private void parseAuthenticationException(HttpServletResponse httpServletResponse) {
 		httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	}
 
 	/**
+	 * 不支持例外
 	 *
+	 * @param httpServletResponse HTTP Servlet 响应
+	 * @throws
+	 * @see HttpServletResponse
 	 */
 	private void notSupportedException(HttpServletResponse httpServletResponse) {
 		httpServletResponse.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
@@ -187,7 +271,13 @@ public class ExceptionFilter implements Filter {
 
 	/**
 	 * 处理根据resource_id找不到对应资源时的异常
-	 **/
+	 *
+	 * @param httpServletResponse HTTP Servlet 响应
+	 * @param e                   e
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see ResourceNotFoundException
+	 */
 	private void parseResourceNotFoundException(HttpServletResponse httpServletResponse,
 			ResourceNotFoundException e) {
 		flushErrorInfo(httpServletResponse, ErrorCode.RESOURCE_NOT_FOUND, e.getMessage());
@@ -195,7 +285,13 @@ public class ExceptionFilter implements Filter {
 
 	/**
 	 * 处理用户输入参数异常
-	 **/
+	 *
+	 * @param httpServletResponse HTTP Servlet 响应
+	 * @param e                   e
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see InvalidParamException
+	 */
 	private void parseInvalidParamException(HttpServletResponse httpServletResponse,
 			InvalidParamException e) {
 		flushErrorInfo(httpServletResponse, ErrorCode.METHOD_ARG_NOT_VALID, e.getMessage());
@@ -203,6 +299,10 @@ public class ExceptionFilter implements Filter {
 
 	/**
 	 * 处理权限相关的异常
+	 *
+	 * @param httpServletResponse HTTP Servlet 响应
+	 * @throws
+	 * @see HttpServletResponse
 	 */
 	private void parseUnauthorizedException(HttpServletResponse httpServletResponse) {
 		// 直接返回403
@@ -213,6 +313,12 @@ public class ExceptionFilter implements Filter {
 
 	/**
 	 * 参数校验异常处理
+	 *
+	 * @param httpServletResponse HTTP Servlet 响应
+	 * @param e                   e
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see BindException
 	 */
 	private void parseArgumentNotValidException(HttpServletResponse httpServletResponse,
 			BindException e) {
@@ -237,11 +343,27 @@ public class ExceptionFilter implements Filter {
 		}
 	}
 
+	/**
+	 * 交易默认错误
+	 *
+	 * @param httpServletResponse HTTP Servlet 响应
+	 * @throws
+	 * @see HttpServletResponse
+	 */
 	private void dealDefaultError(HttpServletResponse httpServletResponse) {
 		flushErrorInfo(httpServletResponse, ErrorCode.INTERNAL_ERROR,
 				BusinessException.getMessageByLanguage(ErrorCode.INTERNAL_ERROR));
 	}
 
+	/**
+	 * 刷新错误信息
+	 *
+	 * @param httpServletResponse HTTP Servlet 响应
+	 * @param errorInfo           错误信息
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see BaseRsp<String>
+	 */
 	private void flushErrorInfo(HttpServletResponse httpServletResponse, BaseRsp<String> errorInfo) {
 		httpServletResponse.setContentType(WebConstant.CONTENT_TYPE);
 		httpServletResponse.setStatus(WebConstant.HTTP_200);
@@ -252,6 +374,17 @@ public class ExceptionFilter implements Filter {
 		}
 	}
 
+	/**
+	 * 刷新错误信息
+	 *
+	 * @param httpServletResponse HTTP Servlet 响应
+	 * @param code                代号
+	 * @param message             消息
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see String
+	 * @see String
+	 */
 	private void flushErrorInfo(HttpServletResponse httpServletResponse, String code,
 			String message) {
 		BaseRsp<String> errorInfo = new BaseRsp<>();
@@ -269,6 +402,15 @@ public class ExceptionFilter implements Filter {
 		}
 	}
 
+	/**
+	 * 获取错误代号
+	 *
+	 * @param code 代号
+	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 */
 	private String getErrorCode(String code) {
 		cache.computeIfAbsent(code, k -> errorPrefix + code);
 		return cache.get(code);

@@ -8,11 +8,22 @@ import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 攻击更新请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see Serializable
+ * @since 1.0.0
+ */
 @Data
 public class AttackUpdateReq implements Serializable {
 
 	/**
 	 * ATT&CK id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("ATT&CK id")
 	@NotNull
@@ -20,6 +31,8 @@ public class AttackUpdateReq implements Serializable {
 
 	/**
 	 * 场景模板id
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty("场景模板id")
 	@NotNull

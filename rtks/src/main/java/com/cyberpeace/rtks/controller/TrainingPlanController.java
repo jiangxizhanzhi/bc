@@ -40,32 +40,82 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 训练计划Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Api(tags = "TRKS-训练计划管理")
 @RestController
 @RequestMapping("/rtks/training-plan")
 @RequiresAuthentication
 public class TrainingPlanController {
 
+	/**
+	 * 日志
+	 *
+	 * @see Logger
+	 */
 	private static final Logger LOG = LoggerFactory.getLogger(TrainingPlanController.class);
 
+	/**
+	 * 训练计划Service
+	 *
+	 * @see TrainingPlanService
+	 */
 	@Autowired
 	private TrainingPlanService trainingPlanService;
 
+	/**
+	 * RTKS统计Service
+	 *
+	 * @see RtksStatisticService
+	 */
 	@Autowired
 	private RtksStatisticService rtksStatisticService;
 
+	/**
+	 * 水平Service
+	 *
+	 * @see LevelService
+	 */
 	@Autowired
 	private LevelService levelService;
 
+	/**
+	 * 框架Service
+	 *
+	 * @see FrameService
+	 */
 	@Autowired
 	private FrameService frameService;
 
+	/**
+	 * 技能Service
+	 *
+	 * @see SkillService
+	 */
 	@Autowired
 	private SkillService skillService;
 
+	/**
+	 * RTKS态势Service
+	 *
+	 * @see RtksSituationService
+	 */
 	@Autowired
 	private RtksSituationService rtksSituationService;
 
+	/**
+	 * 知识点树
+	 *
+	 * @return {@code BaseRsp<List<KnowledgeTreeRes>> }
+	 * @throws
+	 * @see BaseRsp<List<KnowledgeTreeRes>>
+	 */
 	@ApiOperation("知识体系")
 	@GetMapping("/knowledgeTree")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
@@ -75,6 +125,15 @@ public class TrainingPlanController {
 		return new BaseRsp<>(knowledgeTreeRes);
 	}
 
+	/**
+	 * 树
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<LevelTreeOutput> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<LevelTreeOutput>
+	 */
 	@ApiOperation("职业框架管理")
 	@GetMapping("/tree")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
@@ -119,7 +178,15 @@ public class TrainingPlanController {
 		return new BaseRsp<>(frame);
 	}
 
-	// 对应页面：岗位简介树状图
+	/**
+	 * 学习路径
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<RoleDetailRes> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<RoleDetailRes>
+	 */// 对应页面：岗位简介树状图
 	@ApiOperation("学习路径")
 	@GetMapping("/learning-path")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
@@ -132,6 +199,13 @@ public class TrainingPlanController {
 		return new BaseRsp<RoleDetailRes>(roleOutput);
 	}
 
+	/**
+	 * 获取岗位输出由岗位id
+	 *
+	 * @return {@code BaseRsp<RoleDetailRes> }
+	 * @throws
+	 * @see BaseRsp<RoleDetailRes>
+	 */
 	@ApiOperation("人才能力图谱（获取技能和知识点关联的课程内容(不包括课时等信息)）")
 	@GetMapping("/roleMap")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
@@ -147,7 +221,15 @@ public class TrainingPlanController {
 		return rsp;
 	}
 
-	// 岗位评估-技能体系清单
+	/**
+	 * 分页
+	 *
+	 * @param pageReqBase 分页请求体基础
+	 * @return {@code BaseRsp<ListRsp<KnowledgeRes>> }
+	 * @throws
+	 * @see PageReqBase
+	 * @see BaseRsp<ListRsp<KnowledgeRes>>
+	 */// 岗位评估-技能体系清单
 	// 岗位简介-岗位学习路径
 	@ApiOperation("分页获取知识点以及课程")
 	@GetMapping("/getKnowledgeCourseList")
@@ -164,6 +246,13 @@ public class TrainingPlanController {
 		return rsp;
 	}
 
+	/**
+	 * 获取相关课程列表
+	 *
+	 * @return {@code BaseRsp<RoleDetailRes> }
+	 * @throws
+	 * @see BaseRsp<RoleDetailRes>
+	 */
 	@ApiOperation("查询技能和知识点关联的课程学习情况")
 	@GetMapping("/getRelatedCourseList")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
@@ -190,6 +279,13 @@ public class TrainingPlanController {
 		return rsp;
 	}
 
+	/**
+	 * 获取岗位详情结果
+	 *
+	 * @return {@code BaseRsp<RoleDetailRes> }
+	 * @throws
+	 * @see BaseRsp<RoleDetailRes>
+	 */
 	@ApiOperation("查询个人能力评估")
 	@GetMapping("/getRoleDetailRes")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
@@ -213,6 +309,13 @@ public class TrainingPlanController {
 		return rsp;
 	}
 
+	/**
+	 * 获取训练路径
+	 *
+	 * @return {@code BaseRsp<TrainingPathRes> }
+	 * @throws
+	 * @see BaseRsp<TrainingPathRes>
+	 */
 	@ApiOperation("我的职业-技能训练路径")
 	@GetMapping("/training/path")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
@@ -234,6 +337,15 @@ public class TrainingPlanController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 分页技能过程
+	 *
+	 * @param pageReqBase 分页请求体基础
+	 * @return {@code BaseRsp<ListRsp<SkillProcessRes>> }
+	 * @throws
+	 * @see PageReqBase
+	 * @see BaseRsp<ListRsp<SkillProcessRes>>
+	 */
 	@ApiOperation("岗位评估-技能体系清单")
 	@GetMapping("/role_evaluation/skill_list")
 	@RequiresPermissions(
@@ -250,6 +362,15 @@ public class TrainingPlanController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 分页技能路径
+	 *
+	 * @param pageReqBase 分页请求体基础
+	 * @return {@code BaseRsp<ListRsp<SkillPagePath>> }
+	 * @throws
+	 * @see PageReqBase
+	 * @see BaseRsp<ListRsp<SkillPagePath>>
+	 */
 	@ApiOperation("岗位简介-岗位训练路径")
 	@GetMapping("/role_desc/training_path")
 	@RequiresPermissions(
@@ -268,8 +389,12 @@ public class TrainingPlanController {
 
 	/**
 	 * 从训练路径中解析出全部当前岗位相关训练， 去重
-	 * @param trainingPath 
+	 *
+	 * @param trainingPath
 	 * @return
+	 * @throws
+	 * @see List<MissionPathBo>
+	 * @see List<RelatedTrainingRes>
 	 */
 	private List<RelatedTrainingRes> getAllRelatedTraining(List<MissionPathBo> trainingPath) {
 		Set<String> trainingIds = Sets.newHashSet();

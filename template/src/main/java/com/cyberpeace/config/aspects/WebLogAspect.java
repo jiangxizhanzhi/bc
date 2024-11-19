@@ -22,20 +22,47 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Web日志方面
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Aspect
 @Component
 @Slf4j
 @Order(1)
 public class WebLogAspect {
 
+    /**
+     * 对象Mapper
+     *
+     * @see ObjectMapper
+     */
     ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * Web日志
+     *
+     * @throws
+     */
     @Pointcut("execution(* com.cyberpeace..*.controller..*.*(..))")
     public void webLog(){
         // Do nothing
     }
 
 
+    /**
+     * Web日志周围
+     *
+     * @param joinPoint 加入点
+     * @return {@code Object }
+     * @throws @throws Throwable 可投掷
+     * @see ProceedingJoinPoint
+     * @see Object
+     */
     @Around(value = "webLog()")
     public Object webLogAround(ProceedingJoinPoint joinPoint) throws Throwable {
         try {

@@ -11,28 +11,80 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.commons.compress.utils.IOUtils;
 
+/**
+ * 内容缓存请求包装器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see HttpServletRequestWrapper
+ * @since 1.0.0
+ */
 public class ContentCacheRequestWrapper extends HttpServletRequestWrapper {
 
+	/**
+	 * 请求体
+	 *
+	 * @see byte[]
+	 */
 	private byte[] body;
 
+	/**
+	 * 读取器
+	 *
+	 * @see BufferedReader
+	 */
 	private BufferedReader reader;
 
+	/**
+	 * 输入流
+	 *
+	 * @see ServletInputStream
+	 */
 	private ServletInputStream inputStream;
 
+	/**
+	 * 内容缓存请求包装器
+	 *
+	 * @param request 请求
+	 * @throws @throws IOException io异常
+	 * @see HttpServletRequest
+	 */
 	public ContentCacheRequestWrapper(HttpServletRequest request) throws IOException {
 		super(request);
 		loadBody(request);
 	}
 
+	/**
+	 * 加载身体
+	 *
+	 * @param request 请求
+	 * @throws @throws IOException io异常
+	 * @see HttpServletRequest
+	 */
 	private void loadBody(HttpServletRequest request) throws IOException {
 		body = IOUtils.toByteArray(request.getInputStream());
 		inputStream = new RequestCachingInputStream(body);
 	}
 
+	/**
+	 * 获取身体
+	 *
+	 * @return {@code byte[] }
+	 * @throws
+	 * @see byte[]
+	 */
 	public byte[] getBody() {
 		return body;
 	}
 
+	/**
+	 * 获取输入流
+	 *
+	 * @return {@code ServletInputStream }
+	 * @throws @throws IOException io异常
+	 * @see ServletInputStream
+	 */
 	@Override
 	public ServletInputStream getInputStream() throws IOException {
 		if (inputStream != null) {
@@ -41,6 +93,13 @@ public class ContentCacheRequestWrapper extends HttpServletRequestWrapper {
 		return super.getInputStream();
 	}
 
+	/**
+	 * 获取读者
+	 *
+	 * @return {@code BufferedReader }
+	 * @throws @throws IOException io异常
+	 * @see BufferedReader
+	 */
 	@Override
 	public BufferedReader getReader() throws IOException {
 		if (reader == null) {

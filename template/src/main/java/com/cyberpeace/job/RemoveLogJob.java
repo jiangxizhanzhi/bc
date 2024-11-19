@@ -6,10 +6,23 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 
+/**
+ * 删除日志工作
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Slf4j
 @Component
 public class RemoveLogJob {
 
+    /**
+     * 删除日志文件
+     *
+     * @throws
+     */
     @Scheduled(fixedRate = 24 * 60 * 60 * 1000)
     public void removeLogFiles() {
         String logRootPath = System.getProperty("catalina.base") + "/logs/";

@@ -45,30 +45,84 @@ import com.cyberpeace.rtks.util.RtksCommonUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+/**
+ * 岗位Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see ServiceImpl
+ * @see RoleService
+ * @since 1.0.0
+ */
 @Service
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements RoleService {
 
+	/**
+	 * 岗位Mapper
+	 *
+	 * @see RoleMapper
+	 */
 	@Autowired
 	RoleMapper roleMapper;
 
+	/**
+	 * 知识点Service
+	 *
+	 * @see KnowledgeService
+	 */
 	@Autowired
 	private KnowledgeService knowledgeService;
 
+	/**
+	 * 岗位技能关系Mapper
+	 *
+	 * @see RoleSkillRelationMapper
+	 */
 	@Autowired
 	private RoleSkillRelationMapper roleSkillRelationMapper;
 
+	/**
+	 * 事务模板
+	 *
+	 * @see TransactionTemplate
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 技能Mapper
+	 *
+	 * @see SkillMapper
+	 */
 	@Autowired
 	private SkillMapper skillMapper;
 
+	/**
+	 * 任务模板Service
+	 *
+	 * @see MissionTemplateService
+	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
+	/**
+	 * 课程名称Service
+	 *
+	 * @see CourseNameService
+	 */
 	@Autowired
 	private CourseNameService courseNameService;
 
+	/**
+	 * 获取OR404
+	 *
+	 * @param roleId 岗位id
+	 * @return {@code Role }
+	 * @throws
+	 * @see String
+	 * @see Role
+	 */
 	@Override
 	public Role getOr404(String roleId) {
 		Role role = getById(roleId);
@@ -78,17 +132,40 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 		return role;
 	}
 
+	/**
+	 * 删除全部
+	 *
+	 * @param table 桌子
+	 * @throws
+	 * @see String
+	 */
 	@Override
 	public void removeAll(String table) {
 		roleMapper.removeAll(table);
 	}
 
+	/**
+	 * 初始化默认从预设
+	 *
+	 * @param table 桌子
+	 * @throws
+	 * @see String
+	 */
 	@Override
 	public void initDefaultFromPreset(String table) {
 		roleMapper.removeAll(table);
 		roleMapper.copyFromPreset(table);
 	}
 
+	/**
+	 * 更新批量由修改相关id列表
+	 *
+	 * @param id   id
+	 * @param type 类型
+	 * @throws
+	 * @see String
+	 * @see String
+	 */
 	@Override
 	public void updateBatchByModifyRelatedIds(String id, String type) {
 		List<String> ids = Lists.newArrayList();
@@ -110,6 +187,15 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 		}
 	}
 
+	/**
+	 * 更新批量由删除相关id列表
+	 *
+	 * @param deleteReq 删除请求体
+	 * @param type      类型
+	 * @throws
+	 * @see DeleteReq
+	 * @see String
+	 */
 	@Override
 	@Async
 	public void updateBatchByDeleteRelatedIds(DeleteReq deleteReq, String type) {
@@ -140,6 +226,13 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
 	}
 
+	/**
+	 * 删除技能关联由技能id列表
+	 *
+	 * @param skillIds 技能id列表
+	 * @throws
+	 * @see List<String>
+	 */
 	@Override
 	public void deleteSkillRelBySkillIds(List<String> skillIds) {
 		if (skillIds.isEmpty()) {
@@ -148,6 +241,15 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 		roleSkillRelationMapper.deleteBySkillIds(skillIds);
 	}
 
+	/**
+	 * 新增技能关系
+	 *
+	 * @param resourceId     资源id
+	 * @param skillIdWeights 技能id权重
+	 * @throws
+	 * @see String
+	 * @see List<IdWeight>
+	 */
 	@Override
 	public void addSkillRelation(String resourceId, List<IdWeight> skillIdWeights) {
 		if (CollectionUtils.isEmpty(skillIdWeights)) {
@@ -177,6 +279,15 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 		roleSkillRelationMapper.batchInsert(relations);
 	}
 
+	/**
+	 * 更新技能关联
+	 *
+	 * @param resourceId     资源id
+	 * @param skillIdWeights 技能id权重
+	 * @throws
+	 * @see String
+	 * @see List<IdWeight>
+	 */
 	@Override
 	public void updateSkillRel(String resourceId, List<IdWeight> skillIdWeights) {
 		List<RoleSkillRelation> relations = roleSkillRelationMapper.batchGetByRoleId(resourceId);
@@ -199,6 +310,15 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 		});
 	}
 
+	/**
+	 * 更新技能关联简单
+	 *
+	 * @param roleId         岗位id
+	 * @param skillIdWeights 技能id权重
+	 * @throws
+	 * @see String
+	 * @see List<IdWeight>
+	 */
 	@Override
 	public void updateSkillRelSimple(String roleId, List<IdWeight> skillIdWeights) {
 		// compare
@@ -218,11 +338,27 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 		});
 	}
 
+	/**
+	 * 列表技能由岗位id
+	 *
+	 * @param roleId 岗位id
+	 * @return {@code List<SkillWeightRes> }
+	 * @throws
+	 * @see String
+	 * @see List<SkillWeightRes>
+	 */
 	@Override
 	public List<SkillWeightRes> listSkillByRoleId(String roleId) {
 		return roleSkillRelationMapper.listSkillByRoleId(roleId);
 	}
 
+	/**
+	 * 删除技能关联由岗位id列表
+	 *
+	 * @param roleIds 岗位id列表
+	 * @throws
+	 * @see List<String>
+	 */
 	@Override
 	public void deleteSkillRelByRoleIds(List<String> roleIds) {
 		if (roleIds.isEmpty()) {
@@ -231,6 +367,15 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 		roleSkillRelationMapper.deleteByRoleIds(roleIds);
 	}
 
+	/**
+	 * 映射岗位技能计数
+	 *
+	 * @param roleIds 岗位id列表
+	 * @return {@code Map<String, RoleSkillRes> }
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, RoleSkillRes>
+	 */
 	@Override
 	public Map<String, RoleSkillRes> mapRoleSkillCount(List<String> roleIds) {
 		Map<String, RoleSkillRes> mapping = Maps.newHashMap();
@@ -244,22 +389,56 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 		return mapping;
 	}
 
+	/**
+	 * 获取关联任务id列表
+	 *
+	 * @param roleId 岗位id
+	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 */
 	@Override
 	public List<String> getRelMissionIds(String roleId) {
 		return roleSkillRelationMapper.getMissionIdsByRoleId(roleId);
 	}
 
+	/**
+	 * 清除岗位
+	 *
+	 * @throws
+	 */
 	@Override
 	public void clearRole() {
 		roleMapper.clearRole();
 		roleSkillRelationMapper.clearRoleSkillRel();
 	}
 
+	/**
+	 * 如果名称重复
+	 *
+	 * @param name       名称
+	 * @param resourceId 资源id
+	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
+	 */
 	@Override
 	public Boolean ifNameDuplicate(String name, String resourceId) {
 		return roleMapper.ifNameDuplicate(name, resourceId);
 	}
 
+	/**
+	 * 获取课程列表
+	 *
+	 * @param roleId 岗位id
+	 * @return {@code List<CourseConfigOutput> }
+	 * @throws
+	 * @see String
+	 * @see List<CourseConfigOutput>
+	 */
 	@Override
 	public List<CourseConfigOutput> getCourseList(String roleId) {
 		List<CourseConfigOutput> res = Lists.newArrayList();
@@ -308,6 +487,15 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 		return res;
 	}
 
+	/**
+	 * 获取任务列表
+	 *
+	 * @param roleId 岗位id
+	 * @return {@code List<MissionTemplateSimple> }
+	 * @throws
+	 * @see String
+	 * @see List<MissionTemplateSimple>
+	 */
 	@Override
 	public List<MissionTemplateSimple> getMissionList(String roleId) {
 
@@ -344,6 +532,17 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 		return result;
 	}
 
+	/**
+	 * 删除id列表
+	 *
+	 * @param Ids id列表
+	 * @param ids id列表
+	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see String
+	 */
 	private String deleteIds(String Ids, List<String> ids) {
 
 		List<String> originIds = JsonUtil.toJsonObjectArray(Ids, String.class);
@@ -352,11 +551,29 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
 	}
 
+	/**
+	 * 获取角色由层级id
+	 *
+	 * @param levelId 层级id
+	 * @return {@code List<Role> }
+	 * @throws
+	 * @see String
+	 * @see List<Role>
+	 */
 	@Override
 	public List<Role> getRolesByLevelId(String levelId) {
 		return roleMapper.getRolesUnderLevel(levelId);
 	}
 
+	/**
+	 * 获取岗位id列表由层级id列表
+	 *
+	 * @param ids id列表
+	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
+	 */
 	@Override
 	public List<String> getRoleIdsByLevelIds(List<String> ids) {
 		if (CollectionUtils.isEmpty(ids)) {
@@ -365,6 +582,19 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 		return roleMapper.getRoleIdsByLevelIds(ids);
 	}
 
+	/**
+	 * 列出角色
+	 *
+	 * @param page    分页
+	 * @param keyword 关键词
+	 * @param frameId 框架id
+	 * @return {@code IPage<Role> }
+	 * @throws
+	 * @see Page<Role>
+	 * @see String
+	 * @see String
+	 * @see IPage<Role>
+	 */
 	@Override
 	public IPage<Role> listRoles(Page<Role> page, String keyword, String frameId) {
 		return roleMapper.listRole(page, keyword, frameId);

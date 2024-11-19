@@ -31,25 +31,66 @@ import com.cyberpeace.rtks.service.bo.skill.IdWeight;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * RTKS资源Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see RtksResourceService
+ * @since 1.0.0
+ */
 @Slf4j
 @Service
 public class RtksResourceServiceImpl implements RtksResourceService {
 
+	/**
+	 * 层级Mapper
+	 *
+	 * @see LevelMapper
+	 */
 	@Autowired
 	private LevelMapper levelMapper;
 
+	/**
+	 * 知识点Service
+	 *
+	 * @see KnowledgeService
+	 */
 	@Autowired
 	private KnowledgeService knowledgeService;
 
+	/**
+	 * RTKS初始化Service
+	 *
+	 * @see RtksInitService
+	 */
 	@Autowired
 	private RtksInitService rtksInitService;
 
+	/**
+	 * 岗位Service
+	 *
+	 * @see RoleService
+	 */
 	@Autowired
 	private RoleService roleService;
 
+	/**
+	 * 事务模板
+	 *
+	 * @see TransactionTemplate
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 加载
+	 *
+	 * @param req 请求体
+	 * @throws
+	 * @see RtksResourceReq
+	 */
 	@Override
 	public void load(RtksResourceReq req) {
 		RtksRoleResourceBo bo = req.getRtks();
@@ -75,6 +116,13 @@ public class RtksResourceServiceImpl implements RtksResourceService {
 		}
 	}
 
+	/**
+	 * 保存资源
+	 *
+	 * @param resource 资源
+	 * @throws
+	 * @see RtksRoleResource
+	 */
 	private void saveResource(RtksRoleResource resource) {
 		if (Boolean.TRUE.equals(roleService.ifNameDuplicate(resource.getName(), ""))) {
 			log.info("duplicated rtks role: [{}]", resource.getName());
@@ -132,6 +180,13 @@ public class RtksResourceServiceImpl implements RtksResourceService {
 		});
 	}
 
+	/**
+	 * 是否中文
+	 *
+	 * @return boolean
+	 * @throws
+	 * @see boolean
+	 */
 	private boolean isChinese() {
 		String lastLevelName = rtksInitService.getLastInitLevelName();
 		Pattern r = Pattern.compile(PatternConstant.CHINESE_CHARACTERS);
@@ -139,6 +194,15 @@ public class RtksResourceServiceImpl implements RtksResourceService {
 		return m.find();
 	}
 
+	/**
+	 * 转换
+	 *
+	 * @param list 列表
+	 * @return {@code List<IdWeight> }
+	 * @throws
+	 * @see List<IdAndWeight>
+	 * @see List<IdWeight>
+	 */
 	private List<IdWeight> convert(List<IdAndWeight> list) {
 		List<IdWeight> res = Lists.newArrayList();
 		for (IdAndWeight item : list) {

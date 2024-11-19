@@ -18,19 +18,49 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 
+/**
+ * 模板演示Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Api(tags = "template的demo")
 @RestController
 @RequestMapping("/template")
 @RequiresAuthentication
 public class TemplateDemoController {
 
+	/**
+	 * 我的WebSocket处理器
+	 *
+	 * @see MyWebSocketHandler
+	 */
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
+	/**
+	 * 路径 1
+	 *
+	 * @see String
+	 */
 	String path1 = "/ws";
 
+	/**
+	 * 路径 2
+	 *
+	 * @see String
+	 */
 	String path2 = "/ws/course";
 
+	/**
+	 * 发送 msg1
+	 *
+	 * @return {@code BaseRsp<Task> }
+	 * @throws
+	 * @see BaseRsp<Task>
+	 */
 	@ApiOperation("测试websocket消息发送1")
 	@GetMapping("/ws")
 	public BaseRsp<Task> sendMsg1() {
@@ -50,6 +80,13 @@ public class TemplateDemoController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 发送 msg2
+	 *
+	 * @return {@code BaseRsp<Task> }
+	 * @throws
+	 * @see BaseRsp<Task>
+	 */
 	@ApiOperation("测试websocket消息发送2")
 	@GetMapping("/ws1")
 	public BaseRsp<Task> sendMsg2() {

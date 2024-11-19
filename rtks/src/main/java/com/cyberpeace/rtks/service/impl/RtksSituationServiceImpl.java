@@ -27,25 +27,66 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * RTKS态势Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see RtksSituationService
+ * @since 1.0.0
+ */
 @Service
 @Slf4j
 public class RtksSituationServiceImpl implements RtksSituationService {
 
+	/**
+	 * RTKS态势Mapper
+	 *
+	 * @see RtksSituationMapper
+	 */
 	@Autowired
 	private RtksSituationMapper rtksSituationMapper;
 
+	/**
+	 * 事务模板
+	 *
+	 * @see TransactionTemplate
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * RTKS统计Service
+	 *
+	 * @see RtksStatisticService
+	 */
 	@Autowired
 	private RtksStatisticService rtksStatisticService;
 
+	/**
+	 * RTKS岗位火柴记录Mapper
+	 *
+	 * @see RtksRoleMatchRecordMapper
+	 */
 	@Autowired
 	private RtksRoleMatchRecordMapper rtksRoleMatchRecordMapper;
 
+	/**
+	 * 获取排名
+	 *
+	 * @return {@code RtksSituationRankings }
+	 * @throws
+	 * @see RtksSituationRankings
+	 */
 	@Override
 	public RtksSituationRankings getRankings() {
 		RtksSituationRankings result = new RtksSituationRankings();
@@ -168,6 +209,13 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		return result;
 	}
 
+	/**
+	 * 获取态势
+	 *
+	 * @return {@code List<LevelStatisticBo> }
+	 * @throws
+	 * @see List<LevelStatisticBo>
+	 */
 	@Override
 	public List<LevelStatisticBo> getSituation() {
 		// get levels
@@ -235,6 +283,21 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		return result;
 	}
 
+	/**
+	 * 记录态势
+	 *
+	 * @param userId   用户id
+	 * @param userName 用户名称
+	 * @param roleId   岗位id
+	 * @param roleName 岗位名称
+	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see Integer
+	 */
 	@Override
 	public Integer recordSituation(String userId, String userName, String roleId, String roleName) {
 		// 计算匹配度
@@ -251,6 +314,13 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		return match;
 	}
 
+	/**
+	 * 获取趋势
+	 *
+	 * @return {@code SituationTrendBo }
+	 * @throws
+	 * @see SituationTrendBo
+	 */
 	@Override
 	public SituationTrendBo getTrends() {
 		SituationTrendBo result = new SituationTrendBo();
@@ -293,6 +363,13 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		return result;
 	}
 
+	/**
+	 * 获取新闻
+	 *
+	 * @return {@code List<NewsBo> }
+	 * @throws
+	 * @see List<NewsBo>
+	 */
 	@Override
 	public List<NewsBo> getNews() {
 		List<NewsBo> result = Lists.newArrayList();
@@ -318,6 +395,17 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		return result;
 	}
 
+	/**
+	 * 记录匹配
+	 *
+	 * @param userId 用户id
+	 * @param roleId 岗位id
+	 * @param match  火柴
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
+	 */
 	@Override
 	public void recordMatch(String userId, String roleId, Integer match) {
 		Boolean exist = rtksRoleMatchRecordMapper.existBy(userId, roleId);
@@ -328,6 +416,21 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		}
 	}
 
+	/**
+	 * 日志时刻
+	 *
+	 * @param userId   用户id
+	 * @param userName 用户名称
+	 * @param roleId   岗位id
+	 * @param roleName 岗位名称
+	 * @param match    火柴
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see Integer
+	 */
 	private void logMoment(String userId, String userName, String roleId, String roleName,
 			Integer match) {
 
@@ -359,13 +462,26 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 	}
 }
 
+/**
+ * 组织比较器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @see Comparator
+ * @since 1.0.0@date 2024/11/19
+ */
 class OrgComparator implements Comparator<OrgRankingBo> {
 
 	/**
 	 * 先比较优秀岗位，再比较合格岗位，再比较优秀岗位的匹配度之和
+	 *
 	 * @param o1
 	 * @param o2
 	 * @return
+	 * @throws
+	 * @see OrgRankingBo
+	 * @see OrgRankingBo
+	 * @see OrgRankingBo
 	 */
 	@Override
 	public int compare(OrgRankingBo o1, OrgRankingBo o2) {
@@ -379,8 +495,28 @@ class OrgComparator implements Comparator<OrgRankingBo> {
 	}
 }
 
+/**
+ * 多岗位比较仪
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see Comparator
+ * @since 1.0.0
+ */
 class MultiRoleComparator implements Comparator<MultiRoleRankingBo> {
 
+	/**
+	 * 比较
+	 *
+	 * @param o1 o1
+	 * @param o2 O2
+	 * @return int
+	 * @throws
+	 * @see MultiRoleRankingBo
+	 * @see MultiRoleRankingBo
+	 * @see int
+	 */
 	@Override
 	public int compare(MultiRoleRankingBo o1, MultiRoleRankingBo o2) {
 		if (o1.getExcellent().intValue() != o2.getExcellent().intValue()) {

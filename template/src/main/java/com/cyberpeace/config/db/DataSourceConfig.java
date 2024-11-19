@@ -11,13 +11,24 @@ import org.springframework.context.annotation.PropertySource;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author yinqingrong
+ * 数据源配置
+ *
+ * @author yinqingrong@version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
  */
 @Slf4j
 @Configuration
 @PropertySource("classpath:db/datasource.properties")
 public class DataSourceConfig {
 
+	/**
+	 * 数据源
+	 *
+	 * @return {@code DataSource }
+	 * @throws
+	 * @see DataSource
+	 */
 	@Bean
 	@ConfigurationProperties(prefix = "spring.datasource")
 	public DataSource dataSource() {

@@ -12,14 +12,41 @@ import com.cyberpeace.common.constant.WebConstant;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * JWT过滤器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see BasicHttpAuthenticationFilter
+ * @since 1.0.0
+ */
 @Slf4j
 public class JwtFilter extends BasicHttpAuthenticationFilter {
 
+	/**
+	 * 设置授权方案
+	 *
+	 * @param authzScheme Authz 方案
+	 * @throws
+	 * @see String
+	 */
 	@Override
 	public void setAuthzScheme(String authzScheme) {
 		super.setAuthzScheme("JWT");
 	}
 
+	/**
+	 * 获取校长和凭据
+	 *
+	 * @param scheme  方案
+	 * @param realJwt 真实JWT
+	 * @return {@code String[] }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String[]
+	 */
 	@Override
 	protected String[] getPrincipalsAndCredentials(String scheme, String realJwt) {
 		// 默认实现会对jwttoken进行解码
@@ -28,7 +55,15 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 	}
 
 	/**
+	 * 执行登录
 	 *
+	 * @param request  请求
+	 * @param response 响应
+	 * @return boolean
+	 * @throws @throws Exception 例外
+	 * @see ServletRequest
+	 * @see ServletResponse
+	 * @see boolean
 	 */
 	@Override
 	protected boolean executeLogin(ServletRequest request, ServletResponse response)
@@ -39,6 +74,19 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 		return true;
 	}
 
+	/**
+	 * 是否访问允许
+	 *
+	 * @param request     请求
+	 * @param response    响应
+	 * @param mappedValue 映射值
+	 * @return boolean
+	 * @throws
+	 * @see ServletRequest
+	 * @see ServletResponse
+	 * @see Object
+	 * @see boolean
+	 */
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response,
 			Object mappedValue) {
@@ -56,6 +104,17 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 		return true;
 	}
 
+	/**
+	 * 是否登录尝试
+	 *
+	 * @param request  请求
+	 * @param response 响应
+	 * @return boolean
+	 * @throws
+	 * @see ServletRequest
+	 * @see ServletResponse
+	 * @see boolean
+	 */
 	@Override
 	protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
 

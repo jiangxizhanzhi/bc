@@ -24,24 +24,69 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * 课程训练Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see CourseTrainService
+ * @since 1.0.0
+ */
 @Service
 public class CourseTrainServiceImpl implements CourseTrainService {
 
+	/**
+	 * 岗位Mapper
+	 *
+	 * @see RoleMapper
+	 */
 	@Autowired
 	private RoleMapper roleMapper;
 
+	/**
+	 * 知识点Service
+	 *
+	 * @see KnowledgeService
+	 */
 	@Autowired
 	private KnowledgeService knowledgeService;
 
+	/**
+	 * 技能Service
+	 *
+	 * @see SkillService
+	 */
 	@Autowired
 	private SkillService skillService;
 
+	/**
+	 * 课程统计学Service
+	 *
+	 * @see CourseStatisticsService
+	 */
 	@Autowired
 	private CourseStatisticsService courseStatisticsService;
 
+	/**
+	 * 课程Service
+	 *
+	 * @see CourseService
+	 */
 	@Autowired
 	private CourseService courseService;
 
+	/**
+	 * 获取课程知识点
+	 *
+	 * @param userId 用户id
+	 * @param roleId 岗位id
+	 * @return {@code List<CourseKnowledgeSkillBo> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<CourseKnowledgeSkillBo>
+	 */
 	@Override
 	public List<CourseKnowledgeSkillBo> getCourseKnowledge(String userId, String roleId) {
 		Role role = roleMapper.selectById(roleId);
@@ -87,6 +132,15 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 		return boList;
 	}
 
+	/**
+	 * 获取课程知识点由岗位id
+	 *
+	 * @param roleId 岗位id
+	 * @return {@code List<CourseKnowledgeSkillBo> }
+	 * @throws
+	 * @see String
+	 * @see List<CourseKnowledgeSkillBo>
+	 */
 	@Override
 	public List<CourseKnowledgeSkillBo> getCourseKnowledgeByRoleId(String roleId) {
 		Role role = roleMapper.selectById(roleId);
@@ -114,6 +168,17 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 		return boList;
 	}
 
+	/**
+	 * 获取岗位课程路径
+	 *
+	 * @param roleId     岗位id
+	 * @param resourceId 资源id
+	 * @return {@code List<RoleCourseBo> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<RoleCourseBo>
+	 */
 	@Override
 	public List<RoleCourseBo> getRoleCoursePath(String roleId, String resourceId) {
 		Role role = roleMapper.selectById(roleId);

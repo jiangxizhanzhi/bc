@@ -28,20 +28,56 @@ import com.google.common.collect.Sets;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 攻击Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see AttackService
+ * @since 1.0.0
+ */
 @Service
 @Slf4j
 public class AttackServiceImpl implements AttackService {
 
+	/**
+	 * 锁
+	 *
+	 * @see Object
+	 */
 	private final Object lock = new Object();
 
+	/**
+	 * 攻击Mapper
+	 *
+	 * @see AttackMapper
+	 */
 	@Autowired
 	private AttackMapper attackMapper;
 
+	/**
+	 * 事务模板
+	 *
+	 * @see TransactionTemplate
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 缓存攻击
+	 *
+	 * @see AttackCache
+	 */
 	private volatile AttackCache cachedAttacks;
 
+	/**
+	 * 获取攻击
+	 *
+	 * @return {@code List<AttackCategoryBo<AttackBackBo>> }
+	 * @throws
+	 * @see List<AttackCategoryBo<AttackBackBo>>
+	 */
 	@Override
 	public List<AttackCategoryBo<AttackBackBo>> getAttacks() {
 		ensureAttackCache();
@@ -69,6 +105,15 @@ public class AttackServiceImpl implements AttackService {
 		return res;
 	}
 
+	/**
+	 * 获取攻击由训练
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code List<AttackCategoryBo<AttackFrontBo>> }
+	 * @throws
+	 * @see String
+	 * @see List<AttackCategoryBo<AttackFrontBo>>
+	 */
 	@Override
 	public List<AttackCategoryBo<AttackFrontBo>> getAttacksByTraining(String businessTemplateId) {
 		ensureAttackCache();
@@ -90,6 +135,15 @@ public class AttackServiceImpl implements AttackService {
 		return res;
 	}
 
+	/**
+	 * 获取详情由id
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code AttackDetail }
+	 * @throws
+	 * @see String
+	 * @see AttackDetail
+	 */
 	@Override
 	public AttackDetail getDetailById(String resourceId) {
 		ensureAttackCache();
@@ -116,6 +170,15 @@ public class AttackServiceImpl implements AttackService {
 		return detail;
 	}
 
+	/**
+	 * 更新关系
+	 *
+	 * @param resourceId          资源id
+	 * @param businessTemplateIds 业务模板id列表
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 */
 	@Override
 	public void updateRelations(String resourceId, List<String> businessTemplateIds) {
 		List<String> oldRel = attackMapper.getRelatedTemplateIds(resourceId);
@@ -134,6 +197,13 @@ public class AttackServiceImpl implements AttackService {
 		});
 	}
 
+	/**
+	 * 获取缓存
+	 *
+	 * @return {@code List<AttackCategoryBo<FrameItemBase>> }
+	 * @throws
+	 * @see List<AttackCategoryBo<FrameItemBase>>
+	 */
 	@Override
 	public List<AttackCategoryBo<FrameItemBase>> getCache() {
 		ensureAttackCache();
@@ -144,6 +214,11 @@ public class AttackServiceImpl implements AttackService {
 		}
 	}
 
+	/**
+	 * 确保攻击缓存
+	 *
+	 * @throws
+	 */
 	private void ensureAttackCache() {
 		if (null == cachedAttacks) {
 			synchronized (lock) {
@@ -156,6 +231,8 @@ public class AttackServiceImpl implements AttackService {
 
 	/**
 	 * 读取 ATT&CK 缓存
+	 *
+	 * @throws
 	 */
 	private void initializeAttacks() {
 		List<AttackContext> attackContextList = attackMapper.getAll();
@@ -188,6 +265,11 @@ public class AttackServiceImpl implements AttackService {
 
 /**
  * Attack 缓存
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
  */
 @Data
 class AttackCache {
@@ -199,6 +281,11 @@ class AttackCache {
 
 /**
  * Attack 前台中文
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
  */
 @Data
 class AttackFrontZh {
@@ -209,6 +296,11 @@ class AttackFrontZh {
 
 /**
  * Attack 前台英文
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
  */
 @Data
 class AttackFrontEn {
@@ -218,6 +310,11 @@ class AttackFrontEn {
 
 /**
  * Attack 后台中文
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
  */
 @Data
 class AttackBackZh {
@@ -228,6 +325,11 @@ class AttackBackZh {
 
 /**
  * Attack 后台英文
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
  */
 @Data
 class AttackBackEn {

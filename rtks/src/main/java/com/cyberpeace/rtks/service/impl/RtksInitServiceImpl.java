@@ -23,16 +23,44 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * RTKS初始化Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see RtksInitService
+ * @since 1.0.0
+ */
 @Service
 @Slf4j
 public class RtksInitServiceImpl implements RtksInitService {
 
+	/**
+	 * RTKS初始化Mapper
+	 *
+	 * @see RtksInitMapper
+	 */
 	@Autowired
 	private RtksInitMapper rtksInitMapper;
 
+	/**
+	 * 事务模板
+	 *
+	 * @see TransactionTemplate
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 获取初始化课程id列表由id列表
+	 *
+	 * @param knowledgeIds 知识点id列表
+	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
+	 */
 	@Override
 	public List<String> getInitCourseIdsByIds(List<String> knowledgeIds) {
 		if (CollectionUtils.isEmpty(knowledgeIds)) {
@@ -47,11 +75,25 @@ public class RtksInitServiceImpl implements RtksInitService {
 		return courseIds;
 	}
 
+	/**
+	 * 获取最后初始化层级名称
+	 *
+	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 */
 	@Override
 	public String getLastInitLevelName() {
 		return rtksInitMapper.getLastInitLevelName();
 	}
 
+	/**
+	 * 保存初始化岗位
+	 *
+	 * @param role 岗位
+	 * @throws
+	 * @see Role
+	 */
 	@Override
 	public void saveInitRole(Role role) {
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -65,6 +107,15 @@ public class RtksInitServiceImpl implements RtksInitService {
 		});
 	}
 
+	/**
+	 * 保存初始化岗位技能关联
+	 *
+	 * @param roleId          岗位id
+	 * @param skillIdsWeights 技能id列表权重
+	 * @throws
+	 * @see String
+	 * @see List<IdAndWeight>
+	 */
 	@Override
 	public void saveInitRoleSkillRel(String roleId, List<IdAndWeight> skillIdsWeights) {
 		if (CollectionUtils.isEmpty(skillIdsWeights)) {

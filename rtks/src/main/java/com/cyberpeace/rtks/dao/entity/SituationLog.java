@@ -10,25 +10,66 @@ import com.cyberpeace.constant.BaseI18n;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 态势日志
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see Serializable
+ * @since 1.0.0
+ */
 @Data
 @TableName("rtks_situation_log")
 public class SituationLog implements Serializable {
 
+	/**
+	 * id
+	 *
+	 * @see Integer
+	 */
 	private Integer id;
 
+	/**
+	 * 用户id
+	 *
+	 * @see String
+	 */
 	private String userId;
 
 	/**
 	 * 冗余，记录用户名，暂时不用
+	 *
+	 * @see String
 	 */
 	private String userName;
 
+	/**
+	 * 岗位id
+	 *
+	 * @see String
+	 */
 	private String roleId;
 
+	/**
+	 * 岗位名称
+	 *
+	 * @see String
+	 */
 	private String roleName;
 
+	/**
+	 * 类型
+	 *
+	 * @see Integer
+	 */
 	private Integer type;
 
+	/**
+	 * 创建时间
+	 *
+	 * @see Date
+	 */
 	private Date createTime;
 
 	public enum MatchType implements GenericEnum, BaseI18n {

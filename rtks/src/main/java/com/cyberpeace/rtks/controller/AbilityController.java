@@ -21,18 +21,45 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 能力Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Api(tags = "RTKS-能力库管理")
 @RestController
 @RequestMapping("/rtks")
 @RequiresAuthentication
 public class AbilityController {
 
+	/**
+	 * 能力Service
+	 *
+	 * @see AbilityService
+	 */
 	@Autowired
 	private AbilityService abilityService;
 
+	/**
+	 * 岗位Service
+	 *
+	 * @see RoleService
+	 */
 	@Autowired
 	private RoleService roleService;
 
+	/**
+	 * 获取能力
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<Ability> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<Ability>
+	 */
 	@ApiOperation("查询单条能力")
 	@GetMapping("/ability")
 	public BaseRsp<Ability> getAbility(
@@ -40,6 +67,15 @@ public class AbilityController {
 		return new BaseRsp<>(abilityService.getById(resource_id));
 	}
 
+	/**
+	 * 新增能力
+	 *
+	 * @param abilityAddReq 能力新增请求体
+	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see AbilityAddReq
+	 * @see BaseRsp<String>
+	 */
 	@ApiOperation("新增单条能力")
 	@PostMapping("/ability")
 	public BaseRsp<String> addAbility(@RequestBody @Validated AbilityAddReq abilityAddReq) {
@@ -51,6 +87,15 @@ public class AbilityController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 修改能力
+	 *
+	 * @param abilityAddReq 能力新增请求体
+	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see AbilityAddReq
+	 * @see BaseRsp<String>
+	 */
 	@ApiOperation("修改单条能力")
 	@PutMapping("/ability")
 	public BaseRsp<String> modifyAbility(@RequestBody @Validated AbilityAddReq abilityAddReq) {
@@ -62,6 +107,15 @@ public class AbilityController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 删除功能
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see DeleteReq
+	 * @see BaseRsp<String>
+	 */
 	@ApiOperation("删除能力")
 	@DeleteMapping("/ability")
 	public BaseRsp<String> deleteAbility(@RequestBody @Validated DeleteReq deleteReq) {
@@ -71,6 +125,15 @@ public class AbilityController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param abilityListReq 能力列表请求体
+	 * @return {@code BaseRsp<ListRsp<Ability>> }
+	 * @throws
+	 * @see AbilityListReq
+	 * @see BaseRsp<ListRsp<Ability>>
+	 */
 	@ApiOperation("分页查询")
 	@GetMapping("/ability/list")
 	public BaseRsp<ListRsp<Ability>> list(@Validated AbilityListReq abilityListReq) {

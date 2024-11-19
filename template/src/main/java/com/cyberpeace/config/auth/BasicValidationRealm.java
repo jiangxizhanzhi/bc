@@ -22,13 +22,36 @@ import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
+/**
+ * 基本验证领域
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see AuthorizingRealm
+ * @since 1.0.0
+ */
 @Slf4j
 @Service
 public class BasicValidationRealm extends AuthorizingRealm {
 
+    /**
+     * 用户与Service
+     *
+     * @see UserRelateService
+     */
     @Autowired
     private UserRelateService userRelateService;
 
+    /**
+     * 做获取授权信息
+     *
+     * @param principalCollection 主体集合
+     * @return {@code AuthorizationInfo }
+     * @throws
+     * @see PrincipalCollection
+     * @see AuthorizationInfo
+     */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
@@ -41,6 +64,15 @@ public class BasicValidationRealm extends AuthorizingRealm {
         return simpleAuthorizationInfo;
     }
 
+    /**
+     * 做获取认证信息
+     *
+     * @param authenticationToken 鉴权令牌
+     * @return {@code AuthenticationInfo }
+     * @throws @throws AuthenticationException 鉴权异常
+     * @see AuthenticationToken
+     * @see AuthenticationInfo
+     */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken)
             throws AuthenticationException {

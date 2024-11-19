@@ -23,16 +23,35 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * 课程训练Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Api(tags = "rtks-课程训练相关")
 @RestController
 @RequestMapping("/course/train")
 @RequiresAuthentication
 public class CourseTrainController {
 
+	/**
+	 * 课程训练Service
+	 *
+	 * @see CourseTrainService
+	 */
 	@Autowired
 	private CourseTrainService courseTrainService;
 
-	// 对应页面“推荐学习路径”
+	/**
+	 * 课程知识点
+	 *
+	 * @return {@code BaseRsp<OccupationCourseRes> }
+	 * @throws
+	 * @see BaseRsp<OccupationCourseRes>
+	 */// 对应页面“推荐学习路径”
 	@ApiOperation("课程训练-职业课程课程学习进度")
 	@GetMapping("/knowledge")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
@@ -44,6 +63,15 @@ public class CourseTrainController {
 		return new BaseRsp<>(calculatePercent(courseKnowledges));
 	}
 
+	/**
+	 * 获取课程知识点由岗位id
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<OccupationCourseRes> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<OccupationCourseRes>
+	 */
 	@ApiOperation("学习路径-专业课程")
 	@GetMapping("/getCourseKnowledgeByRoleId")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
@@ -56,8 +84,12 @@ public class CourseTrainController {
 
 	/**
 	 * 计算进度
+	 *
 	 * @param courseKnowledges
 	 * @return
+	 * @throws
+	 * @see List<CourseKnowledgeSkillBo>
+	 * @see OccupationCourseRes
 	 */
 	private OccupationCourseRes calculatePercent(List<CourseKnowledgeSkillBo> courseKnowledges) {
 
@@ -90,6 +122,15 @@ public class CourseTrainController {
 		return courseRes;
 	}
 
+	/**
+	 * 获取岗位课程
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<List<RoleCourseBo>> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<RoleCourseBo>>
+	 */
 	@ApiOperation("职业路径课程")
 	@GetMapping("/role/path")
 	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,

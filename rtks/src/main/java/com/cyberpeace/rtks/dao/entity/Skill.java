@@ -8,15 +8,31 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
 /**
- * @TableName rtks_skill
+ * 技能
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see BaseTable
+ * @since 1.0.0
  */
 @TableName(value = "rtks_skill")
 @Data
 public class Skill extends BaseTable {
 
+	/**
+	 * 资源id
+	 *
+	 * @see String
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 内容
+	 *
+	 * @see String
+	 */
 	private String content;
 
 }

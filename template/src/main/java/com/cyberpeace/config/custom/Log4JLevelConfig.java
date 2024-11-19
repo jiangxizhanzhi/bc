@@ -11,12 +11,30 @@ import com.cyberpeace.common.util.SystemPropUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * log4j level  配置
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Slf4j
 @Component
 public class Log4JLevelConfig {
 
+	/**
+	 * 日志层级
+	 *
+	 * @see String
+	 */
 	String LOG_LEVEL = SystemPropUtil.getProp("LOG_LEVEL");
 
+	/**
+	 * 初始化
+	 *
+	 * @throws
+	 */
 	@PostConstruct
 	private void init() {
 		if (StringUtils.isBlank(LOG_LEVEL)) {

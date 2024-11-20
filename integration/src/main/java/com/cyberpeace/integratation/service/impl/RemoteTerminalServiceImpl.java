@@ -8,6 +8,8 @@ import com.cyberpeace.integratation.model.mp.MpDeviceInfo;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.cyberpeace.integratation.service.bo.ClusterImagePageReq;
 import com.cyberpeace.integratation.service.bo.TargetListReq;
+import com.cyberpeace.integratation.service.bo.mp.RealEquipmentPageRequest;
+import com.cyberpeace.integratation.service.bo.mp.VirtualUsbQueryParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,6 +54,14 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 
 	private String SNAPSHOT_BY_NAME;
 
+	private String CSCENE_LINK_STATUS;
+
+	private String DEVOPS_SNAPSHOT_LIST = "/api/mp/devops/cluster/images/%s/snapshot/list";
+
+	private String DEVOPS_REAL_EQUIPMENT_LIST = "/api/mp/devops/cluster/real-equipment/page";
+
+	private String DEVOPS_USB_LIST = "/api/mp/devops/cluster/virtual_usb/page";
+
 	/**
 	 * 中台环境Service
 	 */
@@ -78,6 +88,7 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 		TARGET_LIST = cyberSpaceMpEnvService.getMpHost() + ConfigUtil.getContextProperty("target.list");
 		L2_CATEGORIES = cyberSpaceMpEnvService.getMpHost() + ConfigUtil.getContextProperty("l2.targets");
 		SNAPSHOT_BY_NAME = cyberSpaceMpEnvService.getMpHost() + ConfigUtil.getContextProperty("snapshot.by.name");
+		CSCENE_LINK_STATUS = cyberSpaceMpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.node.connection.status");
 	}
 
 	/**
@@ -171,5 +182,29 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 	public JSONObject snapshotByName(String name) {
 		String targetUrl = SNAPSHOT_BY_NAME + name;
 		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject getLinkStatus(String id) {
+		String targetUrl = CSCENE_LINK_STATUS + id;
+		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject listSnapshot(String uuid) {
+		String targetUrl = cyberSpaceMpEnvService.getMpHost() + String.format(DEVOPS_SNAPSHOT_LIST, uuid);
+		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject pageRealEquipment(RealEquipmentPageRequest request) {
+		String targetUrl = cyberSpaceMpEnvService.getMpHost() + DEVOPS_REAL_EQUIPMENT_LIST;
+		return HttpClientUtil.rawGetByParam(request, targetUrl, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject pageUsb(VirtualUsbQueryParams queryParams) {
+		String targetUrl = cyberSpaceMpEnvService.getMpHost() + DEVOPS_USB_LIST;
+		return HttpClientUtil.rawGetByParam(queryParams, targetUrl, JSONObject.class);
 	}
 }

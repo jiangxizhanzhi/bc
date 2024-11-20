@@ -6,6 +6,8 @@ import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.model.scene.TopoNodeListReq;
 import com.cyberpeace.integratation.service.bo.TopoTemplatePageReq;
+import com.cyberpeace.integratation.service.bo.mp.MibInfoQueryRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -147,4 +149,69 @@ public interface RemoteTopoService {
 	 */
 	JSONObject getTopoTemplatePage(TopoTemplatePageReq pageReq);
 
+	/**
+	 * 上传场景中的附件
+	 *
+	 * @param file 文件
+	 * @return {@code Object }
+	 * @throws
+	 * @see MultipartFile
+	 * @see Object
+	 */
+	JSONObject uploadSceneAttachment(MultipartFile file);
+
+	/**
+	 * 上传图标
+	 *
+	 * @param file 文件
+	 * @return {@code Object }
+	 * @throws
+	 * @see MultipartFile
+	 * @see Object
+	 */
+	JSONObject uploadIcon(MultipartFile file);
+
+	/**
+	 * 上传场景模板快照
+	 *
+	 * @param file 文件
+	 * @return {@code Object }
+	 * @throws
+	 * @see MultipartFile
+	 * @see JSONObject
+	 */
+	JSONObject uploadSceneTemplateSnapshot(MultipartFile file);
+
+	/**
+	 * 上传私钥
+	 *
+	 * @param file 文件
+	 * @return {@code Object }
+	 * @throws
+	 * @see MultipartFile
+	 * @see JSONObject
+	 */
+	JSONObject uploadPrivateKey(MultipartFile file);
+
+	/**
+	 * SNMP采集 上传mib文件
+	 *
+	 * @param file 文件
+	 * @return {@code Object }
+	 * @throws
+	 * @see MultipartFile
+	 * @see JSONObject
+	 */
+	JSONObject uploadMib(MultipartFile file);
+
+	/**
+	 * 获取mib节点信息
+	 *
+	 * @param queryRequest 查询请求
+	 * @return {@code Object }
+	 * @throws
+	 * @see MibInfoQueryRequest
+	 * @see Object
+	 */
+	Object getMibNodeInfo(MibInfoQueryRequest queryRequest);
 }

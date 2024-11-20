@@ -13,11 +13,13 @@ import com.cyberpeace.integratation.model.scene.TopoNodeListReq;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.bo.TopoSupportPartialStartContext;
 import com.cyberpeace.integratation.service.bo.TopoTemplatePageReq;
+import com.cyberpeace.integratation.service.bo.mp.MibInfoQueryRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -84,6 +86,18 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	private String TOPO_NODE_STATISTICS;
 
 	private String TOPO_TEMPLATE_LIST;
+
+	private String CSCENE_ATTACHMENT_UPLOAD = "/api/mp/cscene/file/attachment_upload";
+
+	private String CSCENE_ICON_UPLOAD = "/api/mp/cscene/file/icon_upload";
+
+	private String CSCENE_SCENE_SNAPSHOT_UPLOAD = "/api/mp/cscene/file/scene_template_screenshot_upload";
+
+	private String CSCENE_PRIVATEKEY_UPLOAD = "/api/mp/cscene/file/private_key_upload";
+
+	private String CSCENE_MIB_UPLOAD = "/api/mp/cscene/file/mib_import";
+
+	private String MIB_NODE_INFO = "/cscene/protocol/collection/mib_nodeinfo";
 
 	/**
 	 * 中台环境Service
@@ -377,6 +391,42 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	public JSONObject getTopoTemplatePage(TopoTemplatePageReq pageReq) {
 		String targetUrl = TOPO_TEMPLATE_LIST + pageReq.toQuery();
 		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject uploadSceneAttachment(MultipartFile file) {
+		String targetUrl = cyberSpaceMpEnvService.getMpHost() + CSCENE_ATTACHMENT_UPLOAD;
+		return HttpClientUtil.uploadFile2Mp(targetUrl, file, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject uploadIcon(MultipartFile file) {
+		String targetUrl = cyberSpaceMpEnvService.getMpHost() + CSCENE_ICON_UPLOAD;
+		return HttpClientUtil.uploadFile2Mp(targetUrl, file, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject uploadSceneTemplateSnapshot(MultipartFile file) {
+		String targetUrl = cyberSpaceMpEnvService.getMpHost() + CSCENE_SCENE_SNAPSHOT_UPLOAD;
+		return HttpClientUtil.uploadFile2Mp(targetUrl, file, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject uploadPrivateKey(MultipartFile file) {
+		String targetUrl = cyberSpaceMpEnvService.getMpHost() + CSCENE_PRIVATEKEY_UPLOAD;
+		return HttpClientUtil.uploadFile2Mp(targetUrl, file, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject uploadMib(MultipartFile file) {
+		String targetUrl = cyberSpaceMpEnvService.getMpHost() + CSCENE_MIB_UPLOAD;
+		return HttpClientUtil.uploadFile2Mp(targetUrl, file, JSONObject.class);
+	}
+
+	@Override
+	public Object getMibNodeInfo(MibInfoQueryRequest queryRequest) {
+		String targetUrl = cyberSpaceMpEnvService.getMpHost() + MIB_NODE_INFO;
+		return HttpClientUtil.rawGetByParam(queryRequest, targetUrl, JSONObject.class);
 	}
 
 	/**

@@ -1,7 +1,9 @@
 package com.cyberpeace.common.util;
 
 import com.alibaba.fastjson.JSON;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.*;
 import com.google.common.collect.Lists;
@@ -11,10 +13,15 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
@@ -22,7 +29,9 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.impl.TraceIdContext;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -186,6 +195,95 @@ public class HttpClientUtil {
 		}
 		// 3、执行实际调用、返回序列化后的结果
 		return doHttp(httpGet, resultType);
+	}
+
+	/**
+	 * 上传文件到远程服务
+	 *
+	 * @param url  url
+	 * @param file 文件
+	 * @return {@code String}
+	 */
+	public static <T> T uploadFile2Mp(String url, MultipartFile file, Class<T> resultType) {
+		// 1、设置请求线程数据
+		setContext(url);
+		// 获取文件名
+		String filename = file.getOriginalFilename();
+		HttpPost httpPost = new HttpPost(url);
+		// 创建请求体
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+		try {
+			builder.addBinaryBody("file", file.getBytes(),
+					ContentType.create("multipart/form-data"), filename);
+		} catch (IOException e) {
+			LOG.error("load file error: ", e);
+			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
+		}
+		HttpEntity entity = builder.build();
+		// 设置请求体
+		httpPost.setEntity(entity);
+		T rsp;
+		try {
+			rsp = doHttp(httpPost, resultType);
+		} catch (RemoteServiceException rse){
+			LOG.error("upload file failed, ", rse);
+			throw rse;
+		} catch (Exception le) {
+			LOG.error("failed to upload file, ", le);
+			throw new RemoteServiceException(ErrorCode.FILE_UPLOAD_FAIL);
+		}
+		return rsp;
+	}
+
+	/**
+	 * 上传文件
+	 *
+	 * @param url        网址
+	 * @param file       文件
+	 * @param resultType 结果类型
+	 * @return {@code T }
+	 * @throws
+	 * @see String
+	 * @see MultipartFile
+	 * @see Class<T>
+	 * @see T
+	 */
+	public static <T> T rawPostUploadFile(String url, MultipartFile file, Class<T> resultType) {
+		setContext(url);
+		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+			// 创建 POST 请求
+			HttpPost httpPost = new HttpPost(url);
+
+			try {
+				// 构建 MultipartEntity
+				HttpEntity multipartEntity = MultipartEntityBuilder.create()
+						.setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+						.addBinaryBody("file", file.getInputStream(), ContentType.DEFAULT_BINARY, file.getOriginalFilename())
+						.build();
+				httpPost.setEntity(multipartEntity);
+
+				CloseableHttpResponse response = httpClient.execute(httpPost);
+				// 检查响应状态码
+				int statusCode = response.getStatusLine().getStatusCode();
+				if (statusCode != 200) {
+					LOG.error("rawPostUploadFile response code error, statusCode is {}", statusCode);
+					throw new RemoteServiceException("上传文件请求异常");
+				}
+
+				// 2、解析远程服务的返回值
+				String httpResponse = EntityUtils.toString(response.getEntity(), WebConstant.ENCODING);
+				// 4、解析结果并返回
+				return parseHttpResponse(httpResponse, resultType);
+			} catch (IOException e) {
+				LOG.error("rawPostUploadFile error url ={}, fileName={}", url, file.getOriginalFilename(), e);
+				throw new RemoteServiceException(e.getMessage());
+			}
+		} catch (IOException e) {
+			LOG.error("rawPostUploadFile error", e);
+			throw new RuntimeException(e);
+		}finally {
+			HttpclientContext.removeContext();
+		}
 	}
 
 	/**

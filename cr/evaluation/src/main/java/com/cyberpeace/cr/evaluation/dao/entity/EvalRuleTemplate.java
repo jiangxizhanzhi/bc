@@ -277,11 +277,11 @@ public class EvalRuleTemplate extends BaseTable {
         thirtyMinutes("PT30M", "30分钟"),
         fortyFiveMinutes("PT45M", "45分钟"),
         oneHour("PT1H", "1小时"),
-        twoHours("PT2H", "1小时"),
-        threeHours("PT3H", "1小时"),
-        fourHours("PT4H", "1小时"),
-        fiveHours("PT5H", "1小时"),
-        sixHours("PT6H", "1小时"),
+        twoHours("PT2H", "2小时"),
+        threeHours("PT3H", "3小时"),
+        fourHours("PT4H", "4小时"),
+        fiveHours("PT5H", "5小时"),
+        sixHours("PT6H", "6小时"),
         oneDay("P1D", "1天");
 
         @Getter

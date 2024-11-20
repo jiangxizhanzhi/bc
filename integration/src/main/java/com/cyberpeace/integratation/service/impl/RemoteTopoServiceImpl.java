@@ -12,6 +12,7 @@ import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.model.scene.TopoNodeListReq;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.bo.TopoSupportPartialStartContext;
+import com.cyberpeace.integratation.service.bo.TopoTemplatePageReq;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -83,11 +83,16 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	 */
 	private String TOPO_NODE_STATISTICS;
 
+	private String TOPO_TEMPLATE_LIST;
+
 	/**
 	 * 中台环境Service
 	 */
 	@Autowired
 	private MpEnvService mpEnvService;
+
+	@Autowired
+	private CyberSpaceMpEnvService cyberSpaceMpEnvService;
 
 	/**
 	 * 初始化
@@ -95,6 +100,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
+		String CYBER_MP_HOST = cyberSpaceMpEnvService.getMpHost();
 		COPY_TOPO_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.copy");
 		TOPO_DIGEST_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.topo.terminal.statistic");
@@ -112,6 +118,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 		TOPO_NODE_STATISTICS = MP_HOST + ConfigUtil.getContextProperty("topo.node.statistics");
 
+		TOPO_TEMPLATE_LIST = CYBER_MP_HOST + ConfigUtil.getContextProperty("topo.template.list");
 	}
 
 	/**
@@ -359,6 +366,17 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 		String result = HttpClientUtil.delete(BATCH_DELETE_TOPO, notBlankIds, String.class);
 		return Boolean.TRUE;
+	}
+
+	/**
+	 * 获取拓扑模板列表
+	 * @param pageReq
+	 * @return
+	 */
+	@Override
+	public JSONObject getTopoTemplatePage(TopoTemplatePageReq pageReq) {
+		String targetUrl = TOPO_TEMPLATE_LIST + pageReq.toQuery();
+		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
 	}
 
 	/**

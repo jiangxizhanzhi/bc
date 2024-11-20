@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.model.scene.TopoNodeListReq;
+import com.cyberpeace.integratation.service.bo.TopoTemplatePageReq;
 
 import java.util.List;
 import java.util.Map;
@@ -138,5 +139,12 @@ public interface RemoteTopoService {
 	 * @return {@code JSONObject}
 	 */
 	JSONObject getNodeStatistics(String topoId);
+
+	/**
+	 * 获取拓扑模板列表
+	 * @param pageReq
+	 * @return
+	 */
+	JSONObject getTopoTemplatePage(TopoTemplatePageReq pageReq);
 
 }

@@ -7,6 +7,7 @@ import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.integratation.model.mp.MpDeviceInfo;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.cyberpeace.integratation.service.bo.ClusterImagePageReq;
+import com.cyberpeace.integratation.service.bo.TargetListReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,26 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 	private String IMAGE_LIST;
 
 	/**
+	 * 镜像类型
+	 */
+	private String IMAG_CATEGORY;
+
+	/**
+	 * 查询dynamips 相关的信息
+	 */
+	private String DYNAMIC_IMAGE_INFO;
+
+	private String AGENT_SUPPORT;
+
+	private String COMMON_TARGETS;
+
+	private String TARGET_LIST;
+
+	private String L2_CATEGORIES;
+
+	private String SNAPSHOT_BY_NAME;
+
+	/**
 	 * 中台环境Service
 	 */
 	@Autowired
@@ -50,6 +71,13 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 	public void init() {
 		DEVICE_INFO = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("device.info");
 		IMAGE_LIST = cyberSpaceMpEnvService.getMpHost() + ConfigUtil.getContextProperty("device.list");
+		IMAG_CATEGORY = cyberSpaceMpEnvService.getMpHost() + ConfigUtil.getContextProperty("device.categorie");
+		DYNAMIC_IMAGE_INFO = cyberSpaceMpEnvService.getMpHost() + ConfigUtil.getContextProperty("dynamic.image.info");
+		AGENT_SUPPORT = cyberSpaceMpEnvService.getMpHost() + ConfigUtil.getContextProperty("agent.support");
+		COMMON_TARGETS = cyberSpaceMpEnvService.getMpHost() + ConfigUtil.getContextProperty("common.targets");
+		TARGET_LIST = cyberSpaceMpEnvService.getMpHost() + ConfigUtil.getContextProperty("target.list");
+		L2_CATEGORIES = cyberSpaceMpEnvService.getMpHost() + ConfigUtil.getContextProperty("l2.targets");
+		SNAPSHOT_BY_NAME = cyberSpaceMpEnvService.getMpHost() + ConfigUtil.getContextProperty("snapshot.by.name");
 	}
 
 	/**
@@ -89,9 +117,7 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 	 */
 	@Override
 	public JSONObject getAllCategorie() {
-		String targetUrl = mpEnvService.getMpHost()
-				+ ConfigUtil.getContextProperty("device.categorie") + "?isAll=true";
-		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+		return HttpClientUtil.rawGet(IMAG_CATEGORY, JSONObject.class);
 	}
 
 	/**
@@ -103,6 +129,47 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 	@Override
 	public JSONObject pageImages(ClusterImagePageReq req) {
 		String targetUrl = IMAGE_LIST + req.toQuery();
+		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+	}
+
+	/**
+	 * 查询dynamips 相关的信息
+	 * @return
+	 */
+	@Override
+	public JSONObject getDynamicImageInfo() {
+		return HttpClientUtil.rawGet(DYNAMIC_IMAGE_INFO, JSONObject.class);
+	}
+
+	/**
+	 * 查询靶标对应的探针系统分类
+	 * @return
+	 */
+	@Override
+	public JSONObject getAgentSupport() {
+		return HttpClientUtil.rawGet(AGENT_SUPPORT, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject getCommonTargets() {
+		return HttpClientUtil.rawGet(COMMON_TARGETS, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject targetList(TargetListReq req) {
+		String targetUrl = TARGET_LIST + req.toQuery();
+		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject getL2categories(Integer firstTypeId) {
+		String targetUrl = L2_CATEGORIES + firstTypeId;
+		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject snapshotByName(String name) {
+		String targetUrl = SNAPSHOT_BY_NAME + name;
 		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
 	}
 }

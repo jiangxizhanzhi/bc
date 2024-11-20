@@ -269,6 +269,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// 判断聊天框前端是否应该显示
 		ClassroomGroupInfo groupInfo = null;
+		infoBo.setShowGuidance(true);
 		if (StringUtils.isNotBlank(roomId)) {
 			Classroom classroom = classroomMapper.selectById(roomId);
 			if (null != classroom) {
@@ -280,6 +281,11 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 						&& current.after(classroom.getStartTime())
 						&& current.before(classroom.getEndTime())) {
 					infoBo.setRoomId(roomId);
+				}
+				// 是否展示任务指导
+				infoBo.setShowGuidance(classroom.getShowGuidance());
+				if (Boolean.FALSE.equals(classroom.getShowGuidance())) {
+					infoBo.setGuidance("");
 				}
 			}
 		}

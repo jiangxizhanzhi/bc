@@ -116,6 +116,9 @@ public class LessonInfoBo implements Serializable {
 	@ApiModelProperty("指导")
 	private String guidance;
 
+	@ApiModelProperty(value = "是否展示任务指导")
+	private Boolean showGuidance;
+
 	private Integer radio;
 
 

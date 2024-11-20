@@ -48,4 +48,12 @@ public class ClassroomReq implements Serializable {
 	@ApiModelProperty("训练计划编号")
 	private String trainPlanId;
 
+	/**
+	 * 是否展示任务指导
+	 *
+	 * @see Boolean
+	 */
+	@ApiModelProperty(value = "是否展示任务指导")
+	private Boolean showGuidance;
+
 }

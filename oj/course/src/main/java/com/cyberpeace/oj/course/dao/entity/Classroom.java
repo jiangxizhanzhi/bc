@@ -44,4 +44,6 @@ public class Classroom extends BaseTable {
 
     private Boolean enableRecording;
 
+	private Boolean showGuidance;
+
 }

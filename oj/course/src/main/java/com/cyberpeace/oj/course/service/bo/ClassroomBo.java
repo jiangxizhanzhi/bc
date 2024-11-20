@@ -69,4 +69,7 @@ public class ClassroomBo implements Serializable {
 	@ApiModelProperty("角色类型")
 	private Integer roleGroup;
 
+	@ApiModelProperty(value = "是否展示任务指导")
+	private Boolean showGuidance;
+
 }

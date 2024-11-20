@@ -57,7 +57,36 @@ public class PracticeTheory extends PracticeBase {
 
 	public enum TheoryType implements GenericEnum {
 
-		SINGLE(0, "single"), MULTIPLE(1, "multiple"), JUDGMENT(2, "judgment"), FILL_BLANK(3, "fill_blank"), SHORT_ANSWER(4,
+		/**
+		 * 单选
+		 *
+		 * @see TheoryType
+		 */
+		SINGLE(0, "single"),
+		/**
+		 * 多选
+		 *
+		 * @see TheoryType
+		 */
+		MULTIPLE(1, "multiple"),
+		/**
+		 * 判断
+		 *
+		 * @see TheoryType
+		 */
+		JUDGMENT(2, "judgment"),
+		/**
+		 * 填空
+		 *
+		 * @see TheoryType
+		 */
+		FILL_BLANK(3, "fill_blank"),
+		/**
+		 * 简答
+		 *
+		 * @see TheoryType
+		 */
+		SHORT_ANSWER(4,
 				"short_answer"),
 		/** 不属于基础练习本身*/
 		OPERATION(5, "operation");

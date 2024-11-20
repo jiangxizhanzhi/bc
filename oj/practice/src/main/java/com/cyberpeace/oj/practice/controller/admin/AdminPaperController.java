@@ -1,20 +1,9 @@
 package com.cyberpeace.oj.practice.controller.admin;
 
-import java.util.List;
-
-import com.cyberpeace.common.constant.MenuConstant;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -32,11 +21,20 @@ import com.cyberpeace.oj.practice.service.PaperService;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.google.common.collect.Lists;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 管理纸Controller
@@ -103,38 +101,30 @@ public class AdminPaperController {
 	/**
 	 * 获取
 	 *
-	 * @param practiceSetId 实践设置id
 	 * @param children      子级
 	 * @return {@code BaseRsp<LibSelectRes> }
 	 */
 	@ApiOperation("题库筛选条件查询")
 	@GetMapping("/select_info")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "practice_set_id", value = "习题集编号", dataTypeClass = String.class),
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "practice_type", value = "习题类型, 0=理论题，2=实操题",
+					dataTypeClass = Integer.class),
 			@ApiImplicitParam(name = "children", value = "分类是否查询子类", dataTypeClass = Boolean.class) })
-	@RequiresPermissions(value = {MenuConstant.CMS_EXERCISES, MenuConstant.CMS_PRACTICE_OPERATION,
-			MenuConstant.CMS_COURSES}, logical = Logical.OR)
+	@RequiresPermissions(value = { MenuConstant.CMS_EXERCISES, MenuConstant.CMS_PRACTICE_OPERATION,
+			MenuConstant.CMS_COURSES }, logical = Logical.OR)
 	public BaseRsp<LibSelectRes> get(
-			@RequestParam(value = "practice_set_id", required = false) String practiceSetId,
+			@RequestParam(value = "practice_type", required = false) Integer practice_type,
 			@RequestParam(value = "children", required = false) Boolean children) {
 
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				CommonConstant.FALSE);
-
 		LibSelectRes libInfoBo = new LibSelectRes();
-		// 习题集数据查询
-		List<PracticeSetRes> practiceSetRes = selectPracticeSet(authContext);
-		libInfoBo.setPracticeSet(practiceSetRes);
-
-		if (StringUtils.isNotBlank(practiceSetId)) {
+		if (null != practice_type) {
 			// 联动分类数据查询
-			PracticeSet practiceSet = practiceSetMapper.selectById(practiceSetId);
-			List<CategoryListBo> categoryListBos = selectPracticeCategory(
-					practiceSet.getPracticeType(),
+			List<CategoryListBo> categoryListBos = selectPracticeCategory(practice_type,
 					null == children ? CommonConstant.FALSE : children);
 			libInfoBo.setCategory(categoryListBos);
 
 			// 习题类型数据查询
-			List<Integer> questionType = selectQuestionType(practiceSet.getPracticeType());
+			List<Integer> questionType = selectQuestionType(practice_type);
 			libInfoBo.setQuestionType(questionType);
 		}
 
@@ -182,9 +172,10 @@ public class AdminPaperController {
 	 */
 	private List<Integer> selectQuestionType(int practiceType) {
 
-		if (practiceType == PracticeCategory.PracticeType.THEORY.getCode().intValue()) {
+		if (practiceType == PracticeCategory.PracticeType.THEORY.getCode()) {
 			List<Integer> listCode = EnumUtils.getListCode(PracticeTheory.TheoryType.class);
 			listCode.remove(PracticeTheory.TheoryType.OPERATION.getCode());
+			listCode.remove(PracticeTheory.TheoryType.SHORT_ANSWER.getCode());
 			return listCode;
 		} else {
 			return Lists.newArrayList(PracticeTheory.TheoryType.OPERATION.getCode());

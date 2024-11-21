@@ -20,7 +20,7 @@ public class RealEquipmentPageRequest {
 	 * 系统子类型
 	 */
 	@ApiModelProperty(value = "二级类型")
-	private Integer secondCategory;
+	private Integer second_category;
 
 	/**
 	 * 系统子类型
@@ -54,5 +54,5 @@ public class RealEquipmentPageRequest {
 
 	private Integer page;
 
-	private Integer perPage;
+	private Integer per_page;
 }

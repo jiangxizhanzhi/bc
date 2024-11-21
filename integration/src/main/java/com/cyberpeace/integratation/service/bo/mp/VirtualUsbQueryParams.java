@@ -9,5 +9,5 @@ public class VirtualUsbQueryParams {
 
 	private Integer page;
 
-	private Integer perPage;
+	private Integer per_page;
 }

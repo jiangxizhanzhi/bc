@@ -9,17 +9,15 @@ import javax.validation.constraints.NotNull;
 @Data
 public class MibInfoQueryRequest {
 
-	private static final long serialVersionUID = 2365480436323068459L;
-
 	@ApiModelProperty(value = "场景id")
 	@NotNull
 	@NotEmpty(message = "sceneId can not be empty")
-	private String sceneId;
+	private String scene_id;
 
 	@ApiModelProperty(value = "节点id")
 	@NotNull
 	@NotEmpty(message = "elementId can not be empty")
-	private String elementId;
+	private String element_id;
 
 	@ApiModelProperty(value = "oid")
 	@NotNull
@@ -43,8 +41,8 @@ public class MibInfoQueryRequest {
 	private String username;
 
 	@ApiModelProperty(value = "v3认证密码")
-	private String authKey;
+	private String auth_key;
 
 	@ApiModelProperty(value = "v3加密密码")
-	private String privKey;
+	private String priv_key;
 }

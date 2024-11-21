@@ -1,6 +1,15 @@
 package com.cyberpeace.oj.course.controller.admin;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
@@ -11,12 +20,8 @@ import com.cyberpeace.integratation.service.bo.mp.MibInfoQueryRequest;
 import com.cyberpeace.integratation.service.bo.mp.RealEquipmentPageRequest;
 import com.cyberpeace.integratation.service.bo.mp.VirtualUsbQueryParams;
 import com.cyberpeace.oj.practice.controller.req.LoadResourceReq;
+
 import io.swagger.annotations.*;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @Api(tags = "转发mp接口api")
 @RestController
@@ -124,6 +129,27 @@ public class MpController {
     public BaseRsp cscenes(@ApiParam TopoTemplatePageReq topoTemplatePageReq) {
         return new BaseRsp(remoteTopoService.getTopoTemplatePage(topoTemplatePageReq));
     }
+
+	/**
+	 * 删除场景模板
+	 * /cscene/cscenes?id=xx
+	 *
+	 * @param id id
+	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp
+	 */
+	@ApiOperation("删除场景模板")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "id", value = "场景模板id", dataTypeClass = String.class) })
+	@DeleteMapping("/cscene/cscenes")
+	public BaseRsp delete(@RequestParam(required = true) String id) {
+		if (StringUtils.isBlank(id)) {
+			throw new BusinessException(ErrorCode.BLANK_ID);
+		}
+		return new BaseRsp(remoteTopoService.deleteById(id));
+	}
 
 	/**
 	 * 查询所有靶标信息

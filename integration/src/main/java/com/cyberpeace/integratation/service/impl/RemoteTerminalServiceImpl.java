@@ -141,7 +141,7 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 	@Override
 	public JSONObject pageImages(ClusterImagePageReq req) {
 		String targetUrl = IMAGE_LIST + req.toQuery();
-		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+		return HttpClientUtil.rawSpecialGet(targetUrl, JSONObject.class);
 	}
 
 	/**
@@ -170,7 +170,7 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 	@Override
 	public JSONObject targetList(TargetListReq req) {
 		String targetUrl = TARGET_LIST + req.toQuery();
-		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+		return HttpClientUtil.rawSpecialGet(targetUrl, JSONObject.class);
 	}
 
 	@Override
@@ -182,7 +182,7 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 	@Override
 	public JSONObject snapshotByName(String name) {
 		String targetUrl = SNAPSHOT_BY_NAME + name;
-		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+		return HttpClientUtil.rawSpecialGet(targetUrl, JSONObject.class);
 	}
 
 	@Override

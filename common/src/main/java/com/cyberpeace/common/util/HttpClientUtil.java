@@ -517,7 +517,7 @@ public class HttpClientUtil {
 					JsonUtil.toJsonString(treeMap), url, e);
 			throw new RemoteServiceException();
 		}
-		return rawGet(url, resultType);
+		return rawSpecialGet(url, resultType);
 
 	}
 

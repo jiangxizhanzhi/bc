@@ -102,6 +102,14 @@ public class EvalCloudTemplate extends BaseTable {
 			this.code = code;
 			this.desc = desc;
 		}
+		public static String getDesc(Integer code) {
+			for (TestType item : TestType.values()) {
+				if (item.getCode().equals(code)) {
+					return item.getDesc();
+				}
+			}
+			return null;
+		}
 	}
 
 //	云类型

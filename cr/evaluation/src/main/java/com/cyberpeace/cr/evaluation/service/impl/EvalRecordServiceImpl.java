@@ -1689,7 +1689,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             EvalCloudTemplate evalCloudTemplate = evalCloudTemplateMapper.selectById(evalTest.getTemplateId());
 
             taskName = evalTestInstance.getInstanceName();
-            name = evalCloudTemplate.getName();
+            name = evalTestInstance.getTestName();
             topoId = evalCloudTemplate.getTopoId();
             description = null;
             enableRecording = false;
@@ -1704,13 +1704,16 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
 
         data.put("title", getTitle(name));
-        /*JSONObject topoData = localSceneService.getTopoData(topoId);
+        JSONObject topoData = localSceneService.getTopoData(topoId);
         String topoLogo = topoData.getString("logo");
-        if (StringUtils.isEmpty(topoLogo)) {
+        /*if (StringUtils.isEmpty(topoLogo)) {
             log.error("The logo file does not exist! topoLogo is empty, topoId = [{}]", topoId);
             throw new BusinessException(CrBusinessErrorCode.LOGO_NOT_EXIST);
+        }*/
+
+        if (StringUtils.isNotEmpty(topoLogo)) {
+            data.put("topoLogo", remoteServerEnvService.getFileServerHost() + topoLogo);
         }
-        data.put("topoLogo", remoteServerEnvService.getFileServerHost() + topoLogo);*/
         //设置测试基本信息
         data.put("taskName", taskName);
         data.put("name", evalRecord.getName());
@@ -1722,16 +1725,23 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         data.put("evalTime", evalRecord.getEvalTime());
         data.put("startTime", evalRecord.getStartTime());
         data.put("enableRecording", changeRecordStatus(enableRecording));
-        List<CrConstantsConfig> constants = crConstantsService.getByType(4);
-        List<CodeNameRsp> rsp = StreamApiUtils.map(constants,
-                constant -> new CodeNameRsp(constant.getCode(), constant.selectI18nName()));
-        if (CollectionUtils.isNotEmpty(rsp)) {
-            for (CodeNameRsp codeNameRsp : rsp) {
-                if (codeNameRsp.getCode().equals(categoryCode)) {
-                    data.put("categoryCode", codeNameRsp.getName());
+        if(null == evalTestInstance){
+
+            List<CrConstantsConfig> constants = crConstantsService.getByType(4);
+            List<CodeNameRsp> rsp = StreamApiUtils.map(constants,
+                    constant -> new CodeNameRsp(constant.getCode(), constant.selectI18nName()));
+            if (CollectionUtils.isNotEmpty(rsp)) {
+                for (CodeNameRsp codeNameRsp : rsp) {
+                    if (codeNameRsp.getCode().equals(categoryCode)) {
+                        data.put("categoryCode", codeNameRsp.getName());
+                    }
                 }
             }
+        }else {
+            String desc = EvalCloudTemplate.TestType.getDesc(categoryCode);
+            data.put("categoryCode", desc);
         }
+
         //测试步骤
         data.put("steps", evalTaskStepService.getTaskSteps(taskId));
         //指标体系结构和评估结果数据

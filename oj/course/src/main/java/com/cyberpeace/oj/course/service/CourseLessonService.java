@@ -271,4 +271,12 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @return {@code List<AdminLessonListBo> }
 	 */
 	List<AdminLessonListBo> lesson2AdminBo(List<CourseLesson> lessonList);
+
+	/**
+	 * 查询topo和场景数据信息
+	 * @param lessonId
+	 * @param authContext
+	 * @return
+	 */
+	TopoSceneDataBo getTopoScene(String lessonId, String roomId, AuthContext authContext);
 }

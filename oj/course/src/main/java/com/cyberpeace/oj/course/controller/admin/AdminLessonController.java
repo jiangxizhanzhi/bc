@@ -42,6 +42,7 @@ import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
+import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -552,6 +553,19 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		List<SimpleDataRes> simpleDataRes = StreamApiUtils.map(lessons,
 				courseLesson -> BeanUtils.copy(courseLesson, SimpleDataRes.class));
 		return new BaseRsp<>(simpleDataRes);
+	}
+
+	@ApiOperation("课时场景拓扑信息查询")
+	@GetMapping("/scene_topo")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
+	public BaseRsp<TopoSceneDataBo> getTopoScene(@ApiParam(name = "resource_id",
+			value = "资源数据编号") @RequestParam("resource_id") String lessonId) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		TopoSceneDataBo topoSceneData = courseLessonService.getTopoScene(lessonId, null, authContext);
+
+		return new BaseRsp(topoSceneData);
 	}
 
 	/**

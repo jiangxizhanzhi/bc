@@ -6,6 +6,7 @@ import com.cyberpeace.integratation.service.bo.ClusterImagePageReq;
 import com.cyberpeace.integratation.service.bo.TargetListReq;
 import com.cyberpeace.integratation.service.bo.mp.RealEquipmentPageRequest;
 import com.cyberpeace.integratation.service.bo.mp.VirtualUsbQueryParams;
+import com.mysql.cj.xdevapi.JsonArray;
 
 /**
  * 靶标服务
@@ -82,7 +83,7 @@ public interface RemoteTerminalService {
 	 * @see String
 	 * @see JSONObject
 	 */
-	JSONObject listSnapshot(String uuid);
+	JsonArray listSnapshot(String uuid);
 
 	/**
 	 * 查询实体设备信息，鼠标悬浮数据信息框

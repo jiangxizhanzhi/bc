@@ -153,7 +153,7 @@ public class MpController {
 	 */
     @ApiOperation("查询所有二级分类")
 	@GetMapping("/devops/cluster/types/l2-categories")
-    public BaseRsp l2Ccategories(@ApiParam Integer firstTypeId) {
+    public BaseRsp l2Ccategories(@RequestParam(value = "firstTypeId", required = false) Integer firstTypeId) {
         return new BaseRsp(remoteTerminalService.getL2categories(firstTypeId));
     }
 
@@ -270,8 +270,8 @@ public class MpController {
 	 */
 	@ApiOperation("查询快照历史")
 	@ApiImplicitParam(name = "uuid", value = "靶标id", paramType = "path", dataTypeClass = String.class)
-	@GetMapping("/devops/cluster/images/{id}/snapshot/list")
-	public BaseRsp listSnapshot(@PathVariable("id") String uuid){
+	@GetMapping("/devops/cluster/images/{uuid}/snapshot/list")
+	public BaseRsp listSnapshot(@PathVariable("uuid") String uuid){
 		return new BaseRsp(remoteTerminalService.listSnapshot(uuid));
 	}
 

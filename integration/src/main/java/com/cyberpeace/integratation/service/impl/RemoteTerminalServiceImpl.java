@@ -10,6 +10,7 @@ import com.cyberpeace.integratation.service.bo.ClusterImagePageReq;
 import com.cyberpeace.integratation.service.bo.TargetListReq;
 import com.cyberpeace.integratation.service.bo.mp.RealEquipmentPageRequest;
 import com.cyberpeace.integratation.service.bo.mp.VirtualUsbQueryParams;
+import com.mysql.cj.xdevapi.JsonArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -191,9 +192,9 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 	}
 
 	@Override
-	public JSONObject listSnapshot(String uuid) {
+	public JsonArray listSnapshot(String uuid) {
 		String targetUrl = cyberSpaceMpEnvService.getMpHost() + String.format(DEVOPS_SNAPSHOT_LIST, uuid);
-		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+		return HttpClientUtil.rawGet(targetUrl, JsonArray.class);
 	}
 
 	@Override

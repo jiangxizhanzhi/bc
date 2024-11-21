@@ -133,6 +133,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     private CrConstantsService crConstantsService;
 
     @Autowired
+    private EvalTestInstanceService evalTestInstanceService;
+
+    @Autowired
     private EvalVariableRefMapper evalVariableRefMapper;
 
     @Autowired
@@ -149,6 +152,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Autowired
     private EvalTestInstanceMapper evalTestInstanceMapper;
+
+    @Autowired
+    private EvalCloudTemplateMapper evalCloudTemplateMapper;
+
+    @Autowired
+    private EvalTestMapper evalTestMapper;
 
     private static final long ONCE_PROBE_DATA_SIZE = 1000L;  // 10/100/1000
 
@@ -1663,35 +1672,62 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         EvalTemplate template = evalTemplateService.getById(templateId);
         EvalTask evalTask = evalTaskMapper.selectById(taskId);
 
-        if (StringUtils.isEmpty(evalRecord.getTaskId()) || StringUtils.isEmpty(templateId)) {
+        EvalTestInstance evalTestInstance = evalTestInstanceService.getEvalTestInstanceByResourceId(evalRecord.getTaskId());
+
+        if (StringUtils.isEmpty(evalRecord.getTaskId()) || (StringUtils.isEmpty(templateId) && null == evalTestInstance)) {
             log.error("Task not exist! taskId is empty or templateId is empty");
             throw new BusinessException(CrBusinessErrorCode.TASK_NOT_EXIST_ERROR);
         }
-        data.put("title", getTitle(template.getName()));
-        JSONObject topoData = localSceneService.getTopoData(template.getTopoId());
+        String taskName;
+        String name;
+        String topoId;
+        String description;
+        Boolean enableRecording;
+        Integer categoryCode;
+        if(null == evalTask){
+            EvalTest evalTest = evalTestMapper.selectById(evalTestInstance.getTestId());
+            EvalCloudTemplate evalCloudTemplate = evalCloudTemplateMapper.selectById(evalTest.getTemplateId());
+
+            taskName = evalTestInstance.getInstanceName();
+            name = evalCloudTemplate.getName();
+            topoId = evalCloudTemplate.getTopoId();
+            description = null;
+            enableRecording = false;
+            categoryCode = evalCloudTemplate.getType();
+        }else {
+            taskName = evalTask.getTaskName();
+            name = template.getName();
+            topoId = template.getTopoId();
+            description = template.getDescription();
+            enableRecording = template.getEnableRecording();
+            categoryCode = template.getCategoryCode();
+        }
+
+        data.put("title", getTitle(name));
+        /*JSONObject topoData = localSceneService.getTopoData(topoId);
         String topoLogo = topoData.getString("logo");
         if (StringUtils.isEmpty(topoLogo)) {
-            log.error("The logo file does not exist! topoLogo is empty, topoId = [{}]", template.getTopoId());
+            log.error("The logo file does not exist! topoLogo is empty, topoId = [{}]", topoId);
             throw new BusinessException(CrBusinessErrorCode.LOGO_NOT_EXIST);
         }
-        data.put("topoLogo", remoteServerEnvService.getFileServerHost() + topoLogo);
+        data.put("topoLogo", remoteServerEnvService.getFileServerHost() + topoLogo);*/
         //设置测试基本信息
-        data.put("taskName", evalTask.getTaskName());
+        data.put("taskName", taskName);
         data.put("name", evalRecord.getName());
-        data.put("templateName", template.getName());
+        data.put("templateName", name);
         data.put("recordDescription", evalRecord.getDescription());
-        data.put("templateDescription", template.getDescription());
+        data.put("templateDescription", description);
         data.put("score", evalRecord.getScore());
         data.put("endTime", evalRecord.getEndTime());
         data.put("evalTime", evalRecord.getEvalTime());
         data.put("startTime", evalRecord.getStartTime());
-        data.put("enableRecording", changeRecordStatus(template.getEnableRecording()));
+        data.put("enableRecording", changeRecordStatus(enableRecording));
         List<CrConstantsConfig> constants = crConstantsService.getByType(4);
         List<CodeNameRsp> rsp = StreamApiUtils.map(constants,
                 constant -> new CodeNameRsp(constant.getCode(), constant.selectI18nName()));
         if (CollectionUtils.isNotEmpty(rsp)) {
             for (CodeNameRsp codeNameRsp : rsp) {
-                if (codeNameRsp.getCode().equals(template.getCategoryCode())) {
+                if (codeNameRsp.getCode().equals(categoryCode)) {
                     data.put("categoryCode", codeNameRsp.getName());
                 }
             }

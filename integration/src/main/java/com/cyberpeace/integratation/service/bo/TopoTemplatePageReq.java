@@ -1,5 +1,8 @@
 package com.cyberpeace.integratation.service.bo;
 
+import lombok.Data;
+
+@Data
 public class TopoTemplatePageReq {
 
     private String type;

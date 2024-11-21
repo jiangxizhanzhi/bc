@@ -1684,6 +1684,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         String description;
         Boolean enableRecording;
         Integer categoryCode;
+        String topoLogo = null;
         if(null == evalTask){
             EvalTest evalTest = evalTestMapper.selectById(evalTestInstance.getTestId());
             EvalCloudTemplate evalCloudTemplate = evalCloudTemplateMapper.selectById(evalTest.getTemplateId());
@@ -1694,6 +1695,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             description = null;
             enableRecording = false;
             categoryCode = evalCloudTemplate.getType();
+            topoLogo = evalCloudTemplate.getTopo();
         }else {
             taskName = evalTask.getTaskName();
             name = template.getName();
@@ -1704,12 +1706,17 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
 
         data.put("title", getTitle(name));
-        JSONObject topoData = localSceneService.getTopoData(topoId);
-        String topoLogo = topoData.getString("logo");
-        /*if (StringUtils.isEmpty(topoLogo)) {
+
+        if(null == evalTestInstance){
+            JSONObject topoData = localSceneService.getTopoData(topoId);
+            topoLogo = topoData.getString("logo");
+        }
+
+
+        if (StringUtils.isEmpty(topoLogo)) {
             log.error("The logo file does not exist! topoLogo is empty, topoId = [{}]", topoId);
             throw new BusinessException(CrBusinessErrorCode.LOGO_NOT_EXIST);
-        }*/
+        }
 
         if (StringUtils.isNotEmpty(topoLogo)) {
             data.put("topoLogo", remoteServerEnvService.getFileServerHost() + topoLogo);

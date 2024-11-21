@@ -1,0 +1,1 @@
+alter table cr_eval_cloud_template add topo varchar(255) null comment '拓扑截图图';

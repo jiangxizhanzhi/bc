@@ -70,6 +70,11 @@ public class EvalCloudTemplate extends BaseTable {
 	 */
 	private String createUserId;
 
+	/**
+	 * 拓扑LOGO
+	 */
+	private String topo;
+
 
 	public void setStepIdList(List<String> stepIds) {
 		this.stepIds = JsonUtil.toJsonString(stepIds);

@@ -390,7 +390,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	@Override
 	public JSONObject getTopoTemplatePage(TopoTemplatePageReq pageReq) {
 		String targetUrl = TOPO_TEMPLATE_LIST + pageReq.toQuery();
-		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+		return HttpClientUtil.rawSpecialGet(targetUrl, JSONObject.class);
 	}
 
 	@Override

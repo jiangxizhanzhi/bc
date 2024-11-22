@@ -2223,7 +2223,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			classMap.putIfAbsent(classroom.getTrainPlanId(), Lists.newArrayList());
 			classMap.get(classroom.getTrainPlanId()).add(classroom);
 		}
-		List<CourseLesson> lessonList = courseLessonMapper.selectBatchIds(lessonIds);
+		List<CourseLesson> lessonList = courseLessonMapper.selectBatchIds(StreamApiUtils.map(classrooms, Classroom::getLessonId));
 		Map<String, CourseLesson> lessonMap = StreamApiUtils.toMap(lessonList,
 				CourseLesson::getResourceId, l -> l);
 		List<LessonRecord> recordList = lessonRecordMapper.listByLessonAndUser(userId, lessonIds);

@@ -80,6 +80,9 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 		evalTemTemplate.setTechniqueWarfare(JsonUtil.toJsonString(evalTemTemplateReq.getMissionsScheme()));
 		evalTemTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		evalTemTemplate.setTopoId(saveTopo(evalTemTemplateReq.getSceneConfigData()));
+		if (evalTemTemplateReq.getBaseData().getAuthUserIds() != null && evalTemTemplateReq.getBaseData().getAuthUserIds().size() != 0) {
+			evalTemTemplate.setAuthUserIds(StringUtils.join(evalTemTemplateReq.getBaseData().getAuthUserIds() , ","));
+		}
 		evalTemTemplateMapper.insert(evalTemTemplate);
 		return evalTemTemplate.getResourceId();
 	}
@@ -103,6 +106,9 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 		evalTemTemplate.setExpCondition(updateEvalTemTemplateReq.getBaseData().getCondition());
 		evalTemTemplate.setResourceId(updateEvalTemTemplateReq.getResourceId());
 		evalTemTemplate.setTopoId(topoId);
+		if (updateEvalTemTemplateReq.getBaseData().getAuthUserIds() != null && updateEvalTemTemplateReq.getBaseData().getAuthUserIds().size() != 0) {
+			evalTemTemplate.setAuthUserIds(StringUtils.join(updateEvalTemTemplateReq.getBaseData().getAuthUserIds() , ","));
+		}
 		JSONObject topoJson = new JSONObject();
 		SceneConfigData sceneConfigData = updateEvalTemTemplateReq.getSceneConfigData();
 		topoJson.put("scene_config", sceneConfigData.getSceneConfig());
@@ -144,6 +150,10 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 		EvalTemTemplate evalTemTemplate = evalTemTemplateMapper.selectById(resourceId);
 		BaseTemplateData baseTemplateData = BeanUtils.copy(evalTemTemplate, BaseTemplateData.class);
 		EvalTemTemplateRsp evalTemTemplateRsp = new EvalTemTemplateRsp();
+		if (evalTemTemplate != null && evalTemTemplate.getAuthUserIds() != null) {
+			String[] split = evalTemTemplate.getAuthUserIds().split(",");
+			baseTemplateData.setAuthUserIds(Arrays.asList(split));
+		}
 		evalTemTemplateRsp.setBaseData(baseTemplateData);
 		evalTemTemplateRsp.setResourceId(resourceId);
 		evalTemTemplateRsp.setMissionsScheme(JsonUtil.toJsonObject(evalTemTemplate.getTechniqueWarfare(), MissionScheme.class));

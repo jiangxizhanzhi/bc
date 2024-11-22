@@ -44,4 +44,13 @@ public class EvalTemTemplate extends BaseTable {
 	@ApiModelProperty("创建人id")
 	private String createUserId;
 
+	@ApiModelProperty("授权用户")
+	private String authUserIds;
+
+	@ApiModelProperty("授权模式, 1-所有, 2-自定义")
+	private Integer operationAuthType;
+
+	@ApiModelProperty("体系ID")
+	private String systemId;
+
 }

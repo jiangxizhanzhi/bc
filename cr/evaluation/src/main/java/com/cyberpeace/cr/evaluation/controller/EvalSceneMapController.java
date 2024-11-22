@@ -5,10 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalSceneMapRsp;
 import com.cyberpeace.cr.evaluation.dao.mode.*;
@@ -31,13 +29,11 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 
+import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.*;
@@ -535,6 +531,32 @@ public class EvalSceneMapController {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return new BaseRsp<>(evalSceneMapRsp);
+		}
+	}
+
+	@ApiOperation("导出拓扑")
+	@GetMapping("/export")
+	public void exportScheme(HttpServletResponse response, Integer type) {
+		String tempDir = ZipUtil.generatePath();
+		try {
+			String zipPath;
+			if (type == 1) {
+				zipPath = "/home/file/测绘文件生成拓扑.zip";
+			} else {
+				zipPath = "/home/file/配置文件生成拓扑.zip";
+			}
+
+			// 2. generate file response
+			File zip = new File(zipPath);
+			FileUtil.setResponse(zip, false, response);
+		} catch (Exception e) {
+			log.error("failed to dump combat techs", e);
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_EXPORT_EVAL_SCHEME_TEMPLATE);
+		} finally {
+			// 3. delete temp dir
+			if (!FileUtil.deleteDir(new File(tempDir))) {
+				log.error("failed to remove temp dir :{}", tempDir);
+			}
 		}
 	}
   

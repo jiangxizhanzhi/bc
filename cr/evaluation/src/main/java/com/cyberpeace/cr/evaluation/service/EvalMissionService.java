@@ -7,5 +7,5 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 
 public interface EvalMissionService extends IService<EvalMissionTemplate> {
 
-    void executeCommand(ManualExecutionReq manualExecutionReq, EvalTask evalTask);
+    String executeCommand(ManualExecutionReq manualExecutionReq, EvalTask evalTask);
 }

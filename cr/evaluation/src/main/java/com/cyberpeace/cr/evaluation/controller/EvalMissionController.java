@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.component.ExcelDataHandler;
@@ -433,6 +434,7 @@ public class EvalMissionController {
             UserInfo userInfo = userInfoMap.get(evalMissionTemplateLog.getCreateUserId());
             rsp.setName(userInfo.getName());
             rsp.setCreateTime(evalMissionTemplateLog.getCreateTime());
+            rsp.setContent(evalMissionTemplateLog.getMissionResult());
             res.add(rsp);
         });
         evalNodeLogs.forEach(evalNodeLog -> {
@@ -461,7 +463,7 @@ public class EvalMissionController {
         EvalTask evalTask = evalTaskMapper.selectById(taskId);
 
         // 中台交互
-        evalMissionService.executeCommand(manualExecutionReq, evalTask);
+        String output = evalMissionService.executeCommand(manualExecutionReq, evalTask);
         String tools = evalMissionTemplate.getTools();
         List<ToolBo> toolBos = JsonUtil.toJsonObjectArray(tools, ToolBo.class);
         Map<String, ToolBo> toolBoMap = StreamApiUtils.toMap(toolBos, ToolBo::getToolName, s -> s);
@@ -477,6 +479,8 @@ public class EvalMissionController {
         evalMissionTemplate.setTools(JsonUtil.toJsonString(toolBos));
         // 状态修改 超时单独处理--
         evalMissionTemplateMapper.updateById(evalMissionTemplate);
+        // 日志记录
+        evalMissionTemplateLogMapper.updateMissionResultAndMissionIdAndTaskId(manualExecutionReq.getMissionId(), output, taskId);
         String res = "success";
         return new BaseRsp<>(res);
     }
@@ -622,5 +626,28 @@ public class EvalMissionController {
                 passFields, ExcelHeader.ABNORMAL_DATA);
         FileUtil.setResponse(file, true, response);
     }
+
+
+    @ApiOperation("查看任务执行结果")
+    @GetMapping("/mission/result")
+    public BaseRsp<String> getMissionResult(@ApiParam(name = "mission_id", value = "任务id", required = true) @RequestParam("mission_id") String missionId,
+                                            @ApiParam(name = "task_id", value = "测评任务id", required = true) @RequestParam("task_id") String taskId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("mission_id", missionId);
+        map.put("task_id", taskId);
+        List<EvalMissionTemplateLog> evalMissionTemplateLogs = evalMissionTemplateLogMapper.selectByMap(map);
+
+        String result = null;
+        if (!evalMissionTemplateLogs.isEmpty()) {
+            for (EvalMissionTemplateLog evalMissionTemplateLog : evalMissionTemplateLogs) {
+                if (StringUtils.isNotEmpty(evalMissionTemplateLog.getMissionResult())) {
+                    result = evalMissionTemplateLog.getMissionResult();
+                    break;
+                }
+            }
+        }
+        return new BaseRsp<>(result);
+    }
+
 
 }

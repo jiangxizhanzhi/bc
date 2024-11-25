@@ -26,7 +26,7 @@ public class EvalMissionServiceImpl extends ServiceImpl<EvalMissionTemplateMappe
 
     @Async
     @Override
-    public void executeCommand(ManualExecutionReq manualExecutionReq, EvalTask evalTask) {
+    public String executeCommand(ManualExecutionReq manualExecutionReq, EvalTask evalTask) {
         MissionStartContext missionStartContext = new MissionStartContext();
         missionStartContext.setCommand(manualExecutionReq.getCommand());
         missionStartContext.setNode_id(manualExecutionReq.getNodeId());
@@ -34,6 +34,7 @@ public class EvalMissionServiceImpl extends ServiceImpl<EvalMissionTemplateMappe
 
         missionStartContext.setExec_user(userContext.getUserId());
         missionStartContext.setId(evalTask.getMpSceneId());
-        remoteSceneService.startMission(missionStartContext);
+        String output = remoteSceneService.startMission(missionStartContext);
+        return output;
     }
 }

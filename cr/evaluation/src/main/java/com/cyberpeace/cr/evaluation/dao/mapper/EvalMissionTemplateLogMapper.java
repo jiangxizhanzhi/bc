@@ -19,6 +19,8 @@ public interface EvalMissionTemplateLogMapper extends BaseMapper<EvalMissionTemp
 	List<EvalMissionLogRsp> getAllByTask(String resourceId);
 
 	List<EvalNodeLog> selectByIds(List<String> ids);
+
+	void updateMissionResultAndMissionIdAndTaskId(String missionId, String missionResult, String taskId);
 }
 
 

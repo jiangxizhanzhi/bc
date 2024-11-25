@@ -20,6 +20,8 @@ public class EvalMissionTemplateLog extends BaseTable {
 
 	private String missionName;
 
+	private String missionResult;
+
 	private String taskId;
 
 	private Integer operate;

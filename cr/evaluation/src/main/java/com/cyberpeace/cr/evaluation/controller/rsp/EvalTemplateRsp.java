@@ -35,6 +35,9 @@ public class EvalTemplateRsp extends EvalTemplateListRsp {
 	@ApiModelProperty("任务方案")
 	private MissionScheme missionsScheme;
 
+	@ApiModelProperty("体系ID")
+	private String systemId;
+
 	public void setStepConfig(String stepConfig) {
 		this.stepConfig = JsonUtil.toJsonObjectArray(stepConfig, EvalTaskStepConfig.class);
 	}

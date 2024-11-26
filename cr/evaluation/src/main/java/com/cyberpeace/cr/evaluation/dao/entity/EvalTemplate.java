@@ -55,6 +55,9 @@ public class EvalTemplate extends AuthTable {
 	@ApiModelProperty("任务方案附件")
 	private String scheme;
 
+	@ApiModelProperty("体系ID")
+	private String systemId;
+
 	public void setLogoId(String logoId) {
 		this.logo = logoId;
 	}

@@ -34,4 +34,6 @@ public class EvaTemplateAddReq extends EvaTemplateBaseInfoReq {
 	@ApiModelProperty("模板id")
 	private String templateId;
 
+	@ApiModelProperty("体系ID")
+	private String systemId;
 }

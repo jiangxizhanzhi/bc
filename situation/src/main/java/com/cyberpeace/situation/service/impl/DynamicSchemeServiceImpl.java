@@ -416,6 +416,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				attackMessageReq.getLineWidth(), attackMessageReq.getLineType()));
 		//设置持续时间
 		wsMultiNodeDynamic.setDuration(attackMessageReq.getDurationTime());
+
+		wsMultiNodeDynamic.setIsSucceed(0);
+
 		WsMessage<WsMultiNodeDynamic> wsMessage;
 
 		WsCvss wsCvss = new WsCvss();

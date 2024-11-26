@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.service.impl.bo;
 
+import com.cyberpeace.common.context.user.OperationUserInfo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -39,8 +40,11 @@ public class BaseTemplateData implements Serializable {
 	@ApiModelProperty("任务方案附件名称")
 	private String schemeName;
 
-	@ApiModelProperty("授权用户")
+	@ApiModelProperty("授权用户id")
 	private List<String> authUserIds;
+
+	@ApiModelProperty("授权用户")
+	private List<OperationUserInfo> operationAuthIds;
 
 	@ApiModelProperty("授权模式, 1-所有, 2-自定义")
 	private Integer operationAuthType;

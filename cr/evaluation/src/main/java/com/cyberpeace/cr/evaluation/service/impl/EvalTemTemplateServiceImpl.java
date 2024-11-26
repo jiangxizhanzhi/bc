@@ -4,8 +4,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.context.user.OperationUserInfo;
 import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -150,10 +152,21 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 		EvalTemTemplate evalTemTemplate = evalTemTemplateMapper.selectById(resourceId);
 		BaseTemplateData baseTemplateData = BeanUtils.copy(evalTemTemplate, BaseTemplateData.class);
 		EvalTemTemplateRsp evalTemTemplateRsp = new EvalTemTemplateRsp();
-		if (evalTemTemplate != null && evalTemTemplate.getAuthUserIds() != null) {
+		if (evalTemTemplate != null && StringUtils.isNotBlank(evalTemTemplate.getAuthUserIds())) {
 			String[] split = evalTemTemplate.getAuthUserIds().split(",");
 			baseTemplateData.setAuthUserIds(Arrays.asList(split));
+
+			// 返回用户详细信息列表
+			List<UserInfo> userInfos = remoteUserService.getByIdList(Arrays.asList(split));
+			List<OperationUserInfo> operationUserInfos = StreamApiUtils.map(userInfos, userInfo -> {
+				OperationUserInfo operationUserInfo = BeanUtils.copy(userInfo, OperationUserInfo.class);
+				operationUserInfo.setId(userInfo.getUserId());
+				operationUserInfo.setUsername(userInfo.getUserName());
+				return operationUserInfo;
+			});
+			baseTemplateData.setOperationAuthIds(operationUserInfos);
 		}
+
 		evalTemTemplateRsp.setBaseData(baseTemplateData);
 		evalTemTemplateRsp.setResourceId(resourceId);
 		evalTemTemplateRsp.setMissionsScheme(JsonUtil.toJsonObject(evalTemTemplate.getTechniqueWarfare(), MissionScheme.class));

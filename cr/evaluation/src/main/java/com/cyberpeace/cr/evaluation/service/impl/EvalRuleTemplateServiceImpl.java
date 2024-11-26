@@ -101,6 +101,10 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
 
     @Override
     public EvalRuleTemplateDetailRsp addRuleTemplate(EvalRuleTemplateAddReq evalRuleTemplateAddReq) {
+        List<EvalHostTemplateAddReq> hostList = evalRuleTemplateAddReq.getHostList();
+        if (CollectionUtils.isEmpty(hostList)) {
+            throw new BusinessException(ErrorCode.INVALID_CONFIGURATION,"主机","主机配置不能为空");
+        }
         EvalRuleTemplate evalRuleTemplate = BeanUtils.copy(evalRuleTemplateAddReq, EvalRuleTemplate.class);
         evalRuleTemplate.setName(evalRuleTemplateAddReq.getRuleName());
         evalRuleTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
@@ -265,6 +269,10 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
 
     @Override
     public EvalRuleTemplateDetailRsp modifyRuleTemplate(EvalRuleTemplateModifyReq evalRuleTemplateModifyReq) {
+        List<EvalHostTemplateAddReq> hostList = evalRuleTemplateModifyReq.getHostList();
+        if (CollectionUtils.isEmpty(hostList)) {
+            throw new BusinessException(ErrorCode.INVALID_CONFIGURATION,"主机","主机配置不能为空");
+        }
         EvalRuleTemplate evalRuleTemplate = BeanUtils.copy(evalRuleTemplateModifyReq, EvalRuleTemplate.class);
         evalRuleTemplate.setResourceId(evalRuleTemplateModifyReq.getRuleId());
         evalRuleTemplate.setName(evalRuleTemplateModifyReq.getRuleName());

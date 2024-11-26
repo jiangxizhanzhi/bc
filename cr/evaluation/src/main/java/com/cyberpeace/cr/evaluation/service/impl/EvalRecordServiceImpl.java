@@ -1495,6 +1495,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         Integer status = evalRecord.getStatus();
         result.setRunStatus(status >= EvalRecord.Status.END.getCode() ? EvalRecord.Status.END.getCode() : status);
 
+        EvalTestInstance evalTestInstance = evalTestInstanceService.getById(evalRecord.getTaskId());
+        result.setTaskName(evalTestInstance.getTestName());
         return result;
     }
 

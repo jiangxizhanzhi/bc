@@ -10,4 +10,7 @@ public class EvalRecordResultRsp extends EvalRecordRsp {
 
     @ApiModelProperty("运行错误信息")
     private String message;
+
+    @ApiModelProperty("实验名称")
+    private String taskName;
 }

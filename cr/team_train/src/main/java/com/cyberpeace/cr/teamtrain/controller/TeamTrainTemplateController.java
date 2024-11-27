@@ -228,7 +228,7 @@ public class TeamTrainTemplateController {
 			}
 		}
 
-		baseInfoRsp.setSceneConfigData(localSceneService.getTopoData(businessTemplate.getTopoId()));
+//		baseInfoRsp.setSceneConfigData(localSceneService.getTopoData(businessTemplate.getTopoId()));
 		String sceneManagerId = "";
 		LocalScene localScene = localSceneService
 				.getByBusinessInstanceId(businessTemplate.getResourceId());

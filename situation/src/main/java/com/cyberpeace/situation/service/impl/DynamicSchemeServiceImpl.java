@@ -1067,6 +1067,33 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			if (imageUuid == null) {
 				return null;
 			}
+			String name = null;
+			// 判断设备是否为常用靶标
+			if (imageUuid.equals("5dfe83ac-4689-478d-8257-89bb118ef105")) {
+				name = "外部网络";
+			} else if (imageUuid.equals("1e64d97a-f0b3-4704-be21-8121a9b3ef8f")) {
+				name = "NPC";
+			} else if (imageUuid.equals("0e62a73f-a757-402e-8567-77a16b2e7835")) {
+				name = "路由器";
+			} else if (imageUuid.equals("66e6244c-90d1-48d6-a615-0762af79e4f2")) {
+				name = "交换机";
+			} else if (imageUuid.equals("854f7c24-060f-4dbd-b771-68eab207e071")) {
+				name = "路由器";
+			} else if (imageUuid.equals("c12b7b53-e232-40f4-b7c3-d3dfac8e1b31")) {
+				name = "防火墙";
+			}
+
+			if (name != null) {
+				List<Vuln> leaks = dynamicSchemeMapper.queryLeak();
+				List<Vuln> leakList = new ArrayList<>();
+				for (Vuln leak : leaks) {
+					if (leak.getApplication().toLowerCase().contains(name.toLowerCase())) {
+						leakList.add(leak);
+					}
+				}
+				return leakList;
+			}
+
 			// 获取设备信息
 			DeviceInfo deviceInfo = remoteTerminalService.getById(imageUuid);
 			if (deviceInfo == null || deviceInfo.getVulns() == null || deviceInfo.getVulns().size() == 0) {

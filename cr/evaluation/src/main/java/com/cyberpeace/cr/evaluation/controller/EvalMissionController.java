@@ -258,8 +258,9 @@ public class EvalMissionController {
         }
         // 根据所有任务进行排序，不分阶段
         for (TaskBo taskBo : taskBos) {
-            if (taskBo.getResourceId().equals(evalMissionTemplate.getResourceId()))
+            if (taskBo.getResourceId().equals(evalMissionTemplate.getResourceId())){
                 steps = taskBos.indexOf(taskBo) + 1;
+            }
         }
 
         // 根据当前步骤，判断执行顺序
@@ -462,16 +463,28 @@ public class EvalMissionController {
         String taskId = evalMissionTemplate.getTaskId();
         EvalTask evalTask = evalTaskMapper.selectById(taskId);
 
-        // 中台交互
-        String output = evalMissionService.executeCommand(manualExecutionReq, evalTask);
+        // 判断是否重复操作
         String tools = evalMissionTemplate.getTools();
         List<ToolBo> toolBos = JsonUtil.toJsonObjectArray(tools, ToolBo.class);
         Map<String, ToolBo> toolBoMap = StreamApiUtils.toMap(toolBos, ToolBo::getToolName, s -> s);
         String tool = manualExecutionReq.getTool();
         ToolBo toolBo1 = toolBoMap.get(tool);
+
+        // 更新一次执行剩余时间
+        if(TimeUtil.addSeconds(toolBo1.getExecuteTime(), 30).compareTo(new Date()) > 0){
+            toolBo1.setLimitTime((int)(TimeUtil.addSeconds(toolBo1.getExecuteTime(), 30).getTime() - System.currentTimeMillis())/1000);
+        } else{
+            toolBo1.setLimitTime(0);
+            toolBo1.setIsExecute(false);
+        }
         if (Boolean.TRUE.equals(toolBo1.getIsExecute()) && toolBo1.getLimitTime() > 0) {
             return new BaseRsp<>("can't be executed repeatedly");
         }
+
+        // 中台交互
+        UserInfo userContext = UserInfoContext.getUserContext();
+        evalMissionService.executeCommand(manualExecutionReq, evalTask, userContext.getUserId(), taskId);
+
         toolBo1.setIsExecute(true);
         toolBo1.setExecuteTime(new Date());
         toolBo1.setAction(manualExecutionReq.getCommand());
@@ -479,10 +492,8 @@ public class EvalMissionController {
         evalMissionTemplate.setTools(JsonUtil.toJsonString(toolBos));
         // 状态修改 超时单独处理--
         evalMissionTemplateMapper.updateById(evalMissionTemplate);
-        // 日志记录
-        evalMissionTemplateLogMapper.updateMissionResultAndMissionIdAndTaskId(manualExecutionReq.getMissionId(), output, taskId);
-        String res = "success";
-        return new BaseRsp<>(res);
+
+        return new BaseRsp<>("success");
     }
 
     @ApiOperation("查询任务信息列表")

@@ -1284,8 +1284,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         JSONArray nodes = jsonObject.getJSONObject(SCENE).getJSONObject(TOPOLOGY).getJSONArray(ELEMENTS);
 
         Map<String, String> results = Maps.newHashMap();
-        nodes.forEach(item -> {
+        for (Object item : nodes) {
             JSONObject nodeItem = (JSONObject) item;
+            if(nodeItem.getJSONArray("ports") == null) continue;
 
             String nodeId = nodeItem.getString("id");
             List<String> ips = Lists.newArrayList();
@@ -1297,7 +1298,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 }
             });
             results.put(nodeId, StringUtils.join(ips, ","));
-        });
+        }
         return results;
     }
 

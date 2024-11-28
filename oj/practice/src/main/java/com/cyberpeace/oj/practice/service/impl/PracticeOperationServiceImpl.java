@@ -508,6 +508,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 				if (null == randomFlag) {
 					randomFlag = getRandomFlag(operation);
+					if (randomFlag == null) {
+						log.error("randomFlag is null,resourceId=[{}], practice_name=[{}]", resourceId, operation.getTitle());
+						throw new BusinessException(OjBusinessErrorCode.PRACTICE_OPERATION_FILE_NOT_FOUNT, resourceId);
+					}
 					// 更改处
 					operationBo.setAttachmentId(randomFlag.getAttachmentId());
 					practiceRandomFlagMapper.insert(randomFlag);
@@ -1323,7 +1327,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				log.error(
 						"operation practice file not found！operation_practice_id={} title=[{}], attachment_id={}",
 						operation.getResourceId(), operation.getTitle(), attachmentId);
-				throw new BusinessException(OjBusinessErrorCode.PRACTICE_OPERATION_FILE_NOT_FOUNT);
+				throw new BusinessException(OjBusinessErrorCode.PRACTICE_OPERATION_FILE_NOT_FOUNT, operation.getTitle());
 			}
 
 			// 重命名文件防止重复

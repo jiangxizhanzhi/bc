@@ -1,26 +1,25 @@
 package com.cyberpeace.common.util;
 
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.google.common.collect.Lists;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class FileUtil {
@@ -39,6 +38,11 @@ public class FileUtil {
 		}
 
 		String filename = file.getOriginalFilename();
+		if (StringUtils.isBlank(filename)) {
+			log.error("filename is null! fileSuffix=[{}]", (Object) fileSuffix);
+			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
+		}
+
 		filename = filename.toLowerCase();
 		for (String suffix : fileSuffix) {
 			if (filename.endsWith(CommonConstant.PERIOD + suffix)) {
@@ -47,26 +51,6 @@ public class FileUtil {
 		}
 		log.error("filename is illegal! filename=[{}]",filename);
 		throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
-	}
-
-	/**
-	 * 校验不允许的类型
-	 * @param file
-	 * @param fileSuffix
-	 */
-	public static void validateNotAccessFile(MultipartFile file, String... fileSuffix) {
-		if (null == file) {
-			log.error("file is null! fileSuffix=[{}]",fileSuffix);
-			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
-		}
-
-		String filename = file.getOriginalFilename();
-		for (String suffix : fileSuffix) {
-			if (filename.endsWith(CommonConstant.PERIOD + suffix)) {
-				log.error("filename is illegal! filename=[{}]",filename);
-				throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
-			}
-		}
 	}
 
 	public static File saveFile(MultipartFile file, String basePath) throws IOException {

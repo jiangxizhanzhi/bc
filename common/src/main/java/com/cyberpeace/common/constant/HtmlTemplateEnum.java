@@ -4,7 +4,9 @@ import lombok.Getter;
 import org.springframework.util.ClassUtils;
 
 import java.io.File;
+import java.util.Objects;
 
+@Getter
 public enum HtmlTemplateEnum {
 	/** html模板枚举*/
 	INDIVIDUAL(CommonConstant.INDEX_HTML, "static/template/html_to_pdf_template/Individual"),
@@ -14,15 +16,13 @@ public enum HtmlTemplateEnum {
 	EVAL(CommonConstant.INDEX_HTML, "static/template/html_to_pdf_template/Eval"),
 	LESSON(CommonConstant.INDEX_HTML, "static/template/html_to_pdf_template/Lesson");
 
-	@Getter
-	private String templatePath;
+	private final String templatePath;
 
-	@Getter
-	private String templateName;
+	private final String templateName;
 
 	HtmlTemplateEnum(String templateName, String templatePath) {
 		this.templateName = templateName;
-		this.templatePath = ClassUtils.getDefaultClassLoader().getResource("").getPath()
+		this.templatePath = Objects.requireNonNull(ClassUtils.getDefaultClassLoader()).getResource("").getPath()
 				+ File.separatorChar + templatePath;
 	}
 

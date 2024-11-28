@@ -1,21 +1,5 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.util.CollectionUtils;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
@@ -50,8 +34,22 @@ import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.CollectionUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 任务Service实现
@@ -125,7 +123,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	/**
 	 * 类别缓存
 	 */
-	private volatile Map<String, MissionCategoryCache> categoryCache;
+	private static final Map<String, MissionCategoryCache> categoryCache = Maps.newConcurrentMap();
 
 	/**
 	 * 锁
@@ -1075,7 +1073,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		List<MissionCategoryCache> categories = BeanUtils.deepCopyList(missionCategories,
 				MissionCategoryCache.class);
 
-		categoryCache = Maps.newHashMap();
+		categoryCache.clear();
 
 		for (MissionCategoryCache item : categories) {
 			categoryCache.put(item.getResourceId(), item);
@@ -1086,12 +1084,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * 确保缓存
 	 */
 	private void ensureCache() {
-		if (null == categoryCache) {
-			synchronized (lock) {
-				if (null == categoryCache) {
-					doInit();
-				}
-			}
+		synchronized (lock) {
+			doInit();
 		}
 	}
 

@@ -4,12 +4,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class DefaultLockFactory implements LockFactory {
-    private static volatile LockFactory instance;
     private final Map<String, Object> businessLockMap;
     private String lockType = System.getProperty("lockType");
     private static Lock lock = new ReentrantLock();
@@ -19,14 +17,11 @@ public class DefaultLockFactory implements LockFactory {
     }
 
     public static LockFactory getInstance() {
-        if (instance == null) {
-            synchronized (LockFactory.class) {
-                if (instance == null) {
-                    instance = new DefaultLockFactory();
-                }
-            }
-        }
-        return instance;
+        return SingletonHolder.INSTANCE;
+    }
+
+    private static class SingletonHolder {
+        private static final LockFactory INSTANCE = new DefaultLockFactory();
     }
     @Override
     public Lock getLock(String businessType,String key) {

@@ -1,19 +1,17 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.compress.utils.Lists;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.dao.mapper.CrConstantsConfigMapper;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 靶场常数Service实现
@@ -32,9 +30,9 @@ public class CrConstantsServiceImpl implements CrConstantsService {
 	private CrConstantsConfigMapper crConstantsConfigMapper;
 
 	/**
-	 * 缓存
+	 * 缓存， 全局缓存
 	 */
-	private volatile Map<Integer, List<CrConstantsConfig>> cache = Maps.newHashMap();
+	private static final Map<Integer, List<CrConstantsConfig>> cache = Maps.newConcurrentMap();
 
 	/**
 	 * 获取由类型

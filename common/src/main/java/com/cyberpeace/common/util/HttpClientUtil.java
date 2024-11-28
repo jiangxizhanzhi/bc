@@ -1,13 +1,10 @@
 package com.cyberpeace.common.util;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.TreeMap;
-
+import com.alibaba.fastjson.JSON;
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.model.*;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -26,11 +23,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.impl.TraceIdContext;
 
-import com.alibaba.fastjson.JSON;
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.model.*;
-import com.google.common.collect.Lists;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TreeMap;
 
 public class HttpClientUtil {
 
@@ -173,8 +172,8 @@ public class HttpClientUtil {
 				LOG.error("remote error logging Exception", e1);
 			} finally {
 				HttpclientContext.removeContext();
-				throw new RemoteServiceException();
 			}
+			throw new RemoteServiceException();
 		}
 
 		if (StringUtils.isBlank(httpResponse)) {

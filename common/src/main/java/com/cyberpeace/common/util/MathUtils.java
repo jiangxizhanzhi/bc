@@ -1,11 +1,13 @@
 package com.cyberpeace.common.util;
 
+import com.cyberpeace.common.constant.CommonConstant;
+import lombok.extern.slf4j.Slf4j;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Random;
 
-import com.cyberpeace.common.constant.CommonConstant;
-
+@Slf4j
 public class MathUtils {
 
 	private static final long serialVersionUID = -3345205828566485102L;
@@ -125,9 +127,6 @@ public class MathUtils {
 	 * @return
 	 */
 	public static Integer ceilDivide(Double dividend, Double divisor) {
-		if (null == divisor || divisor == 0) {
-			return 0;
-		}
 		double result = divide(dividend, divisor, DEF_DIV_SCALE);
 		return MathUtils.ceil(result);
 	}
@@ -200,8 +199,17 @@ public class MathUtils {
 	 * @return
 	 */
 	public static int ceil(Double num) {
+		if (num == null) {
+			log.error("ceil num is null");
+			throw new IllegalArgumentException("num not null");
+		}
 		double ceil = Math.ceil(num);
-		return Double.valueOf(ceil).intValue();
+		// 检查是否在 int 范围内
+		if (ceil > Integer.MAX_VALUE || ceil < Integer.MIN_VALUE) {
+			log.error("ceil[{}] out of range", ceil);
+			throw new ArithmeticException("Result is out of int range");
+		}
+		return (int) ceil;
 	}
 
 	/**

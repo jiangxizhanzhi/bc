@@ -106,6 +106,10 @@ public class AHPComputeWeight {
 
             // 向量归一化
             for (int k = 0; k < N; k++) {
+                if (sum == 0){
+                    String errorMessage = String.format("weight is error [%s], [%s], [%d]", Arrays.deepToString(a), Arrays.toString(weight), N);
+                    throw new IllegalArgumentException(errorMessage);
+                }
                 w2[k] = w1[k] / sum;
                 // 最大差值
                 d = Math.max(Math.abs(w2[k] - w0[k]), d);

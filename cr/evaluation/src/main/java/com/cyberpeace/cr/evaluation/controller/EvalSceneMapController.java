@@ -129,7 +129,7 @@ public class EvalSceneMapController {
 				continue;
 			}
 			// 中台获取的镜像角色
-			imagesPageVO.setRole(roleMap.get(imagesPageVO.getRole()));
+//			imagesPageVO.setRole(roleMap.get(imagesPageVO.getRole()));
 			elementPortMap.put(id, imagesPageVO);
 			getTopoElement(topoElement, id, name, imagesPageVO, element);
 			CpcloudElement elementObj = getCpcloudElement(imagesPageVO);

@@ -255,6 +255,7 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 		pluginSceneConfigElement.put("load_task_describe", addReq.getLoadDescription());
 		pluginSceneConfigElement.put("load_exec_command", addReq.getCommand());
 		pluginSceneConfigElement.put("load_tool_id", addReq.getLoadId());
+		pluginSceneConfigElement.put("load_source", addReq.getLoadSource());
 		jsonObject.put("scene_config_element", sceneConfigElement);
 		jsonObject.put("plugin_scene_config_element", pluginSceneConfigElement);
 		EvalTestInstance evalTestInstance = evalTestInstanceMapper.selectById(addReq.getTestInstanceId());

@@ -29,6 +29,9 @@ public class EvalStepLoadAddReq implements Serializable {
 	@ApiModelProperty("载荷描述")
 	private String loadDescription;
 
+	@ApiModelProperty(value = "载荷来源(1载荷平台 2本地)")
+	private Integer loadSource;
+
 	@ApiModelProperty("x坐标")
 	private String x;
 

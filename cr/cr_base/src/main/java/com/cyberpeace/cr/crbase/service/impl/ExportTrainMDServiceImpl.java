@@ -1,20 +1,5 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -38,6 +23,19 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
 import com.cyberpeace.integratation.model.scene.SceneDumpContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 导出训练md服务实现
@@ -196,28 +194,14 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	 * @param title       标题
 	 */
 	public void exportWriteUp(String writeUp, File writeUpFile, String title){
-		FileWriter fw = null;
-		BufferedWriter bw = null;
-		try{
-			fw = new FileWriter(writeUpFile);
-			bw = new BufferedWriter(fw);
+		try(FileWriter fw = new FileWriter(writeUpFile);
+			BufferedWriter bw = new BufferedWriter(fw)) {
 			bw.write(writeUp);
 			bw.flush();
 			log.info("export mission [{}] writeup.md successfully", title);
 		}catch (Exception e) {
 			log.error("Markdown content write failed！file_path=[{}], catch error:", writeUpFile.getAbsolutePath(), e);
 			throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
-		} finally {
-			try {
-				if (null != fw) {
-					fw.close();
-				}
-				if (null != bw) {
-					bw.close();
-				}
-			} catch (IOException e) {
-				// do nothing
-			}
 		}
 	}
 

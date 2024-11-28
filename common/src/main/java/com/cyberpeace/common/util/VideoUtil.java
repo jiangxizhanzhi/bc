@@ -1,19 +1,17 @@
 package com.cyberpeace.common.util;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.concurrent.TimeUnit;
-
-import javax.imageio.ImageIO;
-
 import com.cyberpeace.common.constant.CommonConstant;
 import com.google.common.cache.Cache;
+import lombok.extern.slf4j.Slf4j;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
 
-import lombok.extern.slf4j.Slf4j;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author SN
@@ -54,8 +52,7 @@ public class VideoUtil {
 			log.error("video file not exist or not readable: [{}]", path);
 			return 0;
 		}
-		try {
-			FFmpegFrameGrabber ff = new FFmpegFrameGrabber(file);
+		try(FFmpegFrameGrabber ff = new FFmpegFrameGrabber(file)) {
 			ff.start();
 			duration = ff.getLengthInTime();
 			log.info("FFmpegFrameGrabber getLengthInTime is [{}] ", duration);
@@ -75,8 +72,7 @@ public class VideoUtil {
 	 * @param sec 截图帧时间
 	 */
 	public static File getFramePic(File video, Integer sec, File capture, Boolean resize) {
-		try {
-			FFmpegFrameGrabber ff = new FFmpegFrameGrabber(video);
+		try(FFmpegFrameGrabber ff = new FFmpegFrameGrabber(video)) {
 			ff.start();
 			long targetTime = (long) sec * 1_000_000;
 			ff.setTimestamp(targetTime);

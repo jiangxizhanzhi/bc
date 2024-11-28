@@ -1129,7 +1129,6 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	public VulnTop queryVulnTop(String sceneId, String nodeId, String elementId) {
 		// 获取设备信息
 		DeviceInfo deviceInfo = new DeviceInfo();
-
 		String name = null;
 		if (nodeId.equals("5dfe83ac-4689-478d-8257-89bb118ef105")) {
 			name = "外部网络";
@@ -1159,6 +1158,12 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		}
 
 		VulnTop vulnTop = new VulnTop();
+		vulnTop.setNodeId(nodeId);
+		vulnTop.setCvss(0.0);
+		List<VulnTop.Vulns> vulnsList = new ArrayList<>();
+		vulnTop.setVulnList(vulnsList);
+		List<VulnTop.Defenses> defensesList = new ArrayList<>();
+		vulnTop.setDefenseList(defensesList);
 
 		if (deviceInfo != null && deviceInfo.getVulns() != null) {
 			List<String> vulns = deviceInfo.getVulns();
@@ -1167,8 +1172,6 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			// 获取该节点下防御成功记录
 			List<Defense> defenses = dynamicSchemeMapper.queryDefenseByNodeId(sceneId, elementId, 1);
 			vulnTop.setCvss(0.0);
-			List<VulnTop.Vulns> vulnsList = new ArrayList<>();
-			List<VulnTop.Defenses> defensesList = new ArrayList<>();
 			List<Vuln> we = BeanUtils.deepCopyList(vulnList, Vuln.class);
 			Double cvssAll = 0.0;
 			Double cvssBll = 0.0;
@@ -1219,7 +1222,6 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				}
 			}
 
-			vulnTop.setNodeId(nodeId);
 			Double cvss = cvssBll/cvssAll*10;
 			String str = String.format("%.2f", cvss);
 			vulnTop.setCvss(Double.parseDouble(str));

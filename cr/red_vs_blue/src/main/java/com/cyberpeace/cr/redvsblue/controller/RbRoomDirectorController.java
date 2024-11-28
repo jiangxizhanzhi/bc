@@ -244,15 +244,13 @@ public class RbRoomDirectorController {
 			releaseMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
 
 		CrRole crRole = crRoleService.getById(releaseMissionReq.getRoleResourceId());
-
-		rbRoomService.checkDirectorPermission(crRole.getRoomId(),
-				UserInfoContext.getUserContext().getUserId());
-		rbRoomService.checkRoomOpening(crRole.getRoomId());
-
 		if (crRole == null) {
 			log.error("role does not exist！roleId=[{}]", releaseMissionReq.getRoleResourceId());
 			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
+		rbRoomService.checkDirectorPermission(crRole.getRoomId(),
+				UserInfoContext.getUserContext().getUserId());
+		rbRoomService.checkRoomOpening(crRole.getRoomId());
 
 		missionService.release(releaseMissionReq.getMissionResourceId(),
 				releaseMissionReq.getRoleResourceId(),

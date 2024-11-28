@@ -1,15 +1,5 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
-import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -32,8 +22,16 @@ import com.cyberpeace.cr.evaluation.utils.AHPComputeWeight;
 import com.cyberpeace.cr.evaluation.utils.MatrixData;
 import com.cyberpeace.integratation.service.RemotePythonService;
 import com.google.common.collect.Sets;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 测评编号裁判Service实现
@@ -70,17 +68,18 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 	private EvalVariableRefMapper evalVariableRefMapper;
 
 	/**
-	 * int2cn
+	 * 数字映射
 	 */
-	private final Map<Integer, String> int2cn = new HashMap<Integer, String>() {
+	private static final Map<Integer, String> int2cn;
 
-		{
-			put(1, "一");
-			put(2, "二");
-			put(3, "三");
-			put(4, "四");
-		}
-	};
+	static {
+		Map<Integer, String> tempMap = new HashMap<>();
+		tempMap.put(1, "一");
+		tempMap.put(2, "二");
+		tempMap.put(3, "三");
+		tempMap.put(4, "四");
+		int2cn = Collections.unmodifiableMap(tempMap);
+	}
 
 	/**
 	 * 获取水平文本
@@ -298,37 +297,29 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 	/**
 	 * 周期映射
 	 */
-	private final Map<Integer, Map<Integer, Integer>> CYCLE_MAP = new HashMap<Integer, Map<Integer, Integer>>() {
+	private static final Map<Integer, Map<Integer, Integer>> cycleMap = new HashMap<>();
+	static {
+		Map<Integer, Integer> costMap = new HashMap<>();
+		costMap.put(1, 20);
+		costMap.put(2, 50);
+		costMap.put(3, 100);
+		cycleMap.put(EvalIndexRef.DataAttr.COST.getCode(), costMap);
 
-		{
-			put(EvalIndexRef.DataAttr.COST.getCode(), new HashMap<Integer, Integer>() {
-
-				{
-					put(1, 20);
-					put(2, 50);
-					put(3, 100);
-				}
-			});
-			put(EvalIndexRef.DataAttr.BENEFIT.getCode(), new HashMap<Integer, Integer>() {
-
-				{
-					put(1, 100);
-					put(2, 50);
-					put(3, 20);
-				}
-			});
-		}
-
-	};
+		Map<Integer, Integer> benFitMap = new HashMap<>();
+		benFitMap.put(1, 100);
+		benFitMap.put(2, 50);
+		benFitMap.put(3, 20);
+		cycleMap.put(EvalIndexRef.DataAttr.BENEFIT.getCode(), benFitMap);
+	}
 
 	/**
-	 * 第三专家
+	 * 根据数据类型和属性值获取第三专家的意见
+	 * 该方法主要用于处理特定数据类型，并根据对象的属性值来获取第三专家的特殊意见
 	 *
-	 * @param datatype       数据类型
-	 * @param attribute      属性
-	 * @param attributeValue 属性值
-	 * @param value          值
-	 * @return {@code Integer }
+	 * @param datatype 数据类型，表示需要处理的数据种类
+	 * @param attribute 属性类型，表示对象的特定属性
+	 * @param attributeValue 属性值，表示属性的具体数值
+	 * @return 返回第三专家的意见，以整数形式表示，如果无意见则可能返回null
 	 */
 	@Override
 	public Integer thirdSpecialist(Integer datatype, Integer attribute, Integer attributeValue,
@@ -336,7 +327,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		if (datatype.equals(EvalIndexRef.DataType.PERCENT.getCode())) {
 			return value;
 		} else if (datatype.equals(EvalIndexRef.DataType.CYCLE.getCode())) {
-			Map<Integer, Integer> attrMap = CYCLE_MAP.get(EvalIndexRef.DataAttr.COST.getCode());
+			Map<Integer, Integer> attrMap = cycleMap.get(EvalIndexRef.DataAttr.COST.getCode());
 			return attrMap != null ? attrMap.getOrDefault(value, 0) : 0;
 		} else if (datatype.equals(EvalIndexRef.DataType.INTEGER.getCode())) {
 			// prd259~261页

@@ -522,6 +522,9 @@ public class EvalMissionController {
                 continue;
             }
             String operateTypeName = nodeMap.get(evalNodeLog.getOperate());
+            if(operateTypeName == null || operateTypeName.equals("")){
+                operateTypeName = "其他";
+            }
             if(nodeStatusMap.get(operateTypeName) != null){
                 nodeStatusMap.put(operateTypeName,nodeStatusMap.get(operateTypeName) + 1);
             }else{

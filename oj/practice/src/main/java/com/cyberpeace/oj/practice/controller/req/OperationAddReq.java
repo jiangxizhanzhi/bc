@@ -164,6 +164,9 @@ public class OperationAddReq implements Serializable, CustomValidate {
 	@ApiModelProperty(value = "类型，常量type=49，1：攻击，2：防守，3：其他")
 	private Integer type;
 
+	@ApiModelProperty(value = "是否需要外部操作机，0=不需要，1=需要")
+	private Boolean needOuter;
+
 //	public void setPractice_set_id(String practiceSetId) {
 //		this.practiceSetId = practiceSetId;
 //	}

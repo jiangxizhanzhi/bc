@@ -9,10 +9,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -42,6 +40,15 @@ public class EvalSituationController {
 	@GetMapping("/push_flow")
 	public BaseRsp<Boolean> pushFlow(@ApiParam(name = "resource_id", value = "测评任务编号") @RequestParam(value = "resource_id") String resourceId) {
 		evalSituationService.pushFlow(resourceId);
+		return new BaseRsp<>(Boolean.TRUE);
+	}
+
+	@ApiOperation("推送载荷执行结果数据")
+	@ApiParam(name = "resource_id", value = "测评任务编号")
+	@PostMapping("/push_load_result")
+	public BaseRsp<Boolean> pushLoadResult( @RequestParam(value = "resource_id") String resourceId,
+											@RequestParam("file") MultipartFile file) {
+		evalSituationService.pushLoadResult(resourceId,file);
 		return new BaseRsp<>(Boolean.TRUE);
 	}
 }

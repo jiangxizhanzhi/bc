@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.component.ExcelDataHandler;
@@ -9,6 +8,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.StatisticsRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
@@ -489,7 +489,7 @@ public class EvalMissionController {
     @ApiOperation("行动监控统计")
     @RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
     @GetMapping("/action/mission/statistics")
-    public BaseRsp<Map> prosecuteAction(@ApiParam(name = "resource_id", required = true, value = "资源id") @RequestParam(value = "resource_id") String resourceId,
+    public BaseRsp<StatisticsRsp> prosecuteAction(@ApiParam(name = "resource_id", required = true, value = "资源id") @RequestParam(value = "resource_id") String resourceId,
                                                                     @ApiParam(name = "user_id", value = "人员选择") @RequestParam(value = "user_id",required = false) String userId) {
         HashMap<String, Object> map = new HashMap<>();
         map.put("task_id", resourceId);
@@ -528,10 +528,9 @@ public class EvalMissionController {
                 nodeStatusMap.put(operateTypeName,1);
             }
         }
-        Map<String,Map<String,Integer>> result = new HashMap<>();
-        result.put("taskStatusMap",taskStatusMap);
-        result.put("nodeStatusMap",nodeStatusMap);
-
+        StatisticsRsp result = new StatisticsRsp();
+        result.setTaskStatusMap(taskStatusMap);
+        result.setNodeStatusMap(nodeStatusMap);
         return new BaseRsp<>(result);
     }
 

@@ -1,6 +1,5 @@
 package com.cyberpeace.oj.course.controller.admin;
 
-import com.cyberpeace.common.annoations.AdminRequired;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +43,7 @@ import io.swagger.annotations.ApiOperation;
 @Api(tags = "oj-后台课程分类api")
 @RestController
 @RequestMapping("/oj/admin/course/direction")
+@RequiresAuthentication
 @Slf4j
 public class AdminCourseCategoryController {
 
@@ -58,7 +58,7 @@ public class AdminCourseCategoryController {
 
 	@ApiOperation("课程分类分页查询")
 	@GetMapping("/list")
-	@AdminRequired
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_COURSE_STATISTICS }, logical = Logical.OR)
 	public BaseRsp<ListRsp<CourseCategoryBo>> list(@Validated CourseCategoryListReq listReq) {
 		Page<CourseCategory> page = listReq.toPageParam();
 		if (CollectionUtils.isEmpty(page.getOrders())) {

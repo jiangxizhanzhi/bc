@@ -2,7 +2,6 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.annoations.AdminRequired;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.*;
@@ -57,6 +56,7 @@ import java.util.List;
 @Api(tags = "oj-后台课程相关api")
 @RestController
 @RequestMapping("/oj/admin/course")
+@RequiresAuthentication
 public class AdminCourseController extends AuthAndPublicController<CourseService, Course> {
 
 	@Autowired
@@ -83,6 +83,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	// LGD在使用 知识点和技能点绑定课程
 	@GetMapping("/all/list")
 	@ApiOperation("分页查询全部课程信息")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<ListRsp<CourseWebBo>> getList(
 			@ApiParam(name = "listReq", value = "查询条件") @Valid CourseListReq courseListReq) {
 
@@ -109,7 +110,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("后台课程列表分页查询")
 	@GetMapping("/list")
-	@AdminRequired
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<ListRsp<CourseWebBo>>
 			getAdminCourse(@ApiParam(name = "listReq", value = "查询条件") CourseAdminListReq listReq) {
 
@@ -141,6 +142,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("课程新增")
 	@PostMapping("")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Course> add(@ApiParam(name = "addReq",
 			value = "课程基本信息") @Validated(Create.class) @RequestBody CourseAddReq addReq) {
 
@@ -171,6 +173,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("课程信息修改")
 	@PatchMapping("")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Course> patch(@RequestBody @Validated(Update.class) CourseUpdateReq updateReq) {
 
 		updateReq.validate();
@@ -189,6 +192,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("课程信息查询")
 	@GetMapping("")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<AdminCourseRes> get(@ApiParam(name = "resource_id",
 			value = "课程编号") @RequestParam("resource_id") @Valid @NotBlank String resourceId) {
 
@@ -205,6 +209,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("批量删除课程信息")
 	@DeleteMapping("/batch")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Boolean> batchDelete(@RequestBody @Valid BatchDeleteReq batchDeleteReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -226,6 +231,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("课程大纲文件上传")
 	@PostMapping("/outline/upload_attachment")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<AttachmentBo>
 			upload_attachment(@RequestParam("file") MultipartFile outlineFile) {
 
@@ -246,6 +252,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("查询全部课程信息")
 	@GetMapping("/all/course")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<List<SimpleDataRes>> allCourse() {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),

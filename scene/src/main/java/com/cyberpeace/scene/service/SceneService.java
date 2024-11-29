@@ -52,4 +52,6 @@ public interface SceneService extends IService<SceneEntity> {
     void destroySceneByRaceId(String raceId);
 
     ListRsp<SceneListRsp> getSceneList(PageReqBase req, Integer type);
+
+    void destroySceneByInstanceId(String resourceId);
 }

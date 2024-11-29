@@ -50,4 +50,6 @@ public interface TopologyService extends IService<TopologyEntity> {
 	 * @return {@code String}
 	 */
 	String adCreate(JSONObject req);
+
+    void deleteTopology(String topologyId);
 }

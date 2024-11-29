@@ -2,6 +2,7 @@ package com.cyberpeace.scene.service.impl;
 
 import java.util.*;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -214,4 +215,14 @@ public class TopologyServiceImpl extends ServiceImpl<TopologyMapper, TopologyEnt
 		this.save(entity);
 		return entity.getTopologyId();
 	}
+
+    @Override
+    public void deleteTopology(String topologyId) {
+		if(StringUtils.isBlank(topologyId)){
+			return;
+		}
+		LambdaQueryWrapper<TopologyEntity> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(TopologyEntity::getTopologyId, topologyId);
+		this.remove(wrapper);
+    }
 }

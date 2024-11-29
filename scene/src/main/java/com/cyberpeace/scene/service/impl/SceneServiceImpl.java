@@ -233,7 +233,17 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		return PageUtil.getListResult(sceneEntityIPage);
 	}
 
-	/**
+    @Override
+    public void destroySceneByInstanceId(String resourceId) {
+        LambdaQueryWrapper<SceneEntity> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(SceneEntity::getInstanceId, resourceId);
+		List<SceneEntity> sceneEntities = sceneMapper.selectList(wrapper);
+		for (SceneEntity scene : sceneEntities) {
+			this.destroyScene(scene.getResourceId());
+		}
+    }
+
+    /**
 	 * 验证场景并发数
 	 * @param userId
 	 */

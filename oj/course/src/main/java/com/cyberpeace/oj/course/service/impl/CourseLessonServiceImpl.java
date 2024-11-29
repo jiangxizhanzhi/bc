@@ -1100,7 +1100,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			this.deleteAttachment(handoutUrl, prefix);
 			this.deleteAttachment(videoUrl, prefix);
 
-			topologyService.deleteTopology(lesson.getTopoId());
+			topologyService.deleteTopology(lesson.getTopoId(), true);
 			try {
 				sceneService.destroySceneByInstanceId(lesson.getResourceId());
 			} catch (Exception e){

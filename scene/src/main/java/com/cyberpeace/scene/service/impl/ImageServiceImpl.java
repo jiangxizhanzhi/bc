@@ -1,15 +1,16 @@
 package com.cyberpeace.scene.service.impl;
 
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.scene.service.CpEnvService;
 import com.cyberpeace.scene.service.ImageService;
 import com.cyberpeace.scene.service.bo.res.ImageRes;
 import com.cyberpeace.scene.util.HttpUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
 
 /**
  * @author :   SN
@@ -45,5 +46,13 @@ public class ImageServiceImpl implements ImageService {
             url = url + "?name=" + name;
         }
         return HttpUtil.rawGet(url, ImageRes.class);
+	}
+
+	@Override
+	public void deleteImage(String name) {
+		ImageRes res = this.getImageInfo(name);
+		String uuid = res.getItems().get(0).getUuid();
+		String url = CP_HOST + CP_IMAGE + "/" + uuid;
+		HttpUtil.rawDelete(url, String.class);
     }
 }

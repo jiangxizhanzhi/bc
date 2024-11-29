@@ -15,4 +15,6 @@ public interface ImageService {
      * @return  镜像信息
      */
     ImageRes getImageInfo(String name);
+
+    void deleteImage(String name);
 }

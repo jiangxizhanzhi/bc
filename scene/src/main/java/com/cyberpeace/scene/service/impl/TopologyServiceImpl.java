@@ -2,6 +2,7 @@ package com.cyberpeace.scene.service.impl;
 
 import java.util.*;
 
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import com.cyberpeace.scene.constant.enums.SceneEnum;
 import com.cyberpeace.scene.dao.entity.NodeEntity;
 import com.cyberpeace.scene.dao.entity.TopologyEntity;
 import com.cyberpeace.scene.dao.mapper.TopologyMapper;
+import com.cyberpeace.scene.service.ImageService;
 import com.cyberpeace.scene.service.NodeService;
 import com.cyberpeace.scene.service.TopologyService;
 import com.cyberpeace.scene.service.bo.ElementPort;
@@ -45,6 +47,9 @@ public class TopologyServiceImpl extends ServiceImpl<TopologyMapper, TopologyEnt
 
 	@Autowired
 	private NodeService nodeService;
+
+	@Autowired
+	private ImageService imageService;
 
     @Override
     public JSONObject getTopology(String topologyId) {
@@ -217,9 +222,23 @@ public class TopologyServiceImpl extends ServiceImpl<TopologyMapper, TopologyEnt
 	}
 
     @Override
-    public void deleteTopology(String topologyId) {
+	public void deleteTopology(String topologyId, boolean deleteImage) {
 		if(StringUtils.isBlank(topologyId)){
 			return;
+		}
+		if (deleteImage) {
+			Topology topology = this.formatTopology(topologyId);
+			List<String> imageNames = Lists.newArrayList();
+			for (TopologyElement element : topology.getElements()) {
+				if (ImageTypeEnum.ELEMENT_TYPE_HOST.getCode().equals(element.getType())
+						|| ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode()
+								.equals(element.getType())) {
+					imageNames.add(element.getName());
+				}
+			}
+			for (String imageName : imageNames) {
+				imageService.deleteImage(imageName);
+			}
 		}
 		LambdaQueryWrapper<TopologyEntity> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(TopologyEntity::getTopologyId, topologyId);

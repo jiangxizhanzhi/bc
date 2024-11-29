@@ -473,11 +473,13 @@ public class EvalMissionController {
         List<String> userIds = new ArrayList<>();
         for(EvalMissionTemplateLog evalMissionTemplateLog : templateLogs){
             if(!userIds.contains(evalMissionTemplateLog.getCreateUserId())){
+                userIds.add(evalMissionTemplateLog.getCreateUserId());
                 users.add(userInfoMap.get(evalMissionTemplateLog.getCreateUserId()));
             }
         }
         for(EvalNodeLog evalNodeLog : evalNodeLogs){
             if(!userIds.contains(evalNodeLog.getCreateUserId())){
+                userIds.add(evalNodeLog.getCreateUserId());
                 users.add(userInfoMap.get(evalNodeLog.getCreateUserId()));
             }
         }

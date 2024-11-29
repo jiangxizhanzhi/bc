@@ -165,10 +165,8 @@ public class HttpClientUtil {
 		HttpGet httpGet = new HttpGet(uri);
 		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
 		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
-
-		String jwt = CommonContext.getAuthorization();
-		if (StringUtils.isNotBlank(jwt)) {
-			httpGet.setHeader(WebConstant.AUTHORIZATION_HEADER, "JWT " + jwt);
+		if (CommonContext.getCyberToken() != null) {
+			httpGet.setHeader(WebConstant.AUTHORIZATION_HEADER, "Bearer " + CommonContext.getCyberToken());
 		}
 
 		// 3、执行实际调用、返回序列化后的结果

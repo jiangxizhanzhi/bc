@@ -487,8 +487,8 @@ public class EvalMissionController {
     @ApiOperation("行动监控统计")
     @RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
     @GetMapping("/action/mission/statistics")
-    public BaseRsp<JSONObject> prosecuteAction(@ApiParam(name = "resource_id", required = true, value = "资源id") @RequestParam(value = "resource_id") String resourceId,
-                                                                    @ApiParam(name = "user_id", value = "人员选择") @RequestParam(value = "user_id") String userId) {
+    public BaseRsp<Map> prosecuteAction(@ApiParam(name = "resource_id", required = true, value = "资源id") @RequestParam(value = "resource_id") String resourceId,
+                                                                    @ApiParam(name = "user_id", value = "人员选择") @RequestParam(value = "user_id",required = false) String userId) {
         HashMap<String, Object> map = new HashMap<>();
         map.put("task_id", resourceId);
         List<EvalMissionTemplateLog> templateLogs = evalMissionTemplateLogMapper.selectByMap(map);
@@ -526,7 +526,7 @@ public class EvalMissionController {
                 nodeStatusMap.put(operateTypeName,1);
             }
         }
-        JSONObject result = new JSONObject();
+        Map<String,Map<String,Integer>> result = new HashMap<>();
         result.put("taskStatusMap",taskStatusMap);
         result.put("nodeStatusMap",nodeStatusMap);
 

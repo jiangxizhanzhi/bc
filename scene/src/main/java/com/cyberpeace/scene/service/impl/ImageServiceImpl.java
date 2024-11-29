@@ -51,6 +51,9 @@ public class ImageServiceImpl implements ImageService {
 	@Override
 	public void deleteImage(String name) {
 		ImageRes res = this.getImageInfo(name);
+        if(res.getItems().isEmpty()){
+            return;
+        }
 		String uuid = res.getItems().get(0).getUuid();
 		String url = CP_HOST + CP_IMAGE + "/" + uuid;
 		HttpUtil.rawDelete(url, String.class);

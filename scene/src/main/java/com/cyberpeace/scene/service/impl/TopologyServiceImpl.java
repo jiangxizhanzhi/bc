@@ -3,6 +3,7 @@ package com.cyberpeace.scene.service.impl;
 import java.util.*;
 
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.compress.utils.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -228,7 +229,7 @@ public class TopologyServiceImpl extends ServiceImpl<TopologyMapper, TopologyEnt
 		}
 		if (deleteImage) {
 			Topology topology = this.formatTopology(topologyId);
-			List<String> imageNames = Lists.newArrayList();
+			Set<String> imageNames = Sets.newHashSet();
 			for (TopologyElement element : topology.getElements()) {
 				if (ImageTypeEnum.ELEMENT_TYPE_HOST.getCode().equals(element.getType())
 						|| ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode()

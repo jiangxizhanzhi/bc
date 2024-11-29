@@ -464,7 +464,6 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 				courseIds.forEach(courseId -> {
 					noteMapper.deleteByBusiness(courseId, Note.NoteType.NOTE.getCode(),
 							Note.NoteResourceType.COURSE.getCode());
-					commentMapper.deleteByBusinessId(courseId);
 				});
 
 				// 收藏数据删除

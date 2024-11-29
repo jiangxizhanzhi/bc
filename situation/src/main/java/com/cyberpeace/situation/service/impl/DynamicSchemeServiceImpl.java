@@ -533,7 +533,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			@Override
 			public void run() {
 				// 持续时间结束后清除该多媒体动效
-				Thread.sleep(attackMessageBo.getDurationTime() * 1000);
+				Thread.sleep(attackMessageBo.getDurationTime() * 1000L);
 				// 判断当前是否有其他动效正在运行
 				if (sceneConfigService.isCurrentScheme(attackMessageBo.getSceneId(), code)) {
 					clearMedia(attackMessageBo.getSceneId());
@@ -648,7 +648,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 							pushAttackToRoom(attackMessageReq, elementIds);
 						}
 						if (attackMessageReq.getIntervalTime() != null) {
-							Thread.sleep(attackMessageReq.getIntervalTime() * 1000);
+							Thread.sleep(attackMessageReq.getIntervalTime() * 1000L);
 						}
 
 					}

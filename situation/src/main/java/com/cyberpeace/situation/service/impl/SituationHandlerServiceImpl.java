@@ -951,7 +951,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 			// 延时发送
 			log.info("sleep [{}]s ,delay send flow event", interval);
-			Thread.sleep(interval * 1000);
+			Thread.sleep(interval * 1000L);
 		}
 
 	}

@@ -99,16 +99,16 @@ public class CourseTrainController {
 				.sum();
 		int completeTheory = courseKnowledges.stream()
 				.mapToInt(CourseKnowledgeSkillBo::getCompleteTheory).sum();
-		courseRes.setTheoryPercent(MathUtils.ceilDivide(Double.valueOf(completeTheory * 100),
-				Double.valueOf(theoryCount)));
+		courseRes.setTheoryPercent(MathUtils.ceilDivide(completeTheory * (double) 100,
+                (double) theoryCount));
 
 		// 计算实验课时进度
 		int exerciseCount = courseKnowledges.stream()
 				.mapToInt(CourseKnowledgeSkillBo::getExerciseCount).sum();
 		int completeExercise = courseKnowledges.stream()
 				.mapToInt(CourseKnowledgeSkillBo::getCompleteExercise).sum();
-		courseRes.setExercisePercent(MathUtils.ceilDivide(Double.valueOf(completeExercise * 100),
-				Double.valueOf(exerciseCount)));
+		courseRes.setExercisePercent(MathUtils.ceilDivide(completeExercise * (double) 100,
+                (double) exerciseCount));
 
 		// 计算总进度
 		int count = courseKnowledges.stream().mapToInt(CourseKnowledgeSkillBo::getLessonCount)
@@ -116,7 +116,7 @@ public class CourseTrainController {
 		int completeCount = courseKnowledges.stream()
 				.mapToInt(CourseKnowledgeSkillBo::getCompleteCount).sum();
 		courseRes.setCoursePercent(
-				MathUtils.ceilDivide(Double.valueOf(completeCount * 100), Double.valueOf(count)));
+				MathUtils.ceilDivide((completeCount * (double)100), (double) count));
 
 		courseRes.setKnowledgeBos(courseKnowledges);
 		return courseRes;

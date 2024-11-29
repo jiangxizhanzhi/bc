@@ -1,18 +1,5 @@
 package com.cyberpeace.cs.service.impl;
 
-import java.io.File;
-import java.io.RandomAccessFile;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -26,8 +13,18 @@ import com.cyberpeace.cs.service.FileChunkUploadService;
 import com.cyberpeace.cs.service.context.upload.FileChunkReq;
 import com.cyberpeace.cs.service.context.upload.FileMergeReq;
 import com.cyberpeace.cs.service.context.upload.MergeFileRsp;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.RandomAccessFile;
+import java.util.List;
 
 /**
  * 文件块上传Service实现
@@ -42,12 +39,7 @@ public class FileChunkUploadServiceImpl implements FileChunkUploadService {
 	/**
 	 * 块大小
 	 */
-	private final static long CHUNK_SIZE = 50 * 1024 * 1024;
-
-	/**
-	 * ISO 后缀
-	 */
-	private final static String ISO_SUFFIX = ".iso";
+	private static final long CHUNK_SIZE = 50 * 1024 * 1024L;
 
 	/**
 	 * 上传目录

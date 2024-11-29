@@ -168,7 +168,7 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 
 			// 计算进度
 			studyProcessBo.setProcess(
-					MathUtils.divide(Double.valueOf(studyProcessBo.getCompleteCount() * 100),
+					MathUtils.divide(Double.valueOf(studyProcessBo.getCompleteCount() * (double) 100),
 							 Double.valueOf(studyProcessBo.getLessonCount())));
 
 			return studyProcessBo;

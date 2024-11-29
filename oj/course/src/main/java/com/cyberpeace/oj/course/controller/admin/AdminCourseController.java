@@ -232,7 +232,6 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("批量删除课程信息")
 	@GetMapping("/delete")
-	@AdminRequired
 	public BaseRsp<Boolean> deleteCourse(@ApiParam(value = "id", name = "id") String id) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),

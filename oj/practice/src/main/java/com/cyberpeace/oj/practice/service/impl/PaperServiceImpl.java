@@ -457,7 +457,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 		// 生成理论习题练习
 		List<PaperPracticeContext> theoryContextList = columnMap.getOrDefault(
-				PracticeCategory.PracticeType.THEORY.getCode().intValue(), Lists.newArrayList());
+				PracticeCategory.PracticeType.THEORY.getCode(), Lists.newArrayList());
 		List<PracticeTheoryRef> theoryRefList = theoryContextToRef(theoryContextList, paper);
 		theoryRefs.addAll(theoryRefList);
 

@@ -118,8 +118,7 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 							PracticeRandomFlag randomFlag = practiceRandomFlagMapper
 									.selectByUserAndPractice(authContext.getUserId(),
 											operation.getResourceId(),
-											PracticeRandomFlag.FlagType.LESSON_PRACTICE.getCode()
-													.intValue());
+                                            PracticeRandomFlag.FlagType.LESSON_PRACTICE.getCode());
 							if (null == randomFlag) {
 								randomFlag = getRandomFlag(operation, authContext.getUserId());
 								practiceRandomFlagMapper.insert(randomFlag);

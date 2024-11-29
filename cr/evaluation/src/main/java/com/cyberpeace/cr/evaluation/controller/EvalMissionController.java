@@ -1,6 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.component.ExcelDataHandler;
@@ -29,7 +29,10 @@ import com.cyberpeace.cr.evaluation.service.EvalMissionTemplateService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
-import com.cyberpeace.cr.evaluation.service.impl.bo.*;
+import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
+import com.cyberpeace.cr.evaluation.service.impl.bo.StageData;
+import com.cyberpeace.cr.evaluation.service.impl.bo.TaskBo;
+import com.cyberpeace.cr.evaluation.service.impl.bo.ToolBo;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -433,6 +436,7 @@ public class EvalMissionController {
             rsp.setActionName(evalMissionTemplateLog.getMissionName());
             rsp.setOperateType(missionMap.get(evalMissionTemplateLog.getOperate()));
             UserInfo userInfo = userInfoMap.get(evalMissionTemplateLog.getCreateUserId());
+            rsp.setUserId(evalMissionTemplateLog.getCreateUserId());
             rsp.setName(userInfo.getName());
             rsp.setCreateTime(evalMissionTemplateLog.getCreateTime());
             rsp.setContent(evalMissionTemplateLog.getMissionResult());
@@ -440,6 +444,7 @@ public class EvalMissionController {
         });
         evalNodeLogs.forEach(evalNodeLog -> {
             EvalActionProsecuteRsp rsp = new EvalActionProsecuteRsp();
+            rsp.setUserId(evalNodeLog.getCreateUserId());
             rsp.setActionName(evalNodeLog.getNodeName());
             rsp.setCreateTime(evalNodeLog.getCreateTime());
             rsp.setOperateType(nodeMap.get(evalNodeLog.getOperate()));
@@ -450,6 +455,82 @@ public class EvalMissionController {
         res.sort(Comparator.comparing(EvalActionProsecuteRsp::getCreateTime).reversed());
         ListRsp<EvalActionProsecuteRsp> evalActionProsecuteRspListRsp = PageUtil.pageList(res, pageReqBase.getPage(), pageReqBase.getPerPage());
         return new BaseRsp<>(evalActionProsecuteRspListRsp);
+    }
+
+    @ApiOperation("行动监控统计人员下拉框")
+    @RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
+    @GetMapping("/action/mission/users")
+    public BaseRsp<List<UserInfo>> prosecuteAction(@ApiParam(name = "resource_id", required = true, value = "资源id") @RequestParam(value = "resource_id") String resourceId) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("task_id", resourceId);
+        List<EvalMissionTemplateLog> templateLogs = evalMissionTemplateLogMapper.selectByMap(map);
+        List<EvalNodeLog> evalNodeLogs = evalNodeLogMapper.selectByMap(map);
+        List<CrConstantsConfig> all = crConstantsConfigMapper.getAll();
+        Map<Integer, List<CrConstantsConfig>> constantGroup = StreamApiUtils.groupBy(all, CrConstantsConfig::getType);
+        Map<String, UserInfo> userInfoMap = remoteUserService.allUsers();
+
+        List<UserInfo> users = new ArrayList<>();
+        List<String> userIds = new ArrayList<>();
+        for(EvalMissionTemplateLog evalMissionTemplateLog : templateLogs){
+            if(!userIds.contains(evalMissionTemplateLog.getCreateUserId())){
+                users.add(userInfoMap.get(evalMissionTemplateLog.getCreateUserId()));
+            }
+        }
+        for(EvalNodeLog evalNodeLog : evalNodeLogs){
+            if(!userIds.contains(evalNodeLog.getCreateUserId())){
+                users.add(userInfoMap.get(evalNodeLog.getCreateUserId()));
+            }
+        }
+        return new BaseRsp<>(users);
+    }
+
+    @ApiOperation("行动监控统计")
+    @RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
+    @GetMapping("/action/mission/statistics")
+    public BaseRsp<JSONObject> prosecuteAction(@ApiParam(name = "resource_id", required = true, value = "资源id") @RequestParam(value = "resource_id") String resourceId,
+                                                                    @ApiParam(name = "user_id", value = "人员选择") @RequestParam(value = "user_id") String userId) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("task_id", resourceId);
+        List<EvalMissionTemplateLog> templateLogs = evalMissionTemplateLogMapper.selectByMap(map);
+        List<EvalNodeLog> evalNodeLogs = evalNodeLogMapper.selectByMap(map);
+        List<CrConstantsConfig> all = crConstantsConfigMapper.getAll();
+        Map<Integer, List<CrConstantsConfig>> constantGroup = StreamApiUtils.groupBy(all, CrConstantsConfig::getType);
+        List<CrConstantsConfig> missionNames = constantGroup.get(MissionTemplateStatus.MISSION_CONSTANT);
+        Map<Integer, String> missionMap = StreamApiUtils.toMap(missionNames, CrConstantsConfig::getCode, CrConstantsConfig::getCnName);
+        List<CrConstantsConfig> nodeNames = constantGroup.get(NodeOperate.NODE_CONSTANT);
+        Map<Integer, String> nodeMap = StreamApiUtils.toMap(nodeNames, CrConstantsConfig::getCode, CrConstantsConfig::getCnName);
+
+        Map<String,Integer> taskStatusMap = new HashMap<>();
+        Map<String,Integer> nodeStatusMap = new HashMap<>();
+        for(EvalMissionTemplateLog evalMissionTemplateLog : templateLogs){
+            if(userId != null && !evalMissionTemplateLog.getCreateUserId().equals(userId)){
+                // 直接下一次循环
+                continue;
+            }
+            String operateTypeName = missionMap.get(evalMissionTemplateLog.getOperate());
+            if(taskStatusMap.get(operateTypeName) != null){
+                taskStatusMap.put(operateTypeName,taskStatusMap.get(operateTypeName) + 1);
+            }else{
+                taskStatusMap.put(operateTypeName,1);
+            }
+        }
+        for(EvalNodeLog evalNodeLog : evalNodeLogs){
+            if(userId != null && !evalNodeLog.getCreateUserId().equals(userId)){
+                // 直接下一次循环
+                continue;
+            }
+            String operateTypeName = nodeMap.get(evalNodeLog.getOperate());
+            if(nodeStatusMap.get(operateTypeName) != null){
+                nodeStatusMap.put(operateTypeName,nodeStatusMap.get(operateTypeName) + 1);
+            }else{
+                nodeStatusMap.put(operateTypeName,1);
+            }
+        }
+        JSONObject result = new JSONObject();
+        result.put("taskStatusMap",taskStatusMap);
+        result.put("nodeStatusMap",nodeStatusMap);
+
+        return new BaseRsp<>(result);
     }
 
 

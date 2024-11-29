@@ -12,6 +12,9 @@ public class EvalActionProsecuteRsp {
 	@ApiModelProperty(value = "记录id")
 	private String resourceId;
 
+	@ApiModelProperty(value = "用户-id")
+	private String userId;
+
 	@ApiModelProperty(value = "用户-姓名")
 	@NotNull
 	private String name;

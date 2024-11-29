@@ -1063,9 +1063,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		courseValidateHandler.validateCourseExist(courseId);
 
-		List<Classroom> classrooms = classroomMapper.selectByLesson(resourceIds);
-		List<String> classroomIds = StreamApiUtils.map(classrooms, Classroom::getResourceId);
-
 		// 运行场景
 		List<CourseLesson> lessonList = courseLessonMapper.selectBatchIds(resourceIds);
 		CourseSceneContext sceneContext = this.selectCourseScene(lessonList, authContext);

@@ -1080,16 +1080,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		transactionTemplate.execute(status-> {
 
 			// 笔记和评论
-			resourceIds.forEach(lessonId -> commentMapper.deleteByBusinessId(lessonId));
 			resourceIds.forEach(lessonId -> noteMapper.deleteByBusiness(lessonId, null,
 					Note.NoteResourceType.LESSON.getCode()));
 			// 收藏
 			if (CollectionUtils.isNotEmpty(collectionIds)) {
 				resourceCollectionMapper.deleteBatchIds(collectionIds);
 			}
-
-			// 课堂相关
-			batchDeleteClassroom(classroomIds, authContext);
 
 			// 课后练习
 			lessonList.forEach(courseLesson -> {

@@ -198,38 +198,38 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	@Override
 	public IPage<LibPracticeListBo> selectLibPractice(Page page, LibPracticeQueryBo queryBo,
 			AuthContext authContext) {
+		return theoryConvert(queryBo, page);
 
-		List<String> permissionIds = practiceSetMapper.selectByAuthAndPublic(authContext, true);
-		if (CollectionUtils.isEmpty(permissionIds)
-				|| (StringUtils.isNotBlank(queryBo.getPracticeSetId())
-						&& !permissionIds.contains(queryBo.getPracticeSetId()))) {
-			return null;
-		}
-
-		if (StringUtils.isBlank(queryBo.getPracticeSetId())) {
-			// 仅查询公开习题
-			List<String> theoryIds = practiceTheoryMapper.selectBySetIds(permissionIds, true);
-			List<String> operationIds = Lists.newArrayList();
-					// practiceOperationMapper.selectBySetIds(permissionIds, true);
-
-			return selectAllLibPractice(theoryIds, operationIds, page);
-		}
-
-		PracticeSet practiceSet = practiceSetMapper.selectById(queryBo.getPracticeSetId());
-		if (practiceSet.getPracticeType().intValue() == PracticeCategory.PracticeType.THEORY
-				.getCode()) {
-			return theoryConvert(queryBo, page);
-		} else {
-			// 仅查询公开习题
-			OperationListQuery listQuery = BeanUtils.copy(queryBo, OperationListQuery.class);
-			if (StringUtils.isNotBlank(queryBo.getPracticeSetId())) {
-				listQuery.setPracticeSetIds(Lists.newArrayList(queryBo.getPracticeSetId()));
-			}
-			IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page, listQuery,
-					true);
-
-			return iPage.convert(practiceOperation -> operationToListBo(practiceOperation));
-		}
+//		List<String> permissionIds = practiceSetMapper.selectByAuthAndPublic(authContext, true);
+//		if (CollectionUtils.isEmpty(permissionIds)
+//				|| (StringUtils.isNotBlank(queryBo.getPracticeSetId())
+//						&& !permissionIds.contains(queryBo.getPracticeSetId()))) {
+//			return null;
+//		}
+//
+//		if (StringUtils.isBlank(queryBo.getPracticeSetId())) {
+//			// 仅查询公开习题
+//			List<String> theoryIds = practiceTheoryMapper.selectBySetIds(permissionIds, true);
+//			List<String> operationIds = practiceOperationMapper.selectBySetIds(permissionIds, true);
+//
+//			return selectAllLibPractice(theoryIds, operationIds, page);
+//		}
+//
+//		PracticeSet practiceSet = practiceSetMapper.selectById(queryBo.getPracticeSetId());
+//		if (practiceSet.getPracticeType().intValue() == PracticeCategory.PracticeType.THEORY
+//				.getCode()) {
+//			return theoryConvert(queryBo, page);
+//		} else {
+//			// 仅查询公开习题
+//			OperationListQuery listQuery = BeanUtils.copy(queryBo, OperationListQuery.class);
+//			if (StringUtils.isNotBlank(queryBo.getPracticeSetId())) {
+//				listQuery.setPracticeSetIds(Lists.newArrayList(queryBo.getPracticeSetId()));
+//			}
+//			IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page, listQuery,
+//					true);
+//
+//			return iPage.convert(practiceOperation -> operationToListBo(practiceOperation));
+//		}
 	}
 
 	/**

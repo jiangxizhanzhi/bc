@@ -15,13 +15,6 @@ import lombok.Data;
 @Data
 @ApiModel
 public class LibPracticeListReq extends PageReqBase {
-
-	/**
-	 * 实践设置id
-	 */
-	@ApiModelProperty(name = "practice_set_id", value = "习题集编号")
-	private String practiceSetId;
-
 	/**
 	 * 类别id
 	 */
@@ -34,9 +27,6 @@ public class LibPracticeListReq extends PageReqBase {
 	@ApiModelProperty(name = "question_type", value = "题型")
 	private Integer questionType;
 
-	public void setPractice_set_id(String practiceSetId) {
-		this.practiceSetId = practiceSetId;
-	}
 
 	public void setCategory_id(String categoryId) {
 		this.categoryId = categoryId;

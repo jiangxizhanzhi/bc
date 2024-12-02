@@ -510,6 +510,9 @@ public class EvalMissionController {
                 continue;
             }
             String operateTypeName = missionMap.get(evalMissionTemplateLog.getOperate());
+            if(operateTypeName == null || operateTypeName.equals("")){
+                operateTypeName = "其他";
+            }
             if(taskStatusMap.get(operateTypeName) != null){
                 taskStatusMap.put(operateTypeName,taskStatusMap.get(operateTypeName) + 1);
             }else{

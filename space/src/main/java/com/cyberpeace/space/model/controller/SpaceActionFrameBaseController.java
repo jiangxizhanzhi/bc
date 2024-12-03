@@ -60,7 +60,8 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 			wrapper.in(E::getResourceId, ids);
 		}
 		IPage<E> iPage = baseService.page(req.toPageParam(), wrapper);
-		iPage.convert(e -> e.entity2Bo(this.getRelatedMap(iPage.getRecords())));
+		Map<String, List<IdAndName>> relatedMap = this.getRelatedMap(iPage.getRecords());
+		iPage.convert(e -> e.entity2Bo(relatedMap));
 		ListRsp<B> res = PageUtil.getListResult(iPage);
 		return new BaseRsp<>(res);
 	}

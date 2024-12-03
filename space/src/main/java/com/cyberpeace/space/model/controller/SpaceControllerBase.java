@@ -41,7 +41,8 @@ public abstract class SpaceControllerBase<S extends IService<E>, E extends Space
 			wrapper.like(E::getName, req.getPattern());
 		}
 		IPage<E> iPage = baseService.page(req.toPageParam(), wrapper);
-		iPage.convert(e -> e.entity2Bo(getRelatedMap(iPage.getRecords())));
+		Map<String, IdAndName> relatedMap = getRelatedMap(iPage.getRecords());
+		iPage.convert(e -> e.entity2Bo(relatedMap));
 		ListRsp<B> res = PageUtil.getListResult(iPage);
 		return new BaseRsp<>(res);
 	}

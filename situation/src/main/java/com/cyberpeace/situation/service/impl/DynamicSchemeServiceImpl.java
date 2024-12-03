@@ -464,6 +464,10 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 					wsCvss.setCvss(cvssMap.get(attackMessageReq.getLeak()));
 				} else {
 					wsMultiNodeDynamic.setIsSucceed(0);
+
+					// 处理动作后的节点状态
+					Integer nodeStatus = situationHandlerService.getNodeStatus(attackMessageReq.getSceneId(), attackMessageReq.getTargetId(), null);
+					wsCvss.setFlag(nodeStatus);
 					wsCvss.setCvss(cvssMap.get(attackMessageReq.getLeak()));
 				}
 			} else {

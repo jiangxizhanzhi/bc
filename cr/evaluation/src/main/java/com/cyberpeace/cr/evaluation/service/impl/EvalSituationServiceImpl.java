@@ -24,8 +24,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -70,6 +72,7 @@ public class EvalSituationServiceImpl implements EvalSituationService {
 
     @Override
     public List<EvalSituationServerRsp> getEvalServerByResourceId(String resourceId) {
+        log.info("getEvalServerByResourceId begin. resourceId:[{}]", resourceId);
         List<EvalSituationServerRsp> evalSituationServerRspList = new ArrayList<>();
         resourceId = resourceId.substring(0, resourceId.length() - 1);
         String mpSceneId = localSceneService.getMpSceneIdByBusinessInstanceId(resourceId);
@@ -83,6 +86,7 @@ public class EvalSituationServiceImpl implements EvalSituationService {
             evalSituationServerRsp.setServerName(jsonObject.getString("name"));
             evalSituationServerRspList.add(evalSituationServerRsp);
         }
+        log.info("getEvalServerByResourceId end. evalSituationServerRspList:[{}]", evalSituationServerRspList);
         return evalSituationServerRspList;
     }
 
@@ -147,12 +151,36 @@ public class EvalSituationServiceImpl implements EvalSituationService {
 
     @Override
     public void pushLoadResult(String resourceId, MultipartFile multipartFile) {
+//        resourceId = resourceId.substring(0, resourceId.length() - 1);
+        log.info("pushLoadResult begin. resourceId:{}", resourceId);
+        File file = null;
+        try {
+            file = FileUtil.saveFile(multipartFile, ZipUtil.generatePath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        // 使用 CompletableFuture 异步执行
+        File finalFile = file;
+        String finalResourceId = resourceId;
+        CompletableFuture.runAsync(() -> {
+            try {
+                doPushLoadResult(finalResourceId, multipartFile, finalFile);
+            } catch (Exception e) {
+                log.error("Error in pushLoadResult:", e);
+            }
+        });
+    }
+
+    private void doPushLoadResult(String resourceId, MultipartFile multipartFile, File file) {
         String mpSceneId = localSceneService.getMpSceneIdByBusinessInstanceId(resourceId);
         JSONObject scene = remoteSceneService.getById(mpSceneId, null);
-        Map<String,JSONObject> elementsMap = scene.getJSONObject("scene")
+        Map<String, JSONObject> elementsMap = scene.getJSONObject("scene")
                 .getJSONObject("plugins")
                 .getJSONObject("cpcloud")
                 .getObject("elements", Map.class);
+        List<JSONObject> elements = scene.getJSONObject("scene").getJSONObject("topology")
+                .getObject("elements", List.class);
+        Map<String, String> collect = elements.stream().collect(Collectors.toMap(jsonObject -> jsonObject.getString("id"), jsonObject -> jsonObject.getString("eid")));
         Set<Map.Entry<String, JSONObject>> entries = elementsMap.entrySet();
         HashMap<String, String> map = new HashMap<>();
         ArrayList<String> elementIds = new ArrayList<>();
@@ -160,10 +188,17 @@ public class EvalSituationServiceImpl implements EvalSituationService {
         for (Map.Entry<String, JSONObject> entry : entries) {
             String elementId = entry.getKey();
             JSONObject element = entry.getValue();
-            if(StringUtils.isNotBlank(element.getString("load_tool_id"))){
-                map.put(element.getString("load_tool_id"),elementId);
+            /*if (StringUtils.isNotBlank(element.getString("load_tool_id"))) {
+                map.put(element.getString("load_tool_id"), collect.get(elementId));
+                loadIds.add(collect.get(elementId));
+            } else {
+                elementIds.add(collect.get(elementId));
+            }*/
+
+            if (StringUtils.isNotBlank(element.getString("load_tool_id"))) {
+                map.put(element.getString("load_tool_id"), elementId);
                 loadIds.add(elementId);
-            }else {
+            } else {
                 elementIds.add(elementId);
             }
         }
@@ -171,11 +206,10 @@ public class EvalSituationServiceImpl implements EvalSituationService {
 
         String originalFileName = multipartFile.getOriginalFilename();
         String fileSuffix = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
-        File file = null;
+
         try (Connection connection = ConnectionUtil.getConnection();
              Channel channel = connection.createChannel();
         ) {
-            file = FileUtil.saveFile(multipartFile, ZipUtil.generatePath());
 
             if ("xls".equals(fileSuffix) || "xlsx".equals(fileSuffix)) {
                 ExcelDataHandler excelDataHandler = new ExcelDataHandler(file.getPath(), 0);
@@ -199,24 +233,32 @@ public class EvalSituationServiceImpl implements EvalSituationService {
                     MpEventType mpEventType = MpEventType.UNKNOWN;
 
                     rbSituationAttack.put("attack_type", mpEventType.getMsg());
-                    rbSituationAttack.put("src_node", map.get(countData.get(0)));
-                    if(elementIds.size()>0){
+//                    rbSituationAttack.put("src_node", map.get(countData.get(0)));
+                    rbSituationAttack.put("src_node", "4aae6cae-e1e4-4d7c-a67f-1da66194ebf0");
+                    rbSituationAttack.put("dst_node", "76d78f06a107470b9d1d3f981cbbedd2");
+                    /*if (elementIds.size() > 0) {
                         rbSituationAttack.put("dst_node", elementIds.get(random.nextInt(elementIds.size())));
-                    }else {
+                    } else {
                         rbSituationAttack.put("dst_node", loadIds.get(random.nextInt(loadIds.size())));
-                    }
+                    }*/
                     Map<String, Object> msgMap = new HashMap<>();
                     msgMap.put("type", "mShowAttack");
                     msgMap.put("scene", resourceId);
                     msgMap.put("data", JSON.toJSON(rbSituationAttack));
                     JSONObject msgObject = new JSONObject(msgMap);
-                    channel.queueDeclare(resourceId, true, false, false, null);
-                    channel.basicPublish("", resourceId, null,
+                   /* channel.queueDeclare("eae06aefd911443e8aacdf714af60aba/", true, false, false, null);
+                    channel.basicPublish("", "eae06aefd911443e8aacdf714af60aba/", null,
                             msgObject.toString().getBytes(StandardCharsets.UTF_8));
+                    channel.queueDeclare(resourceId, true, false, false, null);
+                    channel.queueBind(resourceId, RBSITUATIONEXCHANGE, resourceId);*/
+                    channel.basicPublish(RBSITUATIONEXCHANGE, resourceId, null,
+                            msgObject.toString().getBytes(StandardCharsets.UTF_8));
+                    log.info("doPushLoadResult count:{} resourceId:{}", i + 1, resourceId);
                     Thread.sleep(900);
                 }
             }
             file.delete();
+
         } catch (Exception e) {
             log.error("catch error:", e);
             log.error(ERRORLOG, mqHost, mqPort, userName, password);

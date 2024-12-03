@@ -46,8 +46,8 @@ public class EvalSituationController {
 	@ApiOperation("推送载荷执行结果数据")
 	@ApiParam(name = "resource_id", value = "测评任务编号")
 	@PostMapping("/push_load_result")
-	public BaseRsp<Boolean> pushLoadResult( @RequestParam(value = "resource_id") String resourceId,
-											@RequestParam("file") MultipartFile file) {
+	public BaseRsp<Boolean> pushLoadResult( @RequestParam(name = "resource_id", value = "resource_id") String resourceId,
+											@RequestParam(name = "file", value = "file") MultipartFile file) {
 		evalSituationService.pushLoadResult(resourceId,file);
 		return new BaseRsp<>(Boolean.TRUE);
 	}

@@ -11,6 +11,7 @@ import com.cyberpeace.cr.evaluation.service.EvalSituationService;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.FlowLogsPageContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.cyberpeace.situation.constant.ws.AttackType;
 import com.cyberpeace.situation.constant.ws.MpEventType;
 import com.google.common.collect.Lists;
 import com.rabbitmq.client.Channel;
@@ -137,8 +138,7 @@ public class EvalSituationServiceImpl implements EvalSituationService {
                 msgMap.put("scene", resourceId);
                 msgMap.put("data", JSON.toJSON(rbSituationAttack));
                 JSONObject msgObject = new JSONObject(msgMap);
-                channel.queueDeclare(resourceId, true, false, false, null);
-                channel.basicPublish("", resourceId, null,
+                channel.basicPublish(RBSITUATIONEXCHANGE, resourceId, null,
                         msgObject.toString().getBytes(StandardCharsets.UTF_8));
                 count++;
                 Thread.sleep(900);
@@ -151,7 +151,6 @@ public class EvalSituationServiceImpl implements EvalSituationService {
 
     @Override
     public void pushLoadResult(String resourceId, MultipartFile multipartFile) {
-//        resourceId = resourceId.substring(0, resourceId.length() - 1);
         log.info("pushLoadResult begin. resourceId:{}", resourceId);
         File file = null;
         try {
@@ -188,12 +187,6 @@ public class EvalSituationServiceImpl implements EvalSituationService {
         for (Map.Entry<String, JSONObject> entry : entries) {
             String elementId = entry.getKey();
             JSONObject element = entry.getValue();
-            /*if (StringUtils.isNotBlank(element.getString("load_tool_id"))) {
-                map.put(element.getString("load_tool_id"), collect.get(elementId));
-                loadIds.add(collect.get(elementId));
-            } else {
-                elementIds.add(collect.get(elementId));
-            }*/
 
             if (StringUtils.isNotBlank(element.getString("load_tool_id"))) {
                 map.put(element.getString("load_tool_id"), elementId);
@@ -211,7 +204,7 @@ public class EvalSituationServiceImpl implements EvalSituationService {
              Channel channel = connection.createChannel();
         ) {
 
-            if ("xls".equals(fileSuffix) || "xlsx".equals(fileSuffix)) {
+            if ("xls".equals(fileSuffix) || "xlsx".equals(fileSuffix) || "dat".equals(fileSuffix)) {
                 ExcelDataHandler excelDataHandler = new ExcelDataHandler(file.getPath(), 0);
                 List<List<String>> fileCount = excelDataHandler.getSheetData(1);
                 for (int i = 0; i < fileCount.size(); i++) {
@@ -230,27 +223,22 @@ public class EvalSituationServiceImpl implements EvalSituationService {
                     rbSituationAttack.put("dst_action", 1);
                     rbSituationAttack.put("first_view", false);
 
-                    MpEventType mpEventType = MpEventType.UNKNOWN;
-
-                    rbSituationAttack.put("attack_type", mpEventType.getMsg());
-//                    rbSituationAttack.put("src_node", map.get(countData.get(0)));
-                    rbSituationAttack.put("src_node", "4aae6cae-e1e4-4d7c-a67f-1da66194ebf0");
-                    rbSituationAttack.put("dst_node", "76d78f06a107470b9d1d3f981cbbedd2");
-                    /*if (elementIds.size() > 0) {
-                        rbSituationAttack.put("dst_node", elementIds.get(random.nextInt(elementIds.size())));
+                    AttackType successAttack = AttackType.SUCCESS_ATTACK;
+                    String srcNode = map.get(countData.get(0));
+                    rbSituationAttack.put("src_node", srcNode);
+                    rbSituationAttack.put("attack_type", successAttack.getMsg());
+                    if (elementIds.size() > 0) {
+                        String dstNode = getdstNode(srcNode, elementIds, random);
+                        rbSituationAttack.put("dst_node", dstNode);
                     } else {
-                        rbSituationAttack.put("dst_node", loadIds.get(random.nextInt(loadIds.size())));
-                    }*/
+                        String dstNode = getdstNode(srcNode, loadIds, random);
+                        rbSituationAttack.put("dst_node", dstNode);
+                    }
                     Map<String, Object> msgMap = new HashMap<>();
                     msgMap.put("type", "mShowAttack");
                     msgMap.put("scene", resourceId);
                     msgMap.put("data", JSON.toJSON(rbSituationAttack));
                     JSONObject msgObject = new JSONObject(msgMap);
-                   /* channel.queueDeclare("eae06aefd911443e8aacdf714af60aba/", true, false, false, null);
-                    channel.basicPublish("", "eae06aefd911443e8aacdf714af60aba/", null,
-                            msgObject.toString().getBytes(StandardCharsets.UTF_8));
-                    channel.queueDeclare(resourceId, true, false, false, null);
-                    channel.queueBind(resourceId, RBSITUATIONEXCHANGE, resourceId);*/
                     channel.basicPublish(RBSITUATIONEXCHANGE, resourceId, null,
                             msgObject.toString().getBytes(StandardCharsets.UTF_8));
                     log.info("doPushLoadResult count:{} resourceId:{}", i + 1, resourceId);
@@ -263,6 +251,14 @@ public class EvalSituationServiceImpl implements EvalSituationService {
             log.error("catch error:", e);
             log.error(ERRORLOG, mqHost, mqPort, userName, password);
         }
+    }
+
+    private String getdstNode(String srcNode,ArrayList<String> ids,Random random){
+        String dstNode = ids.get(random.nextInt(ids.size()));
+        if(ids.size()>=2 && srcNode.equals(dstNode)){
+            dstNode = getdstNode(srcNode,ids,random);
+        }
+        return dstNode;
     }
 
 }

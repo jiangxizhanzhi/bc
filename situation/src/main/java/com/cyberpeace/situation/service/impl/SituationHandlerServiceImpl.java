@@ -350,39 +350,8 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 					}
 				}
 			}
-			// 获取该节点下防御成功记录
-			List<Defense> defenses = dynamicSchemeMapper.queryDefenseByNodeId(sceneData.getSceneId(), elementId, 1);
-			// 获取该节点下攻击成功记录
-			List<Defense> attacks = dynamicSchemeMapper.queryDefenseByNodeId(sceneData.getSceneId(), elementId, 0);
-			int a = 0;
-			for (Defense attack : attacks) {
-				for (Defense defens : defenses) {
-					if (attack.getVulnId().equals(defens.getVulnId())) {
-						a = a + 1;
-						break;
-					}
-				}
-			}
 
-			if (attacks != null && attacks.size() != 0 && a == attacks.size()
-					&& defenses != null && defenses.size() != 0) {
-				elementInfo.setFlag(2);
-			} else if (attacks != null && attacks.size() != 0 && a < attacks.size()) {
-				elementInfo.setFlag(3);
-			} else {
-				elementInfo.setFlag(1);
-			}
-
-//			if (defenses != null && defenses.size() != 0) {
-//				elementInfo.setFlag(2);
-//			} else {
-//				if (attacks != null && attacks.size() != 0) {
-//					elementInfo.setFlag(3);
-//				} else {
-//					elementInfo.setFlag(1);
-//				}
-//			}
-
+			elementInfo.setFlag(getNodeStatus(sceneData.getSceneId(), elementId, null));
 			elementsInfo.put(elementId, elementInfo);
 		}
 
@@ -1038,6 +1007,54 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		sceneAllDataRes.setLinkStateList(linkStateList);
 		sceneAllDataRes.setAverageSceneData(averageSceneData);
 		return sceneAllDataRes;
+	}
+
+	@Override
+	public Integer getNodeStatus(String sceneId, String nodeId, Defense current) {
+
+		// 1为正常，2为已加固，3为被攻陷，4为已修复
+
+		// 查询节点的攻击、防御记录
+		List<Defense> attacks = dynamicSchemeMapper.queryDefenseByNodeId(sceneId, nodeId, 0);
+		List<Defense> defenses = dynamicSchemeMapper.queryDefenseByNodeId(sceneId, nodeId, 1);
+
+		// 插入当前数据
+		if (current != null && current.getType().equals(0)) {
+			attacks.add(current);
+		} else if (current != null && current.getType().equals(1)) {
+			defenses.add(current);
+		}
+
+		// 处理所有被攻击和防御的漏洞列表
+		Set<String> attackVulns = attacks.stream().map(Defense::getVulnId).collect(Collectors.toSet());
+		Set<String> defenseVulns = defenses.stream().map(Defense::getVulnId).collect(Collectors.toSet());
+
+		// 1、检查是否被攻陷（检查是否有未被防御的已经被攻击的漏洞）
+		if (!attackVulns.stream().allMatch(defenseVulns::contains)) {
+			return 3;
+		}
+
+		// 2、检查是否为加固
+		// 2.1 检查同一个漏洞是否被防御了两次
+		Map<String, Long> defenseCount = defenses.stream()
+				.collect(Collectors.groupingBy(Defense::getVulnId, Collectors.counting()));
+		if (defenseCount.values().stream().anyMatch(count -> count >= 2)) {
+			return 2;
+		}
+
+		// 2.2 检查防御记录中是否存在未被攻击的漏洞
+		if (!defenseVulns.stream().allMatch(attackVulns::contains)) {
+			return 2;
+		}
+
+		// 3、检查是否为已修复状态
+		if (!defenseVulns.isEmpty() && defenseVulns.size() == attackVulns.size()) {
+			return 1;
+		}
+
+		// 4、默认为正常状态
+		return 1;
+
 	}
 
 }

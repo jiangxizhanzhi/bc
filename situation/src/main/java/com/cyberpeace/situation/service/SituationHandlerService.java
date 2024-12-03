@@ -5,6 +5,7 @@ import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
 import com.cyberpeace.situation.controller.res.LinkStateRes;
 import com.cyberpeace.situation.controller.res.SceneAllDataRes;
+import com.cyberpeace.situation.dao.entity.Defense;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
@@ -174,5 +175,7 @@ public interface SituationHandlerService {
 	LinkStateRes getRandomLinkData(String linkId);
 
 	SceneAllDataRes getSceneAllDate(String topoId);
+
+	Integer getNodeStatus(String sceneId, String nodeId, Defense current);
 
 }

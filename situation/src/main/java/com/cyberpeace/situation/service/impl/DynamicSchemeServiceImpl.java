@@ -520,7 +520,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		}
 
 		WsMessage<WsCvss> wsCvssWsMessage = new WsMessage<>(MessageType.Cvss.getDesc(), wsCvss);
-		pushDataToRoom(wsCvssWsMessage, attackMessageReq, playback, null);
+		pushDataToRoom(wsCvssWsMessage, attackMessageReq, playback, null, false);
 
 		//推送攻击弹窗
 		WsAttackInfo attackInfo = new WsAttackInfo();
@@ -557,9 +557,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				attackInfo.setResult(attackType.getSuccessDesc());
 			}
 
-			pushDataToRoom(wsMessage, attackMessageReq, playback, true);
+			pushDataToRoom(wsMessage, attackMessageReq, playback, true, true);
 		} else {
-			pushDataToRoom(wsMessage, attackMessageReq, playback, false);
+			pushDataToRoom(wsMessage, attackMessageReq, playback, false, true);
 		}
 		WsMessage<WsAttackInfo> attackInfoWsMessage = new WsMessage<>(MessageType.AttackInfo.getDesc(), attackInfo);
 		situationHandlerService.pushDataToRoom(attackInfoWsMessage, attackMessageReq.getSceneId());
@@ -1263,21 +1263,8 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				wsCvss.setFlag(2);
 				// 判断是否为多方案推送，多方案推送记录防御成功记录
 				if (isMultiterm) {
-					// 多任务推送判断该加固节点是否有攻击成功记录
-					List<Defense> defenses = dynamicSchemeMapper.queryDefenseByNodeId(attackMessageReq.getSceneId(), attackMessageReq.getDefenseTargetId(), 0);
-					if (defenses != null && defenses.size() != 0) {
-						// 有被攻击记录，判断是否为第一次加固，第一次为修复，第二次为加固
-						List<Defense> defenseList =
-								dynamicSchemeMapper.queryDefenseByNodeId(attackMessageReq.getSceneId(), attackMessageReq.getDefenseTargetId(), 1);
-						if (defenseList == null || defenseList.size() == 0) {
-							// 为第一次加固，是修复攻击漏洞，返回状态为正常
-							wsCvss.setFlag(1);
-						} else {
-							// 为第二次加固，返回状态为加固成功
-							wsCvss.setFlag(2);
-						}
-					}
 
+					// 0、构造记录
 					Defense defense = new Defense();
 					defense.setResourceId(IDGeneratorUtil.getID());
 					defense.setSceneId(attackMessageReq.getSceneId());
@@ -1286,6 +1273,11 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 					defense.setDeacription(toolVuln.get(0).getDescribe());
 					defense.setType(1);
 					defense.setCreateTime(new Date());
+
+					// 处理动作后的节点状态
+					Integer nodeStatus = situationHandlerService.getNodeStatus(attackMessageReq.getSceneId(), attackMessageReq.getDefenseTargetId(), defense);
+					wsCvss.setFlag(nodeStatus);
+
 					// 记录防御成功数据
 					dynamicSchemeMapper.addDefense(defense);
 				}
@@ -1298,39 +1290,16 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 		WsMessage<WsDefenseDynamic> wsMessage = new WsMessage<>(MessageType.DefenseDynamic.getDesc(), wsDefenseDynamic);
 		// 推送防御动效
-		pushDataToRoom(wsMessage, attackMessageReq, playback, null);
+		pushDataToRoom(wsMessage, attackMessageReq, playback, null, true);
 
 		List<Defense> defenses = dynamicSchemeMapper.queryDefenseByNodeId(attackMessageReq.getSceneId(), attackMessageReq.getDefenseTargetId(), 1);
 		String imageUuid = remoteTerminalService.queryImageId(attackMessageReq.getDefenseTargetId());
 		if (imageUuid != null) {
-			// 获取设备信息
-			DeviceInfo deviceInfo = remoteTerminalService.getById(imageUuid);
-			if (deviceInfo != null && deviceInfo.getVulns() != null && deviceInfo.getVulns().size() != 0) {
-				List<String> vulns = deviceInfo.getVulns();
-				List<Vuln> leaks = dynamicSchemeMapper.queryLeakByIds(vulns);
-				Double cvssAll = 0.0;
-				Double cvssBll = 0.0;
-				List<Vuln> we = BeanUtils.deepCopyList(leaks, Vuln.class);
-				for (Vuln vuln : leaks) {
-					cvssAll = cvssAll + vuln.getCvss();
-					for (Defense defens : defenses) {
-						if (vuln.getResourceId().equals(defens.getVulnId())) {
-							we.remove(vuln);
-//							cvssBll = cvssBll + vuln.getCvss();
-							break;
-						}
-					}
-				}
-				for (Vuln vuln : we) {
-					cvssBll = cvssBll + vuln.getCvss();
-				}
-				Double cvss = cvssBll/cvssAll*10;
-				String str = String.format("%.2f", cvss);
-				wsCvss.setCvss(Double.parseDouble(str));
-			}
+			VulnTop vulnTop = queryVulnTop(attackMessageReq.getSceneId(), imageUuid, attackMessageReq.getDefenseTargetId());
+			wsCvss.setCvss(vulnTop.getCvss());
 		}
 		WsMessage<WsCvss> wsCvssWsMessage = new WsMessage<>(MessageType.Cvss.getDesc(), wsCvss);
-		pushDataToRoom(wsCvssWsMessage, attackMessageReq, playback, null);
+		pushDataToRoom(wsCvssWsMessage, attackMessageReq, playback, null, false);
 
 		//推送防御弹窗
 		WsDefenseInfo wsDefenseInfo = new WsDefenseInfo();
@@ -1362,14 +1331,14 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		situationHandlerService.pushDataToRoom(defenseInfoWsMessage, attackMessageReq.getSceneId());
 	}
 
-	private <T> void pushDataToRoom(T data, AttackMessageReq attackMessageReq, Boolean playback, Boolean attackSuccess) {
+	private <T> void pushDataToRoom(T data, AttackMessageReq attackMessageReq, Boolean playback, Boolean attackSuccess, Boolean addData) {
 		situationHandlerService.pushDataToRoom(data, attackMessageReq.getSceneId());
 		if (attackMessageReq.getStep() != null) {
 			WsRealisticSceneDynamic wsRealisticSceneDynamic = new WsRealisticSceneDynamic();
 			wsRealisticSceneDynamic.setStep(attackMessageReq.getStep());
 			situationHandlerService.pushDataToRealisticScene(attackMessageReq.getSceneId(), wsRealisticSceneDynamic);
 		}
-		if(Boolean.FALSE.equals(playback)){
+		if(Boolean.FALSE.equals(playback) && Boolean.TRUE.equals(addData)){
 			//如果不是回放则会增加一条动效历史
 			attackMessageHistoryService.add(attackMessageReq, attackSuccess);
 		}

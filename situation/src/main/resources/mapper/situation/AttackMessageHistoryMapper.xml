@@ -126,4 +126,9 @@
         </where>
     </select>
 
+    <delete id="deleteMessageBySceneId">
+        delete from situation_attack_message_history
+        where scene_id = #{sceneId}
+    </delete>
+
 </mapper>

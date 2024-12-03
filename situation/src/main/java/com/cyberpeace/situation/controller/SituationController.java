@@ -15,6 +15,8 @@ import com.cyberpeace.situation.controller.res.LinkStateRes;
 import com.cyberpeace.situation.controller.res.RefreshDataRes;
 import com.cyberpeace.situation.controller.res.SceneConfigRes;
 import com.cyberpeace.situation.dao.entity.SceneConfig;
+import com.cyberpeace.situation.dao.mapper.AttackMessageHistoryMapper;
+import com.cyberpeace.situation.dao.mapper.DynamicSchemeMapper;
 import com.cyberpeace.situation.dao.mapper.SceneConfigMapper;
 import com.cyberpeace.situation.model.MpSceneData;
 import com.cyberpeace.situation.model.SceneData;
@@ -56,6 +58,12 @@ public class SituationController {
 
 	@Autowired
 	private AttackMessageHistoryService attackMessageHistoryService;
+
+	@Autowired
+	private DynamicSchemeMapper dynamicSchemeMapper;
+
+	@Autowired
+	private AttackMessageHistoryMapper attackMessageHistoryMapper;
 
 	@CrossOrigin("*")
 	@ApiOperation("获取场景拓扑")
@@ -305,5 +313,15 @@ public class SituationController {
 	public BaseRsp<LinkStateRes> gatRandomLinkData(@ApiParam(name = "link_id", value = "链路编号",
 			required = true) @RequestParam(value = "link_id") String linkId) {
 		return new BaseRsp<>(situationHandlerService.getRandomLinkData(linkId));
+	}
+
+	@ApiOperation("清除态势数据")
+	@GetMapping ("clear")
+	public BaseRsp<Boolean>
+	clearSceneData(@ApiParam(name = "scene_id", value = "场景编号",
+			required = true) @RequestParam(value = "scene_id") String sceneId) {
+		dynamicSchemeMapper.deleteDefenseBySceneId(sceneId);
+		attackMessageHistoryMapper.deleteMessageBySceneId(sceneId);
+		return new BaseRsp<>(true);
 	}
 }

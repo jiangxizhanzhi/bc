@@ -73,4 +73,6 @@ public interface AttackMessageHistoryMapper extends BaseMapper<AttackMessageHist
 	 */
 	List<AttackMessageHistory> getDynamicByNodeIdByHighDefenseLevel(@Param("defenseTargetId") String defenseTargetId);
 
+	void deleteMessageBySceneId(@Param("sceneId") String sceneId);
+
 }

@@ -11,7 +11,10 @@ import javax.validation.constraints.NotBlank;
  * 实操更新请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see OperationAddReq
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -19,6 +22,8 @@ public class OperationUpdateReq extends OperationAddReq {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "resource_id", value = "资源编号")
 	@NotBlank(groups = { Update.class })

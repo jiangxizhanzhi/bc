@@ -14,7 +14,10 @@ import java.util.List;
  * 实践实操Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
@@ -26,6 +29,11 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	 * @param listQuery 列表查询
 	 * @param isPublic  是否公开
 	 * @return {@code IPage<PracticeOperation> }
+	 * @throws
+	 * @see Page
+	 * @see OperationListQuery
+	 * @see Boolean
+	 * @see IPage<PracticeOperation>
 	 */
 	IPage<PracticeOperation> pageByQuery(@Param("page") Page page,
 			@Param("listQuery") OperationListQuery listQuery, @Param("isPublic") Boolean isPublic);
@@ -36,6 +44,10 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	 * @param setIds   设置id列表
 	 * @param isPublic 是否公开
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
+	 * @see List<String>
 	 */
 	List<String> selectBySetIds(@Param("setIds") List<String> setIds,
 			@Param("isPublic") Boolean isPublic);
@@ -45,6 +57,9 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	 *
 	 * @param setIds 设置id列表
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> selectOnlyBySetIds(@Param("setIds") List<String> setIds);
 
@@ -54,6 +69,10 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	 * @param categoryIds 类别id列表
 	 * @param isPublic    是否公开
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
+	 * @see List<String>
 	 */
 	List<String> selectByCategoryIds(@Param("categoryIds") List<String> categoryIds,
 			@Param("isPublic") Boolean isPublic);
@@ -64,6 +83,10 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	 * @param listQuery
 	 * @param count
 	 * @return
+	 * @throws
+	 * @see OperationListQuery
+	 * @see Integer
+	 * @see List<PracticeOperation>
 	 */
 	List<PracticeOperation> randomChoice(@Param("query") OperationListQuery listQuery,
 			@Param("limit") Integer count);
@@ -74,6 +97,10 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	 * @param practiceSetId
 	 * @param title
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	String selectByTitle(@Param("practiceSetId") String practiceSetId,
 			@Param("title") String title);
@@ -83,6 +110,9 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	 *
 	 * @param resourceIds 资源id列表
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> topoIdsByIds(@Param("resource_ids") List<String> resourceIds);
 
@@ -92,6 +122,10 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	 * @param listQuery 列表查询
 	 * @param isPublic  是否公开
 	 * @return {@code List<PracticeOperation> }
+	 * @throws
+	 * @see OperationListQuery
+	 * @see Boolean
+	 * @see List<PracticeOperation>
 	 */
 	List<PracticeOperation> listByQuery(@Param("listQuery") OperationListQuery listQuery,
 			@Param("isPublic") Boolean isPublic);
@@ -101,6 +135,9 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	 *
 	 * @param setIds 设置id列表
 	 * @return {@code String }
+	 * @throws
+	 * @see List<String>
+	 * @see String
 	 */
 	String searchBuiltinBySetIds(@Param("setIds") List<String> setIds);
 
@@ -108,6 +145,8 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	 * 查询都类别id列表
 	 *
 	 * @return {@code List<PracticeOperation> }
+	 * @throws
+	 * @see List<PracticeOperation>
 	 */
 	List<PracticeOperation> selectAllCategoryIds();
 
@@ -115,6 +154,8 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	 * 查询时间
 	 *
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
 	 */
 	List<String> selectTime();
 }

@@ -32,7 +32,11 @@ import java.util.*;
  * 实践纸Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see ServiceImpl
+ * @see PracticePaperService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -40,42 +44,56 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 
 	/**
 	 * 实践理论Mapper
+	 *
+	 * @see PracticeTheoryMapper
 	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
 	/**
 	 * 实践解决Mapper
+	 *
+	 * @see PracticeSolvedMapper
 	 */
 	@Autowired
 	private PracticeSolvedMapper practiceSolvedMapper;
 
 	/**
 	 * 实践设置Mapper
+	 *
+	 * @see PracticeSetMapper
 	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
 	/**
 	 * 实践纸Mapper
+	 *
+	 * @see PracticePaperMapper
 	 */
 	@Autowired
 	private PracticePaperMapper practicePaperMapper;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 纸实践理论Service
+	 *
+	 * @see PaperPracticeTheoryService
 	 */
 	@Autowired
 	private PaperPracticeTheoryService paperPracticeTheoryService;
 
 	/**
 	 * 纸实践理论Mapper
+	 *
+	 * @see PaperPracticeTheoryMapper
 	 */
 	@Autowired
 	private PaperPracticeTheoryMapper paperPracticeTheoryMapper;
@@ -84,6 +102,8 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 	 * 获取最后纸设置
 	 *
 	 * @return {@code PracticePaperCreateReq }
+	 * @throws
+	 * @see PracticePaperCreateReq
 	 */
 	@Override
 	public PracticePaperCreateReq getLastPaperSetting() {
@@ -111,6 +131,9 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 	 *
 	 * @param practicePaperCreateReq 实践纸创造请求体
 	 * @return {@code PracticePaper }
+	 * @throws
+	 * @see PracticePaperCreateReq
+	 * @see PracticePaper
 	 */
 	@Override
 	public PracticePaper createPaper(PracticePaperCreateReq practicePaperCreateReq) {
@@ -190,6 +213,9 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 	 *
 	 * @param paperId 纸id
 	 * @return {@code PaperSummaryRes }
+	 * @throws
+	 * @see String
+	 * @see PaperSummaryRes
 	 */
 	@Override
 	public PaperSummaryRes getPaperSummaryRes(String paperId) {
@@ -212,6 +238,8 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 	 * 组卷记录
 	 *
 	 * @return
+	 * @throws
+	 * @see List<PaperRecordRes>
 	 */
 	@Override
 	public List<PaperRecordRes> getPaperRecord() {
@@ -224,6 +252,9 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 	 *
 	 * @param isFinish 结束了
 	 * @return {@code List<PaperRecordSummaryResByDay> }
+	 * @throws
+	 * @see Boolean
+	 * @see List<PaperRecordSummaryResByDay>
 	 */
 	@Override
 	public List<PaperRecordSummaryResByDay> getAllPaperRecord(Boolean isFinish) {
@@ -265,6 +296,9 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 	 *
 	 * @param paperId 纸id
 	 * @return {@code PaperRecordDetailRes }
+	 * @throws
+	 * @see String
+	 * @see PaperRecordDetailRes
 	 */
 	@Override
 	public PaperRecordDetailRes getPaperRecordDetail(String paperId) {
@@ -294,6 +328,9 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 	 *
 	 * @param paperId 纸id
 	 * @return {@code PracticePaper }
+	 * @throws
+	 * @see String
+	 * @see PracticePaper
 	 */
 	@Override
 	public PracticePaper practiceAgain(String paperId) {
@@ -333,6 +370,10 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 	 * @param status
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see List<Integer>
+	 * @see AuthContext
+	 * @see List<String>
 	 */
 	private List<String> getPracticeIdsByQueryAndSolved(List<Integer> status, AuthContext authContext) {
 		List<String> practiceIds = new ArrayList<>();

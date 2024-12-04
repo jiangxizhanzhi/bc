@@ -15,7 +15,10 @@ import java.util.Map;
  * 任务解析
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see MdContentParser
+ * @since 1.0.0
  */
 @Service
 public class BaseMdParser implements MdContentParser<List<TheoryBaseMd>, String> {
@@ -25,6 +28,9 @@ public class BaseMdParser implements MdContentParser<List<TheoryBaseMd>, String>
 	 *
 	 * @param content 内容
 	 * @return {@code List<TheoryBaseMd> }
+	 * @throws
+	 * @see Object
+	 * @see List<TheoryBaseMd>
 	 */
 	@Override
 	public List<TheoryBaseMd> parse(Object content) {
@@ -69,6 +75,9 @@ public class BaseMdParser implements MdContentParser<List<TheoryBaseMd>, String>
 	 *
 	 * @param theoryBaseMds 理论基础MDS
 	 * @return {@code String }
+	 * @throws
+	 * @see List<TheoryBaseMd>
+	 * @see String
 	 */
 	@Override
 	public String write(List<TheoryBaseMd> theoryBaseMds) {

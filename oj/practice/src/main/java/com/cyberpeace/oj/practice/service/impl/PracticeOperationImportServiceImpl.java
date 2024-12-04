@@ -38,7 +38,10 @@ import java.util.Map;
  * 实践实操导入Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see PracticeOperationImportService
+ * @since 1.0.0
  */
 @Slf4j(topic = "resourceImport")
 @Service
@@ -46,57 +49,77 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 
 	/**
 	 * 实践实操Service
+	 *
+	 * @see PracticeOperationService
 	 */
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 
 	/**
 	 * 实践验证处理器
+	 *
+	 * @see PracticeValidateHandler
 	 */
 	@Autowired
 	private PracticeValidateHandler practiceValidateHandler;
 
 	/**
 	 * 附件Service
+	 *
+	 * @see AttachmentService
 	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
 	/**
 	 * utilService
+	 *
+	 * @see UtilService
 	 */
 	@Autowired
 	private UtilService utilService;
 
 	/**
 	 * 实践类别Mapper
+	 *
+	 * @see PracticeCategoryMapper
 	 */
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
 	/**
 	 * 实践理论Service
+	 *
+	 * @see PracticeTheoryService
 	 */
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
 
 	/**
 	 * 最大内容长度
+	 *
+	 * @see Integer
 	 */
 	private Integer MAX_CONTENT_LENGTH;
 
 	/**
 	 * 最大类别长度
+	 *
+	 * @see Integer
 	 */
 	private Integer MAX_CATEGORY_LENGTH;
 
 	/**
 	 * 被收集
+	 *
+	 * @see Boolean
 	 */
 	private final Boolean IS_COLLECTED = Boolean.FALSE;
 
 	/**
 	 * 初始化
+	 *
+	 * @throws
 	 */
 	@PostConstruct
 	private void init() {
@@ -113,6 +136,10 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 	 * @param path         路径
 	 * @param practiceTopo 实践拓扑
 	 * @return {@code List<PracticeOperation> }
+	 * @throws
+	 * @see String
+	 * @see Map<String, String>
+	 * @see List<PracticeOperation>
 	 */
 	@Override
 	public List<PracticeOperation> parseLessonOperation(String path,
@@ -152,6 +179,11 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 	 * @param envReqs     env reqs
 	 * @param practiceSet 实践设置
 	 * @return {@code PracticeOperation }
+	 * @throws
+	 * @see String
+	 * @see Map<String, String>
+	 * @see PracticeSet
+	 * @see PracticeOperation
 	 */
 	@Override
 	public PracticeOperation parseLessonPracticeCtf(String path, Map<String, String> envReqs,
@@ -212,6 +244,11 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 	 * @param envReqs     env reqs
 	 * @param practiceSet 实践设置
 	 * @return {@code PracticeOperation }
+	 * @throws
+	 * @see String
+	 * @see Map<String, String>
+	 * @see PracticeSet
+	 * @see PracticeOperation
 	 */
 	@Override
 	public PracticeOperation parseRmCtf(String path, Map<String, String> envReqs,
@@ -277,6 +314,13 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 	 * @param attachments       附件
 	 * @param operationFilePath 实操文件路径
 	 * @return
+	 * @throws
+	 * @see JSONObject
+	 * @see PracticeSet
+	 * @see String
+	 * @see List<String>
+	 * @see String
+	 * @see PracticeOperation
 	 */
 	private PracticeOperation jsonParseOperation(JSONObject operationData, PracticeSet practiceSet,
 			String topoId, List<String> attachments, String operationFilePath) {
@@ -359,6 +403,9 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 	 *
 	 * @param filedContent 归档内容
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	private String handlerMultiContent(String filedContent) {
 
@@ -383,6 +430,11 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 	 * @param attachments 附件
 	 * @param answers     答案
 	 * @return {@code String }
+	 * @throws
+	 * @see Integer
+	 * @see List<String>
+	 * @see String
+	 * @see String
 	 */
 	private String handlerAnswer(Integer flagType, List<String> attachments, String answers) {
 
@@ -405,6 +457,10 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 	 * @param attachments 附件
 	 * @param flag        旗
 	 * @return {@code Integer }
+	 * @throws
+	 * @see List<String>
+	 * @see String
+	 * @see Integer
 	 */
 	private Integer flagType(List<String> attachments, String flag) {
 
@@ -425,6 +481,9 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 	 *
 	 * @param sceneShareMode 场景共享模式
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	private Integer sceneShareMode(String sceneShareMode) {
 		return StringUtils.isNotBlank(sceneShareMode) && sceneShareMode.equals(CommonConstant.RIGHT)

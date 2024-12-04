@@ -12,7 +12,9 @@ import java.util.Date;
  * 实践ServiceMapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -26,6 +28,12 @@ public interface PracticeServiceMapper {
      * @param evaluated      评价
      * @param practiceObject 练习对象
      * @param date           日期
+     * @throws
+     * @see String
+     * @see String
+     * @see EvaluateResult
+     * @see P
+     * @see Date
      */
     <P extends PracticeBase> void saveSolved(
             @Param("user") String user,
@@ -41,6 +49,10 @@ public interface PracticeServiceMapper {
      * @param user     用户
      * @param practice 实践
      * @return {@code EvaluateResult }
+     * @throws
+     * @see String
+     * @see String
+     * @see EvaluateResult
      */
     EvaluateResult getSolved(@Param("user") String user, @Param("resource_id") String practice);
 

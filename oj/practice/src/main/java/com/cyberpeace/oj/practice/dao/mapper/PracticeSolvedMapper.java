@@ -14,7 +14,10 @@ import java.util.List;
  * 实践解决Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
@@ -27,6 +30,12 @@ public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 	 * @param practiceId   实践id
 	 * @param isCollect    是收集
 	 * @return {@code PracticeSolved }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see Boolean
+	 * @see PracticeSolved
 	 */
 	PracticeSolved selectUserAndId(@Param("userId") String userId,
 			@Param("practiceType") Integer practiceType, @Param("practiceId") String practiceId,
@@ -40,6 +49,12 @@ public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 	 * @param practiceIds  实践id列表
 	 * @param isCollect    是收集
 	 * @return {@code List<PracticeSolved> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see List<String>
+	 * @see Boolean
+	 * @see List<PracticeSolved>
 	 */
 	List<PracticeSolved> selectInPracticeIds(@Param("userId") String userId,
 			 @Param("practiceType") Integer practiceType, @Param("practiceIds") List<String> practiceIds,
@@ -53,6 +68,12 @@ public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 	 * @param solved       解决
 	 * @param isCollect    是收集
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see Boolean
+	 * @see Boolean
+	 * @see List<String>
 	 */
 	List<String> selectUserAndSolved(@Param("userId") String userId,
 			@Param("practiceType") Integer practiceType, @Param("solved") Boolean solved,
@@ -63,6 +84,9 @@ public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 	 *
 	 * @param practiceSolved 练习解决
 	 * @return int
+	 * @throws
+	 * @see PracticeSolved
+	 * @see int
 	 */
 	int updateSolved(@Param("solved") PracticeSolved practiceSolved);
 
@@ -75,6 +99,13 @@ public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 	 * @param endTime     结束时间
 	 * @param solved      解决
 	 * @return {@code List<PracticeTheoryListBo> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see Date
+	 * @see Date
+	 * @see Integer
+	 * @see List<PracticeTheoryListBo>
 	 */
 	List<PracticeTheoryListBo> selectPracticeTheoryRecord(@Param("userId") String userId,
 														  @Param("practiceIds") List<String> practiceIds,
@@ -86,6 +117,8 @@ public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 	 * 删除由实践id列表
 	 *
 	 * @param practiceIds 实践id列表
+	 * @throws
+	 * @see List<String>
 	 */
 	void deleteByPracticeIds(List<String> practiceIds);
 
@@ -98,6 +131,13 @@ public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 	 * @param startTime    开始时间
 	 * @param endTime      结束时间
 	 * @return {@code List<OperationRecordRes> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see Boolean
+	 * @see Date
+	 * @see Date
+	 * @see List<OperationRecordRes>
 	 */
 	List<OperationRecordRes> getOperationRecord(@Param("userId") String userId,
 												@Param("operationIds") List<String> operationIds,

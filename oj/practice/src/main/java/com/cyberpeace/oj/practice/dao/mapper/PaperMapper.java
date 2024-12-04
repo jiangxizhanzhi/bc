@@ -9,7 +9,10 @@ import org.springframework.stereotype.Repository;
  * 纸Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository

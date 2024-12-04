@@ -27,18 +27,24 @@ import lombok.Data;
  * 公共Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 public abstract class PublicController<T extends IService<E>, E> {
 
 	/**
 	 * 基础Service
+	 *
+	 * @see T
 	 */
 	@Autowired
 	protected T baseService;
 
 	/**
 	 * 实体类
+	 *
+	 * @see Class<E>
 	 */
 	protected Class<E> entityClass = currentModelCls();
 
@@ -46,6 +52,8 @@ public abstract class PublicController<T extends IService<E>, E> {
 	 * 当前型号 CLS
 	 *
 	 * @return {@code Class<E> }
+	 * @throws
+	 * @see Class<E>
 	 */
 	@SuppressWarnings("unchecked")
 	private Class<E> currentModelCls() {
@@ -57,6 +65,9 @@ public abstract class PublicController<T extends IService<E>, E> {
 	 *
 	 * @param requestData 请求数据
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see ResourcePublicReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@PatchMapping("/batch-public")
 	@ApiOperation("资源公开/隐藏")
@@ -83,6 +94,10 @@ public abstract class PublicController<T extends IService<E>, E> {
 	 * @param collection
 	 * @param mapperValue
 	 * @return
+	 * @throws
+	 * @see Collection<U>
+	 * @see Function<U, V>
+	 * @see Boolean
 	 */
 	protected <U, V> Boolean updateData(Collection<U> collection, Function<U, V> mapperValue) {
 		List<V> publicDatas = StreamApiUtils.map(collection, mapperValue);

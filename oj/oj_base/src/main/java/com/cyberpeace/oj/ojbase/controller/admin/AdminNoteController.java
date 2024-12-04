@@ -33,7 +33,9 @@ import java.util.Date;
  * 管理注意Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 @Api(tags = "oj-后台笔记相关api")
 @RestController
@@ -43,22 +45,37 @@ public class AdminNoteController {
 
 	/**
 	 * 注意Service
+	 *
+	 * @see NoteService
 	 */
 	@Autowired
 	private NoteService noteService;
 
 	/**
 	 * 注意Mapper
+	 *
+	 * @see NoteMapper
 	 */
 	@Autowired
 	private NoteMapper noteMapper;
 
 	/**
 	 * 注意评估Mapper
+	 *
+	 * @see NoteEvaluateMapper
 	 */
 	@Autowired
 	private NoteEvaluateMapper noteEvaluateMapper;
 
+	/**
+	 * 列表
+	 *
+	 * @param noteReq 笔记请求体
+	 * @return {@code BaseRsp<ListRsp<NoteListBo>> }
+	 * @throws
+	 * @see AdminListNoteReq
+	 * @see BaseRsp<ListRsp<NoteListBo>>
+	 */
 	@ApiOperation("分页查询实验报告")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<NoteListBo>> list(AdminListNoteReq noteReq) {
@@ -72,6 +89,15 @@ public class AdminNoteController {
 		return new BaseRsp<>(PageUtil.getListResult(noteListBos));
 	}
 
+	/**
+	 * 删除id列表
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see DeleteResourceReq
+	 * @see BaseRsp<Boolean>
+	 */
 	@ApiOperation("笔记/实验报告删除")
 	@DeleteMapping("")
 	public BaseRsp<Boolean> deleteIds(@RequestBody @Validated DeleteResourceReq deleteReq) {
@@ -80,6 +106,15 @@ public class AdminNoteController {
 		return new BaseRsp<>(row > 0);
 	}
 
+	/**
+	 * 评估报告
+	 *
+	 * @param evaluateNoteReq 评估笔记请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see EvaluateNoteReq
+	 * @see BaseRsp<Boolean>
+	 */
 	@ApiOperation("实验报告评估")
 	@PatchMapping("/evaluate")
 	public BaseRsp<Boolean>

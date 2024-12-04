@@ -10,7 +10,10 @@ import lombok.Data;
  * 练习论文
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @TableName("oj_practice_paper")
@@ -18,43 +21,59 @@ public class PracticePaper extends BaseTable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	/**
 	 * 实践状态
-	 *///题目状态
+	 *
+	 * @see String
+	 */ //题目状态
 	private String practiceStatus;
 
 	/**
 	 * 计数
-	 *///出题数量
+	 *
+	 * @see Integer
+	 */ //出题数量
 	private Integer count;
 
 	/**
 	 * 难度
-	 *///题目难度
+	 *
+	 * @see String
+	 */ //题目难度
 	private String difficulty;
 
 	/**
 	 * 类型
-	 *///题目类型
+	 *
+	 * @see String
+	 */ //题目类型
 	private String type;
 
 	/**
 	 * 方向
-	 *///方向选择
+	 *
+	 * @see String
+	 */ //方向选择
 	private String direction;
 
 	/**
 	 * 结束了
-	 *///是否完成
+	 *
+	 * @see Boolean
+	 */ //是否完成
 	private Boolean isFinish;
 
 	/**
 	 * 用户id
-	 *///组卷人
+	 *
+	 * @see String
+	 */ //组卷人
 	private String userId;
 
 }

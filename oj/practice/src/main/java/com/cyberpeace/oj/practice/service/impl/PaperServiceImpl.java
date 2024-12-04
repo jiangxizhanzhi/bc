@@ -37,7 +37,11 @@ import java.util.Map;
  * 纸Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see ServiceImpl
+ * @see PaperService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -45,66 +49,88 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 	/**
 	 * 实践理论Mapper
+	 *
+	 * @see PracticeTheoryMapper
 	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
 	/**
 	 * 实践理论裁判Mapper
+	 *
+	 * @see PracticeTheoryRefMapper
 	 */
 	@Autowired
 	private PracticeTheoryRefMapper practiceTheoryRefMapper;
 
 	/**
 	 * 实践实操Mapper
+	 *
+	 * @see PracticeOperationMapper
 	 */
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
 
 	/**
 	 * 实践实操裁判Mapper
+	 *
+	 * @see PracticeOperationRefMapper
 	 */
 	@Autowired
 	private PracticeOperationRefMapper practiceOperationRefMapper;
 
 	/**
 	 * 纸Mapper
+	 *
+	 * @see PaperMapper
 	 */
 	@Autowired
 	private PaperMapper paperMapper;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 实践类别Mapper
+	 *
+	 * @see PracticeCategoryMapper
 	 */
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
 	/**
 	 * 实践设置Mapper
+	 *
+	 * @see PracticeSetMapper
 	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
 	/**
 	 * 实践理论裁判Service
+	 *
+	 * @see PracticeTheoryRefService
 	 */
 	@Autowired
 	private PracticeTheoryRefService practiceTheoryRefService;
 
 	/**
 	 * 实践实操裁判Service
+	 *
+	 * @see PracticeOperationRefService
 	 */
 	@Autowired
 	private PracticeOperationRefService practiceOperationRefService;
 
 	/**
 	 * 实践验证处理器
+	 *
+	 * @see PracticeValidateHandler
 	 */
 	@Autowired
 	private PracticeValidateHandler practiceValidateHandler;
@@ -114,6 +140,9 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	 *
 	 * @param paperContext 纸张上下文
 	 * @return {@code Paper }
+	 * @throws
+	 * @see PaperContext
+	 * @see Paper
 	 */
 	@Override
 	public Paper create(PaperContext paperContext) {
@@ -154,6 +183,9 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	 *
 	 * @param paperContext 纸张上下文
 	 * @return {@code Paper }
+	 * @throws
+	 * @see PaperContext
+	 * @see Paper
 	 */
 	@Override
 	public Paper update(PaperContext paperContext) {
@@ -194,6 +226,11 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	 * @param queryBo     查询 bo
 	 * @param authContext auth 上下文
 	 * @return {@code IPage<LibPracticeListBo> }
+	 * @throws
+	 * @see Page
+	 * @see LibPracticeQueryBo
+	 * @see AuthContext
+	 * @see IPage<LibPracticeListBo>
 	 */
 	@Override
 	public IPage<LibPracticeListBo> selectLibPractice(Page page, LibPracticeQueryBo queryBo,
@@ -239,6 +276,11 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	 * @param operationIds 实操id列表
 	 * @param page         分页
 	 * @return {@code IPage<LibPracticeListBo> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
+	 * @see Page
+	 * @see IPage<LibPracticeListBo>
 	 */
 	private IPage<LibPracticeListBo> selectAllLibPractice(List<String> theoryIds,
 			List<String> operationIds, Page page) {
@@ -277,6 +319,11 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	 * @param score         得分
 	 * @param authContext   auth 上下文
 	 * @return {@code List<LibPracticeListBo> }
+	 * @throws
+	 * @see RandomPracticeQuery
+	 * @see Double
+	 * @see AuthContext
+	 * @see List<LibPracticeListBo>
 	 */
 	@Override
 	public List<LibPracticeListBo> selectRandomPractice(RandomPracticeQuery practiceQuery,
@@ -353,6 +400,10 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	 * @param queryBo
 	 * @param page
 	 * @return
+	 * @throws
+	 * @see LibPracticeQueryBo
+	 * @see Page
+	 * @see IPage<LibPracticeListBo>
 	 */
 	private IPage<LibPracticeListBo> theoryConvert(LibPracticeQueryBo queryBo, Page page) {
 
@@ -370,6 +421,9 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	 *
 	 * @param operation
 	 * @return
+	 * @throws
+	 * @see PracticeOperation
+	 * @see LibPracticeListBo
 	 */
 	private LibPracticeListBo operationToListBo(PracticeOperation operation) {
 
@@ -393,6 +447,9 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	 *
 	 * @param paperId 纸id
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	@Override
 	public Integer practiceCountByPaper(String paperId) {
@@ -406,6 +463,9 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	 *
 	 * @param practiceTheory
 	 * @return
+	 * @throws
+	 * @see PracticeTheory
+	 * @see LibPracticeListBo
 	 */
 	private LibPracticeListBo theoryToListBo(PracticeTheory practiceTheory) {
 
@@ -439,6 +499,11 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	 * @param theoryRefs
 	 * @param operationRefs       实操裁判
 	 * @param practiceContextList 练习上下文列表
+	 * @throws
+	 * @see Paper
+	 * @see List<PracticeTheoryRef>
+	 * @see List<PracticeOperationRef>
+	 * @see List<PaperPracticeContext>
 	 */
 	private void setPaperRelateData(Paper paper, List<PracticeTheoryRef> theoryRefs,
 			List<PracticeOperationRef> operationRefs,
@@ -476,6 +541,10 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	 * @param theoryContexts
 	 * @param paper
 	 * @return
+	 * @throws
+	 * @see List<PaperPracticeContext>
+	 * @see Paper
+	 * @see List<PracticeTheoryRef>
 	 */
 	private List<PracticeTheoryRef> theoryContextToRef(List<PaperPracticeContext> theoryContexts,
 			Paper paper) {
@@ -527,6 +596,10 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	 * @param operationContexts
 	 * @param paper
 	 * @return
+	 * @throws
+	 * @see List<PaperPracticeContext>
+	 * @see Paper
+	 * @see List<PracticeOperationRef>
 	 */
 	private List<PracticeOperationRef>
 			operationContextToRef(List<PaperPracticeContext> operationContexts, Paper paper) {

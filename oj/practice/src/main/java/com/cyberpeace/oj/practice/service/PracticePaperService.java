@@ -14,7 +14,10 @@ import java.util.List;
  * 实践纸Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
  */
 public interface PracticePaperService extends IService<PracticePaper> {
 
@@ -22,6 +25,8 @@ public interface PracticePaperService extends IService<PracticePaper> {
 	 * 获取最后纸设置
 	 *
 	 * @return {@code PracticePaperCreateReq }
+	 * @throws
+	 * @see PracticePaperCreateReq
 	 */
 	PracticePaperCreateReq getLastPaperSetting();
 
@@ -30,6 +35,9 @@ public interface PracticePaperService extends IService<PracticePaper> {
 	 *
 	 * @param practicePaperCreateReq 实践纸创造请求体
 	 * @return {@code PracticePaper }
+	 * @throws
+	 * @see PracticePaperCreateReq
+	 * @see PracticePaper
 	 */
 	PracticePaper createPaper(PracticePaperCreateReq practicePaperCreateReq);
 
@@ -38,6 +46,9 @@ public interface PracticePaperService extends IService<PracticePaper> {
 	 *
 	 * @param paperId 纸id
 	 * @return {@code PaperSummaryRes }
+	 * @throws
+	 * @see String
+	 * @see PaperSummaryRes
 	 */
 	PaperSummaryRes getPaperSummaryRes(String paperId);
 
@@ -45,6 +56,8 @@ public interface PracticePaperService extends IService<PracticePaper> {
 	 * 获取纸记录
 	 *
 	 * @return {@code List<PaperRecordRes> }
+	 * @throws
+	 * @see List<PaperRecordRes>
 	 */
 	List<PaperRecordRes> getPaperRecord();
 
@@ -53,6 +66,9 @@ public interface PracticePaperService extends IService<PracticePaper> {
 	 *
 	 * @param isFinish 结束了
 	 * @return {@code List<PaperRecordSummaryResByDay> }
+	 * @throws
+	 * @see Boolean
+	 * @see List<PaperRecordSummaryResByDay>
 	 */
 	List<PaperRecordSummaryResByDay> getAllPaperRecord(Boolean isFinish);
 
@@ -61,6 +77,9 @@ public interface PracticePaperService extends IService<PracticePaper> {
 	 *
 	 * @param paperId 纸id
 	 * @return {@code PaperRecordDetailRes }
+	 * @throws
+	 * @see String
+	 * @see PaperRecordDetailRes
 	 */
 	PaperRecordDetailRes getPaperRecordDetail(String paperId);
 
@@ -69,6 +88,9 @@ public interface PracticePaperService extends IService<PracticePaper> {
 	 *
 	 * @param paperId 纸id
 	 * @return {@code PracticePaper }
+	 * @throws
+	 * @see String
+	 * @see PracticePaper
 	 */
 	PracticePaper practiceAgain(String paperId);
 }

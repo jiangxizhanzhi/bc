@@ -38,7 +38,9 @@ import java.util.stream.Collectors;
  * 实践验证处理器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -46,42 +48,56 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 实践设置Mapper
+	 *
+	 * @see PracticeSetMapper
 	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
 	/**
 	 * 实践类别Mapper
+	 *
+	 * @see PracticeCategoryMapper
 	 */
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
 	/**
 	 * 实践实操Mapper
+	 *
+	 * @see PracticeOperationMapper
 	 */
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
 
 	/**
 	 * 实践理论Mapper
+	 *
+	 * @see PracticeTheoryMapper
 	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
 	/**
 	 * OJ当地场景Mapper
+	 *
+	 * @see OjLocalSceneMapper
 	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
 	/**
 	 * 系统配置Service
+	 *
+	 * @see SystemConfigService
 	 */
 	@Autowired
 	private SystemConfigService systemConfigService;
 
 	/**
 	 * 远程拓扑Service
+	 *
+	 * @see RemoteTopoService
 	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
@@ -91,6 +107,9 @@ public class PracticeValidateHandler {
 	 *
 	 * @param excelRowData
 	 * @param index        指数
+	 * @throws
+	 * @see List<String>
+	 * @see int
 	 */
 	public void validateChoiceAnswerLength(List<String> excelRowData, int index) {
 		if (CollectionUtils.isEmpty(excelRowData) || excelRowData.size() - 1 <= index) {
@@ -111,6 +130,9 @@ public class PracticeValidateHandler {
 	 *
 	 * @param excelRowData Excel 行数据
 	 * @param index        指数
+	 * @throws
+	 * @see List<String>
+	 * @see int
 	 */
 	public void validateFillBlankAnswerLength(List<String> excelRowData, int index) {
 		if (CollectionUtils.isEmpty(excelRowData) || excelRowData.size() - 1 < index) {
@@ -127,6 +149,8 @@ public class PracticeValidateHandler {
 	 * 校验导入时选择题
 	 *
 	 * @param answer 答案
+	 * @throws
+	 * @see String
 	 */
 	public void validateChoiceAnswer(String answer) {
 		if (StringUtils.isBlank(answer) || !(answer.matches(PatternConstant.CHOICE_ANSWER))) {
@@ -139,6 +163,8 @@ public class PracticeValidateHandler {
 	 * 校验导入时判断题
 	 *
 	 * @param answer 答案
+	 * @throws
+	 * @see String
 	 */
 	public void validateJudgementAnswer(String answer) {
 		if (StringUtils.isBlank(answer) || !(answer.matches(PatternConstant.JUDGEMENT_ANSWER))) {
@@ -151,6 +177,8 @@ public class PracticeValidateHandler {
 	 * 校验习题难度
 	 *
 	 * @param difficulty 习题难度
+	 * @throws
+	 * @see Integer
 	 */
 	public void validateCategoryDifficulty(Integer difficulty) {
 		boolean right = false;
@@ -169,6 +197,8 @@ public class PracticeValidateHandler {
 	 * 校验习题类型
 	 *
 	 * @param type 习题类型值
+	 * @throws
+	 * @see int
 	 */
 	public void validateTheoryType(int type) {
 
@@ -187,6 +217,8 @@ public class PracticeValidateHandler {
 	 * 校验习题类型
 	 *
 	 * @param type 习题类型值
+	 * @throws
+	 * @see int
 	 */
 	public void validateOnlyTheoryType(int type) {
 
@@ -210,6 +242,9 @@ public class PracticeValidateHandler {
 	 *
 	 * @param fieldContent
 	 * @param maxLength    最大长度
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	public void validateFieldLength(String fieldContent, Integer maxLength) {
 		if (fieldContent.length() > maxLength) {
@@ -223,6 +258,9 @@ public class PracticeValidateHandler {
 	 *
 	 * @param practiceOperationId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see PracticeOperation
 	 */
 	public PracticeOperation validateOperationExist(String practiceOperationId) {
 		PracticeOperation operation = practiceOperationMapper.selectById(practiceOperationId);
@@ -241,6 +279,10 @@ public class PracticeValidateHandler {
 	 * @param categoryId
 	 * @param practiceType
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see PracticeCategory
 	 */
 	public PracticeCategory validateCategoryType(String categoryId, Integer practiceType) {
 		PracticeCategory practiceCategory = validateCategoryExist(categoryId);
@@ -260,6 +302,9 @@ public class PracticeValidateHandler {
 	 *
 	 * @param categoryId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see PracticeCategory
 	 */
 	public PracticeCategory validateCategoryExist(String categoryId) {
 		PracticeCategory category = practiceCategoryMapper.selectById(categoryId);
@@ -277,6 +322,10 @@ public class PracticeValidateHandler {
 	 * @param practiceSetId
 	 * @param practiceType
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see PracticeSet
 	 */
 	public PracticeSet validateSetType(String practiceSetId, Integer practiceType) {
 
@@ -297,6 +346,9 @@ public class PracticeValidateHandler {
 	 *
 	 * @param practiceSetId 实践设置id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see PracticeSet
 	 */
 	public PracticeSet validatePracticeSetExist(String practiceSetId) {
 		PracticeSet practiceSet = practiceSetMapper.selectById(practiceSetId);
@@ -313,6 +365,9 @@ public class PracticeValidateHandler {
 	 *
 	 * @param practiceSetId
 	 * @param authContext   auth 上下文
+	 * @throws
+	 * @see String
+	 * @see AuthContext
 	 */
 	public void validatePracticeSetPermission(String practiceSetId, AuthContext authContext) {
 
@@ -328,6 +383,9 @@ public class PracticeValidateHandler {
 	 *
 	 * @param practiceSetId
 	 * @param title         标题
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	public void validateOperationTitleExist(String practiceSetId, String title) {
 		String practiceId = practiceOperationMapper.selectByTitle("", title);
@@ -345,6 +403,10 @@ public class PracticeValidateHandler {
 	 * @param practiceSetId 实践设置id
 	 * @param title         标题
 	 * @param practicePath  实践路径
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	public void validateOperationTitleExist(String practiceSetId, String title, String practicePath) {
 		String practiceId = practiceOperationMapper.selectByTitle(practiceSetId, title);
@@ -360,6 +422,8 @@ public class PracticeValidateHandler {
 	 * 校验flag长度 5.3.6系统flag长度仅对动态flag长度做限制 随机与静态flag长度为1-255
 	 *
 	 * @param flags 标志
+	 * @throws
+	 * @see String
 	 */
 	public void validateFlagLength(String flags) {
 
@@ -386,6 +450,9 @@ public class PracticeValidateHandler {
 	 *
 	 * @param practiceSetId
 	 * @param content       内容
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	public void validateTheoryContentExist(String practiceSetId, String content) {
 		String practiceId = practiceTheoryMapper.selectByContent("", content);
@@ -401,6 +468,9 @@ public class PracticeValidateHandler {
 	 *
 	 * @param operation
 	 * @param newTitle  新标题
+	 * @throws
+	 * @see PracticeOperation
+	 * @see String
 	 */
 	public void validateOperationUpdateTitleExist(PracticeOperation operation, String newTitle) {
 		String existTitleId = practiceOperationMapper.selectByTitle("",
@@ -417,6 +487,9 @@ public class PracticeValidateHandler {
 	 *
 	 * @param operation 实操
 	 * @param topoData  拓扑数据
+	 * @throws
+	 * @see PracticeOperation
+	 * @see JSONObject
 	 */
 	public void validateOperationUpdateSceneExist(PracticeOperation operation,
 												  JSONObject topoData) {
@@ -443,6 +516,10 @@ public class PracticeValidateHandler {
 	 * @param practiceName 实践名称
 	 * @param dynamicFlag  动态标志
 	 * @param attachments  附件
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see List<String>
 	 */
 	public void validateAttachmentLength(String practiceName, Integer dynamicFlag,
 			List<String> attachments) {
@@ -461,6 +538,11 @@ public class PracticeValidateHandler {
 	 * @param dynamicFlag  动态标志
 	 * @param attachments  附件
 	 * @param practicePath 实践路径
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see List<String>
+	 * @see String
 	 */
 	public void validateAttachmentLength(String practiceName, Integer dynamicFlag,
 										 List<String> attachments, String practicePath) {
@@ -477,6 +559,10 @@ public class PracticeValidateHandler {
 	 * @param practiceSetId  实践设置id
 	 * @param content        内容
 	 * @param practiceTheory 实践理论
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see PracticeTheory
 	 */
 	public void validateTheoryContentExistExcludeItself(String practiceSetId, String content,
 			PracticeTheory practiceTheory) {
@@ -494,6 +580,9 @@ public class PracticeValidateHandler {
 	 *
 	 * @param theoryType 理论类型
 	 * @param keyword    关键词
+	 * @throws
+	 * @see Integer
+	 * @see String
 	 */
 	public void validateFillBlankKeyword(Integer theoryType, String keyword) {
 		if (theoryType == PracticeTheory.TheoryType.SHORT_ANSWER.getCode().intValue()) {
@@ -514,6 +603,9 @@ public class PracticeValidateHandler {
 	 *
 	 * @param practiceSet
 	 * @param userId      用户id
+	 * @throws
+	 * @see PracticeSet
+	 * @see String
 	 */
 	public void validatePracticeSetPermission(PracticeSet practiceSet, String userId) {
 		if (practiceSet.getCreateUserId().equals(userId)) {
@@ -538,6 +630,8 @@ public class PracticeValidateHandler {
 	 * 更新隔离模式时校验场景是否存在
 	 *
 	 * @param operation 实操
+	 * @throws
+	 * @see PracticeOperation
 	 */
 	public void validateOperationUpdateShareModeSceneExist(PracticeOperation operation) {
 
@@ -558,6 +652,8 @@ public class PracticeValidateHandler {
 	 * 校验是否为内置资源
 	 *
 	 * @param practiceSet 实践设置
+	 * @throws
+	 * @see PracticeSet
 	 */
 	public void validateBuiltin(PracticeSet practiceSet) {
 		if (practiceSet.isBuiltin()) {

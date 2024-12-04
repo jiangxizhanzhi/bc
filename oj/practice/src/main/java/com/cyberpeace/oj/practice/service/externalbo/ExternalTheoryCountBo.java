@@ -15,7 +15,10 @@ import lombok.Data;
  * 外部理论计数博
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class ExternalTheoryCountBo implements Serializable {
@@ -73,30 +76,40 @@ public class ExternalTheoryCountBo implements Serializable {
 
     /**
      * 单
+     *
+     * @see Integer
      */
     @ApiModelProperty("单选题数量")
     private Integer single;
 
     /**
      * 倍数
+     *
+     * @see Integer
      */
     @ApiModelProperty("多选题数量")
     private Integer multiple;
 
     /**
      * 判断
+     *
+     * @see Integer
      */
     @ApiModelProperty("判断题数量")
     private Integer judgement;
 
     /**
      * 填空
+     *
+     * @see Integer
      */
     @ApiModelProperty("填空题数量")
     private Integer fillBlank;
 
     /**
      * 短答案
+     *
+     * @see Integer
      */
     @ApiModelProperty("简答题数量")
     private Integer shortAnswer;

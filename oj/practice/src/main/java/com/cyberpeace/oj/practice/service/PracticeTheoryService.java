@@ -20,7 +20,10 @@ import java.util.List;
  * 实践理论Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
  */
 public interface PracticeTheoryService extends IService<PracticeTheory> {
 
@@ -31,6 +34,11 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param listQuery
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see Page
+	 * @see TheoryListQueryBo
+	 * @see AuthContext
+	 * @see IPage<PracticeTheoryListBo>
 	 */
 	IPage<PracticeTheoryListBo> pageByQuery(Page page, TheoryListQueryBo listQuery,
 			AuthContext authContext);
@@ -42,6 +50,11 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param userId
 	 * @param isCollected 被收集
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
+	 * @see WebTheoryBo
 	 */
 	WebTheoryBo selectById(String resourceId, String userId, Boolean isCollected);
 
@@ -53,6 +66,12 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param userAnswer
 	 * @param isCollected 被收集
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see Boolean
+	 * @see EvaluateResult
 	 */
 	EvaluateResult submitAnswer(String userId, String theoryId, String userAnswer,
 			Boolean isCollected);
@@ -63,6 +82,10 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param practiceTheory
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see PracticeTheory
+	 * @see AuthContext
+	 * @see Integer
 	 */
 	Integer create(PracticeTheory practiceTheory, AuthContext authContext);
 
@@ -72,6 +95,10 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param practiceTheory
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see PracticeTheory
+	 * @see AuthContext
+	 * @see int
 	 */
 	int updateTheory(PracticeTheory practiceTheory, AuthContext authContext);
 
@@ -81,6 +108,10 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param authContext
 	 * @param practiceSetId 实践设置id
 	 * @return
+	 * @throws
+	 * @see AuthContext
+	 * @see String
+	 * @see List<String>
 	 */
 	List<String> selectPracticeListIds(AuthContext authContext, String practiceSetId);
 
@@ -89,6 +120,9 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 *
 	 * @param resourceIds
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see Integer
 	 */
 	Integer batchDelete(List<String> resourceIds);
 
@@ -99,6 +133,11 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param dumpBo
 	 * @param userId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see PracticeTheoryDumpLoadBo
+	 * @see String
+	 * @see PracticeTheory
 	 */
 	PracticeTheory loadPracticeTheory(String practiceSetId, PracticeTheoryDumpLoadBo dumpBo,
 			String userId);
@@ -108,6 +147,9 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 *
 	 * @param practiceTheory
 	 * @return
+	 * @throws
+	 * @see PracticeTheory
+	 * @see PracticeTheoryDumpLoadBo
 	 */
 	PracticeTheoryDumpLoadBo dumpTheory(PracticeTheory practiceTheory);
 
@@ -116,6 +158,9 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 *
 	 * @param practiceId
 	 * @param logContent 日志内容
+	 * @throws
+	 * @see String
+	 * @see LogContent
 	 */
 	void createMpLog(String practiceId, LogContent logContent);
 
@@ -125,6 +170,10 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param theoryListQueryBo
 	 * @param authContext       auth 上下文
 	 * @return
+	 * @throws
+	 * @see TheoryListQueryBo
+	 * @see AuthContext
+	 * @see ExternalTheoryCountBo
 	 */
 	ExternalTheoryCountBo typeCount(TheoryListQueryBo theoryListQueryBo, AuthContext authContext);
 
@@ -134,6 +183,10 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param path     路径
 	 * @param theories 理论
 	 * @return {@code MdTheoryPractice }
+	 * @throws
+	 * @see String
+	 * @see List<PracticeTheory>
+	 * @see MdTheoryPractice
 	 */
 	MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories);
 
@@ -142,6 +195,9 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 *
 	 * @param practiceSetId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see ProgressStatisticsRes
 	 */
 	ProgressStatisticsRes getProgressStatistics(String practiceSetId);
 
@@ -149,6 +205,8 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * 查询所有方向上的做题进度
 	 *
 	 * @return
+	 * @throws
+	 * @see List<CategoryProgressRes>
 	 */
 	List<CategoryProgressRes> getProgressByCategory();
 
@@ -157,6 +215,9 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 *
 	 * @param webTheoryRecordReq
 	 * @return
+	 * @throws
+	 * @see WebTheoryRecordReq
+	 * @see List<PracticeTheoryListBo>
 	 */
 	List<PracticeTheoryListBo> getPracticeRecord(WebTheoryRecordReq webTheoryRecordReq);
 
@@ -166,6 +227,10 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param authContext   auth 上下文
 	 * @param practiceSetId 实践设置id
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see AuthContext
+	 * @see String
+	 * @see List<String>
 	 */
 	List<String> getPracticeIdsByUserAndSet(AuthContext authContext, String practiceSetId);
 
@@ -173,6 +238,8 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * 查询题库中的所有的方向
 	 *
 	 * @return
+	 * @throws
+	 * @see List<PracticeTheory>
 	 */
 	List<PracticeTheory> getCategoryIdAndSetIds();
 
@@ -182,6 +249,10 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param page      分页
 	 * @param listQuery 列表查询
 	 * @return {@code IPage<ExternalTheoryBo> }
+	 * @throws
+	 * @see Page
+	 * @see TheoryListQueryBo
+	 * @see IPage<ExternalTheoryBo>
 	 */
 	IPage<ExternalTheoryBo> pageByQuery(Page page, TheoryListQueryBo listQuery);
 

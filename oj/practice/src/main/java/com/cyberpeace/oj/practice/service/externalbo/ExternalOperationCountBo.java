@@ -13,7 +13,10 @@ import lombok.Data;
  * 外部实操计数博
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class ExternalOperationCountBo implements Serializable {
@@ -32,18 +35,24 @@ public class ExternalOperationCountBo implements Serializable {
 
 	/**
 	 * 静力学
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("静态习题数量")
 	private Integer statics;
 
 	/**
 	 * 动力学
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("动态习题数量")
 	private Integer dynamics;
 
 	/**
 	 * 随机数
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("随机习题数量")
 	private Integer randoms;

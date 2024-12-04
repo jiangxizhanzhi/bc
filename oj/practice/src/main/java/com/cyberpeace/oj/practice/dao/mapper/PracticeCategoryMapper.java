@@ -14,7 +14,10 @@ import java.util.List;
  * 实践类别Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -27,6 +30,11 @@ public interface PracticeCategoryMapper extends BaseMapper<PracticeCategory> {
 	 * @param pattern
 	 * @param practiceType
 	 * @return
+	 * @throws
+	 * @see Page
+	 * @see String
+	 * @see Integer
+	 * @see IPage<PracticeCategory>
 	 */
 	IPage<PracticeCategory> pageByTypeAndName(Page page, @Param("pattern") String pattern,
 			@Param("practiceType") Integer practiceType);
@@ -36,6 +44,9 @@ public interface PracticeCategoryMapper extends BaseMapper<PracticeCategory> {
 	 *
 	 * @param parentCode
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<PracticeCategory>
 	 */
 	List<PracticeCategory> selectByCode(@Param("code") String parentCode);
 
@@ -45,6 +56,10 @@ public interface PracticeCategoryMapper extends BaseMapper<PracticeCategory> {
 	 * @param practiceType
 	 * @param pattern
 	 * @return
+	 * @throws
+	 * @see Integer
+	 * @see String
+	 * @see List<PracticeCategory>
 	 */
 	List<PracticeCategory> listByTypeAndName(@Param("practiceType") Integer practiceType,
 			@Param("pattern") String pattern);
@@ -55,6 +70,10 @@ public interface PracticeCategoryMapper extends BaseMapper<PracticeCategory> {
 	 * @param practiceType
 	 * @param name
 	 * @return
+	 * @throws
+	 * @see Integer
+	 * @see String
+	 * @see String
 	 */
 	String selectByName(@Param("practiceType") Integer practiceType, @Param("name") String name);
 }

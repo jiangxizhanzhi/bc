@@ -52,62 +52,84 @@ import java.util.regex.Pattern;
  * 实践理论导入Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see ServiceImpl
+ * @see PracticeTheoryImportService
+ * @since 1.0.0
  */
 @Slf4j(topic = "resourceImport")
 @Service
 public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryMapper, PracticeTheory> implements PracticeTheoryImportService {
 
-	/**
-	 * 实践类别Service
-	 */
-	@Autowired
+    /**
+     * 实践类别Service
+     *
+     * @see PracticeCategoryService
+     */
+    @Autowired
 	private PracticeCategoryService practiceCategoryService;
 
-	/**
-	 * 实践理论Mapper
-	 */
-	@Autowired
+    /**
+     * 实践理论Mapper
+     *
+     * @see PracticeTheoryMapper
+     */
+    @Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
-	/**
-	 * 实践验证处理器
-	 */
-	@Autowired
+    /**
+     * 实践验证处理器
+     *
+     * @see PracticeValidateHandler
+     */
+    @Autowired
 	private PracticeValidateHandler practiceValidateHandler;
 
-	/**
-	 * 实践类别Mapper
-	 */
-	@Autowired
+    /**
+     * 实践类别Mapper
+     *
+     * @see PracticeCategoryMapper
+     */
+    @Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
-	/**
-	 * 事务模板
-	 */
-	@Autowired
+    /**
+     * 事务模板
+     *
+     * @see TransactionTemplate
+     */
+    @Autowired
 	private TransactionTemplate transactionTemplate;
 
-	/**
-	 * 习题集Mapper
-	 */
-	@Autowired
+    /**
+     * 习题集Mapper
+     *
+     * @see PracticeSetMapper
+     */
+    @Autowired
 	private PracticeSetMapper practiceSetMapper;
 
-	/**
-	 * 最大内容长度
-	 */
-	private Integer MAX_CONTENT_LENGTH;
+    /**
+     * 最大内容长度
+     *
+     * @see Integer
+     */
+    private Integer MAX_CONTENT_LENGTH;
 
-	/**
-	 * 最大类别长度
-	 */
-	private Integer MAX_CATEGORY_LENGTH;
+    /**
+     * 最大类别长度
+     *
+     * @see Integer
+     */
+    private Integer MAX_CATEGORY_LENGTH;
 
-	/**
-	 * 初始化
-	 */
-	@PostConstruct
+    /**
+     * 初始化
+     *
+     * @throws
+     */
+    @PostConstruct
 	private void init() {
 		MAX_CONTENT_LENGTH = Integer
 				.parseInt(ConfigUtil.getContextProperty("oj.practice.content.max.length"));
@@ -115,14 +137,18 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 				.parseInt(ConfigUtil.getContextProperty("oj.practice.category.max.length"));
 	}
 
-	/**
-	 * 解析课理论Markdown
-	 *
-	 * @param lessonFilePah    课程档案 PAH
-	 * @param mdTheoryPractice Markdown理论实践
-	 * @return {@code List<PracticeTheory> }
-	 */
-	@Override
+    /**
+     * 解析课理论Markdown
+     *
+     * @param lessonFilePah    课程档案 PAH
+     * @param mdTheoryPractice Markdown理论实践
+     * @return {@code List<PracticeTheory> }
+     * @throws
+     * @see String
+     * @see MdTheoryPractice
+     * @see List<PracticeTheory>
+     */
+    @Override
 	public List<PracticeTheory> parseLessonTheoryMd(String lessonFilePah,
 			MdTheoryPractice mdTheoryPractice) {
 		List<PracticeTheory> theories = mdDataToEntity(lessonFilePah,
@@ -139,14 +165,18 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		return theories;
 	}
 
-	/**
-	 * 解析马币理论
-	 *
-	 * @param path        路径
-	 * @param practiceSet 实践设置
-	 * @return {@code List<PracticeTheory> }
-	 */
-	@Override
+    /**
+     * 解析马币理论
+     *
+     * @param path        路径
+     * @param practiceSet 实践设置
+     * @return {@code List<PracticeTheory> }
+     * @throws
+     * @see String
+     * @see PracticeSet
+     * @see List<PracticeTheory>
+     */
+    @Override
 	public List<PracticeTheory> parseRmTheory(String path, PracticeSet practiceSet) {
 		// 获取excel数据
 		String oneFile = FileUtil.getOneFile(path, FileSunffixConstant.XLS.getDesc());
@@ -173,13 +203,16 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 				practiceTheory -> practiceTheory.getContent().toUpperCase(Locale.ROOT));
 	}
 
-	/**
-	 * 解析课理论胜过
-	 *
-	 * @param path 路径
-	 * @return {@code List<PracticeTheory> }
-	 */
-	@Override
+    /**
+     * 解析课理论胜过
+     *
+     * @param path 路径
+     * @return {@code List<PracticeTheory> }
+     * @throws
+     * @see String
+     * @see List<PracticeTheory>
+     */
+    @Override
 	public List<PracticeTheory> parseLessonTheoryExcel(String path) {
 
 		// 获取excel数据
@@ -191,15 +224,20 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		return StreamApiUtils.map(sheetData, rowData -> excelDataToLessonTheory(rowData, null));
 	}
 
-	/**
-	 * 导入理论
-	 *
-	 * @param practiceSetId 实践设置id
-	 * @param filePath      文件路径
-	 * @param userId        用户id
-	 * @return {@code Boolean }
-	 */
-	@Override
+    /**
+     * 导入理论
+     *
+     * @param practiceSetId 实践设置id
+     * @param filePath      文件路径
+     * @param userId        用户id
+     * @return {@code Boolean }
+     * @throws
+     * @see String
+     * @see String
+     * @see String
+     * @see Boolean
+     */
+    @Override
 	public Boolean importTheory(String practiceSetId, String filePath, String userId) {
 		// 基本数据校验
 		PracticeSet practiceSet = practiceValidateHandler.validateSetType(practiceSetId,
@@ -239,16 +277,22 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		});
 	}
 
-	/**
-	 * 实训理论习题资源导入excel数据转换
-	 *
-	 * @param excelRowData
-	 * @param practiceSetId
-	 * @param categoryId
-	 * @param userId        用户id
-	 * @return
-	 */
-	private PracticeTheory ojExcelDataToEntity(List<String> excelRowData, String practiceSetId,
+    /**
+     * 实训理论习题资源导入excel数据转换
+     *
+     * @param excelRowData
+     * @param practiceSetId
+     * @param categoryId
+     * @param userId        用户id
+     * @return
+     * @throws
+     * @see List<String>
+     * @see String
+     * @see String
+     * @see String
+     * @see PracticeTheory
+     */
+    private PracticeTheory ojExcelDataToEntity(List<String> excelRowData, String practiceSetId,
 											   String categoryId, String userId) {
 
 		if (StringUtils.isBlank(String.join("", excelRowData))) {
@@ -332,14 +376,18 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		return practiceTheory;
 	}
 
-	/**
-	 * 将excel数据转换为实体类
-	 *
-	 * @param excelRowData
-	 * @param userId
-	 * @return
-	 */
-	private PracticeTheory excelDataToLessonTheory(List<String> excelRowData, String userId) {
+    /**
+     * 将excel数据转换为实体类
+     *
+     * @param excelRowData
+     * @param userId
+     * @return
+     * @throws
+     * @see List<String>
+     * @see String
+     * @see PracticeTheory
+     */
+    private PracticeTheory excelDataToLessonTheory(List<String> excelRowData, String userId) {
 
 		// 数据长度为零 返回空过滤掉
 		if (StringUtils.isBlank(String.join("", excelRowData))) {
@@ -432,13 +480,16 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		return practiceTheory;
 	}
 
-	/**
-	 * 处理习题类型
-	 *
-	 * @param theoryType 习题类型
-	 * @return
-	 */
-	private Integer handleTheoryType(String theoryType) {
+    /**
+     * 处理习题类型
+     *
+     * @param theoryType 习题类型
+     * @return
+     * @throws
+     * @see String
+     * @see Integer
+     */
+    private Integer handleTheoryType(String theoryType) {
 
 		Integer realType;
 		try {
@@ -453,15 +504,20 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		return realType;
 	}
 
-	/**
-	 * excel数据转化为实体类
-	 *
-	 * @param excelRowData
-	 * @param practiceSet  实践设置
-	 * @param userId       用户id
-	 * @return
-	 */
-	private PracticeTheory excelDataToEntity(List<String> excelRowData, PracticeSet practiceSet,
+    /**
+     * excel数据转化为实体类
+     *
+     * @param excelRowData
+     * @param practiceSet  实践设置
+     * @param userId       用户id
+     * @return
+     * @throws
+     * @see List<String>
+     * @see PracticeSet
+     * @see String
+     * @see PracticeTheory
+     */
+    private PracticeTheory excelDataToEntity(List<String> excelRowData, PracticeSet practiceSet,
 			String userId) {
 
 		// 数据长度为零 返回空过滤掉
@@ -569,14 +625,18 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		return practiceTheory;
 	}
 
-	/**
-	 * 处理填空题答案
-	 *
-	 * @param excelRowData
-	 * @param index
-	 * @return
-	 */
-	private String handleFillBlank(List<String> excelRowData, int index) {
+    /**
+     * 处理填空题答案
+     *
+     * @param excelRowData
+     * @param index
+     * @return
+     * @throws
+     * @see List<String>
+     * @see int
+     * @see String
+     */
+    private String handleFillBlank(List<String> excelRowData, int index) {
 		practiceValidateHandler.validateFillBlankAnswerLength(excelRowData, index);
 
 		// 获取填空题答案
@@ -610,14 +670,18 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		return JsonUtil.arrayToString(blankAnswers);
 	}
 
-	/**
-	 * 处理选项内容
-	 *
-	 * @param excelRowData
-	 * @param start
-	 * @return
-	 */
-	private String formatOption(List<String> excelRowData, Integer start) {
+    /**
+     * 处理选项内容
+     *
+     * @param excelRowData
+     * @param start
+     * @return
+     * @throws
+     * @see List<String>
+     * @see Integer
+     * @see String
+     */
+    private String formatOption(List<String> excelRowData, Integer start) {
 		if (CollectionUtils.isEmpty(excelRowData)) {
 			return CommonConstant.EMPTY_OBJECT;
 		}
@@ -645,13 +709,16 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		return JsonUtil.toJsonString(options);
 	}
 
-	/**
-	 * 处理选择题答案
-	 *
-	 * @param answer
-	 * @return
-	 */
-	private String handleChoiceAnswer(String answer) {
+    /**
+     * 处理选择题答案
+     *
+     * @param answer
+     * @return
+     * @throws
+     * @see String
+     * @see String
+     */
+    private String handleChoiceAnswer(String answer) {
 		practiceValidateHandler.validateChoiceAnswer(answer);
 
 		if (answer.length() > 1 && !answer.contains("|")) {
@@ -662,13 +729,16 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		return answer;
 	}
 
-	/**
-	 * 处理理论习题类型
-	 *
-	 * @param theoryType 习题类型
-	 * @return
-	 */
-	private Integer handleOnlyTheoryType(String theoryType) {
+    /**
+     * 处理理论习题类型
+     *
+     * @param theoryType 习题类型
+     * @return
+     * @throws
+     * @see String
+     * @see Integer
+     */
+    private Integer handleOnlyTheoryType(String theoryType) {
 
 		Integer realType;
 		try {
@@ -683,13 +753,16 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		return realType;
 	}
 
-	/**
-	 * 处理习题难度
-	 *
-	 * @param theoryDifficulty 习题难度
-	 * @return
-	 */
-	private Integer handleTheoryDifficulty(String theoryDifficulty) {
+    /**
+     * 处理习题难度
+     *
+     * @param theoryDifficulty 习题难度
+     * @return
+     * @throws
+     * @see String
+     * @see Integer
+     */
+    private Integer handleTheoryDifficulty(String theoryDifficulty) {
 		Integer realDifficulty;
 
 		try {
@@ -705,15 +778,20 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 
 	}
 
-	/**
-	 * 将md文件内容转换为实体类
-	 *
-	 * @param lessonFilePath
-	 * @param theoryBaseMdList
-	 * @param code
-	 * @return
-	 */
-	public List<PracticeTheory> mdDataToEntity(String lessonFilePath,
+    /**
+     * 将md文件内容转换为实体类
+     *
+     * @param lessonFilePath
+     * @param theoryBaseMdList
+     * @param code
+     * @return
+     * @throws
+     * @see String
+     * @see List<TheoryBaseMd>
+     * @see Integer
+     * @see List<PracticeTheory>
+     */
+    public List<PracticeTheory> mdDataToEntity(String lessonFilePath,
 			List<TheoryBaseMd> theoryBaseMdList, Integer code) {
 
 		List<PracticeTheory> practiceTheories = StreamApiUtils.map(theoryBaseMdList,
@@ -810,13 +888,16 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 
 	}
 
-	/**
-	 * 计算权重
-	 *
-	 * @param split
-	 * @return
-	 */
-	private static int[] getWeight(String[] split) {
+    /**
+     * 计算权重
+     *
+     * @param split
+     * @return
+     * @throws
+     * @see String[]
+     * @see int[]
+     */
+    private static int[] getWeight(String[] split) {
 		int[] weights = new int[split.length];
 		int m = 100 / split.length, i = 0, sum = 0;
 		for (; i < split.length - 1; i++) {
@@ -828,13 +909,16 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		return weights;
 	}
 
-	/**
-	 * 改变标题自理论
-	 *
-	 * @param practiceTheory 实践理论
-	 * @param theoryBaseMd   理论基础Markdown
-	 */
-	private void changeTitleToTheory(PracticeTheory practiceTheory, TheoryBaseMd theoryBaseMd) {
+    /**
+     * 改变标题自理论
+     *
+     * @param practiceTheory 实践理论
+     * @param theoryBaseMd   理论基础Markdown
+     * @throws
+     * @see PracticeTheory
+     * @see TheoryBaseMd
+     */
+    private void changeTitleToTheory(PracticeTheory practiceTheory, TheoryBaseMd theoryBaseMd) {
 
 		String[] split = theoryBaseMd.getTitle().split("\n");
 		List<String> content = Arrays.asList(split);

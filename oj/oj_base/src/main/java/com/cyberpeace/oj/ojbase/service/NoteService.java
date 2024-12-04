@@ -17,7 +17,10 @@ import java.util.List;
  * 注意Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
  */
 public interface NoteService extends IService<Note> {
 
@@ -26,6 +29,9 @@ public interface NoteService extends IService<Note> {
      *
      * @param uniqueContext
      * @return
+     * @throws
+     * @see NoteUniqueContext
+     * @see NoteBo
      */
     NoteBo selectByUnique(NoteUniqueContext uniqueContext);
 
@@ -34,6 +40,9 @@ public interface NoteService extends IService<Note> {
      *
      * @param noteAddContext
      * @return
+     * @throws
+     * @see NoteAddContext
+     * @see Note
      */
     Note addNote(NoteAddContext noteAddContext);
 
@@ -44,6 +53,11 @@ public interface NoteService extends IService<Note> {
      * @param noteListQuery
      * @param isWeb         是 Web
      * @return
+     * @throws
+     * @see Page
+     * @see AdminNoteListQuery
+     * @see Boolean
+     * @see IPage<NoteListBo>
      */
     IPage<NoteListBo> pageByUserNameAndContent(Page page, AdminNoteListQuery noteListQuery, Boolean isWeb);
 
@@ -52,6 +66,9 @@ public interface NoteService extends IService<Note> {
      *
      * @param reportAddReq
      * @return
+     * @throws
+     * @see ReportAddReq
+     * @see Note
      */
     Note addAndUpdateReport(ReportAddReq reportAddReq);
 
@@ -62,6 +79,11 @@ public interface NoteService extends IService<Note> {
      * @param noteType     注释类型
      * @param resourceType 资源类型
      * @return {@code Integer }
+     * @throws
+     * @see String
+     * @see Integer
+     * @see List<String>
+     * @see Integer
      */
     Integer getCount(String userId, Integer noteType, List<String> resourceType);
 
@@ -71,6 +93,10 @@ public interface NoteService extends IService<Note> {
      * @param businessId   业务id
      * @param noteType     注释类型
      * @param businessType 业务类型
+     * @throws
+     * @see String
+     * @see Integer
+     * @see Integer
      */
     void deleteByBusiness(String businessId, Integer noteType, Integer businessType);
 }

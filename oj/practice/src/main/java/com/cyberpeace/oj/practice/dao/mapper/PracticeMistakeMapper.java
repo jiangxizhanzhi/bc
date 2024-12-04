@@ -13,7 +13,10 @@ import java.util.List;
  * 实践错误Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -25,6 +28,10 @@ public interface PracticeMistakeMapper extends BaseMapper<PracticeMistake> {
 	 * @param userId      用户id
 	 * @param practiceIds 实践id列表
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see Integer
 	 */
 	Integer countByUserId(@Param("userId") String userId, @Param("practiceIds") List<String> practiceIds);
 
@@ -33,6 +40,9 @@ public interface PracticeMistakeMapper extends BaseMapper<PracticeMistake> {
 	 *
 	 * @param practiceIds 实践id列表
 	 * @param userId      用户id
+	 * @throws
+	 * @see List<String>
+	 * @see String
 	 */
 	void deleteByPracticeIds(@Param("practiceIds") List<String> practiceIds, @Param("userId") String userId);
 
@@ -42,6 +52,10 @@ public interface PracticeMistakeMapper extends BaseMapper<PracticeMistake> {
 	 * @param practiceIds 实践id列表
 	 * @param userId      用户id
 	 * @return {@code List<PersonalMistakeRes> }
+	 * @throws
+	 * @see List<String>
+	 * @see String
+	 * @see List<PersonalMistakeRes>
 	 */
 	List<PersonalMistakeRes> selectByPracticeId(@Param("practiceIds") List<String> practiceIds, @Param("userId") String userId);
 }

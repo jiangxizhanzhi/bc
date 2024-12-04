@@ -8,19 +8,26 @@ import lombok.Data;
  * 分页评论请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
  */
 @Data
 public class PageCommentReq extends PageReqBase {
 
     /**
      * 业务id
+     *
+     * @see String
      */
     @ApiModelProperty(name = "business_id", value = "资源编号")
     private String businessId;
 
     /**
      * 业务类型
+     *
+     * @see Integer
      */
     @ApiModelProperty(name = "business_type", value = "资源类型 1=课程 2=课时 3=实操题")
     private Integer businessType;

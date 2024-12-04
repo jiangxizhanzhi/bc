@@ -13,7 +13,10 @@ import java.util.List;
  * OJ当地场景Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
  */
 public interface OjLocalSceneService extends IService<OjLocalScene> {
 
@@ -24,6 +27,11 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	 * @param shared      是否共享 1=私有 2=共享
 	 * @param authContext 前后台权限数据
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see AuthContext
+	 * @see OjLocalScene
 	 */
 	OjLocalScene selectOjLocalScene(String businessId, Integer shared, AuthContext authContext);
 
@@ -32,6 +40,9 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	 *
 	 * @param sceneContext
 	 * @return
+	 * @throws
+	 * @see InitOjSceneContext
+	 * @see OjLocalScene
 	 */
 	OjLocalScene initOjLocalScene(InitOjSceneContext sceneContext);
 
@@ -41,6 +52,10 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	 * @param ojLocalScene
 	 * @param topoId       拓扑id
 	 * @return
+	 * @throws
+	 * @see OjLocalScene
+	 * @see JSONObject
+	 * @see JSONObject
 	 */
 	JSONObject setDynamicFlag(OjLocalScene ojLocalScene, JSONObject topoId);
 
@@ -49,6 +64,9 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	 *
 	 * @param ojLocalSceneId OJ当地场景id
 	 * @return {@code OjLocalScene }
+	 * @throws
+	 * @see String
+	 * @see OjLocalScene
 	 */
 	OjLocalScene deleteLocalScene(String ojLocalSceneId);
 
@@ -57,6 +75,9 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	 *
 	 * @param ojLocalScene
 	 * @return
+	 * @throws
+	 * @see OjLocalScene
+	 * @see Boolean
 	 */
 	Boolean deleteLocalAndRemoteScene(OjLocalScene ojLocalScene);
 
@@ -66,6 +87,10 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	 * @param message      场景启动相关消息
 	 * @param ojLocalScene OJ当地场景
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see OjLocalScene
+	 * @see JSONObject
 	 */
 	JSONObject getStartSceneMessage(String message, OjLocalScene ojLocalScene);
 
@@ -74,6 +99,9 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	 *
 	 * @param userId
 	 * @param createCount 创造计数
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	void checkSceneStartCount(String userId, Integer createCount);
 
@@ -82,6 +110,9 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	 *
 	 * @param ojLocalScene
 	 * @return
+	 * @throws
+	 * @see OjLocalScene
+	 * @see JSONObject
 	 */
 	JSONObject getSceneData(OjLocalScene ojLocalScene);
 
@@ -90,6 +121,9 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	 *
 	 * @param ojLocalScenes
 	 * @return
+	 * @throws
+	 * @see List<OjLocalScene>
+	 * @see List<SceneMonitorBo>
 	 */
 	List<SceneMonitorBo> selectMonitorList(List<OjLocalScene> ojLocalScenes);
 
@@ -99,6 +133,10 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	 * @param topoId
 	 * @param record
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see JSONObject
 	 */
 	JSONObject switchScreenRecord(String topoId, Boolean record);
 

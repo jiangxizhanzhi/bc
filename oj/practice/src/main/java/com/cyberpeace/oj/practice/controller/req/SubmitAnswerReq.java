@@ -11,6 +11,9 @@ import java.io.Serializable;
  * 提交答案请求体
  *
  * @author SN
+ * @see Serializable
+ * @version 1.0.0
+ * @since 1.0.0
  * @date 2024/11/08
  */
 @Data
@@ -18,15 +21,19 @@ import java.io.Serializable;
 public class SubmitAnswerReq implements Serializable {
 
 	/**
-	 * 资源id
-	 */
+     * 资源id
+     *
+     * @see String
+     */
 	@ApiModelProperty("资源编号")
 	@NotBlank
 	private String resourceId;
 
 	/**
-	 * 提交答案
-	 */
+     * 提交答案
+     *
+     * @see String
+     */
 	@ApiModelProperty("用户提交答案")
 	@NotBlank
 	private String submitAnswer;

@@ -31,28 +31,38 @@ import lombok.extern.slf4j.Slf4j;
  * Markdown理论解析 器
  *
  * @author chenzhuo
- * 仅支持标题和列表 列表仅支持二级@date 2024/11/08
+ * 仅支持标题和列表 列表仅支持二级@date 2024/11/08@version 1.0.0
+ * @date 2024/12/04
+ * @since 1.0.0
  */
 @Slf4j
 public class MdTheoryParser {
 
 	/**
 	 * head 符号
+	 *
+	 * @see String
 	 */
 	private String HEAD_SYMBOL = "#";
 
 	/**
 	 * 内容
+	 *
+	 * @see List<String>
 	 */
 	private List<String> content;
 
 	/**
 	 * 标题地图
+	 *
+	 * @see Map<String, String>
 	 */
 	private Map<String, String> titleMap;
 
 	/**
 	 * 解析器映射
+	 *
+	 * @see Map<Class, MdContentParser>
 	 */
 	private Map<Class, MdContentParser> parserMap;
 
@@ -60,6 +70,8 @@ public class MdTheoryParser {
 	 * Markdown理论解析 器
 	 *
 	 * @param file 文件
+	 * @throws
+	 * @see String
 	 */
 	public MdTheoryParser(String file) {
 		setFile(file);
@@ -68,6 +80,8 @@ public class MdTheoryParser {
 
 	/**
 	 * Markdown理论解析 器
+	 *
+	 * @throws
 	 */
 	public MdTheoryParser() {
 		collectParse();
@@ -77,6 +91,8 @@ public class MdTheoryParser {
 	 * 设置文件
 	 *
 	 * @param file 文件
+	 * @throws
+	 * @see String
 	 */
 	public void setFile(String file) {
 		if (StringUtils.isBlank(file) || !new File(file).exists()) {
@@ -93,6 +109,9 @@ public class MdTheoryParser {
 	 *
 	 * @param cls CLS
 	 * @return {@code T }
+	 * @throws
+	 * @see Class<T>
+	 * @see T
 	 */
 	public synchronized <T> T read(Class<T> cls) {
 		try {
@@ -108,6 +127,9 @@ public class MdTheoryParser {
 	 *
 	 * @param obj  对象
 	 * @param file 文件
+	 * @throws
+	 * @see Object
+	 * @see File
 	 */
 	public synchronized void write(Object obj, File file) {
 		doWrite(obj, file);
@@ -118,6 +140,9 @@ public class MdTheoryParser {
 	 *
 	 * @param obj  对象
 	 * @param file 文件
+	 * @throws
+	 * @see Object
+	 * @see File
 	 */
 	private void doWrite(Object obj, File file) {
 		FileUtil.mkdirs(file.getParentFile().getAbsolutePath());
@@ -196,7 +221,9 @@ public class MdTheoryParser {
 	 *
 	 * @param cls CLS
 	 * @return {@code T }
-	 * @throws IllegalAccessException 非法访问异常
+	 * @throws @throws IllegalAccessException 非法访问异常
+	 * @see Class<T>
+	 * @see T
 	 */
 	private <T> T doRead(Class<T> cls) throws IllegalAccessException {
 		mdKeyMap();
@@ -236,6 +263,8 @@ public class MdTheoryParser {
 	/**
 	 * 解析markdown文件 返回json数据
 	 * 第一步通过#、##解析题型，第二步通过###解析每道题目
+	 *
+	 * @throws
 	 */
 	public void mdKeyMap() {
 
@@ -270,6 +299,10 @@ public class MdTheoryParser {
 	 * @param singles     单打
 	 * @param markdownTag Markdown 标签
 	 * @return {@code Map<String, String> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Map<String, String>
 	 */
 	public static Map<String, String> parseKeyMap(String singles, String markdownTag) {
 
@@ -315,6 +348,10 @@ public class MdTheoryParser {
 	 * @param newPath 新建路径
 	 * @param line    线
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	public static String setRelativeFilePath(String newPath, String line) {
 
@@ -348,6 +385,10 @@ public class MdTheoryParser {
 	 * @param path 路径
 	 * @param line 线
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	public static String setNewFIlePath(String path, String line) {
 		if (line.contains(ConfigUtil.getContextProperty("cr.local.file.prefix"))) {
@@ -384,6 +425,10 @@ public class MdTheoryParser {
 	 * @param length 长度
 	 * @param str    str
 	 * @return {@code String }
+	 * @throws
+	 * @see int
+	 * @see String
+	 * @see String
 	 */
 	private String getAssignStr(int length, String str) {
 
@@ -397,6 +442,8 @@ public class MdTheoryParser {
 
 	/**
 	 * 内置解析器
+	 *
+	 * @throws
 	 */
 	private void collectParse() {
 		Map<String, MdContentParser> beansOfType = SpringContextUtil
@@ -410,6 +457,9 @@ public class MdTheoryParser {
 	 *
 	 * @param cls             CLS
 	 * @param mdContentParser MD 内容解析器
+	 * @throws
+	 * @see Class
+	 * @see MdContentParser
 	 */
 	public void addParser(Class cls, MdContentParser mdContentParser) {
 		parserMap.put(cls, mdContentParser);

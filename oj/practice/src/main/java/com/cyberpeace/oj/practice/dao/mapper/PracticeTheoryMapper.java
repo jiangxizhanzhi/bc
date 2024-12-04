@@ -18,7 +18,10 @@ import java.util.List;
  * 实践理论Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -34,6 +37,14 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * @param questionType
 	 * @param difficulty
 	 * @return
+	 * @throws
+	 * @see Page
+	 * @see String
+	 * @see List<String>
+	 * @see String
+	 * @see Integer
+	 * @see Integer
+	 * @see IPage<PracticeTheory>
 	 */
 	IPage<PracticeTheory> getList(Page page, @Param("pattern") String pattern,
 			@Param("practice_set_ids") List<String> practiceSetIds, @Param("category") String category,
@@ -45,6 +56,10 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * @param theoryListQuery
 	 * @param count
 	 * @return
+	 * @throws
+	 * @see TheoryListQuery
+	 * @see Integer
+	 * @see List<PracticeTheory>
 	 */
 	List<PracticeTheory> randomChoice(@Param("query") TheoryListQuery theoryListQuery,
 			@Param("limit") Integer count);
@@ -54,6 +69,9 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 *
 	 * @param resourceIds
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see List<PracticeTheory>
 	 */
 	List<PracticeTheory> batchGet(@Param("resource_ids") List<String> resourceIds);
 
@@ -64,6 +82,11 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * @param theoryListQuery 理论列表查询
 	 * @param isPublic        是否公开
 	 * @return {@code IPage<PracticeTheory> }
+	 * @throws
+	 * @see Page
+	 * @see TheoryListQuery
+	 * @see Boolean
+	 * @see IPage<PracticeTheory>
 	 */
 	IPage<PracticeTheory> pageByQuery(Page page,
 			@Param("listQuery") TheoryListQuery theoryListQuery,
@@ -75,6 +98,10 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * @param setIds   设置id列表
 	 * @param isPublic 是否公开
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
+	 * @see List<String>
 	 */
 	List<String> selectBySetIds(@Param("setIds") List<String> setIds,
 			@Param("isPublic") Boolean isPublic);
@@ -85,6 +112,10 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * @param categoryIds 类别id列表
 	 * @param isPublic    是否公开
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
+	 * @see List<String>
 	 */
 	List<String> selectByCategoryIds(@Param("categoryIds") List<String> categoryIds,
 			@Param("isPublic") Boolean isPublic);
@@ -95,6 +126,10 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * @param practiceSetId 实践设置id
 	 * @param content       内容
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	String selectByContent(
 			@Param("practiceSetId") String practiceSetId, @Param("content") String content);
@@ -105,6 +140,10 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * @param theoryListQuery 理论列表查询
 	 * @param isPublic        是否公开
 	 * @return {@code List<TheorySimpleBo> }
+	 * @throws
+	 * @see TheoryListQuery
+	 * @see Boolean
+	 * @see List<TheorySimpleBo>
 	 */
 	List<TheorySimpleBo> selectSimple(@Param("query") TheoryListQuery theoryListQuery,
 			@Param("isPublic") Boolean isPublic);
@@ -114,6 +153,9 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 *
 	 * @param setIds 设置id列表
 	 * @return {@code String }
+	 * @throws
+	 * @see List<String>
+	 * @see String
 	 */
 	String searchBuiltinBySetIds(@Param("setIds") List<String> setIds);
 
@@ -125,6 +167,12 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * @param directions   方向
 	 * @param practiceIds  实践id列表
 	 * @return {@code List<PracticeTheory> }
+	 * @throws
+	 * @see List<Integer>
+	 * @see List<Integer>
+	 * @see List<String>
+	 * @see List<String>
+	 * @see List<PracticeTheory>
 	 */
 	List<PracticeTheory> selectAllByCreatePaper(@Param("difficulties") List<Integer> difficulties,
 												@Param("types") List<Integer> types,
@@ -140,6 +188,13 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * @param authSetIds      认证设置id列表
 	 * @param practiceType    执业类型
 	 * @return {@code List<CategoryProgressRes> }
+	 * @throws
+	 * @see TheoryListQuery
+	 * @see Boolean
+	 * @see String
+	 * @see List<String>
+	 * @see Integer
+	 * @see List<CategoryProgressRes>
 	 */
 	List<CategoryProgressRes> selectByGroupCategory(@Param("listQuery") TheoryListQuery theoryListQuery,
 											@Param("isPublic") Boolean isPublic,
@@ -156,6 +211,13 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * @param authSetIds      认证设置id列表
 	 * @param practiceType    执业类型
 	 * @return {@code List<ProgressProportion> }
+	 * @throws
+	 * @see TheoryListQuery
+	 * @see Boolean
+	 * @see String
+	 * @see List<String>
+	 * @see Integer
+	 * @see List<ProgressProportion>
 	 */
 	List<ProgressProportion> selectByGroupDifficulty(@Param("listQuery") TheoryListQuery theoryListQuery,
 													 @Param("isPublic") Boolean isPublic,
@@ -167,6 +229,8 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * 查询现有题目的方向id和习题集id
 	 *
 	 * @return
+	 * @throws
+	 * @see List<PracticeTheory>
 	 */
 	List<PracticeTheory> selectAllCategoryIds();
 
@@ -174,6 +238,8 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * 查询时间
 	 *
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
 	 */
 	List<String> selectTime();
 
@@ -182,6 +248,9 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 *
 	 * @param setIds 设置id列表
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> selectOnlyBySetIds(@Param("setIds") List<String> setIds);
 }

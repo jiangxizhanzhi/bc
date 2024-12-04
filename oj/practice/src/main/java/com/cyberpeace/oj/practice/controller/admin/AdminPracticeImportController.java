@@ -26,7 +26,9 @@ import lombok.extern.slf4j.Slf4j;
  * 管理实践导入Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 @Slf4j(topic = "resourceImport")
 @Api(tags = "oj-后台习题资源数据导入api")
@@ -34,25 +36,32 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/oj/admin/practice/import")
 public class AdminPracticeImportController {
 
-	/**
-	 * 实践设置Service
-	 */
-	@Autowired
+    /**
+     * 实践设置Service
+     *
+     * @see PracticeSetService
+     */
+    @Autowired
 	private PracticeSetService practiceSetService;
 
-	/**
-	 * 实践设置导入Service
-	 */
-	@Autowired
+    /**
+     * 实践设置导入Service
+     *
+     * @see PracticeSetImportService
+     */
+    @Autowired
 	private PracticeSetImportService practiceSetImportService;
 
-	/**
-	 * 导入 rmtheory
-	 *
-	 * @param rmImportReq 马币导入请求体
-	 * @return {@code BaseRsp<Boolean> }
-	 */
-	@ApiOperation("资管理论习题导入")
+    /**
+     * 导入 rmtheory
+     *
+     * @param rmImportReq 马币导入请求体
+     * @return {@code BaseRsp<Boolean> }
+     * @throws
+     * @see RMImportReq
+     * @see BaseRsp<Boolean>
+     */
+    @ApiOperation("资管理论习题导入")
 	@PostMapping("/rm/theory")
 	public BaseRsp<Boolean> importRMTheory(@RequestBody @Validated RMImportReq rmImportReq) {
 		try {
@@ -65,13 +74,16 @@ public class AdminPracticeImportController {
 		}
 	}
 
-	/**
-	 * 导入 RMCTF
-	 *
-	 * @param practiceImportReq 实践导入请求体
-	 * @return {@code BaseRsp<Boolean> }
-	 */
-	@ApiOperation("资管实操习题资源导入")
+    /**
+     * 导入 RMCTF
+     *
+     * @param practiceImportReq 实践导入请求体
+     * @return {@code BaseRsp<Boolean> }
+     * @throws
+     * @see RmPracticeImportReq
+     * @see BaseRsp<Boolean>
+     */
+    @ApiOperation("资管实操习题资源导入")
 	@PostMapping("/rm/ctf")
 	public BaseRsp<Boolean>
 			importRMCtf(@RequestBody @Validated RmPracticeImportReq practiceImportReq) {
@@ -100,16 +112,22 @@ public class AdminPracticeImportController {
 		}
 	}
 
-	/**
-	 * 导出
-	 *
-	 * @param practiceSetId      实践设置id
-	 * @param practiceId         实践id
-	 * @param newPath            新建路径
-	 * @param disableImageExport 禁用图像导出
-	 * @return {@code BaseRsp<String> }
-	 */
-	@ApiOperation("实操习题导出")
+    /**
+     * 导出
+     *
+     * @param practiceSetId      实践设置id
+     * @param practiceId         实践id
+     * @param newPath            新建路径
+     * @param disableImageExport 禁用图像导出
+     * @return {@code BaseRsp<String> }
+     * @throws
+     * @see String
+     * @see String
+     * @see Boolean
+     * @see Boolean
+     * @see BaseRsp<String>
+     */
+    @ApiOperation("实操习题导出")
 	@GetMapping("/rm/ctf/export")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "set_id", value = "习题编号"),
 			@ApiImplicitParam(name = "practice_id", value = "习题编号"),
@@ -127,13 +145,16 @@ public class AdminPracticeImportController {
 		return new BaseRsp<>(filePath);
 	}
 
-	/**
-	 * 重复实践设置检查
-	 *
-	 * @param practiceSetsReq 实践集请求体
-	 * @return {@code BaseRsp<List<String>> }
-	 */
-	@ApiOperation("习题集重复校验")
+    /**
+     * 重复实践设置检查
+     *
+     * @param practiceSetsReq 实践集请求体
+     * @return {@code BaseRsp<List<String>> }
+     * @throws
+     * @see DuplicatePracticeSetInspectReq
+     * @see BaseRsp<List<String>>
+     */
+    @ApiOperation("习题集重复校验")
 	@PostMapping("/inspect_duplication")
 	public BaseRsp<List<String>> duplicatePracticeSetInspect(
 			@RequestBody @Validated DuplicatePracticeSetInspectReq practiceSetsReq) {

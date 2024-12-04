@@ -16,7 +16,10 @@ import java.util.List;
  * 笔记Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface NoteMapper extends BaseMapper<Note> {
@@ -26,6 +29,9 @@ public interface NoteMapper extends BaseMapper<Note> {
 	 *
 	 * @param context 上下文
 	 * @return {@code Note }
+	 * @throws
+	 * @see NoteUniqueContext
+	 * @see Note
 	 */
 	Note selectByCondition(@Param("context") NoteUniqueContext context);
 
@@ -37,6 +43,12 @@ public interface NoteMapper extends BaseMapper<Note> {
 	 * @param isPublic      是否公开
 	 * @param isSubmit      是提交
 	 * @return {@code IPage<Note> }
+	 * @throws
+	 * @see Page
+	 * @see NoteListQuery
+	 * @see Boolean
+	 * @see Boolean
+	 * @see IPage<Note>
 	 */
 	IPage<Note> pageByUserIdsAndContent(Page page,
 			@Param("noteListQuery") NoteListQuery noteListQuery,
@@ -48,6 +60,9 @@ public interface NoteMapper extends BaseMapper<Note> {
 	 *
 	 * @param note 注意
 	 * @return int
+	 * @throws
+	 * @see Note
+	 * @see int
 	 */
 	@Override
 	int updateById(Note note);
@@ -57,6 +72,9 @@ public interface NoteMapper extends BaseMapper<Note> {
 	 *
 	 * @param note 注意
 	 * @return int
+	 * @throws
+	 * @see Note
+	 * @see int
 	 */
 	int updateNote(Note note);
 
@@ -65,6 +83,9 @@ public interface NoteMapper extends BaseMapper<Note> {
 	 *
 	 * @param context 上下文
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see NoteUniqueContext
+	 * @see List<String>
 	 */
 	List<String> selectByContext(@Param("context") NoteUniqueContext context);
 
@@ -74,6 +95,10 @@ public interface NoteMapper extends BaseMapper<Note> {
 	 * @param noteListQuery 注释列表查询
 	 * @param isPublic      是否公开
 	 * @return {@code List<Note> }
+	 * @throws
+	 * @see NoteListQuery
+	 * @see Boolean
+	 * @see List<Note>
 	 */
 	List<Note> selectByListQuery(@Param("noteListQuery") NoteListQuery noteListQuery,
 			@Param("isPublic") Boolean isPublic);
@@ -84,6 +109,10 @@ public interface NoteMapper extends BaseMapper<Note> {
 	 * @param businessId   业务id
 	 * @param noteType     注释类型
 	 * @param resourceType 资源类型
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see Integer
 	 */
 	void deleteByBusiness(@Param("businessId") String businessId,
 			@Param("noteType") Integer noteType, @Param("resourceType") Integer resourceType);
@@ -96,6 +125,12 @@ public interface NoteMapper extends BaseMapper<Note> {
 	 * @param businessType 业务类型
 	 * @param businessId   业务id
 	 * @return {@code Note }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see Integer
+	 * @see String
+	 * @see Note
 	 */
 	Note selectByUnique(@Param("userId") String userId, @Param("noteType") Integer noteType,
 						@Param("businessType") Integer businessType, @Param("businessId") String businessId);
@@ -105,6 +140,9 @@ public interface NoteMapper extends BaseMapper<Note> {
 	 *
 	 * @param note 注意
 	 * @return int
+	 * @throws
+	 * @see Note
+	 * @see int
 	 */
 	int updateReportByID(Note note);
 
@@ -115,6 +153,11 @@ public interface NoteMapper extends BaseMapper<Note> {
 	 * @param noteType    注释类型
 	 * @param resourceIds 资源id列表
 	 * @return int
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see List<String>
+	 * @see int
 	 */
 	int countByUserId(@Param("userId") String userId, @Param("noteType") Integer noteType, @Param("resourceIds") List<String> resourceIds);
 }

@@ -12,7 +12,10 @@ import java.util.List;
  * 纸实践理论Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
  */
 public interface PaperPracticeTheoryService extends IService<PaperPracticeTheory> {
 
@@ -21,6 +24,9 @@ public interface PaperPracticeTheoryService extends IService<PaperPracticeTheory
 	 *
 	 * @param practiceRefId 实践裁判id
 	 * @return {@code WebTheoryBo }
+	 * @throws
+	 * @see String
+	 * @see WebTheoryBo
 	 */
 	WebTheoryBo getPracticeDetail(String practiceRefId);
 
@@ -30,6 +36,10 @@ public interface PaperPracticeTheoryService extends IService<PaperPracticeTheory
 	 * @param practiceId   实践id
 	 * @param submitAnswer 提交答案
 	 * @return {@code EvaluateResultTheory }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see EvaluateResultTheory
 	 */
 	EvaluateResultTheory submitAnswer(String practiceId, String submitAnswer);
 
@@ -38,6 +48,9 @@ public interface PaperPracticeTheoryService extends IService<PaperPracticeTheory
 	 *
 	 * @param collectionReq 收集请求体
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see CollectionReq
+	 * @see Boolean
 	 */
 	Boolean collection(CollectionReq collectionReq);
 
@@ -46,6 +59,9 @@ public interface PaperPracticeTheoryService extends IService<PaperPracticeTheory
 	 *
 	 * @param practiceRefIds 实践裁判id列表
 	 * @return {@code List<WebTheoryBo> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<WebTheoryBo>
 	 */
 	List<WebTheoryBo> getPracticeDetail(List<String> practiceRefIds);
 }

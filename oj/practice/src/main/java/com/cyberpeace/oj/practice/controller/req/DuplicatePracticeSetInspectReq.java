@@ -12,7 +12,10 @@ import java.util.List;
  * 重复实践设置检查请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -20,6 +23,8 @@ public class DuplicatePracticeSetInspectReq implements Serializable {
 
 	/**
 	 * 文件名
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty("待检查习题集名称")
 	@NotEmpty

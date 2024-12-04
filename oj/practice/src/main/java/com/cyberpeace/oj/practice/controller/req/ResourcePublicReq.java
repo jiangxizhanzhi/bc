@@ -13,13 +13,18 @@ import lombok.Data;
  * 资源公共请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class ResourcePublicReq implements Serializable {
 
 	/**
 	 * 资源id列表
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty("更新资源ID")
 	@NotEmpty
@@ -27,6 +32,8 @@ public class ResourcePublicReq implements Serializable {
 
 	/**
 	 * 是否公开
+	 *
+	 * @see Boolean
 	 */
 	@ApiModelProperty("是否公开")
 	@NotNull

@@ -13,7 +13,10 @@ import java.util.List;
  * 实践类别Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
  */
 public interface PracticeCategoryService extends IService<PracticeCategory> {
 
@@ -24,6 +27,11 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
 	 * @param query
 	 * @param children 是否查询子类信息
 	 * @return
+	 * @throws
+	 * @see Page
+	 * @see CategoryListQuery
+	 * @see Boolean
+	 * @see IPage<CategoryListBo>
 	 */
 	IPage<CategoryListBo> pageByListQuery(Page page, CategoryListQuery query, Boolean children);
 
@@ -33,6 +41,10 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
 	 * @param resourceId
 	 * @param children   是否查询子类信息
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see CategoryListBo
 	 */
 	CategoryListBo selectById(String resourceId, Boolean children);
 
@@ -41,6 +53,9 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
 	 *
 	 * @param category
 	 * @return
+	 * @throws
+	 * @see PracticeCategory
+	 * @see Integer
 	 */
 	Integer updateCategory(PracticeCategory category);
 
@@ -50,6 +65,10 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
 	 * @param practiceCategory
 	 * @param userId
 	 * @return
+	 * @throws
+	 * @see PracticeCategory
+	 * @see String
+	 * @see Integer
 	 */
 	Integer addCategory(PracticeCategory practiceCategory, String userId);
 
@@ -58,6 +77,9 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
 	 *
 	 * @param parentId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	String getCodeByParent(String parentId);
 
@@ -67,6 +89,10 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
 	 * @param listQuery
 	 * @param children
 	 * @return
+	 * @throws
+	 * @see CategoryListQuery
+	 * @see Boolean
+	 * @see List<CategoryListBo>
 	 */
 	List<CategoryListBo> listByTypeAndName(CategoryListQuery listQuery, Boolean children);
 
@@ -76,6 +102,10 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
 	 * @param parentId
 	 * @param self     是否包含本身 true包含 false不包含
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see List<String>
 	 */
 	List<String> selectChildrenIds(String parentId, Boolean self);
 
@@ -84,6 +114,9 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
 	 *
 	 * @param resourceIds
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see int
 	 */
 	int batchDelete(List<String> resourceIds);
 
@@ -94,6 +127,11 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
 	 * @param code
 	 * @param userId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see String
 	 */
 	String selectCategoryOrCreate(String categoryName, Integer code, String userId);
 }

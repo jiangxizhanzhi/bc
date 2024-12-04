@@ -18,13 +18,19 @@ import java.util.Map;
  * 资源收集Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see ServiceImpl
+ * @see ResourceCollectionService
+ * @since 1.0.0
  */
 @Service
 public class ResourceCollectionServiceImpl extends ServiceImpl<ResourceCollectionMapper, ResourceCollection> implements ResourceCollectionService {
 
 	/**
 	 * 资源收集Mapper
+	 *
+	 * @see ResourceCollectionMapper
 	 */
 	@Autowired
 	private ResourceCollectionMapper resourceCollectionMapper;
@@ -35,6 +41,10 @@ public class ResourceCollectionServiceImpl extends ServiceImpl<ResourceCollectio
 	 * @param collectionContext 集合上下文
 	 * @param isCollection      is 集合
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see CollectionContext
+	 * @see Boolean
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean collectionResource(CollectionContext collectionContext, Boolean isCollection) {
@@ -59,6 +69,11 @@ public class ResourceCollectionServiceImpl extends ServiceImpl<ResourceCollectio
 	 * @param businessType 业务类型
 	 * @param businessId   业务id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean selectByUnique(String userId, Integer businessType, String businessId) {
@@ -75,6 +90,10 @@ public class ResourceCollectionServiceImpl extends ServiceImpl<ResourceCollectio
 	 * @param userId       用户id
 	 * @param businessType 业务类型
 	 * @return {@code List<ResourceCollection> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see List<ResourceCollection>
 	 */
 	@Override
 	public List<ResourceCollection> selectByType(String userId, Integer businessType) {
@@ -89,6 +108,11 @@ public class ResourceCollectionServiceImpl extends ServiceImpl<ResourceCollectio
 	 * @param businessType 业务类型
 	 * @param businessIds  业务id列表
 	 * @return {@code Map<String, Boolean> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see List<String>
+	 * @see Map<String, Boolean>
 	 */
 	@Override
 	public Map<String, Boolean> selectCollectionBatchIds(String userId, Integer businessType, List<String> businessIds) {
@@ -112,6 +136,11 @@ public class ResourceCollectionServiceImpl extends ServiceImpl<ResourceCollectio
 	 * @param businessType 业务类型
 	 * @param businessIds  业务id列表
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see List<String>
+	 * @see Integer
 	 */
 	@Override
 	public Integer countCollectionByUserIdAndBusinessId(String userId, Integer businessType,

@@ -11,7 +11,9 @@ import java.util.Map;
  * 实践实操导入Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 public interface PracticeOperationImportService {
 
@@ -21,6 +23,10 @@ public interface PracticeOperationImportService {
      * @param lessonPracticePath
      * @param practiceTopo
      * @return
+     * @throws
+     * @see String
+     * @see Map<String, String>
+     * @see List<PracticeOperation>
      */
     List<PracticeOperation> parseLessonOperation(String lessonPracticePath, Map<String, String> practiceTopo);
 
@@ -31,6 +37,11 @@ public interface PracticeOperationImportService {
      * @param envReqs
      * @param practiceSet
      * @return
+     * @throws
+     * @see String
+     * @see Map<String, String>
+     * @see PracticeSet
+     * @see PracticeOperation
      */
     PracticeOperation parseLessonPracticeCtf(String path, Map<String, String> envReqs,
                                         PracticeSet practiceSet);
@@ -42,6 +53,11 @@ public interface PracticeOperationImportService {
      * @param envReqs
      * @param practiceSet
      * @return
+     * @throws
+     * @see String
+     * @see Map<String, String>
+     * @see PracticeSet
+     * @see PracticeOperation
      */
     PracticeOperation parseRmCtf(String path, Map<String, String> envReqs, PracticeSet practiceSet);
 }

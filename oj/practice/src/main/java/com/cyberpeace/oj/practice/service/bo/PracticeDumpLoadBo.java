@@ -8,33 +8,46 @@ import lombok.Data;
  * 习题数据导出Bo类
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class PracticeDumpLoadBo implements Serializable {
 
 	/**
 	 * 分类名称
+	 *
+	 * @see String
 	 */
 	private String categoryName;
 
 	/**
 	 * 标题
+	 *
+	 * @see String
 	 */
 	private String title;
 
 	/**
 	 * 公开
+	 *
+	 * @see Boolean
 	 */
 	private Boolean isPublic;
 
 	/**
 	 * 所属习题集
+	 *
+	 * @see String
 	 */
 	private String practiceSetId;
 
 	/**
 	 * 内容
+	 *
+	 * @see String
 	 */
 	private String content;
 
@@ -48,21 +61,29 @@ public class PracticeDumpLoadBo implements Serializable {
 	 * \"weight\":60,\"value\":\"B\"
 	 * }
 	 * ], 简答-纯文本")
+	 *
+	 * @see String
 	 */
 	private String answer;
 
 	/**
 	 * 难度, 目前仅操作题使用 0-初级, 1-中级, 2-高级
+	 *
+	 * @see Integer
 	 */
 	private Integer difficulty;
 
 	/**
 	 * 知识点
+	 *
+	 * @see String
 	 */
 	private String knowledge;
 
 	/**
 	 * 分值
+	 *
+	 * @see Double
 	 */
 	private Double score;
 

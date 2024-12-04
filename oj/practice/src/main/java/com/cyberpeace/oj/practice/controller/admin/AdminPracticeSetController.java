@@ -58,6 +58,9 @@ import java.util.List;
  * 管理实践设置Controller
  *
  * @author SN
+ * @version 1.0.0
+ * @see AuthAndPublicController
+ * @since 1.0.0
  * @date 2024/11/08
  */
 @Api(tags = "oj-后台习题集相关api")
@@ -69,30 +72,40 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 	/**
 	 * 实践设置Service
+	 *
+	 * @see PracticeSetService
 	 */
 	@Autowired
 	private PracticeSetService practiceSetService;
 
 	/**
 	 * 实践设置Mapper
+	 *
+	 * @see PracticeSetMapper
 	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
 	/**
 	 * utilService
+	 *
+	 * @see UtilService
 	 */
 	@Autowired
 	private UtilService utilService;
 
 	/**
 	 * 附件Service
+	 *
+	 * @see AttachmentService
 	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
 	/**
 	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
 	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
@@ -102,6 +115,9 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	 *
 	 * @param setAddReq 设置新增请求体
 	 * @return {@code BaseRsp<Integer> }
+	 * @throws
+	 * @see PracticeSetAddReq
+	 * @see PracticeSetAddReq
 	 */
 	@ApiOperation("习题集新增")
 	@PostMapping("")
@@ -141,6 +157,9 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	 *
 	 * @param updateReq 更新请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see PracticeSetUpdateReq
+	 * @see PracticeSetUpdateReq
 	 */
 	@ApiOperation("习题集更新")
 	@PatchMapping("")
@@ -176,6 +195,9 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<AdminPracticeSetBo> }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@ApiOperation("习题集详细信息查询")
 	@GetMapping("")
@@ -195,6 +217,9 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	 *
 	 * @param delReq 戴尔请求体
 	 * @return {@code BaseRsp<Integer> }
+	 * @throws
+	 * @see ResourceDelReq
+	 * @see ResourceDelReq
 	 */
 	@ApiOperation("批量删除习题集")
 	@DeleteMapping("")
@@ -228,6 +253,9 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	 *
 	 * @param setPageReq 设置分页请求体
 	 * @return {@code BaseRsp<ListRsp<AdminPracticeSetBo>> }
+	 * @throws
+	 * @see PracticeSetPageReq
+	 * @see PracticeSetPageReq
 	 */
 	@ApiOperation("分页查询习题集")
 	@GetMapping("/list")
@@ -254,6 +282,9 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	 *
 	 * @param practiceType 执业类型
 	 * @return {@code BaseRsp<List<PracticeSetRes>> }
+	 * @throws
+	 * @see Integer
+	 * @see Integer
 	 */
 	@GetMapping("/all")
 	@ApiOperation("获取全部的习题集信息")
@@ -275,6 +306,10 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	 * @param ids      id列表
 	 * @param response 响应
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	@ApiOperation("习题集资源数据导出")
 	@GetMapping("/batch_dumps")
@@ -297,6 +332,9 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	 *
 	 * @param loadReq 加载请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see LoadResourceReq
+	 * @see LoadResourceReq
 	 */
 	@ApiOperation("习题集资源数据导入")
 	@PostMapping("/batch_loads")

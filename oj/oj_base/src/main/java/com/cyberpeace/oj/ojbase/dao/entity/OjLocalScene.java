@@ -11,7 +11,10 @@ import lombok.*;
  * OJ当地场景
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @Builder
@@ -22,42 +25,58 @@ public class OjLocalScene extends BaseTable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	/**
 	 * 用户id
+	 *
+	 * @see String
 	 */
 	private String userId;
 
 	/**
 	 * 共享
+	 *
+	 * @see Boolean
 	 */
 	private Boolean shared;
 
 	/**
 	 * 从 Web
+	 *
+	 * @see Boolean
 	 */
 	private Boolean fromWeb;
 
 	/**
 	 * 标志
+	 *
+	 * @see String
 	 */
 	private String flags;
 
 	/**
 	 * 业务id
+	 *
+	 * @see String
 	 */
 	private String businessId;
 
 	/**
 	 * 业务类型
+	 *
+	 * @see Integer
 	 */
 	private Integer businessType;
 
 	/**
 	 * 当地场景id
+	 *
+	 * @see String
 	 */
 	private String localSceneId;
 

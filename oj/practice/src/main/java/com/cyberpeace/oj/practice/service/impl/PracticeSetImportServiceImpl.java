@@ -35,7 +35,11 @@ import java.util.Map;
  * 实践设置导入Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see ServiceImpl
+ * @see PracticeSetImportService
+ * @since 1.0.0
  */
 @Slf4j(topic = "resourceImport")
 @Service
@@ -43,42 +47,56 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * utilService
+	 *
+	 * @see UtilService
 	 */
 	@Autowired
 	private UtilService utilService;
 
 	/**
 	 * 实践设置Mapper
+	 *
+	 * @see PracticeSetMapper
 	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
 	/**
 	 * 实践实操Service
+	 *
+	 * @see PracticeOperationService
 	 */
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 
 	/**
 	 * 实践实操导入Service
+	 *
+	 * @see PracticeOperationImportService
 	 */
 	@Autowired
 	private PracticeOperationImportService practiceOperationImportService;
 
 	/**
 	 * 实践理论Service
+	 *
+	 * @see PracticeTheoryService
 	 */
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
 
 	/**
 	 * 实践理论导入Service
+	 *
+	 * @see PracticeTheoryImportService
 	 */
 	@Autowired
 	private PracticeTheoryImportService practiceTheoryImportService;
@@ -89,6 +107,10 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 	 * @param path    路径
 	 * @param envReqs env reqs
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see Map<String, String>
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> importRmCtfSet(String path, Map<String, String> envReqs) {
@@ -155,6 +177,9 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 	 *
 	 * @param path 路径
 	 * @return boolean
+	 * @throws
+	 * @see String
+	 * @see boolean
 	 */
 	@Override
 	public boolean importRmTheorySet(String path) {
@@ -190,6 +215,9 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 	 *
 	 * @param path 习题集路径
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see PracticeSet
 	 */
 	private PracticeSet handlerPracticeSet(String path) {
 
@@ -250,6 +278,10 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 	 * @param setJson         Json化的习题集数据
 	 * @param practiceSetPath 实践设置路径
 	 * @return
+	 * @throws
+	 * @see JSONObject
+	 * @see String
+	 * @see PracticeSet
 	 */
 	private PracticeSet jsonParsePracticeSet(JSONObject setJson, String practiceSetPath) {
 		// 习题集类型处理

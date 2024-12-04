@@ -60,7 +60,11 @@ import lombok.extern.slf4j.Slf4j;
  * 实践设置Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see ServiceImpl
+ * @see PracticeSetService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -68,66 +72,88 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 	/**
 	 * 实践设置Mapper
+	 *
+	 * @see PracticeSetMapper
 	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 实践实操Mapper
+	 *
+	 * @see PracticeOperationMapper
 	 */
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
 
 	/**
 	 * 实践理论Mapper
+	 *
+	 * @see PracticeTheoryMapper
 	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
 	/**
 	 * utilService
+	 *
+	 * @see UtilService
 	 */
 	@Autowired
 	private UtilService utilService;
 
 	/**
 	 * 实践理论Service
+	 *
+	 * @see PracticeTheoryService
 	 */
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
 
 	/**
 	 * 实践实操Service
+	 *
+	 * @see PracticeOperationService
 	 */
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 实践验证处理器
+	 *
+	 * @see PracticeValidateHandler
 	 */
 	@Autowired
 	private PracticeValidateHandler practiceValidateHandler;
 
 	/**
 	 * 系统配置Service
+	 *
+	 * @see SystemPropertyService
 	 */
 	@Autowired
 	private SystemPropertyService systemPropertyService;
 
 	/**
 	 * 导出日志
+	 *
+	 * @see Logger
 	 */
 	private static final Logger EXPORT_LOG = LoggerFactory.getLogger("resourceImport");
 
@@ -137,6 +163,10 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param resourceId  资源id
 	 * @param authContext auth 上下文
 	 * @return {@code AdminPracticeSetBo }
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see AdminPracticeSetBo
 	 */
 	@Override
 	public AdminPracticeSetBo selectById(String resourceId, AuthContext authContext) {
@@ -165,6 +195,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 *
 	 * @param resourceId  资源id
 	 * @param authContext auth 上下文
+	 * @throws
+	 * @see String
+	 * @see AuthContext
 	 */
 	@Override
 	public void enableAccess(String resourceId, AuthContext authContext) {
@@ -184,6 +217,10 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param authContext auth 上下文
 	 * @param setId       设置id
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see AuthContext
+	 * @see String
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> getSetIds(AuthContext authContext, String setId) {
@@ -209,6 +246,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param authContext auth 上下文
 	 * @param userNameMap 用户名称地图
 	 * @return
+	 * @throws
+	 * @see PracticeSet
+	 * @see AuthContext
+	 * @see Map<String, String>
+	 * @see AdminPracticeSetBo
 	 */
 	private AdminPracticeSetBo entityToSetBo(PracticeSet practiceSet, AuthContext authContext,
 			Map<String, String> userNameMap) {
@@ -247,6 +289,12 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param pattern      模式
 	 * @param authContext  auth 上下文
 	 * @return {@code IPage<AdminPracticeSetBo> }
+	 * @throws
+	 * @see Page
+	 * @see Integer
+	 * @see String
+	 * @see AuthContext
+	 * @see IPage<AdminPracticeSetBo>
 	 */
 	@Override
 	public IPage<AdminPracticeSetBo> selectByTypeAndName(Page page, Integer practiceType,
@@ -277,6 +325,10 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param practiceSet 实践设置
 	 * @param authContext auth 上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see PracticeSet
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean updateByAuth(PracticeSet practiceSet, AuthContext authContext) {
@@ -317,6 +369,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 *
 	 * @param resourceIds 资源id列表
 	 * @param authContext auth 上下文
+	 * @throws
+	 * @see List<String>
+	 * @see AuthContext
 	 */
 	@Override
 	public void enableDelete(List<String> resourceIds, AuthContext authContext) {
@@ -342,6 +397,10 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param practiceSetIds 实践设置id列表
 	 * @param authContext    auth 上下文
 	 * @return {@code File }
+	 * @throws
+	 * @see List<String>
+	 * @see AuthContext
+	 * @see File
 	 */
 	@Override
 	public File dumpPracticeSet(List<String> practiceSetIds, AuthContext authContext) {
@@ -392,6 +451,10 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param realPath 实路
 	 * @param userId   用户id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean loadPracticeSet(String realPath, String userId) {
@@ -470,6 +533,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 *
 	 * @param practiceSets 练习集
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> duplicatePracticeSetInspect(List<String> practiceSets) {
@@ -494,6 +560,12 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param newPath            新建路径
 	 * @param disableImageExport 禁用图像导出
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
+	 * @see Boolean
+	 * @see String
 	 */
 	@Override
 	public String exportPracticeSet(String practiceSetId, String practiceId, Boolean newPath, Boolean disableImageExport) {
@@ -555,6 +627,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * 清除用户身份验证
 	 *
 	 * @param userId 用户id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void clearUserAuth(String userId) {
@@ -572,6 +646,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * 清除组织身份验证
 	 *
 	 * @param orgId 组织id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void clearOrgAuth(String orgId) {
@@ -590,6 +666,10 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param path     路径
 	 * @param theories 理论
 	 * @return {@code MdTheoryPractice }
+	 * @throws
+	 * @see String
+	 * @see List<PracticeTheory>
+	 * @see MdTheoryPractice
 	 */
 	@Override
 	public MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories) {
@@ -603,6 +683,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param practiceSetId 实践设置id
 	 * @param setType       设置类型
 	 * @return {@code List<AdminPracticeSetBo> }
+	 * @throws
+	 * @see AuthContext
+	 * @see String
+	 * @see Integer
+	 * @see List<AdminPracticeSetBo>
 	 */
 	@Override
 	public List<AdminPracticeSetBo> getMorePracticeSet(AuthContext authContext, String practiceSetId, Integer setType) {
@@ -626,6 +711,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 *
 	 * @param setName 设置名称
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String createImg(String setName) {
@@ -648,6 +736,10 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param destPath    目标路径
 	 * @param practiceSet 实践设置
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see PracticeSet
+	 * @see String
 	 */
 	private String doExportSet(String destPath, PracticeSet practiceSet) {
 
@@ -703,6 +795,10 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param destPath 目标路径
 	 * @param setName  设置名称
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	private String createPath(String destPath, String setName) {
 		File setPath = new File(destPath, setName);
@@ -715,6 +811,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 *
 	 * @param practiceSet 实践设置
 	 * @return {@code MdPracticeSet }
+	 * @throws
+	 * @see PracticeSet
+	 * @see MdPracticeSet
 	 */
 	private MdPracticeSet entityToMd(PracticeSet practiceSet) {
 		return BeanUtils.copy(practiceSet, MdPracticeSet.class);
@@ -726,6 +825,10 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param setId      设置id
 	 * @param practiceId 实践id
 	 * @return {@code List<PracticeSet> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<PracticeSet>
 	 */
 	private List<PracticeSet> setListByIds(String setId, String practiceId) {
 
@@ -753,6 +856,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 *
 	 * @param practiceId 实践id
 	 * @return {@code List<PracticeOperation> }
+	 * @throws
+	 * @see String
+	 * @see List<PracticeOperation>
 	 */
 	private List<PracticeOperation> practiceListByIds(String practiceId) {
 		if (StringUtils.isBlank(practiceId)) {
@@ -773,6 +879,13 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param filePathMap          文件路径图
 	 * @param filePath             文件路径
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<PracticeOperationDumpLoadBo>
+	 * @see String
+	 * @see Map<String, String>
+	 * @see String
+	 * @see List<PracticeOperation>
 	 */
 	private List<PracticeOperation> loadPracticeOperation(String practiceSetId,
 			List<PracticeOperationDumpLoadBo> operationDumpLoadBos, String userId,
@@ -788,6 +901,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param theoryDumpLoadBos
 	 * @param userId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<PracticeTheoryDumpLoadBo>
+	 * @see String
+	 * @see List<PracticeTheory>
 	 */
 	private List<PracticeTheory> loadPracticeTheory(String practiceSetId,
 			List<PracticeTheoryDumpLoadBo> theoryDumpLoadBos, String userId) {
@@ -802,6 +920,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param userId
 	 * @param filePath      文件路径
 	 * @return
+	 * @throws
+	 * @see PracticeSetDumpLoadBo
+	 * @see String
+	 * @see String
+	 * @see PracticeSet
 	 */
 	private PracticeSet loadPracticeSet(PracticeSetDumpLoadBo setDumpLoadBo, String userId,
 			String filePath) {
@@ -853,6 +976,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param fileStorePath
 	 * @param filePathMap   文件路径图
 	 * @return
+	 * @throws
+	 * @see PracticeSet
+	 * @see String
+	 * @see Map<String, String>
+	 * @see PracticeSetDumpLoadBo
 	 */
 	private PracticeSetDumpLoadBo dumpSet(PracticeSet practiceSet, String fileStorePath,
 			Map<String, String> filePathMap) {
@@ -881,6 +1009,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param fileStorePath
 	 * @param pathMap
 	 * @return
+	 * @throws
+	 * @see PracticeSet
+	 * @see String
+	 * @see Map<String, String>
+	 * @see List<? extends PracticeDumpLoadBo>
 	 */
 	private List<? extends PracticeDumpLoadBo> dumpPractice(PracticeSet practiceSet,
 			String fileStorePath, Map<String, String> pathMap) {
@@ -906,6 +1039,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param fileStorePath 文件存储路径
 	 * @param filePathMap   文件路径图
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Map<String, String>
+	 * @see List<PracticeOperationDumpLoadBo>
 	 */
 	private List<PracticeOperationDumpLoadBo> dumpOperation(String practiceSetId,
 			String fileStorePath, Map<String, String> filePathMap) {
@@ -928,6 +1066,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 *
 	 * @param practiceSetId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<PracticeTheoryDumpLoadBo>
 	 */
 	private List<PracticeTheoryDumpLoadBo> dumpTheory(String practiceSetId) {
 		// 数据查询
@@ -950,6 +1091,10 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param practiceSet
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see PracticeSet
+	 * @see AuthContext
+	 * @see List<String>
 	 */
 	private List<String> hasPractice(PracticeSet practiceSet, AuthContext authContext) {
 

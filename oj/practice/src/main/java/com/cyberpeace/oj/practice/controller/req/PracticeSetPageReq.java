@@ -10,7 +10,10 @@ import lombok.Data;
  * 实践设置分页请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -18,6 +21,8 @@ public class PracticeSetPageReq extends PageReqBase {
 
 	/**
 	 * 执业类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(name = "practice_type", value = "习题集类型 0=理论基础 2=实践操作")
 	private Integer practiceType;

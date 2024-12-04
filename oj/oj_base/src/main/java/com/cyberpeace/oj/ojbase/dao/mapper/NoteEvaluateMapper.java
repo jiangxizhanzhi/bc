@@ -11,7 +11,10 @@ import java.util.List;
  * 注意评估Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface NoteEvaluateMapper extends BaseMapper<NoteEvaluate> {
@@ -21,6 +24,9 @@ public interface NoteEvaluateMapper extends BaseMapper<NoteEvaluate> {
 	 *
 	 * @param noteId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see NoteEvaluate
 	 */
 	NoteEvaluate selectByNote(@Param("noteId") String noteId);
 
@@ -28,6 +34,8 @@ public interface NoteEvaluateMapper extends BaseMapper<NoteEvaluate> {
 	 * 根据报告编号更新数据
 	 *
 	 * @param noteEvaluate 注意评估
+	 * @throws
+	 * @see NoteEvaluate
 	 */
 	void updateByNote(NoteEvaluate noteEvaluate);
 
@@ -37,6 +45,10 @@ public interface NoteEvaluateMapper extends BaseMapper<NoteEvaluate> {
 	 * @param noteIds
 	 * @param isPublic 是否公开
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
+	 * @see List<NoteEvaluate>
 	 */
 	List<NoteEvaluate> selectBatchNoteIds(@Param("noteIds") List<String> noteIds,
 			@Param("isPublic") Boolean isPublic);

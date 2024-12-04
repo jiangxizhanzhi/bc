@@ -10,7 +10,10 @@ import lombok.Data;
  * 评论赞
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @TableName("oj_comment_like")
@@ -18,17 +21,23 @@ public class CommentLike extends BaseTable {
 
     /**
      * 资源id
+     *
+     * @see String
      */
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;
 
     /**
      * 用户id
+     *
+     * @see String
      */
     private String userId;
 
     /**
      * 评论id
+     *
+     * @see String
      */
     private String commentId;
 

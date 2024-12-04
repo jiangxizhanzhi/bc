@@ -13,23 +13,30 @@ import java.io.Serializable;
  * 理论导入请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
 public class TheoryImportReq implements Serializable {
 
-	/**
-	 * 实践设置id
-	 */
-	@ApiModelProperty(name = "practice_set_id", value = "习题集编号")
+    /**
+     * 实践设置id
+     *
+     * @see String
+     */
+    @ApiModelProperty(name = "practice_set_id", value = "习题集编号")
 	@NotBlank
 	private String practiceSetId;
 
-	/**
-	 * 文件
-	 */
-	@ApiModelProperty("文件")
+    /**
+     * 文件
+     *
+     * @see MultipartFile
+     */
+    @ApiModelProperty("文件")
 	@NotNull
 	private MultipartFile file;
 

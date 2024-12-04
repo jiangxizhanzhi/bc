@@ -12,6 +12,15 @@ import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 import java.io.File;
 import java.util.List;
 
+/**
+ * 练习设置Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/12/04
+ * @see IService
+ * @since 1.0.0
+ */
 public interface PracticeSetService extends IService<PracticeSet> {
 
     /**
@@ -20,6 +29,10 @@ public interface PracticeSetService extends IService<PracticeSet> {
      * @param resourceId
      * @param authContext
      * @return
+     * @throws
+     * @see String
+     * @see AuthContext
+     * @see AdminPracticeSetBo
      */
     AdminPracticeSetBo selectById(String resourceId, AuthContext authContext);
 
@@ -28,7 +41,9 @@ public interface PracticeSetService extends IService<PracticeSet> {
      *
      * @param resourceId
      * @param authContext
-     * @return
+     * @throws
+     * @see String
+     * @see AuthContext
      */
     void enableAccess(String resourceId, AuthContext authContext);
 
@@ -38,6 +53,10 @@ public interface PracticeSetService extends IService<PracticeSet> {
      * @param authContext
      * @param setId
      * @return
+     * @throws
+     * @see AuthContext
+     * @see String
+     * @see List<String>
      */
     List<String> getSetIds(AuthContext authContext, String setId);
 
@@ -47,7 +66,14 @@ public interface PracticeSetService extends IService<PracticeSet> {
      * @param page
      * @param practiceType
      * @param pattern
+     * @param authContext  auth 上下文
      * @return
+     * @throws
+     * @see Page
+     * @see Integer
+     * @see String
+     * @see AuthContext
+     * @see IPage<AdminPracticeSetBo>
      */
     IPage<AdminPracticeSetBo> selectByTypeAndName(Page page, Integer practiceType, String pattern,
                                                   AuthContext authContext);
@@ -58,6 +84,10 @@ public interface PracticeSetService extends IService<PracticeSet> {
      * @param practiceSet
      * @param authContext
      * @return
+     * @throws
+     * @see PracticeSet
+     * @see AuthContext
+     * @see Boolean
      */
     Boolean updateByAuth(PracticeSet practiceSet, AuthContext authContext);
 
@@ -65,7 +95,10 @@ public interface PracticeSetService extends IService<PracticeSet> {
      * 删除前判断是否可删除
      *
      * @param resourceIds
-     * @param authContext
+     * @param authContext auth 上下文
+     * @throws
+     * @see List<String>
+     * @see AuthContext
      */
     void enableDelete(List<String> resourceIds, AuthContext authContext);
 
@@ -75,6 +108,10 @@ public interface PracticeSetService extends IService<PracticeSet> {
      * @param practiceSetIds 习题集编号
      * @param authContext
      * @return
+     * @throws
+     * @see List<String>
+     * @see AuthContext
+     * @see File
      */
     File dumpPracticeSet(List<String> practiceSetIds, AuthContext authContext);
 
@@ -84,13 +121,21 @@ public interface PracticeSetService extends IService<PracticeSet> {
      * @param realPath
      * @param userId
      * @return
+     * @throws
+     * @see String
+     * @see String
+     * @see Boolean
      */
     Boolean loadPracticeSet(String realPath, String userId);
 
     /**
      * 检查习题集是否重复
      *
+     * @param practiceSets 练习集
      * @return
+     * @throws
+     * @see List<String>
+     * @see List<String>
      */
     List<String> duplicatePracticeSetInspect(List<String> practiceSets);
 
@@ -99,18 +144,73 @@ public interface PracticeSetService extends IService<PracticeSet> {
      *
      * @param practiceSetId
      * @param practiceId
+     * @param newPath            新建路径
+     * @param disableImageExport 禁用图像导出
      * @return 导出的文件路径
+     * @throws
+     * @see String
+     * @see String
+     * @see Boolean
+     * @see Boolean
+     * @see String
      */
     String exportPracticeSet(String practiceSetId, String practiceId, Boolean newPath, Boolean disableImageExport);
 
+    /**
+     * 清除用户认证
+     *
+     * @param user 用户
+     * @throws
+     * @see String
+     */
     void clearUserAuth(String user);
 
+    /**
+     * 清除组织认证
+     *
+     * @param org 组织
+     * @throws
+     * @see String
+     */
     void clearOrgAuth(String org);
 
+    /**
+     * 导出markdown理论练习
+     *
+     * @param path     路径
+     * @param theories 理论
+     * @return {@code MdTheoryPractice }
+     * @throws
+     * @see String
+     * @see List<PracticeTheory>
+     * @see MdTheoryPractice
+     */
     MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories);
 
+    /**
+     * 获取更多练习设置
+     *
+     * @param authContext   auth 上下文
+     * @param practiceSetId 练习设置id
+     * @param setType       设置类型
+     * @return {@code List<AdminPracticeSetBo> }
+     * @throws
+     * @see AuthContext
+     * @see String
+     * @see Integer
+     * @see List<AdminPracticeSetBo>
+     */
     List<AdminPracticeSetBo> getMorePracticeSet(AuthContext authContext, String practiceSetId, Integer setType);
 
+    /**
+     * 创建IMG
+     *
+     * @param setName 设置名称
+     * @return {@code String }
+     * @throws
+     * @see String
+     * @see String
+     */
     String createImg(String setName);
 
 }

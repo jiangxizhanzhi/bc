@@ -10,25 +10,34 @@ import lombok.Data;
  * 场景监控博
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class SceneMonitorBo implements Serializable {
 
 	/**
 	 * 用户id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("用户编号")
 	private String userId;
 
 	/**
 	 * 用户名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("用户名称")
 	private String userName;
 
 	/**
 	 * 监视器信息
+	 *
+	 * @see List<MonitorInfoBo>
 	 */
 	@ApiModelProperty("监控信息")
 	private List<MonitorInfoBo> monitorInfo;

@@ -43,7 +43,11 @@ import java.util.Map;
  * 纸实践理论Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see ServiceImpl
+ * @see PaperPracticeTheoryService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -51,42 +55,56 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 
 	/**
 	 * 纸实践理论Mapper
+	 *
+	 * @see PaperPracticeTheoryMapper
 	 */
 	@Autowired
 	private PaperPracticeTheoryMapper paperPracticeTheoryMapper;
 
 	/**
 	 * 理论评估处理器
+	 *
+	 * @see TheoryEvaluateHandler
 	 */
 	@Resource(name = "theory")
 	private TheoryEvaluateHandler theoryEvaluateHandler;
 
 	/**
 	 * 实践错误Service
+	 *
+	 * @see PracticeMistakeService
 	 */
 	@Autowired
 	private PracticeMistakeService practiceMistakeService;
 
 	/**
 	 * 实践解决Mapper
+	 *
+	 * @see PracticeSolvedMapper
 	 */
 	@Autowired
 	private PracticeSolvedMapper practiceSolvedMapper;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 资源收集Service
+	 *
+	 * @see ResourceCollectionService
 	 */
 	@Autowired
 	private ResourceCollectionService resourceCollectionService;
 
 	/**
 	 * 实践理论Mapper
+	 *
+	 * @see PracticeTheoryMapper
 	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
@@ -96,6 +114,9 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 	 *
 	 * @param practiceRefId 实践裁判id
 	 * @return {@code WebTheoryBo }
+	 * @throws
+	 * @see String
+	 * @see WebTheoryBo
 	 */
 	@Override
 	public WebTheoryBo getPracticeDetail(String practiceRefId) {
@@ -123,6 +144,10 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 	 * @param practiceRefId 实践裁判id
 	 * @param submitAnswer  提交答案
 	 * @return {@code EvaluateResultTheory }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see EvaluateResultTheory
 	 */
 	@Override
 	public EvaluateResultTheory submitAnswer(String practiceRefId, String submitAnswer) {
@@ -200,6 +225,9 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 	 *
 	 * @param collectionReq 收集请求体
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see CollectionReq
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean collection(CollectionReq collectionReq) {
@@ -225,6 +253,9 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 	 *
 	 * @param practiceRefIds 实践裁判id列表
 	 * @return {@code List<WebTheoryBo> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<WebTheoryBo>
 	 */
 	@Override
 	public List<WebTheoryBo> getPracticeDetail(List<String> practiceRefIds) {

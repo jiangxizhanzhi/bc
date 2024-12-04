@@ -39,7 +39,11 @@ import lombok.extern.slf4j.Slf4j;
  * 实践类别Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see ServiceImpl
+ * @see PracticeCategoryService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -47,24 +51,32 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 
 	/**
 	 * 实践类别Mapper
+	 *
+	 * @see PracticeCategoryMapper
 	 */
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 实践理论Mapper
+	 *
+	 * @see PracticeTheoryMapper
 	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
 	/**
 	 * 实践实操Mapper
+	 *
+	 * @see PracticeOperationMapper
 	 */
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
@@ -76,6 +88,11 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 	 * @param query    查询
 	 * @param children 子级
 	 * @return {@code IPage<CategoryListBo> }
+	 * @throws
+	 * @see Page
+	 * @see CategoryListQuery
+	 * @see Boolean
+	 * @see IPage<CategoryListBo>
 	 */
 	@Override
 	public IPage<CategoryListBo> pageByListQuery(Page page, CategoryListQuery query,
@@ -93,6 +110,10 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 	 * @param resourceId 资源id
 	 * @param children   子级
 	 * @return {@code CategoryListBo }
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see CategoryListBo
 	 */
 	@Override
 	public CategoryListBo selectById(String resourceId, Boolean children) {
@@ -105,6 +126,9 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 	 *
 	 * @param category 类别
 	 * @return {@code Integer }
+	 * @throws
+	 * @see PracticeCategory
+	 * @see Integer
 	 */
 	@Override
 	public Integer updateCategory(PracticeCategory category) {
@@ -153,6 +177,10 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 	 * @param practiceCategory 执业类别
 	 * @param userId           用户id
 	 * @return {@code Integer }
+	 * @throws
+	 * @see PracticeCategory
+	 * @see String
+	 * @see Integer
 	 */
 	@Override
 	public Integer addCategory(PracticeCategory practiceCategory, String userId) {
@@ -173,6 +201,9 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 	 *
 	 * @param parentId 父母id
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String getCodeByParent(String parentId) {
@@ -196,6 +227,10 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 	 * @param listQuery 列表查询
 	 * @param children  子级
 	 * @return {@code List<CategoryListBo> }
+	 * @throws
+	 * @see CategoryListQuery
+	 * @see Boolean
+	 * @see List<CategoryListBo>
 	 */
 	@Override
 	public List<CategoryListBo> listByTypeAndName(CategoryListQuery listQuery, Boolean children) {
@@ -212,6 +247,10 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 	 * @param parentId 父母id
 	 * @param self     自我
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> selectChildrenIds(String parentId, Boolean self) {
@@ -241,6 +280,9 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 	 *
 	 * @param categoryIds 类别id列表
 	 * @return int
+	 * @throws
+	 * @see List<String>
+	 * @see int
 	 */
 	@Override
 	public int batchDelete(List<String> categoryIds) {
@@ -282,6 +324,11 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 	 * @param practiceType 执业类型
 	 * @param userId       用户id
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String selectCategoryOrCreate(String categoryName, Integer practiceType, String userId) {
@@ -308,6 +355,10 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 	 * @param practiceCategory 习题分类实体类
 	 * @param children         子级
 	 * @return
+	 * @throws
+	 * @see PracticeCategory
+	 * @see Boolean
+	 * @see CategoryListBo
 	 */
 	private CategoryListBo entityToListBo(PracticeCategory practiceCategory, Boolean children) {
 
@@ -320,6 +371,9 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 	 *
 	 * @param practiceCategory
 	 * @return
+	 * @throws
+	 * @see PracticeCategory
+	 * @see CategoryListBo
 	 */
 	private CategoryListBo setChildren(PracticeCategory practiceCategory) {
 

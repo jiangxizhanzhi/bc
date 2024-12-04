@@ -35,7 +35,10 @@ import io.swagger.annotations.ApiParam;
  * 认证和公共Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see PublicController
+ * @since 1.0.0
  */
 @Slf4j
 public abstract class AuthAndPublicController<T extends IService<E>, E> extends PublicController {
@@ -45,6 +48,9 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 	 *
 	 * @param requestData 请求数据
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see ResourceAuthReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@PatchMapping("/batch-auth")
 	@ApiOperation("资源授权访问")
@@ -70,6 +76,9 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<ReadAuthInfo> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<ReadAuthInfo>
 	 */
 	@GetMapping("/get_auth")
 	@ApiOperation("获取资源的授权访问信息")
@@ -94,6 +103,9 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<OperationAuthInfo> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<OperationAuthInfo>
 	 */
 	@GetMapping("/get_share")
 	@ApiOperation("获取资源的权限操作信息")
@@ -136,6 +148,9 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 	 *
 	 * @param requestData 请求数据
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see ResourceShareReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@PatchMapping("/batch-share")
 	@ApiOperation("资源授权操作")

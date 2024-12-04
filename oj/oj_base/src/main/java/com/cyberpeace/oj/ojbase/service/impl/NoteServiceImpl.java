@@ -39,7 +39,11 @@ import java.util.stream.Collectors;
  * 注意Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see ServiceImpl
+ * @see NoteService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -47,18 +51,24 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 
 	/**
 	 * 注意Mapper
+	 *
+	 * @see NoteMapper
 	 */
 	@Autowired
 	private NoteMapper noteMapper;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 注意评估Mapper
+	 *
+	 * @see NoteEvaluateMapper
 	 */
 	@Autowired
 	private NoteEvaluateMapper noteEvaluateMapper;
@@ -68,6 +78,9 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 	 *
 	 * @param uniqueContext 独特上下文
 	 * @return {@code NoteBo }
+	 * @throws
+	 * @see NoteUniqueContext
+	 * @see NoteBo
 	 */
 	@Override
 	public NoteBo selectByUnique(NoteUniqueContext uniqueContext) {
@@ -84,6 +97,9 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 	 *
 	 * @param noteAddContext 注意新增上下文
 	 * @return {@code Note }
+	 * @throws
+	 * @see NoteAddContext
+	 * @see Note
 	 */
 	@Override
 	public Note addNote(NoteAddContext noteAddContext) {
@@ -107,6 +123,11 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 	 * @param noteListQuery 注释列表查询
 	 * @param isWeb         是 Web
 	 * @return {@code IPage<NoteListBo> }
+	 * @throws
+	 * @see Page
+	 * @see AdminNoteListQuery
+	 * @see Boolean
+	 * @see IPage<NoteListBo>
 	 */
 	@Override
 	public IPage<NoteListBo> pageByUserNameAndContent(Page page, AdminNoteListQuery noteListQuery,
@@ -162,6 +183,9 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 	 *
 	 * @param reportAddReq 报告新增请求体
 	 * @return {@code Note }
+	 * @throws
+	 * @see ReportAddReq
+	 * @see Note
 	 */
 	@Override
 	public Note addAndUpdateReport(ReportAddReq reportAddReq) {
@@ -204,6 +228,11 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 	 * @param noteType    注释类型
 	 * @param resourceIds 资源id列表
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see List<String>
+	 * @see Integer
 	 */
 	@Override
 	public Integer getCount(String userId, Integer noteType, List<String> resourceIds) {
@@ -216,6 +245,10 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 	 * @param businessId   业务id
 	 * @param noteType     注释类型
 	 * @param businessType 业务类型
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see Integer
 	 */
 	@Override
 	public void deleteByBusiness(String businessId, Integer noteType, Integer businessType) {

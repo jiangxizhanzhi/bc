@@ -12,7 +12,10 @@ import java.io.Serializable;
  * 评估注意请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -20,6 +23,8 @@ public class EvaluateNoteReq implements Serializable {
 
 	/**
 	 * 注意id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("笔记编号")
 	@NotBlank
@@ -27,6 +32,8 @@ public class EvaluateNoteReq implements Serializable {
 
 	/**
 	 * 评估评论
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("评语")
 	@NotBlank
@@ -34,6 +41,8 @@ public class EvaluateNoteReq implements Serializable {
 
 	/**
 	 * 通过
+	 *
+	 * @see Boolean
 	 */
 	@ApiModelProperty("是否通过")
 	@NotNull
@@ -41,6 +50,8 @@ public class EvaluateNoteReq implements Serializable {
 
 	/**
 	 * 得分
+	 *
+	 * @see Double
 	 */
 	@ApiModelProperty("得分")
 	@NotNull

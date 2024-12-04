@@ -12,7 +12,10 @@ import lombok.Getter;
  * 资源收集
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @TableName("oj_resource_collection")
@@ -20,22 +23,30 @@ public class ResourceCollection extends BaseTable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	/**
 	 * 用户id
+	 *
+	 * @see String
 	 */
 	private String userId;
 
 	/**
 	 * 业务id
+	 *
+	 * @see String
 	 */
 	private String businessId;
 
 	/**
 	 * 业务类型
+	 *
+	 * @see Integer
 	 */
 	private Integer businessType;
 

@@ -10,20 +10,28 @@ import lombok.Data;
  * 自由实践列表请求体
  *
  * @author SN
+ * @see PageReqBase
+ * @version 1.0.0
+ * @since 1.0.0
  * @date 2024/11/08
  */
 @Data
 @ApiModel
 public class LibPracticeListReq extends PageReqBase {
+
 	/**
-	 * 类别id
-	 */
+	* 类别id
+	*
+	* @see String
+	*/
 	@ApiModelProperty(name = "category_id", value = "分类编号")
 	private String categoryId;
 
 	/**
-	 * 问题类型
-	 */
+     * 问题类型
+     *
+     * @see Integer
+     */
 	@ApiModelProperty(name = "question_type", value = "题型")
 	private Integer questionType;
 

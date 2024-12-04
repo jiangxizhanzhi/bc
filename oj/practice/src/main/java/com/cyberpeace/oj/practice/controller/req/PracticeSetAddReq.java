@@ -13,7 +13,10 @@ import java.io.Serializable;
  * 实践设置新增请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -21,6 +24,8 @@ public class PracticeSetAddReq implements Serializable {
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "名称", required = true)
 	@NotBlank(groups = { Create.class })
@@ -28,12 +33,16 @@ public class PracticeSetAddReq implements Serializable {
 
 	/**
 	 * 图标
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "封面地址")
 	private String logo;
 
 	/**
 	 * 执业类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "类型 0=理论基础 2=实践操作", allowableValues = "0,2", required = true)
 	@NotNull(groups = { Create.class })
@@ -41,6 +50,8 @@ public class PracticeSetAddReq implements Serializable {
 
 	/**
 	 * 是否公开
+	 *
+	 * @see Boolean
 	 */
 	@ApiModelProperty(value = "公开", required = true)
 	@NotNull(groups = { Create.class })

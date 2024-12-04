@@ -12,7 +12,10 @@ import lombok.Getter;
  * 练习随机标志
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @TableName("oj_practice_random_flag")
@@ -20,32 +23,44 @@ public class PracticeRandomFlag extends BaseTable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	/**
 	 * 用户id
+	 *
+	 * @see String
 	 */
 	private String userId;
 
 	/**
 	 * 附件id
+	 *
+	 * @see String
 	 */
 	private String attachmentId;
 
 	/**
 	 * 实践id
+	 *
+	 * @see String
 	 */
 	private String practiceId;
 
 	/**
 	 * 旗
+	 *
+	 * @see String
 	 */
 	private String flag;
 
 	/**
 	 * 类型
+	 *
+	 * @see Integer
 	 */
 	private Integer type;
 

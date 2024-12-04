@@ -14,7 +14,10 @@ import java.util.List;
  * 实践纸Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -25,6 +28,9 @@ public interface PracticePaperMapper extends BaseMapper<PracticePaper> {
 	 *
 	 * @param userId 用户id
 	 * @return {@code PracticePaper }
+	 * @throws
+	 * @see String
+	 * @see PracticePaper
 	 */
 	PracticePaper getLastPaperByUserId(String userId);
 
@@ -33,6 +39,9 @@ public interface PracticePaperMapper extends BaseMapper<PracticePaper> {
 	 *
 	 * @param userId 用户id
 	 * @return {@code List<PaperRecordRes> }
+	 * @throws
+	 * @see String
+	 * @see List<PaperRecordRes>
 	 */
 	List<PaperRecordRes> getPaperRecord(String userId);
 
@@ -41,6 +50,9 @@ public interface PracticePaperMapper extends BaseMapper<PracticePaper> {
 	 *
 	 * @param userId 用户id
 	 * @return {@code List<PaperRecordSummaryRes> }
+	 * @throws
+	 * @see String
+	 * @see List<PaperRecordSummaryRes>
 	 */
 	List<PaperRecordSummaryRes> getAllPaperRecord(@Param("userId") String userId);
 
@@ -49,6 +61,9 @@ public interface PracticePaperMapper extends BaseMapper<PracticePaper> {
 	 *
 	 * @param paperId 纸id
 	 * @return {@code PaperRecordSummaryRes }
+	 * @throws
+	 * @see String
+	 * @see PaperRecordSummaryRes
 	 */
 	PaperRecordSummaryRes getPaperRecordByPaper(String paperId);
 

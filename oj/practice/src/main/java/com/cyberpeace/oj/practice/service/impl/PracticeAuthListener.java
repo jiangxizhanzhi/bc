@@ -15,7 +15,10 @@ import lombok.extern.slf4j.Slf4j;
  * 练习身份验证侦听器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see AuthMessageListener
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -23,6 +26,8 @@ public class PracticeAuthListener extends AuthMessageListener {
 
     /**
      * 实践设置Service
+     *
+     * @see PracticeSetService
      */
     @Autowired
 	private PracticeSetService practiceSetService;
@@ -31,6 +36,8 @@ public class PracticeAuthListener extends AuthMessageListener {
      * 声明消息类型
      *
      * @return {@code Integer }
+     * @throws
+     * @see Integer
      */
     @Override
 	public Integer declareMessageType() {
@@ -42,6 +49,9 @@ public class PracticeAuthListener extends AuthMessageListener {
      *
      * @param users 用户
      * @return {@code Boolean }
+     * @throws
+     * @see List<String>
+     * @see Boolean
      */
     @Override
 	public Boolean onUserDelete(List<String> users) {
@@ -60,6 +70,9 @@ public class PracticeAuthListener extends AuthMessageListener {
      *
      * @param orgs 组织
      * @return {@code Boolean }
+     * @throws
+     * @see List<String>
+     * @see Boolean
      */
     @Override
 	public Boolean onOrgDelete(List<String> orgs) {

@@ -15,7 +15,10 @@ import java.io.Serializable;
  * 类别更新请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -23,6 +26,8 @@ public class CategoryUpdateReq implements Serializable {
 
     /**
      * 名称
+     *
+     * @see String
      */
     @ApiModelProperty("名称")
     @NotBlank
@@ -30,6 +35,8 @@ public class CategoryUpdateReq implements Serializable {
 
     /**
      * 资源id
+     *
+     * @see String
      */
     @ApiModelProperty("编号")
     @NotBlank
@@ -37,6 +44,8 @@ public class CategoryUpdateReq implements Serializable {
 
     /**
      * 父母id
+     *
+     * @see String
      */
     @ApiModelProperty("父级编号")
     private String parentId;

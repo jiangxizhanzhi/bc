@@ -12,7 +12,10 @@ import lombok.Getter;
  * 实践理论
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see PracticeBase
+ * @since 1.0.0
  */
 @Data
 @TableName("oj_practice_theory")
@@ -20,18 +23,24 @@ public class PracticeTheory extends PracticeBase {
 
 	/**
 	 * 理论类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("理论基础题型")
 	private Integer theoryType;
 
 	/**
 	 * 空白
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("填空题填空内容")
 	private String blank;
 
 	/**
 	 * 选择
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("选择题选项")
 	@TableField("`option`")
@@ -39,18 +48,24 @@ public class PracticeTheory extends PracticeBase {
 
 	/**
 	 * 关键词
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("简答题参考关键字")
 	private String keyword;
 
 	/**
 	 * 类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("类型，常量type=50， 1：视频题，2：图片题，3：文字题")
 	private Integer type;
 
 	/**
 	 * 视频 URL
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "视频链接")
 	private String video;

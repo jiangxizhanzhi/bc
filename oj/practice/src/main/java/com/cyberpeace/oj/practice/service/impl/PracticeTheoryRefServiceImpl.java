@@ -29,7 +29,11 @@ import lombok.extern.slf4j.Slf4j;
  * 实践理论裁判Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see ServiceImpl
+ * @see PracticeTheoryRefService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -37,18 +41,24 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 
 	/**
 	 * 实践理论裁判Mapper
+	 *
+	 * @see PracticeTheoryRefMapper
 	 */
 	@Autowired
 	private PracticeTheoryRefMapper practiceTheoryRefMapper;
 
 	/**
 	 * 实践类别Mapper
+	 *
+	 * @see PracticeCategoryMapper
 	 */
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
 	/**
 	 * 实践设置Service
+	 *
+	 * @see PracticeSetService
 	 */
 	@Autowired
 	private PracticeSetService practiceSetService;
@@ -59,6 +69,10 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 	 * @param paperId    纸id
 	 * @param viewAnswer 视图答案
 	 * @return {@code List<TheoryLessonBo> }
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see List<TheoryLessonBo>
 	 */
 	@Override
 	public List<TheoryLessonBo> selectByPaper(String paperId, Boolean viewAnswer) {
@@ -107,6 +121,10 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 	 * @param paperId    纸id
 	 * @param practiceId 实践id
 	 * @return {@code PracticeTheory }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see PracticeTheory
 	 */
 	@Override
 	public PracticeTheory selectByPracticeId(String paperId, String practiceId) {
@@ -122,6 +140,9 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 	 *
 	 * @param pathname 路径
 	 * @param paperId  纸id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public void exportLessonPractice(String pathname, String paperId) {

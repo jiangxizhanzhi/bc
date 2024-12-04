@@ -8,12 +8,17 @@ import lombok.Data;
  * 分页子级评论请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
  */
 @Data
 public class PageChildrenCommentReq extends PageReqBase {
     /**
      * 资源id
+     *
+     * @see String
      */
     @ApiModelProperty(name= "resource_id",value = "一级留言编号")
     private String resourceId;

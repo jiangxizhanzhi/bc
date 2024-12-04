@@ -15,7 +15,10 @@ import java.util.List;
  * 实践设置Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
@@ -25,6 +28,9 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 	 *
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see AuthContext
+	 * @see List<String>
 	 */
 	List<String> selectByAuthContext(@Param("authContext") AuthContext authContext);
 
@@ -35,6 +41,11 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 	 * @param listQuery
 	 * @param isPublic
 	 * @return
+	 * @throws
+	 * @see Page
+	 * @see SetListQuery
+	 * @see Boolean
+	 * @see IPage<PracticeSet>
 	 */
 	IPage<PracticeSet> pageByTypeAndName(Page page, @Param("listQuery") SetListQuery listQuery,
 			@Param("isPublic") Boolean isPublic);
@@ -46,6 +57,11 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 	 * @param listQuery
 	 * @param isPublic
 	 * @return
+	 * @throws
+	 * @see Page
+	 * @see SetListQuery
+	 * @see Boolean
+	 * @see IPage<PracticeSet>
 	 */
 	IPage<PracticeSet> pageByNameAndType(Page page, @Param("listQuery") SetListQuery listQuery,
 										 @Param("isPublic") Boolean isPublic);
@@ -56,6 +72,10 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 	 * @param practiceType
 	 * @param isPublic
 	 * @return
+	 * @throws
+	 * @see Integer
+	 * @see Boolean
+	 * @see List<PracticeSet>
 	 */
 	List<PracticeSet> selectByType(@Param("practiceType") Integer practiceType,
 			@Param("isPublic") Boolean isPublic);
@@ -65,6 +85,9 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 	 *
 	 * @param name
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	String selectByName(@Param("name") String name);
 
@@ -73,6 +96,9 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 	 *
 	 * @param name
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see List<PracticeSet>
 	 */
 	List<PracticeSet> selectByNames(@Param("names") List<String> name);
 
@@ -82,6 +108,10 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 	 * @param authContext auth 上下文
 	 * @param isPublic    是否公开
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see AuthContext
+	 * @see Boolean
+	 * @see List<String>
 	 */
 	List<String> selectByAuthAndPublic(@Param("authContext") AuthContext authContext,
 			@Param("isPublic") Boolean isPublic);
@@ -91,6 +121,9 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 	 *
 	 * @param userId 用户id
 	 * @return {@code List<PracticeSet> }
+	 * @throws
+	 * @see String
+	 * @see List<PracticeSet>
 	 */
 	List<PracticeSet> selectPracticeSetByUserId(String userId);
 
@@ -99,6 +132,9 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 	 *
 	 * @param orgId 组织id
 	 * @return {@code List<PracticeSet> }
+	 * @throws
+	 * @see String
+	 * @see List<PracticeSet>
 	 */
 	List<PracticeSet> selectPracticeSetByOrgId(String orgId);
 
@@ -108,6 +144,10 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 	 * @param setIds 设置id列表
 	 * @param type   类型
 	 * @return {@code List<PracticeSet> }
+	 * @throws
+	 * @see List<String>
+	 * @see Integer
+	 * @see List<PracticeSet>
 	 */
 	List<PracticeSet> selectByIdsAndType(@Param("setIds") List<String> setIds,@Param("setType") Integer type);
 
@@ -116,6 +156,9 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 	 *
 	 * @param resourceIds 资源id列表
 	 * @return {@code List<PracticeSet> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<PracticeSet>
 	 */
 	List<PracticeSet> selectInResourceIds(@Param("resourceIds") List<String> resourceIds);
 }

@@ -10,7 +10,10 @@ import lombok.NoArgsConstructor;
  * 课程练习 WS 消息标识符
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see WsMessageIdentifier
+ * @since 1.0.0
  */
 @Data
 @Builder
@@ -18,24 +21,32 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LessonPracticeWsMessageIdentifier extends WsMessageIdentifier {
 
-	/**
-	 * 课id
-	 */
-	private String lessonId;
+    /**
+     * 课id
+     *
+     * @see String
+     */
+    private String lessonId;
 
-	/**
-	 * 实践id
-	 */
-	private String practiceId;
+    /**
+     * 实践id
+     *
+     * @see String
+     */
+    private String practiceId;
 
-	/**
-	 * 从 Web
-	 */
-	private Boolean fromWeb;
+    /**
+     * 从 Web
+     *
+     * @see Boolean
+     */
+    private Boolean fromWeb;
 
-	/**
-	 * 共享
-	 */
-	private Integer shared;
+    /**
+     * 共享
+     *
+     * @see Integer
+     */
+    private Integer shared;
 
 }

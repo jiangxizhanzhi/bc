@@ -29,7 +29,10 @@ import com.google.common.collect.Maps;
  * 实操评估处理器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see PracticeEvaluateHandler
+ * @since 1.0.0
  */
 @Slf4j
 @Service("operation")
@@ -37,6 +40,8 @@ public class OperationEvaluateHandler implements PracticeEvaluateHandler {
 
 	/**
 	 * 评估地图
+	 *
+	 * @see Map<Integer, PracticeEvaluateService>
 	 */
 	private static Map<Integer, PracticeEvaluateService> evaluateMap = Maps.newHashMap();
 
@@ -47,12 +52,16 @@ public class OperationEvaluateHandler implements PracticeEvaluateHandler {
 
 	/**
 	 * OJ当地场景Mapper
+	 *
+	 * @see OjLocalSceneMapper
 	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
 	/**
 	 * 实践随机旗Mapper
+	 *
+	 * @see PracticeRandomFlagMapper
 	 */
 	@Autowired
 	private PracticeRandomFlagMapper practiceRandomFlagMapper;
@@ -64,6 +73,11 @@ public class OperationEvaluateHandler implements PracticeEvaluateHandler {
 	 * @param practiceBase 实践基地
 	 * @param userAnswer   用户答案
 	 * @return {@code EvaluateResult }
+	 * @throws
+	 * @see String
+	 * @see PracticeBase
+	 * @see String
+	 * @see EvaluateResult
 	 */
 	@Override
 	public EvaluateResult evaluateByBusiness(String userId, PracticeBase practiceBase,
@@ -92,6 +106,10 @@ public class OperationEvaluateHandler implements PracticeEvaluateHandler {
 	 * @param userId
 	 * @param practiceOperation
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see PracticeOperation
+	 * @see String
 	 */
 	private String correctAnswer(String userId, PracticeOperation practiceOperation) {
 

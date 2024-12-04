@@ -12,7 +12,10 @@ import lombok.Getter;
  * 评论
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @TableName("oj_comment")
@@ -20,42 +23,58 @@ public class Comment extends BaseTable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	/**
 	 * 答id
+	 *
+	 * @see String
 	 */
 	private String replyId;
 
 	/**
 	 * 业务id
+	 *
+	 * @see String
 	 */
 	private String businessId;
 
 	/**
 	 * 主题名称
+	 *
+	 * @see String
 	 */
 	private String themeName;
 
 	/**
 	 * 用户id
+	 *
+	 * @see String
 	 */
 	private String userId;
 
 	/**
 	 * 内容
+	 *
+	 * @see String
 	 */
 	private String content;
 
 	/**
 	 * 业务类型
+	 *
+	 * @see Integer
 	 */
 	private Integer businessType;
 
 	/**
 	 * 根id
+	 *
+	 * @see String
 	 */
 	private String rootId;
 

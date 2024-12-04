@@ -18,13 +18,17 @@ import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
  * 课实操评估处理器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 @Service("lesson_operation")
 public class LessonOperationEvaluateHandler {
 
 	/**
 	 * OJ当地场景Mapper
+	 *
+	 * @see OjLocalSceneMapper
 	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
@@ -37,6 +41,12 @@ public class LessonOperationEvaluateHandler {
 	 * @param userAnswer 用户答案
 	 * @param lessonId   课id
 	 * @return {@code EvaluateResult }
+	 * @throws
+	 * @see String
+	 * @see PracticeOperation
+	 * @see String
+	 * @see String
+	 * @see EvaluateResult
 	 */
 	public EvaluateResult evaluateByBusiness(String userId, PracticeOperation operation,
 			String userAnswer, String lessonId) {
@@ -62,6 +72,11 @@ public class LessonOperationEvaluateHandler {
 	 * @param practiceOperation
 	 * @param lessonId          课id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see PracticeOperation
+	 * @see String
+	 * @see String
 	 */
 	private String correctAnswer(String userId, PracticeOperation practiceOperation,
 			String lessonId) {
@@ -94,6 +109,11 @@ public class LessonOperationEvaluateHandler {
 	 * @param realAnswer
 	 * @param totalScore
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Double
+	 * @see EvaluateResult
 	 */
 	private EvaluateResult evaluate(String userAnswer, String realAnswer, Double totalScore) {
 

@@ -12,7 +12,10 @@ import java.io.Serializable;
  * 评估结果
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @AllArgsConstructor
@@ -22,24 +25,32 @@ public class EvaluateResult implements Serializable {
 
 	/**
 	 * 解决
+	 *
+	 * @see Boolean
 	 */
 	@ApiModelProperty("是否通过")
 	private Boolean solved;
 
 	/**
 	 * 得分
+	 *
+	 * @see Double
 	 */
 	@ApiModelProperty("得分")
 	private Double score;
 
 	/**
 	 * 总分
+	 *
+	 * @see Double
 	 */
 	@ApiModelProperty("总分")
 	private Double totalScore;
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("资源编号")
 	private String resourceId;

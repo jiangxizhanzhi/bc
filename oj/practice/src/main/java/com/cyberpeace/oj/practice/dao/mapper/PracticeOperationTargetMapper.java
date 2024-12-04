@@ -12,7 +12,10 @@ import java.util.List;
  * 实践实操目标Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -23,6 +26,9 @@ public interface PracticeOperationTargetMapper extends BaseMapper<PracticeOperat
 	 *
 	 * @param operationIds 实操id列表
 	 * @return {@code List<PracticeOperationTarget> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<PracticeOperationTarget>
 	 */
 	List<PracticeOperationTarget> getAllByOperationIds(@Param("operationIds") List<String> operationIds);
 
@@ -31,6 +37,9 @@ public interface PracticeOperationTargetMapper extends BaseMapper<PracticeOperat
 	 *
 	 * @param targetIds 目标id列表
 	 * @return {@code List<PracticeOperationTarget> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<PracticeOperationTarget>
 	 */
 	List<PracticeOperationTarget> getAllByTargetIds(@Param("targetIds") List<String> targetIds);
 
@@ -38,6 +47,8 @@ public interface PracticeOperationTargetMapper extends BaseMapper<PracticeOperat
 	 * 删除由实操id
 	 *
 	 * @param operationId 实操id
+	 * @throws
+	 * @see String
 	 */
 	void deleteByOperationId(@Param("operationId") String operationId);
 }

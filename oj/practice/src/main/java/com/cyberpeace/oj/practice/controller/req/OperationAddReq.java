@@ -26,7 +26,11 @@ import static com.cyberpeace.cr.crbase.utils.CrCommonValidator.validateLength;
  * 实操新增请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @see CustomValidate
+ * @since 1.0.0
  */
 @Slf4j
 @Data
@@ -35,6 +39,8 @@ public class OperationAddReq implements Serializable, CustomValidate {
 
 	/**
 	 * 标题
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("标题")
 	@NotBlank(groups = { Create.class })
@@ -45,6 +51,8 @@ public class OperationAddReq implements Serializable, CustomValidate {
 
 	/**
 	 * 类别id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "category_id", value = "方向")
 	@NotBlank(groups = { Create.class })
@@ -52,6 +60,8 @@ public class OperationAddReq implements Serializable, CustomValidate {
 
 	/**
 	 * 课程类别id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "course_category_id", value = "课程方向")
 	@NotBlank(groups = { Create.class })
@@ -59,12 +69,16 @@ public class OperationAddReq implements Serializable, CustomValidate {
 
 	/**
 	 * 知识
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("知识点")
 	private String knowledge;
 
 	/**
 	 * 难度
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("难度")
 	@NotNull(groups = { Create.class })
@@ -72,6 +86,8 @@ public class OperationAddReq implements Serializable, CustomValidate {
 
 	/**
 	 * 内容
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("题目描述")
 	@NotBlank(groups = { Create.class })
@@ -79,12 +95,16 @@ public class OperationAddReq implements Serializable, CustomValidate {
 
 	/**
 	 * 附件id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "attachment_id", value = "附件编号")
 	private String attachmentId;
 
 	/**
 	 * 动态环境
+	 *
+	 * @see Boolean
 	 */
 	@ApiModelProperty(name = "dynamic_env", value = "是否为动态环境")
 	@NotNull(groups = { Create.class })
@@ -92,42 +112,56 @@ public class OperationAddReq implements Serializable, CustomValidate {
 
 	/**
 	 * 场景配置名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "scene_config_name", value = "场景配置名称")
 	private String sceneConfigName;
 
 	/**
 	 * 场景配置数据
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "scene_config_data", value = "场景配置")
 	private String sceneConfigData;
 
 	/**
 	 * 场景共享模式
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(name = "scene_share_mode", value = "场景共享类型 1=个人 2=共享")
 	private Integer sceneShareMode;
 
 	/**
 	 * 动态标志
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(name = "dynamic_flag", value = "是否为动态flag 0=静态 1=动态 2=随机, 3=非flag")
 	private Integer dynamicFlag;
 
 	/**
 	 * 销毁延迟
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(name = "destroy_delay", value = "场景存活时间")
 	private Integer destroyDelay;
 
 	/**
 	 * 答案
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("答案")
 	private String answer;
 
 	/**
 	 * 得分
+	 *
+	 * @see Double
 	 */
 	@ApiModelProperty("分数")
 	@NotNull(groups = { Create.class })
@@ -135,12 +169,16 @@ public class OperationAddReq implements Serializable, CustomValidate {
 
 	/**
 	 * 是否公开
+	 *
+	 * @see Boolean
 	 */
 	@ApiModelProperty(name = "is_public", value = "是否公开")
 	private Boolean isPublic;
 
 	/**
 	 * 公开报道
+	 *
+	 * @see Boolean
 	 */
 	@ApiModelProperty(name = "writeup_public", value = "题解是否公开")
 	@NotNull(groups = { Create.class })
@@ -148,22 +186,33 @@ public class OperationAddReq implements Serializable, CustomValidate {
 
 	/**
 	 * 撰写
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("题解")
 	private String writeup;
 
 	/**
 	 * 目标
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("靶标列表，包含镜像id，附件id，命令")
 	private String target;
 
 	/**
 	 * 类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "类型，常量type=49，1：攻击，2：防守，3：其他")
 	private Integer type;
 
+	/**
+	 * 需要外层
+	 *
+	 * @see Boolean
+	 */
 	@ApiModelProperty(value = "是否需要外部操作机，0=不需要，1=需要")
 	private Boolean needOuter;
 

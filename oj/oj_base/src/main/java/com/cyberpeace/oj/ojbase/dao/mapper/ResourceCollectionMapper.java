@@ -12,7 +12,10 @@ import java.util.List;
  * 资源收集Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface ResourceCollectionMapper extends BaseMapper<ResourceCollection> {
@@ -22,6 +25,9 @@ public interface ResourceCollectionMapper extends BaseMapper<ResourceCollection>
 	 *
 	 * @param collectionContext
 	 * @return
+	 * @throws
+	 * @see CollectionContext
+	 * @see Integer
 	 */
 	Integer deleteByUnique(CollectionContext collectionContext);
 
@@ -30,6 +36,9 @@ public interface ResourceCollectionMapper extends BaseMapper<ResourceCollection>
 	 *
 	 * @param collectionContext
 	 * @return
+	 * @throws
+	 * @see CollectionContext
+	 * @see ResourceCollection
 	 */
 	ResourceCollection selectByUnique(CollectionContext collectionContext);
 
@@ -39,6 +48,10 @@ public interface ResourceCollectionMapper extends BaseMapper<ResourceCollection>
 	 * @param userId
 	 * @param businessType
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see List<ResourceCollection>
 	 */
 	List<ResourceCollection> selectByType(@Param("userId") String userId,
 			@Param("businessType") Integer businessType);
@@ -50,6 +63,11 @@ public interface ResourceCollectionMapper extends BaseMapper<ResourceCollection>
 	 * @param businessId
 	 * @param businessType
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
+	 * @see List<String>
 	 */
 	List<String> selectByBusiness(@Param("userId") String userId,
 								  @Param("businessId") String businessId, @Param("businessType") Integer businessType);
@@ -61,6 +79,11 @@ public interface ResourceCollectionMapper extends BaseMapper<ResourceCollection>
 	 * @param businessType 业务类型
 	 * @param businessIds  业务id列表
 	 * @return {@code List<ResourceCollection> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see List<String>
+	 * @see List<ResourceCollection>
 	 */
 	List<ResourceCollection> selectByBusinessIds(@Param("userId") String userId, @Param("businessType")Integer businessType,
 														@Param("businessIds") List<String> businessIds);

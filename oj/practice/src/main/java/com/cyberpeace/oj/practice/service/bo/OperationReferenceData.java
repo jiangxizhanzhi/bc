@@ -11,7 +11,10 @@ import lombok.NoArgsConstructor;
  * 实操参考数据
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @AllArgsConstructor
@@ -21,31 +24,43 @@ public class OperationReferenceData implements Serializable {
 
 	/**
 	 * 场景类型
+	 *
+	 * @see Integer
 	 */
 	private Integer sceneType;
 
 	/**
 	 * 创建用户
+	 *
+	 * @see String
 	 */
 	private String createUser;
 
 	/**
 	 * 是 Web
+	 *
+	 * @see Boolean
 	 */
 	private Boolean isWeb;
 
 	/**
 	 * 场景名称
+	 *
+	 * @see String
 	 */
 	private String sceneName;
 
 	/**
 	 * 应用程序资源id
+	 *
+	 * @see String
 	 */
 	private String appResourceId;
 
 	/**
 	 * 内容
+	 *
+	 * @see String
 	 */
 	private String content;
 

@@ -11,7 +11,10 @@ import javax.validation.constraints.NotBlank;
  * 实践设置更新请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see PracticeSetAddReq
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -19,6 +22,8 @@ public class PracticeSetUpdateReq extends PracticeSetAddReq {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "资源编号", required = true)
 	@NotBlank(groups = { Update.class })

@@ -12,7 +12,10 @@ import java.io.Serializable;
  * 场景状态请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -20,6 +23,8 @@ public class SceneStatusReq implements Serializable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("资源编号")
 	@NotBlank
@@ -27,6 +32,8 @@ public class SceneStatusReq implements Serializable {
 
 	/**
 	 * 状态
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("1=启动 3=暂停")
 	@NotNull
@@ -34,6 +41,8 @@ public class SceneStatusReq implements Serializable {
 
 	/**
 	 * 房间id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课程表编号")
 	private String roomId;

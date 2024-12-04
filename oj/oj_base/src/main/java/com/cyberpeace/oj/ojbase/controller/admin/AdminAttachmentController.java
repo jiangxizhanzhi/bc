@@ -27,7 +27,9 @@ import java.util.List;
  * 管理附件Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 @Slf4j
 @Api(tags = "oj-后台附件相关api")
@@ -38,16 +40,29 @@ public class AdminAttachmentController {
 
 	/**
 	 * 附件Service
+	 *
+	 * @see AttachmentService
 	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
 	/**
 	 * utilService
+	 *
+	 * @see UtilService
 	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 上传附件
+	 *
+	 * @param file 文件
+	 * @return {@code BaseRsp<LogoUploadRes> }
+	 * @throws
+	 * @see MultipartFile
+	 * @see BaseRsp<LogoUploadRes>
+	 */
 	@ApiOperation("logo文件上传")
 	@PostMapping("/image_upload")
 	public BaseRsp<LogoUploadRes> uploadAttachment(@RequestParam("file") MultipartFile file) {
@@ -58,6 +73,15 @@ public class AdminAttachmentController {
 		return new BaseRsp<>(new LogoUploadRes(viewPath));
 	}
 
+	/**
+	 * 批量公共
+	 *
+	 * @param publicReq 公共请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see ResourcePublicReq
+	 * @see BaseRsp<Boolean>
+	 */
 	@ApiOperation("附件公开与隐藏")
 	@PatchMapping("/batch-public")
 	public BaseRsp<Boolean> batchPublic(@RequestBody @Validated ResourcePublicReq publicReq) {

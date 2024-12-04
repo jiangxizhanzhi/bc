@@ -13,7 +13,10 @@ import lombok.Data;
  * 获取注意请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -21,6 +24,8 @@ public class GetNoteReq implements Serializable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "resource_id", value = "资源编号")
 	@NotBlank
@@ -28,6 +33,8 @@ public class GetNoteReq implements Serializable {
 
 	/**
 	 * 注释类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(name = "note_type", value = "笔记类型 1=笔记 2=实验报告")
 	@NotNull
@@ -35,6 +42,8 @@ public class GetNoteReq implements Serializable {
 
 	/**
 	 * 资源类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(name = "resource_type", value = "资源类型 1=课程 2=课时 3=练习 4=课后练习")
 	@NotNull
@@ -42,6 +51,8 @@ public class GetNoteReq implements Serializable {
 
 	/**
 	 * 用户id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "user_id", value = "创建者")
 	private String userId;

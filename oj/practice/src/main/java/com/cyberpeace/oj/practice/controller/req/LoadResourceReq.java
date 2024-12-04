@@ -12,7 +12,10 @@ import java.io.Serializable;
  * 加载资源请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -20,6 +23,8 @@ public class LoadResourceReq implements Serializable {
 
 	/**
 	 * 文件
+	 *
+	 * @see MultipartFile
 	 */
 	@ApiModelProperty("数据文件")
 	@NotNull

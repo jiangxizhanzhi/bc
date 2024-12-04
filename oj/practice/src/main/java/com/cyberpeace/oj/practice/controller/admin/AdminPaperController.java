@@ -40,7 +40,9 @@ import java.util.List;
  * 管理纸Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 @Api(tags = "oj-后台课后练习和试卷相关api")
 @RestController
@@ -50,18 +52,24 @@ public class AdminPaperController {
 
 	/**
 	 * 纸Service
+	 *
+	 * @see PaperService
 	 */
 	@Autowired
 	private PaperService paperService;
 
 	/**
 	 * 实践类别Service
+	 *
+	 * @see PracticeCategoryService
 	 */
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
 	/**
 	 * 实践设置Mapper
+	 *
+	 * @see PracticeSetMapper
 	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
@@ -71,6 +79,9 @@ public class AdminPaperController {
 	 *
 	 * @param practiceListReq 实践列表请求体
 	 * @return {@code BaseRsp<ListRsp<LibPracticeListBo>> }
+	 * @throws
+	 * @see LibPracticeListReq
+	 * @see BaseRsp<ListRsp<LibPracticeListBo>>
 	 */
 	@ApiOperation("获取习题库习题列表")
 	@GetMapping("/practice/list")
@@ -101,8 +112,13 @@ public class AdminPaperController {
 	/**
 	 * 获取
 	 *
+	 * @param practice_type 练习类型
 	 * @param children      子级
 	 * @return {@code BaseRsp<LibSelectRes> }
+	 * @throws
+	 * @see Integer
+	 * @see Boolean
+	 * @see BaseRsp<LibSelectRes>
 	 */
 	@ApiOperation("题库筛选条件查询")
 	@GetMapping("/select_info")
@@ -136,6 +152,9 @@ public class AdminPaperController {
 	 *
 	 * @param randomPracticeReq 随机实践请求体
 	 * @return {@code BaseRsp<List<LibPracticeListBo>> }
+	 * @throws
+	 * @see RandomPracticeReq
+	 * @see BaseRsp<List<LibPracticeListBo>>
 	 */
 	@ApiOperation("获取随机数量题目")
 	@PostMapping("/random/practice")
@@ -169,6 +188,9 @@ public class AdminPaperController {
 	 *
 	 * @param practiceType
 	 * @return
+	 * @throws
+	 * @see int
+	 * @see List<Integer>
 	 */
 	private List<Integer> selectQuestionType(int practiceType) {
 
@@ -188,6 +210,10 @@ public class AdminPaperController {
 	 * @param practiceType
 	 * @param children     子级
 	 * @return
+	 * @throws
+	 * @see int
+	 * @see boolean
+	 * @see List<CategoryListBo>
 	 */
 	private List<CategoryListBo> selectPracticeCategory(int practiceType, boolean children) {
 		CategoryListQuery listQuery = CategoryListQuery.builder().practiceType(practiceType)
@@ -201,6 +227,9 @@ public class AdminPaperController {
 	 *
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see AuthContext
+	 * @see List<PracticeSetRes>
 	 */
 	private List<PracticeSetRes> selectPracticeSet(AuthContext authContext) {
 

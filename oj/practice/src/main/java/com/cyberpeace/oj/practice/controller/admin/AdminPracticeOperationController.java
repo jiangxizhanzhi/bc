@@ -54,7 +54,10 @@ import java.util.List;
  * 管理实践实操Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see PublicController
+ * @since 1.0.0
  */
 @Api(tags = "oj-后台实践操作练习相关api")
 @RestController
@@ -64,42 +67,56 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	/**
 	 * 实践实操Service
+	 *
+	 * @see PracticeOperationService
 	 */
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 
 	/**
 	 * 实践实操Mapper
+	 *
+	 * @see PracticeOperationMapper
 	 */
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
 
 	/**
 	 * 实践类别Service
+	 *
+	 * @see PracticeCategoryService
 	 */
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
 	/**
 	 * 附件Service
+	 *
+	 * @see AttachmentService
 	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
 	/**
 	 * 实践验证处理器
+	 *
+	 * @see PracticeValidateHandler
 	 */
 	@Autowired
 	private PracticeValidateHandler practiceValidateHandler;
 
 	/**
 	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
 	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
 	/**
 	 * 远程终端Service
+	 *
+	 * @see RemoteTerminalService
 	 */
 	@Autowired
 	private RemoteTerminalService remoteTerminalService;
@@ -109,6 +126,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<OperationBo> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<OperationBo>
 	 */
 	@ApiOperation("详细信息查询")
 	@GetMapping("")
@@ -126,6 +146,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	 *
 	 * @param addReq 新增请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see OperationAddReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("实践操作习题新增")
 	@PostMapping("")
@@ -153,6 +176,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	 *
 	 * @param multipartFile Multipart 文件
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see MultipartFile
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("实操习题附件上传")
 	@PostMapping("/upload_attachment")
@@ -170,6 +196,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	 *
 	 * @param updateReq 更新请求体
 	 * @return {@code BaseRsp<Integer> }
+	 * @throws
+	 * @see OperationUpdateReq
+	 * @see BaseRsp<Integer>
 	 */
 	@ApiOperation("实践操作习题修改")
 	@PatchMapping("")
@@ -194,6 +223,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	 *
 	 * @param delReq 戴尔请求体
 	 * @return {@code BaseRsp<Integer> }
+	 * @throws
+	 * @see ResourceDelReq
+	 * @see BaseRsp<Integer>
 	 */
 	@ApiOperation("实践操作习题删除")
 	@DeleteMapping("")
@@ -223,6 +255,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	 *
 	 * @param listReq 列表请求体
 	 * @return {@code BaseRsp<ListRsp<AdminOperationListBo>> }
+	 * @throws
+	 * @see AdminOperationListReq
+	 * @see BaseRsp<ListRsp<AdminOperationListBo>>
 	 */
 	@ApiOperation("分页查询实践操作习题")
 	@GetMapping("/list")
@@ -255,6 +290,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	 *
 	 * @param publicReq 公共请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see ResourcePublicReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("批量公开/隐藏题解")
 	@PatchMapping("/writeup_public")
@@ -279,6 +317,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	 *
 	 * @param operationId 实操id
 	 * @return {@code BaseRsp<TopoSceneDataBo> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<TopoSceneDataBo>
 	 */
 	@ApiOperation("获取场景拓扑信息")
 	@GetMapping("/scene_topo")
@@ -297,6 +338,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	 *
 	 * @param sceneShareModeReq 场景共享模式请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see SceneShareModeReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("隔离模式设置")
 	@PatchMapping("/scene_share_mode")
@@ -325,6 +369,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	 *
 	 * @param operationReq 实操请求体
 	 * @return {@code BaseRsp<JSONObject> }
+	 * @throws
+	 * @see SceneOperationReq
+	 * @see BaseRsp<JSONObject>
 	 */
 	@ApiOperation("后台场景启动测试")
 	@PostMapping("/start_scene")
@@ -349,6 +396,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	 *
 	 * @param sceneOperationReq 场景实操请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see SceneOperationReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("后台场景删除")
 	@DeleteMapping("/delete_scene")
@@ -372,6 +422,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	 *
 	 * @param sceneNodeReq 场景节点请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see SceneNodeReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("后台场景节点重启")
 	@PostMapping("/scene_node_restart")
@@ -390,6 +443,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	 *
 	 * @param sceneNodeReq 场景节点请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see SceneNodeReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("后台场景节点重建")
 	@PostMapping("/scene_node_recreate")
@@ -410,6 +466,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	 *
 	 * @param sceneStatusReq 场景状态请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see SceneStatusReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("后台场景暂停与恢复")
 	@PatchMapping("/scene_update_status")
@@ -428,6 +487,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	 *
 	 * @param operationByNodeReq 实操由节点请求体
 	 * @return {@code BaseRsp<List<AdminOperationListBo>> }
+	 * @throws
+	 * @see OperationByNodeReq
+	 * @see BaseRsp<List<AdminOperationListBo>>
 	 */
 	@ApiOperation("根据镜像id获取实操题列表")
 	@PostMapping("/list/by_node")
@@ -440,6 +502,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see ClusterImagePageReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("获取镜像列表")
 	@GetMapping("/images")

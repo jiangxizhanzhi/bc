@@ -25,25 +25,35 @@ import java.util.List;
  * 实践错误Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see ServiceImpl
+ * @see PracticeMistakeService
+ * @since 1.0.0
  */
 @Service
 public class PracticeMistakeServiceImpl extends ServiceImpl<PracticeMistakeMapper, PracticeMistake> implements PracticeMistakeService {
 
 	/**
 	 * 实践错误Mapper
+	 *
+	 * @see PracticeMistakeMapper
 	 */
 	@Autowired
 	private PracticeMistakeMapper practiceMistakeMapper;
 
 	/**
 	 * 实践设置Mapper
+	 *
+	 * @see PracticeSetMapper
 	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
 	/**
 	 * 实践理论Mapper
+	 *
+	 * @see PracticeTheoryMapper
 	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
@@ -54,6 +64,10 @@ public class PracticeMistakeServiceImpl extends ServiceImpl<PracticeMistakeMappe
 	 * @param userId      用户id
 	 * @param practiceIds 实践id列表
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see Integer
 	 */
 	@Override
 	public Integer getTheoryMistakeCount(String userId, List<String> practiceIds) {
@@ -66,6 +80,10 @@ public class PracticeMistakeServiceImpl extends ServiceImpl<PracticeMistakeMappe
 	 * @param userId
 	 * @param practiceId
 	 * @param practiceType 执业类型
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
 	 */
 	@Override
 	public void addIncorrect(String userId, String practiceId, Integer practiceType) {
@@ -93,6 +111,10 @@ public class PracticeMistakeServiceImpl extends ServiceImpl<PracticeMistakeMappe
 	 * @param userId
 	 * @param practiceId
 	 * @param practiceType 执业类型
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
 	 */
 	@Override
 	public void addCorrect(String userId, String practiceId, Integer practiceType) {
@@ -110,6 +132,8 @@ public class PracticeMistakeServiceImpl extends ServiceImpl<PracticeMistakeMappe
 	 * 获取实践错误
 	 *
 	 * @return {@code List<PersonalMistakeRes> }
+	 * @throws
+	 * @see List<PersonalMistakeRes>
 	 */
 	@Override
 	public List<PersonalMistakeRes> getPracticeMistake() {
@@ -144,6 +168,10 @@ public class PracticeMistakeServiceImpl extends ServiceImpl<PracticeMistakeMappe
 	 * @param practiceIds 实践id列表
 	 * @param userId      用户id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see List<String>
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean bathDelete(List<String> practiceIds, String userId) {

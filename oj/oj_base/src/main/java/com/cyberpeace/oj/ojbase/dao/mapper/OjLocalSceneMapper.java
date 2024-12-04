@@ -11,7 +11,10 @@ import java.util.List;
  * OJ当地场景Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
@@ -23,6 +26,11 @@ public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 	 * @param businessId
 	 * @param isWeb
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
+	 * @see OjLocalScene
 	 */
 	OjLocalScene selectPrivateScene(@Param("userId") String userId,
 			@Param("businessId") String businessId, @Param("isWeb") Boolean isWeb);
@@ -34,6 +42,11 @@ public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 	 * @param shared
 	 * @param isWeb
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see Boolean
+	 * @see OjLocalScene
 	 */
 	OjLocalScene selectPublicScene(@Param("practiceId") String businessId,
 			@Param("shared") Boolean shared, @Param("isWeb") Boolean isWeb);
@@ -43,6 +56,9 @@ public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 	 *
 	 * @param groupId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see OjLocalScene
 	 */
 	OjLocalScene selectGroupScene(@Param("groupId") String groupId);
 
@@ -51,6 +67,9 @@ public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 	 *
 	 * @param userId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	Integer selectByUser(@Param("userId") String userId);
 
@@ -60,6 +79,10 @@ public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 	 * @param businessId
 	 * @param fromWeb
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see List<OjLocalScene>
 	 */
 	List<OjLocalScene> selectByBusiness(@Param("businessId") String businessId,
 			@Param("fromWeb") Boolean fromWeb);
@@ -69,6 +92,9 @@ public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 	 *
 	 * @param groupIds
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see List<OjLocalScene>
 	 */
 	List<OjLocalScene> selectByGroupIds(@Param("groupIds") List<String> groupIds);
 }

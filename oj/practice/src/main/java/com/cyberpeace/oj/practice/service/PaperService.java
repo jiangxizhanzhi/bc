@@ -16,7 +16,10 @@ import java.util.List;
  * 纸Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
  */
 public interface PaperService extends IService<Paper> {
 
@@ -25,6 +28,9 @@ public interface PaperService extends IService<Paper> {
 	 *
 	 * @param paperContext 修改传入子类
 	 * @return
+	 * @throws
+	 * @see PaperContext
+	 * @see Paper
 	 */
 	Paper create(PaperContext paperContext);
 
@@ -33,6 +39,9 @@ public interface PaperService extends IService<Paper> {
 	 *
 	 * @param paperContext
 	 * @return
+	 * @throws
+	 * @see PaperContext
+	 * @see Paper
 	 */
 	Paper update(PaperContext paperContext);
 
@@ -43,6 +52,11 @@ public interface PaperService extends IService<Paper> {
 	 * @param queryBo
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see Page
+	 * @see LibPracticeQueryBo
+	 * @see AuthContext
+	 * @see IPage<LibPracticeListBo>
 	 */
 	IPage<LibPracticeListBo> selectLibPractice(Page page, LibPracticeQueryBo queryBo,
 			AuthContext authContext);
@@ -54,6 +68,11 @@ public interface PaperService extends IService<Paper> {
 	 * @param score
 	 * @param authContext   权限数据
 	 * @return
+	 * @throws
+	 * @see RandomPracticeQuery
+	 * @see Double
+	 * @see AuthContext
+	 * @see List<LibPracticeListBo>
 	 */
 	List<LibPracticeListBo> selectRandomPractice(RandomPracticeQuery practiceQuery, Double score,
 			AuthContext authContext);
@@ -63,6 +82,9 @@ public interface PaperService extends IService<Paper> {
 	 *
 	 * @param paperId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	Integer practiceCountByPaper(String paperId);
 }

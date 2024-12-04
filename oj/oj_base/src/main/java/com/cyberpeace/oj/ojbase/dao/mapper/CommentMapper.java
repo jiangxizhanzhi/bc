@@ -13,7 +13,10 @@ import java.util.List;
  * 评论Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface CommentMapper extends BaseMapper<Comment> {
@@ -25,6 +28,11 @@ public interface CommentMapper extends BaseMapper<Comment> {
 	 * @param resource     资源
 	 * @param businessType 业务类型
 	 * @return {@code IPage<Comment> }
+	 * @throws
+	 * @see Page
+	 * @see String
+	 * @see Integer
+	 * @see IPage<Comment>
 	 */
 	IPage<Comment> firstByResource(Page page, @Param("businessId") String resource,
 			@Param("businessType") Integer businessType);
@@ -34,6 +42,9 @@ public interface CommentMapper extends BaseMapper<Comment> {
 	 *
 	 * @param parent 父母
 	 * @return {@code List<Comment> }
+	 * @throws
+	 * @see String
+	 * @see List<Comment>
 	 */
 	List<Comment> selectByParent(@Param("parent") String parent);
 
@@ -41,6 +52,8 @@ public interface CommentMapper extends BaseMapper<Comment> {
 	 * 更新评论
 	 *
 	 * @param comment 评论
+	 * @throws
+	 * @see Comment
 	 */
 	void updateComment(Comment comment);
 
@@ -48,6 +61,8 @@ public interface CommentMapper extends BaseMapper<Comment> {
 	 * 删除由业务id
 	 *
 	 * @param businessId 业务id
+	 * @throws
+	 * @see String
 	 */
 	void deleteByBusinessId(@Param("businessId") String businessId);
 
@@ -56,6 +71,9 @@ public interface CommentMapper extends BaseMapper<Comment> {
 	 *
 	 * @param replyId 答id
 	 * @return {@code List<Comment> }
+	 * @throws
+	 * @see String
+	 * @see List<Comment>
 	 */
 	List<Comment> selectByReply(@Param("replyId") String replyId);
 
@@ -64,6 +82,9 @@ public interface CommentMapper extends BaseMapper<Comment> {
 	 *
 	 * @param parents 父母
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> selectIdsByParent(@Param("parents") List<String> parents);
 
@@ -73,6 +94,10 @@ public interface CommentMapper extends BaseMapper<Comment> {
 	 * @param page     分页
 	 * @param parentId 父母id
 	 * @return {@code IPage<Comment> }
+	 * @throws
+	 * @see Page
+	 * @see String
+	 * @see IPage<Comment>
 	 */
 	IPage<Comment> selectAllByParent(Page page, @Param("parentId") String parentId);
 
@@ -83,6 +108,11 @@ public interface CommentMapper extends BaseMapper<Comment> {
 	 * @param businessType 业务类型
 	 * @param content      内容
 	 * @return {@code IPage<Comment> }
+	 * @throws
+	 * @see Page
+	 * @see Integer
+	 * @see String
+	 * @see IPage<Comment>
 	 */
 	IPage<Comment> selectParent(Page page,@Param("businessType") Integer businessType,@Param("content") String content);
 }

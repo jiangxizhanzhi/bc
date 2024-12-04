@@ -10,7 +10,10 @@ import java.util.List;
  * Markdown理论实践
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class MdTheoryPractice implements Serializable {

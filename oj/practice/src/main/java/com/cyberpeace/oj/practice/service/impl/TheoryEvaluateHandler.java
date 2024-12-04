@@ -21,13 +21,18 @@ import java.util.*;
  * 理论评估处理器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see PracticeEvaluateHandler
+ * @since 1.0.0
  */
 @Service("theory")
 public class TheoryEvaluateHandler implements PracticeEvaluateHandler {
 
 	/**
 	 * 评估地图
+	 *
+	 * @see Map<Integer, PracticeEvaluateService>
 	 */
 	private static Map<Integer, PracticeEvaluateService> evaluateMap = Maps.newHashMap();
 
@@ -47,6 +52,11 @@ public class TheoryEvaluateHandler implements PracticeEvaluateHandler {
 	 * @param practiceBase 实践基地
 	 * @param userAnswer   用户答案
 	 * @return {@code EvaluateResult }
+	 * @throws
+	 * @see String
+	 * @see PracticeBase
+	 * @see String
+	 * @see EvaluateResult
 	 */
 	@Override
 	public EvaluateResult evaluateByBusiness(String userId, PracticeBase practiceBase,

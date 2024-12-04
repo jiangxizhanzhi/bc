@@ -19,6 +19,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 练习实操Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/12/04
+ * @see IService
+ * @since 1.0.0
+ */
 public interface PracticeOperationService extends IService<PracticeOperation> {
 
 	/**
@@ -26,7 +35,13 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 *
 	 * @param practiceOperation
 	 * @param targetConfig
+	 * @param authContext       auth 上下文
 	 * @return
+	 * @throws
+	 * @see PracticeOperation
+	 * @see String
+	 * @see AuthContext
+	 * @see Integer
 	 */
 	Integer addPracticeOperation(PracticeOperation practiceOperation, String targetConfig,
 			AuthContext authContext);
@@ -37,6 +52,10 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param updateOperation
 	 * @param targetJson
 	 * @return
+	 * @throws
+	 * @see PracticeOperation
+	 * @see String
+	 * @see Integer
 	 */
 	Integer updateOperation(PracticeOperation updateOperation, String targetJson);
 
@@ -44,7 +63,12 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * 根据id查询实践操作信息
 	 *
 	 * @param resourceId
+	 * @param authContext auth 上下文
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see OperationBo
 	 */
 	OperationBo selectById(String resourceId, AuthContext authContext);
 
@@ -53,11 +77,26 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 *
 	 * @param resourceId
 	 * @param authContext 后台数据查询不需要
+	 * @param isCollected 是否收集
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see Boolean
+	 * @see WebOperationBo
 	 */
 	WebOperationBo selectById(String resourceId, AuthContext authContext, Boolean isCollected);
 
 
+	/**
+	 * 查询由id
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code WebOperationBo }
+	 * @throws
+	 * @see String
+	 * @see WebOperationBo
+	 */
 	WebOperationBo selectById(String resourceId);
 
 	/**
@@ -67,10 +106,26 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param listQuery
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see Page
+	 * @see OperationListQueryBo
+	 * @see AuthContext
+	 * @see IPage<AdminOperationListBo>
 	 */
 	IPage<AdminOperationListBo> pageByQuery(Page page, OperationListQueryBo listQuery,
 			AuthContext authContext);
 
+	/**
+	 * 分页由查询
+	 *
+	 * @param page      分页
+	 * @param listQuery 列表查询
+	 * @return {@code IPage<AdminOperationListBo> }
+	 * @throws
+	 * @see Page
+	 * @see OperationListQueryBo
+	 * @see IPage<AdminOperationListBo>
+	 */
 	IPage<AdminOperationListBo> pageByQuery(Page page, OperationListQueryBo listQuery);
 
 	/**
@@ -79,7 +134,14 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param userId
 	 * @param resourceId
 	 * @param submitAnswer
+	 * @param isCollected  是否收集
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see Boolean
+	 * @see EvaluateResult
 	 */
 	EvaluateResult submitAnswer(String userId, String resourceId, String submitAnswer, Boolean isCollected);
 
@@ -87,7 +149,12 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * 获取所有的实操习题编号
 	 *
 	 * @param authContext
+	 * @param practiceSetId 练习设置id
 	 * @return
+	 * @throws
+	 * @see AuthContext
+	 * @see String
+	 * @see List<String>
 	 */
 	List<String> selectPracticeIds(AuthContext authContext, String practiceSetId);
 
@@ -95,7 +162,12 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * 启动场景
 	 *
 	 * @param resourceId
+	 * @param authContext auth 上下文
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see JSONObject
 	 */
 	JSONObject startScene(String resourceId, AuthContext authContext);
 
@@ -105,6 +177,10 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param resourceId
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	Boolean deleteScene(String resourceId, AuthContext authContext);
 
@@ -113,7 +189,13 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 *
 	 * @param resourceId
 	 * @param nodeId
+	 * @param authContext auth 上下文
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	Boolean nodeRestart(String resourceId, String nodeId, AuthContext authContext);
 
@@ -124,6 +206,11 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param nodeId
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	Boolean nodeRecreate(String resourceId, String nodeId, AuthContext authContext);
 
@@ -134,40 +221,72 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param status
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	Boolean pauseScene(String resourceId, Integer status, AuthContext authContext);
 
 	/**
 	 * 获取拓扑场景数据信息
+	 *
 	 * @param operationId
+	 * @param authContext auth 上下文
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see TopoSceneDataBo
 	 */
 	TopoSceneDataBo getTopoScene(String operationId, AuthContext authContext);
 
 	/**
 	 * 数据批量删除
+	 *
 	 * @param practiceIds
+	 * @param authContext auth 上下文
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see AuthContext
+	 * @see Integer
 	 */
 	Integer batchDelete(List<String> practiceIds, AuthContext authContext);
 
 	/**
 	 * 处理实操习题dump文件
+	 *
 	 * @param operation
 	 * @param fileStorePath
 	 * @param filePathMap
 	 * @return
+	 * @throws
+	 * @see PracticeOperation
+	 * @see String
+	 * @see Map<String, String>
+	 * @see PracticeOperationDumpLoadBo
 	 */
 	PracticeOperationDumpLoadBo handlerDumpOperation(PracticeOperation operation,
 			String fileStorePath, Map<String, String> filePathMap);
 
 	/**
 	 * 习题集数据加载
+	 *
 	 * @param practiceSetId
 	 * @param dumpBo
 	 * @param filePathMap
 	 * @param filePath
+	 * @param userId        用户id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see PracticeOperationDumpLoadBo
+	 * @see Map<String, String>
+	 * @see String
+	 * @see String
+	 * @see PracticeOperation
 	 */
 	PracticeOperation loadPracticeOperation(String practiceSetId,
 			PracticeOperationDumpLoadBo dumpBo, Map<String, String> filePathMap, String filePath,
@@ -175,84 +294,145 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 
 	/**
 	 * 创建远程操作日志
+	 *
 	 * @param practiceId
-	 * @param logContent
+	 * @param logContent 日志内容
+	 * @throws
+	 * @see String
+	 * @see LogContent
 	 */
 	void createMpLog(String practiceId, LogContent logContent);
 
 	/**
 	 * 查询要数据导出的习题
+	 *
 	 * @param setIds
-	 * @param practiceId
+	 * @param practiceId 练习id
+	 * @return {@code List<PracticeOperation> }
+	 * @throws
+	 * @see List<String>
+	 * @see String
+	 * @see List<PracticeOperation>
 	 */
-    List<PracticeOperation> selectExportPractice(List<String> setIds, String practiceId);
+	List<PracticeOperation> selectExportPractice(List<String> setIds, String practiceId);
 
 	/**
 	 * 实操习题数据导出
+	 *
 	 * @param setPath
-	 * @param practiceOperations
+	 * @param practiceOperations 练习操作
+	 * @param disableImageExport 禁用图像导出
+	 * @throws
+	 * @see String
+	 * @see List<PracticeOperation>
+	 * @see Boolean
 	 */
-    void exportPractice(String setPath, List<PracticeOperation> practiceOperations, Boolean disableImageExport);
+	void exportPractice(String setPath, List<PracticeOperation> practiceOperations, Boolean disableImageExport);
 
 	/**
 	 * 获取实操习题附件
+	 *
 	 * @param attachmentId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<PracticeOperationFileBo>
 	 */
 	List<PracticeOperationFileBo> getOperationFile(String attachmentId);
 
 	/**
 	 * 计算各类型习题数量
+	 *
 	 * @param authContext
 	 * @param listQueryBo
 	 * @return
+	 * @throws
+	 * @see AuthContext
+	 * @see OperationListQueryBo
+	 * @see ExternalOperationCountBo
 	 */
-    ExternalOperationCountBo typeCount(AuthContext authContext, OperationListQueryBo listQueryBo);
+	ExternalOperationCountBo typeCount(AuthContext authContext, OperationListQueryBo listQueryBo);
 
 	/**
 	 * 获取实操题练习进度
+	 *
 	 * @param practiceSetId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see ProgressStatisticsRes
 	 */
 	ProgressStatisticsRes getProgressStatistics(String practiceSetId);
 
 	/**
 	 * 根据用户和习题集查询所有可以看见的实操题id
+	 *
 	 * @param authContext
 	 * @param practiceSetId
 	 * @return
+	 * @throws
+	 * @see AuthContext
+	 * @see String
+	 * @see List<String>
 	 */
 	List<String> getOptionIdsByAuth(AuthContext authContext, String practiceSetId);
 
 	/**
 	 * 根据用户和起止时间获取实操题解出记录
+	 *
 	 * @param userInfo
 	 * @param startTime
 	 * @param endTime
 	 * @return
+	 * @throws
+	 * @see UserInfo
+	 * @see Date
+	 * @see Date
+	 * @see List<OperationRecordRes>
 	 */
 	List<OperationRecordRes> getOperationRecord(UserInfo userInfo, Date startTime, Date endTime);
 
 	/**
 	 * 获取各方向的解题进度
+	 *
 	 * @return
+	 * @throws
+	 * @see List<CategoryProgressRes>
 	 */
 	List<CategoryProgressRes> getOperationCategoryProgress();
 
 	/**
 	 * 再练一次状态的提交
+	 *
 	 * @param userId
 	 * @param resourceId
 	 * @param submitAnswer
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see EvaluateResult
 	 */
 	EvaluateResult submitAnswerAgain(String userId, String resourceId, String submitAnswer);
 
 	/**
 	 * 实操题方向和习题集
+	 *
 	 * @return
+	 * @throws
+	 * @see List<PracticeOperation>
 	 */
-    List<PracticeOperation> getCategoryIdAndSetIds();
+	List<PracticeOperation> getCategoryIdAndSetIds();
 
+	/**
+	 * 获取实操由博 德id列表
+	 *
+	 * @param nodeIds 节点id列表
+	 * @return {@code List<AdminOperationListBo> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<AdminOperationListBo>
+	 */
 	List<AdminOperationListBo> getOperationByBodeIds(List<String> nodeIds);
 }

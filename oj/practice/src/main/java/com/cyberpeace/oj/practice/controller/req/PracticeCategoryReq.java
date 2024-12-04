@@ -15,7 +15,9 @@ import javax.validation.constraints.NotNull;
  * 实践类别请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -23,6 +25,8 @@ public class PracticeCategoryReq {
 
     /**
      * 名称
+     *
+     * @see String
      */
     @ApiModelProperty(value = "名称", required = true)
     @NotBlank
@@ -30,6 +34,8 @@ public class PracticeCategoryReq {
 
     /**
      * 执业类型
+     *
+     * @see Integer
      */
     @ApiModelProperty(value = "练习类型 0=理论基础 2=实操习题", required = true)
     @NotNull
@@ -37,6 +43,8 @@ public class PracticeCategoryReq {
 
     /**
      * 父母id
+     *
+     * @see String
      */
     @ApiModelProperty("所属父级节点")
     private String parentId;

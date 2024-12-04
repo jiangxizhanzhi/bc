@@ -13,7 +13,10 @@ import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
  * 实践实操裁判Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
  */
 public interface PracticeOperationRefService extends IService<PracticeOperationRef> {
 
@@ -26,6 +29,13 @@ public interface PracticeOperationRefService extends IService<PracticeOperationR
 	 * @param simpleData  是否只查询基本数据 true 仅查询基本数据
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
+	 * @see Boolean
+	 * @see AuthContext
+	 * @see List<OperationLessonBo>
 	 */
 	List<OperationLessonBo> selectByPaperId(String lessonId, String paperId, Boolean viewAnswer,
 			Boolean simpleData, AuthContext authContext);
@@ -36,6 +46,10 @@ public interface PracticeOperationRefService extends IService<PracticeOperationR
 	 * @param paperId
 	 * @param practiceId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see PracticeOperation
 	 */
 	PracticeOperation selectByPracticeId(String paperId, String practiceId);
 
@@ -45,6 +59,10 @@ public interface PracticeOperationRefService extends IService<PracticeOperationR
 	 * @param pathname           路径
 	 * @param paperId            纸id
 	 * @param disableImageExport 禁用图像导出
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	void exportLessonPractice(String pathname, String paperId, Boolean disableImageExport);
 
@@ -53,6 +71,9 @@ public interface PracticeOperationRefService extends IService<PracticeOperationR
 	 *
 	 * @param paperIds
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> selectLessonPracticeTopoIds(List<String> paperIds);
 
@@ -62,6 +83,10 @@ public interface PracticeOperationRefService extends IService<PracticeOperationR
 	 * @param paperId  试卷编号
 	 * @param onlyTopo 仅获取包含拓扑的实操题目
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see boolean
+	 * @see List<PracticeOperation>
 	 */
 	List<PracticeOperation> operationByPaper(String paperId, boolean onlyTopo);
 
@@ -72,6 +97,11 @@ public interface PracticeOperationRefService extends IService<PracticeOperationR
 	 * @param paperId
 	 * @param authContext auth 上下文
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see List<OjLocalScene>
 	 */
 	List<OjLocalScene> operationByPaper(String lessonId, String paperId, AuthContext authContext);
 }

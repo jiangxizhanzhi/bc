@@ -11,7 +11,10 @@ import java.util.List;
  * 删除资源请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -19,6 +22,8 @@ public class DeleteResourceReq implements Serializable {
 
 	/**
 	 * 资源id列表
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty("资源数据编号")
 	private List<String> resourceIds;

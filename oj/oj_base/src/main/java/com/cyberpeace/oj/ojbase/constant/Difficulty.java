@@ -8,31 +8,45 @@ import lombok.Getter;
  * 难度
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Enum
+ * @see GenericEnum
+ * @since 1.0.0
  */
 public enum Difficulty implements GenericEnum {
 
 	/**
 	 * 主要
+	 *
+	 * @see Difficulty
 	 */
 	PRIMARY(0, "初级"),
 	/**
 	 * 中间
+	 *
+	 * @see Difficulty
 	 */
 	MIDDLE(1, "中级"),
 	/**
 	 * 高
+	 *
+	 * @see Difficulty
 	 */
 	HIGH(2, "高级");
 
 	/**
 	 * 代号
+	 *
+	 * @see Integer
 	 */
 	@Getter
 	private Integer code;
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	@Getter
 	private String desc;

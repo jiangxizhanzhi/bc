@@ -14,7 +14,10 @@ import lombok.Data;
  * 评论请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel("资源评论信息")
@@ -22,6 +25,8 @@ public class CommentReq implements Serializable {
 
     /**
      * 内容
+     *
+     * @see String
      */
     @ApiModelProperty(value = "评论内容")
     @NotBlank(message = OjBusinessErrorCode.MESSAGE_CONTENT_IS_NULL)
@@ -29,6 +34,8 @@ public class CommentReq implements Serializable {
 
     /**
      * 主题名称
+     *
+     * @see String
      */
     @ApiModelProperty("主题信息 课时笔记=课程名称/课时名称 课程笔记=课程名称 实操习题笔记=实操题名称")
     @NotBlank
@@ -36,6 +43,8 @@ public class CommentReq implements Serializable {
 
     /**
      * 业务id
+     *
+     * @see String
      */
     @ApiModelProperty("资源编号 课程 课时 练习")
     @NotBlank
@@ -43,18 +52,24 @@ public class CommentReq implements Serializable {
 
     /**
      * 根id
+     *
+     * @see String
      */
     @ApiModelProperty("资源评论编号")
     private String rootId;
 
     /**
      * 答id
+     *
+     * @see String
      */
     @ApiModelProperty("被回复评论编号")
     private String replyId;
 
     /**
      * 业务类型
+     *
+     * @see Integer
      */
     @ApiModelProperty("评论资源类型 1=课程 2=课时 3=实操")
     @NotNull

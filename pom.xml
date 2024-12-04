@@ -11,7 +11,7 @@
 
     <description>靶场</description>
     <modelVersion>4.0.0</modelVersion>
-    <name>cr</name>
+    <name>cr_5.5.0</name>
     <packaging>pom</packaging>
 
     <groupId>com.cyberpeace</groupId>

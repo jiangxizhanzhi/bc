@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -145,6 +146,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String GET_SCENE_LOAD_INFO;
 
+	private String ADD_LOAD_RESULT;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -255,6 +258,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		IMAGE_LIST = MP_HOST + ConfigUtil.getContextProperty("image");
 
 		IMAGE_UUID_LIST = MP_HOST + ConfigUtil.getContextProperty("image.uuid");
+
+		ADD_LOAD_RESULT = MP_HOST + ConfigUtil.getContextProperty("add.load.result");
 	}
 
 	@Override
@@ -691,6 +696,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	public JSONObject getSceneLoadInfo(String sceneId) {
 		String requestUrl = String.format(GET_SCENE_LOAD_INFO, sceneId);
 		return HttpClientUtil.rawGet(requestUrl, JSONObject.class);
+	}
+
+	@Override
+	public void addLoadResult(JSONObject addReq) {
+		HttpClientUtil.post(ADD_LOAD_RESULT, addReq, Boolean.class);
 	}
 
 }

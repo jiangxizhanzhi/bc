@@ -289,6 +289,13 @@ public class EvalTestController {
 		return new BaseRsp<>(Boolean.TRUE);
 	}
 
+	@ApiOperation("添加载荷执行结果")
+	@PostMapping("/addLoadExecutionResult")
+	public BaseRsp<Boolean> addLoadExecutionResult(@RequestBody EvalLoadResultAddReq addReq) {
+		evalStepService.addLoadExecutionResult(addReq);
+		return new BaseRsp<>(Boolean.TRUE);
+	}
+
 	@ApiOperation("获取该场景下的所有阶段")
 	@GetMapping("/scene/stages")
 	public BaseRsp<List<EvalCodeStageRsp>> getAllStagesBySceneId(@ApiParam(name = "scene_id", value = "场景id",

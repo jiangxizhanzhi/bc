@@ -177,9 +177,6 @@ public class EvalSituationServiceImpl implements EvalSituationService {
                 .getJSONObject("plugins")
                 .getJSONObject("cpcloud")
                 .getObject("elements", Map.class);
-        List<JSONObject> elements = scene.getJSONObject("scene").getJSONObject("topology")
-                .getObject("elements", List.class);
-        Map<String, String> collect = elements.stream().collect(Collectors.toMap(jsonObject -> jsonObject.getString("id"), jsonObject -> jsonObject.getString("eid")));
         Set<Map.Entry<String, JSONObject>> entries = elementsMap.entrySet();
         HashMap<String, String> map = new HashMap<>();
         ArrayList<String> elementIds = new ArrayList<>();

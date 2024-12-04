@@ -247,8 +247,12 @@ public class FileUtil {
 		try (InputStream fis = new FileInputStream(file);
 			 OutputStream outputStream = response.getOutputStream()
 		) {
-			byte[] buffer = new byte[fis.available()];
-			fis.read(buffer);
+			byte[] buffer = new byte[4096];
+
+			int bytesRead;
+			while ((bytesRead = fis.read(buffer)) > 0) {
+				outputStream.write(buffer, 0, bytesRead);
+			}
 
 			// 清空response
 			response.reset();
@@ -256,7 +260,6 @@ public class FileUtil {
 			// 设置返回
 			response.setContentType("application/octet-stream;charset=UTF-8");
 			response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(file.getName(),"UTF-8").replaceAll("\\+","%20"));
-			outputStream.write(buffer);
 			outputStream.flush();
 		} catch (IOException e) {
 			log.error("setResponse error:", e);

@@ -227,22 +227,26 @@ public class ClassroomEventListener extends MessageListener {
 		int eventStatus = scene.getIntValue(JsonKeyConstant.SCENE_EVENT_STATUS);
 
 		if (event != SceneEvent.CREATE.getCode().intValue()) {
+			log.warn("ClassroomEventListener.onSceneSuccess error: scene event is not create [{}]", event);
 			return false;
 		}
 
 		if (eventStatus != SceneEventStatus.FINISH.getCode().intValue()
 				&& eventStatus != SceneEventStatus.FAILED.getCode().intValue()) {
+			log.warn("ClassroomEventListener.onSceneSuccess error: scene event status is not finish or failed, eventStatus=[{}]", eventStatus);
 			return false;
 		}
 
 		OjLocalScene ojLocalScene = validateOjLocalScene(businessId);
 		if (ojLocalScene == null) {
+			log.warn("ClassroomEventListener.onSceneSuccess error: oj_local_scene not found, businessId=[{}]", businessId);
 			return false;
 		}
 
 		ClassroomGroupInfo groupInfo = classroomGroupInfoMapper
 				.selectById(ojLocalScene.getBusinessId());
 		if (null == groupInfo) {
+			log.warn("ClassroomEventListener.onSceneSuccess error: classroom_group_info not found, businessid=[{}]", ojLocalScene.getBusinessId());
 			return false;
 		}
 

@@ -11,13 +11,17 @@ import java.util.concurrent.TimeUnit;
  * 缓存集合
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 @Component
 public class CacheCollection {
 
 	/**
 	 * RTKS态势缓存
+	 *
+	 * @see Cache<String, RtksMatch>
 	 */
 	private static Cache<String, RtksMatch> rtksSituationCache = CacheBuilder.newBuilder()
 			.expireAfterWrite(10, TimeUnit.MINUTES).build();

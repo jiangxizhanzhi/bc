@@ -11,7 +11,10 @@ import java.util.List;
  * 课堂标志Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface ClassroomSignMapper extends BaseMapper<ClassroomSign> {
@@ -21,6 +24,9 @@ public interface ClassroomSignMapper extends BaseMapper<ClassroomSign> {
 	 *
 	 * @param classroomId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<ClassroomSign>
 	 */
 	List<ClassroomSign> selectByRoom(@Param("roomId") String classroomId);
 
@@ -30,6 +36,10 @@ public interface ClassroomSignMapper extends BaseMapper<ClassroomSign> {
 	 * @param roomId
 	 * @param userId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see ClassroomSign
 	 */
 	ClassroomSign selectByRoomAndUser(@Param("roomId") String roomId,
 			@Param("userId") String userId);

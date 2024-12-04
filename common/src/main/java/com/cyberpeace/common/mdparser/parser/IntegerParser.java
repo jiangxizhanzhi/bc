@@ -10,7 +10,10 @@ import org.springframework.stereotype.Service;
  * 整数解析器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see MdContentParser
+ * @since 1.0.0
  */
 @Service
 public class IntegerParser implements MdContentParser<Object, String> {

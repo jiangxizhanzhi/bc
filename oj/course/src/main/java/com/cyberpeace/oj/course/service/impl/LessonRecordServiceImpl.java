@@ -15,13 +15,18 @@ import java.util.stream.Collectors;
  * 课记录Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see LessonRecordService
+ * @since 1.0.0
  */
 @Service
 public class LessonRecordServiceImpl implements LessonRecordService {
 
     /**
      * 课记录Mapper
+     *
+     * @see LessonRecordMapper
      */
     @Autowired
     private LessonRecordMapper lessonRecordMapper;
@@ -33,6 +38,11 @@ public class LessonRecordServiceImpl implements LessonRecordService {
      * @param startTime 开始时间
      * @param endTime   结束时间
      * @return {@code List<LessonRecord> }
+     * @throws
+     * @see String
+     * @see Date
+     * @see Date
+     * @see List<LessonRecord>
      */
     @Override
     public List<LessonRecord> selectByTime(String userId, Date startTime, Date endTime) {
@@ -46,6 +56,10 @@ public class LessonRecordServiceImpl implements LessonRecordService {
      * @param recordLesson 录制课程
      * @param lessons      课
      * @return {@code List<String> }
+     * @throws
+     * @see List<String>
+     * @see List<CourseLesson>
+     * @see List<String>
      */
     @Override
     public List<String> recordBelongCourse(List<String> recordLesson, List<CourseLesson> lessons) {

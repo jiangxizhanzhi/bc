@@ -11,7 +11,10 @@ import java.util.List;
  * 课程研究历史Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface CourseStudyHistoryMapper extends BaseMapper<CourseStudyHistory> {
@@ -21,6 +24,9 @@ public interface CourseStudyHistoryMapper extends BaseMapper<CourseStudyHistory>
 	 *
 	 * @param userId 用户id
 	 * @return {@code List<CourseStudyHistory> }
+	 * @throws
+	 * @see String
+	 * @see List<CourseStudyHistory>
 	 */
 	List<CourseStudyHistory> selectByUserId(@Param("userId") String userId);
 
@@ -30,6 +36,10 @@ public interface CourseStudyHistoryMapper extends BaseMapper<CourseStudyHistory>
 	 * @param courseId 课程id
 	 * @param userId   用户id
 	 * @return {@code CourseStudyHistory }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see CourseStudyHistory
 	 */
 	CourseStudyHistory selectByCourseIdAndUserId(@Param("courseId") String courseId,@Param("userId") String userId);
 

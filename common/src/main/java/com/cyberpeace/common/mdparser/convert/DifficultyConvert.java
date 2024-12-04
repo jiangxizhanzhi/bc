@@ -5,15 +5,46 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
 /**
  * 难度转换
  *
- * @author chenzhuo@date 2024/11/08
+ * @author chenzhuo@date 2024/11/08@see Enum
+ * @version 1.0.0
+ * @date 2024/12/04
+ * @see MdConvertEnum
+ * @see GenericEnum
+ * @since 1.0.0
  */
 public enum DifficultyConvert implements MdConvertEnum<Integer, String>, GenericEnum {
 
-	/** 难度值*/
-	PRIMARY(0, "初级"), INTERMEDIATE(1, "中级"), ADVANCED(2, "高级");
+	/**
+	 * 难度值
+	 *
+	 * @see DifficultyConvert
+	 */
+	PRIMARY(0, "初级"),
+	/**
+	 * 中间
+	 *
+	 * @see DifficultyConvert
+	 */
+	INTERMEDIATE(1, "中级"),
+	/**
+	 * 高深
+	 *
+	 * @see DifficultyConvert
+	 */
+	ADVANCED(2, "高级");
 
+	/**
+	 * 难度
+	 *
+	 * @see Integer
+	 */
 	private Integer difficulty;
 
+	/**
+	 * 描述
+	 *
+	 * @see String
+	 */
 	private String desc;
 
 	/**

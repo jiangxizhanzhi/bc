@@ -11,7 +11,10 @@ import java.io.Serializable;
  * 移动群用户请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -19,6 +22,8 @@ public class MoveGroupUserReq implements Serializable {
 
 	/**
 	 * 从群id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("原分组")
 	@NotBlank
@@ -26,6 +31,8 @@ public class MoveGroupUserReq implements Serializable {
 
 	/**
 	 * 自群id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("目的分组")
 	@NotBlank
@@ -33,6 +40,8 @@ public class MoveGroupUserReq implements Serializable {
 
 	/**
 	 * 用户id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("用户编号")
 	@NotBlank
@@ -40,6 +49,8 @@ public class MoveGroupUserReq implements Serializable {
 
 	/**
 	 * 课堂id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课堂编号")
 	@NotBlank

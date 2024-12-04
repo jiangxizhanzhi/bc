@@ -11,7 +11,10 @@ import java.util.List;
  * 课堂群信息Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo> {
@@ -22,6 +25,10 @@ public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo>
 	 * @param roomId
 	 * @param userId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see ClassroomGroupInfo
 	 */
 	ClassroomGroupInfo selectByRoomAndUser(@Param("roomId") String roomId,
 			@Param("userId") String userId);
@@ -31,6 +38,9 @@ public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo>
 	 *
 	 * @param roomId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<ClassroomGroupInfo>
 	 */
 	List<ClassroomGroupInfo> selectByRoom(@Param("roomId") String roomId);
 
@@ -39,6 +49,9 @@ public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo>
 	 *
 	 * @param roomId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	Integer selectLastGroupByRoom(@Param("roomId") String roomId);
 
@@ -46,6 +59,8 @@ public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo>
 	 * 删除组信息
 	 *
 	 * @param classroomId 课堂id
+	 * @throws
+	 * @see String
 	 */
 	void deleteByRoom(@Param("roomId") String classroomId);
 }

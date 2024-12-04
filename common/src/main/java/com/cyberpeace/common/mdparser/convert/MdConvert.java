@@ -8,7 +8,9 @@ import java.util.stream.Collectors;
  * 中路闪兑
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 public class MdConvert {
 

@@ -19,7 +19,10 @@ import java.util.List;
  * 列表解析器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see MdContentParser
+ * @since 1.0.0
  */
 @Service
 public class ListParser implements MdContentParser<Collection, String> {

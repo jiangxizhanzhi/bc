@@ -13,7 +13,10 @@ import com.cyberpeace.oj.course.service.bo.CourseCategoryBo;
  * 课程类别Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
  */
 public interface CourseCategoryService extends IService<CourseCategory> {
 
@@ -23,6 +26,10 @@ public interface CourseCategoryService extends IService<CourseCategory> {
 	 * @param directionId
 	 * @param self        是否包含自身
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see List<String>
 	 */
 	List<String> getChildrenIds(String directionId, Boolean self);
 
@@ -31,6 +38,9 @@ public interface CourseCategoryService extends IService<CourseCategory> {
 	 *
 	 * @param children 子级
 	 * @return
+	 * @throws
+	 * @see Boolean
+	 * @see List<CourseCategoryBo>
 	 */
 	List<CourseCategoryBo> selectAll(Boolean children);
 
@@ -41,6 +51,11 @@ public interface CourseCategoryService extends IService<CourseCategory> {
 	 * @param pattern
 	 * @param children true包含子类数据 false不包含
 	 * @return
+	 * @throws
+	 * @see Page
+	 * @see String
+	 * @see Boolean
+	 * @see IPage<CourseCategoryBo>
 	 */
 	IPage<CourseCategoryBo> pageBySearch(Page page, String pattern, Boolean children);
 
@@ -49,6 +64,9 @@ public interface CourseCategoryService extends IService<CourseCategory> {
 	 *
 	 * @param categoryAddBo
 	 * @return
+	 * @throws
+	 * @see CategoryAddBo
+	 * @see CourseCategory
 	 */
 	CourseCategory saveOrUpdate(CategoryAddBo categoryAddBo);
 
@@ -57,6 +75,9 @@ public interface CourseCategoryService extends IService<CourseCategory> {
 	 *
 	 * @param resourceIds
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see Integer
 	 */
 	Integer batchDeleteByIds(List<String> resourceIds);
 
@@ -66,6 +87,10 @@ public interface CourseCategoryService extends IService<CourseCategory> {
 	 * @param resourceId
 	 * @param children   是否查询下级分类
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see CourseCategoryBo
 	 */
 	CourseCategoryBo selectById(String resourceId, Boolean children);
 
@@ -74,6 +99,9 @@ public interface CourseCategoryService extends IService<CourseCategory> {
 	 *
 	 * @param categoryName
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see CourseCategory
 	 */
 	CourseCategory getOrCreate(String categoryName);
 }

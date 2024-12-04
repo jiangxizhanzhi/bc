@@ -6,9 +6,18 @@ import com.cyberpeace.common.constant.CommonConstant;
  * 不转换
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Enum
+ * @see MdConvertEnum
+ * @since 1.0.0
  */
 public enum NoConvert implements MdConvertEnum<String, String> {
+    /**
+     * 不转换
+     *
+     * @see NoConvert
+     */
     NO_CONVERT();
 
     /**

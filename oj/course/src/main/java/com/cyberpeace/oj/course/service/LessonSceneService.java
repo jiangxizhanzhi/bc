@@ -10,7 +10,9 @@ import java.util.List;
  * 课场景Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 public interface LessonSceneService {
 
@@ -20,6 +22,10 @@ public interface LessonSceneService {
 	 * @param lessonId
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see JSONObject
 	 */
 	JSONObject startScene(String lessonId, AuthContext authContext);
 
@@ -29,6 +35,10 @@ public interface LessonSceneService {
 	 * @param lessonId
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	Boolean deleteScene(String lessonId, AuthContext authContext);
 
@@ -40,6 +50,12 @@ public interface LessonSceneService {
 	 * @param roomId
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	Boolean restartNode(String resourceId, String nodeId, String roomId, AuthContext authContext);
 
@@ -51,6 +67,12 @@ public interface LessonSceneService {
 	 * @param roomId      房间id
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	Boolean recreateNode(String resourceId, String nodeId, String roomId, AuthContext authContext);
 
@@ -62,6 +84,12 @@ public interface LessonSceneService {
 	 * @param status
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	Boolean updateSceneStatus(String roomId, String resourceId, Integer status, AuthContext authContext);
 
@@ -70,6 +98,9 @@ public interface LessonSceneService {
 	 *
 	 * @param lessonId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<SceneMonitorBo>
 	 */
 	List<SceneMonitorBo> lessonMonitor(String lessonId);
 }

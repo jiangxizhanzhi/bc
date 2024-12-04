@@ -19,7 +19,10 @@ import java.util.List;
  * 课堂Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
  */
 public interface ClassroomService extends IService<Classroom> {
 
@@ -29,6 +32,10 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @param roomListQuery
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see ClassRoomListQuery
+	 * @see AuthContext
+	 * @see List<ClassroomBo>
 	 */
 	List<ClassroomBo> selectList(ClassRoomListQuery roomListQuery, AuthContext authContext);
 
@@ -38,6 +45,10 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @param page
 	 * @param classroomId
 	 * @return
+	 * @throws
+	 * @see Page
+	 * @see String
+	 * @see ListRsp<ClassroomMonitorBo>
 	 */
 	ListRsp<ClassroomMonitorBo> selectSignList(Page page, String classroomId);
 
@@ -47,6 +58,10 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @param classroomId
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see ClassroomStatisticBo
 	 */
 	ClassroomStatisticBo classroomStatistic(String classroomId, AuthContext authContext);
 
@@ -56,6 +71,10 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @param classroomPracticeContext
 	 * @param page                     分页
 	 * @return
+	 * @throws
+	 * @see ClassroomPracticeContext
+	 * @see Page
+	 * @see ClassroomPracticeBo
 	 */
 	ClassroomPracticeBo practiceStatistic(ClassroomPracticeContext classroomPracticeContext,
 			Page page);
@@ -67,6 +86,11 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @param lessonId
 	 * @param userId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see ClassroomPracticeDetailBo
 	 */
 	ClassroomPracticeDetailBo practiceDetail(String classroomId, String lessonId, String userId);
 
@@ -76,6 +100,10 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @param classroomId
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see Integer
 	 */
 	Integer deleteClassroom(String classroomId, AuthContext authContext);
 
@@ -85,6 +113,10 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @param roomId
 	 * @param userContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see UserInfo
+	 * @see DashboardInfo
 	 */
 	DashboardInfo getChatUsers(String roomId, UserInfo userContext);
 
@@ -95,6 +127,11 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @param userInfo 用户信息
 	 * @param cover    盖
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see UserInfo
+	 * @see boolean
+	 * @see List<Classroom>
 	 */
 	List<Classroom> importTrainPlan(String realPath, UserInfo userInfo, boolean cover);
 
@@ -103,6 +140,9 @@ public interface ClassroomService extends IService<Classroom> {
 	 *
 	 * @param userInfo 用户信息
 	 * @param filePath 文件路径
+	 * @throws
+	 * @see UserInfo
+	 * @see String
 	 */
 	void exportTrainPlan(UserInfo userInfo, String filePath);
 
@@ -112,6 +152,10 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @param roomId
 	 * @param groupId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<DashboardUser>
 	 */
 	List<DashboardUser> getChatGroupUsers(String roomId, String groupId);
 
@@ -119,6 +163,8 @@ public interface ClassroomService extends IService<Classroom> {
 	 * 获取中台组织删除消息时 同步删除课堂表中关联记录
 	 *
 	 * @param orgs 删除组织ids
+	 * @throws
+	 * @see List<String>
 	 */
 	void removeClassrooms(List<String> orgs);
 
@@ -128,6 +174,10 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @param roomListQuery 房间列表查询
 	 * @param authContext   auth 上下文
 	 * @return {@code IPage<ClassroomBo> }
+	 * @throws
+	 * @see ClassRoomPageQuery
+	 * @see AuthContext
+	 * @see IPage<ClassroomBo>
 	 */
 	IPage<ClassroomBo>  selectPage(ClassRoomPageQuery roomListQuery, AuthContext authContext);
 
@@ -136,6 +186,9 @@ public interface ClassroomService extends IService<Classroom> {
 	 *
 	 * @param ids id列表
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> selectIdsByPlanIds(List<String> ids);
 
@@ -144,6 +197,9 @@ public interface ClassroomService extends IService<Classroom> {
 	 *
 	 * @param userContext 用户上下文
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see UserInfo
+	 * @see List<String>
 	 */
 	List<String> selectTempTaskIdsByUser(UserInfo userContext);
 }

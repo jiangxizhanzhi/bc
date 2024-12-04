@@ -7,7 +7,9 @@ import java.util.Map;
  * 红蓝对抗等业务模式中，需要根据用户的角色、判断是否允许用户建立连接。
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 public abstract class SelfDefinedWsChecker {
 

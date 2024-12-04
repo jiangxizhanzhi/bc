@@ -17,7 +17,10 @@ import java.util.List;
  * 课程Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -31,6 +34,12 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 * @param courseIds     课程id列表
 	 * @param isPublic      是否公开
 	 * @return {@code IPage<Course> }
+	 * @throws
+	 * @see Page
+	 * @see CourseContext
+	 * @see List<String>
+	 * @see Boolean
+	 * @see IPage<Course>
 	 */
 	IPage<Course> listByPage(Page page, @Param("courseContext") CourseContext courseContext,
 			@Param("courseIds") List<String> courseIds, @Param("isPublic") Boolean isPublic);
@@ -40,6 +49,9 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 *
 	 * @param courseIds 课程id列表
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> notDeleteIdsByIds(@Param("courseIds") List<String> courseIds);
 
@@ -48,6 +60,9 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 *
 	 * @param authContext auth 上下文
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see AuthContext
+	 * @see List<String>
 	 */
 	List<String> selectByAuth(@Param("authContext") AuthContext authContext);
 
@@ -57,6 +72,10 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 * @param courseIds      课程id列表
 	 * @param specialContext 特殊上下文
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see SpecialCourseContext
+	 * @see List<String>
 	 */
 	List<String> selectSpecial(@Param("courseIds") List<String> courseIds,
 			@Param("specialContext") SpecialCourseContext specialContext);
@@ -68,6 +87,11 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 * @param categoryIds 类别id列表
 	 * @param isPublic    是否公开
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
+	 * @see Boolean
+	 * @see List<String>
 	 */
 	List<String> selectIdsByCategory(@Param("courseIds") List<String> courseIds,
 			@Param("categoryIds") List<String> categoryIds, @Param("isPublic") Boolean isPublic);
@@ -77,6 +101,9 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 *
 	 * @param name
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	String selectByName(@Param("name") String name);
 
@@ -85,6 +112,9 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 *
 	 * @param courseNum
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Course
 	 */
 	Course selectByCourseNum(@Param("courseNum") String courseNum);
 
@@ -93,6 +123,9 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 *
 	 * @param courseNames 课程名称
 	 * @return {@code List<Course> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<Course>
 	 */
 	List<Course> selectIdsByCourseName(@Param("courseNames") List<String> courseNames);
 
@@ -101,6 +134,9 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 *
 	 * @param userId 用户id
 	 * @return {@code List<Course> }
+	 * @throws
+	 * @see String
+	 * @see List<Course>
 	 */
 	List<Course> selectCourseByUserId(String userId);
 
@@ -109,6 +145,9 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 *
 	 * @param orgId 组织id
 	 * @return {@code List<Course> }
+	 * @throws
+	 * @see String
+	 * @see List<Course>
 	 */
 	List<Course> selectCourseByOrgId(String orgId);
 
@@ -117,6 +156,9 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 *
 	 * @param heat       热
 	 * @param resourceId 资源id
+	 * @throws
+	 * @see Integer
+	 * @see String
 	 */
 	void updateCourseHeat(@Param("heat") Integer heat,@Param("resourceId") String resourceId);
 
@@ -124,6 +166,8 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 * 查询时间
 	 *
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
 	 */
 	List<String> selectTime();
 }

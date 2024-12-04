@@ -11,7 +11,10 @@ import java.io.Serializable;
  * 合并课程导入上下文
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -19,12 +22,16 @@ public class CombinedCourseImportContext implements Serializable {
 
     /**
      * 路径
+     *
+     * @see String
      */
     @ApiModelProperty("课时地址绝对路径")
     private String path;
 
     /**
      * 课程名称
+     *
+     * @see String
      */
     @ApiModelProperty("课程名称")
     @NotBlank
@@ -32,6 +39,8 @@ public class CombinedCourseImportContext implements Serializable {
 
     /**
      * 课程数量
+     *
+     * @see String
      */
     @ApiModelProperty("课程编号")
     @NotBlank
@@ -39,6 +48,8 @@ public class CombinedCourseImportContext implements Serializable {
 
     /**
      * 类别名称
+     *
+     * @see String
      */
     @ApiModelProperty("课程方向")
     @NotBlank
@@ -46,6 +57,8 @@ public class CombinedCourseImportContext implements Serializable {
 
     /**
      * 章名称
+     *
+     * @see String
      */
     @ApiModelProperty("课程章节")
     @NotBlank
@@ -53,6 +66,8 @@ public class CombinedCourseImportContext implements Serializable {
 
     /**
      * 课名称
+     *
+     * @see String
      */
     @ApiModelProperty("课时名称")
     @NotBlank
@@ -60,18 +75,24 @@ public class CombinedCourseImportContext implements Serializable {
 
     /**
      * 组织课程名称
+     *
+     * @see String
      */
     @ApiModelProperty("原课程名称")
     private String orgCourseName;
 
     /**
      * 组织章名称
+     *
+     * @see String
      */
     @ApiModelProperty("原课程章节")
     private String orgChapterName;
 
     /**
      * 拓扑id
+     *
+     * @see String
      */
     @ApiModelProperty("场景编号")
     private String topoId;

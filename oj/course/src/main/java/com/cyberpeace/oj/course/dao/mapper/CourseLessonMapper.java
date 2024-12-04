@@ -16,7 +16,10 @@ import com.cyberpeace.oj.course.dao.entity.CourseLesson;
  * 课程课Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -28,6 +31,10 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	 * @param courseIds 课程id列表
 	 * @param isPublic  是否公开
 	 * @return {@code List<CourseLesson> }
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
+	 * @see List<CourseLesson>
 	 */
 	List<CourseLesson> listByCourses(@Param("courseIds") List<String> courseIds,
 			@Param("isPublic") Boolean isPublic);
@@ -38,6 +45,10 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	 * @param courseId
 	 * @param isPublic true=公开 false=全部
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see List<CourseLesson>
 	 */
 	List<CourseLesson> selectByCourse(@Param("courseId") String courseId,
 			@Param("isPublic") Boolean isPublic);
@@ -50,6 +61,12 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	 * @param isPublic 是否公开
 	 * @param type     类型
 	 * @return {@code IPage<CourseLesson> }
+	 * @throws
+	 * @see Page
+	 * @see LessonContext
+	 * @see Boolean
+	 * @see Integer
+	 * @see IPage<CourseLesson>
 	 */
 	IPage<CourseLesson> pageByContext(Page page, @Param("context") LessonContext context,
 			@Param("isPublic") Boolean isPublic,@Param("type") Integer type);
@@ -60,6 +77,10 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	 * @param resourceId 资源id
 	 * @param isPublic   是否公开
 	 * @return {@code CourseLesson }
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see CourseLesson
 	 */
 	CourseLesson selectByPublic(@Param("resourceId") String resourceId,
 			@Param("isPublic") Boolean isPublic);
@@ -68,6 +89,8 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	 * 按课程删除
 	 *
 	 * @param courseIds 课程id列表
+	 * @throws
+	 * @see List<String>
 	 */
 	void deleteByCourse(@Param("courseIds") List<String> courseIds);
 
@@ -76,6 +99,9 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	 *
 	 * @param courseIds 课程id列表
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> selectIdsByCourse(@Param("courseIds") List<String> courseIds);
 
@@ -85,6 +111,10 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	 * @param courseId 课程id
 	 * @param name     名称
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	String selectByCourseAndName(@Param("courseId") String courseId, @Param("name") String name);
 
@@ -94,6 +124,10 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	 * @param courseId 课程id
 	 * @param name     名称
 	 * @return {@code CourseLesson }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see CourseLesson
 	 */
 	CourseLesson selectCourseByCourseAndName(@Param("courseId") String courseId, @Param("name") String name);
 
@@ -102,6 +136,9 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	 *
 	 * @param courseId 课程id
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	Integer selectMinIndex(@Param("courseId") String courseId);
 
@@ -110,6 +147,9 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	 *
 	 * @param courseId 课程id
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	Integer selectChapterCount(@Param("courseId") String courseId);
 }

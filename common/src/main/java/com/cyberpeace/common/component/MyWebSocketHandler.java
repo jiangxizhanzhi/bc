@@ -25,7 +25,10 @@ import lombok.extern.slf4j.Slf4j;
  * 我 Web 套接字处理程序
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see WebSocketHandler
+ * @since 1.0.0
  */
 @Slf4j
 @Component
@@ -37,6 +40,8 @@ public class MyWebSocketHandler implements WebSocketHandler {
 	 * 2、value
 	 * 2.1、 value的key=该业务场景下的用户id
 	 * 2.2、value的value=该业务场景下指定用户的session
+	 *
+	 * @see Map<String, Map<String, Set<CpWebSession>>>
 	 */
 	private Map<String, Map<String, Set<CpWebSession>>> businessSocketSessionMap = Maps
 			.newConcurrentMap();

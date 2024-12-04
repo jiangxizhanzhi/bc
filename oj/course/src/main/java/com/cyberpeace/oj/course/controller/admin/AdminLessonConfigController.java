@@ -22,7 +22,9 @@ import io.swagger.annotations.ApiParam;
  * 管理课配置Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 @RestController
 @RequestMapping("/oj/admin/lessonconfig")
@@ -32,6 +34,8 @@ public class AdminLessonConfigController {
 
 	/**
 	 * 课配置Service
+	 *
+	 * @see LessonConfigService
 	 */
 	@Autowired
 	private LessonConfigService lessonConfigService;
@@ -41,6 +45,9 @@ public class AdminLessonConfigController {
 	 *
 	 * @param courseId 课程id
 	 * @return {@code BaseRsp<LessonConfigBo> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<LessonConfigBo>
 	 */
 	@ApiOperation("后台课程目录查询")
 	@GetMapping("")
@@ -60,6 +67,9 @@ public class AdminLessonConfigController {
 	 *
 	 * @param configBo 配置博
 	 * @return {@code BaseRsp<LessonConfigBo> }
+	 * @throws
+	 * @see LessonConfigBo
+	 * @see BaseRsp<LessonConfigBo>
 	 */
 	@ApiOperation("编排课时")
 	@PutMapping("")

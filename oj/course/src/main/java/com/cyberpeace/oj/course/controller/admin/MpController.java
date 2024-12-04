@@ -23,22 +23,34 @@ import com.cyberpeace.oj.practice.controller.req.LoadResourceReq;
 
 import io.swagger.annotations.*;
 
+/**
+ * 中台Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/12/04
+ * @since 1.0.0
+ */
 @Api(tags = "转发mp接口api")
 @RestController
 @RequestMapping("/oj/mp")
 @RequiresAuthentication
 public class MpController {
 
-    /**
-     * 远程终端Service
-     */
-    @Autowired
+	/**
+	 * 远程终端Service
+	 *
+	 * @see RemoteTerminalService
+	 */
+	@Autowired
     private RemoteTerminalService remoteTerminalService;
 
-    /**
-     * 远程拓扑service
-     */
-    @Autowired
+	/**
+	 * 远程拓扑service
+	 *
+	 * @see RemoteTopoService
+	 */
+	@Autowired
     private RemoteTopoService remoteTopoService;
 
 	/**
@@ -49,9 +61,9 @@ public class MpController {
 	 * @return {@code BaseRsp }
 	 * @throws
 	 * @see ClusterImagePageReq
-	 * @see BaseRsp
+	 * @see ClusterImagePageReq
 	 */
-    @ApiOperation("获取镜像列表")
+	@ApiOperation("获取镜像列表")
 	@GetMapping("/devops/cluster/images/page")
     public BaseRsp getImagePage(@ApiParam ClusterImagePageReq req){
         JSONObject res = remoteTerminalService.pageImages(req);
@@ -62,11 +74,10 @@ public class MpController {
 	 * 获取镜像分类
 	 * /api/mp/devops/cluster/types/image-mg-categories
 	 *
-	 * @return {@code BaseRsp }
 	 * @throws
-	 * @see BaseRsp
+	 * @see BaseRsp@return {@code BaseRsp }
 	 */
-    @ApiOperation("获取镜像分类")
+	@ApiOperation("获取镜像分类")
 	@GetMapping("/devops/cluster/types/image-mg-categories")
     public BaseRsp getImageCategories() {
         return new BaseRsp(remoteTerminalService.getAllCategorie());
@@ -74,13 +85,12 @@ public class MpController {
 
 	/**
 	 * 查询dynamips相关的信息
-	 *  /api/mp/devops/cluster/images/dynamic_image_info
+	 * /api/mp/devops/cluster/images/dynamic_image_info
 	 *
-	 * @return {@code BaseRsp }
 	 * @throws
-	 * @see BaseRsp
+	 * @see BaseRsp@return {@code BaseRsp }
 	 */
-    @ApiOperation("查询dynamips相关的信息")
+	@ApiOperation("查询dynamips相关的信息")
 	@GetMapping("/devops/cluster/images/dynamic_image_info")
     public BaseRsp getDynamicImageInfo() {
         return new BaseRsp(remoteTerminalService.getDynamicImageInfo());
@@ -90,11 +100,10 @@ public class MpController {
 	 * 查询靶标对应的探针系统分类
 	 * /api/mp/cscene/config/system_type_to_agent_support
 	 *
-	 * @return {@code BaseRsp }
 	 * @throws
-	 * @see BaseRsp
+	 * @see BaseRsp@return {@code BaseRsp }
 	 */
-    @ApiOperation("查询靶标对应的探针系统分类")
+	@ApiOperation("查询靶标对应的探针系统分类")
 	@GetMapping("/cscene/config/system_type_to_agent_support")
     public BaseRsp systemTypeToAgentSupport() {
         return new BaseRsp(remoteTerminalService.getAgentSupport());
@@ -104,11 +113,10 @@ public class MpController {
 	 * 查询常用靶标信息
 	 * /api/mp/devops/cluster/target/common-targets
 	 *
-	 * @return {@code BaseRsp }
 	 * @throws
-	 * @see BaseRsp
+	 * @see BaseRsp@return {@code BaseRsp }
 	 */
-    @ApiOperation("查询常用靶标信息")
+	@ApiOperation("查询常用靶标信息")
 	@GetMapping("/devops/cluster/target/common-targets")
     public BaseRsp commonTargets() {
         return new BaseRsp(remoteTerminalService.getCommonTargets());
@@ -122,9 +130,9 @@ public class MpController {
 	 * @return {@code BaseRsp }
 	 * @throws
 	 * @see TopoTemplatePageReq
-	 * @see BaseRsp
+	 * @see TopoTemplatePageReq
 	 */
-    @ApiOperation("场景模板列表")
+	@ApiOperation("场景模板列表")
 	@GetMapping("/cscene/cscenes")
     public BaseRsp cscenes(@ApiParam TopoTemplatePageReq topoTemplatePageReq) {
         return new BaseRsp(remoteTopoService.getTopoTemplatePage(topoTemplatePageReq));
@@ -138,7 +146,7 @@ public class MpController {
 	 * @return {@code BaseRsp }
 	 * @throws
 	 * @see String
-	 * @see BaseRsp
+	 * @see String
 	 */
 	@ApiOperation("删除场景模板")
 	@ApiImplicitParams({
@@ -159,9 +167,9 @@ public class MpController {
 	 * @return {@code BaseRsp }
 	 * @throws
 	 * @see TargetListReq
-	 * @see BaseRsp
+	 * @see TargetListReq
 	 */
-    @ApiOperation("查询所有靶标信息")
+	@ApiOperation("查询所有靶标信息")
 	@GetMapping("/devops/cluster/target/listAll")
     public BaseRsp targetListAll(@ApiParam TargetListReq targetListReq) {
         return new BaseRsp(remoteTerminalService.targetList(targetListReq));
@@ -175,9 +183,9 @@ public class MpController {
 	 * @return {@code BaseRsp }
 	 * @throws
 	 * @see Integer
-	 * @see BaseRsp
+	 * @see Integer
 	 */
-    @ApiOperation("查询所有二级分类")
+	@ApiOperation("查询所有二级分类")
 	@GetMapping("/devops/cluster/types/l2-categories")
     public BaseRsp l2Ccategories(@RequestParam(value = "firstTypeId", required = false) Integer firstTypeId) {
         return new BaseRsp(remoteTerminalService.getL2categories(firstTypeId));
@@ -191,9 +199,9 @@ public class MpController {
 	 * @return {@code BaseRsp }
 	 * @throws
 	 * @see String
-	 * @see BaseRsp
+	 * @see String
 	 */
-    @ApiOperation("根据镜像名称或快照名称查询镜像名称和快照历史信息")
+	@ApiOperation("根据镜像名称或快照名称查询镜像名称和快照历史信息")
 	@GetMapping("/devops/cluster/images/snapshot/by-name")
     public BaseRsp snapshotByName(@ApiParam String name) {
         return new BaseRsp(remoteTerminalService.snapshotByName(name));
@@ -207,7 +215,7 @@ public class MpController {
 	 * @return {@code BaseRsp }
 	 * @throws
 	 * @see LoadResourceReq
-	 * @see BaseRsp
+	 * @see LoadResourceReq
 	 */
 	@ApiOperation("上传场景中的附件")
 	@PostMapping("/cscene/file/attachment_upload")
@@ -224,7 +232,7 @@ public class MpController {
 	 * @return {@code BaseRsp }
 	 * @throws
 	 * @see LoadResourceReq
-	 * @see BaseRsp
+	 * @see LoadResourceReq
 	 */
 	@ApiOperation("上传场景中的图标")
 	@PostMapping("/cscene/file/icon_upload")
@@ -240,7 +248,7 @@ public class MpController {
 	 * @return {@code BaseRsp }
 	 * @throws
 	 * @see MultipartFile
-	 * @see BaseRsp
+	 * @see MultipartFile
 	 */
 	@ApiOperation("上传场景中的模板截图")
 	@ApiImplicitParam(name = "file", value = "场景模板截图", dataTypeClass = MultipartFile.class)
@@ -257,7 +265,7 @@ public class MpController {
 	 * @return {@code BaseRsp }
 	 * @throws
 	 * @see MultipartFile
-	 * @see BaseRsp
+	 * @see MultipartFile
 	 */
 	@ApiOperation("上传节点秘钥")
 	@ApiImplicitParam(name = "file", value = "节点秘钥", dataTypeClass = MultipartFile.class)
@@ -274,7 +282,7 @@ public class MpController {
 	 * @return {@code BaseRsp }
 	 * @throws
 	 * @see String
-	 * @see BaseRsp
+	 * @see String
 	 */
 	@ApiOperation("场景链路状态")
 	@ApiImplicitParams({
@@ -286,13 +294,17 @@ public class MpController {
 
 	/**
 	 * 查询快照历史，用于获取历史版本的个数
-	 * /devops/cluster/images/${id}/snapshot/list
+	 * /devops/cluster/images/$
+	 * {
+	 * id
+	 * }
+	 * /snapshot/list
 	 *
 	 * @param uuid uuid
 	 * @return {@code BaseRsp }
 	 * @throws
 	 * @see String
-	 * @see BaseRsp
+	 * @see String
 	 */
 	@ApiOperation("查询快照历史")
 	@ApiImplicitParam(name = "uuid", value = "靶标id", paramType = "path", dataTypeClass = String.class)
@@ -309,7 +321,7 @@ public class MpController {
 	 * @return {@code BaseRsp }
 	 * @throws
 	 * @see RealEquipmentPageRequest
-	 * @see BaseRsp
+	 * @see RealEquipmentPageRequest
 	 */
 	@ApiOperation("分页查询")
 	@GetMapping("/devops/cluster/real-equipment/page")
@@ -325,7 +337,7 @@ public class MpController {
 	 * @return {@code BaseRsp }
 	 * @throws
 	 * @see VirtualUsbQueryParams
-	 * @see BaseRsp
+	 * @see VirtualUsbQueryParams
 	 */
 	@ApiOperation("分页查询虚拟USB信息")
 	@GetMapping("/devops/cluster/virtual_usb/page")
@@ -341,7 +353,7 @@ public class MpController {
 	 * @return {@code BaseRsp }
 	 * @throws
 	 * @see MultipartFile
-	 * @see BaseRsp
+	 * @see MultipartFile
 	 */
 	@ApiOperation("上传mib文件")
 	@ApiImplicitParam(name = "file", value = "mib文件", dataTypeClass = MultipartFile.class)
@@ -358,7 +370,7 @@ public class MpController {
 	 * @return {@code BaseRsp }
 	 * @throws
 	 * @see MibInfoQueryRequest
-	 * @see BaseRsp
+	 * @see MibInfoQueryRequest
 	 */
 	@ApiOperation(value = "mib节点信息查询")
 	@GetMapping("/cscene/protocol/collection/mib_nodeinfo")
@@ -374,7 +386,7 @@ public class MpController {
 	 * @return {@code BaseRsp }
 	 * @throws
 	 * @see JSONObject
-	 * @see BaseRsp
+	 * @see JSONObject
 	 */
 	@ApiOperation(value = "保存（创建/更新）场景", notes = "请忽略test_scenes和app_scenes字段")
 	@ApiImplicitParam(name = "csceneBO", value = "请求体", dataTypeClass = JSONObject.class)

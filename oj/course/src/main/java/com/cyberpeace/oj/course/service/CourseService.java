@@ -15,7 +15,10 @@ import java.util.List;
  * 课程Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
  */
 public interface CourseService extends IService<Course> {
 
@@ -25,6 +28,10 @@ public interface CourseService extends IService<Course> {
 	 * @param courseId
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see CourseInfoBo
 	 */
 	CourseInfoBo selectById(String courseId, AuthContext authContext);
 
@@ -33,6 +40,9 @@ public interface CourseService extends IService<Course> {
 	 *
 	 * @param ids
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see List<CourseInfoBo>
 	 */
 	List<CourseInfoBo> selectByIds(List<String> ids);
 
@@ -44,6 +54,12 @@ public interface CourseService extends IService<Course> {
 	 * @param authContext   auth 上下文
 	 * @param isWeb         是 Web
 	 * @return
+	 * @throws
+	 * @see Page
+	 * @see CourseQueryBo
+	 * @see AuthContext
+	 * @see boolean
+	 * @see ListRsp<CourseWebBo>
 	 */
 	ListRsp<CourseWebBo> selectPage(Page page, CourseQueryBo courseContext,
 									AuthContext authContext, boolean isWeb);
@@ -53,6 +69,9 @@ public interface CourseService extends IService<Course> {
 	 *
 	 * @param courseIds
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> idsByNotDeleteIds(List<String> courseIds);
 
@@ -62,6 +81,10 @@ public interface CourseService extends IService<Course> {
 	 * @param userId
 	 * @param course
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Course
+	 * @see Course
 	 */
 	Course addCourse(String userId, Course course);
 
@@ -71,6 +94,10 @@ public interface CourseService extends IService<Course> {
 	 * @param userId
 	 * @param course
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Course
+	 * @see Course
 	 */
 	Course updateCourse(String userId, Course course);
 
@@ -80,6 +107,10 @@ public interface CourseService extends IService<Course> {
 	 * @param category
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see List<String>
 	 */
 	List<String> selectIdsByCategory(String category, AuthContext authContext);
 
@@ -89,6 +120,10 @@ public interface CourseService extends IService<Course> {
 	 * @param courseIds
 	 * @param authContext auth 上下文
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	Boolean batchDelete(List<String> courseIds, AuthContext authContext);
 
@@ -98,6 +133,10 @@ public interface CourseService extends IService<Course> {
 	 * @param courseIds
 	 * @param authContext
 	 * @return 文件路径
+	 * @throws
+	 * @see List<String>
+	 * @see AuthContext
+	 * @see String
 	 */
 	String dumpCourse(List<String> courseIds, AuthContext authContext);
 
@@ -107,6 +146,10 @@ public interface CourseService extends IService<Course> {
 	 * @param realPath
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	Boolean loadCourse(String realPath, AuthContext authContext);
 
@@ -115,6 +158,9 @@ public interface CourseService extends IService<Course> {
 	 *
 	 * @param length 长度
 	 * @return
+	 * @throws
+	 * @see int
+	 * @see String
 	 */
 	String getRandomCourseNum(int length);
 
@@ -123,6 +169,9 @@ public interface CourseService extends IService<Course> {
 	 *
 	 * @param courseNames 课程名称
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> duplicateCourseInspect(List<String> courseNames);
 
@@ -130,6 +179,8 @@ public interface CourseService extends IService<Course> {
 	 * 清除用户身份验证
 	 *
 	 * @param user 用户
+	 * @throws
+	 * @see String
 	 */
 	void clearUserAuth(String user);
 
@@ -137,14 +188,21 @@ public interface CourseService extends IService<Course> {
 	 * 清除组织身份验证
 	 *
 	 * @param org 组织
+	 * @throws
+	 * @see String
 	 */
 	void clearOrgAuth(String org);
 
 	/**
 	 * 分页查询课程
+	 *
 	 * @param page
 	 * @param courseContext
 	 * @return
+	 * @throws
+	 * @see Page
+	 * @see CourseQueryBo
+	 * @see ListRsp<CourseWebBo>
 	 */
 	ListRsp<CourseWebBo> selectPage(Page page, CourseQueryBo courseContext);
 }

@@ -14,7 +14,10 @@ import java.io.Serializable;
  * 保存课程类别请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -22,6 +25,8 @@ public class SaveCourseCategoryReq implements Serializable {
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课程分类名称")
 	@NotBlank(groups = { Create.class })
@@ -29,12 +34,16 @@ public class SaveCourseCategoryReq implements Serializable {
 
 	/**
 	 * 父母id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("父级分类编号 第一级则不传值")
 	private String parentId;
 
 	/**
 	 * 课程类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "课程类型", hidden = true)
 	private Integer courseType = CourseCategory.CourseType.BASE.getCode();

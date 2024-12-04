@@ -20,7 +20,10 @@ import java.util.Map;
  * 课程课Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
  */
 public interface CourseLessonService extends IService<CourseLesson> {
 
@@ -33,6 +36,13 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param learnedType 学习类型
 	 * @param authContext auth 上下文
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see Integer
+	 * @see AuthContext
+	 * @see LessonInfoBo
 	 */
 	LessonInfoBo getLessonDetail(String courseId, String lessonId, String roomId, Integer learnedType, AuthContext authContext);
 
@@ -42,6 +52,10 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param courseId
 	 * @param lessonId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see AdminLessonBo
 	 */
 	AdminLessonBo selectByCourseAndLesson(String courseId, String lessonId);
 
@@ -52,6 +66,11 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param ojSceneConfig
 	 * @param practiceList
 	 * @return
+	 * @throws
+	 * @see CourseLesson
+	 * @see JSONObject
+	 * @see List<PaperPracticeContext>
+	 * @see CourseLesson
 	 */
 	CourseLesson addLesson(CourseLesson courseLesson, JSONObject ojSceneConfig,
 			List<PaperPracticeContext> practiceList);
@@ -63,6 +82,11 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param ojSceneConfig
 	 * @param practiceList
 	 * @return
+	 * @throws
+	 * @see CourseLesson
+	 * @see JSONObject
+	 * @see List<PaperPracticeContext>
+	 * @see CourseLesson
 	 */
 	CourseLesson updateLesson(CourseLesson courseLesson, JSONObject ojSceneConfig,
 			List<PaperPracticeContext> practiceList);
@@ -74,6 +98,11 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param context
 	 * @param isWeb
 	 * @return
+	 * @throws
+	 * @see Page
+	 * @see LessonContext
+	 * @see boolean
+	 * @see IPage<AdminLessonListBo>
 	 */
 	IPage<AdminLessonListBo> pageByContext(Page page, LessonContext context, boolean isWeb);
 
@@ -83,6 +112,10 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param resourceIds
 	 * @param isPublic
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
+	 * @see Boolean
 	 */
 	Boolean batchPublicPractice(List<String> resourceIds, Boolean isPublic);
 
@@ -92,6 +125,10 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param courseId
 	 * @param lessonIds
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see Boolean
 	 */
 	Boolean importLessons(String courseId, List<String> lessonIds);
 
@@ -102,6 +139,11 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param answers
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see SubmitAnswerContext
+	 * @see List<PracticeAnswerContext>
+	 * @see AuthContext
+	 * @see EvaluateResult
 	 */
 	EvaluateResult submitLessonPractice(SubmitAnswerContext answerContext,
 			List<PracticeAnswerContext> answers, AuthContext authContext);
@@ -113,6 +155,11 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param lessonId
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see LessonPracticeBo
 	 */
 	LessonPracticeBo practiceByLesson(String courseId, String lessonId, AuthContext authContext);
 
@@ -123,6 +170,11 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param lessonId
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see List<AdminLessonPracticeBo>
 	 */
 	List<AdminLessonPracticeBo> adminLessonPractice(String courseId, String lessonId,
 			AuthContext authContext);
@@ -133,6 +185,10 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param resourceId
 	 * @param practiceList
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<PaperPracticeContext>
+	 * @see Boolean
 	 */
 	Boolean addLessonPractice(String resourceId, List<PaperPracticeContext> practiceList);
 
@@ -144,6 +200,12 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param level
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	Boolean markLessonPractice(String resourceId, String userId, Integer level, AuthContext authContext);
 
@@ -155,6 +217,11 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param authId
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	Boolean releaseLessonPractice(String resourceId, String authId, AuthContext authContext);
 
@@ -163,6 +230,9 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 *
 	 * @param courseLesson
 	 * @param handout      讲义
+	 * @throws
+	 * @see CourseLesson
+	 * @see String
 	 */
 	void uploadHandout(CourseLesson courseLesson, String handout);
 
@@ -171,6 +241,9 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 *
 	 * @param courseLesson
 	 * @param video        视频
+	 * @throws
+	 * @see CourseLesson
+	 * @see String
 	 */
 	void uploadVideo(CourseLesson courseLesson, String video);
 
@@ -181,6 +254,11 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param resourceIds
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see AuthContext
+	 * @see Integer
 	 */
 	Integer batchDelete(String courseId, List<String> resourceIds, AuthContext authContext);
 
@@ -188,6 +266,8 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * 批量删除
 	 *
 	 * @param resourceIds 资源id列表
+	 * @throws
+	 * @see List<String>
 	 */
 	void batchDelete(List<String> resourceIds);
 
@@ -198,6 +278,11 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param filePathMap
 	 * @param destFilePath
 	 * @return
+	 * @throws
+	 * @see CourseLesson
+	 * @see Map<String, String>
+	 * @see String
+	 * @see LessonDumpLoadBo
 	 */
 	LessonDumpLoadBo handlerLessonDump(CourseLesson courseLesson, Map<String, String> filePathMap,
 			String destFilePath);
@@ -210,6 +295,12 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param filePath         解压后文件存储路径
 	 * @param filePathMap      文件映射关系
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see LessonDumpLoadBo
+	 * @see String
+	 * @see Map<String, String>
+	 * @see CourseLesson
 	 */
 	CourseLesson loadLesson(String courseId, LessonDumpLoadBo lessonDumpLoadBo, String filePath,
 			Map<String, String> filePathMap);
@@ -218,6 +309,8 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * 创建远程操作日志
 	 *
 	 * @param lessonInfoBo 课程信息 bo
+	 * @throws
+	 * @see LessonInfoBo
 	 */
 	void createMpLog(LessonInfoBo lessonInfoBo);
 
@@ -227,6 +320,10 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param lessonList
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see List<CourseLesson>
+	 * @see AuthContext
+	 * @see List<OjLocalScene>
 	 */
 	List<OjLocalScene> lessonSceneByLessons(List<CourseLesson> lessonList, AuthContext authContext);
 
@@ -236,6 +333,10 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param lessonList  课时列表
 	 * @param authContext 权限
 	 * @return
+	 * @throws
+	 * @see List<CourseLesson>
+	 * @see AuthContext
+	 * @see List<OjLocalScene>
 	 */
 	List<OjLocalScene> lessonPracticeSceneByLessons(List<CourseLesson> lessonList, AuthContext authContext);
 
@@ -245,6 +346,10 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param lessonList
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see List<CourseLesson>
+	 * @see AuthContext
+	 * @see List<OjLocalScene>
 	 */
 	List<OjLocalScene> selectLessonAllScene(List<CourseLesson> lessonList, AuthContext authContext);
 
@@ -253,6 +358,9 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 *
 	 * @param lessonList
 	 * @return
+	 * @throws
+	 * @see List<CourseLesson>
+	 * @see List<String>
 	 */
 	List<String> selectLessonAllTopo(List<CourseLesson> lessonList);
 
@@ -261,6 +369,9 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 *
 	 * @param scenes
 	 * @param topos  拓扑
+	 * @throws
+	 * @see List<OjLocalScene>
+	 * @see List<String>
 	 */
 	void clearSceneAndTopos(List<OjLocalScene> scenes, List<String> topos);
 
@@ -269,14 +380,24 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 *
 	 * @param lessonList 课程列表
 	 * @return {@code List<AdminLessonListBo> }
+	 * @throws
+	 * @see List<CourseLesson>
+	 * @see List<AdminLessonListBo>
 	 */
 	List<AdminLessonListBo> lesson2AdminBo(List<CourseLesson> lessonList);
 
 	/**
 	 * 查询topo和场景数据信息
+	 *
 	 * @param lessonId
+	 * @param roomId      房间id
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see TopoSceneDataBo
 	 */
 	TopoSceneDataBo getTopoScene(String lessonId, String roomId, AuthContext authContext);
 }

@@ -8,6 +8,15 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
 
+/**
+ * 枚举有效
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/12/04
+ * @see Annotation
+ * @since 1.0.0
+ */
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

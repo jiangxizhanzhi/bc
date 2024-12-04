@@ -6,7 +6,10 @@ import java.lang.annotation.*;
  * 调用计数
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/12
+ * @see Annotation
+ * @since 1.0.0
  */
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)

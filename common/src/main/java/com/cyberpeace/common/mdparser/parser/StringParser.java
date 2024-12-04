@@ -10,7 +10,10 @@ import org.springframework.stereotype.Service;
  * 字符串解析器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see MdContentParser
+ * @since 1.0.0
  */
 @Service
 public class StringParser implements MdContentParser<String, String> {

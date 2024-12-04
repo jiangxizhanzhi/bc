@@ -11,7 +11,10 @@ import java.util.List;
  * 课配置Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
@@ -21,6 +24,9 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 	 *
 	 * @param courseId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see LessonConfig
 	 */
 	LessonConfig getCourseNode(@Param("courseId") String courseId);
 
@@ -29,6 +35,9 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 	 *
 	 * @param parentId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<LessonConfig>
 	 */
 	List<LessonConfig> listByParent(@Param("parentId") String parentId);
 
@@ -37,6 +46,9 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 	 *
 	 * @param courseId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<LessonConfig>
 	 */
 	List<LessonConfig> selectByCourse(@Param("courseId") String courseId);
 
@@ -45,6 +57,9 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 	 *
 	 * @param rootId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see LessonConfig
 	 */
 	LessonConfig selectLast(@Param("rootId") String rootId);
 
@@ -53,6 +68,9 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 	 *
 	 * @param lessonIds
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see int
 	 */
 	int deleteByLessonIds(@Param("lessonIds") List<String> lessonIds);
 
@@ -62,6 +80,10 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 	 * @param courseId  课程id
 	 * @param lessonIds
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see List<LessonConfig>
 	 */
 	List<LessonConfig> selectByLessonIds(@Param("courseId") String courseId,
 			@Param("lessonIds") List<String> lessonIds);
@@ -71,6 +93,9 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 	 *
 	 * @param courseId 课程id
 	 * @return int
+	 * @throws
+	 * @see String
+	 * @see int
 	 */
 	int deleteByCourse(String courseId);
 
@@ -78,6 +103,8 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 	 * 批量删除课程目录
 	 *
 	 * @param courseIds 课程id列表
+	 * @throws
+	 * @see List<String>
 	 */
 	void batchDelete(@Param("courseIds") List<String> courseIds);
 
@@ -85,6 +112,8 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 	 * 更新课时目录
 	 *
 	 * @param lessonConfig 课程配置
+	 * @throws
+	 * @see LessonConfig
 	 */
 	void updateByCourseAndLesson(@Param("lessonConfig") LessonConfig lessonConfig);
 
@@ -94,6 +123,10 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 	 * @param courseId
 	 * @param name
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	String selectByCourseAndLessonName(@Param("courseId") String courseId,
 			@Param("name") String name);

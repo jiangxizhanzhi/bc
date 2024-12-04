@@ -40,7 +40,11 @@ import lombok.extern.slf4j.Slf4j;
  * 课配置Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see ServiceImpl
+ * @see LessonConfigService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -48,30 +52,40 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 	/**
 	 * 课程Mapper
+	 *
+	 * @see CourseMapper
 	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
 	/**
 	 * 课配置Mapper
+	 *
+	 * @see LessonConfigMapper
 	 */
 	@Autowired
 	private LessonConfigMapper lessonConfigMapper;
 
 	/**
 	 * 课程课Mapper
+	 *
+	 * @see CourseLessonMapper
 	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
 	/**
 	 * 课记录Mapper
+	 *
+	 * @see LessonRecordMapper
 	 */
 	@Autowired
 	private LessonRecordMapper lessonRecordMapper;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -82,6 +96,10 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 * @param courseId    课程id
 	 * @param authContext auth 上下文
 	 * @return {@code LessonConfigBo }
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see LessonConfigBo
 	 */
 	@Override
 	public LessonConfigBo getLessonConfig(String courseId, AuthContext authContext) {
@@ -109,6 +127,9 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 *
 	 * @param configBo 配置博
 	 * @return {@code LessonConfigBo }
+	 * @throws
+	 * @see LessonConfigBo
+	 * @see LessonConfigBo
 	 */
 	@Override
 	public LessonConfigBo updateLessonConfig(LessonConfigBo configBo) {
@@ -138,6 +159,8 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 * 重新编排目录数据 重置index
 	 *
 	 * @param configBo 配置博
+	 * @throws
+	 * @see LessonConfigBo
 	 */
 	private void resetLessonConfigBo(LessonConfigBo configBo) {
 
@@ -171,6 +194,9 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 *
 	 * @param configContext config 上下文
 	 * @return {@code LessonConfig }
+	 * @throws
+	 * @see AddLessonConfigContext
+	 * @see LessonConfig
 	 */
 	@Override
 	public LessonConfig packageLessonConfig(AddLessonConfigContext configContext) {
@@ -201,6 +227,10 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 * @param courseId    课程id
 	 * @param authContext auth 上下文
 	 * @return {@code LessonConfigDumpBo }
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see LessonConfigDumpBo
 	 */
 	@Override
 	public LessonConfigDumpBo dumpLessonConfig(String courseId, AuthContext authContext) {
@@ -215,6 +245,11 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 * @param courseId      课程id
 	 * @param courseLessons 课程课程
 	 * @return {@code List<LessonConfig> }
+	 * @throws
+	 * @see LessonConfigDumpBo
+	 * @see String
+	 * @see List<CourseLesson>
+	 * @see List<LessonConfig>
 	 */
 	@Override
 	public List<LessonConfig> loadLessonConfig(LessonConfigDumpBo configDumpBo, String courseId,
@@ -245,6 +280,12 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 * @param lessonNameMap
 	 * @param parentId      父母id
 	 * @return
+	 * @throws
+	 * @see List<LessonConfigDumpBo>
+	 * @see String
+	 * @see Map<String, String>
+	 * @see String
+	 * @see List<LessonConfig>
 	 */
 	private List<LessonConfig> dumpBoToEntity(List<LessonConfigDumpBo> configDumpBos,
 			String courseId, Map<String, String> lessonNameMap, String parentId) {
@@ -286,6 +327,9 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 *
 	 * @param lessonConfigBo
 	 * @return
+	 * @throws
+	 * @see LessonConfigBo
+	 * @see LessonConfigDumpBo
 	 */
 	private LessonConfigDumpBo configToDumpBo(LessonConfigBo lessonConfigBo) {
 
@@ -310,6 +354,10 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 * @param courseId
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see List<LessonConfigBo>
 	 */
 	private List<LessonConfigBo> getConfigBo(String courseId, AuthContext authContext) {
 		// 查询课程下所有课时
@@ -352,6 +400,10 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 * @param lessonConfig
 	 * @param lessonMap    课程地图
 	 * @return
+	 * @throws
+	 * @see LessonConfig
+	 * @see Map<String, CourseLesson>
+	 * @see LessonConfigBo
 	 */
 	private LessonConfigBo configToBo(LessonConfig lessonConfig,
 			Map<String, CourseLesson> lessonMap) {
@@ -373,6 +425,9 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 *
 	 * @param node  最上级节点 课程节点
 	 * @param boMap 博地图
+	 * @throws
+	 * @see LessonConfigBo
+	 * @see Map<String, List<LessonConfigBo>>
 	 */
 	private void setConfigTypeIndex(LessonConfigBo node, Map<String, List<LessonConfigBo>> boMap) {
 

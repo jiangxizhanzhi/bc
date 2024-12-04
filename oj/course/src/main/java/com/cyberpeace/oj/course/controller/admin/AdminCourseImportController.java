@@ -32,7 +32,9 @@ import lombok.extern.slf4j.Slf4j;
  * 管理课程导入Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 @Api(tags = "oj-后台课程数据导入相关api")
 @Slf4j(topic = "resourceImport")
@@ -42,24 +44,32 @@ public class AdminCourseImportController {
 
 	/**
 	 * 课程导入Service
+	 *
+	 * @see CourseImportService
 	 */
 	@Autowired
 	private CourseImportService courseImportService;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 课程Service
+	 *
+	 * @see CourseService
 	 */
 	@Autowired
 	private CourseService courseService;
 
 	/**
 	 * 课程转 储Service
+	 *
+	 * @see CourseDumpService
 	 */
 	@Autowired
 	private CourseDumpService courseDumpService;
@@ -69,6 +79,9 @@ public class AdminCourseImportController {
 	 *
 	 * @param courseImportReq 课程导入请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see RMCourseImportReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("资管课程数据导入")
 	@PostMapping("/rm/import")
@@ -108,6 +121,12 @@ public class AdminCourseImportController {
 	 * @param sceneNumber        场景数
 	 * @param disableImageExport 禁用图像导出
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see Boolean
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("课程导出")
     @GetMapping("/rm/course/export")
@@ -127,6 +146,9 @@ public class AdminCourseImportController {
 	 *
 	 * @param courseImportReq 课程导入请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see RMCombinedCourseImportReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("资管组合课程数据导入")
 	@PostMapping("/rm/import-combine")
@@ -148,6 +170,9 @@ public class AdminCourseImportController {
 	 *
 	 * @param courseNamesReq 课程名字请求体
 	 * @return {@code BaseRsp<List<String>> }
+	 * @throws
+	 * @see DuplicateCourseInspectReq
+	 * @see BaseRsp<List<String>>
 	 */
 	@ApiOperation("课程重复校验")
 	@PostMapping("/import/inspect_duplication")

@@ -12,7 +12,10 @@ import java.util.List;
  * 批量删除请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -20,6 +23,8 @@ public class BatchDeleteReq implements Serializable {
 
     /**
      * 资源id列表
+     *
+     * @see List<String>
      */
     @ApiModelProperty("资源编号数组")
     @NotEmpty

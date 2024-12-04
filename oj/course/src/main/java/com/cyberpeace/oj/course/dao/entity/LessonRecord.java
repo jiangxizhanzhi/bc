@@ -12,7 +12,10 @@ import lombok.*;
  * 课程记录
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @Builder
@@ -23,32 +26,44 @@ public class LessonRecord extends BaseTable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	/**
 	 * 课id
+	 *
+	 * @see String
 	 */
 	private String lessonId;
 
 	/**
 	 * 用户id
+	 *
+	 * @see String
 	 */
 	private String userId;
 
 	/**
 	 * 课程id
+	 *
+	 * @see String
 	 */
 	private String courseId;
 
 	/**
 	 * 房间id
+	 *
+	 * @see String
 	 */
 	private String roomId;
 
 	/**
 	 * 学习类型
+	 *
+	 * @see Integer
 	 */
 	private Integer learnedType;
 

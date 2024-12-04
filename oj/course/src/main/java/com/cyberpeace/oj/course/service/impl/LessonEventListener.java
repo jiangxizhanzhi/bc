@@ -22,7 +22,10 @@ import lombok.extern.slf4j.Slf4j;
  * Lesson 事件侦听器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see MessageListener
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -30,12 +33,16 @@ public class LessonEventListener extends MessageListener {
 
 	/**
 	 * OJ当地场景Service
+	 *
+	 * @see OjLocalSceneService
 	 */
 	@Autowired
 	private OjLocalSceneService ojLocalSceneService;
 
 	/**
 	 * 推送消息处理程序
+	 *
+	 * @see PushMessageHandler
 	 */
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
@@ -44,6 +51,8 @@ public class LessonEventListener extends MessageListener {
 	 * 声明消息类型
 	 *
 	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
 	 */
 	@Override
 	public Integer declareMessageType() {
@@ -57,6 +66,11 @@ public class LessonEventListener extends MessageListener {
 	 * @param businessId 业务id
 	 * @param context    上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see MqContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
@@ -76,6 +90,11 @@ public class LessonEventListener extends MessageListener {
 	 * @param businessId 业务id
 	 * @param context    上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see MqContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
@@ -105,6 +124,11 @@ public class LessonEventListener extends MessageListener {
 	 * @param businessId 业务id
 	 * @param context    上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see MqContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
@@ -124,6 +148,9 @@ public class LessonEventListener extends MessageListener {
 	 *
 	 * @param ojLocalSceneId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see OjLocalScene
 	 */
 	private OjLocalScene validateOjLocalScene(String ojLocalSceneId) {
 		OjLocalScene ojLocalScene = ojLocalSceneService.getById(ojLocalSceneId);

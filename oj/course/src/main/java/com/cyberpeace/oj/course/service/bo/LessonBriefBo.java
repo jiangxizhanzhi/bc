@@ -10,7 +10,10 @@ import java.io.Serializable;
  * 课程简介 bo
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -18,24 +21,32 @@ public class LessonBriefBo implements Serializable {
 
 	/**
 	 * 课程id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课程编号")
 	private String courseId;
 
 	/**
 	 * 课程名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课程名称")
 	private String courseName;
 
 	/**
 	 * 课id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课时编号")
 	private String lessonId;
 
 	/**
 	 * 课名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课时名称")
 	private String lessonName;

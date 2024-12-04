@@ -12,7 +12,10 @@ import java.io.Serializable;
  * 课堂群请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -20,6 +23,8 @@ public class ClassroomGroupReq implements Serializable {
 
 	/**
 	 * 课堂id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课堂编号")
 	@NotBlank
@@ -27,6 +32,8 @@ public class ClassroomGroupReq implements Serializable {
 
 	/**
 	 * 群计数
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("每组人数")
 	@NotNull

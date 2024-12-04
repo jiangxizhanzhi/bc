@@ -40,7 +40,10 @@ import com.cyberpeace.oj.practice.service.PracticeTheoryRefService;
  * 课程转 储Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see CourseDumpService
+ * @since 1.0.0
  */
 @Slf4j(topic = "resourceImport")
 @Service
@@ -48,60 +51,80 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 	/**
 	 * 附件Service
+	 *
+	 * @see AttachmentService
 	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
 	/**
 	 * 课程Mapper
+	 *
+	 * @see CourseMapper
 	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
 	/**
 	 * 课程课Mapper
+	 *
+	 * @see CourseLessonMapper
 	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
 	/**
 	 * 实践理论裁判Service
+	 *
+	 * @see PracticeTheoryRefService
 	 */
 	@Autowired
 	private PracticeTheoryRefService practiceTheoryRefService;
 
 	/**
 	 * 实践实操裁判Service
+	 *
+	 * @see PracticeOperationRefService
 	 */
 	@Autowired
 	private PracticeOperationRefService practiceOperationRefService;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 远程场景Service
+	 *
+	 * @see RemoteSceneService
 	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
 	/**
 	 * utilService
+	 *
+	 * @see UtilService
 	 */
 	@Autowired
 	private UtilService utilService;
 
 	/**
 	 * 课配置Mapper
+	 *
+	 * @see LessonConfigMapper
 	 */
 	@Autowired
 	private LessonConfigMapper lessonConfigMapper;
 
 	/**
 	 * 课程类别Mapper
+	 *
+	 * @see CourseCategoryMapper
 	 */
 	@Autowired
 	private CourseCategoryMapper courseCategoryMapper;
@@ -114,6 +137,12 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	 * @param sceneNumber        场景数
 	 * @param disableImageExport 禁用图像导出
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see String
+	 * @see Boolean
+	 * @see String
 	 */
 	@Override
 	public String rMCourseDump(String resourceId, Boolean isDumpTopo, String sceneNumber, Boolean disableImageExport) {
@@ -205,6 +234,13 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	 * @param isDumpTopo           是转 储拓扑
 	 * @param sceneNumber          场景数
 	 * @param disableImageExport   禁用图像导出
+	 * @throws
+	 * @see String
+	 * @see List<LessonConfig>
+	 * @see List<CourseLesson>
+	 * @see Boolean
+	 * @see String
+	 * @see Boolean
 	 */
 	private void combineLessons(String destFilePath, List<LessonConfig> currentLessonConfigs,
 			List<CourseLesson> currentLessons, Boolean isDumpTopo, String sceneNumber, Boolean disableImageExport) {
@@ -250,6 +286,16 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	 * @param sceneNumber        场景数
 	 * @param disableImageExport 禁用图像导出
 	 * @return {@code Map<String, String> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see LessonConfig
+	 * @see List<LessonConfig>
+	 * @see Map<String, List<CourseLesson>>
+	 * @see Boolean
+	 * @see String
+	 * @see Boolean
+	 * @see Map<String, String>
 	 */
 	private Map<String, String> combineChapterFirst(String destFilePath, Integer chapterIndex,
 			LessonConfig chapterOne, List<LessonConfig> lessonConfigs,
@@ -284,6 +330,16 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	 * @param isDumpTopo         是转 储拓扑
 	 * @param sceneNumber        场景数
 	 * @param disableImageExport 禁用图像导出
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see int
+	 * @see LessonConfig
+	 * @see String
+	 * @see Map<String, List<CourseLesson>>
+	 * @see Boolean
+	 * @see String
+	 * @see Boolean
 	 */
 	private void combineChapterSecond(String destFilePath, Integer lastChapter, int index,
 			LessonConfig chapterSecond, String chapterFileName,
@@ -321,6 +377,9 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	 *
 	 * @param pathname 路径
 	 * @param lesson   课
+	 * @throws
+	 * @see String
+	 * @see CourseLesson
 	 */
 	private void combineLessonReadmeMD(String pathname, CourseLesson lesson) {
 		log.info("start dump lesson [{}] readme.md!", lesson.getName());
@@ -355,6 +414,12 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	 * @param lesson             课
 	 * @param sceneNumber        场景数
 	 * @param disableImageExport 禁用图像导出
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see CourseLesson
+	 * @see String
+	 * @see Boolean
 	 */
 	private void combineOperationLesson(String destFilePath, String pathname, CourseLesson lesson, String sceneNumber, Boolean disableImageExport) {
 		// doc 指导文档doc/pdf/md 包含img文件夹 指导书md
@@ -382,6 +447,9 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	 *
 	 * @param pathname 路径
 	 * @param lesson   课
+	 * @throws
+	 * @see String
+	 * @see CourseLesson
 	 */
 	private void combineTheoryLesson(String pathname, CourseLesson lesson) {
 		// handout 讲义
@@ -397,6 +465,9 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	 *
 	 * @param lesson      课
 	 * @param handoutFile 讲义文件
+	 * @throws
+	 * @see CourseLesson
+	 * @see String
 	 */
 	private void generateHandout(CourseLesson lesson, String handoutFile) {
 		Integer handoutType = lesson.getHandoutType();
@@ -433,6 +504,10 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	 * @param pathname           路径
 	 * @param lesson             课
 	 * @param disableImageExport 禁用图像导出
+	 * @throws
+	 * @see String
+	 * @see CourseLesson
+	 * @see Boolean
 	 */
 	private void generateLessonBase(String pathname, CourseLesson lesson, Boolean disableImageExport) {
 		// 存储附件
@@ -482,6 +557,9 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	 *
 	 * @param attachFile 附加文件
 	 * @param pathname   路径
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	private void saveAttachFile(String attachFile, String pathname) {
 		String[] split = attachFile.split("/");
@@ -496,6 +574,11 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	 * @param course       课程
 	 * @param categories   类别
 	 * @param allUsers     所有用户
+	 * @throws
+	 * @see String
+	 * @see Course
+	 * @see List<CourseCategory>
+	 * @see List<UserInfo>
 	 */
 	private void combineCourseContent(String destFilePath, Course course,
 			List<CourseCategory> categories, List<UserInfo> allUsers) {
@@ -547,6 +630,9 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	 *
 	 * @param destFilePath 目标文件路径
 	 * @param outline      大纲
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	private void generateOutlineMD(String destFilePath, String outline) {
 		File file = new File(destFilePath, OUTLINE_NAME);
@@ -560,6 +646,11 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	 * @param course       课程
 	 * @param categoryName 类别名称
 	 * @param userName     用户名称
+	 * @throws
+	 * @see String
+	 * @see Course
+	 * @see String
+	 * @see String
 	 */
 	private void generateReadmeMD(String pathname, Course course, String categoryName,
 			String userName) {

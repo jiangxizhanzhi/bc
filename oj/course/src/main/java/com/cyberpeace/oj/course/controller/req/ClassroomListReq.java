@@ -14,7 +14,10 @@ import lombok.Data;
  * 课堂列表请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @ApiModel
 @Data
@@ -22,6 +25,8 @@ public class ClassroomListReq implements Serializable {
 
 	/**
 	 * 开始时间
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "start_time", value = "开始日期")
 	@NotNull
@@ -29,6 +34,8 @@ public class ClassroomListReq implements Serializable {
 
 	/**
 	 * 结束时间
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "end_time", value = "结束日期")
 	@NotNull
@@ -36,12 +43,16 @@ public class ClassroomListReq implements Serializable {
 
 	/**
 	 * 组织id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "organization_id", value = "组织编号")
 	private String organizationId;
 
 	/**
 	 * 训练计划id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "train_plan_id", value = "训练计划编号")
 	private String trainPlanId;

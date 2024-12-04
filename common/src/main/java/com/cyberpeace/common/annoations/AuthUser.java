@@ -3,7 +3,12 @@ package com.cyberpeace.common.annoations;
 import java.lang.annotation.*;
 
 /**
- * @author chenzhuo
+ * auth 用户
+ *
+ * @author chenzhuo@see Annotation
+ * @version 1.0.0
+ * @date 2024/12/04
+ * @since 1.0.0
  */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

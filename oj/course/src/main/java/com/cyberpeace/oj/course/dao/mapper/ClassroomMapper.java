@@ -15,7 +15,10 @@ import com.cyberpeace.oj.course.dao.entity.Classroom;
  * 课堂Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface ClassroomMapper extends BaseMapper<Classroom> {
@@ -26,6 +29,10 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 * @param orgId
 	 * @param lessonId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Classroom
 	 */
 	Classroom selectByOrgAndLesson(@Param("orgId") String orgId,
 			@Param("lessonId") String lessonId);
@@ -35,6 +42,9 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 *
 	 * @param listQuery
 	 * @return
+	 * @throws
+	 * @see ClassRoomListQuery
+	 * @see List<Classroom>
 	 */
 	List<Classroom> selectList(@Param("listQuery") ClassRoomListQuery listQuery);
 
@@ -44,6 +54,10 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 * @param courseIds
 	 * @param roomListQuery
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see ClassRoomListQuery
+	 * @see List<Classroom>
 	 */
 	List<Classroom> selectListByCourse(@Param("courseIds") List<String> courseIds,
 			@Param("listQuery") ClassRoomListQuery roomListQuery);
@@ -53,6 +67,9 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 *
 	 * @param lessonIds 课id列表
 	 * @return {@code List<Classroom> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<Classroom>
 	 */
 	List<Classroom> selectByLesson(@Param("lessonIds") List<String> lessonIds);
 
@@ -61,6 +78,9 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 *
 	 * @param orgId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<Classroom>
 	 */
 	List<Classroom> selectByOrgId(@Param("orgId") String orgId);
 
@@ -69,13 +89,18 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 *
 	 * @param planId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<Classroom>
 	 */
 	List<Classroom> selectByPlan(@Param("planId") String planId);
 
 	/**
 	 * 根据ids删除房间
 	 *
-	 * @param orgIds
+	 * @param orgIds 组织id列表
+	 * @throws
+	 * @see List<String>
 	 */
 	void deleteByOrgIds(@Param("orgIds") List<String> orgIds);
 
@@ -89,6 +114,14 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 * @param isAdmin     是管理员
 	 * @param courseIds   课程id列表
 	 * @return {@code IPage<Classroom> }
+	 * @throws
+	 * @see Page
+	 * @see String
+	 * @see String
+	 * @see List<String>
+	 * @see boolean
+	 * @see List<String>
+	 * @see IPage<Classroom>
 	 */
 	IPage<Classroom> page(Page listQuery, String userId, String trainPlanId, List<String> childrenOrg, boolean isAdmin, List<String> courseIds);
 
@@ -97,6 +130,9 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 *
 	 * @param ids id列表
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> selectIdsByPlanIds(List<String> ids);
 
@@ -106,6 +142,10 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 * @param userId 用户id
 	 * @param planId 计划id
 	 * @return {@code List<Classroom> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<Classroom>
 	 */
 	List<Classroom> selectByUserPlan(String userId, String planId);
 
@@ -115,6 +155,10 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 * @param userId      用户id
 	 * @param isSuperUser 是超级用户
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see boolean
+	 * @see List<String>
 	 */
 	List<String> selectTempTaskIdsByUser(String userId, boolean isSuperUser);
 }

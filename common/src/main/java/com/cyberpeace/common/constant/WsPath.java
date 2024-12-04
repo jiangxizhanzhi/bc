@@ -9,82 +9,114 @@ import java.util.Set;
  * 对外暴露的websocket路径
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 public class WsPath {
 
 	/**
 	 * 单兵、团队、红蓝的场景启动、节点状态变更、态势消息，使用此path
+	 *
+	 * @see String
 	 */
 	public static final String CR_SCENE = "/ws/cr/ce_base/scene";
 
 	/**
 	 * 靶场任务
+	 *
+	 * @see String
 	 */
 	public static final String CR_MISSION = "/ws/cr/ce_base/mission";
 
 	/**
 	 * 靶场聊天
+	 *
+	 * @see String
 	 */
 	public static final String CR_CHAT = "/ws/cr/ce_base/chat";
 
 	/**
 	 * 课堂聊天
+	 *
+	 * @see String
 	 */
 	public static final String CLASSROOM_CHAT = "/ws/oj/classroom/chat";
 
 	/**
 	 * 课堂帮助
+	 *
+	 * @see String
 	 */
 	public static final String CLASSROOM_HELP = "/ws/oj/classroom/help";
 
 	/**
 	 * 实操场景
+	 *
+	 * @see String
 	 */
 	public static final String OPERATION_SCENE = "/ws/oj/operation/scene";
 
 	/**
 	 * 课场景
+	 *
+	 * @see String
 	 */
 	public static final String LESSON_SCENE = "/ws/course/lesson_scene";
 
 	/**
 	 * 课实践场景
+	 *
+	 * @see String
 	 */
 	public static final String LESSON_PRACTICE_SCENE = "/ws/course/lesson/operation/scene";
 
 	/**
 	 * 课堂场景
+	 *
+	 * @see String
 	 */
 	public static final String CLASSROOM_SCENE = "/ws/oj/classroom/scene";
 
 	/**
 	 * 课堂群场景
+	 *
+	 * @see String
 	 */
 	public static final String CLASSROOM_GROUP_SCENE = "/ws/oj/classroom/group/scene";
 
 	/**
 	 * 房间场景十五分钟技巧
+	 *
+	 * @see String
 	 */
 	public static final String ROOM_SCENE_FIFTEEN_MIN_TIPS = "/ws/oj/classroom/scene/tips";
 
 	/**
 	 * 态势
+	 *
+	 * @see String
 	 */
 	public static final String SITUATION = "/ws/situation/scene";
 
 	/**
 	 * 通知
+	 *
+	 * @see String
 	 */
 	public static final String NOTICE = "/ws/cr/ce_base/notice";
 
 	/**
 	 * 练习纸
+	 *
+	 * @see String
 	 */
 	public static final String EXERCISE_PAPER = "/ws/cr/ce_base/exercise_paper";
 
 	/**
 	 * 缓存
+	 *
+	 * @see Set<String>
 	 */
 	private static Set<String> cache = Sets.newHashSet();
 

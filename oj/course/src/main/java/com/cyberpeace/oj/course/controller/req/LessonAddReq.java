@@ -17,7 +17,10 @@ import lombok.Data;
  * 课新增请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -25,6 +28,8 @@ public class LessonAddReq implements Serializable {
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课时名称")
 	@NotBlank(groups = { Create.class })
@@ -32,6 +37,8 @@ public class LessonAddReq implements Serializable {
 
 	/**
 	 * 类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("课时类型 0=理论课 1=实验课")
 	@NotNull(groups = { Create.class })
@@ -39,18 +46,24 @@ public class LessonAddReq implements Serializable {
 
 	/**
 	 * 知识
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("知识点")
 	private String knowledge;
 
 	/**
 	 * 附件id列表
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "attachment_ids", value = "附件编号")
 	private String attachmentIds;
 
 	/**
 	 * 难度
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("难度 0=初级 1=中级 2=高级")
 	@NotNull(groups = { Create.class })
@@ -58,6 +71,8 @@ public class LessonAddReq implements Serializable {
 
 	/**
 	 * 期间
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("课时时长")
 	@NotNull(groups = { Create.class })
@@ -65,6 +80,8 @@ public class LessonAddReq implements Serializable {
 
 	/**
 	 * 必修
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("课时类型 0=未配置 1=选修 2=必须")
 	@NotNull(groups = { Create.class })
@@ -72,6 +89,8 @@ public class LessonAddReq implements Serializable {
 
 	/**
 	 * 是否公开
+	 *
+	 * @see Boolean
 	 */
 	@ApiModelProperty(name = "is_public", value = "是否公开 0=隐藏 1=公开")
 	@NotNull(groups = { Create.class })
@@ -79,6 +98,8 @@ public class LessonAddReq implements Serializable {
 
 	/**
 	 * 课程id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "course_id", value = "课程编号")
 	@NotBlank(groups = { Create.class })
@@ -86,36 +107,48 @@ public class LessonAddReq implements Serializable {
 
 	/**
 	 * 讲义
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("讲义文件")
 	private String handout;
 
 	/**
 	 * 视频
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("视频文件")
 	private String video;
 
 	/**
 	 * OJ场景配置
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "oj_scene_config", value = "场景配置信息")
 	private String ojSceneConfig;
 
 	/**
 	 * 销毁延迟
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(name = "destroy_delay", value = "场景存活时间 单位小时")
 	private Integer destroyDelay;
 
 	/**
 	 * 场景共享模式
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(name = "scene_share_mode", value = "场景隔离类型 1=共享 2=个人")
 	private Integer sceneShareMode;
 
 	/**
 	 * 执业名单
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "practice_list", value = "习题列表")
 	private String practiceList;

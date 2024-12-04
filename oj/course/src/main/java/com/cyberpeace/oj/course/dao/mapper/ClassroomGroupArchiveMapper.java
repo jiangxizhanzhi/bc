@@ -11,7 +11,10 @@ import java.util.List;
  * 课堂群档案Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface ClassroomGroupArchiveMapper extends BaseMapper<ClassroomGroupArchive> {
@@ -22,6 +25,10 @@ public interface ClassroomGroupArchiveMapper extends BaseMapper<ClassroomGroupAr
 	 * @param classroomId
 	 * @param name
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see ClassroomGroupArchive
 	 */
 	ClassroomGroupArchive selectByRoomAndName(@Param("roomId") String classroomId,
 			@Param("name") String name);
@@ -31,6 +38,9 @@ public interface ClassroomGroupArchiveMapper extends BaseMapper<ClassroomGroupAr
 	 *
 	 * @param classroomId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<ClassroomGroupArchive>
 	 */
 	List<ClassroomGroupArchive> selectByRoom(@Param("roomId") String classroomId);
 }

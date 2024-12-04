@@ -21,7 +21,10 @@ import java.util.List;
  * 课堂聊天处理程序
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see ChatWebSocketHandler
+ * @since 1.0.0
  */
 @Slf4j
 @Component
@@ -29,12 +32,16 @@ public class ClassroomChatHandler extends ChatWebSocketHandler {
 
 	/**
 	 * 课堂群信息Mapper
+	 *
+	 * @see ClassroomGroupInfoMapper
 	 */
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
 	/**
 	 * 课堂Mapper
+	 *
+	 * @see ClassroomMapper
 	 */
 	@Autowired
 	private ClassroomMapper classroomMapper;
@@ -43,6 +50,8 @@ public class ClassroomChatHandler extends ChatWebSocketHandler {
 	 * 声明消息类型
 	 *
 	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
 	 */
 	@Override
 	public Integer declareMessageType() {
@@ -55,6 +64,10 @@ public class ClassroomChatHandler extends ChatWebSocketHandler {
 	 * @param businessId  业务id
 	 * @param chatContent 聊天内容
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see ChatContent
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> getGroup(String businessId, ChatContent chatContent) {

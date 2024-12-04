@@ -16,7 +16,10 @@ import java.util.Map;
  * 列表钥匙值解析 器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see MdContentParser
+ * @since 1.0.0
  */
 @Service
 public class ListKeyValueParser implements MdContentParser<Map<String, String>, String> {

@@ -11,7 +11,10 @@ import java.util.List;
  * 课程场景上下文
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @NoArgsConstructor
@@ -24,11 +27,15 @@ public class CourseSceneContext implements Serializable {
 
 	/**
 	 * 场景
+	 *
+	 * @see List<OjLocalScene>
 	 */
 	private List<OjLocalScene> scenes;
 
 	/**
 	 * 拓扑
+	 *
+	 * @see List<String>
 	 */
 	private List<String> topos;
 

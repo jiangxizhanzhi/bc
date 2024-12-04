@@ -33,23 +33,31 @@ import lombok.extern.slf4j.Slf4j;
  * excel数据处理器 需要什么方法自己加
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 @Slf4j
 public class ExcelDataHandler {
 
 	/**
 	 * 表
+	 *
+	 * @see Sheet
 	 */
 	private Sheet sheet;
 
 	/**
 	 * 练习 册
+	 *
+	 * @see Workbook
 	 */
 	private Workbook workbook;
 
 	/**
 	 * 文件输入流
+	 *
+	 * @see FileInputStream
 	 */
 	private FileInputStream fileInputStream;
 

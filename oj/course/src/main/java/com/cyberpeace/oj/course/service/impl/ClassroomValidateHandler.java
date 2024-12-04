@@ -28,7 +28,9 @@ import lombok.extern.slf4j.Slf4j;
  * 课堂验证处理器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -36,16 +38,22 @@ public class ClassroomValidateHandler {
 
 	/**
 	 * 最小开始时间
+	 *
+	 * @see Integer
 	 */
 	private Integer MIN_START_TIME;
 
 	/**
 	 * 结束最大时间
+	 *
+	 * @see Integer
 	 */
 	private Integer END_MAX_TIME;
 
 	/**
 	 * 初始化
+	 *
+	 * @throws
 	 */
 	@PostConstruct
 	private void init() {
@@ -55,30 +63,40 @@ public class ClassroomValidateHandler {
 
 	/**
 	 * 课堂Mapper
+	 *
+	 * @see ClassroomMapper
 	 */
 	@Autowired
 	private ClassroomMapper classroomMapper;
 
 	/**
 	 * 远程组织Service
+	 *
+	 * @see RemoteOrganizationService
 	 */
 	@Autowired
 	private RemoteOrganizationService remoteOrganizationService;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 课堂标志Mapper
+	 *
+	 * @see ClassroomSignMapper
 	 */
 	@Autowired
 	private ClassroomSignMapper classroomSignMapper;
 
 	/**
 	 * 训练计划Mapper
+	 *
+	 * @see TrainPlanMapper
 	 */
 	@Autowired
 	private TrainPlanMapper trainPlanMapper;
@@ -88,6 +106,9 @@ public class ClassroomValidateHandler {
 	 *
 	 * @param planId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see TrainPlan
 	 */
 	public TrainPlan validatePlanExistById(String planId) {
 		TrainPlan trainPlan = trainPlanMapper.selectById(planId);
@@ -105,6 +126,10 @@ public class ClassroomValidateHandler {
 	 * @param classroomId
 	 * @param userId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see ClassroomSign
 	 */
 	public ClassroomSign validateSign(String classroomId, String userId) {
 		ClassroomSign classroomSign = classroomSignMapper.selectByRoomAndUser(classroomId, userId);
@@ -122,6 +147,10 @@ public class ClassroomValidateHandler {
 	 * @param lessonId
 	 * @param orgId    组织id
 	 * @return {@code Classroom }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Classroom
 	 */
 	public Classroom validateClassroomLessonExist(String lessonId, String orgId) {
 		Classroom classroom = classroomMapper.selectByOrgAndLesson(orgId, lessonId);
@@ -140,6 +169,11 @@ public class ClassroomValidateHandler {
 	 * @param orgId
 	 * @param itself   本身
 	 * @return {@code Classroom }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Classroom
+	 * @see Classroom
 	 */
 	public Classroom validateClassroomLessonExistExcludeItself(String lessonId, String orgId, Classroom itself) {
 		Classroom classroom = classroomMapper.selectByOrgAndLesson(orgId, lessonId);
@@ -156,6 +190,9 @@ public class ClassroomValidateHandler {
 	 *
 	 * @param startTime
 	 * @param endTime   结束时间
+	 * @throws
+	 * @see Date
+	 * @see Date
 	 */
 	public void validateClassroomStartAndEnd(Date startTime, Date endTime) {
 
@@ -170,6 +207,9 @@ public class ClassroomValidateHandler {
 	 *
 	 * @param orgId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	public List<String> validateClassroomOrgHasUser(String orgId) {
 
@@ -181,6 +221,9 @@ public class ClassroomValidateHandler {
 	 *
 	 * @param classroomId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Classroom
 	 */
 	public Classroom validateClassroomExist(String classroomId) {
 
@@ -199,6 +242,10 @@ public class ClassroomValidateHandler {
 	 * @param lessonId
 	 * @param orgId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Classroom
 	 */
 	public Classroom validateClassroomExist(String lessonId, String orgId) {
 		Classroom classroom = classroomMapper.selectByOrgAndLesson(orgId, lessonId);
@@ -216,6 +263,10 @@ public class ClassroomValidateHandler {
 	 * @param organizationId
 	 * @param startTime
 	 * @param endTime        结束时间
+	 * @throws
+	 * @see String
+	 * @see Date
+	 * @see Date
 	 */
 	public void validateClassroomTimeOverlap(String organizationId, Date startTime, Date endTime) {
 
@@ -238,6 +289,11 @@ public class ClassroomValidateHandler {
 	 * @param organizationId
 	 * @param startTime
 	 * @param endTime        结束时间
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Date
+	 * @see Date
 	 */
 	public void validateUpdateClassroomTimeOverlap(String classroomId, String organizationId,
 			Date startTime, Date endTime) {
@@ -260,6 +316,9 @@ public class ClassroomValidateHandler {
 	 *
 	 * @param classroomId
 	 * @param authContext auth 上下文
+	 * @throws
+	 * @see String
+	 * @see AuthContext
 	 */
 	public void validateLessonPracticeAuth(String classroomId, AuthContext authContext) {
 

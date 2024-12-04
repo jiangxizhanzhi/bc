@@ -10,24 +10,33 @@ import io.swagger.annotations.ApiModelProperty;
  * 远程帮助请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 public class RemoteHelpReq implements Serializable {
 
 	/**
 	 * 课id
+	 *
+	 * @see String
 	 */
 	@NotBlank
 	private String lesson_id;
 
 	/**
 	 * 节点id
+	 *
+	 * @see String
 	 */
 	@NotBlank
 	private String node_id;
 
 	/**
 	 * 房间id
+	 *
+	 * @see String
 	 */
 	@NotBlank
 	private String room_id;

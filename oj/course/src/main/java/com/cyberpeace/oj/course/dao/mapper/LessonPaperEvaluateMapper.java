@@ -11,7 +11,10 @@ import java.util.List;
  * 课纸评估Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface LessonPaperEvaluateMapper extends BaseMapper<LessonPaperEvaluate> {
@@ -22,6 +25,10 @@ public interface LessonPaperEvaluateMapper extends BaseMapper<LessonPaperEvaluat
      * @param userId   用户id
      * @param lessonId 课id
      * @return {@code LessonPaperEvaluate }
+     * @throws
+     * @see String
+     * @see String
+     * @see LessonPaperEvaluate
      */
     LessonPaperEvaluate selectByUserAndLesson(@Param("userId") String userId,
                                               @Param("lessonId") String lessonId);
@@ -32,6 +39,10 @@ public interface LessonPaperEvaluateMapper extends BaseMapper<LessonPaperEvaluat
      * @param userIds  用户id列表
      * @param lessonId 课id
      * @return {@code List<LessonPaperEvaluate> }
+     * @throws
+     * @see List<String>
+     * @see String
+     * @see List<LessonPaperEvaluate>
      */
     List<LessonPaperEvaluate> selectByLessonAndUsers(@Param("userIds")List<String> userIds,
                                                @Param("lessonId") String lessonId);

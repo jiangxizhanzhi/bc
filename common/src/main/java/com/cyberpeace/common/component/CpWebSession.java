@@ -11,17 +11,23 @@ import java.util.concurrent.locks.ReentrantLock;
  * CP Web 会话
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 public class CpWebSession {
 
 	/**
 	 * 会期
+	 *
+	 * @see WebSocketSession
 	 */
 	private WebSocketSession session;
 
 	/**
 	 * 锁
+	 *
+	 * @see ReentrantLock
 	 */
 	private ReentrantLock lock;
 

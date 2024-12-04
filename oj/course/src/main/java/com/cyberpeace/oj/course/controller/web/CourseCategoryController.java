@@ -22,6 +22,8 @@ import java.util.List;
  * 课程类别Controller
  *
  * @author SN
+ * @version 1.0.0
+ * @since 1.0.0
  * @date 2024/11/08
  */
 @Api(tags = "oj-前台课程分类相关api")
@@ -32,6 +34,8 @@ public class CourseCategoryController {
 
 	/**
 	 * 课程类别Service
+	 *
+	 * @see CourseCategoryService
 	 */
 	@Autowired
 	private CourseCategoryService courseCategoryService;
@@ -41,6 +45,9 @@ public class CourseCategoryController {
 	 *
 	 * @param children 子级
 	 * @return {@code BaseRsp<List<CourseCategoryBo>> }
+	 * @throws
+	 * @see Boolean
+	 * @see BaseRsp<List<CourseCategoryBo>>
 	 */
 	@GetMapping("")
 	@ApiOperation("课程分类")

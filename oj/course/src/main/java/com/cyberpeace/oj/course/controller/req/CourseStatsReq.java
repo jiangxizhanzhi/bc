@@ -10,19 +10,26 @@ import lombok.Data;
  * 课程统计请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
  */
 @Data
 @ApiModel
 public class CourseStatsReq extends PageReqBase {
     /**
      * 方向
+     *
+     * @see String
      */
     @ApiModelProperty("方向")
     private String direction;
 
     /**
      * 难
+     *
+     * @see Integer
      */
     @ApiModelProperty("难度")
     private Integer difficult;

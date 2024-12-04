@@ -10,7 +10,10 @@ import lombok.Data;
  * 课堂分页请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
  */
 @Data
 
@@ -18,12 +21,16 @@ public class ClassroomPageReq extends PageReqBase {
 
 	/**
 	 * 训练计划id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "train_plan_id", value = "训练计划编号")
 	private String trainPlanId = "";
 
 	/**
 	 * 组织id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "organization_id", value = "组织id")
 	private String organizationId;

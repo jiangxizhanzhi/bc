@@ -38,7 +38,9 @@ import java.util.List;
  * 管理个人统计Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 @Api(tags = "后台-学习统计-个人统计")
 @RestController
@@ -49,6 +51,8 @@ public class AdminPersonalStatsController {
 
 	/**
 	 * 学习统计Service
+	 *
+	 * @see LearnStatsService
 	 */
 	@Autowired
 	LearnStatsService learnStatsService;
@@ -58,6 +62,9 @@ public class AdminPersonalStatsController {
 	 *
 	 * @param userStatsReq 用户统计请求体
 	 * @return {@code BaseRsp<ListRsp<UserStatsBo>> }
+	 * @throws
+	 * @see UserStatsReq
+	 * @see BaseRsp<ListRsp<UserStatsBo>>
 	 */
 	@ApiOperation("个人统计")
 	@GetMapping("/person-stats")
@@ -71,6 +78,8 @@ public class AdminPersonalStatsController {
 	 * 个人统计排名
 	 *
 	 * @return {@code BaseRsp<UserStatsRankBo> }
+	 * @throws
+	 * @see BaseRsp<UserStatsRankBo>
 	 */
 	@ApiOperation("个人统计排名")
 	@GetMapping("/person-stats-rank")
@@ -84,6 +93,9 @@ public class AdminPersonalStatsController {
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<PersonalStatsDetail4CountBo> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<PersonalStatsDetail4CountBo>
 	 */
 	@ApiOperation("个人课程学习数量统计")
 	@GetMapping("/person-stats-detail/count")
@@ -99,6 +111,10 @@ public class AdminPersonalStatsController {
 	 * @param pageReq 分页请求体
 	 * @param userId  用户id
 	 * @return {@code BaseRsp<ListRsp<PersonalStatsDetail4CourseBo>> }
+	 * @throws
+	 * @see PageReqBase
+	 * @see String
+	 * @see BaseRsp<ListRsp<PersonalStatsDetail4CourseBo>>
 	 */
 	@ApiOperation("个人课程学习统计")
 	@GetMapping("/person-stats-detail/course")
@@ -114,6 +130,8 @@ public class AdminPersonalStatsController {
 	 * 类积分前十名
 	 *
 	 * @return {@code BaseRsp<HistogramRes> }
+	 * @throws
+	 * @see BaseRsp<HistogramRes>
 	 */
 	@ApiOperation("积分排名-组织积分排名Top10")
 	@GetMapping("/class_integral")
@@ -126,6 +144,8 @@ public class AdminPersonalStatsController {
 	 * 个人积分前十名
 	 *
 	 * @return {@code BaseRsp<HistogramRes> }
+	 * @throws
+	 * @see BaseRsp<HistogramRes>
 	 */
 	@ApiOperation("积分排名-个人积分排名Top10")
 	@GetMapping("/personal-integral")
@@ -139,6 +159,9 @@ public class AdminPersonalStatsController {
 	 *
 	 * @param request 请求
 	 * @return {@code BaseRsp<UserStatsRankBo> }
+	 * @throws
+	 * @see HttpServletRequest
+	 * @see BaseRsp<UserStatsRankBo>
 	 */
 	@ApiOperation("学习统计排名-组织数据")
 	@GetMapping("/org-stats-rank")
@@ -152,6 +175,9 @@ public class AdminPersonalStatsController {
 	 *
 	 * @param userStatsReq 用户统计请求体
 	 * @return {@code BaseRsp<ListRsp<OrgStatsBo>> }
+	 * @throws
+	 * @see UserStatsReq
+	 * @see BaseRsp<ListRsp<OrgStatsBo>>
 	 */
 	@ApiOperation("学习数据-组织数据")
 	@GetMapping("/org-stats-data")
@@ -166,6 +192,9 @@ public class AdminPersonalStatsController {
 	 *
 	 * @param response     响应
 	 * @param userStatsReq 用户统计请求体
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see UserStatsReq
 	 */
 	@ApiOperation("学习数据-全部数据-导出")
 	@GetMapping(value = "/user-stats-data-export")
@@ -190,6 +219,9 @@ public class AdminPersonalStatsController {
 	 *
 	 * @param response     响应
 	 * @param userStatsReq 用户统计请求体
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see UserStatsReq
 	 */
 	@ApiOperation("学习数据-组织数据-导出")
     @GetMapping(value = "/org-stats-data-export")

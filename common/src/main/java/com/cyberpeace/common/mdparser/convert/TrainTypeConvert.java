@@ -7,15 +7,58 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
  * 训练类型转换
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Enum
+ * @see MdConvertEnum
+ * @see GenericEnum
+ * @since 1.0.0
  */
 public enum TrainTypeConvert implements MdConvertEnum<Integer, String> , GenericEnum {
 
-	TEST(1, "渗透测试"), MAINTENANCE(2, "运维防护"),
-	SIMULATION(3, "系统仿真"), SCENES(4, "综合场景"), OTHER(5, "其他");
+	/**
+	 * 测试
+	 *
+	 * @see TrainTypeConvert
+	 */
+	TEST(1, "渗透测试"),
+	/**
+	 * 保养
+	 *
+	 * @see TrainTypeConvert
+	 */
+	MAINTENANCE(2, "运维防护"),
+	/**
+	 * 模拟
+	 *
+	 * @see TrainTypeConvert
+	 */
+	SIMULATION(3, "系统仿真"),
+	/**
+	 * 场景
+	 *
+	 * @see TrainTypeConvert
+	 */
+	SCENES(4, "综合场景"),
+	/**
+	 * 其他
+	 *
+	 * @see TrainTypeConvert
+	 */
+	OTHER(5, "其他");
 
+	/**
+	 * 训练类型
+	 *
+	 * @see Integer
+	 */
 	private Integer trainType;
 
+	/**
+	 * 描述
+	 *
+	 * @see String
+	 */
 	private String desc;
 
 	/**

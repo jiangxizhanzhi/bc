@@ -42,7 +42,10 @@ import org.springframework.transaction.support.TransactionTemplate;
  * 课实践Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see LessonPracticeSceneService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -50,60 +53,80 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 
 	/**
 	 * OJ当地场景Service
+	 *
+	 * @see OjLocalSceneService
 	 */
 	@Autowired
 	private OjLocalSceneService ojLocalSceneService;
 
 	/**
 	 * 实践实操裁判Mapper
+	 *
+	 * @see PracticeOperationRefMapper
 	 */
 	@Autowired
 	private PracticeOperationRefMapper practiceOperationRefMapper;
 
 	/**
 	 * 课程课Mapper
+	 *
+	 * @see CourseLessonMapper
 	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
 	/**
 	 * 远程拓扑Service
+	 *
+	 * @see RemoteTopoService
 	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * OJ当地场景Mapper
+	 *
+	 * @see OjLocalSceneMapper
 	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
 	/**
 	 * 当地场景Mapper
+	 *
+	 * @see LocalSceneMapper
 	 */
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
 	/**
 	 * 远程场景Service
+	 *
+	 * @see RemoteSceneService
 	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
 	/**
 	 * 推送消息处理程序
+	 *
+	 * @see PushMessageHandler
 	 */
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
@@ -115,6 +138,11 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 	 * @param practiceId  实践id
 	 * @param authContext auth 上下文
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see JSONObject
 	 */
 	@Override
 	public JSONObject startScene(String lessonId, String practiceId, AuthContext authContext) {
@@ -160,6 +188,11 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 	 * @param practiceId  实践id
 	 * @param authContext auth 上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean deleteScene(String lessonId, String practiceId, AuthContext authContext) {
@@ -191,6 +224,12 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 	 * @param nodeId      节点id
 	 * @param authContext auth 上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean restartNode(String lessonId, String practiceId, String nodeId,
@@ -210,6 +249,12 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 	 * @param nodeId      节点id
 	 * @param authContext auth 上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean recreateNode(String lessonId, String practiceId, String nodeId,
@@ -229,6 +274,12 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 	 * @param status      状态
 	 * @param authContext auth 上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean updateSceneStatus(String lessonId, String practiceId, Integer status,
@@ -251,6 +302,11 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 	 * @param practiceId  实践id
 	 * @param authContext auth 上下文
 	 * @return {@code TopoSceneDataBo }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see TopoSceneDataBo
 	 */
 	@Override
 	public TopoSceneDataBo getTopoScene(String lessonId, String practiceId,
@@ -282,6 +338,9 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 	 *
 	 * @param lessonId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see CourseLesson
 	 */
 	private CourseLesson validateLesson(String lessonId) {
 		CourseLesson lesson = courseLessonMapper.selectById(lessonId);
@@ -299,6 +358,10 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 	 * @param practiceId
 	 * @param courseLesson 课程课程
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see CourseLesson
+	 * @see PracticeOperation
 	 */
 	private PracticeOperation validateOperation(String practiceId, CourseLesson courseLesson) {
 		PracticeOperationRef operationRef = practiceOperationRefMapper
@@ -319,6 +382,10 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 	 * @param lesson
 	 * @param operation
 	 * @return
+	 * @throws
+	 * @see CourseLesson
+	 * @see PracticeOperation
+	 * @see String
 	 */
 	private String getBusinessId(CourseLesson lesson, PracticeOperation operation) {
 		return lesson.getResourceId() + CommonConstant.CODE_COMMA + operation.getResourceId();
@@ -331,6 +398,11 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 	 * @param operation
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see CourseLesson
+	 * @see PracticeOperation
+	 * @see AuthContext
+	 * @see OjLocalScene
 	 */
 	private OjLocalScene initLessonPracticeOjLocalScene(CourseLesson lesson,
 			PracticeOperation operation, AuthContext authContext) {
@@ -355,6 +427,12 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 	 * @param ojLocalScene
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see CourseLesson
+	 * @see PracticeOperation
+	 * @see OjLocalScene
+	 * @see AuthContext
+	 * @see LocalScene
 	 */
 	private LocalScene initLocalScene(CourseLesson lesson, PracticeOperation operation,
 			OjLocalScene ojLocalScene, AuthContext authContext) {
@@ -403,6 +481,11 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 	 * @param operation
 	 * @param authContext auth 上下文
 	 * @return
+	 * @throws
+	 * @see CourseLesson
+	 * @see PracticeOperation
+	 * @see AuthContext
+	 * @see LocalScene
 	 */
 	private LocalScene sceneNodeCheck(CourseLesson lesson, PracticeOperation operation,
 			AuthContext authContext) {

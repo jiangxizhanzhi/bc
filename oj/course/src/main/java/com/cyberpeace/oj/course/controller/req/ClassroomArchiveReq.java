@@ -11,6 +11,9 @@ import java.io.Serializable;
  * 课堂档案请求体
  *
  * @author SN
+ * @see Serializable
+ * @version 1.0.0
+ * @since 1.0.0
  * @date 2024/11/08
  */
 @Data
@@ -18,15 +21,19 @@ import java.io.Serializable;
 public class ClassroomArchiveReq implements Serializable {
 
 	/**
-	 * 课堂id
-	 */
+     * 课堂id
+     *
+     * @see String
+     */
 	@ApiModelProperty("课堂编号")
 	@NotBlank
 	private String classroomId;
 
 	/**
-	 * 群档案id
-	 */
+     * 群档案id
+     *
+     * @see String
+     */
 	@ApiModelProperty("分组模板编号")
 	@NotBlank
 	private String groupArchiveId;

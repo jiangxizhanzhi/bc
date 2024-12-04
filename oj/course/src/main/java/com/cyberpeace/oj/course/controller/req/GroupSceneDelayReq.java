@@ -12,7 +12,10 @@ import java.io.Serializable;
  * 群场景延迟请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -20,6 +23,8 @@ public class GroupSceneDelayReq implements Serializable {
 
 	/**
 	 * 课堂id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课堂编号")
 	@NotBlank
@@ -27,6 +32,8 @@ public class GroupSceneDelayReq implements Serializable {
 
 	/**
 	 * 结束
+	 *
+	 * @see Boolean
 	 */
 	@ApiModelProperty("是否开启场景延时 true=开启 false=不开启")
 	@NotNull

@@ -17,7 +17,10 @@ import org.apache.commons.collections.CollectionUtils;
  * 课程配置 bo
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel("课程目录配置信息")
@@ -25,12 +28,16 @@ public class LessonConfigBo implements Serializable {
 
 	/**
 	 * 课程id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课程编号")
 	private String courseId;
 
 	/**
 	 * 指数
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("位置编号")
 	private Integer index;
@@ -43,60 +50,80 @@ public class LessonConfigBo implements Serializable {
 
 	/**
 	 * 必修
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("是否必修")
 	private Integer compulsory;
 
 	/**
 	 * 课id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课程编号")
 	private String lessonId;
 
 	/**
 	 * 类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("课时类型 0-理论 1-实验")
 	private Integer type;
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("名称")
 	private String name;
 
 	/**
 	 * 节点类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("节点类型")
 	private Integer nodeType;
 
 	/**
 	 * 父母id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("父节点编号")
 	private String parentId;
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("资源编号")
 	private String resourceId;
 
 	/**
 	 * 章名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("章节名称")
 	private String chapterName;
 
 	/**
 	 * 子级
+	 *
+	 * @see List<LessonConfigBo>
 	 */
 	@ApiModelProperty("子节点")
 	private List<LessonConfigBo> children;
 
 	/**
 	 * 类型索引
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("目录信息索引 课时1 章节1")
 	private String typeIndex;

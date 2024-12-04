@@ -45,7 +45,10 @@ import lombok.extern.slf4j.Slf4j;
  * 学习统计Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see LearnStatsService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -68,36 +71,48 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 
 	/**
 	 * 学习统计Mapper
+	 *
+	 * @see LearnStatsMapper
 	 */
 	@Autowired
 	LearnStatsMapper learnStatsMapper;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	RemoteUserService remoteUserService;
 
 	/**
 	 * 远程组织Service
+	 *
+	 * @see RemoteOrganizationService
 	 */
 	@Autowired
 	RemoteOrganizationService remoteOrganizationService;
 
 	/**
 	 * 远程竞赛Service
+	 *
+	 * @see RemoteAdService
 	 */
 	@Autowired
 	RemoteAdService remoteAdService;
 
 	/**
 	 * 课程学习统计学Service
+	 *
+	 * @see CourseLearnStatisticsService
 	 */
 	@Autowired
 	CourseLearnStatisticsService courseLearnStatisticsService;
 
 	/**
 	 * 地震魔
+	 *
+	 * @see ExecutorService
 	 */
 	ExecutorService es = Executors.newCachedThreadPool();
 
@@ -111,6 +126,14 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	 * @param startTimeStr 开始时间 STR
 	 * @param endTimeStr   结束时间 STR
 	 * @return {@code ListRsp<UserStatsBo> }
+	 * @throws
+	 * @see Page
+	 * @see String
+	 * @see String
+	 * @see boolean
+	 * @see String
+	 * @see String
+	 * @see ListRsp<UserStatsBo>
 	 */
 	@Override
 	public ListRsp<UserStatsBo> getUserStats(Page page, String pattern, String organization,
@@ -193,6 +216,12 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	 * @param orderField   排序字段
 	 * @param userStatsBos 带分页数据
 	 * @return 分页后的数据
+	 * @throws
+	 * @see Page
+	 * @see Integer
+	 * @see OrderItem
+	 * @see List<T>
+	 * @see ListRsp<T>
 	 */
 	private <T> ListRsp<T> pagedData(Page page, Integer total, OrderItem orderField,
 			List<T> userStatsBos) {
@@ -225,6 +254,8 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	 * 获取用户学习排
 	 *
 	 * @return {@code UserStatsRankBo }
+	 * @throws
+	 * @see UserStatsRankBo
 	 */
 	@Override
 	public UserStatsRankBo getUserLearnRank() {
@@ -342,6 +373,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code PersonalStatsDetail4CountBo }
+	 * @throws
+	 * @see String
+	 * @see PersonalStatsDetail4CountBo
 	 */
 	@Override
 	public PersonalStatsDetail4CountBo getPersonalStatsDetail4Count(String resourceId) {
@@ -378,6 +412,10 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	 * @param page       分页
 	 * @param resourceId 资源id
 	 * @return {@code ListRsp<PersonalStatsDetail4CourseBo> }
+	 * @throws
+	 * @see Page
+	 * @see String
+	 * @see ListRsp<PersonalStatsDetail4CourseBo>
 	 */
 	@Override
 	public ListRsp<PersonalStatsDetail4CourseBo> getPersonalStatsDetail4Course(Page page,
@@ -393,6 +431,10 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	 * @param ranking_type 排名类型
 	 * @param orgId        组织id
 	 * @return {@code HistogramRes }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see HistogramRes
 	 */
 	@Override
 	public HistogramRes getClassIntegralTopTen(String ranking_type, String orgId) {
@@ -495,6 +537,10 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	 * @param result   结果
 	 * @param topCount 返回页首计数
 	 * @return {@code ArrayList<Map.Entry<String, Integer>> }
+	 * @throws
+	 * @see Map<String, Integer>
+	 * @see Integer
+	 * @see ArrayList<Map.Entry<String, Integer>>
 	 */
 	private ArrayList<Map.Entry<String, Integer>> getTopCount(Map<String, Integer> result,
 			Integer topCount) {
@@ -513,6 +559,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	 *
 	 * @param request 请求
 	 * @return {@code UserStatsRankBo }
+	 * @throws
+	 * @see HttpServletRequest
+	 * @see UserStatsRankBo
 	 */
 	@Override
 	public UserStatsRankBo getOrgLearnRank(HttpServletRequest request) {
@@ -615,6 +664,10 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	 * @param lessons   课
 	 * @param org_infos 组织信息
 	 * @return int
+	 * @throws
+	 * @see List<JSONObject>
+	 * @see List<UserInfo>
+	 * @see int
 	 */
 	private int getSum(List<JSONObject> lessons, List<UserInfo> org_infos) {
 		return lessons.stream()
@@ -628,6 +681,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	 *
 	 * @param org 组织
 	 * @return {@code Map<String, String> }
+	 * @throws
+	 * @see String
+	 * @see Map<String, String>
 	 */
 	private Map<String, String> collectChildrenOrg(String org) {
 		String orgId = null;
@@ -647,6 +703,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	 *
 	 * @param afterClassIntegrals 类积分后
 	 * @return {@code Map<String, Integer> }
+	 * @throws
+	 * @see List<JSONObject>
+	 * @see Map<String, Integer>
 	 */
 	private Map<String, Integer> getUserWithIntegral(List<JSONObject> afterClassIntegrals) {
 		return StreamApiUtils.toMap(afterClassIntegrals,
@@ -659,6 +718,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	 *
 	 * @param examIntegrals 考试积分
 	 * @return {@code Map<String, Integer> }
+	 * @throws
+	 * @see List<JSONObject>
+	 * @see Map<String, Integer>
 	 */
 	private Map<String, Integer> getUserWithCount(List<JSONObject> examIntegrals) {
 		return StreamApiUtils.toMap(examIntegrals,
@@ -671,6 +733,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	 *
 	 * @param orgInfos    组织信息
 	 * @param childrenOrg 子级组织
+	 * @throws
+	 * @see List<OrgInfo>
+	 * @see Map<String, String>
 	 */
 	private void getAllChildrenOrg(List<OrgInfo> orgInfos, Map<String, String> childrenOrg) {
 
@@ -694,6 +759,14 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	 * @param endTimeStr   结束时间 STR
 	 * @param isPage       是分页
 	 * @return {@code ListRsp<OrgStatsBo> }
+	 * @throws
+	 * @see Page
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see boolean
+	 * @see ListRsp<OrgStatsBo>
 	 */
 	@Override
 	public ListRsp<OrgStatsBo> getOrgStatsData(Page page, String pattern, String organization,
@@ -772,6 +845,12 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	 * @param orgUserCount 组织用户计数
 	 * @param examCount    考试计数
 	 * @return {@code OrgStatsBo }
+	 * @throws
+	 * @see List<UserStatsBo>
+	 * @see String
+	 * @see Integer
+	 * @see Integer
+	 * @see OrgStatsBo
 	 */
 	private OrgStatsBo generateObj(List<UserStatsBo> collect, String org_name, Integer orgUserCount,
 			Integer examCount) {
@@ -809,6 +888,10 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	 * @param startTimeStr 开始时间 STR
 	 * @param endTime      结束时间
 	 * @return {@code Date }
+	 * @throws
+	 * @see String
+	 * @see Date
+	 * @see Date
 	 */
 	private Date getDefaultStartTime(String startTimeStr, Date endTime) {
 

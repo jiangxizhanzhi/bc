@@ -11,7 +11,10 @@ import lombok.Data;
  * 集团信息 bo
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see ArchiveGroupBo
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -19,12 +22,16 @@ public class GroupInfoBo extends ArchiveGroupBo {
 
 	/**
 	 * 场景数据
+	 *
+	 * @see JSONObject
 	 */
 	@ApiModelProperty("场景信息")
 	private JSONObject sceneData;
 
 	/**
 	 * 用户信息
+	 *
+	 * @see List<SimpleUserData>
 	 */
 	@ApiModelProperty("组员信息")
 	private List<SimpleUserData> userInfos;

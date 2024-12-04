@@ -62,7 +62,10 @@ import java.util.List;
  * 管理课Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see PublicController
+ * @since 1.0.0
  */
 @Api(tags = "oj-后台课时相关api")
 @RestController
@@ -73,48 +76,64 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	/**
 	 * 课程课Service
+	 *
+	 * @see CourseLessonService
 	 */
 	@Autowired
 	private CourseLessonService courseLessonService;
 
 	/**
 	 * 课程课Mapper
+	 *
+	 * @see CourseLessonMapper
 	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
 	/**
 	 * 附件Service
+	 *
+	 * @see AttachmentService
 	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
 	/**
 	 * 课程Service
+	 *
+	 * @see CourseService
 	 */
 	@Autowired
 	private CourseService courseService;
 
 	/**
 	 * 课场景Service
+	 *
+	 * @see LessonSceneService
 	 */
 	@Autowired
 	private LessonSceneService lessonSceneService;
 
 	/**
 	 * 课程Mapper
+	 *
+	 * @see CourseMapper
 	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
 	/**
 	 * utilService
+	 *
+	 * @see UtilService
 	 */
 	@Autowired
 	private UtilService utilService;
 
 	/**
 	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
 	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
@@ -124,6 +143,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 *
 	 * @param lessonReq 课请求体
 	 * @return {@code BaseRsp<ListRsp<AdminLessonListBo>> }
+	 * @throws
+	 * @see ListLessonReq
+	 * @see BaseRsp<ListRsp<AdminLessonListBo>>
 	 */
 	@ApiOperation("分页查询课时列表")
 	@GetMapping("/list")
@@ -174,6 +196,10 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 * @param courseId 课程id
 	 * @param lessonId 课id
 	 * @return {@code BaseRsp<AdminLessonBo> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<AdminLessonBo>
 	 */
 	@ApiOperation("后台课时详情查询接口")
 	@GetMapping("")
@@ -194,6 +220,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 *
 	 * @param lessonAddReq 课新增请求体
 	 * @return {@code BaseRsp<CourseLesson> }
+	 * @throws
+	 * @see LessonAddReq
+	 * @see BaseRsp<CourseLesson>
 	 */
 	@ApiOperation("课时信息新增")
 	@PostMapping("")
@@ -225,6 +254,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 *
 	 * @param lessonUpdateReq 课更新请求体
 	 * @return {@code BaseRsp<CourseLesson> }
+	 * @throws
+	 * @see LessonUpdateReq
+	 * @see BaseRsp<CourseLesson>
 	 */
 	@ApiOperation("课时信息修改")
 	@PatchMapping("")
@@ -264,6 +296,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 *
 	 * @param batchDeleteReq 批量删除请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see BatchDeleteReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("课时信息删除")
 	@DeleteMapping("/batch")
@@ -301,6 +336,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<List<AttachmentBo>> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<AttachmentBo>>
 	 */
 	@ApiOperation("课时附件查询")
 	@GetMapping("/attachment")
@@ -324,6 +362,10 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 * @param courseId 课程id
 	 * @param lessonId 课id
 	 * @return {@code BaseRsp<AdminLessonPracticeBo> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<AdminLessonPracticeBo>
 	 */
 	@ApiOperation("课后练习查询")
 	@GetMapping("/practice")
@@ -346,6 +388,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 *
 	 * @param practiceReq 实践请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see AddLessonPracticeReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("课后练习修改")
 	@PatchMapping("/practice")
@@ -363,6 +408,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 *
 	 * @param resourcePublicReq 资源公共请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see ResourcePublicReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("课时练习公开与隐藏")
 	@PatchMapping("/practice/batch_public")
@@ -379,6 +427,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 *
 	 * @param importLessonReq 导入课请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see ImportLessonReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("课时导入")
 	@PostMapping("/import")
@@ -394,6 +445,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 *
 	 * @param multipartFile Multipart 文件
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see MultipartFile
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("课时新增附件上传")
 	@PostMapping("/upload_attachment")
@@ -411,6 +465,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 *
 	 * @param lessonSceneReq 课场景请求体
 	 * @return {@code BaseRsp<JSONObject> }
+	 * @throws
+	 * @see SceneOperationReq
+	 * @see BaseRsp<JSONObject>
 	 */
 	@ApiOperation("后台课时场景启动")
 	@PostMapping("/start_scene")
@@ -430,6 +487,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 *
 	 * @param sceneStatusReq 场景状态请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see SceneStatusReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("后台课时场景暂停与恢复")
 	@PatchMapping("/update_status")
@@ -449,6 +509,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 *
 	 * @param lessonSceneReq 课场景请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see SceneOperationReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("后台课时场景删除")
 	@DeleteMapping("/delete_scene")
@@ -467,6 +530,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 *
 	 * @param sceneNodeReq 场景节点请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see SceneNodeReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("后台课时节点重启")
 	@PostMapping("/node_restart")
@@ -485,6 +551,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 *
 	 * @param sceneNodeReq 场景节点请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see SceneNodeReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("后台课时节点重建")
 	@PostMapping("/node_recreate")
@@ -502,6 +571,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 *
 	 * @param lessonId 课id
 	 * @return {@code BaseRsp<List<SceneMonitorBo>> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<SceneMonitorBo>>
 	 */
 	@ApiOperation("后台课时场景监控")
 	@GetMapping("/lesson_monitor")
@@ -518,6 +590,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 * 获取监控刷新间隔
 	 *
 	 * @return {@code BaseRsp<Integer> }
+	 * @throws
+	 * @see BaseRsp<Integer>
 	 */
 	@ApiOperation("场景监控信息刷新时间")
 	@GetMapping("/monitor_refresh_interval")
@@ -534,6 +608,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 *
 	 * @param courseId 课程id
 	 * @return {@code BaseRsp<List<SimpleDataRes>> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<SimpleDataRes>>
 	 */
 	@ApiOperation("查询课程下课时简易数据")
 	@GetMapping("/simple/list")
@@ -555,6 +632,15 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp<>(simpleDataRes);
 	}
 
+	/**
+	 * 获取拓扑场景
+	 *
+	 * @param lessonId 课时id
+	 * @return {@code BaseRsp<TopoSceneDataBo> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<TopoSceneDataBo>
+	 */
 	@ApiOperation("课时场景拓扑信息查询")
 	@GetMapping("/scene_topo")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -573,6 +659,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 *
 	 * @param lessonUpdateReq
 	 * @return
+	 * @throws
+	 * @see LessonUpdateReq
+	 * @see CourseLesson
 	 */
 	private CourseLesson updateReqToEntity(LessonUpdateReq lessonUpdateReq) {
 		CourseLesson courseLesson = BeanUtils.copy(lessonUpdateReq, CourseLesson.class);
@@ -611,6 +700,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 *
 	 * @param lessonAddReq
 	 * @return
+	 * @throws
+	 * @see LessonAddReq
+	 * @see CourseLesson
 	 */
 	private CourseLesson addReqToEntity(LessonAddReq lessonAddReq) {
 

@@ -39,7 +39,9 @@ import java.util.List;
  * 管理学习统计Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 @Api(tags = "oj-后台学习统计相关api")
 @RestController
@@ -50,12 +52,16 @@ public class AdminLearnStatisticController {
 
 	/**
 	 * 课程学习统计学Service
+	 *
+	 * @see CourseLearnStatisticsService
 	 */
 	@Autowired
 	private CourseLearnStatisticsService courseLearnStatisticsService;
 
 	/**
 	 * 课程类别Service
+	 *
+	 * @see CourseCategoryService
 	 */
 	@Autowired
 	private CourseCategoryService courseCategoryService;
@@ -64,6 +70,8 @@ public class AdminLearnStatisticController {
 	 * 课程直方图
 	 *
 	 * @return {@code BaseRsp<HistogramRes> }
+	 * @throws
+	 * @see BaseRsp<HistogramRes>
 	 */
 	@ApiOperation("课程统计柱状图")
 	@GetMapping("/course_histogram")
@@ -79,6 +87,8 @@ public class AdminLearnStatisticController {
 	 * 方向直方图
 	 *
 	 * @return {@code BaseRsp<HistogramRes> }
+	 * @throws
+	 * @see BaseRsp<HistogramRes>
 	 */
 	@ApiOperation("课程方向统计柱状图")
 	@GetMapping("/direction_histogram")
@@ -95,6 +105,9 @@ public class AdminLearnStatisticController {
 	 *
 	 * @param courseStatisticsListReq 课程统计学列表请求体
 	 * @return {@code BaseRsp<List<AdminCourseStatisticsRes>> }
+	 * @throws
+	 * @see CourseStatisticsListReq
+	 * @see BaseRsp<List<AdminCourseStatisticsRes>>
 	 */
 	@ApiOperation("课程学习统计list")
 	@GetMapping("/course_statistics_list")
@@ -122,6 +135,9 @@ public class AdminLearnStatisticController {
 	 *
 	 * @param pageReq 分页请求体
 	 * @return {@code BaseRsp<ListRsp<AdminLessonStatisticsRes>> }
+	 * @throws
+	 * @see LessonStatisticsListReq
+	 * @see BaseRsp<ListRsp<AdminLessonStatisticsRes>>
 	 */
 	@ApiOperation("课时学习统计list")
 	@GetMapping("/lesson_statistics_list")
@@ -139,6 +155,9 @@ public class AdminLearnStatisticController {
 	 *
 	 * @param pageReq 分页请求体
 	 * @return {@code BaseRsp<ListRsp<AdminLessonStatisticsDetailRes>> }
+	 * @throws
+	 * @see LessonStatisticsDetailReq
+	 * @see BaseRsp<ListRsp<AdminLessonStatisticsDetailRes>>
 	 */
 	@ApiOperation("课时报告统计detail")
 	@GetMapping("/lesson_statistics_detail")

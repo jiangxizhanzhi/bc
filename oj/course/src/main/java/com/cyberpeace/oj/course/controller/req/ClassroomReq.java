@@ -18,7 +18,10 @@ import lombok.Data;
  * 课堂请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -26,6 +29,8 @@ public class ClassroomReq implements Serializable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课程表编号")
 	@NotBlank(groups = { Update.class })
@@ -33,6 +38,8 @@ public class ClassroomReq implements Serializable {
 
 	/**
 	 * 课程id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课程编号")
 	@NotBlank(groups = { Create.class, Update.class },
@@ -41,6 +48,8 @@ public class ClassroomReq implements Serializable {
 
 	/**
 	 * 课id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课时编号")
 	@NotBlank(groups = { Create.class, Update.class },
@@ -49,6 +58,8 @@ public class ClassroomReq implements Serializable {
 
 	/**
 	 * 组织id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("组织编号")
 	@NotBlank(groups = { Create.class, Update.class },
@@ -57,6 +68,8 @@ public class ClassroomReq implements Serializable {
 
 	/**
 	 * 开始时间
+	 *
+	 * @see Date
 	 */
 	@ApiModelProperty("开始时间")
 	@NotNull(groups = { Create.class, Update.class },
@@ -65,6 +78,8 @@ public class ClassroomReq implements Serializable {
 
 	/**
 	 * 结束时间
+	 *
+	 * @see Date
 	 */
 	@ApiModelProperty("结束时间")
 	@NotNull(groups = { Create.class, Update.class },
@@ -73,6 +88,8 @@ public class ClassroomReq implements Serializable {
 
 	/**
 	 * 训练计划id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("训练计划编号")
 	private String trainPlanId;

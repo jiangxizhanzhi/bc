@@ -17,7 +17,10 @@ import java.util.List;
  * 课程课程
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @TableName("oj_course_lesson")
@@ -25,6 +28,8 @@ public class CourseLesson extends BaseTable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	@ApiModelProperty("资源编号")
@@ -32,54 +37,72 @@ public class CourseLesson extends BaseTable {
 
 	/**
 	 * 内置
+	 *
+	 * @see Boolean
 	 */
 	@ApiModelProperty("是否为内置")
 	private Boolean builtin;
 
 	/**
 	 * 课程id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课程编号")
 	private String courseId;
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("名称")
 	private String name;
 
 	/**
 	 * 类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("课时类型")
 	private Integer type;
 
 	/**
 	 * 讲义类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("讲义类型")
 	private Integer handoutType;
 
 	/**
 	 * 讲义 URL
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("讲义路径或者内容")
 	private String handoutUrl;
 
 	/**
 	 * 视频 URL
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("视频地址")
 	private String videoUrl;
 
 	/**
 	 * 难度
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("难度")
 	private Integer difficulty;
 
 	/**
 	 * 是否公开
+	 *
+	 * @see Boolean
 	 */
 	@TableField("public")
 	@ApiModelProperty("是否公开")
@@ -87,78 +110,104 @@ public class CourseLesson extends BaseTable {
 
 	/**
 	 * 附件id列表
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("附件编号")
 	private String attachmentIds;
 
 	/**
 	 * 必修
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("必修")
 	private Integer compulsory;
 
 	/**
 	 * 销毁延迟
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("销毁延时")
 	private Integer destroyDelay;
 
 	/**
 	 * 期间
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("课时时长")
 	private Integer duration;
 
 	/**
 	 * 拓扑id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("拓扑编号")
 	private String topoId;
 
 	/**
 	 * 知识
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("知识点")
 	private String knowledge;
 
 	/**
 	 * 场景共享模式
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("场景模式")
 	private Integer sceneShareMode;
 
 	/**
 	 * origin markdown 文件
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("md讲义原文件地址")
 	private String originMarkdownFile;
 
 	/**
 	 * 创造用户id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("创建用户")
 	private String createUserId;
 
 	/**
 	 * 纸id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("试卷编号")
 	private String paperId;
 
 	/**
 	 * 热
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("热度")
 	private Integer heat;
 
 	/**
 	 * 论文 公共
+	 *
+	 * @see Boolean
 	 */
 	@ApiModelProperty("课后练习公开")
 	private Boolean paperPublic;
 
 	/**
 	 * 路径
+	 *
+	 * @see String
 	 */
 	@TableField(exist = false,  value = "资管课时路径")
 	private String path;

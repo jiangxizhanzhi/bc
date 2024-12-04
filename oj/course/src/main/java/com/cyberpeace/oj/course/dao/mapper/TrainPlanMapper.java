@@ -14,7 +14,10 @@ import java.util.List;
  * 训练计划Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface TrainPlanMapper extends BaseMapper<TrainPlan> {
@@ -25,6 +28,10 @@ public interface TrainPlanMapper extends BaseMapper<TrainPlan> {
 	 * @param planName 计划名称
 	 * @param userId   用户id
 	 * @return {@code TrainPlan }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see TrainPlan
 	 */
 	TrainPlan selectByName(@Param("planName") String planName, @Param("userId") String userId);
 
@@ -33,6 +40,9 @@ public interface TrainPlanMapper extends BaseMapper<TrainPlan> {
 	 *
 	 * @param userId 用户id
 	 * @return {@code List<TrainPlan> }
+	 * @throws
+	 * @see String
+	 * @see List<TrainPlan>
 	 */
 	List<TrainPlan> selectByUser(@Param("userId") String userId);
 
@@ -40,6 +50,8 @@ public interface TrainPlanMapper extends BaseMapper<TrainPlan> {
 	 * 都
 	 *
 	 * @return {@code List<TrainPlan> }
+	 * @throws
+	 * @see List<TrainPlan>
 	 */
 	List<TrainPlan> all();
 
@@ -54,6 +66,15 @@ public interface TrainPlanMapper extends BaseMapper<TrainPlan> {
 	 * @param isAdmin        是管理员
 	 * @param courseIds      课程id列表
 	 * @return {@code IPage<TrainPlanRsp> }
+	 * @throws
+	 * @see Page
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see boolean
+	 * @see boolean
+	 * @see List<String>
+	 * @see IPage<TrainPlanRsp>
 	 */
 	IPage<TrainPlanRsp> listTrainPlan(Page page, String pattern, String organizationId, String userId, boolean isSuperUser, boolean isAdmin, List<String> courseIds);
 }

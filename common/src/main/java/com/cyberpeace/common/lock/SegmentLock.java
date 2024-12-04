@@ -7,7 +7,9 @@ import java.util.concurrent.locks.ReentrantLock;
  * 段锁
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @since 1.0.0
  */
 public class SegmentLock {
 
@@ -17,6 +19,8 @@ public class SegmentLock {
     private int defaultSegmentCount = 16;
     /**
      * 锁
+     *
+     * @see Lock[]
      */
     private final Lock[] locks;
 

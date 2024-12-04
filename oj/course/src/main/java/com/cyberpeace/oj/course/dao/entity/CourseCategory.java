@@ -12,7 +12,10 @@ import lombok.*;
  * 课程类别
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @Builder
@@ -23,27 +26,37 @@ public class CourseCategory extends BaseTable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	private String name;
 
 	/**
 	 * 课程类型
+	 *
+	 * @see Integer
 	 */
 	private Integer courseType;
 
 	/**
 	 * 代号
+	 *
+	 * @see String
 	 */
 	private String code;
 
 	/**
 	 * 父母id
+	 *
+	 * @see String
 	 */
 	private String parentId;
 

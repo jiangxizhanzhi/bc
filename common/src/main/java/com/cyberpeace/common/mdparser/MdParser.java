@@ -81,7 +81,10 @@ public class MdParser {
         Field[] fields = ObjUtil.getFields(obj);
         if (fields.length <= CommonConstant.ZERO) {
             try {
-                file.createNewFile();
+                boolean newFileFlag = file.createNewFile();
+                if (!newFileFlag) {
+                    log.info("doWrite failed to create new file: [{}]", file.getAbsolutePath());
+                }
             } catch (IOException e) {
                 log.error("File create failed! file_path=[{}]", file.getAbsolutePath());
             }

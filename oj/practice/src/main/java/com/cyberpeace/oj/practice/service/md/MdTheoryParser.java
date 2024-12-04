@@ -122,13 +122,21 @@ public class MdTheoryParser {
 	private void doWrite(Object obj, File file) {
 		FileUtil.mkdirs(file.getParentFile().getAbsolutePath());
 		if (file.exists()) {
-			file.delete();
+			if(file.delete()) {
+				log.debug("File delete success! file_path=[{}]", file.getAbsolutePath());
+			}else {
+				log.error("File delete failed! file_path=[{}]", file.getAbsolutePath());
+			}
 		}
 
 		Field[] fields = ObjUtil.getFields(obj);
 		if (fields.length <= CommonConstant.ZERO) {
 			try {
-				file.createNewFile();
+				if (file.createNewFile()) {
+					log.debug("File create success! file_path=[{}]", file.getAbsolutePath());
+				}else {
+					log.error("File delete failed! file_path=[{}]", file.getAbsolutePath());
+				}
 			} catch (IOException e) {
 				log.error("File create failed! file_path=[{}]", file.getAbsolutePath());
 			}
@@ -173,7 +181,11 @@ public class MdTheoryParser {
 		} catch (Exception e) {
 			log.error("Markdown content write failed！file_path=[{}], catch error:",
 					file.getAbsolutePath(), e);
-			file.delete();
+			if(file.delete()){
+				log.debug("File delete success! file_path=[{}]", file.getAbsolutePath());
+			}else {
+				log.error("File delete failed! file_path=[{}]", file.getAbsolutePath());
+			}
 			throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
 		} finally {
 			try {

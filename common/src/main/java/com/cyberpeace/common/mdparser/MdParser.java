@@ -71,7 +71,11 @@ public class MdParser {
     private void doWrite(Object obj, File file) {
         FileUtil.mkdirs(file.getParentFile().getAbsolutePath());
         if (file.exists()) {
-            file.delete();
+            if (file.delete()){
+                log.debug("File delete success! file_path=[{}]", file.getAbsolutePath());
+            } else {
+                log.error("File delete failed! file_path=[{}]", file.getAbsolutePath());
+            }
         }
 
         Field[] fields = ObjUtil.getFields(obj);
@@ -120,7 +124,11 @@ public class MdParser {
             bw.flush();
         } catch (Exception e) {
             log.error("Markdown content write failed！file_path=[{}], catch error:", file.getAbsolutePath(), e);
-            file.delete();
+            if (file.delete()) {
+                log.debug("File delete success! file_path=[{}]", file.getAbsolutePath());
+            } else {
+                log.error("File delete failed! file_path=[{}]", file.getAbsolutePath());
+            }
             throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
         } finally {
             try {

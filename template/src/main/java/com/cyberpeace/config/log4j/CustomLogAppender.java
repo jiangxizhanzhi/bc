@@ -231,7 +231,11 @@ public class CustomLogAppender extends FileAppender {
         File target = new File(scheduledFilename);
         if (target.exists()) {
             try {
-                target.delete();
+                if(target.delete()){
+                    log.debug("Delete file success! file_path=[{}]", scheduledFilename);
+                } else {
+                    log.error("Delete file failed! file_path=[{}]", scheduledFilename);
+                }
             } catch (SecurityException e) {
                 e.printStackTrace();
             }

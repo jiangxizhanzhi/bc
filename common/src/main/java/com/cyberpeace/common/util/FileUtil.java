@@ -262,7 +262,9 @@ public class FileUtil {
 			log.error("setResponse error:", e);
 		} finally {
 			if (delete.equals(Boolean.TRUE) && null != file && file.exists()) {
-				file.delete();
+				if(!file.delete()) {
+					log.error("delete file is false: {}", file.getAbsolutePath());
+				}
 			}
 		}
 	}
@@ -578,7 +580,9 @@ public class FileUtil {
 
 			for (File subFile : files) {
 				if (subFile.isFile()) {
-					subFile.delete();
+					if(!subFile.delete()) {
+						log.error("Delete file failed not true! file_path=[{}]", subFile.getAbsolutePath());
+					}
 				} else {
 					FileUtils.deleteDirectory(subFile);
 				}

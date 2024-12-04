@@ -143,7 +143,6 @@ public class MdTheoryParser {
 			return;
 		}
 
-		FileWriter fw = null;
 		BufferedWriter bw = null;
 		OutputStreamWriter osw = null;
 
@@ -189,9 +188,6 @@ public class MdTheoryParser {
 			throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
 		} finally {
 			try {
-				if (null != fw) {
-					fw.close();
-				}
 				if (null != bw) {
 					bw.close();
 				}

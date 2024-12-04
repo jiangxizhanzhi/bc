@@ -238,11 +238,6 @@ public class ClassroomEventListener extends MessageListener {
 		}
 
 		OjLocalScene ojLocalScene = validateOjLocalScene(businessId);
-		if (ojLocalScene == null) {
-			log.warn("ClassroomEventListener.onSceneSuccess error: oj_local_scene not found, businessId=[{}]", businessId);
-			return false;
-		}
-
 		ClassroomGroupInfo groupInfo = classroomGroupInfoMapper
 				.selectById(ojLocalScene.getBusinessId());
 		if (null == groupInfo) {

@@ -217,4 +217,6 @@ public final class CrCommonConstants {
 	 */
 	public static final int PER_PAGE = 9999;
 
+	public static final String TIME_FORMATION = "yyyy-MM-dd HH:mm:ss";
+
 }

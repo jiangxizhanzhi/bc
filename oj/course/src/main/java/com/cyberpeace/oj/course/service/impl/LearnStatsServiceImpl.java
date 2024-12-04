@@ -303,7 +303,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 			}
 			try {
 				countDownLatch.countDown();
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				log.warn("{}|countDownLatch error", traceId);
+			}
 		});
 
 		// 完成报告排行
@@ -323,7 +325,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 			}
 			try {
 				countDownLatch.countDown();
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				log.warn("{}|countDownLatch error", traceId);
+			}
 		});
 
 		// 完成课后练习排行
@@ -342,7 +346,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 			}
 			try {
 				countDownLatch.countDown();
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				log.warn("{}|countDownLatch error", traceId);
+			}
 		});
 
 		// 获取竞赛的考试排行
@@ -371,9 +377,12 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 		}
 
 		try {
-			countDownLatch.await(300, TimeUnit.SECONDS);
+			if(!countDownLatch.await(300, TimeUnit.SECONDS)) {
+				log.error("countDownLatch task timeout");
+			}
 		} catch (InterruptedException e) {
 			log.error("task interrupted", e);
+			Thread.currentThread().interrupt();
 		}
 
 		return userStatsRankBo;

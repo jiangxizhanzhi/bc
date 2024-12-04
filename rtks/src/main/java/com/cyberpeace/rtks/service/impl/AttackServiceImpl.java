@@ -2,10 +2,10 @@ package com.cyberpeace.rtks.service.impl;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
-import javax.annotation.PostConstruct;
-
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -14,16 +14,13 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
-import com.cyberpeace.rtks.dao.entity.AttackTrainRelation;
 import com.cyberpeace.rtks.dao.mapper.AttackMapper;
 import com.cyberpeace.rtks.service.AttackService;
 import com.cyberpeace.rtks.service.bo.career.*;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -40,13 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class AttackServiceImpl implements AttackService {
-
-	/**
-	 * 锁
-	 *
-	 * @see Object
-	 */
-	private final Object lock = new Object();
 
 	/**
 	 * 攻击Mapper
@@ -69,7 +59,8 @@ public class AttackServiceImpl implements AttackService {
 	 *
 	 * @see AttackCache
 	 */
-	private volatile AttackCache cachedAttacks;
+	Cache<String, AttackCache> cachedAttackMap = CacheBuilder.newBuilder()
+			.expireAfterAccess(60 * 5L, TimeUnit.SECONDS).build();
 
 	/**
 	 * 获取攻击
@@ -80,7 +71,7 @@ public class AttackServiceImpl implements AttackService {
 	 */
 	@Override
 	public List<AttackCategoryBo<AttackBackBo>> getAttacks() {
-		ensureAttackCache();
+		final AttackCache cachedAttacks = ensureAttackCache();
 		List<AttackCategoryBo<AttackBackBo>> res;
 		if (CommonContext.isChinese()) {
 			res = BeanUtils.deepCopy(cachedAttacks, AttackBackZh.class).getZh();
@@ -116,7 +107,7 @@ public class AttackServiceImpl implements AttackService {
 	 */
 	@Override
 	public List<AttackCategoryBo<AttackFrontBo>> getAttacksByTraining(String businessTemplateId) {
-		ensureAttackCache();
+		final AttackCache cachedAttacks = ensureAttackCache();
 		List<AttackCategoryBo<AttackFrontBo>> res;
 		if (CommonContext.isChinese()) {
 			res = BeanUtils.deepCopy(cachedAttacks, AttackFrontZh.class).getZh();
@@ -146,7 +137,7 @@ public class AttackServiceImpl implements AttackService {
 	 */
 	@Override
 	public AttackDetail getDetailById(String resourceId) {
-		ensureAttackCache();
+		final AttackCache cachedAttacks = ensureAttackCache();
 		AttackDetail detail = new AttackDetail();
 		List<AttackCategoryBo<FrameItemBase>> cache;
 		if (CommonContext.isChinese()) {
@@ -206,7 +197,7 @@ public class AttackServiceImpl implements AttackService {
 	 */
 	@Override
 	public List<AttackCategoryBo<FrameItemBase>> getCache() {
-		ensureAttackCache();
+		final AttackCache cachedAttacks = ensureAttackCache();
 		if (CommonContext.isChinese()) {
 			return cachedAttacks.getZh();
 		} else {
@@ -219,14 +210,19 @@ public class AttackServiceImpl implements AttackService {
 	 *
 	 * @throws
 	 */
-	private void ensureAttackCache() {
-		if (null == cachedAttacks) {
-			synchronized (lock) {
-				if (null == cachedAttacks) {
-					initializeAttacks();
+	private AttackCache ensureAttackCache() {
+		String key = "attack";
+		AttackCache attack = cachedAttackMap.getIfPresent(key);
+		if (null == attack) {
+			synchronized (this) {
+				attack = cachedAttackMap.getIfPresent(key);
+				if (null == attack){
+					attack = initializeAttacks();
+					cachedAttackMap.put(key, attack);
 				}
 			}
 		}
+		return attack;
 	}
 
 	/**
@@ -234,9 +230,9 @@ public class AttackServiceImpl implements AttackService {
 	 *
 	 * @throws
 	 */
-	private void initializeAttacks() {
+	private AttackCache initializeAttacks() {
 		List<AttackContext> attackContextList = attackMapper.getAll();
-		cachedAttacks = new AttackCache();
+		AttackCache cachedAttacks = new AttackCache();
 		String categoryId = "";
 		AttackCategoryBo<FrameItemBase> categoryBoZh = new AttackCategoryBo<>();
 		AttackCategoryBo<FrameItemBase> categoryBoEn = new AttackCategoryBo<>();
@@ -260,7 +256,8 @@ public class AttackServiceImpl implements AttackService {
 			categoryBoZh.getAttacks().add(itemZh);
 			categoryBoEn.getAttacks().add(itemEn);
 		}
-	}
+        return cachedAttacks;
+    }
 }
 
 /**

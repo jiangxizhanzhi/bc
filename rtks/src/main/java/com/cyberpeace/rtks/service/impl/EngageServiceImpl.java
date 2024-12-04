@@ -3,7 +3,10 @@ package com.cyberpeace.rtks.service.impl;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.compress.utils.Lists;
@@ -43,13 +46,6 @@ import lombok.extern.slf4j.Slf4j;
 public class EngageServiceImpl implements EngageService {
 
 	/**
-	 * 锁
-	 *
-	 * @see Object
-	 */
-	private final Object lock = new Object();
-
-	/**
 	 * EngageMapper
 	 *
 	 * @see EngageMapper
@@ -70,7 +66,8 @@ public class EngageServiceImpl implements EngageService {
 	 *
 	 * @see EngageCache
 	 */
-	private volatile EngageCache cachedEngages;
+	Cache<String, EngageCache> cachedAttackMap = CacheBuilder.newBuilder()
+			.expireAfterAccess(60 * 5L, TimeUnit.SECONDS).build();
 
 	/**
 	 * 获取从事
@@ -81,7 +78,7 @@ public class EngageServiceImpl implements EngageService {
 	 */
 	@Override
 	public List<EngageCategoryBo<EngageBackBo>> getEngages() {
-		ensureEngageCache();
+		final EngageCache cachedEngages = ensureEngageCache();
 		List<EngageCategoryBo<EngageBackBo>> res;
 		if (CommonContext.isChinese()) {
 			res = JsonUtil.toJsonObject(cachedEngages.getJson(), EngageBackZh.class).getZh();
@@ -118,7 +115,7 @@ public class EngageServiceImpl implements EngageService {
 	 */
 	@Override
 	public EngageDetail getDetailById(String resourceId) {
-		ensureEngageCache();
+		final EngageCache cachedEngages = ensureEngageCache();
 		EngageDetail detail = new EngageDetail();
 		List<EngageCategoryBo<FrameItemBase>> cache;
 		if (CommonContext.isChinese()) {
@@ -186,7 +183,7 @@ public class EngageServiceImpl implements EngageService {
 	 */
 	@Override
 	public List<EngageCategoryBo<EngageFrontBo>> getEngagesByTraining(String businessTemplateId) {
-		ensureEngageCache();
+		final EngageCache cachedEngages = ensureEngageCache();
 		List<EngageCategoryBo<EngageFrontBo>> res;
 		if (CommonContext.isChinese()) {
 			res = JsonUtil.toJsonObject(cachedEngages.getJson(), EngageFrontZh.class).getZh();
@@ -216,7 +213,7 @@ public class EngageServiceImpl implements EngageService {
 	 */
 	@Override
 	public List<EngageCategoryBo<FrameItemBase>> getCache() {
-		ensureEngageCache();
+		final EngageCache cachedEngages = ensureEngageCache();
 		if (CommonContext.isChinese()) {
 			return cachedEngages.getZh();
 		}
@@ -228,14 +225,19 @@ public class EngageServiceImpl implements EngageService {
 	 *
 	 * @throws
 	 */
-	private void ensureEngageCache() {
-		if (null == cachedEngages) {
-			synchronized (lock) {
-				if (null == cachedEngages) {
-					initializeEngages();
+	private EngageCache ensureEngageCache() {
+		String key = "engage";
+		EngageCache engageCache = cachedAttackMap.getIfPresent(key);
+		if (null == engageCache) {
+			synchronized (this) {
+				engageCache = cachedAttackMap.getIfPresent(key);
+				if (null == engageCache){
+					engageCache = initializeEngages();
+					cachedAttackMap.put(key, engageCache);
 				}
 			}
 		}
+		return engageCache;
 	}
 
 	/**
@@ -243,9 +245,9 @@ public class EngageServiceImpl implements EngageService {
 	 *
 	 * @throws
 	 */
-	private void initializeEngages() {
+	private EngageCache initializeEngages() {
 		List<EngageContext> engageContextList = engageMapper.getAll();
-		cachedEngages = new EngageCache();
+		EngageCache cachedEngages = new EngageCache();
 		String categoryId = "";
 		String subCategoryId = "";
 		EngageCategoryBo<FrameItemBase> categoryBoZh = new EngageCategoryBo<>();
@@ -283,6 +285,7 @@ public class EngageServiceImpl implements EngageService {
 		}
 
 		cachedEngages.setJson(JsonUtil.toJsonString(cachedEngages));
+		return cachedEngages;
 	}
 
 }

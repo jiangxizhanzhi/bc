@@ -32,6 +32,7 @@ import com.google.common.collect.Lists;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.bytedeco.opencv.presets.opencv_core;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -91,6 +92,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	@Autowired
 	private SituationHandlerServiceImpl situationHandlerServiceImpl;
+
+	@Autowired
+	private  DynamicSchemeService dynamicSchemeService;
 
 	//允许上传的图片格式
 	public static String PICTURE_TYPE = "PNG,JPG,JPEG,GIF,SVG";
@@ -495,12 +499,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		}
 
 		String imageUuid = remoteTerminalService.queryImageId(attackMessageReq.getTargetId());
-		DeviceInfo deviceInfo;
-		List<String> leakIds = Lists.newArrayList();
 		if (imageUuid != null) {
 			// 获取设备信息
-			deviceInfo = remoteTerminalService.getById(imageUuid);
-			leakIds = deviceInfo.getVulns();
+			DeviceInfo deviceInfo = remoteTerminalService.getById(imageUuid);
 			if (deviceInfo != null && deviceInfo.getVulns() != null && deviceInfo.getVulns().size() != 0) {
 				List<String> vulns = deviceInfo.getVulns();
 				List<Vuln> leaks = dynamicSchemeMapper.queryLeakByIds(vulns);
@@ -556,8 +557,8 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		}
 		attackInfo.setDuration(attackMessageReq.getDurationTime());
 		//校验漏洞是否匹配
-
-//		List<String> leaks = elementInfoMap.get(attackMessageReq.getTargetId()).getLeakInfos().stream().map(LeakInfo::getName).collect(Collectors.toList());
+		List<Vuln> vulnList = dynamicSchemeService.queryLeak(null, attackMessageReq.getTargetId());
+		List<String> leakIds = vulnList.stream().map(Vuln::getResourceId).collect(Collectors.toList());
 		if (leakIds.contains(attackMessageReq.getLeak())) {
 			attackInfo.setTargetId(attackMessageReq.getTargetId());
 			attackType = AttackType.getEnumByKeyWord(attackMessageReq.getType(), AttackType.class);

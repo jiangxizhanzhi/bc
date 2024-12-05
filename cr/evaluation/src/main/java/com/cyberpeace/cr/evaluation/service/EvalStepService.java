@@ -29,4 +29,6 @@ public interface EvalStepService extends IService<EvalStep> {
 	void addLoad(EvalStepLoadAddReq addReq);
 
 	void addLoadExecutionResult(EvalLoadResultAddReq addReq);
+
+	void pushLoadResult(String sceneId, Integer interval, String endTime);
 }

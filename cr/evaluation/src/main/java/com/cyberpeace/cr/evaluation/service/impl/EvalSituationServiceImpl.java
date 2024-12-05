@@ -170,6 +170,20 @@ public class EvalSituationServiceImpl implements EvalSituationService {
         });
     }
 
+    @Override
+    public void basicPublish(JSONObject msgObject) {
+        try (Connection connection = ConnectionUtil.getConnection();
+             Channel channel = connection.createChannel();
+        ) {
+            channel.basicPublish(RBSITUATIONEXCHANGE, msgObject.getString("scene"), null,
+                    msgObject.toString().getBytes(StandardCharsets.UTF_8));
+            log.info("doPushLoadResult resourceId:{}", msgObject.getString("scene"));
+        } catch (Exception e) {
+            log.error("catch error:", e);
+            log.error(ERRORLOG, mqHost, mqPort, userName, password);
+        }
+    }
+
     private void doPushLoadResult(String resourceId, MultipartFile multipartFile, File file) {
         String mpSceneId = localSceneService.getMpSceneIdByBusinessInstanceId(resourceId);
         JSONObject scene = remoteSceneService.getById(mpSceneId, null);

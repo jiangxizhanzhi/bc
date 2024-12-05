@@ -296,6 +296,15 @@ public class EvalTestController {
 		return new BaseRsp<>(Boolean.TRUE);
 	}
 
+	@ApiOperation("发送回放载荷执行动效")
+	@GetMapping("/pushLoadResult")
+	public BaseRsp<Boolean> pushLoadResult(@RequestParam(value = "scene_id") String sceneId,
+										   @RequestParam(value = "interval") Integer interval,
+										   @RequestParam(value = "end_time") String endTime) {
+		evalStepService.pushLoadResult(sceneId,interval,endTime);
+		return new BaseRsp<>(Boolean.TRUE);
+	}
+
 	@ApiOperation("获取该场景下的所有阶段")
 	@GetMapping("/scene/stages")
 	public BaseRsp<List<EvalCodeStageRsp>> getAllStagesBySceneId(@ApiParam(name = "scene_id", value = "场景id",

@@ -167,4 +167,6 @@ public class EvalLoadResultAddReq implements Serializable {
      * 结果状态名称
      */
     private String resultStatusName;
+
+    private String resourceId;
 }

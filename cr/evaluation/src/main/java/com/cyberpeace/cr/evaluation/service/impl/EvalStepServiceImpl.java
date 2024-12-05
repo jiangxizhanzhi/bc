@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.evaluation.controller.req.EvalLoadResultAddReq;
@@ -20,6 +19,7 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalInstanceStepMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalStepMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalStepTemplateMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTestInstanceMapper;
+import com.cyberpeace.cr.evaluation.service.EvalSituationService;
 import com.cyberpeace.cr.evaluation.service.EvalStepService;
 import com.cyberpeace.cr.evaluation.service.EvalTestService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -27,6 +27,7 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.SceneMpContext;
 import com.cyberpeace.integratation.service.RemoteLoadService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.cyberpeace.situation.constant.ws.AttackType;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -77,6 +78,9 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 
     @Autowired
     private SituationHandlerService situationHandlerService;
+
+    @Autowired
+    private EvalSituationService evalSituationService;
 
     @Override
     public Map<String, String> createByTemplate(List<String> templateIdList, String testId) {
@@ -285,7 +289,6 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 
     @Override
     public void addLoadExecutionResult(EvalLoadResultAddReq addReq) {
-//		String mpSceneId = localSceneService.getMpSceneIdByBusinessInstanceId(addReq.getSceneId());
         JSONObject scene = remoteSceneService.getById(addReq.getSceneId(), null);
         Map<String, JSONObject> elementsMap = scene.getJSONObject("scene")
                 .getJSONObject("plugins")
@@ -303,7 +306,6 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
         for (Map.Entry<String, JSONObject> entry : entries) {
             String elementId = entry.getKey();
             JSONObject element = entry.getValue();
-
             if (StringUtils.isNotBlank(element.getString("load_tool_id"))) {
                 taskIdToMap.put(element.getString("resource_id"), elementId);
                 loadElementIds.add(elementId);
@@ -312,64 +314,31 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
             }
         }
         Random random = new Random();
+//        包装攻击数据发送至3D态势
         JSONObject rbSituationAttack = new JSONObject();
         String srcNode = taskIdToMap.get(addReq.getTaskId());
-        rbSituationAttack.put("code", "attack_event_element-element");
-        rbSituationAttack.put("look_at_target", false);
-        rbSituationAttack.put("scene_id", addReq.getSceneId());
-        rbSituationAttack.put("scene_name", scene.getString("name"));
-        rbSituationAttack.put("source_id", taskIdToMap.get(addReq.getTaskId()));
-        rbSituationAttack.put("source_id_name", idNameMap.get(taskIdToMap.get(addReq.getTaskId())));
-        if (elementIds.size() > 0) {
-            rbSituationAttack.put("target_id", idNameMap.get(getdstNode(srcNode, elementIds, random)));
-        } else {
-            rbSituationAttack.put("target_id", idNameMap.get(getdstNode(srcNode, loadElementIds, random)));
-        }
-        rbSituationAttack.put("target_id_name", "testvmware1");
-        rbSituationAttack.put("type", 0);
-        rbSituationAttack.put("use_name", 1);
+        rbSituationAttack.put("code", "director_scheduling_element-element");
         JSONObject data = new JSONObject();
-        data.put("category", "attack");
-        data.put("description", "攻击阶段:漏洞扫描与验证");
+        data.put("category", 4);
         data.put("duration", 3);
+        data.put("event_type", 1);
+        data.put("result", 1);
+        data.put("name", idNameMap.get(taskIdToMap.get(addReq.getTaskId())) + "载荷执行");
+        data.put("scene_id", addReq.getSceneId());
+        data.put("source_id", taskIdToMap.get(addReq.getTaskId()));
+        if (elementIds.size() > 0) {
+            data.put("target_id", getdstNode(srcNode, elementIds, random));
+        } else {
+            data.put("target_id", getdstNode(srcNode, loadElementIds, random));
+        }
         JSONObject lineStyle = new JSONObject();
         lineStyle.put("color", "#FF0000");
-        lineStyle.put("line_type", "fly");
-        lineStyle.put("width", 0);
-        data.put("line_style", "solid");
-        data.put("flow_type", lineStyle);
+        lineStyle.put("line_type", "straight");
+        lineStyle.put("width", 3);
+        data.put("line_style", lineStyle);
         rbSituationAttack.put("data", data);
-
         log.info("addLoadExecutionResult sendMessage begin.");
-		/*String a = "[\n" +
-				"    {\n" +
-				"      \"name\": \"自定义动效\",\n" +
-				"      \"status\": 1\n" +
-				"    },\n" +
-				"    {\n" +
-				"      \"name\": \"1.攻击阶段:漏洞扫描与验证\",\n" +
-				"      \"status\": 3\n" +
-				"    }\n" +
-				"  ]";
-		String b = "[\n" +
-				"    {\n" +
-				"      \"name\": \"自定义动效\",\n" +
-				"      \"status\": 0\n" +
-				"    },\n" +
-				"    {\n" +
-				"      \"name\": \"\",\n" +
-				"      \"status\": 2\n" +
-				"    }\n" +
-				"  ]";
-		JSONObject jsonObject1 = new JSONObject();
-		jsonObject1.put("code", "attack_schedule");
-		jsonObject1.put("data", JSON.parseArray(a));
-
-		situationHandlerService.pushDataToRoom(jsonObject1, addReq.getSceneId());*/
-        situationHandlerService.pushDataToRoom(rbSituationAttack, addReq.getSceneId());
-		/*jsonObject1.put("data", JSON.parseArray(b));
-		situationHandlerService.pushDataToRoom(jsonObject1, addReq.getSceneId());
-		System.out.println("66666");*/
+        situationHandlerService.pushDataToRoom(rbSituationAttack, rbSituationAttack.getJSONObject("data").getString("scene_id"));
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -380,6 +349,94 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+
+//        包装攻击数据至城市沙盘
+        JSONObject mqRbSituationAttack = new JSONObject();
+        mqRbSituationAttack.put("line_style", 1);
+        mqRbSituationAttack.put("src_action", 1);
+        mqRbSituationAttack.put("dst_action", 1);
+        mqRbSituationAttack.put("first_view", false);
+
+        AttackType successAttack = AttackType.SUCCESS_ATTACK;
+        mqRbSituationAttack.put("src_node", srcNode);
+        mqRbSituationAttack.put("attack_type", successAttack.getMsg());
+        if (elementIds.size() > 0) {
+            String dstNode = getdstNode(srcNode, elementIds, random);
+            mqRbSituationAttack.put("dst_node", dstNode);
+        } else {
+            mqRbSituationAttack.put("dst_node", data.get("target_id"));
+        }
+        Map<String, Object> msgMap = new HashMap<>();
+        msgMap.put("type", "mShowAttack");
+        msgMap.put("scene", addReq.getResourceId());
+        msgMap.put("data", JSON.toJSON(mqRbSituationAttack));
+        JSONObject msgObject = new JSONObject(msgMap);
+        evalSituationService.basicPublish(msgObject);
+
+    }
+
+    @Override
+    public void pushLoadResult(String sceneId, Integer interval, String endTime) {
+        JSONObject scene = remoteSceneService.getById(sceneId, null);
+        Map<String, JSONObject> elementsMap = scene.getJSONObject("scene")
+                .getJSONObject("plugins")
+                .getJSONObject("cpcloud")
+                .getObject("elements", Map.class);
+        List<JSONObject> elements = scene.getJSONObject("scene").getJSONObject("topology")
+                .getObject("elements", List.class);
+        Map<String, String> idNameMap = elements
+                .stream()
+                .collect(Collectors.toMap(e -> e.getString("id"), e -> e.getString("name")));
+        Set<Map.Entry<String, JSONObject>> entries = elementsMap.entrySet();
+        ArrayList<String> elementIds = new ArrayList<>();
+        ArrayList<String> loadElementIds = new ArrayList<>();
+        HashMap<String, String> taskIdToMap = new HashMap<>();
+        for (Map.Entry<String, JSONObject> entry : entries) {
+            String elementId = entry.getKey();
+            JSONObject element = entry.getValue();
+            if (StringUtils.isNotBlank(element.getString("load_tool_id"))) {
+                taskIdToMap.put(element.getString("resource_id"), elementId);
+                loadElementIds.add(elementId);
+            } else {
+                elementIds.add(elementId);
+            }
+        }
+        try {
+            List<JSONObject> loadResultList = remoteSceneService.getLoadResultByNodeIds(sceneId, interval, endTime);
+            //        包装攻击数据发送至3D态势
+            Random random = new Random();
+            for (JSONObject jsonObject : loadResultList) {
+                JSONObject rbSituationAttack = new JSONObject();
+                String srcNode = taskIdToMap.get(jsonObject.getString("task_id"));
+                rbSituationAttack.put("code", "director_scheduling_element-element");
+                JSONObject data = new JSONObject();
+                data.put("category", 4);
+                data.put("duration", 3);
+                data.put("event_type", 1);
+                data.put("result", 1);
+                data.put("name", idNameMap.get(taskIdToMap.get(jsonObject.getString("task_id"))) + "载荷执行");
+                data.put("scene_id", sceneId);
+                data.put("source_id", taskIdToMap.get(jsonObject.getString("task_id")));
+                if (elementIds.size() > 0) {
+                    data.put("target_id", getdstNode(srcNode, elementIds, random));
+                } else {
+                    data.put("target_id", getdstNode(srcNode, loadElementIds, random));
+                }
+                JSONObject lineStyle = new JSONObject();
+                lineStyle.put("color", "#FF0000");
+                lineStyle.put("line_type", "straight");
+                lineStyle.put("width", 3);
+                data.put("line_style", lineStyle);
+                rbSituationAttack.put("data", data);
+                log.info("addLoadExecutionResult sendMessage begin.");
+                situationHandlerService.pushDataToRoom(rbSituationAttack, rbSituationAttack.getJSONObject("data").getString("scene_id"));
+                Thread.sleep(1000);
+            }
+        }catch(Exception e){
+            log.error("pushLoadResult error");
+            e.printStackTrace();
+        }
+        System.out.println("666");
     }
 
     private String getdstNode(String srcNode, List<String> ids, Random random) {

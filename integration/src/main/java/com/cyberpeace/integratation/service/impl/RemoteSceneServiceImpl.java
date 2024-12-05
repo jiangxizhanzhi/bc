@@ -1,26 +1,13 @@
 package com.cyberpeace.integratation.service.impl;
 
-import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
-
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.JsonKeyConstant;
-import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
@@ -30,8 +17,19 @@ import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import javax.annotation.PostConstruct;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+
+import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
 
 @Slf4j
 @Service
@@ -148,6 +146,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String ADD_LOAD_RESULT;
 
+	private String LOAD_RESULT_BY_NODE;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -260,6 +260,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		IMAGE_UUID_LIST = MP_HOST + ConfigUtil.getContextProperty("image.uuid");
 
 		ADD_LOAD_RESULT = MP_HOST + ConfigUtil.getContextProperty("add.load.result");
+
+		LOAD_RESULT_BY_NODE = MP_HOST + ConfigUtil.getContextProperty("load.result.by.node");
 	}
 
 	@Override
@@ -701,6 +703,17 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public void addLoadResult(JSONObject addReq) {
 		HttpClientUtil.post(ADD_LOAD_RESULT, addReq, Boolean.class);
+	}
+
+	@Override
+	public List<JSONObject> getLoadResultByNodeIds(String sceneId, Integer interval, String endTime) {
+		try {
+			endTime = URLEncoder.encode(endTime, StandardCharsets.UTF_8.toString());
+		}catch (Exception e){
+			throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
+		}
+		String requestUrl = String.format(LOAD_RESULT_BY_NODE, sceneId,interval,endTime);
+		return HttpClientUtil.rawGet(requestUrl, List.class);
 	}
 
 }

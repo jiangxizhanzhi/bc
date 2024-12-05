@@ -92,9 +92,6 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	@Autowired
 	private SituationHandlerServiceImpl situationHandlerServiceImpl;
 
-	@Autowired
-	private  DynamicSchemeService dynamicSchemeService;
-
 	//允许上传的图片格式
 	public static String PICTURE_TYPE = "PNG,JPG,JPEG,GIF,SVG";
 
@@ -556,7 +553,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		}
 		attackInfo.setDuration(attackMessageReq.getDurationTime());
 		//校验漏洞是否匹配
-		List<Vuln> vulnList = dynamicSchemeService.queryLeak(null, attackMessageReq.getTargetId());
+		List<Vuln> vulnList = this.queryLeak(null, attackMessageReq.getTargetId());
 		List<String> leakIds = vulnList.stream().map(Vuln::getResourceId).collect(Collectors.toList());
 		if (leakIds.contains(attackMessageReq.getLeak())) {
 			attackInfo.setTargetId(attackMessageReq.getTargetId());

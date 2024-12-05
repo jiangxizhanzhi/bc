@@ -315,13 +315,13 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 						attackType.getActionType().isDurationTime(), attackType.getLeak(), attackType.getTool()));
 		webAttackTypes.addAll(map);
 		// 特殊选择处理
-		webAttackTypes.add(new WebAttackType("ddos", "拒绝服务", "element", true, true, "僵尸网络内攻击者可以控制受害机发送大量数据包，形成拒绝服务攻击", "LOIC"));
-		webAttackTypes.add(new WebAttackType("exploit", "漏洞利用", "element", true, true, "CVE-2021-44228+脏牛提权，Apache Log4j远程代码执行漏洞", "Exp"));
-		webAttackTypes.add(new WebAttackType("host-attack", "主机工具", "element", true, true, "对主机进行攻击", "LOIC"));
-		webAttackTypes.add(new WebAttackType("lateral-movement", "横向移动", "element", true, true, "MES应用服务器对统一安全管理平台发起横向移动", "LOIC"));
-		webAttackTypes.add(new WebAttackType("leveraging-remote-services", "远程服务", "element", true, true, "OwnCloud主机对MES应用服务器发起利用远程服务", "LOIC"));
-		webAttackTypes.add(new WebAttackType("network-scanning", "网络扫描", "element", true, true, "外部攻击机对WEB服务器发起网络扫描", "LOIC"));
-		webAttackTypes.add(new WebAttackType("trojan", "木马攻击", "element", true, true, "统一安全管理平台对工程师站发起木马攻击", "LOIC"));
+//		webAttackTypes.add(new WebAttackType("ddos", "拒绝服务", "element", true, true, "僵尸网络内攻击者可以控制受害机发送大量数据包，形成拒绝服务攻击", "LOIC"));
+//		webAttackTypes.add(new WebAttackType("exploit", "漏洞利用", "element", true, true, "CVE-2021-44228+脏牛提权，Apache Log4j远程代码执行漏洞", "Exp"));
+//		webAttackTypes.add(new WebAttackType("host-attack", "主机工具", "element", true, true, "对主机进行攻击", "LOIC"));
+//		webAttackTypes.add(new WebAttackType("lateral-movement", "横向移动", "element", true, true, "MES应用服务器对统一安全管理平台发起横向移动", "LOIC"));
+//		webAttackTypes.add(new WebAttackType("leveraging-remote-services", "远程服务", "element", true, true, "OwnCloud主机对MES应用服务器发起利用远程服务", "LOIC"));
+//		webAttackTypes.add(new WebAttackType("network-scanning", "网络扫描", "element", true, true, "外部攻击机对WEB服务器发起网络扫描", "LOIC"));
+//		webAttackTypes.add(new WebAttackType("trojan", "木马攻击", "element", true, true, "统一安全管理平台对工程师站发起木马攻击", "LOIC"));
 
 		optionsRes.setAttackTypeList(webAttackTypes);
 		//获取线型

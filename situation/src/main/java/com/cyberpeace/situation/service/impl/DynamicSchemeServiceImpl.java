@@ -495,9 +495,12 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		}
 
 		String imageUuid = remoteTerminalService.queryImageId(attackMessageReq.getTargetId());
+		DeviceInfo deviceInfo;
+		List<String> leakIds = Lists.newArrayList();
 		if (imageUuid != null) {
 			// 获取设备信息
-			DeviceInfo deviceInfo = remoteTerminalService.getById(imageUuid);
+			deviceInfo = remoteTerminalService.getById(imageUuid);
+			leakIds = deviceInfo.getVulns();
 			if (deviceInfo != null && deviceInfo.getVulns() != null && deviceInfo.getVulns().size() != 0) {
 				List<String> vulns = deviceInfo.getVulns();
 				List<Vuln> leaks = dynamicSchemeMapper.queryLeakByIds(vulns);
@@ -553,8 +556,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		}
 		attackInfo.setDuration(attackMessageReq.getDurationTime());
 		//校验漏洞是否匹配
-		List<String> leaks = elementInfoMap.get(attackMessageReq.getTargetId()).getLeakInfos().stream().map(LeakInfo::getName).collect(Collectors.toList());
-		if (leaks.contains(attackMessageReq.getLeak())) {
+
+//		List<String> leaks = elementInfoMap.get(attackMessageReq.getTargetId()).getLeakInfos().stream().map(LeakInfo::getName).collect(Collectors.toList());
+		if (leakIds.contains(attackMessageReq.getLeak())) {
 			attackInfo.setTargetId(attackMessageReq.getTargetId());
 			attackType = AttackType.getEnumByKeyWord(attackMessageReq.getType(), AttackType.class);
 			if (attackType != null) {

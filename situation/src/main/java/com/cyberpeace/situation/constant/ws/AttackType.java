@@ -52,16 +52,7 @@ public enum AttackType {
 	INTRUSION_PREVENTION(ActionType.SUCCESS_ATTACK, "入侵防御", "Intrusion Prevention", "intrusion-prevention", false, false, false, "LOIC", "大量数据包会使网络出现瘫痪，导致网站服务、api、应用程序等无法访问。", "僵尸网络内攻击者可以控制受害机发送大量数据包，形成拒绝服务攻击"),
 	DATA_EAVESDROPPING(ActionType.SUCCESS_ATTACK, "数据窃听", "Data eavesdropping", "data-eavesdropping", false, false, false, "LOIC", "大量数据包会使网络出现瘫痪，导致网站服务、api、应用程序等无法访问。", "僵尸网络内攻击者可以控制受害机发送大量数据包，形成拒绝服务攻击"),
 	VIRUS_IMPLANTATION(ActionType.SUCCESS_ATTACK, "病毒植入", "Virus implantation", "virus-implantation", false, false, true, "LOIC", "大量数据包会使网络出现瘫痪，导致网站服务、api、应用程序等无法访问。", "僵尸网络内攻击者可以控制受害机发送大量数据包，形成拒绝服务攻击"),
-	VULNERABILITY_EXPLOITATION(ActionType.SUCCESS_ATTACK, "漏洞利用", "Vulnerability exploitation", "vulnerability-exploitation", false, true, false, "LOIC", "大量数据包会使网络出现瘫痪，导致网站服务、api、应用程序等无法访问。", "僵尸网络内攻击者可以控制受害机发送大量数据包，形成拒绝服务攻击"),
-
-	// 新增类型
-	DDOS(ActionType.DDOS,  "拒绝服务","ddos", "ddos",  true, false, false, "LOIC", "僵尸网络内攻击者可以控制受害机发送大量数据包，形成拒绝服务攻击",""),
-	EXPLOIT(ActionType.HOST_ATTACK, "漏洞利用", "exploit", "exploit", false, true, true, "Exp", "CVE-2021-44228+脏牛提权，Apache Log4j远程代码执行漏洞", ""),
-	HOST_ATTACK(ActionType.HOST_ATTACK, "主机工具", "host-attack", "host-attack", false, true, true, "LOIC", "对主机进行攻击", ""),
-	LATERAL_MOVEMENT(ActionType.LATERAL_MOVEMENT, "横向移动", "lateral-movement", "lateral-movement", false, true, true, "LOIC", "MES应用服务器对统一安全管理平台发起横向移动", ""),
-	LEVERAGING_REMOTE_SERVICES(ActionType.LEVERAGING_REMOTE_SERVICES, "远程服务", "leveraging-remote-services", "leveraging-remote-services", false, true, true, "LOIC", "OwnCloud主机对MES应用服务器发起利用远程服务", ""),
-	NETWORK_SCANNING(ActionType.NETWORK_SCANNING, "网络扫描", "network-scanning", "network-scanning", false, false, false, "LOIC", "外部攻击机对WEB服务器发起网络扫描", ""),
-	TROJAN(ActionType.TROJAN, "木马攻击", "trojan", "trojan", false, true, true, "LOIC", "统一安全管理平台对工程师站发起木马攻击", "");
+	VULNERABILITY_EXPLOITATION(ActionType.SUCCESS_ATTACK, "漏洞利用", "Vulnerability exploitation", "vulnerability-exploitation", false, true, false, "LOIC", "大量数据包会使网络出现瘫痪，导致网站服务、api、应用程序等无法访问。", "僵尸网络内攻击者可以控制受害机发送大量数据包，形成拒绝服务攻击");
 
 	@Getter
 	private ActionType actionType;

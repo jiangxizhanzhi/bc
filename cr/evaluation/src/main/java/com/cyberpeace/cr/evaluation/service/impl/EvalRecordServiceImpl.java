@@ -1419,9 +1419,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Override
     public List<EvalRecordNodeProbeReq> getNodeProbe(String roomId) {
-        EvalTask evalTask = getTask(roomId);
+//        EvalTask evalTask = getTask(roomId);
 
-        JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
+        EvalTestInstance evalTestInstance = evalTestInstanceMapper.selectById(roomId);
+        JSONObject jsonObject = remoteSceneService.getById(evalTestInstance.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
 
         JSONArray nodes = jsonObject.getJSONObject(SCENE).getJSONObject(TOPOLOGY).getJSONArray(ELEMENTS);
         JSONObject cpCollection = jsonObject.getJSONObject(SCENE).getJSONObject(PLUGINS).getJSONObject(CPCOLLECTION);

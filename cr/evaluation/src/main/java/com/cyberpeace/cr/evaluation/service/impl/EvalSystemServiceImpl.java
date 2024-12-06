@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -451,7 +452,7 @@ public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSys
 		});
 
 		Map<String, EvalCollection> collectionMap = StreamApiUtils.toMap(collects, EvalCollection::getResourceId, s -> s);
-
+//		TODO 验证3不执行算法 用固定值
 		Map<String, EvalAlgorithm> evalAlgorithmRefMap = evalAlgorithmService.lambdaQuery().in(EvalAlgorithm::getResourceId, usingAlgorithmIds).list().stream().collect(Collectors.toMap(EvalAlgorithm::getResourceId, evalAlgorithmRef -> evalAlgorithmRef));
 		for(CollectWithStrContext evalCollect:fifthIndex) {
 			EvalCollection evalCollection = collectionMap.get(evalCollect.getResourceId());
@@ -491,7 +492,7 @@ public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSys
 		itemData.setV(String.valueOf(evalCollect.getScore()));
 		itemData.setM(EvalVariableRefProbeData.Status.MATCHED.getCode());
 		data.getData().add(itemData);
-
+/*
 		List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalCollect.getScoreAlgorithmParams());
 
 		Integer score;
@@ -508,9 +509,10 @@ public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSys
 
 		if (score > 100 || 0 > score) {
 			return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.MARK_ALGORITHM_RESULT_IS_INVALID), evalCollect.getName());
-		}
+		}*/
+
 		EvalCollection evalCollection = evalCollectionService.getById(evalCollect.getResourceId());
-		evalCollection.setScore(score);
+		evalCollection.setScore(evalCollect.getScore());
 		evalCollection.setProgress(EvalVariableRef.Progress.END.getCode());
 		evalCollectionService.updateById(evalCollection);
 
@@ -524,7 +526,7 @@ public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSys
 		data.setData(strings);
 		// 运行匹配算法
 
-		EvalAlgorithm evalAlgorithm = evalAlgorithmRefMap.get(evalCollect.getFormatAlgorithmId());
+		/*EvalAlgorithm evalAlgorithm = evalAlgorithmRefMap.get(evalCollect.getFormatAlgorithmId());
 		List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalCollect.getFormatAlgorithmParams());
 		List<String> formatReturn;
 		try {
@@ -534,8 +536,9 @@ public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSys
 				return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.FORMAT_ALGORITHM_RESULT_IS_INVALID), evalAlgorithm.getName());
 			}
 			return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_FORMAT_EXECUTE_FAILED), evalAlgorithm.getName());
-		}
-		evalCollect.setScore(Integer.valueOf(formatReturn.get(0)));
+		}*/
+		JSONObject jsonObject = JSON.parseObject(str);
+		evalCollect.setScore(Integer.valueOf(jsonObject.values().stream().findFirst().get().toString()));
 		evalCollectionService.updateById(evalCollect);
 		return null;
 	}
@@ -551,7 +554,7 @@ public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSys
 
 
 		// 运行匹配算法
-		List<Integer> matchReturn;
+		/*List<Integer> matchReturn;
 		EvalAlgorithm evalAlgorithm = evalAlgorithmRefMap.get(evalCollect.getDetectionAlgorithmId());
 		List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalCollect.getDetectionAlgorithmParams());
 		try {
@@ -561,9 +564,11 @@ public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSys
 				return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.MATCH_ALGORITHM_RESULT_IS_INVALID), evalAlgorithm.getName());
 			}
 			return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_MATCH_EXECUTE_FAILED), evalAlgorithm.getName());
-		}
+		}*/
+
+
 		evalCollect.setProgress(EvalVariableRef.Progress.MARKING.getCode());
-		evalCollect.setScore(matchReturn.get(0));
+//		evalCollect.setScore(matchReturn.get(0));
 		evalCollectionService.updateById(evalCollect);
 		return null;
 	}

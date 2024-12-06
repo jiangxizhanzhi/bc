@@ -125,6 +125,7 @@ public class TeamSceneEventListener extends MessageListener {
 		// 区分场景节点消息推送和节点登录信息推送
 		if (jsonData.containsKey("call_action")) {
 			pushDataToWeb(data, businessId);
+			log.info("call action push data to web, businessId =[{}]", businessId);
 			return true;
 		}
 		String nodeId = jsonData.getJSONObject("scene_element").getString("id");

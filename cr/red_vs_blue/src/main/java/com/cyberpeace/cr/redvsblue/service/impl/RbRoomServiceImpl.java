@@ -539,6 +539,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	private String confirmAvatarFile(String filePath, String jarFilePath) {
 		File file = new File(filePath);
 		if(file.exists()) {
+			log.info("file exist, filePath is [{}]", filePath);
 			return filePath;
 		}
 		if(!file.getParentFile().exists()) {

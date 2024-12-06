@@ -10,6 +10,7 @@ import lombok.Getter;
  * @author SN
  * @date 2024/11/11
  */
+@Getter
 public enum Operator implements GenericEnum {
 
 	/**
@@ -20,14 +21,12 @@ public enum Operator implements GenericEnum {
 	/**
 	 * 代号
 	 */
-	@Getter
-	private Integer code;
+	private final Integer code;
 
 	/**
 	 * 描述
 	 */
-	@Getter
-	private String desc;
+	private final String desc;
 
 	Operator(Integer code, String desc) {
 		this.code = code;

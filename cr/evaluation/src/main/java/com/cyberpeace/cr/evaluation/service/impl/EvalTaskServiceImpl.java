@@ -308,6 +308,9 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 
 			// 清除任务及其场景数据
 			clearTaskAndScene(evalTaskOpsContext);
+			log.info("Evaluation delete task and scene success! task_id=[{}], scene_id=[{}]",
+					evalTaskOpsContext.getEvalTask().getResourceId(),
+					evalTaskOpsContext.getLocalScene().getBusinessInstanceId());
 			return true;
 
 		}

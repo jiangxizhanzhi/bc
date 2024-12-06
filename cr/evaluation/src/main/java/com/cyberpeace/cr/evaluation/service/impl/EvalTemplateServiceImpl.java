@@ -283,6 +283,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	public Boolean validateStepConfig(List<EvalTaskStepConfig> evalTaskStepConfigList) {
 
 		if (evalTaskStepConfigList.isEmpty()) {
+			log.info("The step configuration is empty, skip validation!");
 			return true;
 		}
 

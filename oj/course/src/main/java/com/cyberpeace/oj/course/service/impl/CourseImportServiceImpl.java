@@ -5,8 +5,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.course.service.bo.LessonPracticeImportBo;
@@ -1353,13 +1351,12 @@ public class CourseImportServiceImpl implements CourseImportService {
      * @see Boolean
      */
     @Override
-
 	public Boolean rMCombinedCourseImport(List<CombinedCourseImportContext> courseInfos,
 			AuthContext authContext) {
 
 		log.info("Combined-Lesson-Import's request is: [{}]", JsonUtil.toJsonString(courseInfos));
 
-		if (null == courseInfos || courseInfos.size() == 0) {
+		if (null == courseInfos || courseInfos.isEmpty()) {
 			log.info("The request body is empty!");
 			return true;
 		}

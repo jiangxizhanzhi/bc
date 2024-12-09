@@ -558,13 +558,6 @@ public class EvalMissionController {
         String tool = manualExecutionReq.getTool();
         ToolBo toolBo1 = toolBoMap.get(tool);
 
-        // 更新一次执行剩余时间
-        if(TimeUtil.addSeconds(toolBo1.getExecuteTime(), 30).compareTo(new Date()) > 0){
-            toolBo1.setLimitTime((int)(TimeUtil.addSeconds(toolBo1.getExecuteTime(), 30).getTime() - System.currentTimeMillis())/1000);
-        } else{
-            toolBo1.setLimitTime(0);
-            toolBo1.setIsExecute(false);
-        }
         if (Boolean.TRUE.equals(toolBo1.getIsExecute()) && toolBo1.getLimitTime() > 0) {
             return new BaseRsp<>("can't be executed repeatedly");
         }

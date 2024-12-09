@@ -103,7 +103,7 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
     public EvalRuleTemplateDetailRsp addRuleTemplate(EvalRuleTemplateAddReq evalRuleTemplateAddReq) {
         List<EvalHostTemplateAddReq> hostList = evalRuleTemplateAddReq.getHostList();
         if (CollectionUtils.isEmpty(hostList)) {
-            throw new BusinessException(ErrorCode.INVALID_CONFIGURATION,"主机","主机配置不能为空");
+            throw new BusinessException(ErrorCode.INVALID_CONFIGURATION, "主机", "主机配置不能为空");
         }
         EvalRuleTemplate evalRuleTemplate = BeanUtils.copy(evalRuleTemplateAddReq, EvalRuleTemplate.class);
         evalRuleTemplate.setName(evalRuleTemplateAddReq.getRuleName());
@@ -250,11 +250,14 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
                                 return evalHostContext;
                             })
                             .collect(Collectors.toList()));
-
         }
 
         List<EvalAlarmCondition> evalAlarmConditionList = evalAlarmConditionMapper.selectList(new LambdaQueryWrapper<EvalAlarmCondition>().eq(EvalAlarmCondition::getRuleId, evalRuleTemplate.getResourceId()));
-        List<EvalAlarmConditionReq> evalAlarmConditionReqList = evalAlarmConditionList.stream().map(evalAlarmCondition -> BeanUtils.copy(evalAlarmCondition, EvalAlarmConditionReq.class))
+        List<EvalAlarmConditionReq> evalAlarmConditionReqList = evalAlarmConditionList.stream().map(evalAlarmCondition -> {
+                    EvalAlarmConditionReq evalAlarmConditionReq = BeanUtils.copy(evalAlarmCondition, EvalAlarmConditionReq.class);
+                    evalAlarmConditionReq.setCondition(evalAlarmCondition.getAlarmCondition());
+                    return evalAlarmConditionReq;
+                })
                 .collect(Collectors.toList());
         evalRuleTemplateDetail.setAlarmConditions(evalAlarmConditionReqList);
         if (StringUtils.isNotBlank(evalRuleTemplate.getAlarmName())) {
@@ -271,7 +274,7 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
     public EvalRuleTemplateDetailRsp modifyRuleTemplate(EvalRuleTemplateModifyReq evalRuleTemplateModifyReq) {
         List<EvalHostTemplateAddReq> hostList = evalRuleTemplateModifyReq.getHostList();
         if (CollectionUtils.isEmpty(hostList)) {
-            throw new BusinessException(ErrorCode.INVALID_CONFIGURATION,"主机","主机配置不能为空");
+            throw new BusinessException(ErrorCode.INVALID_CONFIGURATION, "主机", "主机配置不能为空");
         }
         EvalRuleTemplate evalRuleTemplate = BeanUtils.copy(evalRuleTemplateModifyReq, EvalRuleTemplate.class);
         evalRuleTemplate.setResourceId(evalRuleTemplateModifyReq.getRuleId());

@@ -32,4 +32,6 @@ public class SpaceStrategy extends BaseTable {
 
 	private String frameId;
 
+	private String method;
+
 }

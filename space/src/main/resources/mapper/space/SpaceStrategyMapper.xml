@@ -3,7 +3,7 @@
 <mapper namespace="com.cyberpeace.space.dao.mapper.SpaceStrategyMapper">
     <select id="selectIdAndNameByFrame"
             resultType="com.cyberpeace.space.service.context.strategy.SpaceStrategySimple">
-        select `resource_id`, `name` from space_strategy
+        select `resource_id`, `name`, `content`from space_strategy
         where frame_id = #{frameId}
         <if test="name != null and name != ''">
             <bind name="search" value="'%' + name + '%'"/>

@@ -26,4 +26,7 @@ public class SpaceStrategyAddReq {
 
 	@ApiModelProperty(value = "框架id")
 	private String frameId;
+
+	@ApiModelProperty("策略执行成功判定方法")
+	private String method;
 }

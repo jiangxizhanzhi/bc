@@ -35,6 +35,8 @@ public class MessageListener implements ChannelAwareMessageListener {
 
 	private final String SCENE_ELEMENT = "scene_element";
 
+	private final String LOAD_SUCCESS = "load_success";
+
 	private final String SCENE = "scene";
 
 	private final String SCENE_DELETE = "delete_cscene_instance";
@@ -173,7 +175,8 @@ public class MessageListener implements ChannelAwareMessageListener {
 					realListener.onSceneStartProcess(sceneContent, businessId, context);
 					break;
 				case SCENE_ELEMENT:
-					// 判断是否是已删除场景的推送消息
+                case LOAD_SUCCESS:
+                    // 判断是否是已删除场景的推送消息
 					mpSceneId = object.getJSONObject("data").getString("cscene_id");
 					if (!localScene.getMpSceneId().equals(mpSceneId)) {
 						log.info("mp scene {} has been deleted, no longer belongs to business {}",
@@ -185,7 +188,7 @@ public class MessageListener implements ChannelAwareMessageListener {
 					String content = JsonUtil.toJsonString(reportBO);
 					realListener.onSceneElement(content, businessId, context);
 					break;
-				default:
+                default:
 					break;
 			}
 		} catch (Exception e) {

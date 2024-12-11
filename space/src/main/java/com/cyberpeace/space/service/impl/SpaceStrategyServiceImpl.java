@@ -7,6 +7,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.constant.SpaceError;
@@ -18,14 +19,17 @@ import com.cyberpeace.space.service.SpaceStrategyService;
 import com.cyberpeace.space.service.context.index.IndexStrategy;
 import com.cyberpeace.space.service.context.strategy.*;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -42,16 +46,34 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 
 	@Override
 	public SpaceStrategyFrameBo getFrame() {
-		List<SpaceStrategyFrame> strategyList = frameMapper.getAll();
+		List<SpaceStrategyFrame> strategyFrameList = frameMapper.getAll();
+
+		List<SpaceStrategy> strategyList = mapper.selectList(null);
+		List<String> frameIds = StreamApiUtils.map(strategyList, SpaceStrategy::getFrameId);
+		Set<String> notRemovableIds = Sets.newHashSet(frameIds);
+
 		Map<String, SpaceStrategyFrameBo> map = Maps.newHashMap();
 		map.put(SpaceCommonConstant.DEFAULT_STRATEGY_FRAME, new SpaceStrategyFrameBo());
-		for (SpaceStrategyFrame strategyFrame : strategyList) {
+		for (SpaceStrategyFrame strategyFrame : strategyFrameList) {
 			SpaceStrategyFrameBo bo = this.entity2Bo(strategyFrame);
 			map.put(bo.getResourceId(), bo);
 			if (map.containsKey(bo.getParent())) {
 				map.get(bo.getParent()).getChildren().add(bo);
 			}
 		}
+		// 有策略的不可删除
+		for (String notId : notRemovableIds) {
+			String id = notId;
+			while (StringUtils.isNotBlank(id)) {
+				if (map.containsKey(id)) {
+					map.get(id).setRemovable(false);
+					id = map.get(id).getParent();
+				} else {
+					break;
+				}
+			}
+		}
+
 		return map.get(SpaceCommonConstant.DEFAULT_STRATEGY_FRAME);
 	}
 
@@ -190,6 +212,7 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		bo.setResourceId(spaceStrategyFrame.getResourceId());
 		bo.setBuiltin(spaceStrategyFrame.getBuiltin());
 		bo.setParent(spaceStrategyFrame.getParent());
+		bo.setRemovable(true);
 		return bo;
 	}
 

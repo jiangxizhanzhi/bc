@@ -468,13 +468,42 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		IPage<Course> iPage = courseMapper.listByPage(page, courseContext, null,
 				false);
 
+		// 视频统计
+		Map<String, Integer> videoCountMap = Maps.newHashMap();
+		Map<String, Integer> videoDurationMap = Maps.newHashMap();
+		List<String> courseIds = StreamApiUtils.map(iPage.getRecords(), Course::getResourceId);
+		for (String courseId : courseIds) {
+			videoCountMap.put(courseId, 0);
+			videoDurationMap.put(courseId, 0);
+		}
+
+		if (!courseIds.isEmpty()) {
+			List<CourseLesson> lessonList = courseLessonMapper.listByCourses(courseIds, false);
+			for (CourseLesson lesson : lessonList) {
+				if (StringUtils.isNotBlank(lesson.getVideoUrl())) {
+					videoCountMap.put(lesson.getCourseId(),
+							videoCountMap.get(lesson.getCourseId()) + 1);
+					Integer duration = null == lesson.getVideoDuration() ? 0
+							: lesson.getVideoDuration();
+					videoDurationMap.put(lesson.getCourseId(),
+							videoDurationMap.get(lesson.getCourseId()) + duration);
+				}
+			}
+		}
+
 		// 提取用户名映射
 		Map<String, String> userNameMap = remoteUserService.getIdNameMap(iPage.getRecords(),
 				Course::getCreateUserId);
 
 		IPage<CourseWebBo> webBoIPage = iPage
 				.convert(course -> transferToBo(course, authContext, userNameMap));
-		return PageUtil.getListResult(webBoIPage);
+
+		ListRsp<CourseWebBo> res = PageUtil.getListResult(webBoIPage);
+		for (CourseWebBo bo : res.getList()) {
+			bo.setVideoCount(videoCountMap.get(bo.getResourceId()));
+			bo.setVideoDuration(videoDurationMap.get(bo.getResourceId()));
+		}
+		return res;
 	}
 
     /**

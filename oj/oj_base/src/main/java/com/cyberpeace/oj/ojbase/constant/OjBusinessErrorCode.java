@@ -801,4 +801,5 @@ public interface OjBusinessErrorCode {
 	 * @see String
 	 */
 	String WRITEUP_INVALID = "102132";
+	String VIDEO_DURATION_NOT_NULL = "102133";
 }

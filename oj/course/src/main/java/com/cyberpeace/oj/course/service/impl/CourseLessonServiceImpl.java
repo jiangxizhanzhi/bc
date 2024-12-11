@@ -541,7 +541,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		lessonInfoBo.setLessonFile(attachmentBos);
 
 		// 习题数据查询
-		Paper paper = paperMapper.selectById(lesson.getPaperId());
 		long practiceCount = getPracticeCount(lesson.getPaperId());
 		lessonInfoBo.setPracticeCount(Integer.parseInt(String.valueOf(practiceCount)));
 
@@ -1436,6 +1435,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		if (null != video) {
 			courseLesson.setVideoUrl(video);
+			if (null == courseLesson.getVideoDuration()) {
+				throw new BusinessException(OjBusinessErrorCode.VIDEO_DURATION_NOT_NULL);
+			}
 		}
 	}
 

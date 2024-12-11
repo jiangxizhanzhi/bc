@@ -1,12 +1,12 @@
 package com.cyberpeace.oj.course.service.bo;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * 管理员课程 bo
@@ -187,5 +187,8 @@ public class AdminLessonBo implements Serializable {
      */
     @ApiModelProperty("课时附件数据")
 	private List<AttachmentBo> LessonFile;
+
+    @ApiModelProperty(value = "视频时长")
+    private Integer videoDuration;
 
 }

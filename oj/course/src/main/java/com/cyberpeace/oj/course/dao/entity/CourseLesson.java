@@ -212,6 +212,8 @@ public class CourseLesson extends BaseTable {
 	@TableField(exist = false,  value = "资管课时路径")
 	private String path;
 
+	private Integer videoDuration;
+
 	public enum HandoutType implements GenericEnum {
 
 		/** 讲义类型*/

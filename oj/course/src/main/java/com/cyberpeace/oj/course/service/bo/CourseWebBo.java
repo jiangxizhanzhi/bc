@@ -155,4 +155,10 @@ public class CourseWebBo implements Serializable {
     @ApiModelProperty("岗位")
 	private Integer role;
 
+    @ApiModelProperty(value = "视频课数量")
+    private Integer videoCount;
+
+    @ApiModelProperty(value = "视频长度")
+    private Integer videoDuration;
+
 }

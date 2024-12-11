@@ -39,6 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -288,8 +289,19 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
     }
 
     @Override
+    @Transactional
     public void addLoadExecutionResult(EvalLoadResultAddReq addReq) {
         JSONObject scene = remoteSceneService.getById(addReq.getSceneId(), null);
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+            String json = objectMapper.writeValueAsString(addReq);
+            JSONObject addReqJson = JSON.parseObject(json);
+            remoteSceneService.addLoadResult(addReqJson);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
         Map<String, JSONObject> elementsMap = scene.getJSONObject("scene")
                 .getJSONObject("plugins")
                 .getJSONObject("cpcloud")
@@ -339,16 +351,6 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
         rbSituationAttack.put("data", data);
         log.info("addLoadExecutionResult sendMessage begin.");
         situationHandlerService.pushDataToRoom(rbSituationAttack, rbSituationAttack.getJSONObject("data").getString("scene_id"));
-
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
-            String json = objectMapper.writeValueAsString(addReq);
-            JSONObject addReqJson = JSON.parseObject(json);
-            remoteSceneService.addLoadResult(addReqJson);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
 
 //        包装攻击数据至城市沙盘
         JSONObject mqRbSituationAttack = new JSONObject();

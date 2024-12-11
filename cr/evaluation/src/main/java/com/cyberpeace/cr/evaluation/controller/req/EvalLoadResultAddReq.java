@@ -86,7 +86,7 @@ public class EvalLoadResultAddReq implements Serializable {
     /**
      * 创建时间
      */
-    private LocalDateTime createTime;
+    private String createTime;
     /**
      * 同步时间
      */

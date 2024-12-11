@@ -32,9 +32,13 @@ public class SpaceTrafficDetectRuleBo extends SpaceBoBase {
 	@ApiModelProperty(value = "威胁等级")
 	private String threatLevel;
 
+	@ApiModelProperty(value = "工具")
+	private List<String> tool;
+
 
 	public SpaceTrafficDetectRule bo2Entity() {
 		SpaceTrafficDetectRule entity = BeanUtils.copy(this, SpaceTrafficDetectRule.class);
+		entity.setTool(JsonUtil.arrayToString(this.tool));
 		return entity;
 	}
 

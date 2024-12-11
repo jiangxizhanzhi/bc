@@ -26,8 +26,12 @@ public class SpaceLoadedFileThreatRuleBo extends SpaceBoBase {
 	@ApiModelProperty(value = "规则描述")
 	private String description;
 
+	@ApiModelProperty(value = "工具")
+	private List<String> tool;
+
 	public SpaceLoadedFileThreatRule bo2Entity() {
 		SpaceLoadedFileThreatRule entity = BeanUtils.copy(this, SpaceLoadedFileThreatRule.class);
+		entity.setTool(JsonUtil.arrayToString(this.tool));
 		return entity;
 	}
 

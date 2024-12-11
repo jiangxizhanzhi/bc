@@ -11,13 +11,15 @@ import com.cyberpeace.space.dao.entity.SpaceActionFrame;
 import com.cyberpeace.space.dao.entity.SpaceActionMethod;
 import com.cyberpeace.space.dao.entity.SpaceActionRelation;
 import com.cyberpeace.space.dao.mapper.SpaceActionFrameMapper;
-import com.cyberpeace.space.service.*;
+import com.cyberpeace.space.service.SpaceActionFrameService;
+import com.cyberpeace.space.service.SpaceActionMethodService;
+import com.cyberpeace.space.service.SpaceActionService;
+import com.cyberpeace.space.service.SpaceActionTargetService;
 import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -26,8 +28,6 @@ import java.util.Map;
 @Slf4j
 public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMapper, SpaceActionFrame> implements SpaceActionFrameService {
 
-	@Autowired
-	private SpaceActionRelationService relationService;
 
 	@Autowired
 	private SpaceActionTargetService targetService;
@@ -38,8 +38,6 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 	@Autowired
 	private SpaceActionService actionService;
 
-	@Autowired
-	private TransactionTemplate transactionTemplate;
 
 	@Override
 	public Integer countByType(Integer code) {

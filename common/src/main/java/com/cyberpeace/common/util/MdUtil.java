@@ -305,8 +305,8 @@ public class MdUtil {
 		log.info("replaceImgContent matchStrSet:{}; imagePathSet:{}", matchStrSet, imagePathSet);
 		// 文件路径替换
 		for (String imagePath : imagePathSet) {
-
-			File replaceFile = new File(currentDir, imagePath);
+			String leftPath = imagePath.replace("\\", "/");
+			File replaceFile = new File(currentDir, leftPath);
 			if (!replaceFile.exists()) {
 				log.error("File not exist! file_path=[{}]", replaceFile.getAbsolutePath());
 				String path = StringUtils.isBlank(handoutPath) ? replaceFile.getAbsolutePath()

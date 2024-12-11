@@ -74,7 +74,6 @@ public class AdminCourseImportController {
 			return new BaseRsp<>(result);
 		} catch (Exception e) {
 			log.error("Course import failed! course_path=[{}] catch error:", courseImportReq.getPath(), e);
-			courseImportService.destroyFailedTopo(courseImportReq.getEnvReqs(), courseImportReq.getOperationEnvReqs());
 			throw e;
 		}
 

@@ -2,7 +2,6 @@ package com.cyberpeace.space.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.service.context.rule.SpaceAptThreatDetectRuleBo;
@@ -29,7 +28,6 @@ public class SpaceAptThreatDetectRule extends SpaceBaseTable {
 
 	public SpaceAptThreatDetectRuleBo entity2Bo(Map<String, IdAndName> relatedMap) {
 		SpaceAptThreatDetectRuleBo bo = BeanUtils.copy(this, SpaceAptThreatDetectRuleBo.class);
-		bo.setTool(JsonUtil.toJsonObjectArray(this.tool, String.class));
 		return bo;
 	}
 }

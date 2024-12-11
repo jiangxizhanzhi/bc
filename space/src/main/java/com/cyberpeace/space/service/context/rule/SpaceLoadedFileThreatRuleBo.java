@@ -2,13 +2,11 @@
 package com.cyberpeace.space.service.context.rule;
 
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.space.dao.entity.SpaceLoadedFileThreatRule;
 import com.cyberpeace.space.model.SpaceBoBase;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class SpaceLoadedFileThreatRuleBo extends SpaceBoBase {
@@ -27,11 +25,10 @@ public class SpaceLoadedFileThreatRuleBo extends SpaceBoBase {
 	private String description;
 
 	@ApiModelProperty(value = "工具")
-	private List<String> tool;
+	private String tool;
 
 	public SpaceLoadedFileThreatRule bo2Entity() {
 		SpaceLoadedFileThreatRule entity = BeanUtils.copy(this, SpaceLoadedFileThreatRule.class);
-		entity.setTool(JsonUtil.arrayToString(this.tool));
 		return entity;
 	}
 

@@ -2,13 +2,11 @@
 package com.cyberpeace.space.service.context.rule;
 
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.space.dao.entity.SpaceTrafficDetectRule;
 import com.cyberpeace.space.model.SpaceBoBase;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class SpaceTrafficDetectRuleBo extends SpaceBoBase {
@@ -33,12 +31,11 @@ public class SpaceTrafficDetectRuleBo extends SpaceBoBase {
 	private String threatLevel;
 
 	@ApiModelProperty(value = "工具")
-	private List<String> tool;
+	private String tool;
 
 
 	public SpaceTrafficDetectRule bo2Entity() {
 		SpaceTrafficDetectRule entity = BeanUtils.copy(this, SpaceTrafficDetectRule.class);
-		entity.setTool(JsonUtil.arrayToString(this.tool));
 		return entity;
 	}
 

@@ -24,6 +24,15 @@ public class SpaceActionBo extends SpaceFrameBoBase {
 	@ApiModelProperty(value = "类型，1：攻击，2：防御")
 	private Integer type;
 
+	@ApiModelProperty(value = "ID编号")
+	private String idNumber;
+
+	@ApiModelProperty(value = "父活动编号")
+	private String parentNumber;
+
+	@ApiModelProperty(value = "平台")
+	private List<String> platform;
+
 	@ApiModelProperty(value = "描述")
 	private String description;
 
@@ -54,6 +63,7 @@ public class SpaceActionBo extends SpaceFrameBoBase {
 				.arrayToString(StreamApiUtils.map(this.tool, SpaceActionTool::getResourceId)));
 		entity.setStrategy(JsonUtil.arrayToString(
 				StreamApiUtils.map(this.strategy, SpaceActionStrategy::getResourceId)));
+		entity.setPlatform(JsonUtil.arrayToString(this.platform));
 		return entity;
 	}
 

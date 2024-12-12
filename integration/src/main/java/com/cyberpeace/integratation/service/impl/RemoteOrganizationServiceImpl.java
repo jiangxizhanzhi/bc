@@ -3,6 +3,7 @@ package com.cyberpeace.integratation.service.impl;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
@@ -21,6 +22,7 @@ import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * 远程组织Service实现
@@ -351,5 +353,32 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 	@Override
 	public JSONObject getById(String orgId) {
 		return HttpClientUtil.rawGet(MP_ORG_INFO + orgId, JSONObject.class);
+	}
+
+	@Override
+	public Set<String> getAllOrgIds() {
+		Set<String> ids = Sets.newHashSet();
+		JSONArray orgList = HttpClientUtil.rawGet(MP_ORG_TREE_URL, JSONArray.class);
+
+		// 空数组校验
+		if (CollectionUtils.isEmpty(orgList)) {
+			return ids;
+		}
+
+		// 空对象校验
+		JSONObject realOrgTree = orgList.getJSONObject(CommonConstant.ZERO);
+		if (realOrgTree.isEmpty()) {
+			return ids;
+		}
+
+		for (int i = 0; i < orgList.size(); i++) {
+			JSONObject org = orgList.getJSONObject(i);
+			List<JSONObject> children = getChildrenIds(org);
+			List<String> childrenIds = StreamApiUtils.map(children, o -> o.getString("id"));
+			ids.addAll(childrenIds);
+			ids.add(org.getString(JsonKeyConstant.ID));
+		}
+
+		return ids;
 	}
 }

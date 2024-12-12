@@ -2,6 +2,7 @@ package com.cyberpeace.integratation.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -107,5 +108,14 @@ public interface RemoteOrganizationService {
 	 * @see JSONObject
 	 */
 	JSONObject getById(String orgId);
+
+	/**
+	 * 获取全部组织id列表
+	 *
+	 * @return {@code Set<String> }
+	 * @throws
+	 * @see Set<String>
+	 */
+	Set<String> getAllOrgIds();
 
 }

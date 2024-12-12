@@ -1132,8 +1132,11 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	@Override
 	public VulnTop queryVulnTop(String sceneId, String nodeId, String elementId) {
+
 		// 获取设备信息
 		DeviceInfo deviceInfo = new DeviceInfo();
+
+		// 如果为内置靶标，则固定名称
 		String name = null;
 		if (nodeId.equals("5dfe83ac-4689-478d-8257-89bb118ef105")) {
 			name = "外部网络";
@@ -1150,19 +1153,46 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		}
 
 		if (name != null) {
-			List<Vuln> leaks = dynamicSchemeMapper.queryLeak();
-			List<String> leakList = new ArrayList<>();
-			for (Vuln leak : leaks) {
-				if (leak.getApplication().toLowerCase().contains(name.toLowerCase())) {
-					leakList.add(leak.getResourceId());
-				}
-			}
-			deviceInfo.setVulns(leakList);
+			// 如果为内置靶标，查询匹配的漏洞信息
+			deviceInfo.setVulns(dynamicSchemeMapper.queryLeakByName(name));
 		} else {
+			// 如果为自定义靶标，查询设备信息
 			deviceInfo = remoteTerminalService.getById(nodeId);
 		}
 
+		// 构造漏洞数据
 		VulnTop vulnTop = new VulnTop();
+
+		// 查询节点状态统计数据
+		Integer paralysisHostCount = attackMessageHistoryService
+				.getNodeStateCount(AttackType::getIsParalysis, sceneId, elementId);
+		Integer exploitCount = attackMessageHistoryService
+				.getNodeStateCount(AttackType::getIsExploit, sceneId, elementId);
+		Integer virusCount = attackMessageHistoryService.getNodeStateCount(AttackType::getIsVirus,
+				sceneId, elementId);
+
+		// 构造节点状态统计数据
+		List<VulnTop.NodeState> nodeStateList = new ArrayList<>();
+		nodeStateList.add(new VulnTop.NodeState(1, "病毒植入", virusCount));
+		nodeStateList.add(new VulnTop.NodeState(2, "漏洞利用", exploitCount));
+		nodeStateList.add(new VulnTop.NodeState(3, "毁瘫", paralysisHostCount));
+		vulnTop.setNodeStateList(nodeStateList);
+
+		// 查询最新的5条被攻击的记录
+		List<AttackInfo> attackInfos = attackMessageHistoryMapper.getLast5AttackLog(sceneId,
+				elementId);
+		// 构造统计数据
+		List<VulnTop.NodeAttackedAction> nodeAttackedActionList = new ArrayList<>();
+		attackInfos.forEach(attackInfo -> {
+			// 依据攻击类型code查询AttackType实例的名称
+			String attackTypeName = AttackType
+					.getEnumByKeyWord(attackInfo.getAttackType(), AttackType.class).getCnDesc();
+			nodeAttackedActionList.add(new VulnTop.NodeAttackedAction(attackInfo.getSourceName(),
+					attackTypeName, attackInfo.getLeakName()));
+		});
+		vulnTop.setNodeAttackedActionList(nodeAttackedActionList);
+
+		// 处理节点基本信息
 		vulnTop.setNodeId(nodeId);
 		vulnTop.setCvss(0.0);
 		List<VulnTop.Vulns> vulnsList = new ArrayList<>();
@@ -1170,7 +1200,10 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		List<VulnTop.Defenses> defensesList = new ArrayList<>();
 		vulnTop.setDefenseList(defensesList);
 
+		// 如果设备的漏洞信息不为空
 		if (deviceInfo != null && deviceInfo.getVulns() != null) {
+
+			// 获取漏洞信息
 			List<String> vulns = deviceInfo.getVulns();
 			List<Vuln> vulnList = dynamicSchemeMapper.queryVulnTop(vulns);
 
@@ -1217,11 +1250,13 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			if (collect != null && collect.size() != 0) {
 				List<Vuln> bugs = dynamicSchemeMapper.queryVulnTop(collect);
 				Map<String, String> nameMap = bugs.stream().collect(Collectors.toMap(Vuln::getResourceId, Vuln::getName));
+				Map<String, String> codeMap = bugs.stream().collect(Collectors.toMap(Vuln::getResourceId, Vuln::getNumber));
 				// 填入防御信息
 				for (Defense defens : defenses) {
 					VulnTop.Defenses d = new VulnTop.Defenses();
 					d.setDefenseId(defens.getResourceId());
 					d.setDefenseVulnName(nameMap.get(defens.getVulnId()));
+					d.setDefenseVulnCode(codeMap.get(defens.getVulnId()));
 					d.setDescription(defens.getDeacription());
 					defensesList.add(d);
 				}
@@ -1242,6 +1277,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			}
 			return vulnTop;
 		}
+
 		return vulnTop;
 	}
 

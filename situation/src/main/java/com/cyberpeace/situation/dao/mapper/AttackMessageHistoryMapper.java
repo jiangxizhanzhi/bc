@@ -35,6 +35,16 @@ public interface AttackMessageHistoryMapper extends BaseMapper<AttackMessageHist
 	List<HostCount> getHostTop(@Param("sceneId") String sceneId,@Param("attackTypeList") List<String> attackTypeList);
 
 	/**
+	 * 获取指定的主机状态统计
+	 * @param sceneId 场景编号
+	 * @param targetId 目标节点ID
+	 * @param attackTypeList 动效类型列表
+	 * @return
+	 */
+	Integer getStateCount(@Param("sceneId") String sceneId, @Param("targetId") String targetId,
+			@Param("attackTypeList") List<String> attackTypeList);
+
+	/**
 	 * 恢复
 	 * @param sceneId 场景编号
 	 */
@@ -46,6 +56,15 @@ public interface AttackMessageHistoryMapper extends BaseMapper<AttackMessageHist
 	 * @return 攻击日志
 	 */
 	List<AttackLog> getAttackLog(@Param("sceneId") String sceneId);
+
+	/**
+	 * 获取最近5次攻击日志
+	 * @param sceneId 场景编号
+	 * @param targetId 目标节点ID
+	 * @return
+	 */
+	List<AttackInfo> getLast5AttackLog(@Param("sceneId") String sceneId,
+			@Param("targetId") String targetId);
 
 	/**
 	 * 获取场景运行时间

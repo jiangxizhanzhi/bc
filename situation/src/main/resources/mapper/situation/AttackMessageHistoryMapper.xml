@@ -59,6 +59,29 @@
         group by target_id
         order by times desc
     </select>
+    <select id="getStateCount" resultType="java.lang.Integer">
+        select count(*)
+        from situation_attack_message_history
+        <where>
+            (defense_type is null
+            or defense_level is null
+            or defense_level != 3)
+            and attack_or_defense = 'attack'
+            and is_history = 0
+            <if test="sceneId != null and sceneId != ''">
+                and scene_id = #{sceneId}
+            </if>
+            <if test="targetId != null and targetId != ''">
+                and target_id = #{targetId}
+            </if>
+            <if test="null != attackTypeList and attackTypeList.size > 0">
+                and type in
+                <foreach collection="attackTypeList" open="(" close=")" item="attackType" separator=",">
+                    #{attackType}
+                </foreach>
+            </if>
+        </where>
+    </select>
 
     <select id="getAttackLog" resultType="com.cyberpeace.situation.model.AttackLog">
         select resource_id, create_time as time, source_id ,target_id, type as attack_type
@@ -71,6 +94,25 @@
             and type != 'media-animation'
         </where>
         order by create_time desc
+    </select>
+
+    <select id="getLast5AttackLog" resultType="com.cyberpeace.situation.model.AttackInfo">
+        select a.resource_id, a.create_time as time, a.source_id ,a.target_id, a.type as attack_type, b.number as leak_name, c.name as source_name
+        from situation_attack_message_history as a
+        left join situation_vuln as b on b.resource_id = a.leak
+        left join mp.mp_scene_scene_config_element as c on c.node_id = a.source_id
+        <where>
+            a.attack_or_defense = 'attack'
+            <if test="sceneId != null and sceneId != ''">
+                and a.scene_id = #{sceneId}
+            </if>
+            <if test="targetId != null and targetId != ''">
+                and a.target_id = #{targetId}
+            </if>
+            and a.type != 'media-animation'
+        </where>
+        order by a.create_time desc
+        limit 5
     </select>
 
     <select id="getStartTime" resultType="java.lang.String">

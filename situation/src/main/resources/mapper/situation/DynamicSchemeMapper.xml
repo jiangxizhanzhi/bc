@@ -36,6 +36,11 @@
         select * from situation_vuln
     </select>
 
+    <select id="queryLeakByName" resultType="java.lang.String">
+        <bind name="likeName" value="'%' + name + '%'"/>
+        select resource_id from situation_vuln where application like #{likeName}
+    </select>
+
     <select id="toolVulnById" resultType="com.cyberpeace.situation.dao.entity.ToolVuln">
         <bind name="leak" value="'%' + leak + '%'"/>
         select * from situation_tool_vuln where tool_type = #{type} and resource_id = #{tool} and vuln_ids like #{leak}

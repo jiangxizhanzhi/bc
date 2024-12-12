@@ -51,6 +51,13 @@ public interface DynamicSchemeMapper extends BaseMapper<DynamicScheme> {
     List<Vuln> queryLeak();
 
 	/**
+	 * 根据平台名称查询漏洞
+	 * @param name 平台名称
+	 * @return 漏洞ID
+	 */
+	List<String> queryLeakByName(@Param("name") String name);
+
+	/**
 	 * 查询工具信息
 	 * @param tool 工具id
 	 * @param leak 漏洞id

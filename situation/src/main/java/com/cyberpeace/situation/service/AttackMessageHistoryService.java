@@ -96,4 +96,14 @@ public interface AttackMessageHistoryService {
 	<T> void pushDataTo28S(String topoId, T data);
 
 	List<AttackMessageHistoryRes> getAttackMessageHistoryRes (String sceneId, Date startTime, Date endTime);
+
+	/**
+	 * 获取节点攻击状态的统计
+	 * @param filterValue 攻击类型过滤器
+	 * @param sceneId 场景id
+	 * @param targetId 目标id
+	 * @return
+	 */
+	<E, T> Integer getNodeStateCount(Predicate<? super AttackType> filterValue, String sceneId,
+			String targetId);
 }

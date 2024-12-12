@@ -313,7 +313,7 @@ public class SituationControlController {
 												required = false) String sceneId,
 									  @ApiParam(name = "node_id", value = "设备id") @RequestParam(value = "node_id",
 												required = false) String nodeId,
-										 @ApiParam(name = "node_id", value = "节点id") @RequestParam(value = "element_id",
+										 @ApiParam(name = "element_id", value = "节点id") @RequestParam(value = "element_id",
 												 required = false) String elementId) {
 		return new BaseRsp(dynamicSchemeService.queryVulnTop(sceneId, nodeId, elementId));
 	}

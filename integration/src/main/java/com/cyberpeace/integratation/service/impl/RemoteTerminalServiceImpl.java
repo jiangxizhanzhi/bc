@@ -39,15 +39,12 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 	@Override
 	public DeviceInfo getById(String deviceId) {
 		String targetUrl = DEVICE_INFO + deviceId;
-
 		MpDeviceInfo mpDeviceInfo = HttpClientUtil.rawGet(targetUrl, MpDeviceInfo.class);
-
 		return toLocalDeviceInfo(mpDeviceInfo);
 	}
 
 	private DeviceInfo toLocalDeviceInfo(MpDeviceInfo mpDeviceInfo) {
 		DeviceInfo deviceInfo = new DeviceInfo();
-
 		deviceInfo.setName(mpDeviceInfo.getName());
 		deviceInfo.setResourceId(mpDeviceInfo.getResourceId());
 		deviceInfo.setVulns(mpDeviceInfo.getVulns());

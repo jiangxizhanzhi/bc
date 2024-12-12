@@ -266,6 +266,14 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 		return attackMessageHistoryMapper.getHostTop(sceneId, attackTypeList);
 	}
 
+	@Override
+	public <E, T> Integer getNodeStateCount(Predicate<? super AttackType> filterValue,
+			String sceneId, String targetId) {
+		List<String> attackTypeList = Lists.newArrayList(AttackType.values()).stream()
+				.filter(filterValue).map(AttackType::getKeyWord).collect(Collectors.toList());
+		return attackMessageHistoryMapper.getStateCount(sceneId, targetId, attackTypeList);
+	}
+
 	public AttackMessageHistory attackMessageBoToAttackMessageHistory(AttackMessageReq attackMessageReq, Boolean attackSuccess) {
 		AttackMessageHistory attackMessageHistory = BeanUtils.copy(attackMessageReq, AttackMessageHistory.class);
 		attackMessageHistory

@@ -54,7 +54,7 @@ public class PageReqBase extends PatternBase {
 			asc = false;
 		}
 
-		if (StringUtils.isNotEmpty(sort) && (sort.trim().contains(" ") || sort.trim().contains(";"))) {
+		if (StringUtils.isNotEmpty(sort) && (sort.trim().contains(" ") || sort.trim().contains(";") || sort.contains("(") || sort.contains(")"))) {
 			throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
 		}
 

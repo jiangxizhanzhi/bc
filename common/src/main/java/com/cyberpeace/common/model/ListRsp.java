@@ -1,15 +1,11 @@
 package com.cyberpeace.common.model;
 
+import com.google.common.collect.Lists;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.*;
+
 import java.io.Serializable;
 import java.util.List;
-
-import com.google.common.collect.Lists;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * 分页返回数据模型
@@ -17,7 +13,8 @@ import lombok.NoArgsConstructor;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

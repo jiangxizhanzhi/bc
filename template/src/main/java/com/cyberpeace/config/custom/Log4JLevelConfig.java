@@ -5,6 +5,7 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.cyberpeace.common.util.SystemPropUtil;
@@ -29,6 +30,7 @@ public class Log4JLevelConfig {
 	 * @see String
 	 */
 	String LOG_LEVEL = SystemPropUtil.getProp("LOG_LEVEL");
+	org.slf4j.Logger logResourceImport = LoggerFactory.getLogger("resourceImport");
 
 	/**
 	 * 初始化
@@ -37,6 +39,7 @@ public class Log4JLevelConfig {
 	 */
 	@PostConstruct
 	private void init() {
+		logResourceImport.info("start resourceImport log");
 		if (StringUtils.isBlank(LOG_LEVEL)) {
 			return;
 		}

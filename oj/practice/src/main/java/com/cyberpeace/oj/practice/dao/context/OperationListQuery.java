@@ -1,7 +1,8 @@
 package com.cyberpeace.oj.practice.dao.context;
 
 import com.cyberpeace.common.model.PatternBase;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -14,7 +15,8 @@ import java.util.List;
  * @see PatternBase
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class OperationListQuery extends PatternBase {
 
 	/**

@@ -1,7 +1,8 @@
 package com.cyberpeace.cr.crbase.dao.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 用户id岗位
@@ -9,7 +10,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 public class UserIdRole {
 

@@ -3,7 +3,8 @@ package com.cyberpeace.integratation.model.mp;
 import java.io.Serializable;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Getter;
 
 /**
@@ -12,7 +13,8 @@ import lombok.Getter;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class MpFlow implements Serializable {
 
 	/**

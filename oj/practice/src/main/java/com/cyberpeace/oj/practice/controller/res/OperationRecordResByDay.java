@@ -2,7 +2,8 @@ package com.cyberpeace.oj.practice.controller.res;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
@@ -17,7 +18,8 @@ import java.util.List;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class OperationRecordResByDay implements Serializable {

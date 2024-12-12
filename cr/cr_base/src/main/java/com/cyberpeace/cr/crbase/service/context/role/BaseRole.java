@@ -3,7 +3,8 @@ package com.cyberpeace.cr.crbase.service.context.role;
 import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 基础角色信息
@@ -11,7 +12,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class BaseRole {
 
 	/**

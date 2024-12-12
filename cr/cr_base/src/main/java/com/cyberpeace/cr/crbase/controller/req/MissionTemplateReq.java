@@ -9,7 +9,8 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +24,8 @@ import java.util.List;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @Slf4j
 public class MissionTemplateReq implements Serializable {
 

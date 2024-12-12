@@ -18,7 +18,8 @@ import lombok.*;
  * @see BaseTable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

@@ -1,9 +1,11 @@
 package com.cyberpeace.space.service.context.rule;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class ThreatDetectStatistics {
 
 	@ApiModelProperty(value = "网络流量提取规则")

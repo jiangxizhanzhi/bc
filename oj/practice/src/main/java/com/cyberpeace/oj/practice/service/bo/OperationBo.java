@@ -5,7 +5,8 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -18,7 +19,8 @@ import java.util.List;
  * @see PracticeOperation
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class OperationBo extends PracticeOperation {
 

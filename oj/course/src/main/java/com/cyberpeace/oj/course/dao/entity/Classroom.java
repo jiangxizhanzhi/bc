@@ -8,7 +8,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 课堂
@@ -19,7 +20,8 @@ import lombok.Data;
  * @see BaseTable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @TableName("oj_classroom")
 public class Classroom extends BaseTable {
 

@@ -3,7 +3,8 @@ package com.cyberpeace.cr.evaluation.controller.rsp;
 import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 评估系统树响应
@@ -11,7 +12,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class EvalSystemTreeRsp {
 
 	/**

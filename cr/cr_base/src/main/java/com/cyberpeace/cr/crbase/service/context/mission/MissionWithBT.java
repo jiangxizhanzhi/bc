@@ -2,7 +2,8 @@ package com.cyberpeace.cr.crbase.service.context.mission;
 
 import java.io.Serializable;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 任务模板返回体with训练模板id
@@ -10,7 +11,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class MissionWithBT extends MissionTemplateRes implements Serializable {
 
 	/**

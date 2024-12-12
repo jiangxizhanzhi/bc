@@ -5,7 +5,8 @@ import java.util.List;
 
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import io.swagger.annotations.ApiModel;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 管理课详情结果
@@ -16,7 +17,8 @@ import lombok.Data;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel("后台课时详情")
 public class AdminLessonDetailRes implements Serializable {
 

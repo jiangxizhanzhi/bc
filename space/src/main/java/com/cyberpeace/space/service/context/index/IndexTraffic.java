@@ -1,9 +1,11 @@
 package com.cyberpeace.space.service.context.index;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class IndexTraffic {
 
     @ApiModelProperty(value = "协议流量")

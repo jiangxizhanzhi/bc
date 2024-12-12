@@ -9,9 +9,11 @@ import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.service.context.rule.SpaceEventIntegrationRuleBo;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @TableName("space_event_integration_rule")
 public class SpaceEventIntegrationRule extends SpaceBaseTable {
     @ApiModelProperty(value = "统计周期")

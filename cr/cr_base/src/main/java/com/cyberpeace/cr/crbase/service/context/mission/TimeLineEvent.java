@@ -6,7 +6,8 @@ import java.util.List;
 import com.cyberpeace.cr.crbase.service.context.mark.EvidenceBo;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Getter;
 
 /**
@@ -15,7 +16,8 @@ import lombok.Getter;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TimeLineEvent {
 
 	/**

@@ -5,12 +5,14 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.service.context.algorithm.SpaceAlgorithmTeamBo;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Map;
 
 
-@Data
+@Getter
+@Setter
 @TableName("space_algorithm_team")
 public class SpaceAlgorithmTeam extends SpaceBaseTable {
 

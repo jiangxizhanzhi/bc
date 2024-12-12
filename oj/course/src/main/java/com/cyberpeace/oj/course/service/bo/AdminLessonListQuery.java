@@ -2,7 +2,8 @@ package com.cyberpeace.oj.course.service.bo;
 
 import com.cyberpeace.common.model.PatternBase;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * admin 课程列表查询
@@ -13,7 +14,8 @@ import lombok.Data;
  * @see PatternBase
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class AdminLessonListQuery extends PatternBase {
 
     /**

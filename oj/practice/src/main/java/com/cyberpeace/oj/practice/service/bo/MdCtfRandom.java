@@ -5,7 +5,8 @@ import java.util.Map;
 import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
 
 import com.cyberpeace.common.mdparser.parser.ListKeyValueParser;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * md ctf 随机
@@ -16,7 +17,8 @@ import lombok.Data;
  * @see MdCtfBase
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class MdCtfRandom extends MdCtfBase {
 
     /**

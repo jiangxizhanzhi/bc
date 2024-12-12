@@ -1,7 +1,8 @@
 package com.cyberpeace.oj.ojbase.service.context;
 
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 注意新增上下文
@@ -12,7 +13,8 @@ import lombok.Data;
  * @see NoteUniqueContext
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class NoteAddContext extends NoteUniqueContext {
 
     /**

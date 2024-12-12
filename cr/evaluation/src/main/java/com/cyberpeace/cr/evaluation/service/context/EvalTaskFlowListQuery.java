@@ -5,7 +5,8 @@ import java.io.Serializable;
 import com.cyberpeace.common.model.PageReqBase;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 评估任务流列表查询
@@ -13,7 +14,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class EvalTaskFlowListQuery extends PageReqBase implements Serializable {
 
 	/**

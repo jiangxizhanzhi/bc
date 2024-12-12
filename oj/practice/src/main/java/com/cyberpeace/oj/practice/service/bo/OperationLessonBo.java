@@ -3,7 +3,8 @@ package com.cyberpeace.oj.practice.service.bo;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 课后实操练习数据
@@ -14,7 +15,8 @@ import lombok.Data;
  * @see TheoryLessonBo
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class OperationLessonBo extends TheoryLessonBo {
 

@@ -7,12 +7,14 @@ import com.cyberpeace.space.dao.entity.SpaceAction;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceFrameBoBase;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class SpaceActionBo extends SpaceFrameBoBase {
 
 	@ApiModelProperty(value = "资源id")

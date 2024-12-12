@@ -5,7 +5,8 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 时间安排 bo
@@ -16,7 +17,8 @@ import lombok.Data;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class TimeScheduleBo implements Serializable {
 

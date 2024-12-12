@@ -2,7 +2,8 @@ package com.cyberpeace.cr.crbase.service.context;
 
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 任务阶段
@@ -10,7 +11,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TaskStage extends CrTask {
 
     /**

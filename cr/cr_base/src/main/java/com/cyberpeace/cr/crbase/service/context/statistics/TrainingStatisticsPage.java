@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 import com.cyberpeace.common.model.PageReqBase;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 训练统计分页
@@ -12,7 +13,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TrainingStatisticsPage implements Serializable {
 
 	/**

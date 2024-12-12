@@ -2,9 +2,11 @@ package com.cyberpeace.integratation.service.bo;
 
 import org.apache.commons.lang3.StringUtils;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class TopoTemplatePageReq {
 
     private String type;

@@ -6,7 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Getter;
 
 /**
@@ -14,7 +15,8 @@ import lombok.Getter;
  * @TableName cr_eval_index
  */
 @TableName(value = "cr_eval_index")
-@Data
+@Getter
+@Setter
 public class EvalIndex extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")

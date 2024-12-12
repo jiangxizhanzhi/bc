@@ -6,7 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.ConfigUtil;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,7 +17,8 @@ import org.apache.commons.lang3.StringUtils;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @TableName("cr_tool_tool")
 public class Tool extends BaseTable {
 

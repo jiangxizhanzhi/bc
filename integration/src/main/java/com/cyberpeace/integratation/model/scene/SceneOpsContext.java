@@ -2,7 +2,8 @@ package com.cyberpeace.integratation.model.scene;
 
 import java.io.Serializable;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 操作场景实例的上下文。
@@ -11,7 +12,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class SceneOpsContext implements Serializable {
 
 	/**

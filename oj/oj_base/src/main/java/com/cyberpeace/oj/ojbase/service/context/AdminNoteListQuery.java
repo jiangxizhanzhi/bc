@@ -2,7 +2,8 @@ package com.cyberpeace.oj.ojbase.service.context;
 
 import com.cyberpeace.common.model.PatternBase;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 管理员备注列表查询
@@ -13,7 +14,8 @@ import lombok.Data;
  * @see PatternBase
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class AdminNoteListQuery extends PatternBase {
 
 	/**

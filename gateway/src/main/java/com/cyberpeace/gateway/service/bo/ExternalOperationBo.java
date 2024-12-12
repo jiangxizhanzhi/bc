@@ -3,7 +3,8 @@ package com.cyberpeace.gateway.service.bo;
 import com.cyberpeace.oj.practice.service.bo.PracticeOperationFileBo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -15,7 +16,8 @@ import java.util.List;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class ExternalOperationBo implements Serializable {
 

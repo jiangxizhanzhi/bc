@@ -5,7 +5,8 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -19,7 +20,8 @@ import javax.validation.constraints.NotEmpty;
  * @since 1.0.0
  */
 @ApiModel
-@Data
+@Getter
+@Setter
 public class ResourceDelReq implements Serializable {
 
 	/**

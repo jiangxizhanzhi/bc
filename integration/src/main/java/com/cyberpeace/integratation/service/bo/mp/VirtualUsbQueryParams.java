@@ -1,8 +1,10 @@
 package com.cyberpeace.integratation.service.bo.mp;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class VirtualUsbQueryParams {
 
 	private String name;

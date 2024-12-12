@@ -9,7 +9,8 @@ import com.cyberpeace.cr.evaluation.service.context.EvalCollectionContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalIndicatorContext;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 评估指示器响应
@@ -17,7 +18,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class EvalIndicatorRsp {
 
 	/**

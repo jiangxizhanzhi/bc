@@ -6,7 +6,8 @@ import com.cyberpeace.space.dao.entity.SpaceAlgorithmEquipment;
 import com.cyberpeace.space.model.SpaceBoBase;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 空间算法设备 BO
@@ -14,7 +15,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/05
  */
-@Data
+@Getter
+@Setter
 public class SpaceAlgorithmEquipmentBo extends SpaceBoBase {
 
 	/**

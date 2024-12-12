@@ -1,9 +1,11 @@
 package com.cyberpeace.space.service.context.index;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class IndexFrameCount {
 
 	@ApiModelProperty(value = "攻击流程的JW防御行动框架")

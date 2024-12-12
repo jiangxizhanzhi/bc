@@ -1,7 +1,8 @@
 package com.cyberpeace.cr.crbase.service.context.task;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Getter;
 
 import java.io.Serializable;
@@ -13,7 +14,8 @@ import java.util.Date;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TaskLogRsp implements Serializable {
     /**
      * 房间id

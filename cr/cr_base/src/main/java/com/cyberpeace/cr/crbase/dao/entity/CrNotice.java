@@ -17,6 +17,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.constant.BaseI18n;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -28,7 +29,8 @@ import io.swagger.annotations.ApiModelProperty;
  * @date 2024/11/08
  */
 @TableName(value = "cr_notice")
-@Data
+@Getter
+@Setter
 public class CrNotice extends BaseTable {
 
     /**

@@ -5,7 +5,8 @@ import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 评估模板列表响应
@@ -13,7 +14,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class EvalTemplateListRsp implements Serializable {
 
 	/**

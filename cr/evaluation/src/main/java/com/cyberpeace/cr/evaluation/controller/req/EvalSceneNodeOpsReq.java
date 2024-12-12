@@ -5,7 +5,8 @@ import java.io.Serializable;
 import javax.validation.constraints.NotBlank;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 评估场景节点老年 退休金 计划请求体
@@ -13,7 +14,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class EvalSceneNodeOpsReq implements Serializable {
 
 	/**

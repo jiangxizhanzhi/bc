@@ -2,7 +2,8 @@ package com.cyberpeace.cr.crbase.service.context.mission;
 
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 提交任务、提交评估时，发送ws消息，提醒前端重新从接口获取数据
@@ -10,7 +11,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class MissionWsIdentifier extends WsMessageIdentifier {
 
 	/**

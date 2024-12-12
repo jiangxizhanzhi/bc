@@ -2,7 +2,8 @@ package com.cyberpeace.oj.course.service.bo;
 
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -15,7 +16,8 @@ import java.io.Serializable;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class StartSceneBo implements Serializable {
 
 	/**

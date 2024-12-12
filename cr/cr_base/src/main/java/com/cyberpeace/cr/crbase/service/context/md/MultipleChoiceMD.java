@@ -9,7 +9,8 @@ import com.cyberpeace.common.mdparser.parser.IntegerParser;
 import com.cyberpeace.common.mdparser.parser.ListParser;
 import com.cyberpeace.cr.crbase.service.context.paraser.MultipleChoiceParser;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 多选题MarkDown
@@ -17,7 +18,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class MultipleChoiceMD implements Serializable {
 	/**
 	 * 标题

@@ -5,7 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Getter;
 
 /**
@@ -17,7 +18,8 @@ import lombok.Getter;
  * @see BaseTable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @TableName("oj_practice_solved")
 public class PracticeSolved extends BaseTable {
 

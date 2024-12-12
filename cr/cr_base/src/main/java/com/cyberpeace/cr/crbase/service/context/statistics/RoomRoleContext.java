@@ -2,7 +2,8 @@ package com.cyberpeace.cr.crbase.service.context.statistics;
 
 import java.io.Serializable;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 训练角色模型
@@ -10,7 +11,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class RoomRoleContext implements Serializable {
 
 	/**

@@ -2,6 +2,8 @@ package com.cyberpeace.cs.service.context;
 
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Chat WS 消息标识符
@@ -9,7 +11,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class ChatWsMessageIdentifier extends WsMessageIdentifier {
 
 	/**

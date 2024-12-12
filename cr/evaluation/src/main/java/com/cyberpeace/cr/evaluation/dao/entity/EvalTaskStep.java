@@ -8,10 +8,12 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Getter;
 
-@Data
+@Getter
+@Setter
 @TableName("cr_eval_task_step")
 public class EvalTaskStep extends BaseTable {
 

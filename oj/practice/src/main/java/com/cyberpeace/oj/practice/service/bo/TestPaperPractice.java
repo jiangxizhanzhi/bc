@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.service.bo;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 试卷练习
@@ -10,7 +11,8 @@ import lombok.Data;
  * @date 2024/11/08
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class TestPaperPractice {
     /**
      * 资源id

@@ -1,7 +1,8 @@
 package com.cyberpeace.cr.evaluation.controller.rsp;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 评估房间int双响应
@@ -9,7 +10,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class EvalRoomIntPairRsp {
     /**
      * id

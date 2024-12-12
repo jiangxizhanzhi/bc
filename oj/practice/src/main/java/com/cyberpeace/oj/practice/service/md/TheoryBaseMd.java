@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.service.md;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 理论基础Markdown
@@ -10,7 +11,8 @@ import lombok.Data;
  * @date 2024/11/08
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class TheoryBaseMd {
 
 	private String title;

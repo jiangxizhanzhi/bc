@@ -9,7 +9,8 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -18,7 +19,8 @@ import org.apache.commons.collections.CollectionUtils;
  * @author SN
  * @date 2023/05/15
  */
-@Data
+@Getter
+@Setter
 public class CrRoleSimple implements Serializable {
 
 	/**

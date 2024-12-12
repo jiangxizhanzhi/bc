@@ -3,7 +3,8 @@ package com.cyberpeace.cr.crbase.service.context.statistics;
 import java.io.Serializable;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 
 /**
@@ -12,7 +13,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TrainingPersonalStatistics implements Serializable {
 
 	/**

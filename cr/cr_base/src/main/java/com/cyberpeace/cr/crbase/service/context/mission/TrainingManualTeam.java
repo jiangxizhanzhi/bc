@@ -7,7 +7,8 @@ import com.cyberpeace.cr.crbase.constant.TrainI18n;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 团队训练手册
@@ -15,7 +16,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TrainingManualTeam {
 
 	/**

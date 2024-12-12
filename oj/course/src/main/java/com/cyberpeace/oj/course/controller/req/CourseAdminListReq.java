@@ -2,7 +2,8 @@ package com.cyberpeace.oj.course.controller.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 课程管理列表请求体
@@ -13,7 +14,8 @@ import lombok.Data;
  * @see CourseListReq
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel("后台参数接收")
 public class CourseAdminListReq extends CourseListReq {
 

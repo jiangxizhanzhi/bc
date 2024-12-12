@@ -6,11 +6,13 @@ import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.service.context.rule.SpaceTrafficDetectRuleBo;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Map;
 
-@Data
+@Getter
+@Setter
 @TableName("space_traffic_detect_rule")
 public class SpaceTrafficDetectRule extends SpaceBaseTable {
 

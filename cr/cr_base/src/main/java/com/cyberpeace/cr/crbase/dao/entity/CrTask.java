@@ -14,6 +14,7 @@ import com.cyberpeace.constant.BaseI18n;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 靶场任务
@@ -21,7 +22,8 @@ import lombok.Getter;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @TableName("cr_task")
 public class CrTask extends BaseTable {
 

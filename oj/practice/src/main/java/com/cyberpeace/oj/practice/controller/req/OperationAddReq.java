@@ -10,7 +10,8 @@ import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,7 +34,8 @@ import static com.cyberpeace.cr.crbase.utils.CrCommonValidator.validateLength;
  * @since 1.0.0
  */
 @Slf4j
-@Data
+@Getter
+@Setter
 @ApiModel
 public class OperationAddReq implements Serializable, CustomValidate {
 

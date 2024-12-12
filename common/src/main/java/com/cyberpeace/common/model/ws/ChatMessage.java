@@ -1,9 +1,6 @@
 package com.cyberpeace.common.model.ws;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * 聊天消息
@@ -11,7 +8,8 @@ import lombok.NoArgsConstructor;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

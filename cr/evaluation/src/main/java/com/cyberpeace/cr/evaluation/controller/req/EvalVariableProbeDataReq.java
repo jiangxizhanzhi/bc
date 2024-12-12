@@ -2,7 +2,8 @@ package com.cyberpeace.cr.evaluation.controller.req;
 
 import com.cyberpeace.common.model.PageReqBase;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 评估变量探针数据请求体
@@ -10,7 +11,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class EvalVariableProbeDataReq extends PageReqBase {
     /**
      * 变量id

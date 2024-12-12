@@ -7,7 +7,8 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 资源公共请求体
@@ -18,7 +19,8 @@ import lombok.Data;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class ResourcePublicReq implements Serializable {
 
 	/**

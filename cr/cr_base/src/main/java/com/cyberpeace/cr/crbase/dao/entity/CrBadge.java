@@ -10,6 +10,7 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 用户看到的红点提示
@@ -17,7 +18,8 @@ import lombok.Getter;
  * @author SN
  * @date 2023/06/07
  */
-@Data
+@Getter
+@Setter
 public class CrBadge {
 
 	/**

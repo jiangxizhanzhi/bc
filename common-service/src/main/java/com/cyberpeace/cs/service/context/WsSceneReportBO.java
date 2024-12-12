@@ -5,7 +5,9 @@ import java.io.Serializable;
 import com.alibaba.fastjson.JSONObject;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * WS场景报告博
@@ -13,7 +15,8 @@ import lombok.NoArgsConstructor;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class WsSceneReportBO implements Serializable {
 

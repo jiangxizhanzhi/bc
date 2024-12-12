@@ -3,7 +3,8 @@ package com.cyberpeace.oj.course.service.bo;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.oj.practice.service.bo.PracticeOperationDumpLoadBo;
 import com.cyberpeace.oj.practice.service.bo.PracticeTheoryDumpLoadBo;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
@@ -17,7 +18,8 @@ import java.util.List;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class LessonDumpLoadBo implements Serializable {
 
 	/**

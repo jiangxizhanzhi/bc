@@ -9,7 +9,8 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 外部理论计数博
@@ -20,7 +21,8 @@ import lombok.Data;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class ExternalTheoryCountBo implements Serializable {
     
     public ExternalTheoryCountBo() {

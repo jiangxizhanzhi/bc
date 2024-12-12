@@ -1,6 +1,7 @@
 package com.cyberpeace.space.service.context.tactic;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 攻击修改请求体
@@ -8,7 +9,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/07
  */
-@Data
+@Getter
+@Setter
 public class AttackModifyReq extends AttackAddReq {
 
 	/**

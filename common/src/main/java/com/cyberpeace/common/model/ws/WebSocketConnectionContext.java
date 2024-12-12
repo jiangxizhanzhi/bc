@@ -1,20 +1,17 @@
 package com.cyberpeace.common.model.ws;
 
-import java.util.Map;
-
 import com.google.common.collect.Maps;
+import lombok.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.Map;
 
 /**
  * websocket连接需要的上下文
  *
  * @author yinqingrong@date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

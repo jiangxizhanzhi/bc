@@ -4,7 +4,8 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 课堂分页请求体
@@ -15,7 +16,8 @@ import lombok.Data;
  * @see PageReqBase
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 
 public class ClassroomPageReq extends PageReqBase {
 

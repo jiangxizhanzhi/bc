@@ -3,7 +3,8 @@ package com.cyberpeace.gateway.controller.req;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.model.PageReqBase;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 
@@ -13,7 +14,8 @@ import javax.validation.constraints.NotBlank;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class OperationPageReq extends PageReqBase {
 
     /**

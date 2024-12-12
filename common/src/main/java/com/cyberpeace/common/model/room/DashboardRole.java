@@ -1,6 +1,8 @@
 package com.cyberpeace.common.model.room;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 挡泥板岗位
@@ -8,7 +10,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class DashboardRole {
     /**
      * 岗位类型

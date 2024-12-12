@@ -2,7 +2,8 @@ package com.cyberpeace.oj.course.service.bo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
@@ -14,7 +15,8 @@ import java.util.Date;
  * @date 2024/11/08
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel("课程学习进度信息")
 public class CourseStudyProcessBo {
 

@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 任务计划模板
@@ -13,7 +15,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @TableName("cr_mission_scheme_template")
 public class MissionSchemeTemplate extends BaseTable {
 

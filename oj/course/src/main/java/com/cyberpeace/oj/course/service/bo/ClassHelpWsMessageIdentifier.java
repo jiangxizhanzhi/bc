@@ -2,7 +2,8 @@ package com.cyberpeace.oj.course.service.bo;
 
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 类帮助 WS 消息标识符
@@ -13,7 +14,8 @@ import lombok.Data;
  * @see WsMessageIdentifier
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class ClassHelpWsMessageIdentifier extends WsMessageIdentifier {
 
     /**

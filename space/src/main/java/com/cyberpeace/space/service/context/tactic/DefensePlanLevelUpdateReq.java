@@ -3,9 +3,11 @@ package com.cyberpeace.space.service.context.tactic;
 import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class DefensePlanLevelUpdateReq {
 
 	@ApiModelProperty(value = "框架层级")

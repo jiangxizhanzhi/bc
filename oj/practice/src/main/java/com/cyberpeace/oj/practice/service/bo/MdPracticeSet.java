@@ -3,7 +3,8 @@ package com.cyberpeace.oj.practice.service.bo;
 import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
 import com.cyberpeace.common.mdparser.parser.IntegerParser;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -16,7 +17,8 @@ import java.io.Serializable;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class MdPracticeSet implements Serializable {
 
     /**

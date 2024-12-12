@@ -1,7 +1,8 @@
 package com.cyberpeace.oj.course.service.bo;
 
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
@@ -16,7 +17,8 @@ import java.util.List;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class CourseSceneContext implements Serializable {
 

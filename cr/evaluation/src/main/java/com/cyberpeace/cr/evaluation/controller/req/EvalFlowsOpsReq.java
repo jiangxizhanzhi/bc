@@ -8,7 +8,8 @@ import javax.validation.constraints.NotNull;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowInfoContext;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 评估流老年 退休金 计划请求体
@@ -16,7 +17,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class EvalFlowsOpsReq implements Serializable {
 
 	/**

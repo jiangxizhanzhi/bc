@@ -2,7 +2,8 @@ package com.cyberpeace.cr.tool.controller.res;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
@@ -14,7 +15,8 @@ import java.util.List;
  * @date 2024/11/08
  */
 @ApiModel("前台工具库信息")
-@Data
+@Getter
+@Setter
 public class WebToolRsp implements Serializable {
 
     /**

@@ -2,7 +2,8 @@ package com.cyberpeace.oj.course.controller.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -15,7 +16,8 @@ import java.io.Serializable;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class LessonPracticeSceneReq implements Serializable {
 

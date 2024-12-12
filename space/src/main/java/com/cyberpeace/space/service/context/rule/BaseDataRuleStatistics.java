@@ -1,9 +1,11 @@
 package com.cyberpeace.space.service.context.rule;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class BaseDataRuleStatistics {
 
 	@ApiModelProperty(value = "漏洞库数量")

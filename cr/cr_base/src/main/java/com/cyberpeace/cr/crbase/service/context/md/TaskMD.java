@@ -6,7 +6,8 @@ import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
 import com.cyberpeace.common.mdparser.convert.QuestionTypeConvert;
 import com.cyberpeace.common.mdparser.parser.IntegerParser;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 任务MarkDown
@@ -14,7 +15,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TaskMD implements Serializable {
 
 	/**

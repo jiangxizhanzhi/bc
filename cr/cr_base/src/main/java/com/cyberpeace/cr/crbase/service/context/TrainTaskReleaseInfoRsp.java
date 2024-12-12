@@ -4,7 +4,8 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReleaseInfo;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReleaseStageInfo;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -17,7 +18,8 @@ import java.util.stream.Collectors;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TrainTaskReleaseInfoRsp implements Serializable {
 
     /**

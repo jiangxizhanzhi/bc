@@ -4,7 +4,8 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -17,7 +18,8 @@ import javax.validation.constraints.NotNull;
  * @date 2024/11/08
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel("资源授权操作")
 public class ResourceShareReq {
 

@@ -2,7 +2,8 @@ package com.cyberpeace.cr.crbase.service.context;
 
 import java.util.List;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 任务阶段编排
@@ -10,7 +11,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class MissionStageScheme {
 
 	/**

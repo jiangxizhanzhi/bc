@@ -10,9 +10,11 @@ import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.service.context.rule.SpaceTrafficExtractionRuleBo;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @TableName("space_traffic_extraction_rule")
 public class SpaceTrafficExtractionRule extends SpaceBaseTable {
 

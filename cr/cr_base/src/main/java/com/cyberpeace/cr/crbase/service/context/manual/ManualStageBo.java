@@ -1,12 +1,12 @@
 package com.cyberpeace.cr.crbase.service.context.manual;
 
-import java.io.Serializable;
-import java.util.List;
-
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.compress.utils.Lists;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * 手动载物台 BO
@@ -14,7 +14,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class ManualStageBo implements Serializable {
 
 	/**

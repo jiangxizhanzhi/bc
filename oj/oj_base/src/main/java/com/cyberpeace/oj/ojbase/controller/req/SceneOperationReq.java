@@ -6,7 +6,8 @@ import javax.validation.constraints.NotBlank;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 场景实操请求体
@@ -17,7 +18,8 @@ import lombok.Data;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class SceneOperationReq implements Serializable {
 

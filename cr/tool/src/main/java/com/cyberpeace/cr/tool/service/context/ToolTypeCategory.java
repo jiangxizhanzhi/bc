@@ -1,7 +1,8 @@
 package com.cyberpeace.cr.tool.service.context;
 
 import com.cyberpeace.cr.tool.controller.res.WebToolCategoryRsp;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.compress.utils.Lists;
 
 import java.util.List;
@@ -12,7 +13,8 @@ import java.util.List;
  * @author SN
  * @date 2024/11/13
  */
-@Data
+@Getter
+@Setter
 public class ToolTypeCategory {
 
     /**

@@ -7,6 +7,8 @@ import com.cyberpeace.cr.crbase.service.context.StatisticalInfo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 任务动态响应
@@ -14,7 +16,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class MissionDynamicRsp {
 
 	/**

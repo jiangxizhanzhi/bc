@@ -1,9 +1,11 @@
 package com.cyberpeace.space.service.context.tactic;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class TacticDefenseCategoryBo {
     /**
      * 资源id

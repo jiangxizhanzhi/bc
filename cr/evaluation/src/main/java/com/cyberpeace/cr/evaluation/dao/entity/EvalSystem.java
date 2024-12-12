@@ -6,14 +6,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 
  * @TableName cr_eval_system
  */
 @TableName(value = "cr_eval_system")
-@Data
+@Getter
+@Setter
 public class EvalSystem extends BaseTable {
 
 	@ApiModelProperty("ID")

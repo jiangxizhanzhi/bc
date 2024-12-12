@@ -5,6 +5,8 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.checkerframework.checker.units.qual.A;
 
 /**
@@ -13,7 +15,8 @@ import org.checkerframework.checker.units.qual.A;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class DashboardInfo implements Serializable {
 
 	/**

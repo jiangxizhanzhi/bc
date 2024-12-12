@@ -1,7 +1,8 @@
 package com.cyberpeace.cr.evaluation.controller.req;
 
 import com.cyberpeace.common.model.PageReqBase;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -11,7 +12,8 @@ import java.io.Serializable;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class EvalNameListReq extends PageReqBase implements Serializable {
 
 

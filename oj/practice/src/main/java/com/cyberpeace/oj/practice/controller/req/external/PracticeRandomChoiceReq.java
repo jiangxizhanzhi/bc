@@ -2,7 +2,8 @@ package com.cyberpeace.oj.practice.controller.req.external;
 
 import com.cyberpeace.common.model.PatternBase;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 
@@ -15,7 +16,8 @@ import javax.validation.constraints.NotNull;
  * @see PatternBase
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class PracticeRandomChoiceReq extends PatternBase {
 
 	/**

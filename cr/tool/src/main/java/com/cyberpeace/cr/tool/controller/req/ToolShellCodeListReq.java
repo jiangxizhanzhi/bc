@@ -3,7 +3,8 @@ package com.cyberpeace.cr.tool.controller.req;
 import com.cyberpeace.common.model.PageReqBase;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 工具壳代号列表请求体
@@ -11,7 +12,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class ToolShellCodeListReq extends PageReqBase {
 

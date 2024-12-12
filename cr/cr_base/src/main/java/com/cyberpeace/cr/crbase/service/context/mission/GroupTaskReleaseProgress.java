@@ -1,12 +1,12 @@
 package com.cyberpeace.cr.crbase.service.context.mission;
 
-import java.io.Serializable;
-import java.util.List;
-
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.compress.utils.Lists;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * 组任务下发进度
@@ -14,7 +14,8 @@ import lombok.Data;
  * @author SN
  * @date 2023/05/15
  */
-@Data
+@Getter
+@Setter
 public class GroupTaskReleaseProgress extends ReleaseProgress implements Serializable {
 
 	/**

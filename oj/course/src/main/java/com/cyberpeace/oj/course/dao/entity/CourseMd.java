@@ -3,7 +3,8 @@ package com.cyberpeace.oj.course.dao.entity;
 import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
 import com.cyberpeace.common.mdparser.convert.DifficultyConvert;
 import com.cyberpeace.common.mdparser.parser.ListParser;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -15,7 +16,8 @@ import java.util.List;
  * @date 2024/11/08
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class CourseMd {
 
 	/**

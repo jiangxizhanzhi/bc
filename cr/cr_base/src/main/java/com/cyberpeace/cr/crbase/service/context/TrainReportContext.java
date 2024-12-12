@@ -11,7 +11,8 @@ import com.cyberpeace.cr.crbase.service.context.score.GetScoreRsp;
 import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreTrend;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.time.DateUtils;
 
 import java.time.Year;
@@ -25,7 +26,8 @@ import java.util.stream.Collectors;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TrainReportContext {
 
 	/**

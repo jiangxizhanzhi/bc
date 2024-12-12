@@ -3,7 +3,8 @@ package com.cyberpeace.oj.ojbase.controller.req;
 import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -16,7 +17,8 @@ import javax.validation.constraints.NotNull;
  * @since 1.0.0
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class ResourcePublicReq {
 
 	/**

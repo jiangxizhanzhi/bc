@@ -3,7 +3,8 @@ package com.cyberpeace.cr.crbase.service.context.role;
 import java.io.Serializable;
 import java.util.List;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 角色任务编排阶段模型
@@ -11,7 +12,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class CrRoleMissionSchemeStage implements Serializable {
 
 	/**

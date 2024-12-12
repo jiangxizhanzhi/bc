@@ -1,10 +1,12 @@
 package com.cyberpeace.space.service.context.tactic;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class DefenseListBo {
     private String resourceId;
 

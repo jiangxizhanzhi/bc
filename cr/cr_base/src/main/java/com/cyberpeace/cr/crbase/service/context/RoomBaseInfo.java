@@ -7,7 +7,8 @@ import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.TimeUtil;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -20,7 +21,8 @@ import java.util.List;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class RoomBaseInfo {
 
 	/**

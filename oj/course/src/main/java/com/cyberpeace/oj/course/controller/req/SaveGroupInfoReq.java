@@ -3,7 +3,8 @@ package com.cyberpeace.oj.course.controller.req;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -19,7 +20,8 @@ import java.util.List;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class SaveGroupInfoReq implements Serializable {
 

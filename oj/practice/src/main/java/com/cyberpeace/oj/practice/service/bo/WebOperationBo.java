@@ -2,7 +2,8 @@ package com.cyberpeace.oj.practice.service.bo;
 
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Web实操博
@@ -13,7 +14,8 @@ import lombok.Data;
  * @see OperationBo
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class WebOperationBo extends OperationBo {
 
 	/**

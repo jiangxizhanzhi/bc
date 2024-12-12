@@ -9,7 +9,8 @@ import org.apache.commons.compress.utils.Lists;
 import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 评估算法请求体
@@ -17,7 +18,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class EvalAlgorithmReq {
 
 	/**

@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * id名称类型
@@ -11,7 +13,8 @@ import lombok.Data;
  * @author SN
  * @date 2023/05/18
  */
-@Data
+@Getter
+@Setter
 public class IdNameType implements Serializable {
 
 	/**

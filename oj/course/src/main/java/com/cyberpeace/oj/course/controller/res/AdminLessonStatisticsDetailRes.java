@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 管理课统计学详情结果
@@ -15,7 +16,8 @@ import lombok.Data;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class AdminLessonStatisticsDetailRes implements Serializable {
 
     /**

@@ -3,7 +3,8 @@ package com.cyberpeace.oj.course.service.bo;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -16,7 +17,8 @@ import java.io.Serializable;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel("课程学习排名")
 public class CourseStatsRankBo implements Serializable {
     /**

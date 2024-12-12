@@ -2,7 +2,8 @@ package com.cyberpeace.oj.course.controller.req;
 
 import com.cyberpeace.common.model.PageReqBase;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 用户统计请求体
@@ -13,7 +14,8 @@ import lombok.Data;
  * @see PageReqBase
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class UserStatsReq extends PageReqBase {
     /**
      * 组织

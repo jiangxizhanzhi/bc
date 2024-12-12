@@ -2,7 +2,8 @@ package com.cyberpeace.cr.evaluation.service.context;
 
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.CommonContext;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Eval Task Slim 上下文
@@ -10,7 +11,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class EvalTaskSlimContext {
 
 	/**

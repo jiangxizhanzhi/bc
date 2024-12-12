@@ -1,6 +1,7 @@
 package com.cyberpeace.integratation.service.bo;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -11,7 +12,8 @@ import java.util.Date;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class CalendarCompetitionBo implements Serializable {
 
 	/**

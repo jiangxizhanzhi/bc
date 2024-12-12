@@ -1,11 +1,13 @@
 package com.cyberpeace.space.service.context.rule;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
 public class AptReportHistory {
 
 	@ApiModelProperty(value = "发现时间")

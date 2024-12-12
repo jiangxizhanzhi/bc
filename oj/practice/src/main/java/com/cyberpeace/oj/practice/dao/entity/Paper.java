@@ -17,7 +17,8 @@ import lombok.*;
  * @see AuthTable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

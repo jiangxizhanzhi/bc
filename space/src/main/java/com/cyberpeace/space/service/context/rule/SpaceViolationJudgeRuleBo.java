@@ -7,9 +7,11 @@ import com.cyberpeace.space.dao.entity.SpaceViolationJudgeRule;
 import com.cyberpeace.space.model.SpaceBoBase;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class SpaceViolationJudgeRuleBo extends SpaceBoBase {
 
 	@ApiModelProperty(value = "资源id")

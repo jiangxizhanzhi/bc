@@ -1,10 +1,11 @@
 package com.cyberpeace.cr.crbase.service.context.evaluation;
 
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Date;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 /**
  * 直接查询可得的评估列表信息
@@ -12,7 +13,8 @@ import lombok.Data;
  * @author SN
  * @date 2023/05/18
  */
-@Data
+@Getter
+@Setter
 public class EvaluationListBo implements Serializable {
 
 	/**

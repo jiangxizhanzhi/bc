@@ -2,7 +2,8 @@ package com.cyberpeace.cr.crbase.service.context.score;
 
 import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
@@ -13,7 +14,8 @@ import java.util.Date;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class ScoreTrendReq {
 

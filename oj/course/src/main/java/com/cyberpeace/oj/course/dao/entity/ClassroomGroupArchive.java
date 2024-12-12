@@ -5,7 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 课堂组存档
@@ -16,7 +17,8 @@ import lombok.Data;
  * @see BaseTable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @TableName("oj_classroom_group_archive")
 public class ClassroomGroupArchive extends BaseTable {
 

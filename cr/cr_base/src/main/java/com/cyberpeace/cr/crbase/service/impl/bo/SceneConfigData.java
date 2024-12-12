@@ -1,13 +1,12 @@
 package com.cyberpeace.cr.crbase.service.impl.bo;
 
-import java.io.Serializable;
+import com.alibaba.fastjson.JSONObject;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
-
-import com.alibaba.fastjson.JSONObject;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import java.io.Serializable;
 
 /**
  * 场景配置数据
@@ -15,7 +14,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class SceneConfigData implements Serializable {
 
 	/**

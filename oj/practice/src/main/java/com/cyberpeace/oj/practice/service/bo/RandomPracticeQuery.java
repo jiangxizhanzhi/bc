@@ -4,7 +4,8 @@ import java.util.List;
 
 import com.cyberpeace.common.model.PatternBase;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 随机练习查询
@@ -15,7 +16,8 @@ import lombok.Data;
  * @see PatternBase
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class RandomPracticeQuery extends PatternBase {
 
 	/**

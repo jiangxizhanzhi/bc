@@ -3,7 +3,8 @@ package com.cyberpeace.cr.crbase.service.context.role;
 import java.io.Serializable;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 用于后台模板查询的返回
@@ -11,7 +12,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class CrRoleConfig extends CrRoleNodesData implements Serializable {
 
 	/**

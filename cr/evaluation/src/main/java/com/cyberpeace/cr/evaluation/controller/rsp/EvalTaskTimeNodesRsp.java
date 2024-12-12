@@ -6,7 +6,8 @@ import java.util.List;
 import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 评估任务时间节点响应
@@ -14,7 +15,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class EvalTaskTimeNodesRsp implements Serializable {
 
 	/**

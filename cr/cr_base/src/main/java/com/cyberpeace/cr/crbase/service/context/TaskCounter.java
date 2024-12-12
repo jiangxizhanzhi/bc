@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.service.context;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Getter;
 
 /**
@@ -9,7 +10,8 @@ import lombok.Getter;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TaskCounter {
 
 	/**

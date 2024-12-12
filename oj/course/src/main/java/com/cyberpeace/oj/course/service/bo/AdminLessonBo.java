@@ -3,7 +3,8 @@ package com.cyberpeace.oj.course.service.bo;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
@@ -17,7 +18,8 @@ import java.util.List;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class AdminLessonBo implements Serializable {
 
     /**

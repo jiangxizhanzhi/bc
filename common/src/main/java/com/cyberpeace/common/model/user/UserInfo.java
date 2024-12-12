@@ -1,15 +1,16 @@
 package com.cyberpeace.common.model.user;
 
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Lists;
-
-import lombok.Data;
-
-@Data
+@Getter
+@Setter
 public class UserInfo implements Serializable {
 
     /**

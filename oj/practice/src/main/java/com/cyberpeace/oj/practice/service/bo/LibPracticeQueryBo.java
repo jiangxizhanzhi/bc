@@ -3,7 +3,8 @@ package com.cyberpeace.oj.practice.service.bo;
 import java.util.List;
 
 import com.cyberpeace.common.model.PatternBase;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * lib practice query bo
@@ -14,7 +15,8 @@ import lombok.Data;
  * @see PatternBase
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class LibPracticeQueryBo extends PatternBase {
 
 	/**

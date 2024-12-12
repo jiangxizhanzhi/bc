@@ -3,7 +3,8 @@ package com.cyberpeace.oj.practice.service.bo;
 import com.cyberpeace.common.model.AuthTable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 管理实践设置博
@@ -14,7 +15,8 @@ import lombok.Data;
  * @see AuthTable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class AdminPracticeSetBo extends AuthTable {
 

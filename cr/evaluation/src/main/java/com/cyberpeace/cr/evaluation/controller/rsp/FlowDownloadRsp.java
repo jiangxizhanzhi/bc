@@ -3,7 +3,8 @@ package com.cyberpeace.cr.evaluation.controller.rsp;
 import java.io.Serializable;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 流下载响应
@@ -11,7 +12,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class FlowDownloadRsp implements Serializable {
 
 	/**

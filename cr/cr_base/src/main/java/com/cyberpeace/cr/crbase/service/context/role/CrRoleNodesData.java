@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 角色拥有的节点
@@ -12,7 +13,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class CrRoleNodesData implements Serializable {
 
 	/**

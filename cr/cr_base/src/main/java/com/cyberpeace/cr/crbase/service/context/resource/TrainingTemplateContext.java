@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.service.context.resource;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 训练模板中间模型
@@ -8,7 +9,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TrainingTemplateContext {
 
 	/**

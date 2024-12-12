@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 训练记录，记录训练房间的创建和销毁
@@ -15,7 +17,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @TableName("cr_train_record")
 public class TrainRecord implements Serializable {
 

@@ -4,13 +4,16 @@ import java.io.Serializable;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 在获取任务列表接口使用
  *
  * @author@date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class SchemeListMissionRsp implements Serializable {
 
 	/**

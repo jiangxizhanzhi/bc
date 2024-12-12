@@ -8,7 +8,8 @@ import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 任务编排阶段
@@ -16,7 +17,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class MissionSchemeStage {
 
 	/**
@@ -53,7 +55,8 @@ public class MissionSchemeStage {
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 class MissionSchemeMission {
 
 	/**

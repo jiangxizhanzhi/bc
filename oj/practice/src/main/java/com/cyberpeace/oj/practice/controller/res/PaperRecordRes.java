@@ -1,7 +1,8 @@
 package com.cyberpeace.oj.practice.controller.res;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -14,7 +15,8 @@ import java.io.Serializable;
  * @since 1.0.0
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class PaperRecordRes implements Serializable {
 
 	/**

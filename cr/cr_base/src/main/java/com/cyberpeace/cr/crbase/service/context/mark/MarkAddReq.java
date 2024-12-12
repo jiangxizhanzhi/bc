@@ -7,7 +7,8 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -16,7 +17,8 @@ import org.apache.commons.lang3.StringUtils;
  * @author SN
  * @date 2023/05/24
  */
-@Data
+@Getter
+@Setter
 public class MarkAddReq implements Serializable {
 
 	/**

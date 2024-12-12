@@ -1,6 +1,7 @@
 package com.cyberpeace.integratation.model.scene;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 流记录上下文
@@ -8,7 +9,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class FlowRecordContext extends NodeOpsContext {
 
 	/**

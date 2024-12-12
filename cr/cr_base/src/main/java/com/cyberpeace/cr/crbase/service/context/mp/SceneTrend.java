@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.service.context.mp;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 场景趋势
@@ -8,7 +9,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class SceneTrend {
     /**
      * 数据大小

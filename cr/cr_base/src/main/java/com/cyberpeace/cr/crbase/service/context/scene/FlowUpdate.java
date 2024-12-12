@@ -5,7 +5,8 @@ import java.util.List;
 
 import com.cyberpeace.cs.service.context.scene.ElementFlow;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 流量更新模型
@@ -13,7 +14,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class FlowUpdate implements Serializable {
 
 	/**

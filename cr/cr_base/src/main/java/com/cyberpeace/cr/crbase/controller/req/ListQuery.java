@@ -8,6 +8,8 @@ import com.cyberpeace.common.util.LocalStringUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -19,7 +21,8 @@ import org.apache.commons.lang3.StringUtils;
  * 前台使用的查询类
  */
 @ApiModel
-@Data
+@Getter
+@Setter
 public class ListQuery extends PageReqBase {
 
 	/**

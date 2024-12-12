@@ -1,7 +1,8 @@
 package com.cyberpeace.cr.evaluation.controller.req;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -12,7 +13,8 @@ import java.io.Serializable;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class FlowParamUpdateReq implements Serializable {
 
 	/**

@@ -11,6 +11,7 @@ import com.cyberpeace.cs.constant.SceneEvent;
 import com.cyberpeace.cs.constant.SceneEventStatus;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
@@ -20,7 +21,8 @@ import java.util.Date;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @TableName("local_scene")
 public class LocalScene extends BaseTable {
 

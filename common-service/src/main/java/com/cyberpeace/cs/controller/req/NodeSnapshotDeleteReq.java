@@ -8,6 +8,8 @@ import javax.validation.constraints.NotEmpty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 节点快照删除请求体
@@ -15,7 +17,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class NodeSnapshotDeleteReq implements Serializable {
 

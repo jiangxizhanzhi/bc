@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 元素流列表
@@ -11,7 +13,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class ElementFlowList implements Serializable {
 
 	/**

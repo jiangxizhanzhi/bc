@@ -11,7 +11,8 @@ import com.cyberpeace.cr.crbase.service.context.UserData;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleSimple;
 import com.cyberpeace.cr.crbase.service.context.task.TaskLogRsp;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.io.Serializable;
@@ -27,7 +28,8 @@ import java.util.Map;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class GetScoreRsp implements Serializable {
 
 	/**

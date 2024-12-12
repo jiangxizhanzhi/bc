@@ -9,7 +9,8 @@ import com.cyberpeace.common.util.LocalStringUtil;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 业务模板查询
@@ -20,7 +21,8 @@ import lombok.Data;
  * 后台使用的查询类
  */
 @ApiModel
-@Data
+@Getter
+@Setter
 public class BusinessTemplateQuery extends PageReqBase {
 
 	/**

@@ -2,7 +2,8 @@ package com.cyberpeace.integratation.model.scene;
 
 import java.util.List;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 流批量老年 退休金 计划上下文
@@ -10,7 +11,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class FlowBatchOpsContext extends NodeOpsContext {
 
 	/**

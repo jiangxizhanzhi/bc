@@ -1,11 +1,11 @@
 package com.cyberpeace.cr.crbase.service.context.device;
 
-import java.io.Serializable;
-
 import com.cyberpeace.common.model.PageReqBase;
-
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * 资产清单
@@ -13,7 +13,8 @@ import lombok.Data;
  * @author SN
  * @date 2023/05/29
  */
-@Data
+@Getter
+@Setter
 public class AssetPageReq extends PageReqBase implements Serializable {
 
 	/**

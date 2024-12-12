@@ -1,7 +1,8 @@
 package com.cyberpeace.oj.course.service.bo;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
@@ -15,7 +16,8 @@ import java.util.List;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 public class PageReportBo implements Serializable {
 

@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.service.bo;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 实践理论转 储加载博
@@ -11,7 +12,8 @@ import lombok.Data;
  * @see PracticeDumpLoadBo
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class PracticeTheoryDumpLoadBo extends PracticeDumpLoadBo {
 
     // 理论题独有字段

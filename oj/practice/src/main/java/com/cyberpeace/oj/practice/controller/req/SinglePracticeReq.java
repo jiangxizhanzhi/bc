@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.controller.req;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * TestPaperReq使用, 提交试卷中的练习信息
@@ -10,7 +11,8 @@ import lombok.Data;
  * @date 2024/11/08
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class SinglePracticeReq {
 
     /**

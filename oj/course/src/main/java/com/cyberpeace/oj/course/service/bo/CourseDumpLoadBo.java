@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 课程 dump load bo
@@ -15,7 +16,8 @@ import lombok.Data;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class CourseDumpLoadBo implements Serializable {
 
 	/**

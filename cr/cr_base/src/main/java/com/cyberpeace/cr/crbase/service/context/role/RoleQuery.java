@@ -2,7 +2,8 @@ package com.cyberpeace.cr.crbase.service.context.role;
 
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 /**
@@ -11,7 +12,8 @@ import lombok.NoArgsConstructor;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class RoleQuery {
 

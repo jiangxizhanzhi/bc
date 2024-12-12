@@ -14,7 +14,8 @@ import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -332,7 +333,8 @@ interface RoleGroupNames {
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @Slf4j
 public class MDParser {
 
@@ -1037,7 +1039,8 @@ public class MDParser {
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 class Option implements Serializable {
 
 	/**
@@ -1062,7 +1065,8 @@ class Option implements Serializable {
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 class RbRoleInfo {
 
 	/**
@@ -1082,7 +1086,8 @@ class RbRoleInfo {
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 class RoleInfo {
 
 	/**
@@ -1113,7 +1118,8 @@ class RoleInfo {
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 class MissionScheme {
 
 	/**
@@ -1147,7 +1153,8 @@ class MissionScheme {
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 class SchemeDatum {
 
 	/**
@@ -1172,7 +1179,8 @@ class SchemeDatum {
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 class Mission {
 
 	private String resourceId;
@@ -1193,7 +1201,8 @@ class Mission {
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 class Node {
 
 	/**
@@ -1222,7 +1231,8 @@ class Node {
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 class Role {
 
 	/**
@@ -1247,7 +1257,8 @@ class Role {
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 class GroupRoles {
 
 	/**

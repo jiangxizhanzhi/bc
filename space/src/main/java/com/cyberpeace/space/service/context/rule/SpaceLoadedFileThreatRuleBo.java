@@ -6,9 +6,11 @@ import com.cyberpeace.space.dao.entity.SpaceLoadedFileThreatRule;
 import com.cyberpeace.space.model.SpaceBoBase;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class SpaceLoadedFileThreatRuleBo extends SpaceBoBase {
 
 	@ApiModelProperty(value = "资源id")

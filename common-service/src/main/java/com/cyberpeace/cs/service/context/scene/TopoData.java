@@ -1,8 +1,9 @@
 package com.cyberpeace.cs.service.context.scene;
 
-import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
-import lombok.Data;
+import java.io.Serializable;
 
 /**
  * 拓扑数据
@@ -10,7 +11,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TopoData implements Serializable {
 
 	/**

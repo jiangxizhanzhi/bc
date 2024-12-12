@@ -1,8 +1,10 @@
 package com.cyberpeace.space.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public abstract class SpaceFrameBoBase {
 
 	private String resourceId;

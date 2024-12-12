@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 节点流量查询体
@@ -12,7 +13,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class ElementFlowListContext implements Serializable {
 
 	/**

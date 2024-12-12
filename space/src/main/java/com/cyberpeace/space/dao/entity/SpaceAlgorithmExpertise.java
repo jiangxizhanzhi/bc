@@ -6,11 +6,13 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.service.context.algorithm.SpaceAlgorithmExpertiseBo;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Map;
 
-@Data
+@Getter
+@Setter
 @TableName("space_algorithm_expertise")
 public class SpaceAlgorithmExpertise extends SpaceBaseTable {
 

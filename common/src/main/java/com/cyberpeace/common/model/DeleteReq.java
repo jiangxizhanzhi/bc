@@ -1,11 +1,12 @@
 package com.cyberpeace.common.model;
 
-import java.io.Serializable;
-import java.util.List;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * 删除请求体
@@ -13,7 +14,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class DeleteReq implements Serializable {
 

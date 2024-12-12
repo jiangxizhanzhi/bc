@@ -7,7 +7,8 @@ import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.context.UserData;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,8 @@ import java.util.stream.Collectors;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class MissionReleaseStageInfo {
 
 	/**

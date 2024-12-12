@@ -2,7 +2,8 @@ package com.cyberpeace.cr.evaluation.controller.rsp;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -13,7 +14,8 @@ import java.util.Date;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @ApiModel("评估列表数据")
 public class EvalRecordListRsp implements Serializable {
     /**

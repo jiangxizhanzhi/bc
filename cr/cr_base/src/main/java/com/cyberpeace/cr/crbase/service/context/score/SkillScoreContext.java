@@ -1,7 +1,8 @@
 package com.cyberpeace.cr.crbase.service.context.score;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
@@ -12,7 +13,8 @@ import java.io.Serializable;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class SkillScoreContext implements Serializable {

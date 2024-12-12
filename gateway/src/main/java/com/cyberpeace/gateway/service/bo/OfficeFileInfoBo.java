@@ -1,7 +1,8 @@
 package com.cyberpeace.gateway.service.bo;
 
 import io.swagger.annotations.ApiModel;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -11,7 +12,8 @@ import java.io.Serializable;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @ApiModel("office文件信息")
 public class OfficeFileInfoBo implements Serializable {
 

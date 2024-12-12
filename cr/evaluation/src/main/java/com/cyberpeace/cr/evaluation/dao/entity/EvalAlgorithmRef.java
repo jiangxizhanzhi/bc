@@ -6,7 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Getter;
 
 import java.util.List;
@@ -17,7 +18,8 @@ import java.util.List;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @TableName("cr_eval_algorithm_ref")
 public class EvalAlgorithmRef extends BaseTable {
     /**

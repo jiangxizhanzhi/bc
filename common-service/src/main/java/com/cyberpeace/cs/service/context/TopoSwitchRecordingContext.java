@@ -3,6 +3,8 @@ package com.cyberpeace.cs.service.context;
 import java.io.Serializable;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 用于设置中台拓扑的录屏选项
@@ -10,7 +12,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TopoSwitchRecordingContext implements Serializable {
 
 	/**

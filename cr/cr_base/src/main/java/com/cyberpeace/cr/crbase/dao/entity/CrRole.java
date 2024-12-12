@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.alibaba.fastjson.JSONObject;
@@ -31,7 +32,8 @@ import lombok.Getter;
  * @date 2024/11/08
  */
 @TableName(value = "cr_role")
-@Data
+@Getter
+@Setter
 public class CrRole extends BaseTable {
 
 	/**

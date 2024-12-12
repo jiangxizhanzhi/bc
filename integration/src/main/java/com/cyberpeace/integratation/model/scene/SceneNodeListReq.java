@@ -6,7 +6,8 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -15,7 +16,8 @@ import lombok.extern.slf4j.Slf4j;
  * @author SN
  * @date 2023/05/30
  */
-@Data
+@Getter
+@Setter
 @Slf4j
 public class SceneNodeListReq extends TopoNodeListReq implements Serializable {
 

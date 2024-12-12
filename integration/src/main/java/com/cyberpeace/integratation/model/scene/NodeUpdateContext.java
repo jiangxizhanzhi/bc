@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 import com.alibaba.fastjson.JSONObject;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 节点动态更新
@@ -12,7 +13,8 @@ import lombok.Data;
  * @author SN
  * @date 2023/05/11
  */
-@Data
+@Getter
+@Setter
 public class NodeUpdateContext extends SceneOpsContext implements Serializable {
 
 	/**

@@ -2,17 +2,15 @@ package com.cyberpeace.common.model.ws;
 
 import java.io.Serializable;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * Web 套接字消息上下文
  *
  * @author yinqingrong@date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

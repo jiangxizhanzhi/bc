@@ -2,7 +2,8 @@ package com.cyberpeace.oj.ojbase.service.context;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
@@ -16,7 +17,8 @@ import java.io.Serializable;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

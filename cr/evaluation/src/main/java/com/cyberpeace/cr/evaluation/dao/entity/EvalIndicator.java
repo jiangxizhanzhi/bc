@@ -3,14 +3,16 @@ package com.cyberpeace.cr.evaluation.dao.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.cyberpeace.common.model.BaseTable;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 
  * @TableName cr_eval_indicator
  */
 @TableName(value = "cr_eval_indicator")
-@Data
+@Getter
+@Setter
 public class EvalIndicator extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")

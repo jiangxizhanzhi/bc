@@ -3,10 +3,7 @@ package com.cyberpeace.cs.dao.entity;
 import java.io.Serializable;
 
 import com.alibaba.fastjson.JSONObject;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * 当地场景元
@@ -14,7 +11,8 @@ import lombok.NoArgsConstructor;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

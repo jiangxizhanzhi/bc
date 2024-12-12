@@ -7,7 +7,8 @@ import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
 import com.cyberpeace.cr.crbase.service.context.paraser.TaskParser;
 import com.cyberpeace.cs.service.context.RoleBo;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 单兵训练角色MarkDown
@@ -15,7 +16,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class SingleRoleMD implements Serializable {
 
 	/**

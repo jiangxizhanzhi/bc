@@ -8,7 +8,8 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Getter;
 
 import java.util.List;
@@ -22,7 +23,8 @@ import java.util.List;
  * @see BaseTable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @TableName("oj_course_lesson")
 public class CourseLesson extends BaseTable {
 

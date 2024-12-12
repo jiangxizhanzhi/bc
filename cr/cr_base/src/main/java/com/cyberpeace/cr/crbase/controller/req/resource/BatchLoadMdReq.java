@@ -3,7 +3,8 @@ package com.cyberpeace.cr.crbase.controller.req.resource;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.NotEmpty;
@@ -17,7 +18,8 @@ import java.util.Map;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @Slf4j
 public class BatchLoadMdReq implements Serializable {
 

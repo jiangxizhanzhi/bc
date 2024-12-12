@@ -9,6 +9,7 @@ import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 靶场任务提交
@@ -16,7 +17,8 @@ import lombok.Getter;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @TableName("cr_task_submit")
 public class CrTaskSubmit extends BaseTable {
 

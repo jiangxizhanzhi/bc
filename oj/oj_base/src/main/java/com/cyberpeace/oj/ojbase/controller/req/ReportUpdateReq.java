@@ -1,7 +1,8 @@
 package com.cyberpeace.oj.ojbase.controller.req;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 
@@ -14,7 +15,8 @@ import javax.validation.constraints.NotBlank;
  * @see ReportAddReq
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class ReportUpdateReq extends ReportAddReq{
 
 	/**

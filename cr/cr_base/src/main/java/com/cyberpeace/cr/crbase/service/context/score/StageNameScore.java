@@ -6,7 +6,8 @@ import java.util.List;
 import org.apache.commons.compress.utils.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 阶段名称得分
@@ -14,7 +15,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class StageNameScore extends NameScore implements Serializable {
 
 	/**

@@ -8,7 +8,8 @@ import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 伊娃模板新增请求体
@@ -16,7 +17,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class EvaTemplateAddReq extends EvaTemplateBaseInfoReq {
 
 	/**

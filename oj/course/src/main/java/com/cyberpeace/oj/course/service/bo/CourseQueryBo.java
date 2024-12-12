@@ -1,7 +1,8 @@
 package com.cyberpeace.oj.course.service.bo;
 
 import com.cyberpeace.oj.course.dao.context.CourseContext;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 课程查询 bo
@@ -12,7 +13,8 @@ import lombok.Data;
  * @see CourseContext
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class CourseQueryBo extends CourseContext {
 
 	/**

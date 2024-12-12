@@ -1,11 +1,11 @@
 package com.cyberpeace.common.model.cache;
 
+import com.cyberpeace.common.model.user.UserInfo;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.List;
-
-import com.cyberpeace.common.model.user.UserInfo;
-
-import lombok.Data;
 
 /**
  * rtks 匹配度缓存
@@ -13,7 +13,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class RtksMatch implements Serializable {
 
 	private String userId;

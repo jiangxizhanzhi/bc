@@ -1,12 +1,14 @@
 package com.cyberpeace.integratation.service.bo.mp;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-@Data
+@Getter
+@Setter
 public class MibInfoQueryRequest {
 
 	@ApiModelProperty(value = "场景id")

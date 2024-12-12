@@ -4,7 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 时间轴数据
@@ -13,7 +14,8 @@ import lombok.Data;
  * @author SN
  * @date 2023/05/31
  */
-@Data
+@Getter
+@Setter
 public class TimeLineData {
 
 	/**

@@ -3,12 +3,14 @@ package com.cyberpeace.space.service.context;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class IdListReq {
 
 	@ApiModelProperty("ID列表")

@@ -2,7 +2,8 @@ package com.cyberpeace.cr.crbase.service.context.role;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
@@ -15,7 +16,8 @@ import java.util.stream.Collectors;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @ApiModel("单个用户角色")
 
 public class UserRole {

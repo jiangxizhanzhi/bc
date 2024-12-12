@@ -7,12 +7,14 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceFrameBaseTable;
 import com.cyberpeace.space.service.context.frame.SpaceActionBo;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.Map;
 
-@Data
+@Getter
+@Setter
 @TableName("space_action")
 public class SpaceAction extends SpaceFrameBaseTable {
 

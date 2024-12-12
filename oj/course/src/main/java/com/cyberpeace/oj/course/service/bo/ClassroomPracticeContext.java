@@ -2,7 +2,8 @@ package com.cyberpeace.oj.course.service.bo;
 
 import java.io.Serializable;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 课堂练习环境
@@ -13,7 +14,8 @@ import lombok.Data;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class ClassroomPracticeContext implements Serializable {
 
     /**

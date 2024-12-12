@@ -3,7 +3,8 @@ package com.cyberpeace.oj.course.controller.req;
 import java.io.Serializable;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 训练计划更新请求体
@@ -14,7 +15,8 @@ import lombok.Data;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class TrainPlanUpdateReq implements Serializable {
 
 	/**

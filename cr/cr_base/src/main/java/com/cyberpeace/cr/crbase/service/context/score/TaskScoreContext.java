@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 任务得分上下文
@@ -13,7 +14,8 @@ import lombok.Data;
  * @author SN
  * @date 2023/05/23
  */
-@Data
+@Getter
+@Setter
 public class TaskScoreContext implements Serializable {
 
 	/**

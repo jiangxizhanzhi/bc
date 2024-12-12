@@ -2,7 +2,8 @@ package com.cyberpeace.gateway.controller.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
@@ -14,7 +15,8 @@ import java.util.List;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class ExternalBatchReq implements Serializable {
 

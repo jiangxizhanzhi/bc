@@ -2,7 +2,8 @@ package com.cyberpeace.cr.crbase.service.context.task;
 
 import java.util.Date;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 靶场任务拒绝响应
@@ -10,7 +11,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class CrTaskRejectRsp {
 
 	/**

@@ -9,9 +9,11 @@ import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.service.context.rule.SpaceThreatImageRuleBo;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @TableName("space_threat_image_rule")
 public class SpaceThreatImageRule extends SpaceBaseTable {
 

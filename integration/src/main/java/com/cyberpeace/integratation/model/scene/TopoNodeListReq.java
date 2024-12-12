@@ -9,7 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -18,7 +19,8 @@ import lombok.extern.slf4j.Slf4j;
  * @author SN
  * @date 2023/05/30
  */
-@Data
+@Getter
+@Setter
 @Slf4j
 public class TopoNodeListReq implements Serializable {
 

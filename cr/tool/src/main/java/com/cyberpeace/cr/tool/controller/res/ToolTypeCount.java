@@ -2,7 +2,8 @@ package com.cyberpeace.cr.tool.controller.res;
 
 import com.cyberpeace.cr.tool.dao.context.MonthCount;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
@@ -13,7 +14,8 @@ import java.util.List;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class ToolTypeCount implements Serializable {
 
 	/**

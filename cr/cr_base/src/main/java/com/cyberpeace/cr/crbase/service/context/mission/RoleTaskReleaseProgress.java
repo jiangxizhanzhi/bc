@@ -6,7 +6,8 @@ import java.util.List;
 import org.apache.commons.compress.utils.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 角色任务下发进度
@@ -14,7 +15,8 @@ import lombok.Data;
  * @author SN
  * @date 2023/05/15
  */
-@Data
+@Getter
+@Setter
 public class RoleTaskReleaseProgress extends ReleaseProgress implements Serializable {
 
 	/**

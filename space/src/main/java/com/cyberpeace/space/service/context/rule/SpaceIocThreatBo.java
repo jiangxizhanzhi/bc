@@ -6,11 +6,13 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.space.dao.entity.SpaceIocThreat;
 import com.cyberpeace.space.model.SpaceBoBase;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class SpaceIocThreatBo extends SpaceBoBase {
 
 	@ApiModelProperty(value = "资源id")

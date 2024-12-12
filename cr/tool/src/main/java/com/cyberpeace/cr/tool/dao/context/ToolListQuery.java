@@ -2,7 +2,8 @@ package com.cyberpeace.cr.tool.dao.context;
 
 import com.cyberpeace.common.model.PatternBase;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 工具列表查询
@@ -10,7 +11,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class ToolListQuery extends PatternBase {
 
 	/**

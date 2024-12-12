@@ -1,7 +1,8 @@
 package com.cyberpeace.space.service.context.tactic;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -11,7 +12,8 @@ import java.util.List;
  * @author SN
  * @date 2024/11/11
  */
-@Data
+@Getter
+@Setter
 public class AttackAddReq {
 
 	/**

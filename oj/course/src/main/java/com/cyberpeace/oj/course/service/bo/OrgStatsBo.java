@@ -2,7 +2,8 @@ package com.cyberpeace.oj.course.service.bo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 组织统计 bo
@@ -13,7 +14,8 @@ import lombok.Data;
  * @see PublicStatsBo
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel("组织学习统计信息")
 public class OrgStatsBo extends PublicStatsBo {
 

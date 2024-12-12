@@ -7,7 +7,8 @@ import java.util.Map;
 import com.cyberpeace.common.model.ListRsp;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 训练统计总体情况
@@ -15,7 +16,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TrainingStatisticsRsp implements Serializable {
 
 	/**

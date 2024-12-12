@@ -2,7 +2,8 @@ package com.cyberpeace.integratation.service.bo;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 簇图像分页请求体
@@ -10,7 +11,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class ClusterImagePageReq {
 
 	/**

@@ -5,7 +5,8 @@ import java.util.List;
 import com.cyberpeace.cr.crbase.service.context.UserData;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 岗位用户
@@ -14,7 +15,8 @@ import lombok.Data;
  * @date 2024/11/08
  */
 @ApiModel("查询实例列表时包含所有用户的角色")
-@Data
+@Getter
+@Setter
 public class RoleUsers {
 
 	/**

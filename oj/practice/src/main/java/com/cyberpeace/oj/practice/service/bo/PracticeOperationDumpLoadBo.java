@@ -1,7 +1,8 @@
 package com.cyberpeace.oj.practice.service.bo;
 
 import com.alibaba.fastjson.JSONObject;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -14,7 +15,8 @@ import java.util.List;
  * @see PracticeDumpLoadBo
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class PracticeOperationDumpLoadBo extends PracticeDumpLoadBo {
 
 	/**

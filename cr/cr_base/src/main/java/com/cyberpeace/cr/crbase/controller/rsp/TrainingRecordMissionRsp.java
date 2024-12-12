@@ -1,18 +1,19 @@
 package com.cyberpeace.cr.crbase.controller.rsp;
 
-import java.io.Serializable;
-
 import com.cyberpeace.cr.crbase.service.context.TrainingRecord;
-
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * 在获取训练记录接口使用
  *
  * @author 张晋宝@date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TrainingRecordMissionRsp implements Serializable {
 
 	/**

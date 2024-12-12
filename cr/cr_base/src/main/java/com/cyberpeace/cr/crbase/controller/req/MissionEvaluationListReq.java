@@ -7,6 +7,8 @@ import com.cyberpeace.common.model.PageReqBase;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 任务评估列表请求体
@@ -15,7 +17,8 @@ import lombok.Data;
  * @date 2024/11/08
  */
 @ApiModel
-@Data
+@Getter
+@Setter
 public class MissionEvaluationListReq extends PageReqBase {
 
 	/**

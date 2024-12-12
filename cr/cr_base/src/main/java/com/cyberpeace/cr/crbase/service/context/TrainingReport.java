@@ -8,7 +8,8 @@ import com.cyberpeace.constant.BaseI18n;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Getter;
 
 /**
@@ -17,7 +18,8 @@ import lombok.Getter;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TrainingReport {
 
 	/**

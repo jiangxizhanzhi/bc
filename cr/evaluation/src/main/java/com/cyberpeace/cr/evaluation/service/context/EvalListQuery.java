@@ -6,7 +6,8 @@ import com.cyberpeace.common.model.PageReqBase;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 评估列表查询
@@ -17,7 +18,8 @@ import lombok.Data;
  * 前台使用的查询类
  */
 @ApiModel
-@Data
+@Getter
+@Setter
 public class EvalListQuery extends PageReqBase {
 
 	/**

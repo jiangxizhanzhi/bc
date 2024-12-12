@@ -4,7 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 调用计数
@@ -12,7 +13,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/12
  */
-@Data
+@Getter
+@Setter
 @TableName("space_call_count")
 public class SpaceCallCount {
 

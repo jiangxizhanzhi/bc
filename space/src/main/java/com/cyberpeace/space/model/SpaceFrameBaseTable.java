@@ -7,14 +7,16 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.cyberpeace.common.util.JsonUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.compress.utils.Lists;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-@Data
+@Getter
+@Setter
 public abstract class SpaceFrameBaseTable {
 
 	@JsonIgnore

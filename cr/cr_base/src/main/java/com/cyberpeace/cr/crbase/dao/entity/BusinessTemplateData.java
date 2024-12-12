@@ -1,6 +1,8 @@
 package com.cyberpeace.cr.crbase.dao.entity;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 靶场模板公共信息类
@@ -8,7 +10,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class BusinessTemplateData extends BusinessTemplate {
 
 	/**

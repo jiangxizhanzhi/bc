@@ -3,6 +3,8 @@ package com.cyberpeace.cs.service.context.scene;
 import java.io.Serializable;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * CP 集合
@@ -10,7 +12,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class CpCollection implements Serializable {
 
 	/**

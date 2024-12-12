@@ -2,7 +2,8 @@ package com.cyberpeace.cr.tool.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -12,7 +13,8 @@ import java.io.Serializable;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @TableName("cr_tool_ghdb")
 public class ToolGhdb implements Serializable {
 

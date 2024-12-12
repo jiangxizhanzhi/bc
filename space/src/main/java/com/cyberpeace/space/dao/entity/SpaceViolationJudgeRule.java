@@ -10,9 +10,11 @@ import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.service.context.rule.SpaceViolationJudgeRuleBo;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @TableName("space_violation_judge_rule")
 public class SpaceViolationJudgeRule extends SpaceBaseTable {
 

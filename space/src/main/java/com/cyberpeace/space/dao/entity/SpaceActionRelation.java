@@ -1,11 +1,13 @@
 package com.cyberpeace.space.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 @TableName("space_action_relation")
 public class SpaceActionRelation {
 

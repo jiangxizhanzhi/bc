@@ -1,7 +1,8 @@
 package com.cyberpeace.oj.practice.service.bo;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Web理论博
@@ -12,7 +13,8 @@ import lombok.Data;
  * @see AdminTheoryBo
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class WebTheoryBo extends AdminTheoryBo {
 
 	/**

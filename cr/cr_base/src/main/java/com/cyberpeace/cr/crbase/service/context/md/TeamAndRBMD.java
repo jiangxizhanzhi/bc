@@ -8,7 +8,8 @@ import com.cyberpeace.common.mdparser.parser.ListParser;
 import com.cyberpeace.cr.crbase.service.context.paraser.TaskParser;
 import com.cyberpeace.cs.service.context.RoleBo;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 团队、红蓝角色Markdown
@@ -16,7 +17,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TeamAndRBMD implements Serializable {
 
 	/**

@@ -7,7 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.mdparser.convert.MdConvertEnum;
 import com.cyberpeace.common.model.AuthTable;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Getter;
 
 /**
@@ -19,7 +20,8 @@ import lombok.Getter;
  * @see AuthTable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @TableName("oj_practice_set")
 public class PracticeSet extends AuthTable {
 

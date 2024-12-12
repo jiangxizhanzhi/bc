@@ -3,7 +3,8 @@ package com.cyberpeace.oj.practice.controller.req;
 import com.cyberpeace.common.model.PageReqBase;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 管理理论列表请求体
@@ -14,7 +15,8 @@ import lombok.Data;
  * @see PageReqBase
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class AdminTheoryListReq extends PageReqBase {
 

@@ -3,9 +3,11 @@ package com.cyberpeace.space.service.context.index;
 import java.util.Map;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class IndexTool {
 
 	@ApiModelProperty(value = "探测类工具")

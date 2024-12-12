@@ -3,7 +3,8 @@ package com.cyberpeace.oj.course.service.bo;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -16,7 +17,8 @@ import java.util.List;
  * @see PublicStatsBo
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel("用户学习统计信息")
 public class UserStatsBo extends PublicStatsBo {
 

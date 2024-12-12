@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.dao.context;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 理论列表查询
@@ -11,7 +12,8 @@ import lombok.Data;
  * @see OperationListQuery
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class TheoryListQuery extends OperationListQuery {
 
 	/**

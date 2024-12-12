@@ -1,9 +1,10 @@
 package com.cyberpeace.cr.crbase.service.impl.bo;
 
-import javax.validation.constraints.NotNull;
-
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * 基础模板基础信息
@@ -11,7 +12,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class BasicTemplate {
 
 	/**

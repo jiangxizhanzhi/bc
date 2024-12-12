@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.service.bo;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -14,7 +15,8 @@ import java.util.Date;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class PracticeCategoryParent implements Serializable {
     /**
      * 资源id

@@ -5,7 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import com.cyberpeace.common.model.PageReqBase;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 类房间分页查询
@@ -16,7 +17,8 @@ import lombok.Data;
  * @see PageReqBase
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class ClassRoomPageQuery extends PageReqBase {
 
 

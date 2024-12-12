@@ -8,6 +8,7 @@ import com.cyberpeace.common.model.AuthTable;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 靶场模板公共信息模型
@@ -15,7 +16,8 @@ import lombok.Getter;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @TableName("cr_business_template")
 public class BusinessTemplate extends AuthTable {
 

@@ -5,14 +5,16 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 
  * @TableName cr_eval_result
  */
 @TableName(value = "cr_eval_result")
-@Data
+@Getter
+@Setter
 public class EvalResult extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")

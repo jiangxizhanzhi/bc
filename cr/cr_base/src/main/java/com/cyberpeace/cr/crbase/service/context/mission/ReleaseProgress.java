@@ -3,7 +3,8 @@ package com.cyberpeace.cr.crbase.service.context.mission;
 import java.io.Serializable;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 任务下发进度
@@ -11,7 +12,8 @@ import lombok.Data;
  * @author SN
  * @date 2023/05/15
  */
-@Data
+@Getter
+@Setter
 public class ReleaseProgress implements Serializable {
 
 	/**

@@ -7,12 +7,14 @@ import com.cyberpeace.space.dao.entity.SpaceTacticDefensePlan;
 import com.cyberpeace.space.model.SpaceBoBase;
 import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.compress.utils.Lists;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class SpaceTacticDefensePlanBo extends SpaceBoBase {
 
 	/**

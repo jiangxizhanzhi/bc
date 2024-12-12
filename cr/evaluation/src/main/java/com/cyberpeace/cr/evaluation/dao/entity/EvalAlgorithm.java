@@ -7,7 +7,8 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Getter;
 
 /**
@@ -15,7 +16,8 @@ import lombok.Getter;
  * @TableName cr_eval_algorithm
  */
 @TableName(value ="cr_eval_algorithm")
-@Data
+@Getter
+@Setter
 public class EvalAlgorithm extends BaseTable {
     
 

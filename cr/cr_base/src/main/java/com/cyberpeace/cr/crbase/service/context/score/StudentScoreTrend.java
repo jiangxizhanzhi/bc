@@ -3,7 +3,8 @@ package com.cyberpeace.cr.crbase.service.context.score;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.service.context.UserData;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -16,7 +17,8 @@ import java.util.List;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class StudentScoreTrend {
 
 	/**

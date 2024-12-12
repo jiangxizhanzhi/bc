@@ -1,10 +1,12 @@
 package com.cyberpeace.space.service.context.frame;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
 public class ActionStatisticsBo implements Serializable {
 
 	private Integer type;

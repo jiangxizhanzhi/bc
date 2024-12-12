@@ -3,7 +3,8 @@ package com.cyberpeace.oj.ojbase.controller.res;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
@@ -18,7 +19,8 @@ import java.util.Date;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

@@ -3,7 +3,8 @@ package com.cyberpeace.cr.tool.controller.req;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
@@ -16,7 +17,8 @@ import java.util.List;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class ToolAddReq implements Serializable {
 

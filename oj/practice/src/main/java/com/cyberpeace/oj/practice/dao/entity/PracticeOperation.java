@@ -4,7 +4,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -17,7 +18,8 @@ import lombok.ToString;
  * @see PracticeBase
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ToString(callSuper = true)
 @TableName("oj_practice_operation")
 public class PracticeOperation extends PracticeBase {

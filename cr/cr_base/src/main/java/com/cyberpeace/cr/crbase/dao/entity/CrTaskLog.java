@@ -13,7 +13,8 @@ import lombok.*;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

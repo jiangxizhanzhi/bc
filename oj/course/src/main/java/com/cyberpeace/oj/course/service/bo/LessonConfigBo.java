@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -22,7 +23,8 @@ import org.apache.commons.collections.CollectionUtils;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel("课程目录配置信息")
 public class LessonConfigBo implements Serializable {
 

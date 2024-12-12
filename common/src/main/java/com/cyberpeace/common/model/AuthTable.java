@@ -2,8 +2,8 @@ package com.cyberpeace.common.model;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * auth 表
@@ -11,7 +11,8 @@ import lombok.Getter;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class AuthTable extends BaseTable {
 
 	/**

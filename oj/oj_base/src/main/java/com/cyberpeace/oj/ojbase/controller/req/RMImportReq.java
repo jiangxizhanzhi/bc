@@ -2,7 +2,8 @@ package com.cyberpeace.oj.ojbase.controller.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -16,7 +17,8 @@ import java.io.Serializable;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel("资管数据导入基础请求类")
 public class RMImportReq implements Serializable {
 

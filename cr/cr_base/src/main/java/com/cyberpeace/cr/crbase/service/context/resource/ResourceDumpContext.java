@@ -8,7 +8,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 资源导出中间模型
@@ -16,7 +17,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class ResourceDumpContext<T> implements Serializable {
 
 	/**

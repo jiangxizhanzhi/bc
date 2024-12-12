@@ -2,7 +2,8 @@ package com.cyberpeace.oj.course.service.bo;
 
 import java.io.Serializable;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 提交答案上下文
@@ -13,7 +14,8 @@ import lombok.Data;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class SubmitAnswerContext implements Serializable {
 
     /**

@@ -6,7 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.cyberpeace.common.model.BaseTable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -20,7 +21,8 @@ import java.io.Serializable;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class PracticeBase extends BaseTable implements Serializable {
 
 	/**

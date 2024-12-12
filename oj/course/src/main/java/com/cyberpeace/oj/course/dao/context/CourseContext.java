@@ -4,7 +4,8 @@ import java.util.List;
 
 import com.cyberpeace.common.model.PatternBase;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 课程背景
@@ -14,7 +15,8 @@ import lombok.Data;
  * @see PatternBase
  * @since 1.0.0@date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class CourseContext extends PatternBase {
 
 	/**

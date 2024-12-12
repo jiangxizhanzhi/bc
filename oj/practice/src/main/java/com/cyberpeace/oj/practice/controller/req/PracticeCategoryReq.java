@@ -5,7 +5,8 @@ import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.NotBlank;
@@ -19,7 +20,8 @@ import javax.validation.constraints.NotNull;
  * @date 2024/11/08
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class PracticeCategoryReq {
 

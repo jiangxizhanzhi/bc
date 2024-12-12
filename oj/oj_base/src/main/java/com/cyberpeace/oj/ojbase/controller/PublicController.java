@@ -21,7 +21,8 @@ import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
 
 import io.swagger.annotations.ApiOperation;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 公共Controller
@@ -112,7 +113,8 @@ public abstract class PublicController<T extends IService<E>, E> {
 	/**
 	 * 数据中间存储
 	 */
-	@Data
+	@Getter
+@Setter
 	class AuthAndPublicData {
 
 		private String resourceId;

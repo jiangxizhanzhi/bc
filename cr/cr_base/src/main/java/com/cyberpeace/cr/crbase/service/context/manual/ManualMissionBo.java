@@ -1,9 +1,10 @@
 package com.cyberpeace.cr.crbase.service.context.manual;
 
-import java.io.Serializable;
-
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * 手动任务 bo
@@ -11,7 +12,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class ManualMissionBo implements Serializable {
 
 	/**

@@ -1,7 +1,8 @@
 package com.cyberpeace.oj.practice.service.md;
 
 import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
@@ -15,7 +16,8 @@ import java.util.List;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class MdTheoryPractice implements Serializable {
 
 	@MdHeadLine(level = 1, name = "课后习题")

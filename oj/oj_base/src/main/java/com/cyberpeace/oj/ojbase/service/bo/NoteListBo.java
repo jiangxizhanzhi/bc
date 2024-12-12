@@ -3,7 +3,8 @@ package com.cyberpeace.oj.ojbase.service.bo;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 备注列表 bo
@@ -14,7 +15,8 @@ import lombok.Data;
  * @see Note
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class NoteListBo extends Note {
 
     /**

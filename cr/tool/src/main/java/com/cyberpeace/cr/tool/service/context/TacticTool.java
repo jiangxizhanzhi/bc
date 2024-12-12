@@ -1,7 +1,8 @@
 package com.cyberpeace.cr.tool.service.context;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 战术工具
@@ -9,7 +10,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TacticTool {
 
 	/**

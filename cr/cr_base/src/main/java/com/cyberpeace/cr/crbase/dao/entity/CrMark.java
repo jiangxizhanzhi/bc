@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * cr标记
@@ -14,7 +16,8 @@ import lombok.Data;
  * @date 2023/05/24
  */
 @TableName(value = "cr_mark")
-@Data
+@Getter
+@Setter
 public class CrMark extends BaseTable {
 
     /**

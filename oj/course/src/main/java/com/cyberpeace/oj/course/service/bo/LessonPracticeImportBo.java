@@ -10,7 +10,8 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeTheoryRef;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 课程练习导入 bo
@@ -21,7 +22,8 @@ import lombok.Data;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class LessonPracticeImportBo implements Serializable {
 
 	/**

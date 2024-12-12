@@ -5,7 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.constant.SelectI18nName;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -16,7 +17,8 @@ import java.io.Serializable;
  * @date 2024/11/08
  */
 @TableName("cr_tool_toolcategory")
-@Data
+@Getter
+@Setter
 public class ToolCategory implements Serializable, SelectI18nName {
 
 	/**

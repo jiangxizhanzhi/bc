@@ -2,7 +2,8 @@ package com.cyberpeace.oj.ojbase.service.bo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -16,7 +17,8 @@ import java.util.Date;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class NoteBo implements Serializable {
 

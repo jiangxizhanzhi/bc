@@ -7,7 +7,8 @@ import java.util.Map;
 
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 外部实操计数博
@@ -18,7 +19,8 @@ import lombok.Data;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class ExternalOperationCountBo implements Serializable {
 
 	public ExternalOperationCountBo(Map<Integer, List<PracticeOperation>> typeMap) {

@@ -4,7 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 派生于PracticeOperation, 在试卷中被引用
@@ -15,7 +16,8 @@ import lombok.Data;
  * @see BaseTable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @TableName("oj_practice_operation_ref")
 public class PracticeOperationRef extends BaseTable {
 

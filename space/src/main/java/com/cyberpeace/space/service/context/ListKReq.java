@@ -3,9 +3,11 @@ package com.cyberpeace.space.service.context;
 import com.cyberpeace.common.model.PageReqBase;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @ApiModel("课时列表查询")
 public class ListKReq extends PageReqBase {
 

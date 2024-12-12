@@ -2,7 +2,8 @@ package com.cyberpeace.cr.evaluation.controller.req;
 
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -12,7 +13,8 @@ import javax.validation.constraints.NotEmpty;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class EvalIndexRefReq {
 
 	/**

@@ -1,11 +1,13 @@
 package com.cyberpeace.space.service.context.strategy;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 public class SpaceStrategyBo {
 
 	private String resourceId;

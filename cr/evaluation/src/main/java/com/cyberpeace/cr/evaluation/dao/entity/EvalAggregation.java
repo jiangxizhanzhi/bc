@@ -5,7 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * eval 聚合
@@ -14,7 +15,8 @@ import lombok.Data;
  * @date 2024/11/08
  */
 @TableName(value = "cr_eval_aggregation")
-@Data
+@Getter
+@Setter
 public class EvalAggregation extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")

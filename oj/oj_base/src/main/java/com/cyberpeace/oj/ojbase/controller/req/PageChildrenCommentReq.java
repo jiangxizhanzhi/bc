@@ -2,7 +2,8 @@ package com.cyberpeace.oj.ojbase.controller.req;
 
 import com.cyberpeace.common.model.PageReqBase;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 分页子级评论请求体
@@ -13,7 +14,8 @@ import lombok.Data;
  * @see PageReqBase
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class PageChildrenCommentReq extends PageReqBase {
     /**
      * 资源id

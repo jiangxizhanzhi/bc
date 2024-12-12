@@ -1,9 +1,11 @@
 package com.cyberpeace.space.service.context.index;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class IndexKnowledge {
 
 	@ApiModelProperty(value = "理论知识库")

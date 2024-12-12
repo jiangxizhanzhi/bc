@@ -3,7 +3,8 @@ package com.cyberpeace.cr.crbase.service.context.score;
 import com.cyberpeace.common.util.MathUtils;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 任务统计
@@ -11,7 +12,8 @@ import lombok.Data;
  * @author SN
  * @date 2023/05/23
  */
-@Data
+@Getter
+@Setter
 public class TaskStatistics {
 
 	/**

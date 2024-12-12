@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.service.externalbo;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -13,7 +14,8 @@ import java.io.Serializable;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class TheorySimpleBo implements Serializable {
 
     /**

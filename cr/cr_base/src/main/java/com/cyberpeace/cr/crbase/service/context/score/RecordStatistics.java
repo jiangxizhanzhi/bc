@@ -5,7 +5,8 @@ import java.io.Serializable;
 import com.cyberpeace.common.util.MathUtils;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 记录统计信息
@@ -13,7 +14,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class RecordStatistics implements Serializable {
 
 	/**

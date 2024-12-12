@@ -2,7 +2,8 @@ package com.cyberpeace.oj.course.service.bo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 课程管理员 bo
@@ -13,7 +14,8 @@ import lombok.Data;
  * @see CourseWebBo
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel("后台课程信息")
 public class CourseAdminBo extends CourseWebBo {
 

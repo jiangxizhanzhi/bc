@@ -11,9 +11,11 @@ import com.cyberpeace.space.service.context.rule.SpaceAlgorithmParameter;
 import com.cyberpeace.space.service.context.rule.SpaceBaseAlgorithmBo;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @TableName("space_base_algorithm")
 public class SpaceBaseAlgorithm extends SpaceBaseTable {
 

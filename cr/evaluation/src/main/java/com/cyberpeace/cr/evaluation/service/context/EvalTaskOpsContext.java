@@ -3,7 +3,8 @@ package com.cyberpeace.cr.evaluation.service.context;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * eval task ops 上下文
@@ -11,7 +12,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class EvalTaskOpsContext {
 
 	/**

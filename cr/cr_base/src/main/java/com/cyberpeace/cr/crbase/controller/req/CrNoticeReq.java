@@ -8,6 +8,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -19,7 +21,8 @@ import io.swagger.annotations.ApiModelProperty;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class CrNoticeReq implements Serializable {
 
     /**

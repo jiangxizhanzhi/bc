@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.crbase.controller.req;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,7 +17,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @Slf4j
 public class SubmitEvaluationReq {
 

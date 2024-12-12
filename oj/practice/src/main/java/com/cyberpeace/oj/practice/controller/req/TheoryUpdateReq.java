@@ -3,7 +3,8 @@ package com.cyberpeace.oj.practice.controller.req;
 import com.cyberpeace.common.baseinterface.Update;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 
@@ -16,7 +17,8 @@ import javax.validation.constraints.NotBlank;
  * @see TheoryAddReq
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel("理论基础练习")
 public class TheoryUpdateReq extends TheoryAddReq {
 

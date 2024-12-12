@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 红点
@@ -11,7 +13,8 @@ import lombok.Data;
  * @author SN
  * @date 2023/06/08
  */
-@Data
+@Getter
+@Setter
 public class BadgeBo implements Serializable {
 
 	/**

@@ -5,7 +5,8 @@ import com.cyberpeace.cr.crbase.service.context.mp.AttackTypeCount;
 import com.cyberpeace.cr.crbase.service.context.mp.SceneTrend;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreTrend;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.*;
@@ -17,7 +18,8 @@ import java.util.stream.Collectors;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TrainReportExportContext extends TrainReportContext {
 
 	/**

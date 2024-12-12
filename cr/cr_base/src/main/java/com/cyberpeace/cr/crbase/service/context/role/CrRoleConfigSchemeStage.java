@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 用于后台模板查询接口返回基本任务信息
@@ -12,7 +13,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class CrRoleConfigSchemeStage implements Serializable {
 
 	/**

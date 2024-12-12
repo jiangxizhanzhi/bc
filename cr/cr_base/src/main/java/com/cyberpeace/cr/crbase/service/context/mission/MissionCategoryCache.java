@@ -2,7 +2,8 @@ package com.cyberpeace.cr.crbase.service.context.mission;
 
 import com.cyberpeace.constant.SelectI18nName;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 任务类别缓存
@@ -10,7 +11,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class MissionCategoryCache implements SelectI18nName {
 
 	/**

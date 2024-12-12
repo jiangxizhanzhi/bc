@@ -2,7 +2,8 @@ package com.cyberpeace.oj.course.controller.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -16,7 +17,8 @@ import java.io.Serializable;
  * @since 1.0.0
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class ClassroomArchiveReq implements Serializable {
 

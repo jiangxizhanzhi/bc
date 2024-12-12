@@ -8,7 +8,8 @@ import javax.validation.constraints.NotNull;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 评论请求体
@@ -19,7 +20,8 @@ import lombok.Data;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel("资源评论信息")
 public class CommentReq implements Serializable {
 

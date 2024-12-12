@@ -2,7 +2,8 @@ package com.cyberpeace.oj.practice.service.bo;
 
 import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
 import com.cyberpeace.common.mdparser.parser.ListParser;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -15,7 +16,8 @@ import java.util.List;
  * @see MdCtfBase
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class MdCtf extends MdCtfBase {
 
     /**

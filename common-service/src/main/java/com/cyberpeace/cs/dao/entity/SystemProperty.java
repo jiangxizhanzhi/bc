@@ -3,8 +3,8 @@ package com.cyberpeace.cs.dao.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
-import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -14,7 +14,8 @@ import java.io.Serializable;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @TableName("system_property")
 public class SystemProperty implements Serializable {
 

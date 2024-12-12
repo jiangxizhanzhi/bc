@@ -8,7 +8,8 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.AuthTable;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Getter;
 
 /**
@@ -20,7 +21,8 @@ import lombok.Getter;
  * @see AuthTable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @TableName("oj_note")
 public class Note extends AuthTable {
 

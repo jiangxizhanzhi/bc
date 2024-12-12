@@ -9,9 +9,11 @@ import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.service.context.rule.SpaceSourceAnalyzeRuleBo;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @TableName("space_source_analyze_rule")
 public class SpaceSourceAnalyzeRule extends SpaceBaseTable {
 

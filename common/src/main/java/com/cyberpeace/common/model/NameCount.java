@@ -2,6 +2,8 @@ package com.cyberpeace.common.model;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -11,7 +13,8 @@ import java.io.Serializable;
  * @author SN
  * @date 2023/05/10
  */
-@Data
+@Getter
+@Setter
 public class NameCount implements Serializable {
 
 	/**

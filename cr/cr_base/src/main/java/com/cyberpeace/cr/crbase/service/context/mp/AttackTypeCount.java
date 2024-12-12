@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.service.context.mp;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 攻击类型计数
@@ -8,7 +9,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class AttackTypeCount {
 
     /**

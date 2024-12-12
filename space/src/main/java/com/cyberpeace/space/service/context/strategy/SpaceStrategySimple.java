@@ -1,6 +1,7 @@
 package com.cyberpeace.space.service.context.strategy;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 空间策略
@@ -10,7 +11,8 @@ import lombok.Data;
  * @date 2024/12/11
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class SpaceStrategySimple {
 
     /**

@@ -3,7 +3,8 @@ package com.cyberpeace.cr.crbase.service.context.role;
 import java.io.Serializable;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.EqualsAndHashCode;
 
 /**
@@ -13,7 +14,8 @@ import lombok.EqualsAndHashCode;
  * @date 2023/05/12
  */
 @EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
 public class RoleUpdateConfig extends CrRoleNodesData implements Serializable {
 
 	/**

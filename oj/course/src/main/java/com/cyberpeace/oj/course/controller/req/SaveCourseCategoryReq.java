@@ -4,7 +4,8 @@ import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.NotBlank;
@@ -19,7 +20,8 @@ import java.io.Serializable;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class SaveCourseCategoryReq implements Serializable {
 

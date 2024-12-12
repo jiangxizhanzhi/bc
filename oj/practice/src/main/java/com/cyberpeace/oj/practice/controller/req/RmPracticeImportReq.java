@@ -2,7 +2,8 @@ package com.cyberpeace.oj.practice.controller.req;
 
 import com.cyberpeace.oj.ojbase.controller.req.RMImportReq;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Map;
 
@@ -15,7 +16,8 @@ import java.util.Map;
  * @see RMImportReq
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class RmPracticeImportReq extends RMImportReq {
 
     /**

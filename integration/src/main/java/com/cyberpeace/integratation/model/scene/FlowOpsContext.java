@@ -1,6 +1,7 @@
 package com.cyberpeace.integratation.model.scene;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -9,7 +10,8 @@ import org.apache.commons.lang3.StringUtils;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class FlowOpsContext extends NodeOpsContext {
 
     /**

@@ -4,7 +4,8 @@ import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 课实操博
@@ -15,7 +16,8 @@ import lombok.Data;
  * @see OperationLessonBo
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class
 LessonOperationBo extends OperationLessonBo {

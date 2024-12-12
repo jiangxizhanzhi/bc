@@ -5,12 +5,14 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Getter;
 
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 @TableName("cr_eval_index_ref")
 public class EvalIndexRef extends BaseTable {
     @TableId(type = IdType.UUID, value = "resource_id")

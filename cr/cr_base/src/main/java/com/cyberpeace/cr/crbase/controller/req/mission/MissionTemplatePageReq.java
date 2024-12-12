@@ -12,6 +12,8 @@ import lombok.Setter;
  * @author SN
  * @date 2024/11/08
  */
+@Getter
+@Setter
 public class MissionTemplatePageReq extends PageReqBase {
 
 	/**

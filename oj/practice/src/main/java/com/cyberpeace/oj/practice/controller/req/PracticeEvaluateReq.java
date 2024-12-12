@@ -1,7 +1,8 @@
 package com.cyberpeace.oj.practice.controller.req;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 实践评估请求体
@@ -11,7 +12,8 @@ import lombok.Data;
  * @date 2024/11/08
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class PracticeEvaluateReq {
 
     /**

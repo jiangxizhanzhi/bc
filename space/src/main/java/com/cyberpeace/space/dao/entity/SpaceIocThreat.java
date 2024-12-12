@@ -9,9 +9,11 @@ import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.service.context.rule.SpaceIocThreatBo;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @TableName("space_ioc_threat")
 public class SpaceIocThreat extends SpaceBaseTable {
 	@ApiModelProperty(value = "类型")

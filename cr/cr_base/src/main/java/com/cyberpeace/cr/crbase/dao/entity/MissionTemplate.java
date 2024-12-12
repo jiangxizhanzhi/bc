@@ -3,6 +3,8 @@ package com.cyberpeace.cr.crbase.dao.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 任务模板
@@ -10,7 +12,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 @TableName("cr_mission_template")
 public class MissionTemplate extends MissionBase {
 

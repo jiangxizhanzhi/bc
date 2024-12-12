@@ -8,7 +8,8 @@ import javax.validation.constraints.NotNull;
 import com.cyberpeace.common.model.PatternBase;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 随机实践请求体
@@ -19,7 +20,8 @@ import lombok.Data;
  * @see PatternBase
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class RandomPracticeReq extends PatternBase {
 

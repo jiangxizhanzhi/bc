@@ -1,10 +1,11 @@
 package com.cyberpeace.common.model.user;
 
+import com.google.common.collect.Lists;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.List;
-
-import com.google.common.collect.Lists;
-import lombok.Data;
 
 /**
  * 组织信息
@@ -12,7 +13,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class OrgInfo implements Serializable {
 
     /**

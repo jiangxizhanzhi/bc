@@ -3,7 +3,8 @@ package com.cyberpeace.cr.crbase.service.context.template;
 import java.io.Serializable;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 训练模板简要信息
@@ -11,7 +12,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class BusinessTemplateSimple implements Serializable {
 
 	/**

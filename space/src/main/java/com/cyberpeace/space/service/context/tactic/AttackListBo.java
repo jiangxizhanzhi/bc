@@ -1,7 +1,8 @@
 package com.cyberpeace.space.service.context.tactic;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 攻击列表 bo
@@ -9,7 +10,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/07
  */
-@Data
+@Getter
+@Setter
 public class AttackListBo {
 
 	/**

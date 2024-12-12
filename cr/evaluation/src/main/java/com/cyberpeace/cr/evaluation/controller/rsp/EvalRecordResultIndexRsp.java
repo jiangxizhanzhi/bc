@@ -2,7 +2,8 @@ package com.cyberpeace.cr.evaluation.controller.rsp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
@@ -13,7 +14,8 @@ import java.util.List;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class EvalRecordResultIndexRsp implements Serializable {
     /**
      * 资源id

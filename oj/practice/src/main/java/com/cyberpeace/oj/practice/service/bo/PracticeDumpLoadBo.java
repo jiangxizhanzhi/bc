@@ -2,7 +2,8 @@ package com.cyberpeace.oj.practice.service.bo;
 
 import java.io.Serializable;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 习题数据导出Bo类
@@ -13,7 +14,8 @@ import lombok.Data;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class PracticeDumpLoadBo implements Serializable {
 
 	/**

@@ -11,7 +11,8 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleSimple;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Getter;
 
 import java.util.*;
@@ -23,7 +24,8 @@ import java.util.stream.Collectors;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class TaskMatrix {
     /**
      * 成功计数

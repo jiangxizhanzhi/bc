@@ -2,7 +2,8 @@ package com.cyberpeace.cr.evaluation.controller.rsp;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -13,7 +14,8 @@ import java.util.List;
  * @date 2024/11/08
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Data
+@Getter
+@Setter
 public class EvalSystemResultRsp {
 
 	/**

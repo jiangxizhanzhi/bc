@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.service.context;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * eval 模板 base info 上下文
@@ -8,7 +9,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class EvalTemplateBaseInfoContext {
 
 	/**

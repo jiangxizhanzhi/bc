@@ -8,7 +8,8 @@ import javax.validation.constraints.NotNull;
 import com.cyberpeace.common.util.TimeUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 课堂列表请求体
@@ -20,7 +21,8 @@ import lombok.Data;
  * @since 1.0.0
  */
 @ApiModel
-@Data
+@Getter
+@Setter
 public class ClassroomListReq implements Serializable {
 
 	/**

@@ -2,7 +2,8 @@ package com.cyberpeace.oj.practice.controller.req;
 
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -17,7 +18,8 @@ import java.util.List;
  * @see Serializable
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 public class PracticePaperCreateReq implements Serializable {
 
 	/**

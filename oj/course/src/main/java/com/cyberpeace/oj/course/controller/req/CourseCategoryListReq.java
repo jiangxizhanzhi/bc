@@ -3,7 +3,8 @@ package com.cyberpeace.oj.course.controller.req;
 import com.cyberpeace.common.model.PageReqBase;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 
@@ -16,7 +17,8 @@ import javax.validation.constraints.NotNull;
  * @see PageReqBase
  * @since 1.0.0
  */
-@Data
+@Getter
+@Setter
 @ApiModel
 public class CourseCategoryListReq extends PageReqBase {
 

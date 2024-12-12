@@ -1,7 +1,8 @@
 package com.cyberpeace.cr.crbase.service.context.score;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
@@ -11,7 +12,8 @@ import java.util.Date;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class ScoreTrend extends NameScore{
 
     /**

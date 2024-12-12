@@ -4,7 +4,8 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.StreamApiUtils;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.compress.utils.Lists;
 
@@ -16,7 +17,8 @@ import java.util.List;
  * @author SN
  * @date 2024/11/05
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class SpaceFrameLevel {
 

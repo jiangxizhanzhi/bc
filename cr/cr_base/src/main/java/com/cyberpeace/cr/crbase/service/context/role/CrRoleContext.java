@@ -6,7 +6,8 @@ import java.util.Map;
 import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 角色模型
@@ -14,7 +15,8 @@ import lombok.Data;
  * @author SN
  * @date 2024/11/08
  */
-@Data
+@Getter
+@Setter
 public class CrRoleContext<T> {
 
 	/**

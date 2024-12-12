@@ -545,8 +545,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         }
 
         // 过滤已删除组织关联数据
-        List<String> orgs = remoteOrganizationService.childrenList("", true);
-        classrooms = classrooms.stream().filter(classroom -> orgs.contains(classroom.getOrganizationId())).collect(Collectors.toList());
+        Set<String> orgIds = remoteOrganizationService.getAllOrgIds();
+        classrooms = classrooms.stream().filter(classroom -> orgIds.contains(classroom.getOrganizationId())).collect(Collectors.toList());
 		ClassroomInfo info = getInfo(classrooms);
 
 		return StreamApiUtils.map(classrooms, c -> entityToBo(c, info));

@@ -171,7 +171,7 @@ public class EvalMissionController {
         // 当前步骤
         Integer stage = getStage(evalMissionTemplate, updateEvalMissionReq.getTaskId(), updateEvalMissionReq.getTemplateId());
 
-        Integer templateStatus = evalMissionTemplate.getStatus();
+        Integer templateStatus = evalMissionTemplate.getStatus();// 任务状态
         if(templateStatus.equals(MissionTemplateStatus.FAIL) || templateStatus.equals(MissionTemplateStatus.FINISH)){
             return new BaseRsp<>(evalMissionTemplateService.getMissionTemplate(updateEvalMissionReq.getResourceId()));
         }
@@ -245,6 +245,13 @@ public class EvalMissionController {
                 }
             }
         });
+        // 任务超时,evalMissionTemplateLog添加数据
+        if (evalMissionTemplate.getStatus().equals(MissionTemplateStatus.OVERTIME)) {
+            EvalMissionTemplateLog log = new EvalMissionTemplateLog();
+            BeanUtils.copyProperties(evalMissionTemplateLog,log);
+            log.setOperate(MissionTemplateStatus.OVERTIME);
+            evalMissionTemplateLogMapper.insert(log);
+        }
 
         return new BaseRsp<>(evalMissionTemplateService.getMissionTemplate(updateEvalMissionReq.getResourceId()));
     }

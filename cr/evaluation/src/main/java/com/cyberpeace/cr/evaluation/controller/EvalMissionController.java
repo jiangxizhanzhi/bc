@@ -165,7 +165,9 @@ public class EvalMissionController {
     @RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
     @PatchMapping("/mission/edit")
     public BaseRsp<EvalMissionTemplateRsp> updateMissionStatus(@RequestBody @Validated UpdateEvalMissionTemplateReq updateEvalMissionReq) {
-
+        Date date = new Date();// 当前系统时间
+        log.info("updateMissionStatus local date : " + date);
+        log.info("updateMissionStatus local date timestamp : " + date.getTime());
         EvalMissionTemplate evalMissionTemplate = evalMissionTemplateMapper.selectById(updateEvalMissionReq.getResourceId());
 
         // 当前步骤
@@ -177,26 +179,26 @@ public class EvalMissionController {
         }
         EvalMissionTemplateLog evalMissionTemplateLog = updateMissionLog(updateEvalMissionReq.getResourceId(), evalMissionTemplate.getName(), updateEvalMissionReq.getTaskId(), updateEvalMissionReq.getStatus());
         Integer status = updateEvalMissionReq.getStatus();
-
+        log.info("updateMissionStatus status : " + status);
+        log.info("updateMissionStatus update time : " + evalMissionTemplate.getUpdateTime());
+        log.info("updateMissionStatus update timestamp: " + evalMissionTemplate.getUpdateTime().getTime());
         // 判断当前状态，暂停状态不计时，中止状态计算是否超时
         if (status.equals(MissionTemplateStatus.START)) {
             evalMissionTemplate.setStatus(status);
-            evalMissionTemplate.setUpdateTime(new Date());
+            evalMissionTemplate.setUpdateTime(date);
             // 记录剩余时间
             evalMissionTemplate.setRemainingTime((evalMissionTemplate.getLimitTime() * 60 * 1000L));
         } else if(status.equals(MissionTemplateStatus.PAUSE)){
-
             // 更新状态
             evalMissionTemplate.setStatus(status);
-            //计算所用时间
-            // 执行开始的时间
+            // 计算所用时间
+            // 执行开始或者继续的时间
             long time = evalMissionTemplate.getUpdateTime().getTime();
-            evalMissionTemplate.setUpdateTime(new Date());
+            evalMissionTemplate.setUpdateTime(date);
             // 经过时间
-            long l = evalMissionTemplate.getUpdateTime().getTime() - time;
+            long l = date.getTime() - time;
             // 剩余时间
             evalMissionTemplate.setRemainingTime(evalMissionTemplate.getRemainingTime() - l);
-
         } else if (status.equals(MissionTemplateStatus.STOP)) {
             // 当执行中止命令时，先判断当前任务状态
             // 执行时
@@ -205,9 +207,9 @@ public class EvalMissionController {
                 //计算所用时间
                 // 执行或继续开始的时间
                 long time = evalMissionTemplate.getUpdateTime().getTime();
-                evalMissionTemplate.setUpdateTime(new Date());
                 // 经过时间
-                long l = evalMissionTemplate.getUpdateTime().getTime() - time;
+                long l = date.getTime() - time;
+                evalMissionTemplate.setUpdateTime(date);
                 // 剩余时间
                 evalMissionTemplate.setRemainingTime(evalMissionTemplate.getRemainingTime() - l);
                 // 更新状态
@@ -215,17 +217,15 @@ public class EvalMissionController {
             } else if (templateStatus.equals(MissionTemplateStatus.PAUSE) ) {
                 evalMissionTemplate.setStatus(evalMissionTemplate.getRemainingTime() >= 0 ? status : MissionTemplateStatus.OVERTIME);
             }
-
         } else {
-
-            // 状态为3,5,6
+            // 状态为继续
             evalMissionTemplate.setStatus(status);
-            evalMissionTemplate.setUpdateTime(new Date());
+            evalMissionTemplate.setUpdateTime(date);
         }
 
         evalMissionTemplate.setTaskId(updateEvalMissionReq.getTaskId());
         if(status.equals(MissionTemplateStatus.FINISH) || status.equals(MissionTemplateStatus.FAIL)){
-            evalMissionTemplate.setEndTime(new Date());
+            evalMissionTemplate.setEndTime(date);
         }
         // 状态修改 超时单独处理--
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -252,7 +252,6 @@ public class EvalMissionController {
             log.setOperate(MissionTemplateStatus.OVERTIME);
             evalMissionTemplateLogMapper.insert(log);
         }
-
         return new BaseRsp<>(evalMissionTemplateService.getMissionTemplate(updateEvalMissionReq.getResourceId()));
     }
 

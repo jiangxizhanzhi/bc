@@ -302,6 +302,7 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
             throw new RuntimeException(e);
         }
 
+        if (StringUtils.isBlank(addReq.getTaskId())) return;
         Map<String, JSONObject> elementsMap = scene.getJSONObject("scene")
                 .getJSONObject("plugins")
                 .getJSONObject("cpcloud")
@@ -434,7 +435,7 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
                 situationHandlerService.pushDataToRoom(rbSituationAttack, rbSituationAttack.getJSONObject("data").getString("scene_id"));
                 Thread.sleep(1000);
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error("pushLoadResult error");
             e.printStackTrace();
         }

@@ -14,7 +14,7 @@ public class AttackInfo implements Serializable {
 	private String time;
 
 	@ApiModelProperty("源节点名称")
-	private String sourceName;
+	private String sourceName = "未知节点";
 
 	@ApiModelProperty("源节点ID")
 	private String sourceId;
@@ -29,5 +29,5 @@ public class AttackInfo implements Serializable {
 	private String attackType;
 
 	@ApiModelProperty("漏洞名称")
-	private String leakName;
+	private String leakName = "未知漏洞";
 }

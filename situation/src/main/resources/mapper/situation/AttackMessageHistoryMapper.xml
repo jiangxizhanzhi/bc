@@ -110,6 +110,7 @@
                 and a.target_id = #{targetId}
             </if>
             and a.type != 'media-animation'
+            and is_history = 0
         </where>
         order by a.create_time desc
         limit 5

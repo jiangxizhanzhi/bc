@@ -494,6 +494,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			wsMessage = new WsMessage<>(MessageType.AttackEventEA.getDesc(), wsMultiNodeDynamic);
 		}
 
+		// 计算CVSS值
 		String imageUuid = remoteTerminalService.queryImageId(attackMessageReq.getTargetId());
 		if (imageUuid != null) {
 			// 获取设备信息
@@ -524,6 +525,8 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		}
 
 		WsMessage<WsCvss> wsCvssWsMessage = new WsMessage<>(MessageType.Cvss.getDesc(), wsCvss);
+
+		// 推送CVSS消息
 		pushDataToRoom(wsCvssWsMessage, attackMessageReq, playback, null, false);
 
 		//推送攻击弹窗
@@ -552,9 +555,20 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			}
 		}
 		attackInfo.setDuration(attackMessageReq.getDurationTime());
+
 		//校验漏洞是否匹配
+		// 查询目标节点存在漏洞
 		List<Vuln> vulnList = this.queryLeak(null, attackMessageReq.getTargetId());
 		List<String> leakIds = vulnList.stream().map(Vuln::getResourceId).collect(Collectors.toList());
+
+		// 处理已防御的漏洞
+		for (Defense defens : defenses) {
+			if (attackMessageReq.getTargetId().equals(defens.getNodeId()) && leakIds.contains(defens.getVulnId())) {
+				leakIds.remove(defens.getVulnId());
+			}
+		}
+
+		// 如果目标节点存在漏洞，且漏洞与当前攻击匹配，且未被修复过，则攻击成功
 		if (leakIds.contains(attackMessageReq.getLeak())) {
 			attackInfo.setTargetId(attackMessageReq.getTargetId());
 			attackType = AttackType.getEnumByKeyWord(attackMessageReq.getType(), AttackType.class);
@@ -764,7 +778,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
 
 		// 清空当前场景防御记录
-		dynamicSchemeMapper.deleteDefenseBySceneId(sceneId);
+//		dynamicSchemeMapper.deleteDefenseBySceneId(sceneId);
 	}
 
 	/**
@@ -1282,6 +1296,8 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	}
 
 	public void pushDefenseToRoom(AttackMessageReq attackMessageReq, Boolean playback, Boolean isMultiterm) {
+
+		// 构造ws消息
 		WsDefenseDynamic wsDefenseDynamic = BeanUtils.copy(attackMessageReq, WsDefenseDynamic.class);
 		DefenseType defenseType = DefenseType.getEnumByKeyWord(attackMessageReq.getDefenseType(), DefenseType.class);
 		if (defenseType != null) {
@@ -1289,6 +1305,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		}
 		wsDefenseDynamic.setDuration(attackMessageReq.getDurationTime());
 
+		// 计算CVSS分数
 		WsCvss wsCvss = new WsCvss();
 		wsCvss.setNodeId(attackMessageReq.getDefenseTargetId());
 		wsCvss.setFlag(1);
@@ -1330,9 +1347,10 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		}
 
 		WsMessage<WsDefenseDynamic> wsMessage = new WsMessage<>(MessageType.DefenseDynamic.getDesc(), wsDefenseDynamic);
-		// 推送防御动效
+		// 推送原有防御动效
 		pushDataToRoom(wsMessage, attackMessageReq, playback, null, true);
 
+		// 推送漏洞CVSS值
 		List<Defense> defenses = dynamicSchemeMapper.queryDefenseByNodeId(attackMessageReq.getSceneId(), attackMessageReq.getDefenseTargetId(), 1);
 		String imageUuid = remoteTerminalService.queryImageId(attackMessageReq.getDefenseTargetId());
 		if (imageUuid != null) {

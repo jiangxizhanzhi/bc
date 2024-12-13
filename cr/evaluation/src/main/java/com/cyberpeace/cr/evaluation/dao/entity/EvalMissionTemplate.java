@@ -40,4 +40,7 @@ public class EvalMissionTemplate extends BaseTable {
 
 	@ApiModelProperty("结束时间")
 	private Date endTime;
+
+	@ApiModelProperty("更新时间")
+	private Date stageStatusUpdateTime;
 }

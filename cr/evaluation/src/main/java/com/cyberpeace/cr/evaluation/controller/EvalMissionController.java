@@ -180,12 +180,12 @@ public class EvalMissionController {
         EvalMissionTemplateLog evalMissionTemplateLog = updateMissionLog(updateEvalMissionReq.getResourceId(), evalMissionTemplate.getName(), updateEvalMissionReq.getTaskId(), updateEvalMissionReq.getStatus());
         Integer status = updateEvalMissionReq.getStatus();
         log.info("updateMissionStatus status : " + status);
-        log.info("updateMissionStatus update time : " + evalMissionTemplate.getUpdateTime());
-        log.info("updateMissionStatus update timestamp: " + evalMissionTemplate.getUpdateTime().getTime());
+        log.info("updateMissionStatus update time : " + evalMissionTemplate.getStageStatusUpdateTime());
+        log.info("updateMissionStatus update timestamp: " + evalMissionTemplate.getStageStatusUpdateTime().getTime());
         // 判断当前状态，暂停状态不计时，中止状态计算是否超时
         if (status.equals(MissionTemplateStatus.START)) {
             evalMissionTemplate.setStatus(status);
-            evalMissionTemplate.setUpdateTime(date);
+            evalMissionTemplate.setStageStatusUpdateTime(date);
             // 记录剩余时间
             evalMissionTemplate.setRemainingTime((evalMissionTemplate.getLimitTime() * 60 * 1000L));
         } else if(status.equals(MissionTemplateStatus.PAUSE)){
@@ -193,8 +193,8 @@ public class EvalMissionController {
             evalMissionTemplate.setStatus(status);
             // 计算所用时间
             // 执行开始或者继续的时间
-            long time = evalMissionTemplate.getUpdateTime().getTime();
-            evalMissionTemplate.setUpdateTime(date);
+            long time = evalMissionTemplate.getStageStatusUpdateTime().getTime();
+            evalMissionTemplate.setStageStatusUpdateTime(date);
             // 经过时间
             long l = date.getTime() - time;
             // 剩余时间
@@ -206,10 +206,10 @@ public class EvalMissionController {
                     templateStatus.equals(MissionTemplateStatus.CONTINUE)) {
                 //计算所用时间
                 // 执行或继续开始的时间
-                long time = evalMissionTemplate.getUpdateTime().getTime();
+                long time = evalMissionTemplate.getStageStatusUpdateTime().getTime();
                 // 经过时间
                 long l = date.getTime() - time;
-                evalMissionTemplate.setUpdateTime(date);
+                evalMissionTemplate.setStageStatusUpdateTime(date);
                 // 剩余时间
                 evalMissionTemplate.setRemainingTime(evalMissionTemplate.getRemainingTime() - l);
                 // 更新状态
@@ -220,7 +220,7 @@ public class EvalMissionController {
         } else {
             // 状态为继续
             evalMissionTemplate.setStatus(status);
-            evalMissionTemplate.setUpdateTime(date);
+            evalMissionTemplate.setStageStatusUpdateTime(date);
         }
 
         evalMissionTemplate.setTaskId(updateEvalMissionReq.getTaskId());

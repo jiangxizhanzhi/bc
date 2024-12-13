@@ -180,8 +180,6 @@ public class EvalMissionController {
         EvalMissionTemplateLog evalMissionTemplateLog = updateMissionLog(updateEvalMissionReq.getResourceId(), evalMissionTemplate.getName(), updateEvalMissionReq.getTaskId(), updateEvalMissionReq.getStatus());
         Integer status = updateEvalMissionReq.getStatus();
         log.info("updateMissionStatus status : " + status);
-        log.info("updateMissionStatus update time : " + evalMissionTemplate.getStageStatusUpdateTime());
-        log.info("updateMissionStatus update timestamp: " + evalMissionTemplate.getStageStatusUpdateTime().getTime());
         // 判断当前状态，暂停状态不计时，中止状态计算是否超时
         if (status.equals(MissionTemplateStatus.START)) {
             evalMissionTemplate.setStatus(status);

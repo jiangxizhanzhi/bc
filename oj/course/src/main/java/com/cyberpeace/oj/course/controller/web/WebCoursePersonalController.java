@@ -5,6 +5,7 @@ import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
@@ -80,7 +81,8 @@ public class WebCoursePersonalController {
 		}
 		courseInfo.setTotalCourses(courses.size());
 		courseInfo.setFinishedCourses(courseInfo.getFinishedCourses());
-		courseInfo.setCourseProgress(courseLessons.isEmpty() ? 0 : (int)Math.ceil((double)courseInfo.getCourseProgress()*100/  courseLessons.size()));
+
+		courseInfo.setCourseProgress(courseLessons.isEmpty() ? 0 : MathUtils.roundDivide(courseInfo.getCourseProgress()*100,  courseLessons.size()));
 		return new BaseRsp<>(courseInfo);
 	}
 

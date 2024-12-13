@@ -185,15 +185,15 @@ public class PersonController {
 			StudyRecord record = map.get(s.getResourceId());
             PersonStatsBo personStatsBo = new PersonStatsBo();
             if (null != record) {
-                personStatsBo.setTheoryCorrectRate(record.getTheoryPracticeCount() * theoryPracticeAllCount == 0 ? "0%": record.getTheoryPracticeCount()*100 / theoryPracticeAllCount+"%");
+                personStatsBo.setTheoryCorrectRate(record.getTheoryPracticeCount() * theoryPracticeAllCount == 0 ? "0%": MathUtils.roundDivide(record.getTheoryPracticeCount()*100 , theoryPracticeAllCount)+"%");
                 int practiceCount = record.getOperationPracticeCount() + opsSolved;
-                personStatsBo.setOperateCorrectRate(practiceCount * operationPracticeAllCount == 0 ?"0%" : practiceCount*100 / operationPracticeAllCount+"%");
+                personStatsBo.setOperateCorrectRate(practiceCount * operationPracticeAllCount == 0 ?"0%" : MathUtils.roundDivide(practiceCount*100 , operationPracticeAllCount)+"%");
             }else {
 				personStatsBo.setOperateCorrectRate("0%");
 			}
 
             if (lessonMap.containsKey(s.getResourceId())) {
-                personStatsBo.setCourseProgress(lessonMap.get(s.getResourceId()) * lessonAllCount == 0 ?"0%": lessonMap.get(s.getResourceId())*100 / lessonAllCount+"%");
+                personStatsBo.setCourseProgress(lessonMap.get(s.getResourceId()) * lessonAllCount == 0 ?"0%": MathUtils.roundDivide(lessonMap.get(s.getResourceId())*100, lessonAllCount)+"%");
             }
 			if (userExamPassMap.containsKey(s.getResourceId())) {
 				Double passRate = userExamPassMap.getOrDefault(s.getResourceId(), new JSONObject())

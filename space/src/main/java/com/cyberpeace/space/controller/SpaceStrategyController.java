@@ -1,6 +1,7 @@
 package com.cyberpeace.space.controller;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.space.dao.entity.SpaceStrategy;
 import com.cyberpeace.space.model.req.IdReq;
 import com.cyberpeace.space.service.SpaceStrategyService;
 import com.cyberpeace.space.service.context.strategy.*;
@@ -8,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -90,10 +92,14 @@ public class SpaceStrategyController {
 
 	@ApiOperation("查看策略路径")
 	@GetMapping("/route")
-	public BaseRsp<String> getRoute(@ApiParam(value = "策略id", name = "strategy_id") String strategy_id,
-									@ApiParam(value = "框架id", name = "frame_id") String frame_id) {
-		String res = spaceStrategyService.getFrameRouteById(frame_id);
-		return new BaseRsp<>(res);
+	public BaseRsp<String> getRoute(
+			@ApiParam(value = "策略id", name = "strategy_id") String strategy_id,
+			@ApiParam(value = "框架id", name = "frame_id") String frame_id) {
+		if (StringUtils.isNotBlank(frame_id)) {
+			String res = spaceStrategyService.getFrameRouteById(frame_id);
+			return new BaseRsp<>(res);
+		}
+		SpaceStrategy strategy = spaceStrategyService.getById(strategy_id);
+		return new BaseRsp<>(spaceStrategyService.getFrameRouteById(strategy.getFrameId()));
 	}
-
 }

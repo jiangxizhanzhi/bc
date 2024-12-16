@@ -223,6 +223,24 @@ public class MathUtils {
 
 		return ret;
 	}
+
+	/**
+	 * 计算通过率
+	 * 保留一位小数，四舍五入
+	 *
+	 * @param dividend 股利
+	 * @param divisor  除数
+	 * @return {@code String }
+	 * @throws
+	 * @see Integer
+	 * @see Integer
+	 * @see String
+	 */
+	public static String calPassRate(Integer dividend, Integer divisor){
+		Double res = divide((double)(dividend * 100), (double)divisor, 1);
+		return res.toString();
+	}
+
 	
 	private MathUtils() {}
 

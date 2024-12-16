@@ -185,9 +185,9 @@ public class PersonController {
 			StudyRecord record = map.get(s.getResourceId());
             PersonStatsBo personStatsBo = new PersonStatsBo();
             if (null != record) {
-                personStatsBo.setTheoryCorrectRate(record.getTheoryPracticeCount() * theoryPracticeAllCount == 0 ? "0%": MathUtils.roundDivide(record.getTheoryPracticeCount()*100 , theoryPracticeAllCount)+"%");
+                personStatsBo.setTheoryCorrectRate(record.getTheoryPracticeCount() * theoryPracticeAllCount == 0 ? "0%": MathUtils.calPassRate(record.getTheoryPracticeCount() , theoryPracticeAllCount)+"%");
                 int practiceCount = record.getOperationPracticeCount() + opsSolved;
-                personStatsBo.setOperateCorrectRate(practiceCount * operationPracticeAllCount == 0 ?"0%" : MathUtils.roundDivide(practiceCount*100 , operationPracticeAllCount)+"%");
+                personStatsBo.setOperateCorrectRate(practiceCount * operationPracticeAllCount == 0 ?"0%" : MathUtils.calPassRate(practiceCount , operationPracticeAllCount)+"%");
             }else {
 				personStatsBo.setOperateCorrectRate("0%");
 			}

@@ -17,5 +17,5 @@ public class SpaceActionStrategy {
 	private String route;
 
 	@ApiModelProperty(value = "执行脚本")
-	private String script;
+	private String content;
 }

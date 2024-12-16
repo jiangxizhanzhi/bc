@@ -35,4 +35,6 @@ public class SpaceStrategySimple {
      * @see String
      */
     private String content;
+
+    private String route;
 }

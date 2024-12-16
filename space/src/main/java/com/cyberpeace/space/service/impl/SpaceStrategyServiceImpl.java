@@ -106,6 +106,10 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 	@Override
 	public List<SpaceStrategySimple> listStrategiesByFrame(String frameId, String name) {
 		List<SpaceStrategySimple> simpleList = mapper.selectIdAndNameByFrame(frameId, name);
+		String route = this.getFrameRouteById(frameId);
+		for (SpaceStrategySimple simple : simpleList) {
+			simple.setRoute(route);
+		}
 		return simpleList;
 	}
 

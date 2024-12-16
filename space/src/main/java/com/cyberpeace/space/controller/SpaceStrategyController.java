@@ -88,4 +88,12 @@ public class SpaceStrategyController {
 		return new BaseRsp<>(res);
 	}
 
+	@ApiOperation("查看策略路径")
+	@GetMapping("/route")
+	public BaseRsp<String> getRoute(@ApiParam(value = "策略id", name = "strategy_id") String strategy_id,
+									@ApiParam(value = "框架id", name = "frame_id") String frame_id) {
+		String res = spaceStrategyService.getFrameRouteById(frame_id);
+		return new BaseRsp<>(res);
+	}
+
 }

@@ -142,7 +142,7 @@ public class SpaceActionController extends SpaceActionFrameBaseController<SpaceA
 			SpaceActionStrategy bo = new SpaceActionStrategy();
 			bo.setResourceId(strategy.getResourceId());
 			bo.setName(strategy.getName());
-			bo.setScript(strategy.getScript());
+			bo.setContent(strategy.getContent());
 			String frameRoute = strategyService.getFrameRouteById(strategy.getFrameId());
 			bo.setRoute(frameRoute);
 

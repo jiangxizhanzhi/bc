@@ -148,10 +148,10 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 	@Override
 	public String getFrameRouteById(String frameId) {
 		List<String> names = Lists.newArrayList();
-		SpaceStrategyFrame frame = this.getFrameOrException(frameId);
-		while (!SpaceCommonConstant.DEFAULT_STRATEGY_FRAME.equals(frame.getParent())){
-			frame = this.getFrameOrException(frame.getParent());
+		while (!SpaceCommonConstant.DEFAULT_STRATEGY_FRAME.equals(frameId)){
+			SpaceStrategyFrame frame = this.getFrameOrException(frameId);
 			names.add(frame.getName());
+			frameId = frame.getParent();
 		}
 		Collections.reverse(names);
 		return String.join("/", names);

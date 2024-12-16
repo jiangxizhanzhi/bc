@@ -98,6 +98,7 @@ public class SpaceActionController extends SpaceActionFrameBaseController<SpaceA
 		List<SpaceActionMethod> methods = this.getUpperRelated(upperIds);
 		List<IdAndName> idAndNames = StreamApiUtils.map(methods, m->new IdAndName(m.getResourceId(), m.getName()));
 		bo.setMethod(idAndNames);
+		bo.setPlatform(JsonUtil.toJsonObjectArray(e.getPlatform(), String.class));
 		return new BaseRsp<>(bo);
 	}
 

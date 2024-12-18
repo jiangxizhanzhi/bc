@@ -269,7 +269,7 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
         String createUserId = evalTest.getCreateUserId();
         log.info("EvalTest permission check, userId = [{}], createUserId = [{}]", userId, createUserId);
         UserInfo byId = remoteUserService.getById(createUserId);
-        log.info("UserInfo = [{}], isAdmin = [{}]", byId, byId.isAdmin());
+        log.info("UserInfo = [{}], isAdmin = [{}]", byId, byId == null ? null : byId.isAdmin());
         if (!evalTest.isFree2Operate() && !evalTest.getCreateUserId().equals(userId)
                 && !evalTest.getOperationAuthIds().contains(userId) && ( byId!=null || !byId.isAdmin())) {
             /*if (!evalTest.isFree2Operate() && !evalTest.getCreateUserId().equals(userId)

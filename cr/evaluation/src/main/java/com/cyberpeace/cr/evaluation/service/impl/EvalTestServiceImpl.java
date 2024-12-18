@@ -267,9 +267,13 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
         //校验权限
         String userId = UserInfoContext.getUserContext().getUserId();
         String createUserId = evalTest.getCreateUserId();
+        log.info("EvalTest permission check, userId = [{}], createUserId = [{}]", userId, createUserId);
         UserInfo byId = remoteUserService.getById(createUserId);
+        log.info("UserInfo = [{}], isAdmin = [{}]", byId, byId == null ? null : byId.isAdmin());
         if (!evalTest.isFree2Operate() && !evalTest.getCreateUserId().equals(userId)
-                && !evalTest.getOperationAuthIds().contains(userId) && !byId.isAdmin()) {
+                && !evalTest.getOperationAuthIds().contains(userId) && !(byId == null || byId.isAdmin())) {
+            /*if (!evalTest.isFree2Operate() && !evalTest.getCreateUserId().equals(userId)
+                && !evalTest.getOperationAuthIds().contains(userId) && !byId.isAdmin()) {*/
             log.error("Permission denied! userId = [{}]",
                     UserInfoContext.getUserContext().getUserId());
             throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);

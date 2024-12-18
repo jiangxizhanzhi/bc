@@ -271,7 +271,7 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
         UserInfo byId = remoteUserService.getById(createUserId);
         log.info("UserInfo = [{}], isAdmin = [{}]", byId, byId.isAdmin());
         if (!evalTest.isFree2Operate() && !evalTest.getCreateUserId().equals(userId)
-                && !evalTest.getOperationAuthIds().contains(userId)) {
+                && !evalTest.getOperationAuthIds().contains(userId) && !byId.isAdmin()) {
             /*if (!evalTest.isFree2Operate() && !evalTest.getCreateUserId().equals(userId)
                 && !evalTest.getOperationAuthIds().contains(userId) && !byId.isAdmin()) {*/
             log.error("Permission denied! userId = [{}]",

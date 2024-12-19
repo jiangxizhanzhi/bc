@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import com.cyberpeace.cr.crbase.constant.NodeOperate;
+import com.cyberpeace.cr.evaluation.service.EvalNodeLogService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,9 @@ public class EvalTaskSceneController {
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	@Autowired
+	private EvalNodeLogService evalNodeLogService;
+
 	@ApiOperation("重启节点")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("/node/restart")
@@ -61,6 +66,24 @@ public class EvalTaskSceneController {
 			log.error("Node recreate failure! nodeOpsReq = [{}]", JsonUtil.toJsonString(nodeOpsReq));
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
 		}
+		return new BaseRsp<>(result);
+	}
+	@PostMapping("/node/access")
+	@ApiOperation("单个节点接入")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+	public void accessNode(@RequestBody @Validated EvalSceneNodeOpsReq nodeOpsReq) {
+		EvalTask evalTask = evalTaskService.getActiveTask(nodeOpsReq.getTaskId());
+		evalNodeLogService.logNodeOperate(nodeOpsReq, nodeOpsReq.getTaskId(), evalTask.getMpSceneId(), nodeOpsReq.getOperate());
+
+	}
+
+	@PostMapping("/node/stop")
+	@ApiOperation("单个节点关机")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+	public BaseRsp<Boolean> stopNode(@RequestBody @Validated EvalSceneNodeOpsReq nodeOpsReq) {
+		Boolean result = localSceneService.stopNode(nodeOpsReq.getMpSceneId(), nodeOpsReq.getNodeId());
+		EvalTask evalTask = evalTaskService.getActiveTask(nodeOpsReq.getTaskId());
+		evalNodeLogService.logNodeOperate(nodeOpsReq, evalTask.getResourceId(), evalTask.getMpSceneId(), NodeOperate.STOP);
 		return new BaseRsp<>(result);
 	}
 

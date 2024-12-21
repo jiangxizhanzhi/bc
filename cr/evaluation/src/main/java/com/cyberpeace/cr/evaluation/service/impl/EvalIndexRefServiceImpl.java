@@ -102,18 +102,22 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		if (evalIndexRef.getLevel().equals(EvalIndexRef.Level.AGGREGATION.getCode())) {
 			for (String nextId : nextIds) {
 				EvalVariableRef evalVariableRef = evalVariableRefMap.get(nextId);
-				if (!evalVariableRef.getProgress()
-						.equals(EvalVariableRef.Progress.EXCEPTION.getCode())) {
-					scoreList.add(evalVariableRef.getScore());
-				}
+//				if (!evalVariableRef.getProgress()
+//						.equals(EvalVariableRef.Progress.EXCEPTION.getCode())) {
+//					scoreList.add(evalVariableRef.getScore());
+//				}
+				//todo 暂时不管是否异常，都添加到scoreList中 有异常默认是0分
+				scoreList.add(evalVariableRef.getScore() == null ? 0 : evalVariableRef.getScore());
 			}
 		} else {
 			for (String nextId : nextIds) {
 				EvalIndexRef evalIndexRef1 = evalIndexRefMap.get(nextId);
-				if (!evalIndexRef1.getProgress()
-						.equals(EvalIndexRef.Progress.EXCEPTION.getCode())) {
-					scoreList.add(evalIndexRef1.getScore());
-				}
+//				if (evalIndexRef1.getProgress()
+//						.equals(EvalIndexRef.Progress.EXCEPTION.getCode())) {
+//					scoreList.add(evalIndexRef1.getScore());
+//				}
+				//todo 暂时不管是否异常，都添加到scoreList中 有异常默认是0分
+				scoreList.add(evalIndexRef1.getScore() == null ? 0 : evalIndexRef1.getScore());
 			}
 		}
 		// 次级全部执行失败情况下（scoreList为空），继续向下执行
@@ -156,7 +160,8 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 								.getMessageByLanguage(CrBusinessErrorCode.INDEX_EXECUTE_FAILED),
 						this.getLevelText(evalIndexRef.getLevel()), evalIndexRef.getName());
 			}
-			evalRecord.setMessage(evalRecord.getMessage() + msg + "\n");
+			//todo 异常暂时不管，继续向下执行
+//			evalRecord.setMessage(evalRecord.getMessage() + msg + "\n");
 			EvalLog.error(evalRecord, evalIndexRef, "system evaluation type index on failure.");
 		}
 
@@ -166,7 +171,8 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 					BusinessException.getMessageByLanguage(
 							CrBusinessErrorCode.AGG_ALGORITHM_RESULT_IS_INVALID),
 					this.getLevelText(evalIndexRef.getLevel()), evalIndexRef.getName());
-			evalRecord.setMessage(evalRecord.getMessage() + msg + "\n");
+			//todo 异常暂时不管，继续向下执行
+//			evalRecord.setMessage(evalRecord.getMessage() + msg + "\n");
 			score = 0;
 		}
 

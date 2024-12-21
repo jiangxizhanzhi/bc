@@ -1028,7 +1028,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             if (!StringUtils.isEmpty(result)) {
                 evalVariableRef.setScore(0);
                 evalVariableRef.setProgress(EvalVariableRef.Progress.EXCEPTION.getCode());
-                evalRecord.setMessage(result + "\n");
+                evalRecord.setMessage(evalRecord.getMessage() + result + "\n");
                 transactionTemplate.execute(status -> {
                     evalVariableRefService.updateById(evalVariableRef);
                     return updateById(evalRecord);

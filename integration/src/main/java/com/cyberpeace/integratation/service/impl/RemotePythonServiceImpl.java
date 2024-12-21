@@ -58,6 +58,7 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 	private String invoke(JSONObject requestData) {
 		String resp = HttpClientUtil.post(getPyHost() + "/algorithm/run/", requestData,
 				String.class);
+		log.info("执行结果 : {}", resp);
 		if (resp == null) {
 			throw new RemoteServiceException(ErrorCode.ALGORITHM_RETURN_NULL);
 		}
@@ -120,7 +121,7 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 			List<Serializable> otherArguments) {
 		JSONObject json = buildRequestData(algorithmId, algorithmCode, otherArguments);
 		json.put("data", data);
-
+		log.info("执行算法入参:{}", json);
 		String resp;
 		try {
 			resp = invoke(json);

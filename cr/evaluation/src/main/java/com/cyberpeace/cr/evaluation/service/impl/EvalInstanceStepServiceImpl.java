@@ -122,7 +122,7 @@ public class EvalInstanceStepServiceImpl extends ServiceImpl<EvalInstanceStepMap
 		List<String> stepIds = evalInstanceStepMapper.selectIncompleteStepCount(instanceId);
 		evalTaskStatisticsRes.setInCompletion(stepIds.size());
 		List<String> failStepIds = histories.stream()
-											.filter(history -> !"success".equals(history.getResultStatus()))
+											.filter(history -> !"1005010101".equals(history.getResultStatus()))
 											.map(LoadHistory::getStageId)
 											.distinct().collect(Collectors.toList());
 		failStepIds.removeAll(stepIds);

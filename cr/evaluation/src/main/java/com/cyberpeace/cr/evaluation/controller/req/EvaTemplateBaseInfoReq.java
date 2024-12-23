@@ -35,6 +35,9 @@ public class EvaTemplateBaseInfoReq {
 	@ApiModelProperty("试验方法")
 	private String method;
 
+	@ApiModelProperty("试验方法附件")
+	private String methodFile;
+
 	@ApiModelProperty(value = "是否录屏", required = true)
 	@NotNull
 	private Boolean enableRecording;

@@ -1,7 +1,5 @@
 package com.cyberpeace.iov.index.service.impl;
 
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
@@ -10,22 +8,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.model.ws.WebSocketMessageContext;
-import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.iov.constant.IovConstants;
 import com.cyberpeace.iov.index.service.IovCanService;
+import com.cyberpeace.iov.index.service.IovSituationService;
 import com.cyberpeace.iov.index.service.bo.can.CanMsg;
 import com.cyberpeace.iov.index.service.bo.can.FuzzingReq;
-import com.cyberpeace.iov.index.service.bo.can.IovSituationIdentifier;
+import com.cyberpeace.iov.index.service.bo.can.IovSituationFlashEffect;
 import com.cyberpeace.iov.index.service.bo.can.MsgSendReq;
 import com.cyberpeace.iov.util.IovHttpClientUtil;
 import com.google.common.collect.Lists;
@@ -58,7 +54,7 @@ public class IovCanServiceImpl implements IovCanService {
 	private static final String MSG_CHN = "1";
 
 	@Autowired
-	private MyWebSocketHandler myWebSocketHandler;
+	private IovSituationService iovSituationService;
 
 
 	@PostConstruct
@@ -153,30 +149,20 @@ public class IovCanServiceImpl implements IovCanService {
 	 */
 	private void sendFlashEffect(MsgSendReq req) {
 		for (CanMsg msg : req.getMsgs()) {
+			JSONObject object = new JSONObject();
+			object.put(JsonKeyConstant.TYPE, IovConstants.IovWsType.FLASH);
+			IovSituationFlashEffect effect = new IovSituationFlashEffect();
 			if (IovConstants.CanData.ROTATE_SCREEN.equals(msg.getMsgData())
 					|| IovConstants.CanData.SWITCH_APP.equals(msg.getMsgData())) {
-				pushIovSituationMessage(Lists.newArrayList(IovConstants.IovEcu.VIDEO_SCREEN));
+				effect.setEcu(Lists.newArrayList(IovConstants.IovEcu.VIDEO_SCREEN));
 			} else if (IovConstants.CanData.OPEN_DOOR.equals(msg.getMsgData())) {
-				pushIovSituationMessage(IovConstants.IovEcu.DOOR);
+				effect.setEcu(IovConstants.IovEcu.DOOR);
+			} else {
+				continue;
 			}
+			object.put(JsonKeyConstant.DATA, effect);
+			iovSituationService.pushSituationWsMsg(object);
 		}
-	}
-
-	/**
-	 * 推送报文对应的3D态势消息
-	 * @param ecuCode ecu类型
-	 */
-	private void pushIovSituationMessage(List<Integer> ecuCode) {
-		IovSituationIdentifier identifier = new IovSituationIdentifier();
-		identifier.setPath(WsPath.IOV);
-		// identifier.setFrame(frameId);
-
-		JSONObject data = new JSONObject();
-		data.put("ecu", ecuCode);
-
-		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
-				.builder().messageIdentifier(identifier).data(data).build();
-		myWebSocketHandler.pushMessage(messageContext, true);
 	}
 
 }

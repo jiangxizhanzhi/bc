@@ -42,4 +42,14 @@ public final class IovConstants {
 
 	}
 
+	/**
+	 * websocket 消息类型
+	 */
+	public static final class IovWsType {
+		/**
+		 * 闪光
+		 */
+		public static final Integer FLASH = 1;
+	}
+
 }

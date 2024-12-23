@@ -23,7 +23,10 @@
                 and name like #{pattern}
             </if>
             <if test="evalTemplateListQuery.type != null">
-                and type = #{type}
+                and type = #{evalTemplateListQuery.type}
+            </if>
+            <if test="evalTemplateListQuery.isTem != null">
+                and is_tem = #{evalTemplateListQuery.isTem}
             </if>
         </where>
     </select>

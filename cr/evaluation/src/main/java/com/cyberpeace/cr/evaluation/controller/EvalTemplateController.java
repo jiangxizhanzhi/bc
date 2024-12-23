@@ -1,27 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.evaluation.controller.req.*;
-import com.cyberpeace.cr.evaluation.dao.entity.*;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalToolMapper;
-import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
-import com.cyberpeace.cr.evaluation.service.context.*;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.integratation.model.scene.MissionStartContext;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.context.user.OperationUserInfo;
@@ -31,19 +10,39 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.cr.evaluation.controller.req.*;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateIdRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateTaskListRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.*;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalToolMapper;
+import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
+import com.cyberpeace.cr.evaluation.service.context.*;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.model.scene.MissionStartContext;
 import com.cyberpeace.integratation.service.RemoteUserService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "靶场测评-模板")
 @RestController
@@ -194,43 +193,15 @@ public class EvalTemplateController {
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<EvalTemplateListRsp>>
 			getEvalTemplateList(EvalTemplateListQuery evalTemplateListQuery) {
-
 		IPage<EvalTemplate> data = evalTemplateService.list(evalTemplateListQuery);
-		List<EvalTemplate> records = data.getRecords();
-		IPage<EvalTemplate> evalTemplateIPage = null;
-		if (evalTemplateListQuery.getIsTem()==1) {
-			//模板
-//			 records.stream().filter(s -> s.getIsTem() == 1).collect(Collectors.toList());
-			List<EvalTemplate> collect = records.stream().map(s->{
-				if (s.getIsTem()!=null&& s.getIsTem() == 1) {
-					return s;
-				}
-				return null;
-			}).collect(Collectors.toList());
-			List<EvalTemplate> list = collect.stream().filter(Objects::nonNull).collect(Collectors.toList());
-			evalTemplateIPage = data.setRecords(list).setCurrent(data.getCurrent()).setSize(list.size()).setPages(data.getPages()).setTotal(list.size());
-		}else {
-			//非模板
-//			List<EvalTemplate> noTem = records.stream().filter(s -> s.getIsTem() != 1).collect(Collectors.toList());
-			List<EvalTemplate> noTem = records.stream().map(s->{
-				if (s.getIsTem()!=null&&0==s.getIsTem()) {
-					return s;
-				}
-				return null;
-			}).collect(Collectors.toList());
-			List<EvalTemplate> collect = noTem.stream().filter(Objects::nonNull).collect(Collectors.toList());
-			evalTemplateIPage = data.setRecords(collect).setCurrent(data.getCurrent()).setSize(collect.size()).setPages(data.getPages()).setTotal(collect.size());
-		}
-		evalTemplateIPage.convert(evalTemplate -> {
+		data.convert(evalTemplate -> {
 			EvalTemplateListRsp evalTemplateListRsp = BeanUtils.copy(evalTemplate,
 					EvalTemplateListRsp.class);
 			evalTemplateListRsp
 					.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
 			return evalTemplateListRsp;
-
 		});
-
-		return new BaseRsp<>(PageUtil.getListResult(evalTemplateIPage));
+		return new BaseRsp<>(PageUtil.getListResult(data));
 	}
 
 	@ApiOperation("模板任务列表查询")

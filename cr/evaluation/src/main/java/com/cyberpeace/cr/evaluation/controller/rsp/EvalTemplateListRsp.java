@@ -33,6 +33,9 @@ public class EvalTemplateListRsp {
 	@ApiModelProperty("试验方法")
 	private String method;
 
+	@ApiModelProperty("试验方法附件")
+	private String methodFile;
+
 	@ApiModelProperty(value = "实验目标")
 	private String target;
 

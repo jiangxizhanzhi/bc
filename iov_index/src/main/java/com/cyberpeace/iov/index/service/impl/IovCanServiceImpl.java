@@ -1,23 +1,34 @@
 package com.cyberpeace.iov.index.service.impl;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.model.ws.WebSocketMessageContext;
+import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.iov.constant.IovConstants;
 import com.cyberpeace.iov.index.service.IovCanService;
+import com.cyberpeace.iov.index.service.bo.can.CanMsg;
 import com.cyberpeace.iov.index.service.bo.can.FuzzingReq;
+import com.cyberpeace.iov.index.service.bo.can.IovSituationIdentifier;
 import com.cyberpeace.iov.index.service.bo.can.MsgSendReq;
 import com.cyberpeace.iov.util.IovHttpClientUtil;
+import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,6 +56,9 @@ public class IovCanServiceImpl implements IovCanService {
 
 	// 每个车的通道不一样，后续根据车型来配置
 	private static final String MSG_CHN = "1";
+
+	@Autowired
+	private MyWebSocketHandler myWebSocketHandler;
 
 
 	@PostConstruct
@@ -92,6 +106,7 @@ public class IovCanServiceImpl implements IovCanService {
 	public void startSendMsg(MsgSendReq req) {
 		req.getMsgs().forEach(msg -> msg.setMsgChn(MSG_CHN));
 		IovHttpClientUtil.postJson(START_SEND_MSG_URL, req, JSONObject.class);
+		this.sendFlashEffect(req);
 	}
 
 	@Override
@@ -127,6 +142,41 @@ public class IovCanServiceImpl implements IovCanService {
 	@Override
 	public void stopSniff() {
 
+	}
+
+	/**
+	 * 发送闪动效果
+	 *
+	 * @param req 请求体
+	 * @throws
+	 * @see MsgSendReq
+	 */
+	private void sendFlashEffect(MsgSendReq req) {
+		for (CanMsg msg : req.getMsgs()) {
+			if (IovConstants.CanData.ROTATE_SCREEN.equals(msg.getMsgData())
+					|| IovConstants.CanData.SWITCH_APP.equals(msg.getMsgData())) {
+				pushIovSituationMessage(Lists.newArrayList(IovConstants.IovEcu.VIDEO_SCREEN));
+			} else if (IovConstants.CanData.OPEN_DOOR.equals(msg.getMsgData())) {
+				pushIovSituationMessage(IovConstants.IovEcu.DOOR);
+			}
+		}
+	}
+
+	/**
+	 * 推送报文对应的3D态势消息
+	 * @param ecuCode ecu类型
+	 */
+	private void pushIovSituationMessage(List<Integer> ecuCode) {
+		IovSituationIdentifier identifier = new IovSituationIdentifier();
+		identifier.setPath(WsPath.IOV);
+		// identifier.setFrame(frameId);
+
+		JSONObject data = new JSONObject();
+		data.put("ecu", ecuCode);
+
+		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
+				.builder().messageIdentifier(identifier).data(data).build();
+		myWebSocketHandler.pushMessage(messageContext, true);
 	}
 
 }

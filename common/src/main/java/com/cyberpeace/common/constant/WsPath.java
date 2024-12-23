@@ -46,6 +46,8 @@ public class WsPath {
 
 	public static final String LIVE = "/ws/live";
 
+	public static final String IOV = "/ws/iov";
+
 	private static Set<String> cache = Sets.newHashSet();
 
 	static {
@@ -65,6 +67,7 @@ public class WsPath {
 		cache.add(NOTICE);
 		cache.add(EXERCISE_PAPER);
 		cache.add(LIVE);
+		cache.add(IOV);
 	}
 
 	public static boolean validPath(String path) {

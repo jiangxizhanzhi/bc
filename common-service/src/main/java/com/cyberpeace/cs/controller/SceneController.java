@@ -80,7 +80,7 @@ public class SceneController {
 	@ApiOperation("场景节点快照路径")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
-			MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE }, logical = Logical.OR)
+			MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.WEB_CR_EVALUATION }, logical = Logical.OR)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "scene_id", value = "场景编号", required = true),
 			@ApiImplicitParam(name = "id", value = "镜像编号", required = true) })
 	public BaseRsp<JSONArray> snapshotPath(@RequestParam("scene_id") String sceneId,

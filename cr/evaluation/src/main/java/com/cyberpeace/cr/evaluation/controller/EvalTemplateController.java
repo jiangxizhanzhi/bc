@@ -111,12 +111,18 @@ public class EvalTemplateController {
 	@PostMapping("/manual/exe")
 	public BaseRsp<String>
 			exeCommandManual(@RequestBody @Validated ManualExecutionReq manualExecutionReq) {
-		// 执行任务
-		MissionStartContext missionStartContext = new MissionStartContext();
-		evalTemplateService.executeCommond(missionStartContext);
 
 		String taskId = manualExecutionReq.getTaskId();
 		EvalTask evalTask = evalTaskMapper.selectById(taskId);
+		// 执行任务
+		MissionStartContext missionStartContext = new MissionStartContext();
+		missionStartContext.setCommand(manualExecutionReq.getCommand());
+		missionStartContext.setNode_id(manualExecutionReq.getNodeId());
+		missionStartContext.setExec_user(UserInfoContext.getUserContext().getUserId());
+		missionStartContext.setId(evalTask.getMpSceneId());
+		evalTemplateService.executeCommond(missionStartContext, manualExecutionReq.getMissionId(), manualExecutionReq.getTaskId());
+
+
 		String phase = evalTask.getPhase();
 		List<EvalTaskStepConfig> stages = JsonUtil.toJsonObjectArray(phase, EvalTaskStepConfig.class);
 		Map<Integer, EvalTaskStepConfig> map = StreamApiUtils.toMap(stages, EvalTaskStepConfig::getStage, s -> s);

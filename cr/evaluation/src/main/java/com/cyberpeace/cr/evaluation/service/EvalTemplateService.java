@@ -1,7 +1,5 @@
 package com.cyberpeace.cr.evaluation.service;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.BaseRsp;
@@ -15,6 +13,8 @@ import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
 import com.cyberpeace.integratation.model.scene.MissionStartContext;
+
+import java.util.List;
 
 /**
  * 测评靶场-模板的处理
@@ -71,7 +71,7 @@ public interface EvalTemplateService extends IService<EvalTemplate> {
 	 */
 	Boolean validateStepConfig(List<EvalTaskStepConfig> evalTaskStepConfigList);
 
-    void executeCommond(MissionStartContext missionStartContext);
+    void executeCommond(MissionStartContext missionStartContext, String missionId, String taskId);
 
     BaseRsp<ListRsp<CombatLog>> getAlarm(AlarmPageReq req);
 }

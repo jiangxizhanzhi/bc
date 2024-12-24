@@ -185,5 +185,8 @@ public final class MenuConstant {
     //红蓝对抗统计
 	public static final String CMS_CR_RB_TRAIN_STATISTICS = "red-vs-blue-statistics";
 
+    //测试验证模板管理
+    public static final String CMS_CR_EVALUATION_TEMPLATE = "assessment-template";
+
     private MenuConstant() {}
 }

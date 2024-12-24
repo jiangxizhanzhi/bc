@@ -49,7 +49,7 @@ public class SceneController {
 	@ApiOperation("场景节点打快照")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
-			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
+			MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.WEB_CR_EVALUATION}, logical = Logical.OR)
 	public BaseRsp<Boolean> nodeSnapshot(@Valid @RequestBody NodeSnapShotReq snapShotReq) {
 
 		snapShotReq.setSnapshotName(snapShotReq.getSnapshotName().trim());
@@ -68,7 +68,7 @@ public class SceneController {
 	@ApiOperation("场景节点快照删除")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
-			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
+			MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.WEB_CR_EVALUATION}, logical = Logical.OR)
 	public BaseRsp<Boolean> snapshotDelete(@Valid @RequestBody NodeSnapshotDeleteReq deleteReq) {
 
 		Boolean result = localSceneService.deleteSnapshot(deleteReq.getSceneId(),

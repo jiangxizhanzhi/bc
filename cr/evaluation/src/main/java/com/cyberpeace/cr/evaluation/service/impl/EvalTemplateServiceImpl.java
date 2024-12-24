@@ -1,37 +1,27 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
-import java.util.HashSet;
-import java.util.List;
-
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.evaluation.dao.entity.AlarmPageReq;
-import com.cyberpeace.cr.evaluation.dao.entity.CombatLog;
-import com.cyberpeace.integratation.model.scene.MissionStartContext;
-import com.cyberpeace.integratation.service.RemoteSceneService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ListUtil;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.cr.evaluation.dao.entity.AlarmPageReq;
+import com.cyberpeace.cr.evaluation.dao.entity.CombatLog;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalMissionTemplateLogMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
@@ -43,10 +33,19 @@ import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
 import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.integratation.model.scene.MissionStartContext;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.HashSet;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -75,6 +74,9 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 	@Autowired
 	private RemoteSceneService remoteSceneService;
+
+	@Autowired
+	private EvalMissionTemplateLogMapper evalMissionTemplateLogMapper;
 
 	@Override
 	public EvalTemplate getTemplate(String templateId) {
@@ -250,9 +252,13 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 	@Async
     @Override
-    public void executeCommond(MissionStartContext missionStartContext) {
-		remoteSceneService.startMission(missionStartContext);
-    }
+    public void executeCommond(MissionStartContext missionStartContext, String missionId, String taskId) {
+		String output = remoteSceneService.startMission(missionStartContext);
+
+		// 日志记录
+		evalMissionTemplateLogMapper.updateMissionResultAndMissionIdAndTaskId(missionId, output, taskId);
+
+	}
 
 	@Override
 	public BaseRsp<ListRsp<CombatLog>> getAlarm(AlarmPageReq req) {

@@ -644,11 +644,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		String targetUrl = MISSION_START_URL;
 		JSONObject post = HttpClientUtil.post(targetUrl, missionStartContext, JSONObject.class);
 		String status = post.get("status").toString();
+		String output = post.get("output").toString();
 		if(!Boolean.parseBoolean(status)){
 			log.error("topoId=[{}]  mission execute error, response data is null", missionStartContext.getId());
 			return "false";
 		}
-		return status;
+		return output;
     }
 
 	@Override

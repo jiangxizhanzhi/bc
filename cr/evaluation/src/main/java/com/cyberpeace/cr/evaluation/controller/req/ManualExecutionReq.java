@@ -25,4 +25,10 @@ public class ManualExecutionReq implements Serializable {
 
 	private String taskId;
 
+	@ApiModelProperty("导出类型")
+	private Integer exportType;
+
+	@ApiModelProperty("任务id")
+	private String missionId;
+
 }

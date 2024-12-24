@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalMissionTemplateLogMapper">
+
+<!--    <select id="getAllByTask" resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionLogRsp">-->
+<!--        SELECT-->
+<!--            l.mission_id as resource_id,-->
+<!--            t.name,-->
+<!--            DATE_FORMAT(t.create_time, '%Y-%m-%d %H:%i:%s') as  start_time,-->
+<!--            DATE_FORMAT(t.end_time, '%Y-%m-%d %H:%i:%s') AS end_time-->
+<!--        FROM-->
+<!--            cr_eval_mission_template_log as l-->
+<!--        left join cr_eval_mission_template as t-->
+<!--				on l.mission_id = t.resource_id-->
+<!--        WHERE-->
+<!--            t.task_id = #{taskId} and t.status in (5,6)-->
+<!--        GROUP BY-->
+<!--            l.mission_id;-->
+<!--    </select>-->
+
+<!--    <select id="selectByIds" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalNodeLog">-->
+<!--        SELECT create_user_id, update_time, operate, node_name FROM cr_eval_node_log WHERE resource_id in-->
+<!--        <foreach collection="ids" item="id" separator="," close=")" open="(">-->
+<!--            #{id}-->
+<!--        </foreach>-->
+<!--    </select>-->
+
+    <update id="updateMissionResultAndMissionIdAndTaskId">
+        UPDATE cr_eval_mission_template_log SET mission_result = #{missionResult} WHERE mission_id = #{missionId} AND task_id = #{taskId};
+    </update>
+</mapper>

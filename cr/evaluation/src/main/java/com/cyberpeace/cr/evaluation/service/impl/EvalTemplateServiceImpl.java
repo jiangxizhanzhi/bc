@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -253,14 +254,22 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		String output = remoteSceneService.startMission(missionStartContext);
 
 		if (StringUtils.isNotEmpty(output)) {
-			EvalMissionTemplateLog evalMissionTemplateLog = new EvalMissionTemplateLog();
-			evalMissionTemplateLog.setMissionId(missionId);
-			evalMissionTemplateLog.setTaskId(taskId);
-			evalMissionTemplateLog.setMissionResult(output);
-			evalMissionTemplateLog.setMissionName(title);
-			evalMissionTemplateLog.setCreateUserId(missionStartContext.getExec_user());
-			// 日志记录
-			evalMissionTemplateLogMapper.insert(evalMissionTemplateLog);
+
+			Integer i = evalMissionTemplateLogMapper.selectCount(new LambdaQueryWrapper<EvalMissionTemplateLog>()
+					.eq(EvalMissionTemplateLog::getMissionId, missionId)
+					.eq(EvalMissionTemplateLog::getTaskId, taskId));
+			if (i == 0) {
+				EvalMissionTemplateLog evalMissionTemplateLog = new EvalMissionTemplateLog();
+				evalMissionTemplateLog.setMissionId(missionId);
+				evalMissionTemplateLog.setTaskId(taskId);
+				evalMissionTemplateLog.setMissionResult(output);
+				evalMissionTemplateLog.setMissionName(title);
+				evalMissionTemplateLog.setCreateUserId(missionStartContext.getExec_user());
+				// 日志记录
+				evalMissionTemplateLogMapper.insert(evalMissionTemplateLog);
+			} else {
+				evalMissionTemplateLogMapper.updateMissionResultAndMissionIdAndTaskId(output, missionId, taskId);
+			}
 		}
 
 	}

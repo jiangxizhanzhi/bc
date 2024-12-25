@@ -17,10 +17,7 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cr.evaluation.dao.entity.AlarmPageReq;
-import com.cyberpeace.cr.evaluation.dao.entity.CombatLog;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
+import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalMissionTemplateLogMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
@@ -252,11 +249,19 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 	@Async
     @Override
-    public void executeCommond(MissionStartContext missionStartContext, String missionId, String taskId) {
+    public void executeCommond(MissionStartContext missionStartContext, String missionId, String taskId, String title) {
 		String output = remoteSceneService.startMission(missionStartContext);
 
-		// 日志记录
-		evalMissionTemplateLogMapper.updateMissionResultAndMissionIdAndTaskId(missionId, output, taskId);
+		if (StringUtils.isNotEmpty(output)) {
+			EvalMissionTemplateLog evalMissionTemplateLog = new EvalMissionTemplateLog();
+			evalMissionTemplateLog.setMissionId(missionId);
+			evalMissionTemplateLog.setTaskId(taskId);
+			evalMissionTemplateLog.setMissionResult(output);
+			evalMissionTemplateLog.setMissionName(title);
+			evalMissionTemplateLog.setCreateUserId(missionStartContext.getExec_user());
+			// 日志记录
+			evalMissionTemplateLogMapper.insert(evalMissionTemplateLog);
+		}
 
 	}
 

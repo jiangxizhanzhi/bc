@@ -71,7 +71,7 @@ public interface EvalTemplateService extends IService<EvalTemplate> {
 	 */
 	Boolean validateStepConfig(List<EvalTaskStepConfig> evalTaskStepConfigList);
 
-    void executeCommond(MissionStartContext missionStartContext, String missionId, String taskId);
+    void executeCommond(MissionStartContext missionStartContext, String missionId, String taskId, String title);
 
     BaseRsp<ListRsp<CombatLog>> getAlarm(AlarmPageReq req);
 }

@@ -114,19 +114,18 @@ public class EvalTemplateController {
 
 		String taskId = manualExecutionReq.getTaskId();
 		EvalTask evalTask = evalTaskMapper.selectById(taskId);
+		String phase = evalTask.getPhase();
+		List<EvalTaskStepConfig> stages = JsonUtil.toJsonObjectArray(phase, EvalTaskStepConfig.class);
+		Map<Integer, EvalTaskStepConfig> map = StreamApiUtils.toMap(stages, EvalTaskStepConfig::getStage, s -> s);
+		EvalTaskStepConfig evalTaskStepConfig = map.get(manualExecutionReq.getStage());
 		// 执行任务
 		MissionStartContext missionStartContext = new MissionStartContext();
 		missionStartContext.setCommand(manualExecutionReq.getCommand());
 		missionStartContext.setNode_id(manualExecutionReq.getNodeId());
 		missionStartContext.setExec_user(UserInfoContext.getUserContext().getUserId());
 		missionStartContext.setId(evalTask.getMpSceneId());
-		evalTemplateService.executeCommond(missionStartContext, manualExecutionReq.getMissionId(), manualExecutionReq.getTaskId());
+		evalTemplateService.executeCommond(missionStartContext, manualExecutionReq.getMissionId(), manualExecutionReq.getTaskId(), evalTaskStepConfig.getTitle());
 
-
-		String phase = evalTask.getPhase();
-		List<EvalTaskStepConfig> stages = JsonUtil.toJsonObjectArray(phase, EvalTaskStepConfig.class);
-		Map<Integer, EvalTaskStepConfig> map = StreamApiUtils.toMap(stages, EvalTaskStepConfig::getStage, s -> s);
-		EvalTaskStepConfig evalTaskStepConfig = map.get(manualExecutionReq.getStage());
 		int stageIndex = stages.indexOf(evalTaskStepConfig);
 		List<ToolBo> toolBos = evalTaskStepConfig.getEquip();
 		Map<Integer, ToolBo> toolBoMap = StreamApiUtils.toMap(toolBos, ToolBo::getToolNum, a -> a);

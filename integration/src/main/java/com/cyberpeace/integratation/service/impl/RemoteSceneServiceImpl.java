@@ -643,12 +643,17 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
     public String startMission(MissionStartContext missionStartContext) {
 		String targetUrl = MISSION_START_URL;
 		JSONObject post = HttpClientUtil.post(targetUrl, missionStartContext, JSONObject.class);
+		log.info("执行结束 : {}", post);
 		String status = post.get("status").toString();
+		if (!Boolean.parseBoolean(post.get("status").toString())) {
+			return null;
+		}
 		String output = post.get("output").toString();
 		if(!Boolean.parseBoolean(status)){
 			log.error("topoId=[{}]  mission execute error, response data is null", missionStartContext.getId());
 			return "false";
 		}
+		log.info("执行结果 : {}", output);
 		return output;
     }
 

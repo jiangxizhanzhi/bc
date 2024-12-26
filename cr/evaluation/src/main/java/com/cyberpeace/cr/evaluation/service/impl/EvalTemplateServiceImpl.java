@@ -276,7 +276,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 	@Override
 	public BaseRsp<ListRsp<CombatLog>> getAlarm(AlarmPageReq req) {
-		JSONObject jsonObject = remoteSceneService.getPageEvent(req.getSceneId(),req.getPage(),req.getPerPage(),req.getNodeName(),req.getQuarantine());
+		JSONObject jsonObject = remoteSceneService.getPageEvent(req.getSceneId(),req.getPage(),req.getPerPage(),req.getAlarmName(),req.getNodeId());
 		Integer total =(Integer) jsonObject.get("total");
 		long l = total.longValue();
 		Object list = jsonObject.get("list");

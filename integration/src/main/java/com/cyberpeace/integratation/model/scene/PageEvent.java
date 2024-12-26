@@ -23,4 +23,8 @@ public class PageEvent {
 
     @ApiModelProperty("处理数据隔离")
     private Integer quarantine;
+
+    private String nodeId;
+
+    private String alarmName;
 }

@@ -21,8 +21,20 @@ public class RemoteXdServiceImpl implements RemoteXdService {
 	@PostConstruct
 	public void init() {
 		String XD_HOST = SystemPropUtil.getProp("XD_HOST");
+		if (XD_HOST == null) {
+			XD_HOST = "2.10.66.33";
+		}
+
 		String XD_PORT = SystemPropUtil.getProp("XD_PORT");
+		if (XD_PORT == null) {
+			XD_PORT = "8081";
+		}
+
 		String XD_PATH = SystemPropUtil.getProp("XD_PATH");
+		if (XD_PATH == null) {
+			XD_PATH = "WLKJXL/BattefieldNet/getXunLianXdStatus";
+		}
+
 		XD_URL = "http://" + XD_HOST + ":" + XD_PORT + "/" + XD_PATH;
 	}
 

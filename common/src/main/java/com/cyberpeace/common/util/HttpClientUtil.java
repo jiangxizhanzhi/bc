@@ -269,6 +269,12 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	private static boolean isSuccess(BaseRsp baseRsp) {
+
+		// 兼容第三方code
+		if ("200".equals(baseRsp.getCode())) {
+			return true;
+		}
+
 		return StringUtils.endsWith(baseRsp.getCode(), SUCCESS_POSTFIX);
 	}
 

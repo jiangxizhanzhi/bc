@@ -1,21 +1,25 @@
 package com.cyberpeace.gateway.controller;
 
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.SystemPropUtil;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.situation.constant.SituationErrorCode;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
+import java.io.UnsupportedEncodingException;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
+import com.cyberpeace.integratation.service.RemoteXdService;
+import com.cyberpeace.situation.constant.SituationErrorCode;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -25,6 +29,9 @@ public class ExternalJumpController {
 
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
+
+	@Autowired
+	private RemoteXdService remoteXdService;
 
 	@ApiOperation("镜像管理")
 	@GetMapping("/image_manage")
@@ -36,14 +43,29 @@ public class ExternalJumpController {
 	@ApiOperation("跳转态势页面")
 	@GetMapping("/situation")
 	public void jumpSituation(HttpServletResponse response,
-							  @RequestParam(value = "resource_id") String resourceId,
-							  @RequestParam(value = "is_same_site", required = false) Boolean isSameSite) {
+			@RequestParam(value = "resource_id") String resourceId,
+			@RequestParam(value = "hdnm", required = false) String hdnm,
+			@RequestParam(value = "pass", required = false) Boolean pass,
+			@RequestParam(value = "is_same_site", required = false) Boolean isSameSite) {
+
 		BusinessTemplate businessTemplate = businessTemplateService.getById(resourceId);
-		if(businessTemplate == null){
+		if (businessTemplate == null) {
 			throw new BusinessException(SituationErrorCode.CANNOT_FIND_TOPO);
 		}
-		setResponse(response,
-				"/page/mg/admin/screen-3/visual-screen?name=" + getURLEncoderString(businessTemplate.getName()) + "&topo_id=" + businessTemplate.getTopoId(), isSameSite);
+		// 获取想定状态
+		Boolean xdStatus = remoteXdService.getXdStatus(hdnm, resourceId);
+
+		if (Boolean.TRUE.equals(!xdStatus) && !Boolean.TRUE.equals(pass)) {
+			// 如果想定未开启，则跳转到空页面
+			setResponse(response, "/page/mg/empty-scene-navigation", isSameSite);
+		} else {
+			// 跳转到态势页面
+			setResponse(response,
+					"/page/mg/admin/screen-3/visual-screen?name="
+							+ getURLEncoderString(businessTemplate.getName()) + "&topo_id="
+							+ businessTemplate.getTopoId(),
+					isSameSite);
+		}
 	}
 
 	@ApiOperation("跳转动效控制台页面")

@@ -165,6 +165,7 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
         Map<String, String> loadInstanceMap = new HashMap<>();
         Map<String, String> loadAccessModelMap = new HashMap<>();
         Map<String, String> traSceneIdMap = new HashMap<>();
+        HashMap<String, String> nodeIdMap = new HashMap<>();
         for (String elementId : extendElementInfo.keySet()) {
             JSONObject elementInfo = (JSONObject) extendElementInfo.get(elementId);
             String loadToolId = elementInfo.getString("load_tool_id");
@@ -173,6 +174,7 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
                 loadInstanceMap.put(loadToolId, elementInfo.getString("load_resource_instance_id"));
                 loadAccessModelMap.put(loadToolId, elementInfo.getString("load_access_model"));
                 traSceneIdMap.put(loadToolId, elementInfo.getString("tra_scene_id"));
+                nodeIdMap.put(loadToolId, elementId);
             }
         }
         Map<String, EvalStep> stepMap = stepList.stream().collect(Collectors.toMap(EvalStep::getResourceId, e -> e));
@@ -207,6 +209,7 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
                 load.put("load_resource_instance_id", loadInstanceMap.getOrDefault(load.getString("id"), ""));
                 load.put("load_access_model",loadAccessModelMap.getOrDefault(load.getString("id"), ""));
                 load.put("tra_scene_id",traSceneIdMap.getOrDefault(load.getString("id"), ""));
+                load.put("node_id",nodeIdMap.get(load.getString("id")));
             }
             evalTestStepListRsp.setLoadList(loadList);
             evalTestStepListRspList.add(evalTestStepListRsp);

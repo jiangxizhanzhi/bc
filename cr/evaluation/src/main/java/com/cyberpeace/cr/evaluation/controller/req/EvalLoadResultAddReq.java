@@ -169,4 +169,6 @@ public class EvalLoadResultAddReq implements Serializable {
     private String resultStatusName;
 
     private String resourceId;
+
+    private String resource;
 }

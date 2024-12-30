@@ -310,81 +310,82 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
-        if (StringUtils.isBlank(addReq.getTaskId())) return;
-        Map<String, JSONObject> elementsMap = scene.getJSONObject("scene")
-                .getJSONObject("plugins")
-                .getJSONObject("cpcloud")
-                .getObject("elements", Map.class);
-        List<JSONObject> elements = scene.getJSONObject("scene").getJSONObject("topology")
-                .getObject("elements", List.class);
-        Map<String, String> idNameMap = elements
-                .stream()
-                .collect(Collectors.toMap(e -> e.getString("id"), e -> e.getString("name")));
-        Set<Map.Entry<String, JSONObject>> entries = elementsMap.entrySet();
-        ArrayList<String> elementIds = new ArrayList<>();
-        ArrayList<String> loadElementIds = new ArrayList<>();
-        HashMap<String, String> taskIdToMap = new HashMap<>();
-        for (Map.Entry<String, JSONObject> entry : entries) {
-            String elementId = entry.getKey();
-            JSONObject element = entry.getValue();
-            if (StringUtils.isNotBlank(element.getString("load_tool_id"))) {
-                taskIdToMap.put(element.getString("resource_id"), elementId);
-                loadElementIds.add(elementId);
-            } else {
-                elementIds.add(elementId);
+//        判断载荷是否是外部载荷（1）  2本地载荷 本地载荷不走该动效 需要查对应流量产生动效
+        if("1".equals(addReq.getResource())) {
+            if (StringUtils.isBlank(addReq.getTaskId())) return;
+            Map<String, JSONObject> elementsMap = scene.getJSONObject("scene")
+                    .getJSONObject("plugins")
+                    .getJSONObject("cpcloud")
+                    .getObject("elements", Map.class);
+            List<JSONObject> elements = scene.getJSONObject("scene").getJSONObject("topology")
+                    .getObject("elements", List.class);
+            Map<String, String> idNameMap = elements
+                    .stream()
+                    .collect(Collectors.toMap(e -> e.getString("id"), e -> e.getString("name")));
+            Set<Map.Entry<String, JSONObject>> entries = elementsMap.entrySet();
+            ArrayList<String> elementIds = new ArrayList<>();
+            ArrayList<String> loadElementIds = new ArrayList<>();
+            HashMap<String, String> taskIdToMap = new HashMap<>();
+            for (Map.Entry<String, JSONObject> entry : entries) {
+                String elementId = entry.getKey();
+                JSONObject element = entry.getValue();
+                if (StringUtils.isNotBlank(element.getString("load_tool_id"))) {
+                    taskIdToMap.put(element.getString("resource_id"), elementId);
+                    loadElementIds.add(elementId);
+                } else {
+                    elementIds.add(elementId);
+                }
             }
-        }
-        Random random = new Random();
+            Random random = new Random();
 //        包装攻击数据发送至3D态势
-        JSONObject rbSituationAttack = new JSONObject();
-        String srcNode = taskIdToMap.get(addReq.getTaskId());
-        rbSituationAttack.put("code", "director_scheduling_element-element");
-        JSONObject data = new JSONObject();
-        data.put("category", 4);
-        data.put("duration", 3);
-        data.put("event_type", 1);
-        data.put("result", 1);
-        data.put("name", idNameMap.get(taskIdToMap.get(addReq.getTaskId())) + "载荷执行");
-        data.put("scene_id", addReq.getSceneId());
-        data.put("source_id", taskIdToMap.get(addReq.getTaskId()));
-        if (elementIds.size() > 0) {
-            data.put("target_id", getdstNode(srcNode, elementIds, random));
-        } else {
-            data.put("target_id", getdstNode(srcNode, loadElementIds, random));
-        }
-        JSONObject lineStyle = new JSONObject();
-        lineStyle.put("color", "#FF0000");
-        lineStyle.put("line_type", "straight");
-        lineStyle.put("width", 3);
-        data.put("line_style", lineStyle);
-        rbSituationAttack.put("data", data);
-        log.info("addLoadExecutionResult sendMessage begin.");
-        situationHandlerService.pushDataToRoom(rbSituationAttack, rbSituationAttack.getJSONObject("data").getString("scene_id"));
+            JSONObject rbSituationAttack = new JSONObject();
+            String srcNode = taskIdToMap.get(addReq.getTaskId());
+            rbSituationAttack.put("code", "director_scheduling_element-element");
+            JSONObject data = new JSONObject();
+            data.put("category", 4);
+            data.put("duration", 3);
+            data.put("event_type", 1);
+            data.put("result", 1);
+            data.put("name", idNameMap.get(taskIdToMap.get(addReq.getTaskId())) + "载荷执行");
+            data.put("scene_id", addReq.getSceneId());
+            data.put("source_id", taskIdToMap.get(addReq.getTaskId()));
+            if (elementIds.size() > 0) {
+                data.put("target_id", getdstNode(srcNode, elementIds, random));
+            } else {
+                data.put("target_id", getdstNode(srcNode, loadElementIds, random));
+            }
+            JSONObject lineStyle = new JSONObject();
+            lineStyle.put("color", "#FF0000");
+            lineStyle.put("line_type", "straight");
+            lineStyle.put("width", 3);
+            data.put("line_style", lineStyle);
+            rbSituationAttack.put("data", data);
+            log.info("addLoadExecutionResult sendMessage begin.");
+            situationHandlerService.pushDataToRoom(rbSituationAttack, rbSituationAttack.getJSONObject("data").getString("scene_id"));
 
 //        包装攻击数据至城市沙盘
-        JSONObject mqRbSituationAttack = new JSONObject();
-        mqRbSituationAttack.put("line_style", 1);
-        mqRbSituationAttack.put("src_action", 1);
-        mqRbSituationAttack.put("dst_action", 1);
-        mqRbSituationAttack.put("first_view", false);
+            JSONObject mqRbSituationAttack = new JSONObject();
+            mqRbSituationAttack.put("line_style", 1);
+            mqRbSituationAttack.put("src_action", 1);
+            mqRbSituationAttack.put("dst_action", 1);
+            mqRbSituationAttack.put("first_view", false);
 
-        AttackType successAttack = AttackType.SUCCESS_ATTACK;
-        mqRbSituationAttack.put("src_node", srcNode);
-        mqRbSituationAttack.put("attack_type", successAttack.getMsg());
-        if (elementIds.size() > 0) {
-            String dstNode = getdstNode(srcNode, elementIds, random);
-            mqRbSituationAttack.put("dst_node", dstNode);
-        } else {
-            mqRbSituationAttack.put("dst_node", data.get("target_id"));
+            AttackType successAttack = AttackType.SUCCESS_ATTACK;
+            mqRbSituationAttack.put("src_node", srcNode);
+            mqRbSituationAttack.put("attack_type", successAttack.getMsg());
+            if (elementIds.size() > 0) {
+                String dstNode = getdstNode(srcNode, elementIds, random);
+                mqRbSituationAttack.put("dst_node", dstNode);
+            } else {
+                mqRbSituationAttack.put("dst_node", data.get("target_id"));
+            }
+            Map<String, Object> msgMap = new HashMap<>();
+            msgMap.put("type", "mShowAttack");
+            msgMap.put("scene", addReq.getResourceId());
+            msgMap.put("data", JSON.toJSON(mqRbSituationAttack));
+            JSONObject msgObject = new JSONObject(msgMap);
+            evalSituationService.basicPublish(msgObject);
         }
-        Map<String, Object> msgMap = new HashMap<>();
-        msgMap.put("type", "mShowAttack");
-        msgMap.put("scene", addReq.getResourceId());
-        msgMap.put("data", JSON.toJSON(mqRbSituationAttack));
-        JSONObject msgObject = new JSONObject(msgMap);
-        evalSituationService.basicPublish(msgObject);
-
     }
 
     @Override

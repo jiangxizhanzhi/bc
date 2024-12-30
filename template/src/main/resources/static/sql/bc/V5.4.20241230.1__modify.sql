@@ -1,0 +1,1 @@
+ALTER TABLE cr_eval_index_ref MODIFY COLUMN even_name VARCHAR(1024);

@@ -518,14 +518,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 							PracticeRandomFlag.FlagType.PRACTICE.getCode());
 				}
 
-				if (updateOperation.getDynamicFlag()
-						.intValue() == PracticeOperation.DynamicFlag.DYNAMIC.getCode().intValue()) {
-					practiceOperationTargetMapper
-							.deleteByOperationId(updateOperation.getResourceId());
-					if (!targetList.isEmpty()) {
-						practiceOperationTargetService.saveBatch(targetList);
-					}
+//				if (updateOperation.getDynamicFlag()
+//						.intValue() == PracticeOperation.DynamicFlag.DYNAMIC.getCode().intValue()) {
+				practiceOperationTargetMapper
+						.deleteByOperationId(updateOperation.getResourceId());
+				if (!targetList.isEmpty()) {
+					practiceOperationTargetService.saveBatch(targetList);
 				}
+//				}
 
 				// 如果修改了额定字段
 				if (isModifySpecify(updateOperation, operation)) {

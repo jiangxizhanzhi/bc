@@ -10,7 +10,7 @@ public class AlarmPageReq extends PageReqBase {
 
     private String sceneId;
 
-    private String nodeId;
+    private String[] nodeIds;
 
     private String alarmName;
 }

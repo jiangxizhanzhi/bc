@@ -41,4 +41,9 @@ public class CombatLog  {
 
 	private String originalLog;
 
+	/**
+	 * 告警匹配规则名称
+	 */
+	private String alarmMatchName;
+
 }

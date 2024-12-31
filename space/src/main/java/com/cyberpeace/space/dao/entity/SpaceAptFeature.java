@@ -62,6 +62,8 @@ public class SpaceAptFeature extends SpaceBaseTable {
 	@ApiModelProperty(value = "历史报告")
 	private String historyReport;
 
+	private String logo;
+
 
 	public SpaceAptFeatureBo entity2Bo(Map<String, IdAndName> relatedMap) {
 		SpaceAptFeatureBo bo = BeanUtils.copy(this, SpaceAptFeatureBo.class);

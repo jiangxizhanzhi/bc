@@ -16,17 +16,25 @@ import java.util.Map;
 @TableName("space_apt_threat_detect_rule")
 public class SpaceAptThreatDetectRule extends SpaceBaseTable {
 
-	@ApiModelProperty(value = "情报类型,1:IP,2:DNS,3:URL,4:邮箱账号,5:文件HASH,6:证书HASH")
+	/**
+	 * 类型
+	 * 1:IP,2:DNS,3:URL,4:邮箱账号,5:文件HASH,6:证书HASH
+	 * @see String
+	 */
+	@ApiModelProperty(value = "检测类型")
 	private String type;
 
-	@ApiModelProperty(value = "情报对象")
-	private String object;
-
-	@ApiModelProperty(value = "信誉等级")
-	private Integer level;
-
-	@ApiModelProperty(value = "工具")
+	@ApiModelProperty(value = "应用工具")
 	private String tool;
+
+	@ApiModelProperty(value = "APT代号")
+	private String aptCode;
+
+	@ApiModelProperty(value = "内容详情")
+	private String content;
+
+	@ApiModelProperty(value = "内容简介")
+	private String description;
 
 	public SpaceAptThreatDetectRuleBo entity2Bo(Map<String, IdAndName> relatedMap) {
 		SpaceAptThreatDetectRuleBo bo = BeanUtils.copy(this, SpaceAptThreatDetectRuleBo.class);

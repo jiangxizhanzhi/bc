@@ -18,14 +18,22 @@ public class SpaceAptThreatDetectRuleBo extends SpaceBoBase {
 	@ApiModelProperty(value = "名称")
 	private String name;
 
-	@ApiModelProperty(value = "情报类型 1:IP,2:DNS,3:URL,4:邮箱账号,5:文件HASH,6:证书HASH")
+	/**
+	 * 类型
+	 * 1:IP,2:DNS,3:URL,4:邮箱账号,5:文件HASH,6:证书HASH
+	 * @see String
+	 */
+	@ApiModelProperty(value = "情报类型")
 	private String type;
 
-	@ApiModelProperty(value = "情报对象")
-	private String object;
+	@ApiModelProperty(value = "APT代号")
+	private String aptCode;
 
-	@ApiModelProperty(value = "信誉等级")
-	private Integer level;
+	@ApiModelProperty(value = "内容详情")
+	private String content;
+
+	@ApiModelProperty(value = "内容简介")
+	private String description;
 
 	@ApiModelProperty(value = "工具")
 	private String tool;

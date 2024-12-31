@@ -15,10 +15,18 @@ import java.util.Map;
 @Setter
 @TableName("space_warning_dictionary")
 public class SpaceWarningDictionary extends SpaceBaseTable {
-	@ApiModelProperty(value = "规则列表")
-	private String rule;
 
+	@ApiModelProperty(value = "工具类型")
+	private String toolType;
 
+	@ApiModelProperty(value = "工具告警等级")
+	private String toolLevel;
+
+	@ApiModelProperty(value = "告警等级,低1,中2,高3")
+	private Integer level;
+
+	@ApiModelProperty(value = "等级描述")
+	private String description;
 
 	public SpaceWarningDictionaryBo entity2Bo(Map<String, IdAndName> relatedMap) {
 		SpaceWarningDictionaryBo bo = BeanUtils.copy(this, SpaceWarningDictionaryBo.class);

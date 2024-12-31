@@ -13,7 +13,7 @@ import com.cyberpeace.space.service.context.rule.SpaceAptFeatureBo;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(tags = "知识库-规则库-APT特征库")
+@Api(tags = "知识库-规则库-APT组织库")
 @RestController
 @RequestMapping("/space/rule/space_apt_feature")
 @RequiresAuthentication

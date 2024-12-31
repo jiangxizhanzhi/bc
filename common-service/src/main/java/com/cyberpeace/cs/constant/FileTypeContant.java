@@ -11,7 +11,7 @@ public interface FileTypeContant {
 	/**
 	 * 文件类型后缀
 	 */
-	String PICTURE_TYPE = "JPEG,PNG,JPG";
+	String PICTURE_TYPE = "JPEG,PNG,JPG,SVG";
 
 	/**
 	 * 课时讲义允许上传类型

@@ -1,19 +1,5 @@
 package com.cyberpeace.cs.controller;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -22,17 +8,29 @@ import com.cyberpeace.common.model.ExtractBase;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.constant.FileTypeContant;
-import com.cyberpeace.cs.constant.UploadAttachmentPermission;
 import com.cyberpeace.cs.constant.UploadImagePermission;
 import com.cyberpeace.cs.controller.req.AdMdUploadReq;
 import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * 常见Controller
@@ -122,17 +120,17 @@ public class CommonController {
 	public BaseRsp<AttachmentBo> attachmentUpload(FileCommonUploadReq fileCommonUploadReq) {
 
 		// 获取需要校验的数据
-		UploadAttachmentPermission filePermission = EnumUtils
-				.getEnumByCode(fileCommonUploadReq.getType(), UploadAttachmentPermission.class);
-		if (null == filePermission) {
-			log.error("Type not found! type=[{}]", fileCommonUploadReq.getType());
-			throw new UnauthorizedException();
-		}
+//		UploadAttachmentPermission filePermission = EnumUtils
+//				.getEnumByCode(fileCommonUploadReq.getType(), UploadAttachmentPermission.class);
+//		if (null == filePermission) {
+//			log.error("Type not found! type=[{}]", fileCommonUploadReq.getType());
+//			throw new UnauthorizedException();
+//		}
 
 		// 校验权限和文件
-		filePermission.validatePermission(false);
+//		filePermission.validatePermission(false);
 		String fileName = fileCommonUploadReq.getFile().getOriginalFilename();
-		filePermission.validateFileSuffix(fileName);
+//		filePermission.validateFileSuffix(fileName);
 
 		validateFileNameLen(fileName);
 		// 文件上传

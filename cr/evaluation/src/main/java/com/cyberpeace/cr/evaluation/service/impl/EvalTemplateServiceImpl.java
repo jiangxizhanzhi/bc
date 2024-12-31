@@ -282,9 +282,10 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		Object list = jsonObject.get("list");
 		List<CombatLog> combatLogs = JsonUtil.toJsonObjectArray(list.toString(), CombatLog.class);
 		Page<CombatLog> page = new Page<>();
-		page.setCurrent(req.getPerPage());
-		page.setSize(req.getPage());
-		ListRsp<CombatLog> combatLogListRsp = PageUtil.pageList(combatLogs, req.getPage(), total);
+		page.setRecords(combatLogs);
+		page.setSize(req.getPerPage());
+		page.setTotal(total);
+		ListRsp<CombatLog> combatLogListRsp = PageUtil.getListResult(combatLogs, page, total);
 		return new BaseRsp<>(combatLogListRsp);
 	}
 

@@ -7,8 +7,10 @@ import com.cyberpeace.cr.evaluation.controller.req.EvalStepLoadDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestStepListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalStep;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public interface EvalStepService extends IService<EvalStep> {
 
@@ -31,4 +33,8 @@ public interface EvalStepService extends IService<EvalStep> {
 	void addLoadExecutionResult(EvalLoadResultAddReq addReq);
 
 	void pushLoadResult(String sceneId, Integer interval, String endTime);
+
+	void buildAndSendSituationAttackData(String sceneId, String nodeName, String sourceId, String targetId);
+
+	void packageAndSendAttackData(String scene, String srcNode, String targetId);
 }

@@ -337,55 +337,76 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
                 }
             }
             Random random = new Random();
-//        包装攻击数据发送至3D态势
-            JSONObject rbSituationAttack = new JSONObject();
             String srcNode = taskIdToMap.get(addReq.getTaskId());
-            rbSituationAttack.put("code", "director_scheduling_element-element");
-            JSONObject data = new JSONObject();
-            data.put("category", 4);
-            data.put("duration", 3);
-            data.put("event_type", 1);
-            data.put("result", 1);
-            data.put("name", idNameMap.get(taskIdToMap.get(addReq.getTaskId())) + "载荷执行");
-            data.put("scene_id", addReq.getSceneId());
-            data.put("source_id", taskIdToMap.get(addReq.getTaskId()));
+            String sourceId = taskIdToMap.get(addReq.getTaskId());
+            String targetId = "";
             if (elementIds.size() > 0) {
-                data.put("target_id", getdstNode(srcNode, elementIds, random));
+                targetId = getdstNode(srcNode, elementIds, random);
             } else {
-                data.put("target_id", getdstNode(srcNode, loadElementIds, random));
+                targetId = getdstNode(srcNode, loadElementIds, random);
             }
-            JSONObject lineStyle = new JSONObject();
-            lineStyle.put("color", "#FF0000");
-            lineStyle.put("line_type", "straight");
-            lineStyle.put("width", 3);
-            data.put("line_style", lineStyle);
-            rbSituationAttack.put("data", data);
-            log.info("addLoadExecutionResult sendMessage begin.");
-            situationHandlerService.pushDataToRoom(rbSituationAttack, rbSituationAttack.getJSONObject("data").getString("scene_id"));
+            String nodeName = idNameMap.get(taskIdToMap.get(addReq.getTaskId())) + "载荷执行";
 
-//        包装攻击数据至城市沙盘
-            JSONObject mqRbSituationAttack = new JSONObject();
-            mqRbSituationAttack.put("line_style", 1);
-            mqRbSituationAttack.put("src_action", 1);
-            mqRbSituationAttack.put("dst_action", 1);
-            mqRbSituationAttack.put("first_view", false);
+            buildAndSendSituationAttackData(addReq.getSceneId(), nodeName, sourceId, targetId);
 
-            AttackType successAttack = AttackType.SUCCESS_ATTACK;
-            mqRbSituationAttack.put("src_node", srcNode);
-            mqRbSituationAttack.put("attack_type", successAttack.getMsg());
-            if (elementIds.size() > 0) {
-                String dstNode = getdstNode(srcNode, elementIds, random);
-                mqRbSituationAttack.put("dst_node", dstNode);
-            } else {
-                mqRbSituationAttack.put("dst_node", data.get("target_id"));
-            }
-            Map<String, Object> msgMap = new HashMap<>();
-            msgMap.put("type", "mShowAttack");
-            msgMap.put("scene", addReq.getResourceId());
-            msgMap.put("data", JSON.toJSON(mqRbSituationAttack));
-            JSONObject msgObject = new JSONObject(msgMap);
-            evalSituationService.basicPublish(msgObject);
+            packageAndSendAttackData(addReq.getResourceId(), srcNode, targetId);
         }
+    }
+
+    /**
+     * 包装攻击数据至城市沙盘
+     * @param scene
+     * @param srcNode
+     * @param targetId
+     */
+    @Override
+    public void packageAndSendAttackData(String scene, String srcNode, String targetId) {
+        JSONObject mqRbSituationAttack = new JSONObject();
+        mqRbSituationAttack.put("line_style", 1);
+        mqRbSituationAttack.put("src_action", 1);
+        mqRbSituationAttack.put("dst_action", 1);
+        mqRbSituationAttack.put("first_view", false);
+
+        AttackType successAttack = AttackType.SUCCESS_ATTACK;
+        mqRbSituationAttack.put("src_node", srcNode);
+        mqRbSituationAttack.put("attack_type", successAttack.getMsg());
+        mqRbSituationAttack.put("dst_node", targetId);
+        Map<String, Object> msgMap = new HashMap<>();
+        msgMap.put("type", "mShowAttack");
+        msgMap.put("scene", scene);
+        msgMap.put("data", JSON.toJSON(mqRbSituationAttack));
+        JSONObject msgObject = new JSONObject(msgMap);
+        evalSituationService.basicPublish(msgObject);
+    }
+
+    /**
+     * 构建动效数据并发送至3D态势
+     * @param sceneId
+     * @param nodeName
+     * @param sourceId
+     * @param targetId
+     */
+    @Override
+    public void buildAndSendSituationAttackData(String sceneId, String nodeName, String sourceId, String targetId) {
+        JSONObject rbSituationAttack = new JSONObject();
+        rbSituationAttack.put("code", "director_scheduling_element-element");
+        JSONObject data = new JSONObject();
+        data.put("category", 4);
+        data.put("duration", 3);
+        data.put("event_type", 1);
+        data.put("result", 1);
+        data.put("name", nodeName);
+        data.put("scene_id", sceneId);
+        data.put("source_id", sourceId);
+        data.put("target_id", targetId);
+        JSONObject lineStyle = new JSONObject();
+        lineStyle.put("color", "#FF0000");
+        lineStyle.put("line_type", "straight");
+        lineStyle.put("width", 3);
+        data.put("line_style", lineStyle);
+        rbSituationAttack.put("data", data);
+        log.info("addLoadExecutionResult sendMessage begin.");
+        situationHandlerService.pushDataToRoom(rbSituationAttack, rbSituationAttack.getJSONObject("data").getString("scene_id"));
     }
 
     @Override

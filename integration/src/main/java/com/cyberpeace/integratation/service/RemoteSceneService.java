@@ -330,4 +330,7 @@ public interface RemoteSceneService {
     void addLoadResult(JSONObject addReq);
 
     List<JSONObject> getLoadResultByNodeIds(String sceneId, Integer interval, String endTime);
+
+    JSONArray getProcessExecutionRecords();
+
 }

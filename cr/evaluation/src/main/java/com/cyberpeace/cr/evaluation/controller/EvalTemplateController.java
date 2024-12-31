@@ -270,6 +270,18 @@ public class EvalTemplateController {
 		return evalTemplateService.getAlarm(pageReq);
 	}
 
+	@ApiOperation("查询告警事件")
+	@GetMapping("/alarms")
+	public BaseRsp<ListRsp<CombatLog>>getAlarms(AlarmPageReq pageReq){
+		if (pageReq.getSceneId()!=null) {
+			pageReq.setSceneId(pageReq.getSceneId());
+		}else {
+			String mpSceneId = localSceneService.getByTaskId(pageReq.getTaskId());
+			pageReq.setSceneId(mpSceneId);
+		}
+		return evalTemplateService.getAlarms(pageReq);
+	}
+
 	@ApiOperation("查询grade转换name")
 	@GetMapping("/gradeConName")
 	public BaseRsp<List<CodeConversionNameReq>>getGradeAndName(){

@@ -74,4 +74,6 @@ public interface EvalTemplateService extends IService<EvalTemplate> {
     void executeCommond(MissionStartContext missionStartContext, String missionId, String taskId, String title);
 
     BaseRsp<ListRsp<CombatLog>> getAlarm(AlarmPageReq req);
+
+	BaseRsp<ListRsp<CombatLog>> getAlarms(AlarmPageReq req);
 }

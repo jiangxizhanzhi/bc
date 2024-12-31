@@ -42,8 +42,10 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -286,6 +288,32 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		page.setSize(req.getPerPage());
 		page.setTotal(total);
 		ListRsp<CombatLog> combatLogListRsp = PageUtil.getListResult(combatLogs, page, total);
+		return new BaseRsp<>(combatLogListRsp);
+	}
+
+	@Override
+	public BaseRsp<ListRsp<CombatLog>> getAlarms(AlarmPageReq req) {
+		JSONObject jsonObject = remoteSceneService.getPageEvent(req.getSceneId(),req.getPage(),req.getPerPage(),req.getAlarmName(),req.getNodeIds());
+		Integer total =(Integer) jsonObject.get("total");
+		Object list = jsonObject.get("list");
+		List<CombatLog> combatLogs = JsonUtil.toJsonObjectArray(list.toString(), CombatLog.class);
+
+		Set<String> uniqueAlarmNames = new HashSet<>();
+		List<CombatLog> filteredLogs = new ArrayList<>();
+
+		for (CombatLog log : combatLogs) {
+			String alarmNameValue = log.getAlarmMatchName();
+
+			if (alarmNameValue != null && uniqueAlarmNames.add(alarmNameValue)) {
+				filteredLogs.add(log);
+			}
+		}
+
+		Page<CombatLog> page = new Page<>();
+		page.setRecords(filteredLogs);
+		page.setSize(req.getPerPage());
+		page.setTotal(total);
+		ListRsp<CombatLog> combatLogListRsp = PageUtil.getListResult(filteredLogs, page, total);
 		return new BaseRsp<>(combatLogListRsp);
 	}
 

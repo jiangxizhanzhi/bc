@@ -110,6 +110,9 @@ public class SpaceActionController extends SpaceActionFrameBaseController<SpaceA
 	 */
 	@Override
 	protected List<SpaceActionMethod> getUpperRelated(List<String> upperIds) {
+		if (upperIds.isEmpty()) {
+			return Lists.newArrayList();
+		}
 		return methodService.listByIds(upperIds);
 	}
 

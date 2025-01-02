@@ -1,16 +1,13 @@
 package com.cyberpeace.cr.evaluation.controller.req;
 
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.compress.utils.Lists;
-
 import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.compress.utils.Lists;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * 评估算法请求体
@@ -82,5 +79,8 @@ public class EvalAlgorithmReq {
 	@ApiModelProperty(value = "参数列表", required = true)
 	@NotNull
 	private List<AlgorithmParamContext> params = Lists.newArrayList();
+
+	@ApiModelProperty(value = "算法语言，1:python,2:java")
+	private Integer language;
 
 }

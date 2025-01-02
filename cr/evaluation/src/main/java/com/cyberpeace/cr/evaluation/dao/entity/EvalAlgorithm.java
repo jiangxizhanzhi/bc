@@ -5,11 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.Getter;
 
 /**
  * 
@@ -79,6 +77,8 @@ public class EvalAlgorithm extends BaseTable {
      */
     @ApiModelProperty("创建者ID")
     private String createUserId;
+
+    private Integer language;
 
 	public enum Type implements GenericEnum {
 

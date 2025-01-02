@@ -19,6 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_event_integration_rule")
 @RequiresAuthentication
 @Slf4j
-public class SpaceEventIntegrationRuleController extends SpaceControllerBase<SpaceEventIntegrationRuleService, SpaceEventIntegrationRule, SpaceEventIntegrationRuleBo, SpaceEventIntegrationRulePageReq>
-    
-{}
+public class SpaceEventIntegrationRuleController extends SpaceControllerBase<SpaceEventIntegrationRuleService, SpaceEventIntegrationRule, SpaceEventIntegrationRuleBo, SpaceEventIntegrationRulePageReq> {
+
+    @Override
+    public void checkNameDuplication(SpaceEventIntegrationRule entity) {
+    }
+}

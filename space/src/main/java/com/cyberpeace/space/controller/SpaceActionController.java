@@ -17,10 +17,7 @@ import com.cyberpeace.space.service.SpaceActionMethodService;
 import com.cyberpeace.space.service.SpaceActionRelationService;
 import com.cyberpeace.space.service.SpaceActionService;
 import com.cyberpeace.space.service.SpaceStrategyService;
-import com.cyberpeace.space.service.context.frame.SpaceActionBo;
-import com.cyberpeace.space.service.context.frame.SpaceActionPageReq;
-import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
-import com.cyberpeace.space.service.context.frame.SpaceActionTool;
+import com.cyberpeace.space.service.context.frame.*;
 import com.google.common.collect.Maps;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -93,6 +90,7 @@ public class SpaceActionController extends SpaceActionFrameBaseController<SpaceA
 		List<Tool> toolList = toolService.listByIdsInOrder(toolIds);
 		bo.setTool(BeanUtils.deepCopyList(toolList, SpaceActionTool.class));
 		bo.setStrategy(this.convert(strategyIds));
+		bo.setOfflineTool(JsonUtil.toJsonObjectArray(e.getOfflineTool(), SpaceActionOfflineTool.class));
 
 		List<String> upperIds = relationService.getUpperIdsByLowerId(e.getResourceId());
 		List<SpaceActionMethod> methods = this.getUpperRelated(upperIds);

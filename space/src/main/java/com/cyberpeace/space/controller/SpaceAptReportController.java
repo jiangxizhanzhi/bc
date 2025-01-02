@@ -4,6 +4,7 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cyberpeace.space.controller.req.SpaceAptReportPageReq;
 import com.cyberpeace.space.dao.entity.SpaceAptReport;
 import com.cyberpeace.space.model.controller.SpaceControllerBase;
 import com.cyberpeace.space.service.SpaceAptReportService;
@@ -17,6 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/theory/space_apt_report")
 @RequiresAuthentication
 @Slf4j
-public class SpaceAptReportController extends SpaceControllerBase<SpaceAptReportService, SpaceAptReport, SpaceAptReportBo> {
+public class SpaceAptReportController extends SpaceControllerBase<SpaceAptReportService, SpaceAptReport, SpaceAptReportBo, SpaceAptReportPageReq> {
 
 }

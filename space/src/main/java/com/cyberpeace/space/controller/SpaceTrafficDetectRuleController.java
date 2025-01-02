@@ -2,6 +2,7 @@
 package com.cyberpeace.space.controller;
 
 import com.cyberpeace.space.model.controller.SpaceControllerBase;
+import com.cyberpeace.space.model.req.SpacePageReqBase;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_traffic_detect_rule")
 @RequiresAuthentication
 @Slf4j
-public class SpaceTrafficDetectRuleController extends SpaceControllerBase<SpaceTrafficDetectRuleService, SpaceTrafficDetectRule, SpaceTrafficDetectRuleBo> {
+public class SpaceTrafficDetectRuleController extends SpaceControllerBase<SpaceTrafficDetectRuleService, SpaceTrafficDetectRule, SpaceTrafficDetectRuleBo, SpacePageReqBase> {
 
     @Override
 	public void checkNameDuplication(SpaceTrafficDetectRule entity) {

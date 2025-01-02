@@ -6,6 +6,7 @@ import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.space.dao.entity.SpaceAlgorithmExpertise;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.controller.SpaceControllerBase;
+import com.cyberpeace.space.model.req.SpacePageReqBase;
 import com.cyberpeace.space.service.SpaceAlgorithmExpertiseService;
 import com.cyberpeace.space.service.context.algorithm.SpaceAlgorithmExpertiseBo;
 import com.google.common.collect.Maps;
@@ -31,7 +32,7 @@ import java.util.Map;
 @RequestMapping("/space/algorithm/algorithm_expertise")
 @RequiresAuthentication
 @Slf4j
-public class SpaceAlgorithmExpertiseController extends SpaceControllerBase<SpaceAlgorithmExpertiseService, SpaceAlgorithmExpertise, SpaceAlgorithmExpertiseBo> {
+public class SpaceAlgorithmExpertiseController extends SpaceControllerBase<SpaceAlgorithmExpertiseService, SpaceAlgorithmExpertise, SpaceAlgorithmExpertiseBo, SpacePageReqBase> {
 
 	/**
 	 * 课程Service

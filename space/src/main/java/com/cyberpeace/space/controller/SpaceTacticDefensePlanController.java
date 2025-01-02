@@ -1,6 +1,7 @@
 package com.cyberpeace.space.controller;
 
 import com.cyberpeace.space.model.controller.SpaceControllerBase;
+import com.cyberpeace.space.model.req.SpacePageReqBase;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/tactic/defense_plan")
 @RequiresAuthentication
 @Slf4j
-public class SpaceTacticDefensePlanController extends SpaceControllerBase<SpaceTacticDefensePlanService, SpaceTacticDefensePlan, SpaceTacticDefensePlanBo> {
+public class SpaceTacticDefensePlanController extends SpaceControllerBase<SpaceTacticDefensePlanService, SpaceTacticDefensePlan, SpaceTacticDefensePlanBo, SpacePageReqBase> {
 
 	@Autowired
 	private SpaceTacticDefensePlanService service;

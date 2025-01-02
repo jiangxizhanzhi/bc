@@ -2,6 +2,7 @@
 package com.cyberpeace.space.controller;
 
 import com.cyberpeace.space.model.controller.SpaceControllerBase;
+import com.cyberpeace.space.model.req.SpacePageReqBase;
 import com.cyberpeace.space.service.context.rule.SpaceRoundMechanismRuleBo;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_round_mechanism_rule")
 @RequiresAuthentication
 @Slf4j
-public class SpaceRoundMechanismRuleController extends SpaceControllerBase<SpaceRoundMechanismRuleService, SpaceRoundMechanismRule, SpaceRoundMechanismRuleBo>
+public class SpaceRoundMechanismRuleController extends SpaceControllerBase<SpaceRoundMechanismRuleService, SpaceRoundMechanismRule, SpaceRoundMechanismRuleBo, SpacePageReqBase>
     
 {}

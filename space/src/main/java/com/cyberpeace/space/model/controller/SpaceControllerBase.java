@@ -8,7 +8,6 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -16,6 +15,7 @@ import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.model.SpaceBoBase;
+import com.cyberpeace.space.model.req.SpacePageReqBase;
 import com.cyberpeace.space.service.context.IdListReq;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-public abstract class SpaceControllerBase<S extends IService<E>, E extends SpaceBaseTable, B extends SpaceBoBase> {
+public abstract class SpaceControllerBase<S extends IService<E>, E extends SpaceBaseTable, B extends SpaceBoBase, R extends SpacePageReqBase> {
 
 	@Autowired
 	protected S baseService;
@@ -35,11 +35,8 @@ public abstract class SpaceControllerBase<S extends IService<E>, E extends Space
 
 	@ApiOperation("列表")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<B>> page(PageReqBase req) {
-		LambdaQueryWrapper<E> wrapper = new LambdaQueryWrapper<>();
-		if (StringUtils.isNotBlank(req.getPattern())) {
-			wrapper.like(E::getName, req.getPattern());
-		}
+	public BaseRsp<ListRsp<B>> page(R req) {
+		LambdaQueryWrapper<E> wrapper = req.req2QueryWrapper();
 		IPage<E> iPage = baseService.page(req.toPageParam(), wrapper);
 		Map<String, IdAndName> relatedMap = getRelatedMap(iPage.getRecords());
 		iPage.convert(e -> e.entity2Bo(relatedMap));

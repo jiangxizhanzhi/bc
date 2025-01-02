@@ -1,6 +1,7 @@
 
 package com.cyberpeace.space.controller;
 
+import com.cyberpeace.space.model.req.SpacePageReqBase;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,5 +19,5 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_ioc_threat")
 @RequiresAuthentication
 @Slf4j
-public class SpaceIocThreatController extends SpaceControllerBase<SpaceIocThreatService, SpaceIocThreat, SpaceIocThreatBo> {
+public class SpaceIocThreatController extends SpaceControllerBase<SpaceIocThreatService, SpaceIocThreat, SpaceIocThreatBo, SpacePageReqBase> {
 }

@@ -6,6 +6,7 @@ import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.space.dao.entity.SpaceAlgorithmRole;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.controller.SpaceControllerBase;
+import com.cyberpeace.space.model.req.SpacePageReqBase;
 import com.cyberpeace.space.service.SpaceAlgorithmRoleService;
 import com.cyberpeace.space.service.context.algorithm.SpaceAlgorithmRoleBo;
 import com.google.common.collect.Maps;
@@ -25,7 +26,7 @@ import java.util.Map;
 @RequestMapping("/space/algorithm/algorithm_role")
 @RequiresAuthentication
 @Slf4j
-public class SpaceAlgorithmRoleController extends SpaceControllerBase<SpaceAlgorithmRoleService, SpaceAlgorithmRole, SpaceAlgorithmRoleBo> {
+public class SpaceAlgorithmRoleController extends SpaceControllerBase<SpaceAlgorithmRoleService, SpaceAlgorithmRole, SpaceAlgorithmRoleBo, SpacePageReqBase> {
 
     @Autowired
     private CourseService courseService;

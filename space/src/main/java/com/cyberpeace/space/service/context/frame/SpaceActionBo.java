@@ -1,17 +1,18 @@
 package com.cyberpeace.space.service.context.frame;
 
+import java.util.Date;
+import java.util.List;
+
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.space.dao.entity.SpaceAction;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceFrameBoBase;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter
@@ -41,17 +42,20 @@ public class SpaceActionBo extends SpaceFrameBoBase {
 	@ApiModelProperty(value = "所属交战方法")
 	private List<IdAndName> method;
 
-	@ApiModelProperty(value = "作战环境")
+	@ApiModelProperty(value = "工作原理")
 	private String environment;
 
 	@ApiModelProperty(value = "动作")
 	private String action;
 
-	@ApiModelProperty(value = "分析")
+	@ApiModelProperty(value = "注意事项")
 	private String analyze;
 
-	@ApiModelProperty(value = "相关工具")
+	@ApiModelProperty(value = "在线工具")
 	private List<SpaceActionTool> tool;
+
+	@ApiModelProperty(value = "离线工具")
+	private List<SpaceActionOfflineTool> offlineTool;
 
 	@ApiModelProperty(value = "相关策略")
 	private List<SpaceActionStrategy> strategy;
@@ -66,6 +70,7 @@ public class SpaceActionBo extends SpaceFrameBoBase {
 		entity.setStrategy(JsonUtil.arrayToString(
 				StreamApiUtils.map(this.strategy, SpaceActionStrategy::getResourceId)));
 		entity.setPlatform(JsonUtil.arrayToString(this.platform));
+		entity.setOfflineTool(JsonUtil.arrayToString(this.offlineTool));
 		return entity;
 	}
 

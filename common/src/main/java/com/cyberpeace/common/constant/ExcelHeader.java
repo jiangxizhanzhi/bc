@@ -40,6 +40,10 @@ public enum ExcelHeader {
 			new String[] {"Organization", "Participation", "Number of classes completed",
 					"Number of exercises completed after class", "Number of completed experiments","Number of examinations taken"},
 			new String[] {"desc"}),
+
+	APT_THREAT_DETECT_RULE(new String[] { "APT代号", "检测类型", "内容简介", "内容详情", "应用工具" },
+			new String[] {}, new String[] { "desc" }),
+
 	/**
 	 * 训练计划
 	 *

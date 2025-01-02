@@ -121,7 +121,7 @@ public class SpaceActionController extends SpaceActionFrameBaseController<SpaceA
 	 */
 	@Override
 	protected List<String> getUpperIds(SpaceActionBo req) {
-		return StreamApiUtils.map(req.getMethod(), IdAndName::getResourceId);
+		return StreamApiUtils.distinct(StreamApiUtils.map(req.getMethod(), IdAndName::getResourceId));
 	}
 
 

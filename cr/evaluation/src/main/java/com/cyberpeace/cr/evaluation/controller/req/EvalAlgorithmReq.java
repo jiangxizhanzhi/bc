@@ -48,7 +48,7 @@ public class EvalAlgorithmReq {
 	/**
 	 * 算法语言
 	 */
-	@ApiModelProperty(value = "算法语言", required = true)
+	@ApiModelProperty(value = "算法语言 0:python,1:java", required = true)
 	@NotNull
 	private Integer algorithmLanguage;
 
@@ -79,8 +79,5 @@ public class EvalAlgorithmReq {
 	@ApiModelProperty(value = "参数列表", required = true)
 	@NotNull
 	private List<AlgorithmParamContext> params = Lists.newArrayList();
-
-	@ApiModelProperty(value = "算法语言，1:python,2:java")
-	private Integer language;
 
 }

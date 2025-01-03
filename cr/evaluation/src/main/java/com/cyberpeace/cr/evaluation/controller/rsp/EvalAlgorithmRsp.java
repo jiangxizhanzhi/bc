@@ -49,7 +49,7 @@ public class EvalAlgorithmRsp {
 	/**
 	 * 算法语言
 	 */
-	@ApiModelProperty(value = "算法语言", required = true)
+	@ApiModelProperty(value = "算法语言 0:python,1:java", required = true)
 	@NotNull
 	private Integer algorithmLanguage;
 
@@ -93,8 +93,5 @@ public class EvalAlgorithmRsp {
 	@ApiModelProperty(value = "参数个数", required = true)
 	@NotNull
 	private Integer paramsNum;
-
-	@ApiModelProperty(value = "算法语言，1:python,2:java")
-	private Integer language;
 
 }

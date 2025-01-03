@@ -78,8 +78,6 @@ public class EvalAlgorithm extends BaseTable {
     @ApiModelProperty("创建者ID")
     private String createUserId;
 
-    private Integer language;
-
 	public enum Type implements GenericEnum {
 
 		SCORING_ALGORITHM(1, "评分算法"), FORMAT_ALGORITHM(2, "格式化算法"), MATCHING_ALGORITHM(3,

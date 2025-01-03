@@ -27,10 +27,10 @@ public class SpaceActionFrameBo extends SpaceFrameBoBase {
 	private Integer role;
 
 	@ApiModelProperty(value = "攻击类型")
-	private List<String> attack;
+	private String attack;
 
 	@ApiModelProperty(value = "防御类型")
-	private List<String> defense;
+	private String defense;
 
 	@ApiModelProperty(value = "标签")
 	private List<String> tag;
@@ -43,8 +43,6 @@ public class SpaceActionFrameBo extends SpaceFrameBoBase {
 
 	public SpaceActionFrame bo2Entity() {
 		SpaceActionFrame entity = BeanUtils.copy(this, SpaceActionFrame.class);
-		entity.setAttack(JsonUtil.arrayToString(this.attack));
-		entity.setDefense(JsonUtil.arrayToString(this.defense));
 		entity.setTag(JsonUtil.arrayToString(this.tag));
 		return entity;
 	}

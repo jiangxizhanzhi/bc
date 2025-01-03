@@ -40,7 +40,7 @@ import java.util.Map;
 @Slf4j
 public class SpaceLoadedFileThreatRuleController extends SpaceControllerBase<SpaceLoadedFileThreatRuleService, SpaceLoadedFileThreatRule, SpaceLoadedFileThreatRuleBo, SpaceLoadedFileThreatRulePageReq> {
 
-	private static Map<Integer, String> EXECUTE_TYPE_MAP = Maps.newHashMap();
+	private static final Map<Integer, String> EXECUTE_TYPE_MAP = Maps.newHashMap();
 
 	static {
 		EXECUTE_TYPE_MAP.put(1, "手动");

@@ -1,13 +1,13 @@
 
 package com.cyberpeace.space.controller;
 
-import com.cyberpeace.space.model.controller.SpaceControllerBase;
-import com.cyberpeace.space.model.req.SpacePageReqBase;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cyberpeace.space.controller.req.SpaceAptFeaturePageReq;
 import com.cyberpeace.space.dao.entity.SpaceAptFeature;
+import com.cyberpeace.space.model.controller.SpaceControllerBase;
 import com.cyberpeace.space.service.SpaceAptFeatureService;
 import com.cyberpeace.space.service.context.rule.SpaceAptFeatureBo;
 
@@ -19,6 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_apt_feature")
 @RequiresAuthentication
 @Slf4j
-public class SpaceAptFeatureController extends SpaceControllerBase<SpaceAptFeatureService, SpaceAptFeature, SpaceAptFeatureBo, SpacePageReqBase>
+public class SpaceAptFeatureController extends SpaceControllerBase<SpaceAptFeatureService, SpaceAptFeature, SpaceAptFeatureBo, SpaceAptFeaturePageReq>
     
 {}

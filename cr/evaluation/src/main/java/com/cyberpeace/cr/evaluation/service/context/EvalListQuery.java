@@ -1,13 +1,12 @@
 package com.cyberpeace.cr.evaluation.service.context;
 
-import java.util.List;
-
 import com.cyberpeace.common.model.PageReqBase;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 /**
  * 评估列表查询
@@ -33,6 +32,9 @@ public class EvalListQuery extends PageReqBase {
 	 */
 	@ApiModelProperty(value = "类型")
 	private Integer type;
+
+	@ApiModelProperty(value = "算法语言 0:python,1:java")
+	private Integer algorithm_language;
 
 	/**
 	 * id列表

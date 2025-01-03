@@ -1,12 +1,11 @@
 package com.cyberpeace.cr.evaluation.controller.req;
 
-import java.io.Serializable;
-
 import com.cyberpeace.common.model.PageReqBase;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * 评估算法列表请求体
@@ -23,4 +22,7 @@ public class EvalAlgorithmListReq extends PageReqBase implements Serializable {
 	 */
 	@ApiModelProperty(value = "算法类型", required = false)
 	private Integer type;
+
+	@ApiModelProperty(value = "算法语言 0:python,1:java")
+	private Integer algorithm_language;
 }

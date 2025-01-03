@@ -59,7 +59,7 @@
             <if test="listQuery.type != null and listQuery.type != ''">
                 and `type` = #{listQuery.type}
             </if>
-            <if test="listQuery.algorithm_language != null and listQuery.algorithm_language != ''">
+            <if test="listQuery.algorithm_language != null">
                 and `algorithm_language` = #{listQuery.algorithm_language}
             </if>
         </where>

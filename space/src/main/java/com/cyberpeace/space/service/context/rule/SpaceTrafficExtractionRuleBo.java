@@ -4,6 +4,7 @@ package com.cyberpeace.space.service.context.rule;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.space.dao.entity.SpaceTrafficExtractionRule;
 import com.cyberpeace.space.model.SpaceBoBase;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,11 +23,17 @@ public class SpaceTrafficExtractionRuleBo extends SpaceBoBase {
 	@ApiModelProperty(value = "顺序")
 	private String order;
 
-	@ApiModelProperty(value = "文件名")
-	private String filename;
+	// @ApiModelProperty(value = "文件名")
+	// private String filename;
+	//
+	// @ApiModelProperty(value = "路径")
+	// private String route;
 
-	@ApiModelProperty(value = "路径")
-	private String route;
+	@ApiModelProperty(value = "内容")
+	private String content;
+
+	@ApiModelProperty(value = "工具")
+	private String tool;
 
 
 	public SpaceTrafficExtractionRule bo2Entity() {

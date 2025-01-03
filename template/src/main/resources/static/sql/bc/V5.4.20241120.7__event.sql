@@ -20,3 +20,8 @@ ALTER TABLE `space_score_ranking_rule`
 
 ALTER TABLE `space_tactic_defense_plan`
     MODIFY COLUMN `description` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;
+
+
+ALTER TABLE `space_traffic_extraction_rule`
+    ADD COLUMN `content` text NULL,
+    ADD COLUMN `tool` varchar(1024) NULL;

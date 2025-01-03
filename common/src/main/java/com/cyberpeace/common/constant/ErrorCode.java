@@ -428,4 +428,6 @@ public interface ErrorCode {
      * @see String
      */
     String DUPLICATE_ID = "104022";
+
+    String NAME_CONTENT_DUPLICATE = "104023";
 }

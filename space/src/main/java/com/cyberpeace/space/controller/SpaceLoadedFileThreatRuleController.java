@@ -60,6 +60,9 @@ public class SpaceLoadedFileThreatRuleController extends SpaceControllerBase<Spa
 		if (StringUtils.isNotBlank(req.getTool())) {
 			wrapper.like(SpaceLoadedFileThreatRule::getTool, req.getTool());
 		}
+		if (StringUtils.isNotBlank(req.getType())) {
+			wrapper.like(SpaceLoadedFileThreatRule::getType, req.getType());
+		}
 		List<SpaceLoadedFileThreatRule> all = baseService.list(wrapper);
 
 		List<SpaceLoadedFileThreatRuleExcelBo> exportBoList = StreamApiUtils.map(all, e->{

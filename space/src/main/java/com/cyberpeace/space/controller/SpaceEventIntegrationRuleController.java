@@ -48,6 +48,9 @@ public class SpaceEventIntegrationRuleController extends SpaceControllerBase<Spa
         if (StringUtils.isNotBlank(req.getTool())) {
             wrapper.like(SpaceEventIntegrationRule::getTool, req.getTool());
         }
+        if (StringUtils.isNotBlank(req.getType())) {
+            wrapper.like(SpaceEventIntegrationRule::getType, req.getType());
+        }
         List<SpaceEventIntegrationRule> all = baseService.list(wrapper);
         List<SpaceEventIntegrationRuleExcelBo> exportBoList = BeanUtils.deepCopyList(all,
                 SpaceEventIntegrationRuleExcelBo.class);

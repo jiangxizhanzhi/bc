@@ -56,6 +56,9 @@ public enum ExcelHeader {
 	WARNING_DICTIONARY(new String[] { "告警名称", "工具类型", "工具告警等级", "告警等级", "等级描述", "更新时间" },
 			new String[] {}, new String[] { "desc" }),
 
+	TRAFFIC_EXTRACTION(new String[] { "名称", "顺序", "内容", "工具"},
+			new String[] {}, new String[] { "desc" }),
+
 	/**
 	 * 训练计划
 	 *

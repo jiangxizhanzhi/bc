@@ -2,6 +2,7 @@ package com.cyberpeace.space.model.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -51,9 +52,9 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 	public BaseRsp<ListRsp<B>> page(R req) {
 		LambdaQueryWrapper<E> wrapper = req.req2QueryWrapper();
 		wrapper.orderByDesc(E::getUpdateTime);
-		String upperId = req.getUpperId();
-		if (StringUtils.isNotBlank(upperId)) {
-			List<String> ids = relationService.getLowerIdsByUpperId(upperId);
+		List<String> upperIds = req.getUpperIds();
+		if (CollectionUtils.isNotEmpty(upperIds)) {
+			List<String> ids = relationService.getLowerIdsByUpperIds(upperIds);
 			if (ids.isEmpty()) {
 				return new BaseRsp<>(PageUtil.getNullResult());
 			}
@@ -147,7 +148,7 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 		}
 	}
 
-	private Map<String, List<IdAndName>> getRelatedMap(List<E> eList){
+	protected Map<String, List<IdAndName>> getRelatedMap(List<E> eList){
 		Map<String, List<IdAndName>> res = Maps.newHashMap();
 		if (eList.isEmpty()) {
 			return res;

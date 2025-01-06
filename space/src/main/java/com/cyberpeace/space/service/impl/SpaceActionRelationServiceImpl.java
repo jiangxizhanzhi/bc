@@ -1,6 +1,7 @@
 package com.cyberpeace.space.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -65,6 +66,17 @@ public class SpaceActionRelationServiceImpl extends ServiceImpl<SpaceActionRelat
         List<SpaceActionRelation> relations  = this.list(wrapper);
         return StreamApiUtils.map(relations, SpaceActionRelation::getLowerId);
     }
+
+	@Override
+	public List<String> getLowerIdsByUpperIds(List<String> upperIds) {
+		if (CollectionUtils.isEmpty(upperIds)) {
+			return Lists.newArrayList();
+		}
+		LambdaQueryWrapper<SpaceActionRelation> wrapper = new LambdaQueryWrapper<>();
+		wrapper.in(SpaceActionRelation::getUpperId, upperIds);
+		List<SpaceActionRelation> relations = this.list(wrapper);
+		return StreamApiUtils.map(relations, SpaceActionRelation::getLowerId);
+	}
 
     @Override
     public List<SpaceActionRelation> listByUpperIds(List<String> upperIds) {

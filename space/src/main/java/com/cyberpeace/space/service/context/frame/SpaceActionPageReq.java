@@ -9,6 +9,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @ApiModel
 public class SpaceActionPageReq extends FrameBasePageReq {
 
@@ -23,7 +25,7 @@ public class SpaceActionPageReq extends FrameBasePageReq {
 	@Getter
 	@Setter
 	@ApiModelProperty(value = "方法id")
-	private String methodId;
+	private List<String> methodId;
 
 	public LambdaQueryWrapper<SpaceAction> req2QueryWrapper() {
 		LambdaQueryWrapper<SpaceAction> wrapper = new LambdaQueryWrapper<>();
@@ -37,9 +39,7 @@ public class SpaceActionPageReq extends FrameBasePageReq {
 		return wrapper;
 	}
 
-	@Override
-	public String getUpperId() {
+	public List<String> getUpperIds() {
 		return this.methodId;
 	}
-
 }

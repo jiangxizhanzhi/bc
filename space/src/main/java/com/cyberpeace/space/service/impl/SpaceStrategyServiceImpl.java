@@ -1,12 +1,17 @@
 package com.cyberpeace.space.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
@@ -46,34 +51,7 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 
 	@Override
 	public SpaceStrategyFrameBo getFrame() {
-		List<SpaceStrategyFrame> strategyFrameList = frameMapper.getAll();
-
-		List<SpaceStrategy> strategyList = mapper.selectList(null);
-		List<String> frameIds = StreamApiUtils.map(strategyList, SpaceStrategy::getFrameId);
-		Set<String> notRemovableIds = Sets.newHashSet(frameIds);
-
-		Map<String, SpaceStrategyFrameBo> map = Maps.newHashMap();
-		map.put(SpaceCommonConstant.DEFAULT_STRATEGY_FRAME, new SpaceStrategyFrameBo());
-		for (SpaceStrategyFrame strategyFrame : strategyFrameList) {
-			SpaceStrategyFrameBo bo = this.entity2Bo(strategyFrame);
-			map.put(bo.getResourceId(), bo);
-			if (map.containsKey(bo.getParent())) {
-				map.get(bo.getParent()).getChildren().add(bo);
-			}
-		}
-		// 有策略的不可删除
-		for (String notId : notRemovableIds) {
-			String id = notId;
-			while (StringUtils.isNotBlank(id)) {
-				if (map.containsKey(id)) {
-					map.get(id).setRemovable(false);
-					id = map.get(id).getParent();
-				} else {
-					break;
-				}
-			}
-		}
-
+		Map<String, SpaceStrategyFrameBo> map = this.getFrameMap();
 		return map.get(SpaceCommonConstant.DEFAULT_STRATEGY_FRAME);
 	}
 
@@ -182,11 +160,52 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return strategy;
     }
 
-	private void collectFrameId(List<String> frameIds, SpaceStrategyFrameBo bo){
+	@Override
+	public ListRsp<SpaceStrategySimple> pageStrategiesByFrame(PageReqBase req, String frameId, String name) {
+		Page page = req.toPageParam();
+		LambdaQueryWrapper<SpaceStrategy> wrapper = new LambdaQueryWrapper<>();
+		if(StringUtils.isNotBlank(name)){
+			wrapper.like(SpaceStrategy::getName, name);
+		}
+		Map<String, SpaceStrategyFrameBo> map = this.getFrameMap();
+		if (!StringUtils.isBlank(frameId)) {
+			List<String> frameIds = Lists.newArrayList();
+			SpaceStrategyFrameBo frame = map.get(frameId);
+			this.collectFrameId(frameIds, frame);
+			wrapper.in(SpaceStrategy::getFrameId, frameIds);
+		}
+		IPage<SpaceStrategy> iPage = mapper.selectPage(page, wrapper);
+		Map<String, String> routeMap = Maps.newHashMap();
+		List<String> names = Lists.newArrayList();
+		collectFrameRoute(routeMap, names, map.get(SpaceCommonConstant.DEFAULT_STRATEGY_FRAME));
+		IPage<SpaceStrategySimple> resPage = iPage.convert(item -> {
+			SpaceStrategySimple simple = BeanUtils.copy(item, SpaceStrategySimple.class);
+			simple.setRoute(routeMap.get(item.getFrameId()));
+			return simple;
+		});
+		return PageUtil.getListResult(resPage);
+	}
+
+	private void collectFrameId(List<String> frameIds, SpaceStrategyFrameBo bo) {
+		if (null == bo) {
+			return;
+		}
 		frameIds.add(bo.getResourceId());
 		for (SpaceStrategyFrameBo child : bo.getChildren()) {
 			collectFrameId(frameIds, child);
 		}
+	}
+
+	private void collectFrameRoute(Map<String, String> routeMap, List<String> frameNames, SpaceStrategyFrameBo bo){
+		if (null == bo) {
+			return;
+		}
+		frameNames.add(bo.getName());
+		routeMap.put(bo.getResourceId(), String.join("/", frameNames.subList(1, frameNames.size())));
+		for (SpaceStrategyFrameBo child : bo.getChildren()) {
+			collectFrameRoute(routeMap, frameNames, child);
+		}
+		frameNames.remove(frameNames.size() - 1);
 	}
 
 	private Integer countByFrameIds(List<String> frameIds){
@@ -234,6 +253,37 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		return frame;
+	}
+
+	private Map<String, SpaceStrategyFrameBo> getFrameMap(){
+		List<SpaceStrategyFrame> strategyFrameList = frameMapper.getAll();
+
+		List<SpaceStrategy> strategyList = mapper.selectList(null);
+		List<String> frameIds = StreamApiUtils.map(strategyList, SpaceStrategy::getFrameId);
+		Set<String> notRemovableIds = Sets.newHashSet(frameIds);
+
+		Map<String, SpaceStrategyFrameBo> map = Maps.newHashMap();
+		map.put(SpaceCommonConstant.DEFAULT_STRATEGY_FRAME, new SpaceStrategyFrameBo());
+		for (SpaceStrategyFrame strategyFrame : strategyFrameList) {
+			SpaceStrategyFrameBo bo = this.entity2Bo(strategyFrame);
+			map.put(bo.getResourceId(), bo);
+			if (map.containsKey(bo.getParent())) {
+				map.get(bo.getParent()).getChildren().add(bo);
+			}
+		}
+		// 有策略的不可删除
+		for (String notId : notRemovableIds) {
+			String id = notId;
+			while (StringUtils.isNotBlank(id)) {
+				if (map.containsKey(id)) {
+					map.get(id).setRemovable(false);
+					id = map.get(id).getParent();
+				} else {
+					break;
+				}
+			}
+		}
+		return map;
 	}
 
 }

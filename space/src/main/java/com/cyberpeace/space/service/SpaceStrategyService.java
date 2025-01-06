@@ -1,6 +1,8 @@
 package com.cyberpeace.space.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.space.dao.entity.SpaceStrategy;
 import com.cyberpeace.space.service.context.index.IndexStrategy;
 import com.cyberpeace.space.service.context.strategy.*;
@@ -95,4 +97,5 @@ public interface SpaceStrategyService extends IService<SpaceStrategy> {
      */
     IndexStrategy getStatistics();
 
+    ListRsp<SpaceStrategySimple> pageStrategiesByFrame(PageReqBase req, String frameId, String name);
 }

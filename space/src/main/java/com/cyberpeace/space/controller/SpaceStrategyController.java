@@ -1,6 +1,8 @@
 package com.cyberpeace.space.controller;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.space.dao.entity.SpaceStrategy;
 import com.cyberpeace.space.model.req.IdReq;
 import com.cyberpeace.space.service.SpaceStrategyService;
@@ -58,6 +60,16 @@ public class SpaceStrategyController {
 			@ApiParam(value = "框架id", name = "frame_id") String frame_id,
 			@ApiParam(value = "名称", name = "name") String name) {
 		List<SpaceStrategySimple> res = spaceStrategyService.listStrategiesByFrame(frame_id, name);
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("策略列表分页")
+	@GetMapping("/page")
+	public BaseRsp<ListRsp<SpaceStrategySimple>> pageStrategies(
+			PageReqBase req,
+			@ApiParam(value = "框架id", name = "frame_id") String frame_id,
+			@ApiParam(value = "名称", name = "name") String name) {
+		ListRsp<SpaceStrategySimple> res = spaceStrategyService.pageStrategiesByFrame(req, frame_id, name);
 		return new BaseRsp<>(res);
 	}
 

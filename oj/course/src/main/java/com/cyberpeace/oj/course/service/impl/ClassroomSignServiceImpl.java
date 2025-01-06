@@ -3,7 +3,6 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.Date;
 import java.util.Map;
 
-import com.cyberpeace.oj.ojbase.constant.ClassroomRole;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.JsonKeyConstant;
@@ -18,6 +18,8 @@ import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.model.ws.WebSocketMessageContext;
+import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -33,6 +35,7 @@ import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.bo.HelpStatusBo;
+import com.cyberpeace.oj.ojbase.constant.ClassroomRole;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
@@ -75,6 +78,9 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
+
+	@Autowired
+	private MyWebSocketHandler myWebSocketHandler;
 
 	@Override
 	public Boolean signIn(String classroomId, AuthContext authContext) {
@@ -163,8 +169,19 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		// 请求协助消息发送
 		String needHelpMessage = getNeedHelpMessage(classroomSign.getUserId(),
 				classroom.getResourceId());
-		pushChatMessage(classroom, needHelpMessage, classroom.getCreateUserId());
 
+		pushHelpMessage(needHelpMessage, classroom.getCreateUserId());
+
+	}
+
+	private void pushHelpMessage(String msg, String toUserId) {
+		WsMessageIdentifier messageIdentifier = new WsMessageIdentifier();
+		messageIdentifier.setPath(WsPath.CLASSROOM_HELP);
+		messageIdentifier.setUserId(toUserId);
+
+		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
+				.builder().messageIdentifier(messageIdentifier).data(msg).build();
+		myWebSocketHandler.pushMessage(messageContext, false);
 	}
 
 	@Override

@@ -52,6 +52,7 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 	@Override
 	public SpaceStrategyFrameBo getFrame() {
 		Map<String, SpaceStrategyFrameBo> map = this.getFrameMap();
+		this.decorateFrameMap(map);
 		return map.get(SpaceCommonConstant.DEFAULT_STRATEGY_FRAME);
 	}
 
@@ -71,14 +72,22 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 
 	@Override
 	public void deleteFrame(String resourceId) {
-		SpaceStrategyFrame frame = frameMapper.selectById(resourceId);
+		Map<String, SpaceStrategyFrameBo> frameMap = this.getFrameMap();
+		SpaceStrategyFrameBo frame = frameMap.get(resourceId);
 		if (null == frame) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		if (frame.getBuiltin()) {
+		if (Boolean.TRUE.equals(frame.getBuiltin())) {
 			throw new BusinessException(SpaceError.BUILTIN_FRAME);
 		}
-		frameMapper.deleteById(resourceId);
+		List<String> frameIds = Lists.newArrayList();
+		this.collectFrameId(frameIds, frameMap.get(resourceId));
+		List<SpaceStrategy> strategies = mapper.selectList(
+				new LambdaQueryWrapper<SpaceStrategy>().in(SpaceStrategy::getFrameId, frameIds));
+		if (!strategies.isEmpty()) {
+			throw new BusinessException(SpaceError.STRATEGY_EXIST);
+		}
+		frameMapper.deleteBatchIds(frameIds);
 	}
 
 	@Override
@@ -256,22 +265,11 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return frame;
 	}
 
-	private Map<String, SpaceStrategyFrameBo> getFrameMap(){
-		List<SpaceStrategyFrame> strategyFrameList = frameMapper.getAll();
-
+	private void decorateFrameMap(Map<String, SpaceStrategyFrameBo> map) {
 		List<SpaceStrategy> strategyList = mapper.selectList(null);
 		List<String> frameIds = StreamApiUtils.map(strategyList, SpaceStrategy::getFrameId);
 		Set<String> notRemovableIds = Sets.newHashSet(frameIds);
 
-		Map<String, SpaceStrategyFrameBo> map = Maps.newHashMap();
-		map.put(SpaceCommonConstant.DEFAULT_STRATEGY_FRAME, new SpaceStrategyFrameBo());
-		for (SpaceStrategyFrame strategyFrame : strategyFrameList) {
-			SpaceStrategyFrameBo bo = this.entity2Bo(strategyFrame);
-			map.put(bo.getResourceId(), bo);
-			if (map.containsKey(bo.getParent())) {
-				map.get(bo.getParent()).getChildren().add(bo);
-			}
-		}
 		// 有策略的不可删除
 		for (String notId : notRemovableIds) {
 			String id = notId;
@@ -282,6 +280,20 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 				} else {
 					break;
 				}
+			}
+		}
+	}
+
+	private Map<String, SpaceStrategyFrameBo> getFrameMap() {
+		List<SpaceStrategyFrame> strategyFrameList = frameMapper.getAll();
+
+		Map<String, SpaceStrategyFrameBo> map = Maps.newHashMap();
+		map.put(SpaceCommonConstant.DEFAULT_STRATEGY_FRAME, new SpaceStrategyFrameBo());
+		for (SpaceStrategyFrame strategyFrame : strategyFrameList) {
+			SpaceStrategyFrameBo bo = this.entity2Bo(strategyFrame);
+			map.put(bo.getResourceId(), bo);
+			if (map.containsKey(bo.getParent())) {
+				map.get(bo.getParent()).getChildren().add(bo);
 			}
 		}
 		return map;

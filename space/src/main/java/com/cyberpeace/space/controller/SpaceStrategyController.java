@@ -6,6 +6,7 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.space.dao.entity.SpaceStrategy;
 import com.cyberpeace.space.model.req.IdReq;
 import com.cyberpeace.space.service.SpaceStrategyService;
+import com.cyberpeace.space.service.context.IdListReq;
 import com.cyberpeace.space.service.context.strategy.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -89,8 +90,8 @@ public class SpaceStrategyController {
 
 	@ApiOperation("删除策略")
 	@DeleteMapping("")
-	public BaseRsp deleteStrategy(@RequestBody IdReq req) {
-		spaceStrategyService.deleteStrategy(req.getResourceId());
+	public BaseRsp deleteStrategy(@RequestBody IdListReq req) {
+		spaceStrategyService.deleteStrategy(req.getIds());
 		return new BaseRsp();
 	}
 

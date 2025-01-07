@@ -70,9 +70,9 @@ public interface SpaceStrategyService extends IService<SpaceStrategy> {
     /**
      * 删除策略
      *
-     * @param resourceId 资源id
+     * @param ids 资源id
      */
-    void deleteStrategy(String resourceId);
+    void deleteStrategy(List<String> ids);
 
     /**
      * 获取详情

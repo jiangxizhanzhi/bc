@@ -116,8 +116,11 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 	}
 
 	@Override
-	public void deleteStrategy(String resourceId) {
-		mapper.deleteById(resourceId);
+	public void deleteStrategy(List<String> ids) {
+		if(null == ids || ids.isEmpty()){
+			return;
+		}
+		mapper.deleteBatchIds(ids);
 	}
 
 	@Override

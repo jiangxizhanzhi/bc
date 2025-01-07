@@ -66,11 +66,11 @@ public class SpaceStrategyController {
 
 	@ApiOperation("策略列表分页")
 	@GetMapping("/page")
-	public BaseRsp<ListRsp<SpaceStrategySimple>> pageStrategies(
+	public BaseRsp<ListRsp<SpaceStrategyBo>> pageStrategies(
 			PageReqBase req,
 			@ApiParam(value = "框架id", name = "frame_id") String frame_id,
 			@ApiParam(value = "名称", name = "name") String name) {
-		ListRsp<SpaceStrategySimple> res = spaceStrategyService.pageStrategiesByFrame(req, frame_id, name);
+		ListRsp<SpaceStrategyBo> res = spaceStrategyService.pageStrategiesByFrame(req, frame_id, name);
 		return new BaseRsp<>(res);
 	}
 

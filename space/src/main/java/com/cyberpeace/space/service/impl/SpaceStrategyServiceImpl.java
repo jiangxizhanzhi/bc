@@ -174,7 +174,7 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
     }
 
 	@Override
-	public ListRsp<SpaceStrategySimple> pageStrategiesByFrame(PageReqBase req, String frameId, String name) {
+	public ListRsp<SpaceStrategyBo> pageStrategiesByFrame(PageReqBase req, String frameId, String name) {
 		Page page = req.toPageParam();
 		LambdaQueryWrapper<SpaceStrategy> wrapper = new LambdaQueryWrapper<>();
 		if(StringUtils.isNotBlank(name)){
@@ -191,8 +191,8 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		Map<String, String> routeMap = Maps.newHashMap();
 		List<String> names = Lists.newArrayList();
 		collectFrameRoute(routeMap, names, map.get(SpaceCommonConstant.DEFAULT_STRATEGY_FRAME));
-		IPage<SpaceStrategySimple> resPage = iPage.convert(item -> {
-			SpaceStrategySimple simple = BeanUtils.copy(item, SpaceStrategySimple.class);
+		IPage<SpaceStrategyBo> resPage = iPage.convert(item -> {
+			SpaceStrategyBo simple = BeanUtils.copy(item, SpaceStrategyBo.class);
 			simple.setRoute(routeMap.get(item.getFrameId()));
 			return simple;
 		});

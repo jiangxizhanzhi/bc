@@ -97,5 +97,5 @@ public interface SpaceStrategyService extends IService<SpaceStrategy> {
      */
     IndexStrategy getStatistics();
 
-    ListRsp<SpaceStrategySimple> pageStrategiesByFrame(PageReqBase req, String frameId, String name);
+    ListRsp<SpaceStrategyBo> pageStrategiesByFrame(PageReqBase req, String frameId, String name);
 }

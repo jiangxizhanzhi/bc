@@ -44,6 +44,8 @@ public class SpaceStrategyBo {
 
 	private Date createTime;
 
+	private Date updateTime;
+
 	@ApiModelProperty("策略执行成功判定方法")
 	private String method;
 

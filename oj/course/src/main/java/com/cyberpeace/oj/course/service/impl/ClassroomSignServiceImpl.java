@@ -27,13 +27,10 @@ import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.context.ChatWsMessageIdentifier;
 import com.cyberpeace.cs.service.impl.ChatWebSocketHandler;
 import com.cyberpeace.integratation.service.RemoteSceneService;
-import com.cyberpeace.oj.course.dao.entity.Classroom;
-import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
-import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
+import com.cyberpeace.oj.course.dao.entity.*;
+import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
+import com.cyberpeace.oj.course.service.bo.HelpMessage;
 import com.cyberpeace.oj.course.service.bo.HelpStatusBo;
 import com.cyberpeace.oj.ojbase.constant.ClassroomRole;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
@@ -81,6 +78,12 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
+
+	@Autowired
+	private CourseMapper courseMapper;
+
+	@Autowired
+	private CourseLessonMapper courseLessonMapper;
 
 	@Override
 	public Boolean signIn(String classroomId, AuthContext authContext) {
@@ -170,11 +173,29 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		String needHelpMessage = getNeedHelpMessage(classroomSign.getUserId(),
 				classroom.getResourceId());
 
-		pushHelpMessage(needHelpMessage, classroom.getCreateUserId());
+		HelpMessage message = new HelpMessage();
+		message.setMessage(needHelpMessage);
+		// 课程数据组装
+		Course course = courseMapper.selectById(classroom.getCourseId());
+		if (course == null) {
+			log.error("Course not found! course_id=[{}]", classroom.getCourseId());
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		// 课时数据组装
+		CourseLesson lesson = courseLessonMapper.selectById(classroom.getLessonId());
+		if (lesson == null) {
+			log.error("Lesson not found! lesson_id=[{}]", classroom.getLessonId());
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		message.setClassroom(course.getName() + "/" + lesson.getName());
+		message.setStudent(UserInfoContext.getUserContext().getName());
+		message.setStart(classroom.getStartTime());
+		pushHelpMessage(message, classroom.getCreateUserId());
 
 	}
 
-	private void pushHelpMessage(String msg, String toUserId) {
+	private void pushHelpMessage(HelpMessage msg, String toUserId) {
 		WsMessageIdentifier messageIdentifier = new WsMessageIdentifier();
 		messageIdentifier.setPath(WsPath.CLASSROOM_HELP);
 		messageIdentifier.setUserId(toUserId);

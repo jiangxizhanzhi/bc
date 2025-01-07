@@ -46,4 +46,6 @@ public class SpaceStrategyBo {
 
 	@ApiModelProperty("策略执行成功判定方法")
 	private String method;
+
+	private String route;
 }

@@ -120,6 +120,7 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		UserInfo userInfo = remoteUserService.getById(bo.getUserId());
 		bo.setUser(userInfo.getName());
 		bo.setUserAvatar(userInfo.getAvatarUrl());
+		bo.setRoute(this.getFrameRouteById(strategy.getFrameId()));
 		return bo;
 	}
 

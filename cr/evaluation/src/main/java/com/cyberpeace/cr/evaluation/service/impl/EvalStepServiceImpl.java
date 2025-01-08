@@ -158,7 +158,8 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
         }
         List<EvalStep> stepList = evalStepMapper.selectBatchIds(stepIds);
         String sceneId = testInstance.getMpSceneId();
-        JSONObject plugins = remoteSceneService.getById(sceneId, null).getJSONObject("scene").getJSONObject("plugins");
+        JSONObject scene = remoteSceneService.getById(sceneId, null).getJSONObject("scene");
+        JSONObject plugins = scene.getJSONObject("plugins");
         JSONObject extendElementInfo = (JSONObject) ((JSONObject) plugins.getOrDefault("cpcloud",
                 new JSONObject())).getOrDefault("elements", new JSONObject());
         Map<String, String> loadTaskMap = new HashMap<>();
@@ -166,6 +167,7 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
         Map<String, String> loadAccessModelMap = new HashMap<>();
         Map<String, String> traSceneIdMap = new HashMap<>();
         HashMap<String, String> nodeIdMap = new HashMap<>();
+
         for (String elementId : extendElementInfo.keySet()) {
             JSONObject elementInfo = (JSONObject) extendElementInfo.get(elementId);
             String loadToolId = elementInfo.getString("load_tool_id");
@@ -177,6 +179,14 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
                 nodeIdMap.put(loadToolId, elementId);
             }
         }
+        JSONArray elements = (JSONArray) scene.getJSONObject("topology").getOrDefault("elements", new JSONArray());
+        Map<String, String> cmdMap = elements.stream()
+                .map(obj -> (JSONObject) obj)
+                .collect(Collectors.toMap(
+                        element -> element.getString("id"),
+                        element -> element.getString("default_cmd"),
+                        (oldValue, newValue) -> newValue
+                ));
         Map<String, EvalStep> stepMap = stepList.stream().collect(Collectors.toMap(EvalStep::getResourceId, e -> e));
         for (int i = 0; i < instanceStepList.size(); i++) {
             EvalInstanceStep instanceStep = instanceStepList.get(i);
@@ -204,12 +214,13 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
             JSONArray loadList = remoteLoadService.getLoadByIds(loadIds);
             for (Object o : loadList) {
                 JSONObject load = (JSONObject) o;
-                load.put("cmd", loadCmdMap.getOrDefault(load.getString("id"), load.getString("default_cmd")));
+                load.put("cmd", cmdMap.getOrDefault(nodeIdMap.get(load.getString("id")),load.getString("default_cmd")));
                 load.put("task_id", loadTaskMap.getOrDefault(load.getString("id"), ""));
                 load.put("load_resource_instance_id", loadInstanceMap.getOrDefault(load.getString("id"), ""));
                 load.put("load_access_model",loadAccessModelMap.getOrDefault(load.getString("id"), ""));
                 load.put("tra_scene_id",traSceneIdMap.getOrDefault(load.getString("id"), ""));
                 load.put("node_id",nodeIdMap.get(load.getString("id")));
+                load.put("scene",scene.getJSONObject("topology").getJSONObject("scene").getString("eid"));
             }
             evalTestStepListRsp.setLoadList(loadList);
             evalTestStepListRspList.add(evalTestStepListRsp);

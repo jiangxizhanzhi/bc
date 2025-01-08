@@ -3,6 +3,7 @@ package com.cyberpeace.space.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.constant.CallType;
 import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
 import com.cyberpeace.cr.tool.dao.mapper.ToolMapper;
@@ -22,6 +23,7 @@ import com.cyberpeace.space.service.context.index.*;
 import com.cyberpeace.space.service.context.rule.BaseDataRuleStatistics;
 import com.cyberpeace.space.service.context.rule.RaceStatistics;
 import com.cyberpeace.space.service.context.rule.ThreatDetectStatistics;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -176,7 +179,7 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		count.setTarget(spaceActionFrameService.countByType(SpaceActionFrame.Type.TARGET.getCode()));
 		count.calSum();
 		frame.setFrameCount(count);
-
+		frame.setTrending(this.defaultChart());
 		return frame;
 
 	}
@@ -188,5 +191,18 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 			ip = "10.4.2.3";
 		}
 		return ip;
+	}
+
+	private IndexActionFrameChart defaultChart() {
+		List<Integer> list = Lists.newArrayList(61,25,43,32,59,62,68,54,78,55,71,77,41,50,16,65,58,47,48,58,49,60,53,43,12,58,18,25,56,14,67,14,38,62,53,12,77,10,59,22);
+		IndexActionFrameChart chart = new IndexActionFrameChart();
+		chart.setProcess(Arrays.asList(0, 0, 0, 0, 0, 0, 0));
+		Date date = TimeUtil.addDates(new Date(), -7);
+		for (int i = 0; i < 7; i++) {
+			chart.getXDates().add(TimeUtil.format6(date));
+			date = TimeUtil.addDates(date, 1);
+			chart.getTarget().add(list.get((int)(date.getTime()/86_400_000)%40));
+		}
+		return chart;
 	}
 }

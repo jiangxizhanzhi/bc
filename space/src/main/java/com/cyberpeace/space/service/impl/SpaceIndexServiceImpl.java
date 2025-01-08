@@ -193,15 +193,25 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return ip;
 	}
 
+	/**
+	 * 默认图表,假数据
+	 *
+	 * @return {@code IndexActionFrameChart }
+	 * @throws
+	 * @see IndexActionFrameChart
+	 */
 	private IndexActionFrameChart defaultChart() {
-		List<Integer> list = Lists.newArrayList(61,25,43,32,59,62,68,54,78,55,71,77,41,50,16,65,58,47,48,58,49,60,53,43,12,58,18,25,56,14,67,14,38,62,53,12,77,10,59,22);
+		List<Integer> list = Lists.newArrayList(61, 25, 43, 32, 59, 62, 68, 54, 78, 55, 71, 77, 41,
+				50, 16, 65, 58, 47, 48, 58, 49, 60, 53, 43, 12, 58, 18, 25, 56, 14, 67, 14, 38, 62,
+				53, 12, 77, 10, 59, 22);
 		IndexActionFrameChart chart = new IndexActionFrameChart();
 		chart.setProcess(Arrays.asList(0, 0, 0, 0, 0, 0, 0));
 		Date date = TimeUtil.addDates(new Date(), -7);
+		int j = (int) (date.getTime() / 86_400_000) % 40;
 		for (int i = 0; i < 7; i++) {
 			chart.getXDates().add(TimeUtil.format6(date));
 			date = TimeUtil.addDates(date, 1);
-			chart.getTarget().add(list.get((int)(date.getTime()/86_400_000)%40));
+			chart.getTarget().add(list.get((j + i) % 40));
 		}
 		return chart;
 	}

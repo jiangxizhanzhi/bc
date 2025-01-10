@@ -102,7 +102,7 @@ public class EvalIndexRefController {
                 String eventNodeId = requestData.getEventListContext().getEventNodeId();
                 String eventName = requestData.getEventListContext().getEventName();
                 if (!StringUtils.isBlank(eventName)) {
-                    int value= remoteSceneService.getEventValue(map.get(eventNodeId).getLabel(),eventName);
+                    int value= remoteSceneService.getEventValue(eventNodeId,eventName);
                     evalIndexRef.setEventValue(value);
                     evalIndexRef.setEvenName(eventName);
                     evalIndexRef.setNodeId(eventNodeId);

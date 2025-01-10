@@ -14,8 +14,8 @@ import java.io.Serializable;
 @Builder
 public class AlarmParameter implements Serializable {
 
-    @ApiModelProperty("节点名称")
-    private String nodeName;
+    @ApiModelProperty("节点id")
+    private String nodeId;
 
     @ApiModelProperty("事件名称")
     private String eventName;

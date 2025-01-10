@@ -658,9 +658,9 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
     }
 
 	@Override
-	public int getEventValue(String nodeName, String eventName) {
+	public int getEventValue(String nodeId, String eventName) {
 //		请求参数
-		AlarmParameter build = AlarmParameter.builder().nodeName(nodeName).eventName(eventName).build();
+		AlarmParameter build = AlarmParameter.builder().nodeId(nodeId).eventName(eventName).build();
 		JSONObject object = JsonUtil.java2JsonObject(build, PropertyNamingStrategy.SnakeCase);
 		Integer value = HttpClientUtil.post(ALARM_EVENTS_DATA_URL, object, Integer.class);
 

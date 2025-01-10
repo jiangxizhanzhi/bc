@@ -293,12 +293,15 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 List<EvalRoomPairRsp> nodes = this.getNodes(requestData.getTaskId());
                     Map<String, EvalRoomPairRsp> map = nodes.stream().collect(Collectors.toMap(EvalRoomPairRsp::getId, eval -> eval));
                     //节点设备名称
-                if (!StringUtils.isBlank(evalRecordIndexContext.getEvent().getEventName())) {
+                if (!StringUtils.isBlank(evalRecordIndexContext.getEvent().getEventNodeId())) {
                     String nodeName = map.get(evalRecordIndexContext.getEvent().getEventNodeId()).getLabel();
-                    //事件名称
+                    // 节点id
+                    String nodeId = evalRecordIndexContext.getEvent().getEventNodeId();
+                    // 事件名称
                     String eventName = evalRecordIndexContext.getEvent().getEventName();
-
-                    int value= remoteSceneService.getEventValue(evalRecordIndexContext.getEvent().getEventNodeId(),eventName);
+                    // 告警匹配名称
+                    String alarmMatchName = evalRecordIndexContext.getEvent().getAlarmMatchName();
+                    int value= remoteSceneService.getEventValue(nodeId,eventName,alarmMatchName);
                     thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(),value);
                     thirdEventName.put(evalRecordIndexContext.getResourceId(),eventName);
                     thirdNodeId.put(evalRecordIndexContext.getResourceId(),evalRecordIndexContext.getEvent().getEventNodeId());
@@ -663,10 +666,14 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     Map<String, EvalRoomPairRsp> map = nodes.stream().collect(Collectors.toMap(EvalRoomPairRsp::getId, eval -> eval));
                     //节点设备名称
                     String nodeName = map.get(evalRecordIndexContext.getEvent().getEventNodeId()).getLabel();
+                    // 节点id
+                    String eventNodeId = evalRecordIndexContext.getEvent().getEventNodeId();
                     //事件名称
                     String eventName = evalRecordIndexContext.getEvent().getEventName();
+                    // 告警匹配名称
+                    String alarmMatchName = evalRecordIndexContext.getEvent().getAlarmMatchName();
                     //请求参数
-                    int value= remoteSceneService.getEventValue(evalRecordIndexContext.getEvent().getEventNodeId(),eventName);
+                    int value= remoteSceneService.getEventValue(eventNodeId,eventName,alarmMatchName);
                     evalIndexRef.setEventValue(value);
                     evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(),evalIndexRef.getEventAttr(),evalIndexRef.getEventAttrValue(),evalIndexRef.getEventValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());

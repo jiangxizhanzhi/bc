@@ -19,4 +19,7 @@ public class AlarmParameter implements Serializable {
 
     @ApiModelProperty("事件名称")
     private String eventName;
+
+    @ApiModelProperty("告警匹配名称")
+    private String alarmMatchName;
 }

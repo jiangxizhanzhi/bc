@@ -101,8 +101,9 @@ public class EvalIndexRefController {
                 Map<String, EvalRoomPairRsp> map = nodes.stream().collect(Collectors.toMap(EvalRoomPairRsp::getId, eval -> eval));
                 String eventNodeId = requestData.getEventListContext().getEventNodeId();
                 String eventName = requestData.getEventListContext().getEventName();
+                String alarmMatchName = requestData.getEventListContext().getAlarmMatchName();
                 if (!StringUtils.isBlank(eventName)) {
-                    int value= remoteSceneService.getEventValue(eventNodeId,eventName);
+                    int value= remoteSceneService.getEventValue(eventNodeId,eventName,alarmMatchName);
                     evalIndexRef.setEventValue(value);
                     evalIndexRef.setEvenName(eventName);
                     evalIndexRef.setNodeId(eventNodeId);

@@ -283,6 +283,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         HashMap<String, String> thirdNodeId = Maps.newHashMap();
         //存放告警事件的告警事件名称
         HashMap<String, String> thirdEventName = Maps.newHashMap();
+        //存放告警事件的告警匹配名称
+        HashMap<String, String> thirdAlarmMatchName = Maps.newHashMap();
         requestData.getIndexes().forEach(evalRecordIndexContext -> {
             thirdIndexesTypeMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getType());
             if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
@@ -304,10 +306,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     int value= remoteSceneService.getEventValue(nodeId,eventName,alarmMatchName);
                     thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(),value);
                     thirdEventName.put(evalRecordIndexContext.getResourceId(),eventName);
+                    thirdAlarmMatchName.put(evalRecordIndexContext.getResourceId(),alarmMatchName);
                     thirdNodeId.put(evalRecordIndexContext.getResourceId(),evalRecordIndexContext.getEvent().getEventNodeId());
                 }else {
                     thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(),0);
                     thirdEventName.put(evalRecordIndexContext.getResourceId(),"");
+                    thirdAlarmMatchName.put(evalRecordIndexContext.getResourceId(),"");
                     thirdNodeId.put(evalRecordIndexContext.getResourceId(),evalRecordIndexContext.getEvent().getEventNodeId().equals("")?"":evalRecordIndexContext.getEvent().getEventNodeId());
                 }
 
@@ -531,6 +535,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalIndexRef.setEventAttrValue(evalIndicator.getAttributeValue());
                 evalIndexRef.setEventValue(thirdSpecialistMap.get(evalIndex.getResourceId()));
                 evalIndexRef.setEvenName(thirdEventName.get(evalIndex.getResourceId()));
+                evalIndexRef.setAlarmMatchName(thirdAlarmMatchName.get(evalIndex.getResourceId()));
                 evalIndexRef.setNodeId(thirdNodeId.get(evalIndex.getResourceId()));
                 if (evalIndexRef.getType().equals(EvalIndexRef.Type.EVENT.getCode())) {
                     evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getEventType(),evalIndexRef.getEventAttr(),evalIndexRef.getEventAttrValue(),evalIndexRef.getEventValue()));
@@ -742,6 +747,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalSystemIndexesContext.getEvent().setType(evalIndexRef.getEventType());
                 evalSystemIndexesContext.getEvent().setEventNodeId(evalIndexRef.getNodeId());
                 evalSystemIndexesContext.getEvent().setEventName(evalIndexRef.getEvenName());
+                evalSystemIndexesContext.getEvent().setAlarmMatchName(evalIndexRef.getAlarmMatchName());
             }else {
                 evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
                 evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());

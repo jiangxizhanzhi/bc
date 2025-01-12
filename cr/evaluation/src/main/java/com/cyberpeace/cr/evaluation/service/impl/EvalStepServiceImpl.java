@@ -322,7 +322,7 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
             throw new RuntimeException(e);
         }
 //        判断载荷是否是外部载荷（1）  2本地载荷 本地载荷不走该动效 需要查对应流量产生动效
-        if("1".equals(addReq.getResource())) {
+        if("1".equals(addReq.getSource())) {
             if (StringUtils.isBlank(addReq.getTaskId())) return;
             log.info("外部载荷态势动效开始执行");
             Map<String, JSONObject> elementsMap = scene.getJSONObject("scene")

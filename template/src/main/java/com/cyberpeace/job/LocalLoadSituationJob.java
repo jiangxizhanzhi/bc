@@ -23,6 +23,7 @@ public class LocalLoadSituationJob {
     //	设置2秒执行一次任务
     @Scheduled(fixedRate = 2000)
     public void localLoadSituationTask() {
+        log.info("start localLoadSituationTask");
 //        查询要执行动效数据
         JSONArray data = remoteSceneService.getProcessExecutionRecords();
 //        发送动效

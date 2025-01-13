@@ -2,11 +2,9 @@ package com.cyberpeace.oj.practice.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.Getter;
 import lombok.ToString;
 
 /**
@@ -103,6 +101,14 @@ public class PracticeOperation extends PracticeBase {
 	 */
 	@ApiModelProperty(value = "是否需要外部操作机，0=不需要，1=需要")
 	private Boolean needOuter;
+
+	/**
+	 * 是否支持组网
+	 *
+	 * @see Boolean
+	 */
+	@ApiModelProperty(value = "是否支持组网，0=不支持，1=支持")
+	private Boolean networking;
 
 	public enum DynamicFlag implements GenericEnum {
 

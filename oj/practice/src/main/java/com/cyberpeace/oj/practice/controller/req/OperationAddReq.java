@@ -218,9 +218,14 @@ public class OperationAddReq implements Serializable, CustomValidate {
 	@ApiModelProperty(value = "是否需要外部操作机，0=不需要，1=需要")
 	private Boolean needOuter;
 
-//	public void setPractice_set_id(String practiceSetId) {
-//		this.practiceSetId = practiceSetId;
-//	}
+	/**
+	 * 是否支持组网
+	 *
+	 * @see Boolean
+	 */
+	@ApiModelProperty(value = "是否支持组网，0=不支持，1=支持")
+	private Boolean networking;
+
 
 	public void setCategory_id(String categoryId) {
 		this.categoryId = categoryId;

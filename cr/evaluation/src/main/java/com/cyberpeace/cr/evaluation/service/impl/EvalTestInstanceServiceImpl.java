@@ -84,11 +84,12 @@ public class EvalTestInstanceServiceImpl extends ServiceImpl<EvalTestInstanceMap
 			clearInstanceAndScene(localScene.getResourceId(), evalTestInstance.getTestId(), instanceId);
 			return true;
 		}
+//		先查后删避免报错
+		EvalTestInstance instance = evalTestInstanceMapper.selectById(instanceId);
 
 		//清除已结束的任务数据
 		clearInstance(instanceId);
 
-		EvalTestInstance instance = evalTestInstanceMapper.selectById(instanceId);
 		if (instance.getCopyedTopoId() != null) {
 			remoteTopoService.deleteById(instance.getCopyedTopoId());
 		}

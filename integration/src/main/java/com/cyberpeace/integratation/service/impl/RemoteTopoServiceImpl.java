@@ -113,24 +113,24 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	 */
 	@PostConstruct
 	public void init() {
-		String MP_HOST = mpEnvService.getMpHost();
+		//String MP_HOST = mpEnvService.getMpHost();
 		String CYBER_MP_HOST = cyberSpaceMpEnvService.getMpHost();
-		COPY_TOPO_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.copy");
-		TOPO_DIGEST_URL = mpEnvService.getMpHost()
+		COPY_TOPO_URL = cyberSpaceMpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.copy");
+		TOPO_DIGEST_URL = cyberSpaceMpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.topo.terminal.statistic");
-		TOPO_SYNC = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.sync");
-		TOPO_SYNC_UNLIMITED = mpEnvService.getMpHost()
+		TOPO_SYNC = cyberSpaceMpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.sync");
+		TOPO_SYNC_UNLIMITED = cyberSpaceMpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.topo.sync.unlimited");
-		TOPO_RETRIEVE = mpEnvService.getMpHost()
+		TOPO_RETRIEVE = cyberSpaceMpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.topo.retrieve");
-		TOPO_DELETE = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.delete");
-		TOPO_EXPORT = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.export");
+		TOPO_DELETE = cyberSpaceMpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.delete");
+		TOPO_EXPORT = cyberSpaceMpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.export");
 
-		BATCH_DELETE_TOPO = MP_HOST + ConfigUtil.getContextProperty("scene.topo.delete.batch");
+		BATCH_DELETE_TOPO = CYBER_MP_HOST + ConfigUtil.getContextProperty("scene.topo.delete.batch");
 
-		TOPO_NODE_LIST = MP_HOST + ConfigUtil.getContextProperty("topo.node.list");
+		TOPO_NODE_LIST = CYBER_MP_HOST + ConfigUtil.getContextProperty("topo.node.list");
 
-		TOPO_NODE_STATISTICS = MP_HOST + ConfigUtil.getContextProperty("topo.node.statistics");
+		TOPO_NODE_STATISTICS = CYBER_MP_HOST + ConfigUtil.getContextProperty("topo.node.statistics");
 
 		TOPO_TEMPLATE_LIST = CYBER_MP_HOST + ConfigUtil.getContextProperty("topo.template.list");
 	}

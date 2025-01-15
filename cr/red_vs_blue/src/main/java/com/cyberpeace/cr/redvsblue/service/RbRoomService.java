@@ -232,4 +232,27 @@ public interface RbRoomService extends IService<RbRoom> {
 	 * @return {@code RbRoomRsp}
 	 */
 	RbRoomRsp getRoomRsp(String roomId);
+
+	/**
+	 * 更新当地场景id
+	 *
+	 * @param roomId       房间id
+	 * @param localSceneId 当地场景id
+	 * @throws
+	 * @see String
+	 * @see String
+	 */
+	void updateLocalSceneId(String roomId, String localSceneId);
+
+
+	/**
+	 * 更新训练状态
+	 *
+	 * @param roomId         房间id
+	 * @param trainingStatus 训练状态
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 */
+	void updateTrainingStatus(String roomId, Integer trainingStatus);
 }

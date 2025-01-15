@@ -155,13 +155,11 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 		timeManagement.setRecoverTime(new Date());
 		timeManagement.setLength(0L);
 
-		room.setTrainingStatus(timeManagement.getStatus());
-
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				rbRoomMapper.updateById(room);
+				rbRoomMapper.updateTrainingStatus(room.getResourceId(), status);
 				save(timeManagement);
 
 			}

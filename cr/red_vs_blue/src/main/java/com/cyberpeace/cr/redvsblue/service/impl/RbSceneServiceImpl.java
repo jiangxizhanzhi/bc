@@ -172,11 +172,10 @@ public class RbSceneServiceImpl implements RbSceneService {
                     localScene.setMpSceneId(sceneId);
                     localScene.setSceneStatus(SceneStatusEnum.START.getCode());
                     localScene.setStartTime(new Date());
-                    room.setLocalSceneId(localScene.getResourceId());
 
                     // 执行表更新
                     localSceneService.save(localScene);
-                    rbRoomService.updateById(room);
+                    rbRoomService.updateLocalSceneId(roomId, localScene.getResourceId());
                 }
             });
             // 5.1 本地保存数据错误，删除已启动的远程场景
@@ -326,12 +325,11 @@ public class RbSceneServiceImpl implements RbSceneService {
     @Override
     public void clearLocal(RbRoom room) {
         String localSceneId = room.getLocalSceneId();
-        room.setLocalSceneId("");
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-                rbRoomService.updateById(room);
+                rbRoomService.updateLocalSceneId(room.getResourceId(), "");
                 localSceneService.removeById(localSceneId);
             }
         });

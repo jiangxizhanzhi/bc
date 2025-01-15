@@ -878,6 +878,16 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		return rbRoomRsp;
 	}
 
+    @Override
+    public void updateLocalSceneId(String roomId, String localSceneId) {
+        rbRoomMapper.updateLocalSceneId(roomId, localSceneId);
+    }
+
+	@Override
+	public void updateTrainingStatus(String roomId, Integer trainingStatus) {
+		rbRoomMapper.updateTrainingStatus(roomId, trainingStatus);
+	}
+
 	/**
 	 * 列表室
 	 *

@@ -2,6 +2,8 @@ package com.cyberpeace.iov.index.service.impl;
 
 import javax.annotation.PostConstruct;
 
+import com.alibaba.fastjson.JSONArray;
+import com.cyberpeace.integratation.service.RemotePythonService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,6 +58,9 @@ public class IovCanServiceImpl implements IovCanService {
 	@Autowired
 	private IovSituationService iovSituationService;
 
+	@Autowired
+	private RemotePythonService remotePythonService;
+
 
 	@PostConstruct
 	public void init() {
@@ -106,9 +111,16 @@ public class IovCanServiceImpl implements IovCanService {
 	}
 
 	@Override
-	public void stopSendMsg() {
+	public JSONArray stopSendMsg() {
 		String fileName = getDownloadPath();
 		IovHttpClientUtil.rawPostFile(STOP_SEND_MSG_URL, fileName);
+		JSONArray rsp = new JSONArray();
+		try {
+			rsp = remotePythonService.getBlfParseResult(fileName);
+		} catch (Exception e) {
+			log.error("get blf parse result error", e);
+		}
+		return rsp;
 	}
 
 	@Override

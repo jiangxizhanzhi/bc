@@ -146,6 +146,15 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 		return JsonUtil.toJsonObject(resp, Integer.class);
 	}
 
+	@Override
+	public JSONArray getBlfParseResult(String filePath) {
+		JSONObject body = new JSONObject();
+		body.put("path", filePath);
+		String resp = HttpClientUtil.post(getPyHost() + "/blf/parse/", body,
+				String.class);
+		return JsonUtil.stringToArray(resp);
+	}
+
 	public List<List<String>> getFormatMatrixData(String matrixData, List<Integer> scores){
 		JSONArray objects = JSON.parseArray(matrixData);
 		List<List<String>> res = new ArrayList<>();

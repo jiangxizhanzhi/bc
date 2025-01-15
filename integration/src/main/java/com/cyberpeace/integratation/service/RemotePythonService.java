@@ -3,6 +3,7 @@ package com.cyberpeace.integratation.service;
 import java.io.Serializable;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.integratation.model.evaluation.FormatData;
 import com.cyberpeace.integratation.model.evaluation.MarkData;
 import com.cyberpeace.integratation.model.evaluation.MatchData;
@@ -69,4 +70,6 @@ public interface RemotePythonService {
 	 */
 	Integer indexAhpPerform(String algorithmId, String matrixData, String algorithmCode, List<Integer> data,
 						 List<Serializable> otherArguments);
+
+	JSONArray getBlfParseResult(String filePath);
 }

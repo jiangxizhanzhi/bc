@@ -2,6 +2,7 @@ package com.cyberpeace.iov.index.controller;
 
 import javax.validation.constraints.NotNull;
 
+import com.alibaba.fastjson.JSONArray;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -62,9 +63,9 @@ public class IovCanController {
 
 	@ApiOperation("停止发送报文")
 	@PostMapping("/msg/stop/")
-	public BaseRsp<Void> stopSendMessage() {
-		iovCanService.stopSendMsg();
-		return new BaseRsp<>();
+	public BaseRsp<JSONArray> stopSendMessage() {
+		JSONArray result = iovCanService.stopSendMsg();
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("开始抓取")

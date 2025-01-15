@@ -323,46 +323,52 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
         }
 //        判断载荷是否是外部载荷（1）  2本地载荷 本地载荷不走该动效 需要查对应流量产生动效
         if("1".equals(addReq.getSource())) {
-            if (StringUtils.isBlank(addReq.getTaskId())) return;
-            log.info("外部载荷态势动效开始执行");
-            Map<String, JSONObject> elementsMap = scene.getJSONObject("scene")
-                    .getJSONObject("plugins")
-                    .getJSONObject("cpcloud")
-                    .getObject("elements", Map.class);
-            List<JSONObject> elements = scene.getJSONObject("scene").getJSONObject("topology")
-                    .getObject("elements", List.class);
-            Map<String, String> idNameMap = elements
-                    .stream()
-                    .collect(Collectors.toMap(e -> e.getString("id"), e -> e.getString("name")));
-            Set<Map.Entry<String, JSONObject>> entries = elementsMap.entrySet();
-            ArrayList<String> elementIds = new ArrayList<>();
-            ArrayList<String> loadElementIds = new ArrayList<>();
-            HashMap<String, String> taskIdToMap = new HashMap<>();
-            for (Map.Entry<String, JSONObject> entry : entries) {
-                String elementId = entry.getKey();
-                JSONObject element = entry.getValue();
-                if (StringUtils.isNotBlank(element.getString("load_tool_id"))) {
-                    taskIdToMap.put(element.getString("resource_id"), elementId);
-                    loadElementIds.add(elementId);
-                } else {
-                    elementIds.add(elementId);
-                }
-            }
-            Random random = new Random();
-            String srcNode = taskIdToMap.get(addReq.getTaskId());
-            String sourceId = taskIdToMap.get(addReq.getTaskId());
-            String targetId = "";
-            if (elementIds.size() > 0) {
-                targetId = getdstNode(srcNode, elementIds, random);
-            } else {
-                targetId = getdstNode(srcNode, loadElementIds, random);
-            }
-            String nodeName = idNameMap.get(taskIdToMap.get(addReq.getTaskId())) + "载荷执行";
-
-            buildAndSendSituationAttackData(addReq.getSceneId(), nodeName, sourceId, targetId);
-
-            packageAndSendAttackData(addReq.getResourceId(), srcNode, targetId);
+            sendAttackData(addReq, scene);
+        }else {
+//            随机
         }
+    }
+
+    private void sendAttackData(EvalLoadResultAddReq addReq, JSONObject scene) {
+        if (StringUtils.isBlank(addReq.getTaskId())) return;
+        log.info("载荷态势动效开始执行");
+        Map<String, JSONObject> elementsMap = scene.getJSONObject("scene")
+                .getJSONObject("plugins")
+                .getJSONObject("cpcloud")
+                .getObject("elements", Map.class);
+        List<JSONObject> elements = scene.getJSONObject("scene").getJSONObject("topology")
+                .getObject("elements", List.class);
+        Map<String, String> idNameMap = elements
+                .stream()
+                .collect(Collectors.toMap(e -> e.getString("id"), e -> e.getString("name")));
+        Set<Map.Entry<String, JSONObject>> entries = elementsMap.entrySet();
+        ArrayList<String> elementIds = new ArrayList<>();
+        ArrayList<String> loadElementIds = new ArrayList<>();
+        HashMap<String, String> taskIdToMap = new HashMap<>();
+        for (Map.Entry<String, JSONObject> entry : entries) {
+            String elementId = entry.getKey();
+            JSONObject element = entry.getValue();
+            if (StringUtils.isNotBlank(element.getString("load_tool_id"))) {
+                taskIdToMap.put(element.getString("resource_id"), elementId);
+                loadElementIds.add(elementId);
+            } else {
+                elementIds.add(elementId);
+            }
+        }
+        Random random = new Random();
+        String srcNode = taskIdToMap.get(addReq.getTaskId());
+        String sourceId = taskIdToMap.get(addReq.getTaskId());
+        String targetId = "";
+        if (elementIds.size() > 0) {
+            targetId = getdstNode(srcNode, elementIds, random);
+        } else {
+            targetId = getdstNode(srcNode, loadElementIds, random);
+        }
+        String nodeName = idNameMap.get(taskIdToMap.get(addReq.getTaskId())) + "载荷执行";
+
+        buildAndSendSituationAttackData(addReq.getSceneId(), nodeName, sourceId, targetId);
+
+        packageAndSendAttackData(addReq.getResourceId(), srcNode, targetId);
     }
 
     /**

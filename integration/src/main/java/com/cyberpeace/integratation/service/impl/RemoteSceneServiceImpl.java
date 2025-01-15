@@ -150,6 +150,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String GET_LOCAL_LOAD_RECORDS;
 
+	private String GET_DEMO_LOCAL_LOAD_RECORDS;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -266,6 +268,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		LOAD_RESULT_BY_NODE = MP_HOST + ConfigUtil.getContextProperty("load.result.by.node");
 
 		GET_LOCAL_LOAD_RECORDS = MP_HOST + ConfigUtil.getContextProperty("get.local.load.records");
+
+		GET_DEMO_LOCAL_LOAD_RECORDS = MP_HOST + ConfigUtil.getContextProperty("get.demo.local.load.records");
 	}
 
 	@Override
@@ -723,6 +727,14 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public JSONArray getProcessExecutionRecords() {
 		String requestUrl = String.format(GET_LOCAL_LOAD_RECORDS);
+		JSONArray jsonArray = HttpClientUtil.rawGet(requestUrl, JSONArray.class);
+		log.info("getProcessExecutionRecords:{}", jsonArray);
+		return jsonArray;
+	}
+
+	@Override
+	public JSONArray getDemoExecutionRecords() {
+		String requestUrl = String.format(GET_DEMO_LOCAL_LOAD_RECORDS);
 		JSONArray jsonArray = HttpClientUtil.rawGet(requestUrl, JSONArray.class);
 		log.info("getProcessExecutionRecords:{}", jsonArray);
 		return jsonArray;

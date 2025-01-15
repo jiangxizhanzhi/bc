@@ -40,6 +40,27 @@ public class LocalLoadSituationJob {
 
             evalStepService.packageAndSendAttackData(resourceId, loadNode, destinationNode);
         }
+    }
 
+    // 设置2分钟执行一次任务
+    @Scheduled(fixedRate = 120000)
+    public void localLoadDemoSituationTask() {
+        log.info("start localLoadSituationTask");
+//        查询要执行动效数据
+        JSONArray data = remoteSceneService.getDemoExecutionRecords();
+//        发送动效
+        for (int i = 0; i < data.size(); i++) {
+            JSONObject jsonObject = data.getJSONObject(i);
+//            TODO 包装数据发送态势动效
+            String scene = jsonObject.getString("scene");
+            String loadNodeName = jsonObject.getString("load_node_name");
+            String loadNode = jsonObject.getString("load_node");
+            String destinationNode = jsonObject.getString("destination_node");
+            String resourceId = jsonObject.getString("resource_id");
+
+            evalStepService.buildAndSendSituationAttackData(scene, loadNodeName + "载荷执行", loadNode, destinationNode);
+
+            evalStepService.packageAndSendAttackData(resourceId, loadNode, destinationNode);
+        }
     }
 }

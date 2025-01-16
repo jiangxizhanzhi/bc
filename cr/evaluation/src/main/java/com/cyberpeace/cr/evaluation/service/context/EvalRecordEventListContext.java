@@ -22,4 +22,7 @@ public class EvalRecordEventListContext implements Serializable {
 
     @ApiModelProperty(value = "告警事件名称",required = false)
     private String eventName;
+
+    @ApiModelProperty(value = "告警匹配名称",required = false)
+    private String alarmMatchName;
 }

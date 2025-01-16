@@ -100,6 +100,11 @@ public class EvalIndexRef extends BaseTable {
     private String evenName;
 
     /**
+     * 告警匹配名称
+     */
+    private String alarmMatchName;
+
+    /**
      * 当前指标项下一级ID, 为json字符串
      */
     private String nextIds;

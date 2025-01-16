@@ -286,7 +286,11 @@ public class EvalTemplateController {
 			String mpSceneId = localSceneService.getByTaskId(pageReq.getTaskId());
 			pageReq.setSceneId(mpSceneId);
 		}
-		return evalTemplateService.getAlarms(pageReq);
+		// 不需要分页,查询所有
+		pageReq.setPage(1);
+		pageReq.setPerPage(10000);
+		BaseRsp<ListRsp<CombatLog>> alarms = evalTemplateService.getAlarms(pageReq);
+		return alarms;
 	}
 
 	@ApiOperation("查询grade转换name")

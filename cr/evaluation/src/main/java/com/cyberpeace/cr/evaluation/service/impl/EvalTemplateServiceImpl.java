@@ -300,7 +300,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 		Set<String> uniqueAlarmNames = new HashSet<>();
 		List<CombatLog> filteredLogs = new ArrayList<>();
-
+		// filteredLogs收集combatLogs中alarmMatchName不为空的且不重复的成员
 		for (CombatLog log : combatLogs) {
 			String alarmNameValue = log.getAlarmMatchName();
 
@@ -308,12 +308,11 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 				filteredLogs.add(log);
 			}
 		}
-
 		Page<CombatLog> page = new Page<>();
 		page.setRecords(filteredLogs);
 		page.setSize(req.getPerPage());
-		page.setTotal(total);
-		ListRsp<CombatLog> combatLogListRsp = PageUtil.getListResult(filteredLogs, page, total);
+		page.setTotal(filteredLogs.size());
+		ListRsp<CombatLog> combatLogListRsp = PageUtil.getListResult(filteredLogs, page, filteredLogs.size());
 		return new BaseRsp<>(combatLogListRsp);
 	}
 

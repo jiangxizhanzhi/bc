@@ -133,11 +133,18 @@ public class EvalTemplateController {
 		int index = toolBos.indexOf(toolBo);
 		toolBo.setExecuteTime(new Date());
 		toolBo.setIsExecute(true);
+		// 重新赋值命令
+		toolBo.setAction(manualExecutionReq.getCommand());
 		toolBos.set(index, toolBo);
 		evalTaskStepConfig.setEquip(toolBos);
 		stages.set(stageIndex, evalTaskStepConfig);
 		evalTask.setPhase(JsonUtil.toJsonString(stages));
 		evalTaskMapper.updateById(evalTask);
+
+		// 更新模板
+		EvalTemplate evalTemplate = evalTemplateService.getTemplate(evalTask.getTemplateId());
+		evalTemplate.setStepConfig(JsonUtil.toJsonString(stages));
+		evalTemplateService.updateById(evalTemplate);
 		return new BaseRsp<>("success");
 	}
 

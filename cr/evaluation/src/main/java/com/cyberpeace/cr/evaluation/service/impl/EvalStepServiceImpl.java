@@ -9,10 +9,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.evaluation.controller.req.EvalLoadResultAddReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalStepLoadAddReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalStepLoadDeleteReq;
-import com.cyberpeace.cr.evaluation.controller.req.LoadSetReq;
+import com.cyberpeace.cr.evaluation.controller.req.*;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestStepListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalInstanceStepMapper;
@@ -214,13 +211,13 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
             JSONArray loadList = remoteLoadService.getLoadByIds(loadIds);
             for (Object o : loadList) {
                 JSONObject load = (JSONObject) o;
-                load.put("cmd", cmdMap.getOrDefault(nodeIdMap.get(load.getString("id")),load.getString("default_cmd")));
+                load.put("cmd", cmdMap.getOrDefault(nodeIdMap.get(load.getString("id")), load.getString("default_cmd")));
                 load.put("task_id", loadTaskMap.getOrDefault(load.getString("id"), ""));
                 load.put("load_resource_instance_id", loadInstanceMap.getOrDefault(load.getString("id"), ""));
-                load.put("load_access_model",loadAccessModelMap.getOrDefault(load.getString("id"), ""));
-                load.put("tra_scene_id",traSceneIdMap.getOrDefault(load.getString("id"), ""));
-                load.put("node_id",nodeIdMap.get(load.getString("id")));
-                load.put("scene",scene.getJSONObject("topology").getJSONObject("scene").getString("eid"));
+                load.put("load_access_model", loadAccessModelMap.getOrDefault(load.getString("id"), ""));
+                load.put("tra_scene_id", traSceneIdMap.getOrDefault(load.getString("id"), ""));
+                load.put("node_id", nodeIdMap.get(load.getString("id")));
+                load.put("scene", scene.getJSONObject("topology").getJSONObject("scene").getString("eid"));
             }
             evalTestStepListRsp.setLoadList(loadList);
             evalTestStepListRspList.add(evalTestStepListRsp);
@@ -322,10 +319,36 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
             throw new RuntimeException(e);
         }
 //        判断载荷是否是外部载荷（1）  2本地载荷 本地载荷不走该动效 需要查对应流量产生动效
-        if("1".equals(addReq.getSource())) {
+        if ("1".equals(addReq.getSource())) {
             sendAttackData(addReq, scene);
-        }else {
-//            随机
+        }
+    }
+
+    @Override
+    public void updateLoadExecutionResultByPk(EvalMpDevopsLoadSceneLogAddReq addReq) {
+//        保存研判结果
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+            String json = objectMapper.writeValueAsString(addReq);
+            JSONObject addReqJson = JSON.parseObject(json);
+            remoteSceneService.updateLoadExecutionResultByPk(addReqJson);
+//        查载荷记录，发送攻击数据
+            if(StringUtils.isNotBlank(addReq.getExecutionRecordId())) {
+                JSONObject jsonObject = remoteSceneService.getExecutionRecord(addReq.getExecutionRecordId());
+//            TODO 包装数据发送态势动效
+                String scene = jsonObject.getString("scene");
+                String loadNodeName = jsonObject.getString("load_node_name");
+                String loadNode = jsonObject.getString("load_node");
+                String destinationNode = jsonObject.getString("destination_node");
+                String resourceId = jsonObject.getString("resource_id");
+
+                buildAndSendSituationAttackData(scene, loadNodeName + "载荷执行", loadNode, destinationNode);
+
+                packageAndSendAttackData(resourceId, loadNode, destinationNode);
+            }
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -373,6 +396,7 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 
     /**
      * 包装攻击数据至城市沙盘
+     *
      * @param scene
      * @param srcNode
      * @param targetId
@@ -399,6 +423,7 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 
     /**
      * 构建动效数据并发送至3D态势
+     *
      * @param sceneId
      * @param nodeName
      * @param sourceId

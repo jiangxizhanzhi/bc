@@ -296,6 +296,12 @@ public class EvalTestController {
 		return new BaseRsp<>(Boolean.TRUE);
 	}
 
+	@ApiOperation("修改载荷执行结果")
+	@PostMapping("/updateLoadExecutionResultByPk")
+	public BaseRsp<Boolean> updateLoadExecutionResultByPk(@RequestBody EvalMpDevopsLoadSceneLogAddReq addReq) {
+		evalStepService.updateLoadExecutionResultByPk(addReq);
+		return new BaseRsp<>(Boolean.TRUE);
+	}
 	@ApiOperation("发送回放载荷执行动效")
 	@GetMapping("/pushLoadResult")
 	public BaseRsp<Boolean> pushLoadResult(@RequestParam(value = "scene_id") String sceneId,

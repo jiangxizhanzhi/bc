@@ -35,709 +35,731 @@ import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
 @Service
 public class RemoteSceneServiceImpl implements RemoteSceneService {
 
-	@Autowired
-	private MpEnvService mpEnvService;
+    @Autowired
+    private MpEnvService mpEnvService;
 
-	private String SCENE_START_URL;
+    private String SCENE_START_URL;
 
-	private String SCENE_START_TEST_URL;
+    private String SCENE_START_TEST_URL;
 
-	private String SCENE_DELETE_URL;
+    private String SCENE_DELETE_URL;
 
-	private String SCENE_CLEAR_URL;
+    private String SCENE_CLEAR_URL;
 
-	private String SCENE_RETRIEVE;
+    private String SCENE_RETRIEVE;
 
-	private String SCENE_PAUSE_URL;
+    private String SCENE_PAUSE_URL;
 
-	private String SCENE_UNPAUSE_URL;
+    private String SCENE_UNPAUSE_URL;
 
-	private String NODE_CREATE_URL;
+    private String NODE_CREATE_URL;
 
-	private String NODE_RESTART_URL;
+    private String NODE_RESTART_URL;
 
-	private String NODE_RECREATE_URL;
+    private String NODE_RECREATE_URL;
 
-	private String FLOW_START_URL;
+    private String FLOW_START_URL;
 
-	private String FLOW_STOP_URL;
+    private String FLOW_STOP_URL;
 
-	private String FLOW_UPDATE_PARAM_URL;
+    private String FLOW_UPDATE_PARAM_URL;
 
-	private String FLOW_BATCH_START_URL;
+    private String FLOW_BATCH_START_URL;
 
-	private String FLOW_BATCH_STOP_URL;
+    private String FLOW_BATCH_STOP_URL;
 
-	private String NODE_SESSION_URL;
+    private String NODE_SESSION_URL;
 
-	private String FLOW_LOG_URL;
+    private String FLOW_LOG_URL;
 
-	private String HOST_STATE_URL;
+    private String HOST_STATE_URL;
 
-	private String FLOW_TREND_URL;
+    private String FLOW_TREND_URL;
 
-	private String EVENT_AGGR_URL;
+    private String EVENT_AGGR_URL;
 
-	private String RISK_COUNT_URL;
+    private String RISK_COUNT_URL;
 
-	private String COLLECTION_EVENT_URL;
+    private String COLLECTION_EVENT_URL;
 
-	private String COLLECTION_EVENT_DATA_URL;
+    private String COLLECTION_EVENT_DATA_URL;
 
-	private String FLOW_RECORD_URL;
+    private String FLOW_RECORD_URL;
 
-	private String FLOW_RETRIEVE_URL;
+    private String FLOW_RETRIEVE_URL;
 
-	private String NODE_SNAPSHOT_URL;
+    private String NODE_SNAPSHOT_URL;
 
-	private String SNAPSHOT_HISTORY_URL;
+    private String SNAPSHOT_HISTORY_URL;
 
-	private String SNAPSHOT_MERGE_URL;
+    private String SNAPSHOT_MERGE_URL;
 
-	private String SNAPSHOT_DELETE_URL;
+    private String SNAPSHOT_DELETE_URL;
 
-	private String CONNECTION_STATUS_URL;
+    private String CONNECTION_STATUS_URL;
 
-	private String SCENE_DUMP_URL;
+    private String SCENE_DUMP_URL;
 
-	private String NODE_UPDATE_URL;
+    private String NODE_UPDATE_URL;
 
-	private String NODE_DELETE_URL;
+    private String NODE_DELETE_URL;
 
-	private String SCENE_UPDATE_URL;
+    private String SCENE_UPDATE_URL;
 
-	private String NODE_START_URL;
+    private String NODE_START_URL;
 
-	private String NODE_STOP_URL;
+    private String NODE_STOP_URL;
 
-	private String SCENE_NODE_LIST;
+    private String SCENE_NODE_LIST;
 
-	private String SCENE_CLOUD_NODE_LIST;
+    private String SCENE_CLOUD_NODE_LIST;
 
-	private String SCENE_NODE_STATISTICS;
+    private String SCENE_NODE_STATISTICS;
 
-	private String NODE_SCREEN_RECORD;
+    private String NODE_SCREEN_RECORD;
 
-	private String ATTACK_TYPE_COUNT;
+    private String ATTACK_TYPE_COUNT;
 
-	private String SCENE_TREND;
+    private String SCENE_TREND;
 
-	private String EVENT_TOTAL_COUNT_URL;
+    private String EVENT_TOTAL_COUNT_URL;
 
-	private String ATTACK_TYPE_COUNT_URL;
+    private String ATTACK_TYPE_COUNT_URL;
 
-	private String EVENT_TRENT_COUNT_URL;
+    private String EVENT_TRENT_COUNT_URL;
 
-	private String EVENT_TIME_LIST_URL;
+    private String EVENT_TIME_LIST_URL;
 
-	private String EVENT_LIST_URL;
+    private String EVENT_LIST_URL;
 
-	private String HOST_EVENT_LIST;
+    private String HOST_EVENT_LIST;
 
-	private String SAVE_ALERT_RULE;
+    private String SAVE_ALERT_RULE;
 
-	private String IMAGE_LIST;
+    private String IMAGE_LIST;
 
-	private String IMAGE_UUID_LIST;
+    private String IMAGE_UUID_LIST;
 
-	private String GET_BY_AREA_URL;
+    private String GET_BY_AREA_URL;
 
-	private String GET_SCENE_LOAD_INFO;
+    private String GET_SCENE_LOAD_INFO;
 
-	private String ADD_LOAD_RESULT;
+    private String ADD_LOAD_RESULT;
 
-	private String LOAD_RESULT_BY_NODE;
+    private String LOAD_RESULT_BY_NODE;
 
-	private String GET_LOCAL_LOAD_RECORDS;
+    private String GET_LOCAL_LOAD_RECORDS;
 
-	private String GET_DEMO_LOCAL_LOAD_RECORDS;
+    private String GET_DEMO_LOCAL_LOAD_RECORDS;
 
-	@PostConstruct
-	public void init() {
-		String MP_HOST = mpEnvService.getMpHost();
-		SCENE_START_URL = MP_HOST + ConfigUtil.getContextProperty("scene.start.app");
+    private String UPDATE_LOAD_EXECUTION_RESULT_BY_PK;
 
-		SCENE_START_TEST_URL = MP_HOST + ConfigUtil.getContextProperty("scene.start.test");
+    private String GET_EXECUTION_RECORD;
 
-		SCENE_DELETE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.delete");
+    @PostConstruct
+    public void init() {
+        String MP_HOST = mpEnvService.getMpHost();
+        SCENE_START_URL = MP_HOST + ConfigUtil.getContextProperty("scene.start.app");
 
-		SCENE_CLEAR_URL = MP_HOST + ConfigUtil.getContextProperty("scene.clear");
+        SCENE_START_TEST_URL = MP_HOST + ConfigUtil.getContextProperty("scene.start.test");
 
-		SCENE_RETRIEVE = MP_HOST + ConfigUtil.getContextProperty("scene.retrieve");
+        SCENE_DELETE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.delete");
 
-		SCENE_PAUSE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.pause");
+        SCENE_CLEAR_URL = MP_HOST + ConfigUtil.getContextProperty("scene.clear");
 
-		SCENE_UNPAUSE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.unpause");
+        SCENE_RETRIEVE = MP_HOST + ConfigUtil.getContextProperty("scene.retrieve");
 
-		SCENE_DUMP_URL = MP_HOST + ConfigUtil.getContextProperty("mp.scene.dump");
+        SCENE_PAUSE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.pause");
 
-		NODE_CREATE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.create");
+        SCENE_UNPAUSE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.unpause");
 
-		NODE_RESTART_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.restart");
+        SCENE_DUMP_URL = MP_HOST + ConfigUtil.getContextProperty("mp.scene.dump");
 
-		NODE_RECREATE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.recreate");
+        NODE_CREATE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.create");
 
-		FLOW_START_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.flow.start");
+        NODE_RESTART_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.restart");
 
-		FLOW_STOP_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.flow.stop");
+        NODE_RECREATE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.recreate");
 
-		FLOW_UPDATE_PARAM_URL = MP_HOST
-				+ ConfigUtil.getContextProperty("scene.node.flow.param.update");
+        FLOW_START_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.flow.start");
 
-		FLOW_BATCH_START_URL = MP_HOST
-				+ ConfigUtil.getContextProperty("scene.node.flow.batch.start");
+        FLOW_STOP_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.flow.stop");
 
-		FLOW_BATCH_STOP_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.flow.batch.stop");
+        FLOW_UPDATE_PARAM_URL = MP_HOST
+                + ConfigUtil.getContextProperty("scene.node.flow.param.update");
 
-		NODE_SESSION_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.session");
+        FLOW_BATCH_START_URL = MP_HOST
+                + ConfigUtil.getContextProperty("scene.node.flow.batch.start");
 
-		FLOW_LOG_URL = MP_HOST + ConfigUtil.getContextProperty("scene.flow.log");
+        FLOW_BATCH_STOP_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.flow.batch.stop");
 
-		HOST_STATE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.host.state");
+        NODE_SESSION_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.session");
 
-		FLOW_TREND_URL = MP_HOST + ConfigUtil.getContextProperty("scene.flow.trend");
+        FLOW_LOG_URL = MP_HOST + ConfigUtil.getContextProperty("scene.flow.log");
 
-		EVENT_AGGR_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.aggr");
+        HOST_STATE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.host.state");
 
-		RISK_COUNT_URL = MP_HOST + ConfigUtil.getContextProperty("scene.risk.count");
+        FLOW_TREND_URL = MP_HOST + ConfigUtil.getContextProperty("scene.flow.trend");
 
-		COLLECTION_EVENT_URL = MP_HOST
-				+ ConfigUtil.getContextProperty("scene.probe.collection.event");
+        EVENT_AGGR_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.aggr");
 
-		COLLECTION_EVENT_DATA_URL = MP_HOST
-				+ ConfigUtil.getContextProperty("scene.probe.collection.data");
+        RISK_COUNT_URL = MP_HOST + ConfigUtil.getContextProperty("scene.risk.count");
 
-		FLOW_RECORD_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.flow.record");
+        COLLECTION_EVENT_URL = MP_HOST
+                + ConfigUtil.getContextProperty("scene.probe.collection.event");
 
-		FLOW_RETRIEVE_URL = MP_HOST + ConfigUtil.getContextProperty("mp.flow.retrieve");
+        COLLECTION_EVENT_DATA_URL = MP_HOST
+                + ConfigUtil.getContextProperty("scene.probe.collection.data");
 
-		NODE_SNAPSHOT_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot");
-		SNAPSHOT_HISTORY_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot.history");
-		SNAPSHOT_MERGE_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot.merge");
-		SNAPSHOT_DELETE_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot.delete");
+        FLOW_RECORD_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.flow.record");
 
-		CONNECTION_STATUS_URL = mpEnvService.getMpHost()
-				+ ConfigUtil.getContextProperty("scene.node.connection.status");
+        FLOW_RETRIEVE_URL = MP_HOST + ConfigUtil.getContextProperty("mp.flow.retrieve");
 
-		NODE_UPDATE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.modify");
+        NODE_SNAPSHOT_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot");
+        SNAPSHOT_HISTORY_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot.history");
+        SNAPSHOT_MERGE_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot.merge");
+        SNAPSHOT_DELETE_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot.delete");
 
-		NODE_DELETE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.delete");
+        CONNECTION_STATUS_URL = mpEnvService.getMpHost()
+                + ConfigUtil.getContextProperty("scene.node.connection.status");
 
-		SCENE_UPDATE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.update");
+        NODE_UPDATE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.modify");
 
-		NODE_START_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.start");
+        NODE_DELETE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.delete");
 
-		NODE_STOP_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.stop");
+        SCENE_UPDATE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.update");
 
-		SCENE_NODE_LIST = MP_HOST + ConfigUtil.getContextProperty("scene.node.list");
+        NODE_START_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.start");
 
-		SCENE_CLOUD_NODE_LIST = MP_HOST + ConfigUtil.getContextProperty("scene.cloud.node.list");
+        NODE_STOP_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.stop");
 
-		SCENE_NODE_STATISTICS = MP_HOST + ConfigUtil.getContextProperty("scene.node.statistics");
+        SCENE_NODE_LIST = MP_HOST + ConfigUtil.getContextProperty("scene.node.list");
 
-		NODE_SCREEN_RECORD = MP_HOST + ConfigUtil.getContextProperty("mp.screen.record");
+        SCENE_CLOUD_NODE_LIST = MP_HOST + ConfigUtil.getContextProperty("scene.cloud.node.list");
 
-		ATTACK_TYPE_COUNT = MP_HOST + ConfigUtil.getContextProperty("mp.attack.type.count");
+        SCENE_NODE_STATISTICS = MP_HOST + ConfigUtil.getContextProperty("scene.node.statistics");
 
-		SCENE_TREND = MP_HOST + ConfigUtil.getContextProperty("mp.scene.trend");
+        NODE_SCREEN_RECORD = MP_HOST + ConfigUtil.getContextProperty("mp.screen.record");
 
-		EVENT_TOTAL_COUNT_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.count");
+        ATTACK_TYPE_COUNT = MP_HOST + ConfigUtil.getContextProperty("mp.attack.type.count");
 
-		ATTACK_TYPE_COUNT_URL = MP_HOST + ConfigUtil.getContextProperty("attack.type.count");
+        SCENE_TREND = MP_HOST + ConfigUtil.getContextProperty("mp.scene.trend");
 
-		EVENT_TRENT_COUNT_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.trend");
+        EVENT_TOTAL_COUNT_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.count");
 
-		EVENT_TIME_LIST_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.time");
+        ATTACK_TYPE_COUNT_URL = MP_HOST + ConfigUtil.getContextProperty("attack.type.count");
 
-		EVENT_LIST_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.list");
+        EVENT_TRENT_COUNT_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.trend");
 
-		HOST_EVENT_LIST = MP_HOST + ConfigUtil.getContextProperty("host.event.list");
+        EVENT_TIME_LIST_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.time");
 
-		GET_BY_AREA_URL = MP_HOST + ConfigUtil.getContextProperty("scene.by.area");
+        EVENT_LIST_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.list");
 
-		GET_SCENE_LOAD_INFO = MP_HOST + ConfigUtil.getContextProperty("get.scene.load.info");
+        HOST_EVENT_LIST = MP_HOST + ConfigUtil.getContextProperty("host.event.list");
 
-		SAVE_ALERT_RULE = MP_HOST + ConfigUtil.getContextProperty("alert.rule.save");
+        GET_BY_AREA_URL = MP_HOST + ConfigUtil.getContextProperty("scene.by.area");
 
-		IMAGE_LIST = MP_HOST + ConfigUtil.getContextProperty("image");
+        GET_SCENE_LOAD_INFO = MP_HOST + ConfigUtil.getContextProperty("get.scene.load.info");
 
-		IMAGE_UUID_LIST = MP_HOST + ConfigUtil.getContextProperty("image.uuid");
+        SAVE_ALERT_RULE = MP_HOST + ConfigUtil.getContextProperty("alert.rule.save");
 
-		ADD_LOAD_RESULT = MP_HOST + ConfigUtil.getContextProperty("add.load.result");
+        IMAGE_LIST = MP_HOST + ConfigUtil.getContextProperty("image");
 
-		LOAD_RESULT_BY_NODE = MP_HOST + ConfigUtil.getContextProperty("load.result.by.node");
+        IMAGE_UUID_LIST = MP_HOST + ConfigUtil.getContextProperty("image.uuid");
 
-		GET_LOCAL_LOAD_RECORDS = MP_HOST + ConfigUtil.getContextProperty("get.local.load.records");
+        ADD_LOAD_RESULT = MP_HOST + ConfigUtil.getContextProperty("add.load.result");
 
-		GET_DEMO_LOCAL_LOAD_RECORDS = MP_HOST + ConfigUtil.getContextProperty("get.demo.local.load.records");
-	}
+        LOAD_RESULT_BY_NODE = MP_HOST + ConfigUtil.getContextProperty("load.result.by.node");
 
-	@Override
-	public String startScene(SceneStartContext sceneStartContext) {
-		return startScene(sceneStartContext, SCENE_START_URL);
-	}
+        GET_LOCAL_LOAD_RECORDS = MP_HOST + ConfigUtil.getContextProperty("get.local.load.records");
 
-	@Override
-	public String testScene(SceneStartContext sceneStartContext) {
-		return startScene(sceneStartContext, SCENE_START_TEST_URL);
-	}
+        GET_DEMO_LOCAL_LOAD_RECORDS = MP_HOST + ConfigUtil.getContextProperty("get.demo.local.load.records");
 
-	@Override
-	public Boolean stopScene(SceneOpsContext sceneOpsContext) {
-		String targetUrl = SCENE_DELETE_URL;
+        UPDATE_LOAD_EXECUTION_RESULT_BY_PK = MP_HOST + ConfigUtil.getContextProperty("update.load.execution.result.by.pk");
 
-		return HttpClientUtil.delete(targetUrl, sceneOpsContext, Boolean.class);
-	}
+        GET_EXECUTION_RECORD = MP_HOST + ConfigUtil.getContextProperty("get.execution.record");
+    }
 
-	@Override
-	public Boolean pauseScene(SceneOpsContext sceneOpsContext) {
-		return HttpClientUtil.post(SCENE_PAUSE_URL, sceneOpsContext, Boolean.class);
-	}
+    @Override
+    public String startScene(SceneStartContext sceneStartContext) {
+        return startScene(sceneStartContext, SCENE_START_URL);
+    }
 
-	@Override
-	public JSONObject getById(String sceneId, String userId) {
-		String targetUrl = SCENE_RETRIEVE + "?id=" + sceneId + "&accessUserId=" + userId;
-		return replaceAccessIp(HttpClientUtil.rawGet(targetUrl, JSONObject.class));
+    @Override
+    public String testScene(SceneStartContext sceneStartContext) {
+        return startScene(sceneStartContext, SCENE_START_TEST_URL);
+    }
 
-	}
+    @Override
+    public Boolean stopScene(SceneOpsContext sceneOpsContext) {
+        String targetUrl = SCENE_DELETE_URL;
 
-	@Override
-	public Boolean unpauseScene(SceneOpsContext sceneOpContext) {
-		return HttpClientUtil.post(SCENE_UNPAUSE_URL, sceneOpContext, Boolean.class);
+        return HttpClientUtil.delete(targetUrl, sceneOpsContext, Boolean.class);
+    }
 
-	}
+    @Override
+    public Boolean pauseScene(SceneOpsContext sceneOpsContext) {
+        return HttpClientUtil.post(SCENE_PAUSE_URL, sceneOpsContext, Boolean.class);
+    }
 
-	@Override
-	public Boolean createNode(NodeOpsContext nodeOpsContext) {
-		return HttpClientUtil.post(NODE_CREATE_URL, nodeOpsContext, Boolean.class);
-	}
+    @Override
+    public JSONObject getById(String sceneId, String userId) {
+        String targetUrl = SCENE_RETRIEVE + "?id=" + sceneId + "&accessUserId=" + userId;
+        return replaceAccessIp(HttpClientUtil.rawGet(targetUrl, JSONObject.class));
 
-	@Override
-	public JSONObject updateNode(NodeUpdateContext context) {
-		return HttpClientUtil.post(NODE_UPDATE_URL, context, JSONObject.class);
-	}
+    }
 
-	@Override
-	public JSONObject deleteNode(NodeOpsContext context) {
-		return HttpClientUtil.post(NODE_DELETE_URL, context, JSONObject.class);
-	}
+    @Override
+    public Boolean unpauseScene(SceneOpsContext sceneOpContext) {
+        return HttpClientUtil.post(SCENE_UNPAUSE_URL, sceneOpContext, Boolean.class);
 
-	@Override
-	public JSONObject updateScene(SceneUpdateContext context) {
-		return HttpClientUtil.post(SCENE_UPDATE_URL, context, JSONObject.class);
-	}
+    }
 
-	@Override
-	public Boolean startNode(NodeOpsContext context) {
-		return HttpClientUtil.post(NODE_START_URL, context, Boolean.class);
-	}
+    @Override
+    public Boolean createNode(NodeOpsContext nodeOpsContext) {
+        return HttpClientUtil.post(NODE_CREATE_URL, nodeOpsContext, Boolean.class);
+    }
 
-	@Override
-	public Boolean stopNode(NodeOpsContext context) {
-		return HttpClientUtil.post(NODE_STOP_URL, context, Boolean.class);
-	}
+    @Override
+    public JSONObject updateNode(NodeUpdateContext context) {
+        return HttpClientUtil.post(NODE_UPDATE_URL, context, JSONObject.class);
+    }
 
-	@Override
-	public JSONArray getAssetList(SceneNodeListReq req) {
-		String targetUrl = SCENE_NODE_LIST + req.toUrl();
-		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
-	}
+    @Override
+    public JSONObject deleteNode(NodeOpsContext context) {
+        return HttpClientUtil.post(NODE_DELETE_URL, context, JSONObject.class);
+    }
 
-	@Override
-	public JSONArray getAssetCloudList(SceneNodeListReq req) {
-		String targetUrl = SCENE_CLOUD_NODE_LIST + req.toUrl();
-		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
-	}
+    @Override
+    public JSONObject updateScene(SceneUpdateContext context) {
+        return HttpClientUtil.post(SCENE_UPDATE_URL, context, JSONObject.class);
+    }
 
-	@Override
-	public JSONObject getAssetsStatisticsBySceneId(String sceneId) {
-		// 只获取一个场景的
-		String targetUrl = SCENE_NODE_STATISTICS + "?sceneIds=" + sceneId;
-		JSONArray rsp = HttpClientUtil.rawGet(targetUrl, JSONArray.class);
-		return rsp.getJSONObject(0);
-	}
+    @Override
+    public Boolean startNode(NodeOpsContext context) {
+        return HttpClientUtil.post(NODE_START_URL, context, Boolean.class);
+    }
 
-	@Override
-	public JSONObject screenrecord(String sceneId, String nodeId) {
+    @Override
+    public Boolean stopNode(NodeOpsContext context) {
+        return HttpClientUtil.post(NODE_STOP_URL, context, Boolean.class);
+    }
 
-		String targetUrl = NODE_SCREEN_RECORD + "?csceneId=" + sceneId+"&nodeId="+nodeId+"&page=1&pageSize=999";
-		return  HttpClientUtil.rawGet(targetUrl, JSONObject.class);
-	}
+    @Override
+    public JSONArray getAssetList(SceneNodeListReq req) {
+        String targetUrl = SCENE_NODE_LIST + req.toUrl();
+        return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
+    }
 
-	@Override
-	public JSONArray attackTypeCount(String mpSceneId) {
-		String targetUrl = ATTACK_TYPE_COUNT + "?sceneId=" + mpSceneId;
-		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
-	}
+    @Override
+    public JSONArray getAssetCloudList(SceneNodeListReq req) {
+        String targetUrl = SCENE_CLOUD_NODE_LIST + req.toUrl();
+        return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
+    }
 
-	@Override
-	public JSONArray sceneTrend(String mpSceneId) {
-		String targetUrl = SCENE_TREND + "?sceneId=" + mpSceneId;
-		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
-	}
+    @Override
+    public JSONObject getAssetsStatisticsBySceneId(String sceneId) {
+        // 只获取一个场景的
+        String targetUrl = SCENE_NODE_STATISTICS + "?sceneIds=" + sceneId;
+        JSONArray rsp = HttpClientUtil.rawGet(targetUrl, JSONArray.class);
+        return rsp.getJSONObject(0);
+    }
 
-	@Override
-	public Boolean restartNode(NodeOpsContext nodeOpsContext) {
-		return HttpClientUtil.post(NODE_RESTART_URL, nodeOpsContext, Boolean.class);
-	}
+    @Override
+    public JSONObject screenrecord(String sceneId, String nodeId) {
 
-	@Override
-	public Boolean recreateNode(NodeOpsContext nodeOpsContext) {
-		return HttpClientUtil.post(NODE_RECREATE_URL, nodeOpsContext, Boolean.class);
-	}
+        String targetUrl = NODE_SCREEN_RECORD + "?csceneId=" + sceneId + "&nodeId=" + nodeId + "&page=1&pageSize=999";
+        return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+    }
 
-	@Override
-	public JSONObject sceneDump(SceneDumpContext sceneDumpContext) {
-		return HttpClientUtil.post(SCENE_DUMP_URL, sceneDumpContext, JSONObject.class);
-	}
+    @Override
+    public JSONArray attackTypeCount(String mpSceneId) {
+        String targetUrl = ATTACK_TYPE_COUNT + "?sceneId=" + mpSceneId;
+        return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
+    }
 
-	@Override
-	public MpFlow getFlowById(String flowId) {
-		return HttpClientUtil.rawGet(FLOW_RETRIEVE_URL + flowId, MpFlow.class);
-	}
+    @Override
+    public JSONArray sceneTrend(String mpSceneId) {
+        String targetUrl = SCENE_TREND + "?sceneId=" + mpSceneId;
+        return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
+    }
 
-	@Override
-	public Boolean updateFlowParam(FlowOpsContext flowOpsContext) {
-		return HttpClientUtil.post(FLOW_UPDATE_PARAM_URL, flowOpsContext, Boolean.class);
-	}
+    @Override
+    public Boolean restartNode(NodeOpsContext nodeOpsContext) {
+        return HttpClientUtil.post(NODE_RESTART_URL, nodeOpsContext, Boolean.class);
+    }
 
-	@Override
-	public Boolean startFlow(FlowOpsContext flowOpsContext) {
-		return HttpClientUtil.post(FLOW_START_URL, flowOpsContext, Boolean.class);
-	}
+    @Override
+    public Boolean recreateNode(NodeOpsContext nodeOpsContext) {
+        return HttpClientUtil.post(NODE_RECREATE_URL, nodeOpsContext, Boolean.class);
+    }
 
-	@Override
-	public Boolean stopFlow(FlowOpsContext context) {
-		return HttpClientUtil.post(FLOW_STOP_URL, context, Boolean.class);
-	}
+    @Override
+    public JSONObject sceneDump(SceneDumpContext sceneDumpContext) {
+        return HttpClientUtil.post(SCENE_DUMP_URL, sceneDumpContext, JSONObject.class);
+    }
 
-	@Override
-	public Boolean batchStartFlow(FlowBatchOpsContext flowBatchOpsContext) {
-		return HttpClientUtil.post(FLOW_BATCH_START_URL, flowBatchOpsContext, Boolean.class);
-	}
+    @Override
+    public MpFlow getFlowById(String flowId) {
+        return HttpClientUtil.rawGet(FLOW_RETRIEVE_URL + flowId, MpFlow.class);
+    }
 
-	@Override
-	public Boolean batchStopFlow(FlowBatchOpsContext flowBatchOpsContext) {
-		return HttpClientUtil.post(FLOW_BATCH_STOP_URL, flowBatchOpsContext, Boolean.class);
-	}
+    @Override
+    public Boolean updateFlowParam(FlowOpsContext flowOpsContext) {
+        return HttpClientUtil.post(FLOW_UPDATE_PARAM_URL, flowOpsContext, Boolean.class);
+    }
 
-	@Override
-	public JSONObject getFlowRecords(FlowRecordContext flowRecordContext) {
-		return HttpClientUtil.post(FLOW_RECORD_URL, flowRecordContext, JSONObject.class);
-	}
+    @Override
+    public Boolean startFlow(FlowOpsContext flowOpsContext) {
+        return HttpClientUtil.post(FLOW_START_URL, flowOpsContext, Boolean.class);
+    }
 
-	private String startScene(SceneStartContext context, String url) {
-		JSONObject data = HttpClientUtil.post(url, context, JSONObject.class);
+    @Override
+    public Boolean stopFlow(FlowOpsContext context) {
+        return HttpClientUtil.post(FLOW_STOP_URL, context, Boolean.class);
+    }
 
-		if (null == data) {
-			log.error("topoId=[{}] startScene error, response data is null", context.getId());
-			throw new RemoteServiceException();
-		}
+    @Override
+    public Boolean batchStartFlow(FlowBatchOpsContext flowBatchOpsContext) {
+        return HttpClientUtil.post(FLOW_BATCH_START_URL, flowBatchOpsContext, Boolean.class);
+    }
 
-		String sceneId = data.getString("id");
-		if (StringUtils.isBlank(sceneId)) {
-			log.error("topoId=[{}] startScene error, sceneId is blank", context.getId());
-			throw new RemoteServiceException();
-		}
-		// 校验sceneId长度
-		if (sceneId.length() != SCENE_ID_LENGTH) {
-			log.error("Illegal sceneId {}", sceneId);
-			throw new RemoteServiceException();
-		}
+    @Override
+    public Boolean batchStopFlow(FlowBatchOpsContext flowBatchOpsContext) {
+        return HttpClientUtil.post(FLOW_BATCH_STOP_URL, flowBatchOpsContext, Boolean.class);
+    }
 
-		return sceneId;
-	}
+    @Override
+    public JSONObject getFlowRecords(FlowRecordContext flowRecordContext) {
+        return HttpClientUtil.post(FLOW_RECORD_URL, flowRecordContext, JSONObject.class);
+    }
 
-	@Override
-	public JSONArray getNodeSessions(List<String> sceneIds) {
+    private String startScene(SceneStartContext context, String url) {
+        JSONObject data = HttpClientUtil.post(url, context, JSONObject.class);
 
-		if (CollectionUtils.isEmpty(sceneIds)) {
-			return new JSONArray();
-		}
+        if (null == data) {
+            log.error("topoId=[{}] startScene error, response data is null", context.getId());
+            throw new RemoteServiceException();
+        }
 
-		String sceneIdStr = String.join(CommonConstant.CODE_COMMA, sceneIds);
-		return HttpClientUtil.rawGet(NODE_SESSION_URL + sceneIdStr, JSONArray.class);
-	}
+        String sceneId = data.getString("id");
+        if (StringUtils.isBlank(sceneId)) {
+            log.error("topoId=[{}] startScene error, sceneId is blank", context.getId());
+            throw new RemoteServiceException();
+        }
+        // 校验sceneId长度
+        if (sceneId.length() != SCENE_ID_LENGTH) {
+            log.error("Illegal sceneId {}", sceneId);
+            throw new RemoteServiceException();
+        }
 
-	@Override
-	public JSONArray getNodeSessions(List<String> sceneIds, List<String> nodeIds,
-			List<String> userIds, String type) {
-		if (CollectionUtils.isEmpty(sceneIds)) {
-			return new JSONArray();
-		}
+        return sceneId;
+    }
 
-		String assistanceUrl = this.NODE_SESSION_URL
-				+ String.join(CommonConstant.CODE_COMMA, sceneIds);
-		if (!CollectionUtils.isEmpty(nodeIds)) {
-			assistanceUrl += "&nodeIds=" + String.join(CommonConstant.CODE_COMMA, nodeIds);
-		}
-		if (!CollectionUtils.isEmpty(userIds)) {
-			assistanceUrl += "&userIds=" + String.join(CommonConstant.CODE_COMMA, userIds);
-		}
-		if (StringUtils.isNotBlank(type)) {
-			assistanceUrl += "&type=" + type;
-		}
+    @Override
+    public JSONArray getNodeSessions(List<String> sceneIds) {
 
-		return HttpClientUtil.rawGet(assistanceUrl, JSONArray.class);
-	}
+        if (CollectionUtils.isEmpty(sceneIds)) {
+            return new JSONArray();
+        }
 
-	@Override
-	public Map<String, String> getAssistanceMap(List<String> sceneIds, List<String> nodeIds,
-			List<String> userIds) {
+        String sceneIdStr = String.join(CommonConstant.CODE_COMMA, sceneIds);
+        return HttpClientUtil.rawGet(NODE_SESSION_URL + sceneIdStr, JSONArray.class);
+    }
 
-		JSONArray nodeSessions = getNodeSessions(sceneIds, nodeIds, userIds,
-				SessionType.ASSISTANCE.type);
-		List<Object> filterList = StreamApiUtils.filter(nodeSessions, node -> StringUtils
-				.isNotBlank(((JSONObject) node).getString(JsonKeyConstant.ASSISTANCE_URL)));
+    @Override
+    public JSONArray getNodeSessions(List<String> sceneIds, List<String> nodeIds,
+                                     List<String> userIds, String type) {
+        if (CollectionUtils.isEmpty(sceneIds)) {
+            return new JSONArray();
+        }
 
-		List<Object> distinct = StreamApiUtils.distinctByColumn(filterList,
-				obj -> ((JSONObject) obj).getString(JsonKeyConstant.USER_KEY));
+        String assistanceUrl = this.NODE_SESSION_URL
+                + String.join(CommonConstant.CODE_COMMA, sceneIds);
+        if (!CollectionUtils.isEmpty(nodeIds)) {
+            assistanceUrl += "&nodeIds=" + String.join(CommonConstant.CODE_COMMA, nodeIds);
+        }
+        if (!CollectionUtils.isEmpty(userIds)) {
+            assistanceUrl += "&userIds=" + String.join(CommonConstant.CODE_COMMA, userIds);
+        }
+        if (StringUtils.isNotBlank(type)) {
+            assistanceUrl += "&type=" + type;
+        }
 
-		Map<String, String> userAssistanceMap = StreamApiUtils.toMap(distinct,
-				object -> ((JSONObject) object).getString(JsonKeyConstant.USER_KEY),
-				object -> ((JSONObject) object).getString(JsonKeyConstant.ASSISTANCE_URL));
-		return userAssistanceMap;
-	}
+        return HttpClientUtil.rawGet(assistanceUrl, JSONArray.class);
+    }
 
-	@Override
-	public JSONArray getMonitorSessions(String mpSceneId, String studentId) {
-		String url = NODE_SESSION_URL + mpSceneId;
-		if (StringUtils.isNotBlank(studentId)) {
-			url = url + "&userIds=" + studentId;
-		}
-		return HttpClientUtil.rawGet(url, JSONArray.class);
-	}
+    @Override
+    public Map<String, String> getAssistanceMap(List<String> sceneIds, List<String> nodeIds,
+                                                List<String> userIds) {
 
-	@Override
-	public JSONObject getFlowLogs(FlowLogsPageContext flowLogsPageContext) {
-		return HttpClientUtil.rawGetByParam(flowLogsPageContext, FLOW_LOG_URL, JSONObject.class);
-	}
+        JSONArray nodeSessions = getNodeSessions(sceneIds, nodeIds, userIds,
+                SessionType.ASSISTANCE.type);
+        List<Object> filterList = StreamApiUtils.filter(nodeSessions, node -> StringUtils
+                .isNotBlank(((JSONObject) node).getString(JsonKeyConstant.ASSISTANCE_URL)));
 
-	@Override
-	public List<MpHostState> getHostState(ElementCommonContext elementCommonContext) {
-		String mpHostStates = HttpClientUtil.rawGetByParam(elementCommonContext, HOST_STATE_URL,
-				String.class);
-		return JsonUtil.toJsonObjectArray(mpHostStates, MpHostState.class);
-	}
+        List<Object> distinct = StreamApiUtils.distinctByColumn(filterList,
+                obj -> ((JSONObject) obj).getString(JsonKeyConstant.USER_KEY));
 
-	@Override
-	public List<MpFlowTrend> getFlowTrend(ElementCommonContext elementCommonContext) {
-		String flowTrends = HttpClientUtil.rawGetByParam(elementCommonContext, FLOW_TREND_URL,
-				String.class);
-		return JsonUtil.toJsonObjectArray(flowTrends, MpFlowTrend.class);
-	}
+        Map<String, String> userAssistanceMap = StreamApiUtils.toMap(distinct,
+                object -> ((JSONObject) object).getString(JsonKeyConstant.USER_KEY),
+                object -> ((JSONObject) object).getString(JsonKeyConstant.ASSISTANCE_URL));
+        return userAssistanceMap;
+    }
 
-	@Override
-	public MpEventAggr getEventAggr(ElementCommonContext elementCommonContext) {
-		return HttpClientUtil.rawGetByParam(elementCommonContext, EVENT_AGGR_URL,
-				MpEventAggr.class);
-	}
+    @Override
+    public JSONArray getMonitorSessions(String mpSceneId, String studentId) {
+        String url = NODE_SESSION_URL + mpSceneId;
+        if (StringUtils.isNotBlank(studentId)) {
+            url = url + "&userIds=" + studentId;
+        }
+        return HttpClientUtil.rawGet(url, JSONArray.class);
+    }
 
-	@Override
-	public MpRiskCount getRiskCount(ElementCommonContext elementCommonContext) {
-		return HttpClientUtil.rawGetByParam(elementCommonContext, RISK_COUNT_URL,
-				MpRiskCount.class);
-	}
+    @Override
+    public JSONObject getFlowLogs(FlowLogsPageContext flowLogsPageContext) {
+        return HttpClientUtil.rawGetByParam(flowLogsPageContext, FLOW_LOG_URL, JSONObject.class);
+    }
 
-	@Override
-	public List<MpCollectionEvent>
-			getCollectionEvent(CollectionEventPageContext collectionEventPageContext) {
-		String mpCollectionEvents = HttpClientUtil.rawGetByParam(collectionEventPageContext,
-				COLLECTION_EVENT_DATA_URL, String.class);
-		// 远程返回异常
-		if (mpCollectionEvents == null) {
-			throw new RemoteServiceException();
-		}
-		JSONObject result = JsonUtil.toJsonObject(mpCollectionEvents, JSONObject.class);
+    @Override
+    public List<MpHostState> getHostState(ElementCommonContext elementCommonContext) {
+        String mpHostStates = HttpClientUtil.rawGetByParam(elementCommonContext, HOST_STATE_URL,
+                String.class);
+        return JsonUtil.toJsonObjectArray(mpHostStates, MpHostState.class);
+    }
 
-		return JsonUtil.toJsonObjectArray(result.getString("list"), MpCollectionEvent.class);
-	}
+    @Override
+    public List<MpFlowTrend> getFlowTrend(ElementCommonContext elementCommonContext) {
+        String flowTrends = HttpClientUtil.rawGetByParam(elementCommonContext, FLOW_TREND_URL,
+                String.class);
+        return JsonUtil.toJsonObjectArray(flowTrends, MpFlowTrend.class);
+    }
 
-	@Override
-	public Boolean nodeSnapshot(NodeSnapshotContext snapshotContext) {
-		return HttpClientUtil.post(NODE_SNAPSHOT_URL,
-				JsonUtil.toJsonString(snapshotContext, PropertyNamingStrategy.SnakeCase),
-				Boolean.class);
-	}
+    @Override
+    public MpEventAggr getEventAggr(ElementCommonContext elementCommonContext) {
+        return HttpClientUtil.rawGetByParam(elementCommonContext, EVENT_AGGR_URL,
+                MpEventAggr.class);
+    }
 
-	@Override
-	public JSONArray snapshotHistory(String imageId) {
-		String requestUrl = String.format(SNAPSHOT_HISTORY_URL, imageId);
-		return HttpClientUtil.rawGet(requestUrl, JSONArray.class);
-	}
-
-	@Override
-	public JSONObject mergeSnapshot(MergeSnapshotContext mergeSnapshotContext) {
-
-		HttpClientUtil.post(SNAPSHOT_MERGE_URL,
-				JsonUtil.toJsonString(mergeSnapshotContext, PropertyNamingStrategy.SnakeCase),
-				String.class);
-		return null;
-	}
-
-	@Override
-	public Boolean deleteSnapshot(SnapshotDeleteContext deleteContext) {
-		return HttpClientUtil.post(SNAPSHOT_DELETE_URL,
-				JsonUtil.toJsonString(deleteContext, PropertyNamingStrategy.SnakeCase),
-				Boolean.class);
-	}
-
-	@Override
-	public List<MpNodeStatus> getConnectionStatus(String mpSceneId) {
-		String url = CONNECTION_STATUS_URL + mpSceneId;
-
-		JSONObject jsonObject = HttpClientUtil.rawGet(url, JSONObject.class);
-		String mpNodeStatus = JsonUtil.toJsonString(
-				jsonObject.getOrDefault("node_link_status_list", Lists.newArrayList()));
-
-		return JsonUtil.toJsonObjectArray(mpNodeStatus, MpNodeStatus.class);
-	}
-
-	private JSONObject replaceAccessIp(JSONObject topoData) {
-		if (topoData == null) {
-			return null;
-		}
-		try {
-			JSONObject elementPorts = topoData.getJSONObject("scene").getJSONObject("plugins")
-					.getJSONObject("cpcloud").getJSONObject("element_ports");
-			replaceAccessIpExe(elementPorts);
-		} catch (Exception e) {
-			log.error("[getById] access ip replacement failed:", e);
-		}
-
-		return topoData;
-	}
-
-	@Override
-	public void replaceAccessIpExe(JSONObject elementPorts) {
-		if (elementPorts == null) {
-			return;
-		}
-		for (String key : elementPorts.keySet()) {
-			JSONArray accessModes = elementPorts.getJSONObject(key).getJSONArray("access_modes");
-			if (!accessModes.isEmpty()) {
-				accessModes.toJavaList(JSONObject.class).forEach(item -> {
-					// origin access port
-					String accessIp = item.getString("access_ip");
-					String accessPort = item.getString("access_port");
-					if (!StringUtils.isEmpty(accessIp)) {
-						// internet access port
-						String internetProxyIp = item.getString("public_net_proxy_ip");
-						Integer internetProxyPort = item.getInteger("public_net_proxy_port");
-						if (!StringUtils.isEmpty(internetProxyIp)) {
-							item.put("access_ip", internetProxyIp);
-							item.put("access_port", internetProxyPort);
-							log.debug("[replaceAccessIp] access ip replacement [{}:{}] -> [{}:{}]",
-									accessIp, accessPort, internetProxyIp, internetProxyPort);
-						}
-					}
-				});
-			}
-		}
-	}
-
-	@Override
-	public JSONObject getEventTotalCount(String sceneId) {
-		String requestUrl = EVENT_TOTAL_COUNT_URL + sceneId;
-		return HttpClientUtil.rawGet(requestUrl, JSONObject.class);
-	}
-
-	@Override
-	public JSONArray getAttackTypeCountGroup(String sceneId) {
-		String requestUrl = ATTACK_TYPE_COUNT_URL + sceneId;
-		return HttpClientUtil.rawGet(requestUrl, JSONArray.class);
-	}
-
-	@Override
-	public JSONArray getEventTrentCount(String sceneId) {
-		String requestUrl = EVENT_TRENT_COUNT_URL + sceneId;
-		return HttpClientUtil.rawGet(requestUrl, JSONArray.class);
-	}
-
-	@Override
-	public JSONArray getEventTimeList(SceneEventContext sceneEventContext) {
-		return HttpClientUtil.post(EVENT_TIME_LIST_URL,
-				JsonUtil.toJsonString(sceneEventContext, PropertyNamingStrategy.SnakeCase),
-				JSONArray.class);
-	}
-
-	@Override
-	public JSONArray getEventList(SceneEventContext sceneEventContext) {
-		JSONObject jsonObject = HttpClientUtil.post(EVENT_LIST_URL,
-				JsonUtil.toJsonString(sceneEventContext, PropertyNamingStrategy.SnakeCase),
-				JSONObject.class);
-		return jsonObject.getJSONArray("list");
-	}
-
-	@Override
-	public List<MpHostEvent> getHostEventList(SceneEventHostListReq req) {
-		String listData =  HttpClientUtil.rawGetByParam(req, HOST_EVENT_LIST, JSONObject.class)
-				.getString("list");
-		return JsonUtil.toJsonObjectArray(listData, MpHostEvent.class);
-	}
-
-	@Override
-	public Boolean saveAlertRule(JSONArray data) {
-		return HttpClientUtil.post(SAVE_ALERT_RULE, data, Boolean.class);
-	}
-
-	@Override
-	public List<ImagesByIdVO> getImageList() {
-		String list = HttpClientUtil.rawGetByParam(null, IMAGE_LIST,
-				JSONObject.class).getString("list");
-		return JsonUtil.toJsonObjectArray(list, ImagesByIdVO.class);
-	}
-
-	@Override
-	public List<ImagesByIdVO> getImageListByuuids(List<String> uuids) {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("uuids", uuids);
-		JSONArray post = HttpClientUtil.post(IMAGE_UUID_LIST, JsonUtil.toJsonString(jsonObject, PropertyNamingStrategy.SnakeCase),
-				JSONArray.class);
-		return post.toJavaList(ImagesByIdVO.class);
-	}
-	@Override
-	public JSONObject getByArea(String sceneId, String areaId) {
-		String requestUrl = String.format(GET_BY_AREA_URL, sceneId, areaId);
-		return HttpClientUtil.rawGet(requestUrl, JSONObject.class);
-	}
-
-	@Override
-	public JSONObject getSceneLoadInfo(String sceneId) {
-		String requestUrl = String.format(GET_SCENE_LOAD_INFO, sceneId);
-		return HttpClientUtil.rawGet(requestUrl, JSONObject.class);
-	}
-
-	@Override
-	public void addLoadResult(JSONObject addReq) {
-		HttpClientUtil.post(ADD_LOAD_RESULT, addReq, Boolean.class);
-	}
-
-	@Override
-	public List<JSONObject> getLoadResultByNodeIds(String sceneId, Integer interval, String endTime) {
-		try {
-			endTime = URLEncoder.encode(endTime, StandardCharsets.UTF_8.toString());
-		}catch (Exception e){
-			throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
-		}
-		String requestUrl = String.format(LOAD_RESULT_BY_NODE, sceneId,interval,endTime);
-		return HttpClientUtil.rawGet(requestUrl, List.class);
-	}
-
-	@Override
-	public JSONArray getProcessExecutionRecords() {
-		String requestUrl = String.format(GET_LOCAL_LOAD_RECORDS);
-		JSONArray jsonArray = HttpClientUtil.rawGet(requestUrl, JSONArray.class);
-		log.info("getProcessExecutionRecords:{}", jsonArray);
-		return jsonArray;
-	}
-
-	@Override
-	public JSONArray getDemoExecutionRecords() {
-		String requestUrl = String.format(GET_DEMO_LOCAL_LOAD_RECORDS);
-		JSONArray jsonArray = HttpClientUtil.rawGet(requestUrl, JSONArray.class);
-		log.info("getProcessExecutionRecords:{}", jsonArray);
-		return jsonArray;
-	}
+    @Override
+    public MpRiskCount getRiskCount(ElementCommonContext elementCommonContext) {
+        return HttpClientUtil.rawGetByParam(elementCommonContext, RISK_COUNT_URL,
+                MpRiskCount.class);
+    }
+
+    @Override
+    public List<MpCollectionEvent>
+    getCollectionEvent(CollectionEventPageContext collectionEventPageContext) {
+        String mpCollectionEvents = HttpClientUtil.rawGetByParam(collectionEventPageContext,
+                COLLECTION_EVENT_DATA_URL, String.class);
+        // 远程返回异常
+        if (mpCollectionEvents == null) {
+            throw new RemoteServiceException();
+        }
+        JSONObject result = JsonUtil.toJsonObject(mpCollectionEvents, JSONObject.class);
+
+        return JsonUtil.toJsonObjectArray(result.getString("list"), MpCollectionEvent.class);
+    }
+
+    @Override
+    public Boolean nodeSnapshot(NodeSnapshotContext snapshotContext) {
+        return HttpClientUtil.post(NODE_SNAPSHOT_URL,
+                JsonUtil.toJsonString(snapshotContext, PropertyNamingStrategy.SnakeCase),
+                Boolean.class);
+    }
+
+    @Override
+    public JSONArray snapshotHistory(String imageId) {
+        String requestUrl = String.format(SNAPSHOT_HISTORY_URL, imageId);
+        return HttpClientUtil.rawGet(requestUrl, JSONArray.class);
+    }
+
+    @Override
+    public JSONObject mergeSnapshot(MergeSnapshotContext mergeSnapshotContext) {
+
+        HttpClientUtil.post(SNAPSHOT_MERGE_URL,
+                JsonUtil.toJsonString(mergeSnapshotContext, PropertyNamingStrategy.SnakeCase),
+                String.class);
+        return null;
+    }
+
+    @Override
+    public Boolean deleteSnapshot(SnapshotDeleteContext deleteContext) {
+        return HttpClientUtil.post(SNAPSHOT_DELETE_URL,
+                JsonUtil.toJsonString(deleteContext, PropertyNamingStrategy.SnakeCase),
+                Boolean.class);
+    }
+
+    @Override
+    public List<MpNodeStatus> getConnectionStatus(String mpSceneId) {
+        String url = CONNECTION_STATUS_URL + mpSceneId;
+
+        JSONObject jsonObject = HttpClientUtil.rawGet(url, JSONObject.class);
+        String mpNodeStatus = JsonUtil.toJsonString(
+                jsonObject.getOrDefault("node_link_status_list", Lists.newArrayList()));
+
+        return JsonUtil.toJsonObjectArray(mpNodeStatus, MpNodeStatus.class);
+    }
+
+    private JSONObject replaceAccessIp(JSONObject topoData) {
+        if (topoData == null) {
+            return null;
+        }
+        try {
+            JSONObject elementPorts = topoData.getJSONObject("scene").getJSONObject("plugins")
+                    .getJSONObject("cpcloud").getJSONObject("element_ports");
+            replaceAccessIpExe(elementPorts);
+        } catch (Exception e) {
+            log.error("[getById] access ip replacement failed:", e);
+        }
+
+        return topoData;
+    }
+
+    @Override
+    public void replaceAccessIpExe(JSONObject elementPorts) {
+        if (elementPorts == null) {
+            return;
+        }
+        for (String key : elementPorts.keySet()) {
+            JSONArray accessModes = elementPorts.getJSONObject(key).getJSONArray("access_modes");
+            if (!accessModes.isEmpty()) {
+                accessModes.toJavaList(JSONObject.class).forEach(item -> {
+                    // origin access port
+                    String accessIp = item.getString("access_ip");
+                    String accessPort = item.getString("access_port");
+                    if (!StringUtils.isEmpty(accessIp)) {
+                        // internet access port
+                        String internetProxyIp = item.getString("public_net_proxy_ip");
+                        Integer internetProxyPort = item.getInteger("public_net_proxy_port");
+                        if (!StringUtils.isEmpty(internetProxyIp)) {
+                            item.put("access_ip", internetProxyIp);
+                            item.put("access_port", internetProxyPort);
+                            log.debug("[replaceAccessIp] access ip replacement [{}:{}] -> [{}:{}]",
+                                    accessIp, accessPort, internetProxyIp, internetProxyPort);
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    @Override
+    public JSONObject getEventTotalCount(String sceneId) {
+        String requestUrl = EVENT_TOTAL_COUNT_URL + sceneId;
+        return HttpClientUtil.rawGet(requestUrl, JSONObject.class);
+    }
+
+    @Override
+    public JSONArray getAttackTypeCountGroup(String sceneId) {
+        String requestUrl = ATTACK_TYPE_COUNT_URL + sceneId;
+        return HttpClientUtil.rawGet(requestUrl, JSONArray.class);
+    }
+
+    @Override
+    public JSONArray getEventTrentCount(String sceneId) {
+        String requestUrl = EVENT_TRENT_COUNT_URL + sceneId;
+        return HttpClientUtil.rawGet(requestUrl, JSONArray.class);
+    }
+
+    @Override
+    public JSONArray getEventTimeList(SceneEventContext sceneEventContext) {
+        return HttpClientUtil.post(EVENT_TIME_LIST_URL,
+                JsonUtil.toJsonString(sceneEventContext, PropertyNamingStrategy.SnakeCase),
+                JSONArray.class);
+    }
+
+    @Override
+    public JSONArray getEventList(SceneEventContext sceneEventContext) {
+        JSONObject jsonObject = HttpClientUtil.post(EVENT_LIST_URL,
+                JsonUtil.toJsonString(sceneEventContext, PropertyNamingStrategy.SnakeCase),
+                JSONObject.class);
+        return jsonObject.getJSONArray("list");
+    }
+
+    @Override
+    public List<MpHostEvent> getHostEventList(SceneEventHostListReq req) {
+        String listData = HttpClientUtil.rawGetByParam(req, HOST_EVENT_LIST, JSONObject.class)
+                .getString("list");
+        return JsonUtil.toJsonObjectArray(listData, MpHostEvent.class);
+    }
+
+    @Override
+    public Boolean saveAlertRule(JSONArray data) {
+        return HttpClientUtil.post(SAVE_ALERT_RULE, data, Boolean.class);
+    }
+
+    @Override
+    public List<ImagesByIdVO> getImageList() {
+        String list = HttpClientUtil.rawGetByParam(null, IMAGE_LIST,
+                JSONObject.class).getString("list");
+        return JsonUtil.toJsonObjectArray(list, ImagesByIdVO.class);
+    }
+
+    @Override
+    public List<ImagesByIdVO> getImageListByuuids(List<String> uuids) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("uuids", uuids);
+        JSONArray post = HttpClientUtil.post(IMAGE_UUID_LIST, JsonUtil.toJsonString(jsonObject, PropertyNamingStrategy.SnakeCase),
+                JSONArray.class);
+        return post.toJavaList(ImagesByIdVO.class);
+    }
+
+    @Override
+    public JSONObject getByArea(String sceneId, String areaId) {
+        String requestUrl = String.format(GET_BY_AREA_URL, sceneId, areaId);
+        return HttpClientUtil.rawGet(requestUrl, JSONObject.class);
+    }
+
+    @Override
+    public JSONObject getSceneLoadInfo(String sceneId) {
+        String requestUrl = String.format(GET_SCENE_LOAD_INFO, sceneId);
+        return HttpClientUtil.rawGet(requestUrl, JSONObject.class);
+    }
+
+    @Override
+    public void addLoadResult(JSONObject addReq) {
+        HttpClientUtil.post(ADD_LOAD_RESULT, addReq, Boolean.class);
+    }
+
+    @Override
+    public List<JSONObject> getLoadResultByNodeIds(String sceneId, Integer interval, String endTime) {
+        try {
+            endTime = URLEncoder.encode(endTime, StandardCharsets.UTF_8.toString());
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
+        }
+        String requestUrl = String.format(LOAD_RESULT_BY_NODE, sceneId, interval, endTime);
+        return HttpClientUtil.rawGet(requestUrl, List.class);
+    }
+
+    @Override
+    public JSONArray getProcessExecutionRecords() {
+        String requestUrl = String.format(GET_LOCAL_LOAD_RECORDS);
+        JSONArray jsonArray = HttpClientUtil.rawGet(requestUrl, JSONArray.class);
+        log.info("getProcessExecutionRecords:{}", jsonArray);
+        return jsonArray;
+    }
+
+    @Override
+    public JSONArray getDemoExecutionRecords() {
+        String requestUrl = String.format(GET_DEMO_LOCAL_LOAD_RECORDS);
+        JSONArray jsonArray = HttpClientUtil.rawGet(requestUrl, JSONArray.class);
+        log.info("getDemoExecutionRecords:{}", jsonArray);
+        return jsonArray;
+    }
+
+    @Override
+    public void updateLoadExecutionResultByPk(JSONObject addReqJson) {
+        HttpClientUtil.post(UPDATE_LOAD_EXECUTION_RESULT_BY_PK, addReqJson, Boolean.class);
+    }
+
+    @Override
+    public JSONObject getExecutionRecord(String executionRecordId) {
+        String requestUrl = String.format(GET_EXECUTION_RECORD,executionRecordId);
+        JSONObject jsonObject = HttpClientUtil.rawGet(requestUrl, JSONObject.class);
+        log.info("getExecutionRecords:{}", jsonObject);
+        return jsonObject;
+    }
 
 }

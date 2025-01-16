@@ -334,4 +334,8 @@ public interface RemoteSceneService {
     JSONArray getProcessExecutionRecords();
 
     JSONArray getDemoExecutionRecords();
+
+    void updateLoadExecutionResultByPk(JSONObject addReqJson);
+
+    JSONObject getExecutionRecord(String executionRecordId);
 }

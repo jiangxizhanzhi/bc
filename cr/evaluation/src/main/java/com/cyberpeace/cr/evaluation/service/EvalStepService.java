@@ -2,6 +2,7 @@ package com.cyberpeace.cr.evaluation.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.evaluation.controller.req.EvalLoadResultAddReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalMpDevopsLoadSceneLogAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStepLoadAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStepLoadDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestStepListRsp;
@@ -37,4 +38,6 @@ public interface EvalStepService extends IService<EvalStep> {
 	void buildAndSendSituationAttackData(String sceneId, String nodeName, String sourceId, String targetId);
 
 	void packageAndSendAttackData(String scene, String srcNode, String targetId);
+
+	void updateLoadExecutionResultByPk(EvalMpDevopsLoadSceneLogAddReq addReq);
 }

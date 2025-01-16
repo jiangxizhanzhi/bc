@@ -3,6 +3,7 @@ package com.cyberpeace.iov.index.controller;
 import javax.validation.constraints.NotNull;
 
 import com.alibaba.fastjson.JSONArray;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.iov.constant.IovConstants;
 import com.cyberpeace.iov.index.service.bo.can.CanMsg;
 import com.google.common.collect.Lists;
@@ -68,7 +69,7 @@ public class IovCanController {
 	@PostMapping("/msg/stop/")
 	public BaseRsp<JSONArray> stopSendMessage() {
 		JSONArray result = iovCanService.stopSendMsg();
-		return new BaseRsp<>(result);
+		return new BaseRsp<>(JsonUtil.subList(result, 200));
 	}
 
 	@ApiOperation("开始抓取")

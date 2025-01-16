@@ -42,6 +42,25 @@ public final class IovConstants {
 
 	}
 
+	public static final class CanDataId {
+
+		/**
+		 * 切换app
+		 */
+		public static final String SWITCH_APP = "2EE";
+
+		/**
+		 * 旋转屏幕
+		 */
+		public static final String ROTATE_SCREEN = "4F5";
+
+		/**
+		 * 开启车门
+		 */
+		public static final String OPEN_DOOR = "133";
+
+	}
+
 	/**
 	 * websocket 消息类型
 	 */
@@ -50,6 +69,15 @@ public final class IovConstants {
 		 * 闪光
 		 */
 		public static final Integer FLASH = 1;
+	}
+
+	public static final class PacketType {
+
+		public static final Integer CAN = 1;
+
+		public static final Integer WIFI = 2;
+
+		public static final Integer BLUETOOTH = 3;
 	}
 
 }

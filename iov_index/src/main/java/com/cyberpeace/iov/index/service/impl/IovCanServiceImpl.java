@@ -4,6 +4,7 @@ import javax.annotation.PostConstruct;
 
 import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.integratation.service.RemotePythonService;
+import com.cyberpeace.iov.dao.mapper.LastRawPacketMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,40 +61,49 @@ public class IovCanServiceImpl implements IovCanService {
 
 	@Autowired
 	private RemotePythonService remotePythonService;
+	
+	@Autowired
+	private LastRawPacketMapper lastRawPacketMapper;
 
 
 	@PostConstruct
 	public void init() {
 		String KA_HOST = SystemPropUtil.getProp("KA_HOST");
+		String KA_CAN_PORT = SystemPropUtil.getProp("KA_CAN_PORT");
 		// 控安测试地址 http://180.167.177.61:18080
 		if (StringUtils.isBlank(KA_HOST) || !KA_HOST.startsWith("http")) {
 			log.error("KA_HOST [{}] not starts with http!", KA_HOST);
 			throw new BusinessException("KA_HOST not set");
 		}
-		START_FUZZING_URL = KA_HOST + ConfigUtil.getContextProperty("ka.fuzzing.start");
-		STOP_FUZZING_URL = KA_HOST + ConfigUtil.getContextProperty("ka.fuzzing.stop");
-		START_REPLAY_URL = KA_HOST + ConfigUtil.getContextProperty("ka.replay.start");
-		STOP_REPLAY_URL = KA_HOST + ConfigUtil.getContextProperty("ka.replay.stop");
-		START_SEND_MSG_URL = KA_HOST + ConfigUtil.getContextProperty("ka.msg.send.start");
-		STOP_SEND_MSG_URL = KA_HOST + ConfigUtil.getContextProperty("ka.mgs.send.stop");
-		START_SNIFF_URL = KA_HOST + ConfigUtil.getContextProperty("ka.sniff.start");
-		STOP_SNIFF_URL = KA_HOST + ConfigUtil.getContextProperty("ka.sniff.stop");
+		if (StringUtils.isBlank(KA_CAN_PORT)) {
+			log.error("KA_CAN_PORT [{}] not set!", KA_CAN_PORT);
+			throw new BusinessException("KA_CAN_PORT not set");
+		}
+		String KA_CAN_HOST = KA_HOST + ":" + KA_CAN_PORT;
+		START_FUZZING_URL = KA_CAN_HOST + ConfigUtil.getContextProperty("ka.fuzzing.start");
+		STOP_FUZZING_URL = KA_CAN_HOST + ConfigUtil.getContextProperty("ka.fuzzing.stop");
+		START_REPLAY_URL = KA_CAN_HOST + ConfigUtil.getContextProperty("ka.replay.start");
+		STOP_REPLAY_URL = KA_CAN_HOST + ConfigUtil.getContextProperty("ka.replay.stop");
+		START_SEND_MSG_URL = KA_CAN_HOST + ConfigUtil.getContextProperty("ka.msg.send.start");
+		STOP_SEND_MSG_URL = KA_CAN_HOST + ConfigUtil.getContextProperty("ka.mgs.send.stop");
+		START_SNIFF_URL = KA_CAN_HOST + ConfigUtil.getContextProperty("ka.sniff.start");
+		STOP_SNIFF_URL = KA_CAN_HOST + ConfigUtil.getContextProperty("ka.sniff.stop");
 		DOWNLOAD_PATH = ConfigUtil.getContextProperty("cr.local.file.prefix") + "blf";
 
 
-		log.info("ka host is =[{}]", KA_HOST);
+		log.info("ka host is =[{}]", KA_CAN_HOST);
 	}
 
 	@Override
 	public void startFuzzing(FuzzingReq req) {
 		req.setMsgChn(MSG_CHN);
-		IovHttpClientUtil.postJson(START_FUZZING_URL, req, JSONObject.class);
+		IovHttpClientUtil.postJson(START_FUZZING_URL, req);
 	}
 
 	@Override
 	public void stopFuzzing() {
 		String fileName = getDownloadPath();
-		IovHttpClientUtil.rawPostFile(STOP_FUZZING_URL, fileName);
+		IovHttpClientUtil.rawPostFile(STOP_FUZZING_URL, null, fileName);
 	}
 
 	private String getDownloadPath() {
@@ -106,19 +116,27 @@ public class IovCanServiceImpl implements IovCanService {
 	@Override
 	public void startSendMsg(MsgSendReq req) {
 		req.getMsgs().forEach(msg -> msg.setMsgChn(MSG_CHN));
-		IovHttpClientUtil.postJson(START_SEND_MSG_URL, req, JSONObject.class);
+		IovHttpClientUtil.postJson(START_SEND_MSG_URL, req);
 		this.sendFlashEffect(req);
 	}
 
 	@Override
 	public JSONArray stopSendMsg() {
 		String fileName = getDownloadPath();
-		IovHttpClientUtil.rawPostFile(STOP_SEND_MSG_URL, fileName);
+		IovHttpClientUtil.rawPostFile(STOP_SEND_MSG_URL,null, fileName);
 		JSONArray rsp = new JSONArray();
 		try {
 			rsp = remotePythonService.getBlfParseResult(fileName);
+			if (!rsp.isEmpty()) {
+				lastRawPacketMapper.updatePacket(IovConstants.PacketType.CAN, rsp.toJSONString());
+			}
 		} catch (Exception e) {
 			log.error("get blf parse result error", e);
+		}
+		// 暂时用固定的数据
+		if (rsp.isEmpty()) {
+			return remotePythonService.getBlfParseResult(
+					"/cpms/blf/7e2b02b9ca194aa1a661398dc13c8e44/20241224_091902.blf");
 		}
 		return rsp;
 	}
@@ -126,7 +144,7 @@ public class IovCanServiceImpl implements IovCanService {
 	@Override
 	public void stopReplay() {
 		String fileName = getDownloadPath();
-		IovHttpClientUtil.rawPostFile(STOP_REPLAY_URL, fileName);
+		IovHttpClientUtil.rawPostFile(STOP_REPLAY_URL,null, fileName);
 	}
 
 	@Override
@@ -139,12 +157,12 @@ public class IovCanServiceImpl implements IovCanService {
 			throw new BusinessException(ErrorCode.INVALID_VEHICLE_FRAME_ID, "文件大小不能为空或者不能超过200M");
 		}
 
-		IovHttpClientUtil.rawPostUploadFile(START_REPLAY_URL, blFile, JSONObject.class);
+		IovHttpClientUtil.rawPostUploadFile(START_REPLAY_URL, blFile);
 	}
 
 	@Override
 	public void startSniff() {
-		IovHttpClientUtil.postJson(START_SNIFF_URL, null, String.class);
+		IovHttpClientUtil.postJson(START_SNIFF_URL, null);
 	}
 
 	@Override

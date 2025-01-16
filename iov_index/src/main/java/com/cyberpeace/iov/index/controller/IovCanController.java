@@ -3,6 +3,9 @@ package com.cyberpeace.iov.index.controller;
 import javax.validation.constraints.NotNull;
 
 import com.alibaba.fastjson.JSONArray;
+import com.cyberpeace.iov.constant.IovConstants;
+import com.cyberpeace.iov.index.service.bo.can.CanMsg;
+import com.google.common.collect.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -80,6 +83,41 @@ public class IovCanController {
 	public BaseRsp<Void> stopSniff() {
 		iovCanService.stopSniff();
 		return new BaseRsp<>();
+	}
+
+	@ApiOperation("车辆解锁")
+	@PostMapping("/msg/start/unlock")
+	public BaseRsp<Void> unlock() {
+		MsgSendReq req = this.createReq(IovConstants.CanData.OPEN_DOOR, IovConstants.CanDataId.OPEN_DOOR);
+		iovCanService.startSendMsg(req);
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("切换车辆APP")
+	@PostMapping("/msg/start/switch_app")
+	public BaseRsp<Void> switchApp() {
+		MsgSendReq req = this.createReq(IovConstants.CanData.SWITCH_APP, IovConstants.CanDataId.SWITCH_APP);
+		iovCanService.startSendMsg(req);
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("旋转中控屏")
+	@PostMapping("/msg/start/rotate_screen")
+	public BaseRsp<Void> rotateScreen() {
+		MsgSendReq req = this.createReq(IovConstants.CanData.ROTATE_SCREEN, IovConstants.CanDataId.ROTATE_SCREEN);
+		iovCanService.startSendMsg(req);
+		return new BaseRsp<>();
+	}
+
+	private MsgSendReq createReq(String data, String id){
+		MsgSendReq req = new MsgSendReq();
+		req.setMsgInterval("1000");
+		CanMsg msg = new CanMsg();
+		msg.setMsgId(id);
+		msg.setMsgData(data);
+		req.setMsgs(Lists.newArrayList(msg));
+
+		return req;
 	}
 
 }

@@ -3,54 +3,42 @@ package com.cyberpeace.iov.util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.TreeMap;
 
-import com.cyberpeace.common.util.FileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.impl.TraceIdContext;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.model.HttpDeleteWithBody;
 import com.cyberpeace.common.model.HttpclientContext;
 import com.cyberpeace.common.model.HttpclientModel;
+import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.ObjUtil;
 import com.cyberpeace.iov.model.CanBaseRsp;
 import com.google.common.collect.Lists;
-import org.springframework.web.multipart.MultipartFile;
 
 public class IovHttpClientUtil {
 
@@ -64,11 +52,9 @@ public class IovHttpClientUtil {
 	 * 执行post请求
 	 * @param url 请求的url地址
 	 * @param body 输入参数
-	 * @param resultType 返回的数据类型
-	 * @param <T>
 	 * @return
 	 */
-	public static <T> T postJson(String url, Object body, Class<T> resultType) {
+	public static JSONArray postJson(String url, Object body) {
 		// 1、设置请求线程数据
 		setContext(url);
 
@@ -87,84 +73,7 @@ public class IovHttpClientUtil {
 		post.setEntity(entity);
 
 		// 3、执行实际调用、返回序列化后的结果
-		return doHttp(post, resultType);
-	}
-
-	public static <T> T delete(String url, Object body, Class<T> resultType) {
-		// 1、设置请；线程数据
-		setContext(url);
-
-		// 2、设置请求参数
-		StringEntity entity = new StringEntity(JsonUtil.toJsonString(body), WebConstant.ENCODING);
-
-		HttpDeleteWithBody delete = new HttpDeleteWithBody(url);
-		delete.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
-		delete.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
-		delete.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
-		delete.setEntity(entity);
-
-		// 3、执行实际调用、返回序列化后的结果
-		return doHttp(delete, resultType);
-	}
-
-	/**
-	 * 请求地址中包含特殊字符的可使用该方法 比如空格 * ｜
-	 * @param resultType
-	 * @param url
-	 * @param <T>
-	 * @return
-	 */
-	public static <T> T rawSpecialGet(String url, Class<T> resultType) {
-		// 1、设置请求线程数据
-		setContext(url);
-
-		// 2、生成get请求
-		URL httpUrl;
-		URI uri;
-		try {
-			httpUrl = new URL(url);
-			uri = new URI(httpUrl.getProtocol(), null, httpUrl.getHost(), httpUrl.getPort(),
-					httpUrl.getPath(), httpUrl.getQuery(), null);
-		} catch (MalformedURLException | URISyntaxException e) {
-			LOG.error("URL contains special characters, encoding conversion failed！", e);
-			throw new RemoteServiceException();
-		}
-
-		HttpGet httpGet = new HttpGet(uri);
-		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
-		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
-
-		String jwt = CommonContext.getAuthorization();
-		if (StringUtils.isNotBlank(jwt)) {
-			httpGet.setHeader(WebConstant.AUTHORIZATION_HEADER, "JWT " + jwt);
-		}
-
-		// 3、执行实际调用、返回序列化后的结果
-		return doHttp(httpGet, resultType);
-	}
-
-	/**
-	 * 所有参数都放在url中都get方法
-	 *
-	 * @param resultType
-	 * @param url
-	 * @param <T>
-	 * @return
-	 */
-	public static <T> T rawGet(String url, Class<T> resultType) {
-		// 1、设置请求线程数据
-		setContext(url);
-
-		// 2、生成get请求
-		HttpGet httpGet = new HttpGet(url);
-		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
-		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
-		String authorization = CommonContext.getAuthorization();
-		if (null != authorization) { // 调用竞赛接口需要
-			httpGet.setHeader(WebConstant.AUTHORIZATION_HEADER, "JWT " + authorization);
-		}
-		// 3、执行实际调用、返回序列化后的结果
-		return doHttp(httpGet, resultType);
+		return doHttp(post);
 	}
 
 
@@ -173,11 +82,18 @@ public class IovHttpClientUtil {
 	 * @param url
 	 * @param fileName
 	 */
-	public static void rawPostFile(String url, String fileName) {
+	public static void rawPostFile(String url,Object body, String fileName) {
 
 		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
 			// 创建 GET 请求
 			HttpPost httpPost = new HttpPost(url);
+			// 2、设置请求参数
+			if(null != body){
+				String reqJson = JsonUtil.toJsonString(body, PropertyNamingStrategy.SnakeCase);
+				StringEntity reqEntity = new StringEntity(reqJson, WebConstant.ENCODING);
+				httpPost.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
+				httpPost.setEntity(reqEntity);
+			}
 
 			try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
 				// 检查响应状态码
@@ -218,7 +134,7 @@ public class IovHttpClientUtil {
 		LOG.info("结束下载文件到本地文件: {}", fileName);
 	}
 
-	public static <T> T rawPostUploadFile(String url, MultipartFile file, Class<T> resultType) {
+	public static JSONArray rawPostUploadFile(String url, MultipartFile file) {
 		setContext(url);
 		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
 			// 创建 POST 请求
@@ -243,7 +159,7 @@ public class IovHttpClientUtil {
 				// 2、解析远程服务的返回值
 				String httpResponse = EntityUtils.toString(response.getEntity(), WebConstant.ENCODING);
 				// 4、解析结果并返回
-				return parseHttpResponse(httpResponse, resultType);
+				return parseHttpResponse(httpResponse);
 			} catch (IOException e) {
 				LOG.error("rawPostUploadFile error url ={}, fileName={}", url, file.getOriginalFilename(), e);
 				throw new RemoteServiceException(e.getMessage());
@@ -264,7 +180,7 @@ public class IovHttpClientUtil {
 		HttpclientContext.setContext(httpclientModel);
 	}
 
-	private static <T> T doHttp(HttpUriRequest httpRequest, Class<T> resultType) {
+	private static JSONArray doHttp(HttpUriRequest httpRequest) {
 		HttpResponse response = null;
 		String httpResponse = null;
 		HttpclientContext.getContext().setMethod(httpRequest.getMethod());
@@ -295,18 +211,16 @@ public class IovHttpClientUtil {
 		}
 
 		// 4、解析结果并返回
-		return parseHttpResponse(httpResponse, resultType);
+		return parseHttpResponse(httpResponse);
 	}
 
 	/**
 	 * 序列化http返回结果
 	 *
 	 * @param httpResponse http返回
-	 * @param resultType   需要序列化的类型
-	 * @param <T>          返回结果类型
 	 * @return
 	 */
-	private static <T> T parseHttpResponse(String httpResponse, Class<T> resultType) {
+	private static JSONArray parseHttpResponse(String httpResponse) {
 
 		try {
 			CanBaseRsp baseRsp = JSON.parseObject(httpResponse, CanBaseRsp.class);
@@ -326,15 +240,15 @@ public class IovHttpClientUtil {
 				throw new RemoteServiceException(baseRsp.getMsg().get(0));
 			}
 			if (null == baseRsp.getData().get(0)) {
-				return null;
+				return new JSONArray();
 			}
-			return JsonUtil.toJsonObjectArray(baseRsp.getData().toString(), resultType).get(0);
+			return JsonUtil.stringToArray(baseRsp.getData().toString());
 		} catch (RemoteServiceException e) {
 			throw e;
 		} catch (Exception e) {
 			// 遇到不能解析的返回结果，直接报错
-			LOG.error("parse httpResponse error, url=[{}], result=[{}], resultType=[{}]",
-					HttpclientContext.getContext().getUrl(), httpResponse, resultType);
+			LOG.error("parse httpResponse error, url=[{}], result=[{}]",
+					HttpclientContext.getContext().getUrl(), httpResponse);
 			throw new RemoteServiceException();
 		} finally {
 			HttpclientContext.removeContext();
@@ -385,31 +299,4 @@ public class IovHttpClientUtil {
 		return baseRsp.getCode().contains(SUCCESS_CODE);
 	}
 
-	/**
-	 * 附带参数get查询
-	 * @param obj 对象参数 根据对象字段和值去查询 过滤掉空值字段
-	 * @param url 接口地址
-	 * @param resultType
-	 * @param <T>
-	 * @return
-	 */
-	public static <T> T rawGetByParam(Object obj, String url, Class<T> resultType) {
-
-		TreeMap<String, Object> treeMap = ObjUtil.obj2TreemapExcludeEmpty(obj);
-		List<BasicNameValuePair> nvps = Lists.newArrayList();
-		treeMap.forEach((key, value) -> nvps
-				.add(new BasicNameValuePair(key, JsonUtil.toJsonString(value))));
-
-		try {
-			HttpEntity urlEncodedFormEntity = new UrlEncodedFormEntity(nvps, "UTF-8");
-			String paramsStr = EntityUtils.toString(urlEncodedFormEntity);
-			url = url + "?" + paramsStr;
-		} catch (Exception e) {
-			LOG.error("rawGetByParam: Request param format failed! params={}, url=[{}]",
-					JsonUtil.toJsonString(treeMap), url, e);
-			throw new RemoteServiceException();
-		}
-		return rawGet(url, resultType);
-
-	}
 }

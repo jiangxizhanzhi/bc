@@ -19,6 +19,7 @@ import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
@@ -31,7 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import edu.uci.ics.jung.algorithms.layout.FRLayout;
 
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
@@ -39,8 +39,8 @@ import java.awt.geom.Point2D;
 import java.io.*;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -125,7 +125,7 @@ public class EvalSceneMapController {
 			}
 			ImagesByIdVO imagesPageVO = imagesByIdVOMap.get(image);
 			// 中台获取的镜像角色
-			imagesPageVO.setRole(roleMap.get(imagesPageVO.getRole()));
+//			imagesPageVO.setRole(roleMap.get(imagesPageVO.getRole()));// role不需要转换
 			elementPortMap.put(id, imagesPageVO);
 			getTopoElement(topoElement, id, name, imagesPageVO, element);
 			CpcloudElement elementObj = getCpcloudElement(imagesPageVO);

@@ -171,4 +171,15 @@ public class EvalLoadResultAddReq implements Serializable {
     private String resourceId;
 
     private String resource;
+
+    /**
+     * 研判结果(0:未研判 1:成功 2:失败)
+     */
+    private Integer judgmentStatus;
+
+    /**
+     * 备注 研判结果原因
+     */
+    private String remark;
+
 }

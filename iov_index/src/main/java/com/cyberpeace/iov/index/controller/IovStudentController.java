@@ -2,6 +2,9 @@ package com.cyberpeace.iov.index.controller;
 
 import java.util.List;
 
+import com.cyberpeace.iov.index.service.bo.student.ResultFileBo;
+import com.cyberpeace.iov.index.util.FileScanner;
+import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,6 +48,13 @@ public class IovStudentController {
 	@GetMapping("/raw/packet/")
 	public BaseRsp<RawPacket> getRawPacket() {
 		RawPacket res = iovStudentService.getLatestPacket();
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("文件列表")
+	@GetMapping("/files/")
+	public BaseRsp<List<ResultFileBo>> getResultFiles(@ApiParam(value = "是否按时间正序") Boolean asc) {
+		List<ResultFileBo> res = iovStudentService.listResultFiles(asc);
 		return new BaseRsp<>(res);
 	}
 

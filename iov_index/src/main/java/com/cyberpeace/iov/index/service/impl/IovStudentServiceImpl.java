@@ -5,6 +5,9 @@ import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.iov.index.service.bo.student.ResultFileBo;
+import com.cyberpeace.iov.index.util.FileScanner;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +18,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.DateUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.iov.constant.IovConstants;
 import com.cyberpeace.iov.dao.entity.LastRawPacket;
 import com.cyberpeace.iov.dao.mapper.LastRawPacketMapper;
@@ -59,7 +58,7 @@ public class IovStudentServiceImpl implements IovStudentService {
 
 	@Override
 	public List<String> sniffBluetooth() {
-		String fileName = getDownloadPath();
+		String fileName = getSavePath() + "_bt.pcap";
 		JSONObject body = new JSONObject();
 		body.put("second", 10);
 		IovHttpClientUtil.rawPostFile(SNIFF_BLUETOOTH_URL, body, fileName);
@@ -80,6 +79,8 @@ public class IovStudentServiceImpl implements IovStudentService {
 		JSONArray res = IovHttpClientUtil.postJson(SNIFF_WIFI_URL, null);
 		if (null != res && !res.isEmpty()) {
 			lastRawPacketMapper.updatePacket(IovConstants.PacketType.WIFI, res.toJSONString());
+			String fileName = getSavePath() + "_wifi.json";
+			FileUtil.writeToDestFile(res.toJSONString(), fileName);
 		}
 		return res;
 	}
@@ -102,10 +103,19 @@ public class IovStudentServiceImpl implements IovStudentService {
 		return res;
 	}
 
-	private String getDownloadPath() {
+    @Override
+    public List<ResultFileBo> listResultFiles(Boolean asc) {
+		List<ResultFileBo> res = FileScanner.scanFiles(DOWNLOAD_PATH, Boolean.TRUE.equals(asc));
+		for (ResultFileBo bo : res) {
+			bo.fulfill();
+		}
+		return res;
+    }
+
+    private String getSavePath() {
 		final UserInfo userContext = UserInfoContext.getUserContext();
 		final String userId = userContext.getUserId();
 		final String formatter = DateUtil.generateTimeNamedFileName();
-		return DOWNLOAD_PATH + "/" + userId + "/" + formatter + "_bt.pcap";
+		return DOWNLOAD_PATH + "/" + userId + "/" + formatter;
 	}
 }

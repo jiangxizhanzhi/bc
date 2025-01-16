@@ -90,13 +90,13 @@ public class IovStudentServiceImpl implements IovStudentService {
 		List<LastRawPacket> packetList = lastRawPacketMapper.selectList(null);
 		for (LastRawPacket rawPacket : packetList) {
 			if (Objects.equals(rawPacket.getType(), IovConstants.PacketType.CAN)) {
-				res.setCan(JsonUtil.stringToArray(rawPacket.getRaw()));
+				res.setCan(JsonUtil.subList(JsonUtil.stringToArray(rawPacket.getRaw()), 200));
 			}
 			if (Objects.equals(rawPacket.getType(), IovConstants.PacketType.WIFI)) {
-				res.setWifi(JsonUtil.stringToArray(rawPacket.getRaw()));
+				res.setWifi(JsonUtil.subList(JsonUtil.stringToArray(rawPacket.getRaw()), 200));
 			}
 			if (Objects.equals(rawPacket.getType(), IovConstants.PacketType.BLUETOOTH)) {
-				res.setBluetooth(JsonUtil.toJsonObjectArray(rawPacket.getRaw(), String.class));
+				res.setBluetooth(JsonUtil.subList(JsonUtil.stringToArray(rawPacket.getRaw()), 200));
 			}
 		}
 		return res;

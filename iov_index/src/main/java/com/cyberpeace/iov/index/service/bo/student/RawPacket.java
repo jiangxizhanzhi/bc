@@ -1,7 +1,5 @@
 package com.cyberpeace.iov.index.service.bo.student;
 
-import java.util.List;
-
 import com.alibaba.fastjson.JSONArray;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -18,5 +16,5 @@ public class RawPacket {
 	JSONArray wifi;
 
 	@ApiModelProperty(value = "蓝牙")
-	List<String> bluetooth;
+	JSONArray bluetooth;
 }

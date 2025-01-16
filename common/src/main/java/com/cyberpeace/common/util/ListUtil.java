@@ -206,4 +206,10 @@ public class ListUtil {
 		}
 		return res;
 	}
+	public static <E> List<E> subList(List<E> list, Integer size) {
+		if(null == list || list.size()< size){
+			return list;
+		}
+		return list.subList(0, size);
+	}
 }

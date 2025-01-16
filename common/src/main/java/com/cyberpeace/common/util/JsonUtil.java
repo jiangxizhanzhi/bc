@@ -204,6 +204,14 @@ public class JsonUtil {
 		return JsonUtil.toJsonString(treeMap1).equals(JsonUtil.toJsonString(treeMap2));
 
 	}
+	
+	public static JSONArray subList(JSONArray jsonArray, Integer size) {
+		if (jsonArray.size() <= size) {
+			return jsonArray;
+		}
+		return new JSONArray(jsonArray.subList(0, size));
+	}
+	
 
 	/** 获取有顺序的key*/
 	private static TreeMap<String, String> toTreeMap(JSONObject jsonObject) {

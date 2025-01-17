@@ -32,6 +32,10 @@ public class TSharkInvoker {
 			log.error("TShark invoker error: ", e);
 			Thread.currentThread().interrupt();
 		}
+		// 去掉警告
+		if (!res.isEmpty() && res.get(0).contains("Running as user")) {
+			res = res.subList(1, res.size());
+		}
 		return res;
 	}
 

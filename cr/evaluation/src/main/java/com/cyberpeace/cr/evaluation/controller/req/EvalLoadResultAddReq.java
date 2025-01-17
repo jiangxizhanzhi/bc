@@ -182,4 +182,9 @@ public class EvalLoadResultAddReq implements Serializable {
      */
     private String remark;
 
+    /**
+     * 载荷执行记录id
+     */
+    private String executionRecordId;
+
 }

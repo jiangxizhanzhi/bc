@@ -129,8 +129,9 @@ public class EvalSceneMapController {
 			elementPortMap.put(id, imagesPageVO);
 			getTopoElement(topoElement, id, name, imagesPageVO, element);
 			CpcloudElement elementObj = getCpcloudElement(imagesPageVO);
+			// 回传相同数据结构的其他可选择镜像
+			getOtherImagesToSet(elementObj, imageList);
 			cpElements.put(id, elementObj);
-
 
 			List<Port> portList = portMap.get(element.getId());
 			if(portList.isEmpty()){
@@ -144,7 +145,6 @@ public class EvalSceneMapController {
 			initElement(elementPorts, map, elementPortMap, id, portList, objects, portIndex);
 			topoElement.setPorts(objects);
 			topoElements.add(topoElement);
-
 		}
 
 		List<Connection> connections = topo.getConnections();
@@ -181,6 +181,26 @@ public class EvalSceneMapController {
 		plugins.setCpcloud(cpcloud);
 		rsp.setPlugins(plugins);
 		return new BaseRsp<>(rsp);
+	}
+
+	// 根据role和imageType收集相对应的靶标
+	public List<ImagesByIdVO> filterImagesByRoleAndType(List<ImagesByIdVO> imageList, Integer role, String imageType) {
+		// 使用流式操作对列表进行筛选
+		return imageList.stream()
+				.filter(image -> role.equals(image.getRole()) && imageType.equals(image.getImageType()))
+				.collect(Collectors.toList());
+	}
+
+	private void getOtherImagesToSet(CpcloudElement elementObj, List<ImagesByIdVO> imageList) {
+		Integer role = elementObj.getRole();
+		String imageType = elementObj.getImageType();
+		// 根据role 和 imageType (可能还有其他的特殊情况)获取其他可选择镜像
+		List<CpcloudElement> cpcloudElements = new ArrayList<>();
+		if(role != null && imageType != null){
+			List<ImagesByIdVO> imagesByIdVOS = filterImagesByRoleAndType(imageList, role, imageType);
+			cpcloudElements = getCpcloudElements(imagesByIdVOS);
+		}
+		elementObj.setOtherSimilarElements(cpcloudElements);
 	}
 
 	private void initElement(JSONObject elementPorts, HashMap<String, String> map, HashMap<String, ImagesByIdVO> elementPortMap, String id, List<Port> portList, JSONArray objects, int portIndex) {
@@ -455,6 +475,11 @@ public class EvalSceneMapController {
 		topoElement.setName(StringUtils.isEmpty(name) ? element.getId() : name);
 	}
 
+	private List<CpcloudElement> getCpcloudElements(List<ImagesByIdVO> imagesPageVOs) {
+		return imagesPageVOs.stream()
+				.map(this::getCpcloudElement) // 将每个 ImagesByIdVO 转换为 CpcloudElement
+				.collect(Collectors.toList()); // 收集到 List 中
+	}
 
 	private CpcloudElement getCpcloudElement(ImagesByIdVO imagesPageVO) {
 		CpcloudElement elementObj = new CpcloudElement();

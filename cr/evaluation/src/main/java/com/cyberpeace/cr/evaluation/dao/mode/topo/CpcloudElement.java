@@ -2,18 +2,16 @@ package com.cyberpeace.cr.evaluation.dao.mode.topo;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.integratation.model.mp.ImagesByIdVO;
-import com.cyberpeace.integratation.model.mp.PortConfig;
 import lombok.Data;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 public class CpcloudElement {
     private String resourceId = "";
     private Integer role;
     private String imageType;
+    private List<CpcloudElement> otherSimilarElements;
     private String imageUuid;
     private Boolean isBuildIn;
     private String image;

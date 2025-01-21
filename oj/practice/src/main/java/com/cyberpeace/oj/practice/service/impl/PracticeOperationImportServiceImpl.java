@@ -226,7 +226,7 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 
 		// 场景flag类型
 		Integer flagType = flagType(attachments, flag);
-		String answerStr = handlerMultiContent(flag);
+		String answerStr = handleMultiFlagContent(flag);
 		operation.setAnswer(handlerAnswer(flagType, attachments, answerStr));
 		operation.setDynamicFlag(flagType);
 
@@ -286,6 +286,20 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 
 
 		return JSON.toJSONString(res);
+	}
+
+	private String handleMultiFlagContent(String filedContent) {
+
+		if (StringUtils.isBlank(filedContent)
+				|| filedContent.equals(CommonConstant.SHORT_TRANSVERSE_LINE)) {
+			return JsonUtil.arrayToString(Lists.newArrayList());
+		}
+
+		String[] multiContent = filedContent.split(PatternConstant.KNOWLEDGE_SPLIT_STR);
+		List<String> contents = StreamApiUtils.map(Arrays.asList(multiContent), String::trim);
+		List<String> result = StreamApiUtils.filter(contents, StringUtils::isNotBlank);
+
+		return JsonUtil.arrayToString(result);
 	}
 
 	/** 处理实操题答案**/

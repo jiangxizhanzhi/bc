@@ -288,8 +288,9 @@ public class RbSceneServiceImpl implements RbSceneService {
             // 记录复盘用的scene_id
             // 是否需要更新replay_scene_id。训练未结束，更新；训练已结束，场景开始时间在训练结束之前才更新。
             // 只有训练已结束且场景开启时间在训练结束之后，才不更新
-            if (!(room.isEnded() && localScene.getCreateTime()
-                    .after(rbTimeManagementService.getActualEndTime(roomId)))) {
+			boolean updateReplayFlag = !(room.isEnded() && localScene.getCreateTime()
+					.after(rbTimeManagementService.getActualEndTime(roomId)));
+			if (updateReplayFlag) {
                 room.setReplaySceneId(localScene.getMpSceneId());
 
                 //该训练过程中的场景+1
@@ -301,6 +302,10 @@ public class RbSceneServiceImpl implements RbSceneService {
 
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					if (updateReplayFlag) {
+						rbRoomService.updateReplaySceneId(room.getResourceId(),
+								room.getReplaySceneId(), room.getSceneIdRecord());
+					}
                     // 清除localScene
                     clearLocal(room);
                     // 恢复创建房间时的角色资产配置

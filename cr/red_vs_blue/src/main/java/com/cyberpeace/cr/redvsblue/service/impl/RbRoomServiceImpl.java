@@ -888,6 +888,11 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		rbRoomMapper.updateTrainingStatus(roomId, trainingStatus);
 	}
 
+	@Override
+	public void updateReplaySceneId(String resourceId, String replaySceneId, String sceneIdRecord) {
+		rbRoomMapper.updateReplaySceneId(resourceId, replaySceneId, sceneIdRecord);
+	}
+
 	/**
 	 * 列表室
 	 *

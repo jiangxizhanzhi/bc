@@ -112,4 +112,19 @@ public interface RbRoomMapper extends BaseMapper<RbRoom> {
 	 * @see Integer
 	 */
 	void updateTrainingStatus(String roomId, Integer trainingStatus);
+
+	/**
+	 * 更新复盘场景id
+	 *
+	 * @param resourceId    资源id
+	 * @param replaySceneId 复盘场景id
+	 * @param sceneIdRecord 场景id记录
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 */
+	void updateReplaySceneId(@Param("resourceId") String resourceId,
+			@Param("replaySceneId") String replaySceneId,
+			@Param("sceneIdRecord") String sceneIdRecord);
 }

@@ -255,4 +255,18 @@ public interface RbRoomService extends IService<RbRoom> {
 	 * @see Integer
 	 */
 	void updateTrainingStatus(String roomId, Integer trainingStatus);
+
+	/**
+	 * 更新复盘场景id
+	 *
+	 * @param resourceId    资源id
+	 * @param replaySceneId 复盘场景id
+	 * @param sceneIdRecord      场景id列表
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<String>
+	 */
+	void updateReplaySceneId(String resourceId, String replaySceneId, String sceneIdRecord);
+
 }

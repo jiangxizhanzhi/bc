@@ -19,6 +19,11 @@
         set training_status = #{trainingStatus}
         where resource_id = #{roomId}
     </update>
+    <update id="updateReplaySceneId">
+        update cr_rb_room
+        set replay_scene_id = #{replaySceneId}, scene_id_record = #{sceneIdRecord}
+        where resource_id = #{roomId}
+    </update>
 
     <select id="selectAll" resultType="com.cyberpeace.cr.redvsblue.entity.RbRoom">
         select *

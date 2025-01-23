@@ -111,6 +111,9 @@ public class EvalSceneMapController {
 		HashMap<String, String> map = new HashMap<>();
 		HashMap<String, ImagesByIdVO> elementPortMap = new HashMap<>();
 
+		List<String> allImages = imageList.stream().filter(element -> element.getUuid() != null).
+				map(element -> element.getUuid()).distinct().collect(Collectors.toList());
+		List<ImagesByIdVO> allImageListByuuids = remoteSceneService.getImageListByuuids(allImages);
 		for(Element element:elements){
 			TopoElement topoElement = new TopoElement();
 			String id = IDGeneratorUtil.getID();
@@ -130,7 +133,7 @@ public class EvalSceneMapController {
 			getTopoElement(topoElement, id, name, imagesPageVO, element);
 			CpcloudElement elementObj = getCpcloudElement(imagesPageVO);
 			// 回传相同数据结构的其他可选择镜像
-			getOtherImagesToSet(elementObj, imageList);
+			getOtherImagesToSet(elementObj, allImageListByuuids);
 			cpElements.put(id, elementObj);
 
 			List<Port> portList = portMap.get(element.getId());

@@ -145,7 +145,7 @@ public class EvalSceneMapController {
 			// 端口id 仿真节点 1个端口 4- image_type vm 虚拟机 container 容器 连线超出当前max_port_num  需要手动生成 自动补足
 			// 网关 ext_gateway -port——configs 几条数据则 几个端口 判断连线是否超出当前端口数 超出则自动补足 区分wan lan口 port_type 2-lan 除了2都是wan口
 			// 3.1、根据端口信息以及 设备关联的镜像信息中的接入配置信息 填充设备的默认端口信息
-			initElement(elementPorts, map, elementPortMap, id, portList, objects, portIndex);
+			initElement(element, elementPorts, map, elementPortMap, id, portList, objects, portIndex);
 			topoElement.setPorts(objects);
 			topoElements.add(topoElement);
 		}
@@ -206,7 +206,7 @@ public class EvalSceneMapController {
 		elementObj.setOtherSimilarElements(cpcloudElements);
 	}
 
-	private void initElement(JSONObject elementPorts, HashMap<String, String> map, HashMap<String, ImagesByIdVO> elementPortMap, String id, List<Port> portList, JSONArray objects, int portIndex) {
+	private void initElement(Element element, JSONObject elementPorts, HashMap<String, String> map, HashMap<String, ImagesByIdVO> elementPortMap, String id, List<Port> portList, JSONArray objects, int portIndex) {
 		for(Port port: portList){
 			String value = "port_" + id + "_" + portIndex;
 			String portId = port.getId();
@@ -239,7 +239,7 @@ public class EvalSceneMapController {
 			object.put("id", value);
 			object.put("name", "eth0/" + (objects.isEmpty() ? 1 : objects.size() + 1));
 			object.put("mac_addr", "");
-			object.put("ip", null);
+			object.put("ip", element.getId());
 			objects.add(object);
 			portIndex++;
 		}

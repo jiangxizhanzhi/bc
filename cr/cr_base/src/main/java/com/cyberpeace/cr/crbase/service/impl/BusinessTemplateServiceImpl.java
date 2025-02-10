@@ -12,6 +12,9 @@ import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cs.dao.entity.SystemProperty;
+import com.cyberpeace.cs.dao.mapper.SystemPropertyMapper;
+import com.cyberpeace.cs.service.SystemPropertyService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,6 +111,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	private RemoteLogService remoteLogService;
 
 	@Autowired
+	private SystemPropertyMapper systemPropertyMapper;
+
+	@Autowired
 	@Qualifier("businessTemplateHandler")
 	private BusinessTemplateHandler businessTemplateHandler;
 
@@ -134,7 +140,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
 		if (baseInfo.getType().equals(BusinessType.TRAINING_TEAM.getCode())) {
-			businessTemplate.setTopoId("");
+			// 车联网靶场用配置的统一的拓扑id
+			SystemProperty property =  systemPropertyMapper.selectByName("default_iov_topo");
+			businessTemplate.setTopoId(null == property? null: property.getContent());
 		} else {
 			// 拓扑场景id保存获取
 			SceneConfigData topoData = baseInfo.getSceneConfigData();

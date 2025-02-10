@@ -137,4 +137,13 @@ public interface CrSceneService {
 	List<CrRoleConfig> getNodeConfigList(List<CrRole> roleList);
 
 	void setRbNodeConfig(RbSceneViewContext context, List<CrRole> roleList);
+
+	/**
+	 * 获取资产列表
+	 * 不做分页
+	 *
+	 * @param req               请求体
+	 * @return {@code List<JSONObject>}
+	 */
+	List<JSONObject> getIovAssetList(AssetPageReq req);
 }

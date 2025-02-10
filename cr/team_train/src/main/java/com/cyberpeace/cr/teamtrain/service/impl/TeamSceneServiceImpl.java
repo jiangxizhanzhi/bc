@@ -79,6 +79,10 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		teamRoomService.checkTeacherPermission(roomId, userId);
 
 		TeamRoom room = teamRoomService.getById(roomId);
+		// 未配置场景
+		if (StringUtils.isBlank(room.getCopyedTopoId())) {
+			return "";
+		}
 
 		// 2、如果已经有启动的场景，不能重复启动; 如果有脏数据，清除脏数据
 		LocalScene localSceneExisted = localSceneService.getByBusinessInstanceId(roomId);
@@ -132,32 +136,18 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 
 		TeamRoom room = teamRoomService.getById(roomId);
 
-		String userId = UserInfoContext.getUserContext().getUserId();
-		// 1、获取可见节点&鉴权， null代表所有节点可见
-		List<CrRole> roleList = crRoleService.getRolesByRoomId(roomId);
-		CrRole selfRole = CrRole.findRoleByUserId(roleList, userId);
-		if (null == selfRole) {
-			log.error("user [{}] has no permission to access team training [{}]", userId, roomId);
-			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
-		}
-		CrRoleNodesData nodes = getNodes(selfRole, roleList, roleId);
-
 		// 2、尝试获取启动的远程场景
 		JSONObject sceneData = getMpSceneData(room);
 		if (sceneData != null) {
-			sceneFilterService.filterVisibleTopo(sceneData, nodes);
 			ret.setSceneData(sceneData);
 			ret.setLocalSceneId(room.getLocalSceneId());
 			ret.setMpSceneId(sceneData.getString(CrCommonConstants.MP_SCENE_ID_KEY));
 
-			// 4. 场景角色资产配置，用于动态编辑,
-			ret.setRoleList(crSceneService.getNodeConfigList(roleList));
 			return ret;
 		}
 		// 3、 远程场景不存在，返回topo数据
 		JSONObject topoData = localSceneService.getTopoData(room.getCopyedTopoId())
 				.getJSONObject(CrCommonConstants.TOPO_DATA_KEY);
-		sceneFilterService.filterVisibleTopo(topoData, nodes);
 		ret.setTopoId(room.getCopyedTopoId());
 		ret.setTopoData(topoData);
 

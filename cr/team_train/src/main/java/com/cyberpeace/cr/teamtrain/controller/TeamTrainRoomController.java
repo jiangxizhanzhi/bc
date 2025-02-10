@@ -465,14 +465,28 @@ public class TeamTrainRoomController {
 	@PostMapping("/start_end_team")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<Map<String,Integer>> changeTrainingStatus(@RequestBody @Validated ResourceIdReq resourceIdReq) {
+		final Integer[] trainingStatus = new Integer[1];
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-		int status = teamRoomService.changeTrainingStatus(resourceIdReq.getResourceId());
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				trainingStatus[0] = teamRoomService
+						.changeTrainingStatus(resourceIdReq.getResourceId());
+				if (trainingStatus[0].equals(TeamRoom.TrainingStatusCode.ENDED.getCode())) {
+					teamSceneService.stopScene(resourceIdReq.getResourceId());
+				} else if (trainingStatus[0]
+						.equals(TeamRoom.TrainingStatusCode.OPENING.getCode())) {
+					teamSceneService.startScene(resourceIdReq.getResourceId(),
+							UserInfoContext.getUserContext().getUserId());
+				}
+			}
+		});
 
 		Map<String,Integer> map = Maps.newHashMap();
-		map.put("training_status", status);
+		map.put("training_status", trainingStatus[0]);
 
 		// 记录远程操作日志
-		OperationType operationType = Objects.equals(status,
+		OperationType operationType = Objects.equals(trainingStatus[0],
 				TeamRoom.TrainingStatusCode.ENDED.getCode()) ? OperationType.STOP
 						: OperationType.START;
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,

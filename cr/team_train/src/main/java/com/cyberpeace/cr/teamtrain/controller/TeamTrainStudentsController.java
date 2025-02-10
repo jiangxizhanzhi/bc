@@ -7,8 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import com.cyberpeace.iov.service.VehicleTrafficService;
-import com.cyberpeace.iov.service.bo.traffic.VehicleTrafficDetailBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -70,6 +68,8 @@ import com.cyberpeace.cr.teamtrain.service.context.TeamTrainDeviceContext;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.iov.service.VehicleTrafficService;
+import com.cyberpeace.iov.service.bo.traffic.VehicleTrafficDetailBo;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
@@ -520,6 +520,27 @@ public class TeamTrainStudentsController {
 	public BaseRsp<List<VehicleTrafficDetailBo>> listBlf() {
 		List<VehicleTrafficDetailBo> res = vehicleTrafficService.listTraffic();
 		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("IOV虚拟攻击机")
+	@GetMapping("/device/iov/")
+	public BaseRsp<List<JSONObject>> getIovDevice(
+			@ApiParam(name = "resource_id", value = "团队房间id", required = true) String resource_id,
+			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,
+			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
+		AssetPageReq assetPageReq = new AssetPageReq();
+		assetPageReq.setResource_id(resource_id);
+		List<JSONObject> availableDevices = null;
+		try {
+			availableDevices = crSceneService.getIovAssetList(assetPageReq);
+		} catch (BusinessException e) {
+			if (StringUtils.isNotEmpty(e.getMessage())
+					&& e.getMessage().equals(ErrorCode.UNKNOWN_SCENE)) { // 如果是场景未启动导致的就返回空数组
+				return new BaseRsp<>(new ArrayList<>());
+			}
+		}
+
+		return new BaseRsp<>(availableDevices);
 	}
 
 	/** 获取单个实例中自己的角色信息，只包括自己角色的基本信息

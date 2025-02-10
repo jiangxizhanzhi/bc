@@ -499,4 +499,15 @@ public class CrSceneServiceImpl implements CrSceneService {
 		context.setRedRoles(redConfigList);
 		context.setBlueRoles(blueConfigList);
 	}
+
+	@Override
+	public List<JSONObject> getIovAssetList(AssetPageReq req) {
+		String roomId = req.getResource_id();
+		// make req
+		SceneNodeListReq listReq = new SceneNodeListReq();
+		String mpSceneId = localSceneService.getMpSceneIdByBusinessInstanceId(roomId);
+		listReq.setId(mpSceneId);
+		listReq.setRealTimeHostState(true);
+		return localSceneService.getAssetList(listReq);
+	}
 }

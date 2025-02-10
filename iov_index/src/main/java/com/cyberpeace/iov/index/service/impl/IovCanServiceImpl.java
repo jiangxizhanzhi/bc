@@ -134,10 +134,10 @@ public class IovCanServiceImpl implements IovCanService {
 			log.error("get blf parse result error", e);
 		}
 		// 暂时用固定的数据
-		if (rsp.isEmpty()) {
-			return remotePythonService.getBlfParseResult(
-					"/cpms/blf/7e2b02b9ca194aa1a661398dc13c8e44/20241224_091902.blf");
-		}
+//		if (rsp.isEmpty()) {
+//			return remotePythonService.getBlfParseResult(
+//					"/cpms/blf/7e2b02b9ca194aa1a661398dc13c8e44/20241224_091902.blf");
+//		}
 		return rsp;
 	}
 

@@ -2,6 +2,8 @@ package com.cyberpeace.cr.evaluation.dao.mode.topo;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.cr.evaluation.dao.mode.TopoElement;
+import com.cyberpeace.integratation.model.mp.ImagesByIdVO;
 import lombok.Data;
 
 import java.util.List;
@@ -61,4 +63,6 @@ public class CpcloudElement {
     private JSONArray mibData;
     private String snmpConfig="undefined";
     private JSONObject dockerParams;
+    private ImagesByIdVO sourceImageInfo;
+    private TopoElement initTopoElement;
 }

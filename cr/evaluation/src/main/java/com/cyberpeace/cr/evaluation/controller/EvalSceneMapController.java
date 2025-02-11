@@ -132,8 +132,8 @@ public class EvalSceneMapController {
 			elementPortMap.put(id, imagesPageVO);
 			getTopoElement(topoElement, id, name, imagesPageVO, element);
 			CpcloudElement elementObj = getCpcloudElement(imagesPageVO);
-			// 回传相同数据结构的其他可选择镜像
-			getOtherImagesToSet(elementObj, allImageListByuuids);
+			// 回传相同数据结构的其他可选择镜像,以及该镜像的一些初始值(cpu内存之类的信息)
+			getOtherImagesToSet(elementObj, allImageListByuuids, topoElement);
 			cpElements.put(id, elementObj);
 
 			List<Port> portList = portMap.get(element.getId());
@@ -194,7 +194,7 @@ public class EvalSceneMapController {
 				.collect(Collectors.toList());
 	}
 
-	private void getOtherImagesToSet(CpcloudElement elementObj, List<ImagesByIdVO> imageList) {
+	private void getOtherImagesToSet(CpcloudElement elementObj, List<ImagesByIdVO> imageList, TopoElement topoElement) {
 		Integer role = elementObj.getRole();
 		String imageType = elementObj.getImageType();
 		// 根据role 和 imageType (可能还有其他的特殊情况)获取其他可选择镜像
@@ -202,24 +202,58 @@ public class EvalSceneMapController {
 		if(role != null && imageType != null){
 			List<ImagesByIdVO> imagesByIdVOS = filterImagesByRoleAndType(imageList, role, imageType);
 			cpcloudElements = getCpcloudElements(imagesByIdVOS);
+			for(CpcloudElement element : cpcloudElements){
+				element.setInitTopoElement(initTopoElement(topoElement,element.getSourceImageInfo()));
+				element.setSourceImageInfo(null);
+			}
 		}
 		elementObj.setOtherSimilarElements(cpcloudElements);
+		elementObj.setSourceImageInfo(null);
 	}
 
-	private void initElement(Element element, JSONObject elementPorts, HashMap<String, String> map, HashMap<String, ImagesByIdVO> elementPortMap, String id, List<Port> portList, JSONArray objects, int portIndex) {
-		for(Port port: portList){
+	private TopoElement initTopoElement(TopoElement topoElement, ImagesByIdVO imagesPageVO) {
+		String logo = imagesPageVO.getLogo();
+		topoElement.setType(imagesPageVO.getRole());
+		topoElement.setIcon2(logo);
+		topoElement.setSystemLanguage(imagesPageVO.getExtSystemInfo().getLanguage());
+		topoElement.setSystemArchitecture(imagesPageVO.getExtSystemInfo().getSystemArchitecture());
+		topoElement.setSystemType(imagesPageVO.getExtSystemInfo().getSystemType());
+		topoElement.setMaxPortNumber(imagesPageVO.getRole() == 4 || imagesPageVO.getRole() == 7 ? 1:0);
+		topoElement.setCpu(imagesPageVO.getExtVm().getCpu());
+		topoElement.setDisk(imagesPageVO.getExtVm().getDisk());
+		topoElement.setRam(imagesPageVO.getExtVm().getRam());
+		return topoElement;
+	}
+
+	private void initElement(Element element, JSONObject elementPorts, HashMap<String, String> map, HashMap<String, ImagesByIdVO> elementPortMap
+			, String id, List<Port> portList, JSONArray objects, int portIndex) {
+		for(Port port: portList) {
 			String value = "port_" + id + "_" + portIndex;
 			String portId = port.getId();
 			JSONObject item = new JSONObject();
 			ImagesByIdVO imagesByIdVO = elementPortMap.get(id);
-			ExtGateway gateway = imagesByIdVO.getExtGateway();
 			ExtVm extVm = imagesByIdVO.getExtVm();
 			ExtDocker extDocker = imagesByIdVO.getExtDocker();
 			JSONObject object = new JSONObject();
-			if(null != gateway){
-				item.put("access_modes", gateway);
-				object.put("access_modes", gateway);
 
+			if(null != imagesByIdVO.getExtGateway()){
+				AccessProtocol consoleConfig = imagesByIdVO.getExtGateway().getConsoleConfig();
+				JSONObject first = new JSONObject();
+				first.put("protocol", consoleConfig.getProtocol());
+				first.put("password", consoleConfig.getPassword());
+				first.put("username", consoleConfig.getUsername());
+				first.put("manage_mode", consoleConfig.getManageMode());
+				first.put("desc", consoleConfig.getDescription());
+
+				JSONObject second = new JSONObject();
+				second.put("proxy", consoleConfig.getProxy());
+				second.put("private_key_enable", consoleConfig.getPrivateKeyEnable());
+
+				JSONArray modes = new JSONArray();
+				modes.add(first);
+				modes.add(second);
+				item.put("access_modes", modes);
+				object.put("access_modes", modes);
 
 			} else if(null != extVm.getAccessProtocols()){
 				item.put("access_modes", extVm.getAccessProtocols());
@@ -228,8 +262,8 @@ public class EvalSceneMapController {
 			} else if(null != extDocker.getAccessProtocols()){
 				item.put("access_modes", extDocker.getAccessProtocols());
 				object.put("access_modes", extDocker.getAccessProtocols());
-
 			}
+
 			item.put("connect_mode", (imagesByIdVO.getRole() == 1 || imagesByIdVO.getRole() == 2) && !"simple".equals(imagesByIdVO.getImageType()) ? "simple":null);
 			item.put("firewall_rules", null);
 			item.put("logic_network_id", "");
@@ -410,7 +444,7 @@ public class EvalSceneMapController {
 		String apiDoc = ConfigUtil.getContextProperty("ojj.apiDoc");
 		String unzipDir;
 		if(Boolean.parseBoolean(apiDoc)){
-			unzipDir = "D:/cpms/decompress/";
+			unzipDir = "C:/cpms/decompress/";
 		} else {
 			unzipDir = "/cpms/decompress/";
 
@@ -486,6 +520,7 @@ public class EvalSceneMapController {
 
 	private CpcloudElement getCpcloudElement(ImagesByIdVO imagesPageVO) {
 		CpcloudElement elementObj = new CpcloudElement();
+		elementObj.setSourceImageInfo(imagesPageVO);
 		elementObj.setRole(imagesPageVO.getRole());
 		elementObj.setImageType(imagesPageVO.getImageType());
 		elementObj.setImageUuid(imagesPageVO.getUuid());

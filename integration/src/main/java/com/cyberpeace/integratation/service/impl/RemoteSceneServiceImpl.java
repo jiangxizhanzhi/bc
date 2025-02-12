@@ -15,6 +15,9 @@ import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Lists;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,6 +137,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String GET_PAGE_EVENT_URL;
 
+	private String NODE_EXEC_COMMAND_URL;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -239,6 +244,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		ALARM_EVENTS_DATA_URL = MP_HOST +ConfigUtil.getContextProperty("alarm.events.data");
 
 		GET_PAGE_EVENT_URL = MP_HOST + ConfigUtil.getContextProperty("page.event.data");
+
+		NODE_EXEC_COMMAND_URL = MP_HOST + ConfigUtil.getContextProperty("node.exec.command");
 	}
 
 	@Override
@@ -672,6 +679,27 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		PageEvent pageEvent = PageEvent.builder().mpSceneId(mpSceneId).page(page).perPage(perpage).alarmName(alarmName).nodeIds(nodeIds).build();
 		JSONObject object = JsonUtil.java2JsonObject(pageEvent, PropertyNamingStrategy.SnakeCase);
 		JSONObject post = HttpClientUtil.post(GET_PAGE_EVENT_URL, object, JSONObject.class);
+		return post;
+	}
+
+	@Data
+	@Builder
+	static class DeviceCommandExecReq {
+		@ApiModelProperty(value = "节点id")
+		private String nodeId;
+		@ApiModelProperty(value = "场景id")
+		private String id;
+		@ApiModelProperty(value = "需要执行的指令")
+		private List<String> execCmds;
+		@ApiModelProperty(value = "协议类型")
+		private String protocol;
+	}
+
+	@Override
+	public JSONObject execCmdByAgent(String nodeId, String sceneId , List<String> cmds, String protocol) {
+		DeviceCommandExecReq build = DeviceCommandExecReq.builder().nodeId(nodeId).id(sceneId).execCmds(cmds).protocol(protocol).build();
+		JSONObject object = JsonUtil.java2JsonObject(build, PropertyNamingStrategy.SnakeCase);
+		JSONObject post = HttpClientUtil.post(NODE_EXEC_COMMAND_URL, object, JSONObject.class);
 		return post;
 	}
 

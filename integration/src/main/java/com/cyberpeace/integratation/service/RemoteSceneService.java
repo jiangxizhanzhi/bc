@@ -279,4 +279,6 @@ public interface RemoteSceneService {
 	int getEventValue(String nodeId, String eventName, String alarmMatchName);
 
 	JSONObject getPageEvent(String mpSceneId,Integer page,Integer prePage,String alarmName,String[] nodeIds);
+
+	JSONObject execCmdByAgent(String nodeId,String sceneId, List<String> cmds, String protocol);
 }

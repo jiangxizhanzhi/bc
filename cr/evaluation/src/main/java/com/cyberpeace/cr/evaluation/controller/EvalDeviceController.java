@@ -4,6 +4,10 @@ package com.cyberpeace.cr.evaluation.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.cr.evaluation.controller.req.DeviceCommandExecReq;
+import com.cyberpeace.cr.evaluation.controller.req.DeviceCommandModelReq;
+import com.cyberpeace.cr.evaluation.entity.CrRbTargetCommandParameters;
+import com.cyberpeace.cr.evaluation.entity.CrRbTargetCommandTemplates;
 import com.cyberpeace.cr.evaluation.service.EvalDeviceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,6 +16,7 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 
 @Api(tags = "靶场测评-设备清单")
@@ -38,4 +43,26 @@ public class EvalDeviceController {
             @ApiParam(name = "resource_id", value = "模板id", required = true) @RequestParam(name = "resource_id") String resourceId) {
         return new BaseRsp<>(evalDeviceService.getDeviceStatistics(resourceId));
     }
+
+    @ApiOperation("当前设备可执行的模板命令")
+    @PostMapping("/command/modes")
+    public BaseRsp getDeviceCommandModels(@RequestBody DeviceCommandModelReq req) {
+        List<CrRbTargetCommandTemplates> list = evalDeviceService.getDeviceCommandModels(req);
+        return new BaseRsp<>(list);
+    }
+
+    @ApiOperation("当前模板命令可填写的参数")
+    @GetMapping("/command/parameters")
+    public BaseRsp getDeviceCommandParameters(@RequestParam(name = "id") String id){
+        List<CrRbTargetCommandParameters> list = evalDeviceService.getDeviceCommandParameters(id);
+        return new BaseRsp<>(list);
+    }
+
+    @ApiOperation("实体设备执行命令")
+    @PostMapping("/exec_cmd_by_agent")
+    public BaseRsp execCmdByAgent(@RequestBody DeviceCommandExecReq req){
+        evalDeviceService.execCmdByAgent(req);
+        return new BaseRsp<>();
+    }
+
 }

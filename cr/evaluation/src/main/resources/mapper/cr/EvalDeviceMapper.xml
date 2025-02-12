@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalDeviceMapper">
+
+    <insert id="insert">
+        insert into cr_rb_target_command_log
+        (id, scene_id, node_id, command_user, command_id, parameters, excuted_time, status, result, create_time,
+         update_time)
+        values (#{param.id}, #{param.sceneId}, #{param.nodeId}, #{param.commandUser}, #{param.commandId}, #{param.parameters}, now(), #{param.status}, #{param.result},
+                now(), now())
+    </insert>
+
+    <select id="getDeviceCommandModels"
+            resultType="com.cyberpeace.cr.evaluation.entity.CrRbTargetCommandTemplates">
+        select * from cr_rb_target_command_templates
+        <where>
+            <if test="param != null and param.role != null">
+                and role = #{param.role}
+            </if>
+            <if test="param != null and param.mainCategory != null">
+                and main_category = #{param.mainCategory}
+            </if>
+            <if test="param != null and param.subCategory != null">
+                and sub_category = #{param.subCategory}
+            </if>
+            <if test="param != null and param.thirdCategory != null">
+                and third_category = #{param.thirdCategory}
+            </if>
+            <if test="param != null and param.imageType != null">
+                and image_type = #{param.imageType}
+            </if>
+            <if test="param != null and param.businessTag != null">
+                and business_tag = #{param.businessTag}
+            </if>
+            <if test="param != null and param.brand != null">
+                and brand = #{param.brand}
+            </if>
+        </where>
+    </select>
+
+    <select id="getDeviceCommandParameters"
+            resultType="com.cyberpeace.cr.evaluation.entity.CrRbTargetCommandParameters">
+        select *
+        from cr_rb_target_command_parameters
+        where command_id = #{id}
+    </select>
+
+</mapper>

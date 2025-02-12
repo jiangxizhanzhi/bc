@@ -6,9 +6,9 @@
 
     <insert id="insert">
         insert into cr_rb_target_command_log
-        (id, scene_id, node_id, command_user, command_id, parameters, excuted_time, status, result, create_time,
+        (id, scene_id, node_id, command_user, protocol, command_text, excuted_time, status, result, create_time,
          update_time)
-        values (#{param.id}, #{param.sceneId}, #{param.nodeId}, #{param.commandUser}, #{param.commandId}, #{param.parameters}, now(), #{param.status}, #{param.result},
+        values (#{param.id}, #{param.sceneId}, #{param.nodeId}, #{param.commandUser}, #{param.protocol}, #{param.commandText}, now(), #{param.status}, #{param.result},
                 now(), now())
     </insert>
 

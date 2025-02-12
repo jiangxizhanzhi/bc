@@ -203,7 +203,8 @@ public class EvalSceneMapController {
 			List<ImagesByIdVO> imagesByIdVOS = filterImagesByRoleAndType(imageList, role, imageType);
 			cpcloudElements = getCpcloudElements(imagesByIdVOS);
 			for(CpcloudElement element : cpcloudElements){
-				element.setInitTopoElement(initTopoElement(topoElement,element.getSourceImageInfo()));
+				TopoElement initTopoElement = initTopoElement(topoElement, element.getSourceImageInfo());
+				element.setInitTopoElement(initTopoElement);
 				element.setSourceImageInfo(null);
 			}
 		}
@@ -212,17 +213,19 @@ public class EvalSceneMapController {
 	}
 
 	private TopoElement initTopoElement(TopoElement topoElement, ImagesByIdVO imagesPageVO) {
+		TopoElement initTopoElement = new TopoElement();
+		BeanUtils.copyProperties(topoElement, initTopoElement);
 		String logo = imagesPageVO.getLogo();
-		topoElement.setType(imagesPageVO.getRole());
-		topoElement.setIcon2(logo);
-		topoElement.setSystemLanguage(imagesPageVO.getExtSystemInfo().getLanguage());
-		topoElement.setSystemArchitecture(imagesPageVO.getExtSystemInfo().getSystemArchitecture());
-		topoElement.setSystemType(imagesPageVO.getExtSystemInfo().getSystemType());
-		topoElement.setMaxPortNumber(imagesPageVO.getRole() == 4 || imagesPageVO.getRole() == 7 ? 1:0);
-		topoElement.setCpu(imagesPageVO.getExtVm().getCpu());
-		topoElement.setDisk(imagesPageVO.getExtVm().getDisk());
-		topoElement.setRam(imagesPageVO.getExtVm().getRam());
-		return topoElement;
+		initTopoElement.setType(imagesPageVO.getRole());
+		initTopoElement.setIcon2(logo);
+		initTopoElement.setSystemLanguage(imagesPageVO.getExtSystemInfo().getLanguage());
+		initTopoElement.setSystemArchitecture(imagesPageVO.getExtSystemInfo().getSystemArchitecture());
+		initTopoElement.setSystemType(imagesPageVO.getExtSystemInfo().getSystemType());
+		initTopoElement.setMaxPortNumber(imagesPageVO.getRole() == 4 || imagesPageVO.getRole() == 7 ? 1:0);
+		initTopoElement.setCpu(imagesPageVO.getExtVm().getCpu());
+		initTopoElement.setDisk(imagesPageVO.getExtVm().getDisk());
+		initTopoElement.setRam(imagesPageVO.getExtVm().getRam());
+		return initTopoElement;
 	}
 
 	private void initElement(Element element, JSONObject elementPorts, HashMap<String, String> map, HashMap<String, ImagesByIdVO> elementPortMap

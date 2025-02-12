@@ -132,8 +132,6 @@ public class EvalSceneMapController {
 			elementPortMap.put(id, imagesPageVO);
 			getTopoElement(topoElement, id, name, imagesPageVO, element);
 			CpcloudElement elementObj = getCpcloudElement(imagesPageVO);
-			// 回传相同数据结构的其他可选择镜像,以及该镜像的一些初始值(cpu内存之类的信息)
-			getOtherImagesToSet(elementObj, allImageListByuuids, topoElement);
 			cpElements.put(id, elementObj);
 
 			List<Port> portList = portMap.get(element.getId());
@@ -148,6 +146,8 @@ public class EvalSceneMapController {
 			initElement(element, elementPorts, map, elementPortMap, id, portList, objects, portIndex);
 			topoElement.setPorts(objects);
 			topoElements.add(topoElement);
+			// 回传相同数据结构的其他可选择镜像,以及该镜像的一些初始值(cpu内存之类的信息)
+			getOtherImagesToSet(elementObj, allImageListByuuids, topoElement);
 		}
 
 		List<Connection> connections = topo.getConnections();

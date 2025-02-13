@@ -94,8 +94,34 @@ public class EvalIndexRef extends BaseTable {
      */
     private String matrixData;
 
+    /**
+     * 告警事件评分设置类型（三级指标包含）百分比/周期/整数值
+     */
+    private Integer loadType;
+
+    /**
+     * 告警事件评分设置属性（三级指标包含）效益/成本/固定/偏离
+     */
+    private Integer judgmentStatus;
+
+    /**
+     * 告警事件评分设置值（三级指标包含）类型输入
+     */
+    private Integer loadValue;
+
+    private Integer loadAttrValue;
+
+    /**
+     * 载荷执行记录id
+     */
+    private String loadExecutionId;
+    /**
+     * 载荷执行记录名称
+     */
+    private String loadExecutionName;
+
     public enum Type implements GenericEnum {
-        SYSTEM(1, "系统评分"), SPECIALIST(2, "专家评分");
+        SYSTEM(1, "系统评分"), SPECIALIST(2, "专家评分"), LOAD(3, "载荷记录");
 
         @Getter
         private final Integer code;

@@ -30,9 +30,7 @@ import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.*;
-import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalRecordVariableContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalSystemIndexesContext;
+import com.cyberpeace.cr.evaluation.service.context.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.mp.MpCollectionEvent;
@@ -287,11 +285,22 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         Map<String, EvalRecordVariableContext> evalRecordVariableContextMap = Maps.newHashMap();
         // 获取"三级指标"评分类型
         Map<String, Integer> thirdIndexesTypeMap = Maps.newHashMap();
+        Map<String, EvalRecordIndexContext> thirdIndexesRecordLoadMap = Maps.newHashMap();
         Map<String, Integer> thirdSpecialistMap = Maps.newHashMap();
         requestData.getIndexes().forEach(evalRecordIndexContext -> {
             thirdIndexesTypeMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getType());
             if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
                 thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getSpecialist().getValue());
+            } else if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.LOAD.getCode())){
+//            处理载荷记录评分
+                if (!StringUtils.isBlank(evalRecordIndexContext.getRecordLoad().getLoadExecutionId())) {
+                    int value = evalRecordIndexContext.getRecordLoad().getValue() == null ? 100 : evalRecordIndexContext.getRecordLoad().getValue();
+                    value = EvalRecordLoadListContext.JudgmentResult.SUCCESS.getCode() == evalRecordIndexContext.getRecordLoad().getJudgmentStatus() ? value : 0;
+                    thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(), value);
+                }else {
+                    thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(),0);
+                }
+                thirdIndexesRecordLoadMap.put(evalRecordIndexContext.getResourceId(),evalRecordIndexContext);
             }
             evalRecordIndexContext.getVariables().forEach(evalRecordVariableContext -> evalRecordVariableContextMap.put(evalRecordVariableContext.getResourceId(), evalRecordVariableContext));
         });
@@ -506,6 +515,13 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
                 }
+                //事件评分
+                evalIndexRef.setLoadType(evalIndicator.getDatatype());
+                evalIndexRef.setLoadAttrValue(evalIndicator.getAttributeValue());
+                evalIndexRef.setLoadValue(thirdSpecialistMap.get(evalIndex.getResourceId()));
+                evalIndexRef.setLoadExecutionName(thirdIndexesRecordLoadMap.get(evalIndex.getResourceId())==null?"":thirdIndexesRecordLoadMap.get(evalIndex.getResourceId()).getRecordLoad().getLoadExecutionName());
+                evalIndexRef.setLoadExecutionId(thirdIndexesRecordLoadMap.get(evalIndex.getResourceId())==null?"":thirdIndexesRecordLoadMap.get(evalIndex.getResourceId()).getRecordLoad().getLoadExecutionId());
+                evalIndexRef.setJudgmentStatus(thirdIndexesRecordLoadMap.get(evalIndex.getResourceId())==null?0:thirdIndexesRecordLoadMap.get(evalIndex.getResourceId()).getRecordLoad().getJudgmentStatus());
             }
 
             evalIndexRef.setAlgorithmId(evalAlgorithmRef.getResourceId());
@@ -629,7 +645,18 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     evalIndexRef.setSpecialistValue(evalRecordIndexContext.getSpecialist().getValue());
                     evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
-                } else {
+                } else if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.LOAD.getCode())){
+//            处理载荷记录评分
+                    int value = evalRecordIndexContext.getRecordLoad().getValue() == null ? 100 : evalRecordIndexContext.getRecordLoad().getValue();
+                    value = EvalRecordLoadListContext.JudgmentResult.SUCCESS.getCode() == evalRecordIndexContext.getRecordLoad().getJudgmentStatus() ? value : 0;
+                    evalIndexRef.setLoadValue(value);
+                    evalIndexRef.setLoadExecutionName(evalRecordIndexContext.getRecordLoad().getLoadExecutionName());
+                    evalIndexRef.setLoadExecutionId(evalRecordIndexContext.getRecordLoad().getLoadExecutionId());
+                    evalIndexRef.setJudgmentStatus(evalRecordIndexContext.getRecordLoad().getJudgmentStatus());
+                    evalIndexRef.setSpecialistValue(value);
+                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
+                    evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
+                }else {
                     evalIndexRef.setProgress(EvalIndexRef.Progress.NOT_START.getCode());
                 }
                 evalIndexRefs.add(evalIndexRef);
@@ -687,9 +714,18 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 同三级指标项下变量项过滤
         Set<String> variablesMap = Sets.newHashSet();
         nextIds.forEach(nextId -> {
-            evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
-            evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());
-            evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getSpecialistType());
+            if (evalIndexRef.getType()==3){
+                evalSystemIndexesContext.setRecordLoad(new EvalRecordLoadListContext());
+                evalSystemIndexesContext.getRecordLoad().setType(evalIndexRef.getLoadType());
+                evalSystemIndexesContext.getRecordLoad().setLoadExecutionId(evalIndexRef.getLoadExecutionId());
+                evalSystemIndexesContext.getRecordLoad().setLoadExecutionName(evalIndexRef.getLoadExecutionName());
+                evalSystemIndexesContext.getRecordLoad().setJudgmentStatus(evalIndexRef.getJudgmentStatus());
+                evalSystemIndexesContext.getRecordLoad().setValue(evalIndexRef.getLoadValue());
+            } else {
+                evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
+                evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());
+                evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getSpecialistType());
+            }
             EvalIndexRef evalIndexRef1 = fullIndexesMap.get(nextId);
             // 如果"ifFull"为真，跳过第四级直接由"EvalVariableRef"获取第五级
             Integer condition = Boolean.TRUE.equals(isFull) ? EvalIndexRef.Level.AGGREGATION.getCode() : EvalIndex.Level.THIRD.getCode();

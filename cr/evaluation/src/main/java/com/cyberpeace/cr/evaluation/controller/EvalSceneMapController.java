@@ -275,6 +275,9 @@ public class EvalSceneMapController {
 			map.put(portId, value);
 			object.put("id", value);
 			object.put("name", "eth0/" + (objects.isEmpty() ? 1 : objects.size() + 1));
+			if(null != imagesByIdVO.getExtGateway()){
+				object.put("name", "E0/" + (objects.isEmpty() ? 1 : objects.size() + 1) + " (WAN)");
+			}
 			object.put("mac_addr", "");
 			object.put("ip", element.getId());
 			objects.add(object);
@@ -562,10 +565,11 @@ public class EvalSceneMapController {
 			elementObj.setWanPortNumber(0);
 			elementObj.setLanPortNumber(0);
 		} else {
-			List<PortConfig> portConfigs = imagesPageVO.getExtGateway().getPortConfigs();
-			elementObj.setWanPortNumber((int) portConfigs.stream().filter(s -> s.getPortType() == 1).count());
-			elementObj.setLanPortNumber((int) portConfigs.stream().filter(s -> s.getPortType() == 2).count());
-
+//			List<PortConfig> portConfigs = imagesPageVO.getExtGateway().getPortConfigs();
+//			elementObj.setWanPortNumber((int) portConfigs.stream().filter(s -> s.getPortType() == 1).count());
+//			elementObj.setLanPortNumber((int) portConfigs.stream().filter(s -> s.getPortType() == 2).count());
+			elementObj.setWanPortNumber(1);// 默认一个wan口开放
+			elementObj.setLanPortNumber(0);
 		}
 
 		elementObj.setWanPortType("dynamips".equals(imagesPageVO.getImageType()) ? "sfp" : "E");

@@ -38,6 +38,10 @@ public class CrRbTargetCommandParameters implements Serializable {
      */
     private Integer parameterType;
     /**
+     * 参数备注
+     */
+    private String parameterRemarks;
+    /**
      * 默认值
      */
     private String defaultValue;

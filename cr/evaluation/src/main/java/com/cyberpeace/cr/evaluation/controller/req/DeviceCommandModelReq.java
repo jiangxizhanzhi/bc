@@ -2,6 +2,8 @@ package com.cyberpeace.cr.evaluation.controller.req;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class DeviceCommandModelReq {
 
@@ -33,4 +35,6 @@ public class DeviceCommandModelReq {
 	 * 设备品牌
 	 */
 	private String brand;
+
+	private List<String> ids;
 }

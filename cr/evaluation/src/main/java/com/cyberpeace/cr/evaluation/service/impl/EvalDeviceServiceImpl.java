@@ -45,6 +45,7 @@ public class EvalDeviceServiceImpl implements EvalDeviceService {
 
     /**
      * 通过模板id查询设备清单
+     *
      * @param resourceId
      * @param category
      * @param name
@@ -54,9 +55,9 @@ public class EvalDeviceServiceImpl implements EvalDeviceService {
     public JSONArray getDeviceList(String resourceId, Integer category, String name) {
         //根据模板id去查询
         EvalTemplate evalTemplate = evalTemplateMapper.selectByResourceId(resourceId);
-        if (Objects.isNull(evalTemplate)){
-            log.error("Param exception:{}",resourceId);
-            throw new BusinessException("getDeviceList Param exception:{}",resourceId);
+        if (Objects.isNull(evalTemplate)) {
+            log.error("Param exception:{}", resourceId);
+            throw new BusinessException("getDeviceList Param exception:{}", resourceId);
         }
         LocalScene localScene = localSceneMapper.selectLocalSceneBytemplateId(evalTemplate.getResourceId());
         if (Objects.nonNull(localScene)) {
@@ -70,9 +71,9 @@ public class EvalDeviceServiceImpl implements EvalDeviceService {
     public JSONObject getDeviceStatistics(String resourceId) {
         //根据模板id查询
         EvalTemplate evalTemplate = evalTemplateMapper.selectByResourceId(resourceId);
-        if (Objects.isNull(evalTemplate)){
-            log.error("Param exception:{}",resourceId);
-            throw new BusinessException("getDeviceList Param exception:{}",resourceId);
+        if (Objects.isNull(evalTemplate)) {
+            log.error("Param exception:{}", resourceId);
+            throw new BusinessException("getDeviceList Param exception:{}", resourceId);
         }
         //根据模板id去查询场景ID
         LocalScene localScene = localSceneMapper.selectLocalSceneBytemplateId(resourceId);
@@ -103,21 +104,28 @@ public class EvalDeviceServiceImpl implements EvalDeviceService {
         log.setProtocol(req.getProtocol());
         log.setId(UUID.randomUUID().toString());
         log.setCommandUser(UserInfoContext.getUserContext().getUserId());
-        log.setCommandText(req.getExecCmds().toString());
+        log.setCommandText(req.getExecCmds() != null ? req.getExecCmds().toString() : "");
+        log.setCommandTemplateIds(req.getCommandTemplateIds() != null ? req.getCommandTemplateIds().toString() : "");
+        log.setCommandParameters(req.getCommandParameters() != null ? req.getCommandParameters().toString() : "");
         //存储执行结果
-        if(jsonObject != null){
-            if(jsonObject.get("code") != null && jsonObject.get("code").equals("MP-000000")){
+        if (jsonObject != null) {
+            if (jsonObject.get("code") != null && jsonObject.get("code").equals("MP-000000")) {
                 flag = true;
                 String result = jsonObject.get("data") != null ? jsonObject.get("data").toString() : "";
                 log.setStatus(1);
                 log.setResult(result);
             }
         }
-        if(!flag){
+        if (!flag) {
             log.setStatus(0);
             log.setResult(jsonObject != null ? String.valueOf(jsonObject) : "");
         }
         evalDeviceMapper.insert(log);
+    }
+
+    @Override
+    public List<CrRbTargetCommandLog> execCmdByAgentRusult(String id, String nodeId) {
+        return evalDeviceMapper.execCmdByAgentRusult(id, nodeId);
     }
 
 

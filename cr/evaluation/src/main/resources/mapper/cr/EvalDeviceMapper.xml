@@ -6,10 +6,12 @@
 
     <insert id="insert">
         insert into cr_rb_target_command_log
-        (id, scene_id, node_id, command_user, protocol, command_text, excuted_time, status, result, create_time,
+        (id, scene_id, node_id, command_user, protocol, command_text, excuted_time, status, result, command_templates,
+         command_parameters, create_time,
          update_time)
-        values (#{param.id}, #{param.sceneId}, #{param.nodeId}, #{param.commandUser}, #{param.protocol}, #{param.commandText}, now(), #{param.status}, #{param.result},
-                now(), now())
+        values (#{param.id}, #{param.sceneId}, #{param.nodeId}, #{param.commandUser}, #{param.protocol},
+                #{param.commandText}, now(), #{param.status}, #{param.result},
+                #{param.commandTemplateIds}, #{param.commandParameters}, now(), now())
     </insert>
 
     <select id="getDeviceCommandModels"
@@ -45,6 +47,13 @@
         select *
         from cr_rb_target_command_parameters
         where command_id = #{id}
+    </select>
+
+    <select id="execCmdByAgentRusult" resultType="com.cyberpeace.cr.evaluation.entity.CrRbTargetCommandLog">
+        select *
+        from cr_rb_target_command_log
+        where scene_id = #{id}
+          and node_id = #{nodeId}
     </select>
 
 </mapper>

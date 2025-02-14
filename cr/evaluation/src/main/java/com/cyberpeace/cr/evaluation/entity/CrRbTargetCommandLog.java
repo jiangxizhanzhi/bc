@@ -39,6 +39,14 @@ public class CrRbTargetCommandLog implements Serializable {
      */
     private String protocol;
     /**
+     * 执行的模板ids
+     */
+    private String commandTemplateIds;
+    /**
+     * 执行的模板参数
+     */
+    private String commandParameters;
+    /**
      * 执行的命令
      */
     private String commandText;

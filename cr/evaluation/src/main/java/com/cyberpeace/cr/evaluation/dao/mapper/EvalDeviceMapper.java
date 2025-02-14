@@ -18,7 +18,9 @@ public interface EvalDeviceMapper {
 
     List<CrRbTargetCommandParameters> getDeviceCommandParameters(@Param("id") String id);
 
-    void insert(@Param("param")CrRbTargetCommandLog log);
+    void insert(@Param("param") CrRbTargetCommandLog log);
+
+    List<CrRbTargetCommandLog> execCmdByAgentRusult(@Param("id") String id, @Param("nodeId") String nodeId);
 }
 
 

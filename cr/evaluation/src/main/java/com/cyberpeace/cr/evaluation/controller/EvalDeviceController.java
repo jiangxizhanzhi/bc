@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.evaluation.controller.req.DeviceCommandExecReq;
 import com.cyberpeace.cr.evaluation.controller.req.DeviceCommandModelReq;
+import com.cyberpeace.cr.evaluation.entity.CrRbTargetCommandLog;
 import com.cyberpeace.cr.evaluation.entity.CrRbTargetCommandParameters;
 import com.cyberpeace.cr.evaluation.entity.CrRbTargetCommandTemplates;
 import com.cyberpeace.cr.evaluation.service.EvalDeviceService;
@@ -37,6 +38,7 @@ public class EvalDeviceController {
             @ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
         return new BaseRsp<>(evalDeviceService.getDeviceList(resourceId, category, name));
     }
+
     @ApiOperation("设备统计")
     @GetMapping("/device/statistics")
     public BaseRsp<JSONObject> getDeviceStatistics(
@@ -53,16 +55,23 @@ public class EvalDeviceController {
 
     @ApiOperation("当前模板命令可填写的参数")
     @GetMapping("/command/parameters")
-    public BaseRsp getDeviceCommandParameters(@RequestParam(name = "id") String id){
+    public BaseRsp getDeviceCommandParameters(@RequestParam(name = "id") String id) {
         List<CrRbTargetCommandParameters> list = evalDeviceService.getDeviceCommandParameters(id);
         return new BaseRsp<>(list);
     }
 
     @ApiOperation("实体设备执行命令")
     @PostMapping("/exec_cmd_by_agent")
-    public BaseRsp execCmdByAgent(@RequestBody DeviceCommandExecReq req){
+    public BaseRsp execCmdByAgent(@RequestBody DeviceCommandExecReq req) {
         evalDeviceService.execCmdByAgent(req);
         return new BaseRsp<>();
+    }
+
+    @ApiOperation("实体设备执行命令历史记录")
+    @GetMapping("/exec_cmd_by_agent/result")
+    public BaseRsp execCmdByAgentRusult(@RequestParam(name = "id") String id, @RequestParam(name = "node_id") String nodeId) {
+        List<CrRbTargetCommandLog> result = evalDeviceService.execCmdByAgentRusult(id, nodeId);
+        return new BaseRsp<>(result);
     }
 
 }

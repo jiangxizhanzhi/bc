@@ -105,7 +105,7 @@ public class EvalDeviceServiceImpl implements EvalDeviceService {
         log.setId(UUID.randomUUID().toString());
         log.setCommandUser(UserInfoContext.getUserContext().getUserId());
         log.setCommandText(req.getExecCmds() != null ? req.getExecCmds().toString() : "");
-        log.setCommandTemplateIds(req.getCommandTemplateIds() != null ? req.getCommandTemplateIds().toString() : "");
+        log.setCommandTemplates(req.getCommandTemplates() != null ? req.getCommandTemplates().toString() : "");
         log.setCommandParameters(req.getCommandParameters() != null ? req.getCommandParameters().toString() : "");
         //存储执行结果
         if (jsonObject != null) {

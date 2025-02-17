@@ -11,7 +11,7 @@
          update_time)
         values (#{param.id}, #{param.sceneId}, #{param.nodeId}, #{param.commandUser}, #{param.protocol},
                 #{param.commandText}, now(), #{param.status}, #{param.result},
-                #{param.commandTemplateIds}, #{param.commandParameters}, now(), now())
+                #{param.commandTemplates}, #{param.commandParameters}, now(), now())
     </insert>
 
     <select id="getDeviceCommandModels"

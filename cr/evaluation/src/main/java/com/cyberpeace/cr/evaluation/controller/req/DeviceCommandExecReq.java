@@ -16,7 +16,7 @@ public class DeviceCommandExecReq {
 	@ApiModelProperty(value = "执行的协议方式")
 	private String protocol;
 	@ApiModelProperty(value = "需要执行的指令模板")
-	private List<String> commandTemplateIds;
+	private List<String> commandTemplates;
 	@ApiModelProperty(value = "需要执行的指令参数")
 	private List<String> commandParameters;
 }

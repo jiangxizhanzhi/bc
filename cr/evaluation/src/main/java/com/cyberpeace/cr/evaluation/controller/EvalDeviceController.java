@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.evaluation.controller.req.DeviceCommandExecReq;
 import com.cyberpeace.cr.evaluation.controller.req.DeviceCommandModelReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.CrRbTargetCommandLogResp;
 import com.cyberpeace.cr.evaluation.entity.CrRbTargetCommandLog;
 import com.cyberpeace.cr.evaluation.entity.CrRbTargetCommandParameters;
 import com.cyberpeace.cr.evaluation.entity.CrRbTargetCommandTemplates;
@@ -70,7 +71,7 @@ public class EvalDeviceController {
     @ApiOperation("实体设备执行命令历史记录")
     @GetMapping("/exec_cmd_by_agent/result")
     public BaseRsp execCmdByAgentRusult(@RequestParam(name = "id") String id, @RequestParam(name = "node_id") String nodeId) {
-        List<CrRbTargetCommandLog> result = evalDeviceService.execCmdByAgentRusult(id, nodeId);
+        List<CrRbTargetCommandLogResp> result = evalDeviceService.execCmdByAgentRusult(id, nodeId);
         return new BaseRsp<>(result);
     }
 

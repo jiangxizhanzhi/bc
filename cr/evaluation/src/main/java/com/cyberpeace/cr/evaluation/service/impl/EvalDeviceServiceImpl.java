@@ -1,11 +1,14 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.evaluation.controller.req.DeviceCommandExecReq;
 import com.cyberpeace.cr.evaluation.controller.req.DeviceCommandModelReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.CrRbTargetCommandLogResp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalDeviceMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
@@ -18,12 +21,12 @@ import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -106,6 +109,7 @@ public class EvalDeviceServiceImpl implements EvalDeviceService {
         log.setCommandUser(UserInfoContext.getUserContext().getUserId());
         log.setCommandText(req.getExecCmds() != null ? req.getExecCmds().toString() : "");
         log.setCommandTemplates(req.getCommandTemplates() != null ? req.getCommandTemplates().toString() : "");
+        log.setCommandTemplateIds(req.getCommandTemplateIds() != null ? req.getCommandTemplateIds().toString() : "");
         log.setCommandParameters(req.getCommandParameters() != null ? req.getCommandParameters().toString() : "");
         //存储执行结果
         if (jsonObject != null) {
@@ -124,8 +128,55 @@ public class EvalDeviceServiceImpl implements EvalDeviceService {
     }
 
     @Override
-    public List<CrRbTargetCommandLog> execCmdByAgentRusult(String id, String nodeId) {
-        return evalDeviceMapper.execCmdByAgentRusult(id, nodeId);
+    public List<CrRbTargetCommandLogResp> execCmdByAgentRusult(String id, String nodeId) {
+        // 获取日志记录
+        List<CrRbTargetCommandLog> crRbTargetCommandLogs = evalDeviceMapper.execCmdByAgentRusult(id, nodeId);
+
+        // 结果集合
+        List<CrRbTargetCommandLogResp> result = new ArrayList<>();
+
+        // 将 commandTemplateId 关联的命令模板提前查询一次，避免循环内查询
+        Set<String> allCommandTemplateIds = crRbTargetCommandLogs.stream()
+                .filter(log -> StringUtils.isNotEmpty(log.getCommandTemplateIds()))
+                .flatMap(log -> JSON.parseArray(log.getCommandTemplateIds(), String.class).stream())
+                .collect(Collectors.toSet());
+
+        if (!allCommandTemplateIds.isEmpty()) {
+            DeviceCommandModelReq deviceCommandModelReq = new DeviceCommandModelReq();
+            deviceCommandModelReq.setIds(new ArrayList<>(allCommandTemplateIds));
+            List<CrRbTargetCommandTemplates> commandTemplates = evalDeviceMapper.getDeviceCommandModels(deviceCommandModelReq);
+
+            // 将命令模板按 ID 映射，减少查找时间
+            Map<String, String> commandTemplateMap = commandTemplates.stream()
+                    .collect(Collectors.toMap(CrRbTargetCommandTemplates::getId, CrRbTargetCommandTemplates::getCommandName));
+
+            // 遍历日志，填充响应对象
+            for (CrRbTargetCommandLog log : crRbTargetCommandLogs) {
+                CrRbTargetCommandLogResp crRbTargetCommandLogResp = new CrRbTargetCommandLogResp();
+
+                // 直接复制属性
+                BeanUtils.copyProperties(log, crRbTargetCommandLogResp);
+
+                String commandTemplateIds = log.getCommandTemplateIds();
+                Set<String> commandNames = new HashSet<>();
+
+                // 如果 commandTemplateIds 不为空，解析命令模板 ID 并获取命令名称
+                if (StringUtils.isNotEmpty(commandTemplateIds)) {
+                    List<String> commandTemplateIdList = JSON.parseArray(commandTemplateIds, String.class);
+                    for (String templateId : commandTemplateIdList) {
+                        String commandName = commandTemplateMap.get(templateId);
+                        if (StringUtils.isNotEmpty(commandName)) {
+                            commandNames.add(commandName);
+                        }
+                    }
+                }
+
+                crRbTargetCommandLogResp.setCommandTemplateNames(commandNames);
+                result.add(crRbTargetCommandLogResp);
+            }
+        }
+
+        return result;
     }
 
 

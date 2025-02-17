@@ -7,11 +7,10 @@
     <insert id="insert">
         insert into cr_rb_target_command_log
         (id, scene_id, node_id, command_user, protocol, command_text, excuted_time, status, result, command_templates,
-         command_parameters, create_time,
-         update_time)
+         command_parameters, command_template_ids, create_time, update_time)
         values (#{param.id}, #{param.sceneId}, #{param.nodeId}, #{param.commandUser}, #{param.protocol},
                 #{param.commandText}, now(), #{param.status}, #{param.result},
-                #{param.commandTemplates}, #{param.commandParameters}, now(), now())
+                #{param.commandTemplates}, #{param.commandParameters}, #{param.commandTemplateIds}, now(), now())
     </insert>
 
     <select id="getDeviceCommandModels"

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.cr.evaluation.controller.req.DeviceCommandExecReq;
 import com.cyberpeace.cr.evaluation.controller.req.DeviceCommandModelReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.CrRbTargetCommandLogResp;
 import com.cyberpeace.cr.evaluation.entity.CrRbTargetCommandLog;
 import com.cyberpeace.cr.evaluation.entity.CrRbTargetCommandParameters;
 import com.cyberpeace.cr.evaluation.entity.CrRbTargetCommandTemplates;
@@ -24,5 +25,5 @@ public interface EvalDeviceService {
 
     void execCmdByAgent(DeviceCommandExecReq req);
 
-    List<CrRbTargetCommandLog> execCmdByAgentRusult(String id, String nodeId);
+    List<CrRbTargetCommandLogResp> execCmdByAgentRusult(String id, String nodeId);
 }

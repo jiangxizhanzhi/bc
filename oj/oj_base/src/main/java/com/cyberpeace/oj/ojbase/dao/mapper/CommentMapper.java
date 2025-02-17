@@ -52,6 +52,13 @@ public interface CommentMapper extends BaseMapper<Comment> {
 	void deleteByBusinessId(@Param("businessId") String businessId);
 
 	/**
+	 * 删除由业务id
+	 *
+	 * @param businessIds 业务id
+	 */
+	void deleteByBusinessIds(@Param("businessIds") List<String> businessIds);
+
+	/**
 	 * 查询由答
 	 *
 	 * @param replyId 答id

@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.oj.ojbase.dao.entity.Note;
+import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
+import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -238,6 +241,12 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
      */
     @Autowired
 	private PracticeMistakeMapper practiceMistakeMapper;
+
+	@Autowired
+	private NoteMapper noteMapper;
+
+	@Autowired
+	private CommentMapper commentMapper;
 
     /**
      * 导出日志
@@ -1190,6 +1199,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return transactionTemplate.execute(status -> {
 			practiceMistakeMapper.deleteByPracticeIds(practiceIds, null);
 			practiceSolvedMapper.deleteByPracticeIds(practiceIds);
+			// 删除关联笔记
+			noteMapper.deleteByBusinessIds(practiceIds, Note.NoteType.NOTE.getCode());
+			// 删除评论
+			commentMapper.deleteByBusinessIds(practiceIds);
 
 			if (CollectionUtils.isNotEmpty(localSceneIds)) {
 				localSceneMapper.deleteBatchIds(localSceneIds);

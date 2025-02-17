@@ -141,6 +141,18 @@
             </if>
         </where>
     </delete>
+    <delete id="deleteByBusinessIds">
+        delete from oj_note
+        <where>
+            business_id in
+            <foreach collection="businessIds" separator="," item="businessId" open="(" close=")">
+                #{businessId}
+            </foreach>
+            <if test="noteType != null">
+                and note_type = #{noteType}
+            </if>
+        </where>
+    </delete>
 
     <select id="selectByUnique" resultType="com.cyberpeace.oj.ojbase.dao.entity.Note">
         select *

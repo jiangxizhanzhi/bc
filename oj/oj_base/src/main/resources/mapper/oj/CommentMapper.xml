@@ -50,6 +50,13 @@
         delete from oj_comment
         where business_id = #{businessId}
     </delete>
+    <delete id="deleteByBusinessIds">
+        delete from oj_comment
+        where business_id in
+        <foreach collection="businessIds" item="businessId" separator="," close=")" open="(">
+            #{businessId}
+        </foreach>
+    </delete>
 
     <select id="selectByReply" resultMap="base">
         select * from oj_comment

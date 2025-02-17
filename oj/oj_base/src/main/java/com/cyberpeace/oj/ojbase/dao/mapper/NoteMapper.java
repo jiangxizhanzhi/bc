@@ -89,6 +89,15 @@ public interface NoteMapper extends BaseMapper<Note> {
 			@Param("noteType") Integer noteType, @Param("resourceType") Integer resourceType);
 
 	/**
+	 * 根据业务id批量删除
+	 *
+	 * @param businessIds  业务id
+	 * @param noteType     笔记类型
+	 */
+	void deleteByBusinessIds(@Param("businessIds") List<String> businessIds,
+						  @Param("noteType") Integer noteType);
+
+	/**
 	 * 查询由独特
 	 *
 	 * @param userId       用户id

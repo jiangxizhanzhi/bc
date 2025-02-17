@@ -17,7 +17,9 @@ import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
+import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
+import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.controller.req.WebTheoryRecordReq;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
@@ -143,6 +145,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
      */
     @Autowired
     private PracticeMistakeService practiceMistakeService;
+
+    @Autowired
+    private NoteMapper noteMapper;
 
 
     /**
@@ -532,6 +537,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
         return transactionTemplate.execute(status -> {
             practiceMistakeMapper.deleteByPracticeIds(resourceIds, null);
             practiceSolvedMapper.deleteByPracticeIds(resourceIds);
+            // 删除关联笔记
+            noteMapper.deleteByBusinessIds(resourceIds, Note.NoteType.NOTE.getCode());
             practiceSetMapper.updateById(practiceSet);
             return practiceTheoryMapper.deleteBatchIds(resourceIds);
         });

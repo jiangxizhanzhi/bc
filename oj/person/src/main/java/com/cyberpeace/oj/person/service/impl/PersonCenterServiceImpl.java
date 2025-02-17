@@ -342,11 +342,13 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         note.setUserName(UserInfoContext.getUserContext().getUserName());
         if (note.getResourceType() != null) {
             String themeName = note.getThemeName();
-            if (note.getResourceType().equals(Note.NoteResourceType.OPTION.getCode())) {
-                note.setThemeName(EXERCISE.getMsg() + "-" + Difficulty.ofCode(note.getDifficulty()) + "-" + themeName);
-            }
-            if (note.getResourceType().equals(Note.NoteResourceType.THEORY.getCode())) {
-                note.setThemeName(THEORY.getMsg() + "-" + Difficulty.ofCode(note.getDifficulty()) + "-" + themeName);
+            if(null != note.getDifficulty()) {
+                if (note.getResourceType().equals(Note.NoteResourceType.OPTION.getCode())) {
+                    note.setThemeName(EXERCISE.getMsg() + "-" + Difficulty.ofCode(note.getDifficulty()) + "-" + themeName);
+                }
+                if (note.getResourceType().equals(Note.NoteResourceType.THEORY.getCode())) {
+                    note.setThemeName(THEORY.getMsg() + "-" + Difficulty.ofCode(note.getDifficulty()) + "-" + themeName);
+                }
             }
         }
         return note;

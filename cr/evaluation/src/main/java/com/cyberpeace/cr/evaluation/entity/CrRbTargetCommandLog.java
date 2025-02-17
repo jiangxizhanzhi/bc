@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -53,6 +54,7 @@ public class CrRbTargetCommandLog implements Serializable {
     /**
      * 执行时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime excutedTime;
     /**
      * 执行状态(0:失败 1:成功)
@@ -65,10 +67,12 @@ public class CrRbTargetCommandLog implements Serializable {
     /**
      * 创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime createTime;
     /**
      * 更新时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime updateTime;
 
 }

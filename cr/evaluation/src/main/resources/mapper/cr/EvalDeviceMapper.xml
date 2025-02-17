@@ -60,6 +60,7 @@
         from cr_rb_target_command_log
         where scene_id = #{id}
           and node_id = #{nodeId}
+        order by excuted_time desc
     </select>
 
 </mapper>

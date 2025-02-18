@@ -1,20 +1,5 @@
 package com.cyberpeace.common.component;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import com.alibaba.fastjson.JSONException;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -26,8 +11,21 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ObjUtil;
 import com.cyberpeace.common.util.TimeUtil;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Date;
+import java.util.List;
 
 /**
  * excel数据处理器 需要什么方法自己加
@@ -338,7 +336,9 @@ public class ExcelDataHandler {
 					null);
 		} finally {
 			try {
-				workbook.close();
+				if (null != workbook) {
+					workbook.close();
+				}
 			} catch (IOException e) {
 				// 关闭
 			}
@@ -426,6 +426,10 @@ public class ExcelDataHandler {
 				// .....
 			}
 			throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
+		} finally {
+			try {
+				wb.close();
+			} catch (IOException ignored) {}
 		}
 
 		return file;

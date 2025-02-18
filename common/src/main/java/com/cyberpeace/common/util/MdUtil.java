@@ -1,10 +1,11 @@
 package com.cyberpeace.common.util;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
-
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.google.common.collect.Sets;
 import com.vladsch.flexmark.ext.autolink.AutolinkExtension;
 import com.vladsch.flexmark.ext.emoji.EmojiExtension;
 import com.vladsch.flexmark.ext.emoji.EmojiImageType;
@@ -17,18 +18,13 @@ import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.options.MutableDataSet;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.google.common.collect.Sets;
-
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.util.CollectionUtils;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * markdown操作工具类
@@ -444,25 +440,16 @@ public class MdUtil {
 	 * @return {@code File }
 	 */
 	public static File saveAsFileWriter(String content, String savefile) {
-		FileWriter fwriter = null;
-        File file = new File(savefile);
-		try {
-			if(!file.exists()) {
+		File file = new File(savefile);
+		try (FileWriter fwriter = new FileWriter(savefile);) {
+			if (!file.exists()) {
 				file.createNewFile();
 			}
-			fwriter = new FileWriter(savefile);
 			fwriter.write(content);
 		} catch (IOException ex) {
 			ex.printStackTrace();
-		} finally {
-			try {
-				fwriter.flush();
-				fwriter.close();
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
 		}
-        return file;
+		return file;
 	}
 
 	/**

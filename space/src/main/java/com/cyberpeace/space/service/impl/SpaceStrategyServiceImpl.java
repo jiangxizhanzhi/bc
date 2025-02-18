@@ -153,6 +153,9 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		SpaceStrategyFrameBo frameBo = this.getFrame();
 		Map<String, List<String>> map = Maps.newHashMap();
 		for (SpaceStrategyFrameBo child : frameBo.getChildren()) {
+			if (null == child) {
+				continue;
+			}
 			List<String> frameIds = Lists.newArrayList();
 			this.collectFrameId(frameIds, child);
 			map.put(child.getResourceId(), frameIds);

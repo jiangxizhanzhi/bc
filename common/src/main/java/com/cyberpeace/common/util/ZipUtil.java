@@ -180,13 +180,13 @@ public class ZipUtil {
 			zos.putNextEntry(new ZipEntry(name));
 			// copy文件到zip输出流中
 			int len;
-			FileInputStream in = new FileInputStream(sourceFile);
-			while ((len = in.read(buf)) != -1) {
-				zos.write(buf, 0, len);
+			try (FileInputStream in = new FileInputStream(sourceFile)) {
+				while ((len = in.read(buf)) != -1) {
+					zos.write(buf, 0, len);
+				}
+				// Complete the entry
+				zos.closeEntry();
 			}
-			// Complete the entry
-			zos.closeEntry();
-			in.close();
 		} else {
 			// 压缩文件夹
 			File[] listFiles = sourceFile.listFiles();

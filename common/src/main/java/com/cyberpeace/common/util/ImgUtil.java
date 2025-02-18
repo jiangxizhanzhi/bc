@@ -11,9 +11,7 @@ import javax.imageio.stream.FileImageInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,41 +48,6 @@ public class ImgUtil {
 		BufferedImage image = reader.read(0, readParam);
 		// the `jpg` can use `png`
 		ImageIO.write(image, "jpg", new File(jpgPath));
-	}
-
-	/**
-	 * IMG 类型
-	 *
-	 * @param file 文件
-	 * @return {@code String }
-	 * @throws IOException io异常
-	 *///获取图片的真实格式
-	public static String imgType(File file) throws IOException {
-		InputStream inputStream = new FileInputStream(file);
-		// 读取文件前几位
-		byte[] fileHeader = new byte[4];
-		int read = inputStream.read(fileHeader, 0, fileHeader.length);
-		inputStream.close();
-
-		// 转为十六进制字符串
-		String header = ImgUtil.bytes2Hex(fileHeader);
-
-		if (header.contains("FFD8FF")) {
-			return "jpg";
-		} else if (header.contains("89504E47")) {
-			return "png";
-		} else if (header.contains("47494638")) {
-			return "gif";
-		} else if (header.contains("424D")) {
-			return "bmp";
-		} else if (header.contains("52494646")) {
-			return "webp";
-		} else if (header.contains("49492A00")) {
-			return "tif";
-		} else {
-			return "unknown";
-		}
-
 	}
 
 	/**

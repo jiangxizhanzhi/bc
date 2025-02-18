@@ -93,8 +93,7 @@ public class ParseMarkdown {
 		BufferedReader reader = null;
 		ArrayList<String> lines = Lists.newArrayList();
 
-		try{
-			FileInputStream fileInputStream = new FileInputStream(file);
+		try (FileInputStream fileInputStream = new FileInputStream(file)) {
 			reader = new BufferedReader(new InputStreamReader(fileInputStream, "utf-8"));
 			String tempStr;
 			while ((tempStr = reader.readLine()) != null) {

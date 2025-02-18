@@ -2304,26 +2304,15 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			// 前台需要先查询课堂场景
 			OjLocalScene ojLocalScene = null;
-			ClassroomGroupInfo groupInfo = null;
-
-//			if (authContext.getIsWeb()) {
-//				groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, roomId, authContext);
-//				if (null != groupInfo) {
-//					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
-//				}
-//			}
 
 			// 查询课时场景
-			if (null == ojLocalScene && StringUtils.isBlank(roomId)) {
+			if (StringUtils.isBlank(roomId)) {
 				ojLocalScene = ojLocalSceneService.selectOjLocalScene(courseLesson.getResourceId(),
 						courseLesson.getSceneShareMode(), authContext);
 			}
 
 			if (null != ojLocalScene) {
 				JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
-				if (groupInfo != null) {
-					sceneData.put(JsonKeyConstant.ROOM_ID, groupInfo.getClassroomId());
-				}
 				topoSceneDataRes.setSceneData(sceneData);
 			}
 		}

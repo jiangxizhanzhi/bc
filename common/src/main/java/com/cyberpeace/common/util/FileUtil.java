@@ -1,5 +1,15 @@
 package com.cyberpeace.common.util;
 
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
@@ -9,19 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.google.common.collect.Lists;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class FileUtil {
@@ -200,27 +197,14 @@ public class FileUtil {
 		}
 
 		// 文件拷贝
-		FileChannel input = null;
-		FileChannel output = null;
-		try {
-			input = new FileInputStream(path).getChannel();
-			output = new FileOutputStream(dest).getChannel();
-
+		try (FileChannel input = new FileInputStream(path).getChannel();
+				FileChannel output = new FileOutputStream(dest).getChannel()) {
 			output.transferFrom(input, 0, input.size());
 		} catch (Exception e) {
 			log.error("copyFile: File copy failed! path=[{}], dest=[{}], catch error:", path, dest,
 					e);
 			throw new BusinessException(ErrorCode.FILE_COPY_FAIL);
-		} finally {
-			try {
-				input.close();
-				output.close();
-			} catch (Exception e) {
-				// 不管
-			}
-
 		}
-
 		return dest;
 	}
 

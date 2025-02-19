@@ -522,6 +522,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalIndexRef.setLoadExecutionName(thirdIndexesRecordLoadMap.get(evalIndex.getResourceId())==null?"":thirdIndexesRecordLoadMap.get(evalIndex.getResourceId()).getRecordLoad().getLoadExecutionName());
                 evalIndexRef.setLoadExecutionId(thirdIndexesRecordLoadMap.get(evalIndex.getResourceId())==null?"":thirdIndexesRecordLoadMap.get(evalIndex.getResourceId()).getRecordLoad().getLoadExecutionId());
                 evalIndexRef.setJudgmentStatus(thirdIndexesRecordLoadMap.get(evalIndex.getResourceId())==null?0:thirdIndexesRecordLoadMap.get(evalIndex.getResourceId()).getRecordLoad().getJudgmentStatus());
+                if (evalIndexRef.getType().equals(EvalIndexRef.Type.LOAD.getCode())) {
+                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getLoadType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getLoadAttrValue(), evalIndexRef.getLoadValue()));
+                    evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
+                }
             }
 
             evalIndexRef.setAlgorithmId(evalAlgorithmRef.getResourceId());

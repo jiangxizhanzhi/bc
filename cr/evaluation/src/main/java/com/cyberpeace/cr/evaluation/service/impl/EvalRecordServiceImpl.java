@@ -725,6 +725,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalSystemIndexesContext.getRecordLoad().setLoadExecutionName(evalIndexRef.getLoadExecutionName());
                 evalSystemIndexesContext.getRecordLoad().setJudgmentStatus(evalIndexRef.getJudgmentStatus());
                 evalSystemIndexesContext.getRecordLoad().setValue(evalIndexRef.getLoadValue());
+                evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
+                evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getSpecialistType());
             } else {
                 evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
                 evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());

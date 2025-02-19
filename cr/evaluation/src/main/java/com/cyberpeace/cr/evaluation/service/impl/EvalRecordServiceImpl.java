@@ -220,10 +220,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             log.error("Evaluation not found! resourceId = [{}]", resourceId);
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
-        if (!evalRecord.getStatus().equals(EvalRecord.Status.NOT_START.getCode())) {
+        /*if (!evalRecord.getStatus().equals(EvalRecord.Status.NOT_START.getCode())) {
             log.error("Evaluation has been initiated! resourceId = [{}]", resourceId);
             throw new BusinessException(CrBusinessErrorCode.EVALUATION_HAS_BEEN_INITIATED_ERROR);
-        }
+        }*/
         return evalRecord;
     }
 

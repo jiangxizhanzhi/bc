@@ -27,6 +27,12 @@ public class EvalTaskStepConfig {
 	@ApiModelProperty("装备")
 	private List<ToolBo> equip;
 
+	@ApiModelProperty("附件名称")
+	private String attachmentName;
+
+	@ApiModelProperty("附件")
+	private String attachmentPath;
+
 	public void validate() {
 		if (stage == null || title == null || process == null) {
 			log.error("The configuration of the evaluation step is incorrect! EvalTaskStepConfig = [{}]", JsonUtil.toJsonString(this));

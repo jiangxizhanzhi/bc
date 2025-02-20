@@ -79,7 +79,9 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 	@ApiOperation("新增")
 	@PostMapping("")
 	public BaseRsp<E> addAttack(@RequestBody B req) {
-		req.setResourceId(IDGeneratorUtil.getID());
+		if (StringUtils.isBlank(req.getResourceId())) {
+			req.setResourceId(IDGeneratorUtil.getID());
+		}
 		E entity = (E) req.bo2Entity();
 		this.checkNameDuplication(entity);
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -137,7 +139,7 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 		return new BaseRsp<>(bo);
 	}
 
-	public void checkNameDuplication(E entity) {
+	public boolean checkNameDuplication(E entity) {
 		CrCommonValidator.validateNameLen(entity.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		LambdaQueryWrapper<E> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(E::getName, entity.getName());
@@ -146,6 +148,7 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 				|| !one.getResourceId().equals(entity.getResourceId()))) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
+		return true;
 	}
 
 	protected Map<String, List<IdAndName>> getRelatedMap(List<E> eList){

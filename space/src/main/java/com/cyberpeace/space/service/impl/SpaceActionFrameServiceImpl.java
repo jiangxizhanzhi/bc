@@ -132,11 +132,11 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 	 * @param req 请求体
 	 */
 	@Override
-	public void saveFrame(SpaceFrameLevel req) {
+	public boolean saveFrame(SpaceFrameLevel req) {
 		req.checkLevel(false);
 		SpaceActionFrame frame = this.getOrException(req.getResourceId());
 		frame.setFrame(JsonUtil.toJsonString(req));
-		this.updateById(frame);
+		return this.updateById(frame);
 	}
 
 	private SpaceActionRelation createRel(String upperId, String lowerId) {

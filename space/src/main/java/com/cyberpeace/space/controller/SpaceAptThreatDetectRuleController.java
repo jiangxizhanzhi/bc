@@ -63,6 +63,7 @@ public class SpaceAptThreatDetectRuleController extends SpaceControllerBase<Spac
 	}
 
 	@Override
-	public void checkNameDuplication(SpaceAptThreatDetectRule entity) {
+	public boolean checkNameDuplication(SpaceAptThreatDetectRule entity) {
+		return true;
 	}
 }

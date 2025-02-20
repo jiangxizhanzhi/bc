@@ -79,6 +79,8 @@ public class SpaceLoadedFileThreatRuleController extends SpaceControllerBase<Spa
 	}
 
 	@Override
-	public void checkNameDuplication(SpaceLoadedFileThreatRule entity) {}
+	public boolean checkNameDuplication(SpaceLoadedFileThreatRule entity) {
+		return true;
+	}
 
 }

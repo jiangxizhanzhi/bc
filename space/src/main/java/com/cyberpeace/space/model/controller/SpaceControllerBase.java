@@ -50,7 +50,7 @@ public abstract class SpaceControllerBase<S extends IService<E>, E extends Space
 		req.setResourceId(IDGeneratorUtil.getID());
 		E entity = (E) req.bo2Entity();
 		this.checkNameDuplication(entity);
-		baseService.getBaseMapper().insert(entity);
+		baseService.save(entity);
 		return new BaseRsp();
 	}
 
@@ -85,7 +85,7 @@ public abstract class SpaceControllerBase<S extends IService<E>, E extends Space
 		return new BaseRsp<>(bo);
 	}
 
-	public void checkNameDuplication(E entity) {
+	public boolean checkNameDuplication(E entity) {
 		CrCommonValidator.validateNameLen(entity.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		LambdaQueryWrapper<E> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(E::getName, entity.getName());
@@ -94,6 +94,7 @@ public abstract class SpaceControllerBase<S extends IService<E>, E extends Space
 				|| !one.getResourceId().equals(entity.getResourceId()))) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
+		return true;
 	}
 
 	protected Map<String, IdAndName> getRelatedMap(List<E> eList) {

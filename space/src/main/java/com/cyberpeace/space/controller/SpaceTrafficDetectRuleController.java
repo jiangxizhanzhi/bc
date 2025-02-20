@@ -60,7 +60,8 @@ public class SpaceTrafficDetectRuleController extends SpaceControllerBase<SpaceT
     }
 
     @Override
-	public void checkNameDuplication(SpaceTrafficDetectRule entity) {
+	public boolean checkNameDuplication(SpaceTrafficDetectRule entity) {
+        return true;
 
     }
 }

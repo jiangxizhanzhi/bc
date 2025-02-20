@@ -68,7 +68,7 @@ public class SpaceTrafficExtractionRuleController extends SpaceControllerBase<Sp
 	}
 
 	@Override
-	public void checkNameDuplication(SpaceTrafficExtractionRule entity) {
+	public boolean checkNameDuplication(SpaceTrafficExtractionRule entity) {
 		CrCommonValidator.validateNameLen(entity.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		LambdaQueryWrapper<SpaceTrafficExtractionRule> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(SpaceTrafficExtractionRule::getName, entity.getName());
@@ -78,5 +78,6 @@ public class SpaceTrafficExtractionRuleController extends SpaceControllerBase<Sp
 				|| !one.getResourceId().equals(entity.getResourceId()))) {
 			throw new BusinessException(ErrorCode.NAME_CONTENT_DUPLICATE);
 		}
+		return true;
 	}
 }

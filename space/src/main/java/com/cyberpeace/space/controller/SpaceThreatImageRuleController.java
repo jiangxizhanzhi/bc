@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class SpaceThreatImageRuleController extends SpaceControllerBase<SpaceThreatImageRuleService, SpaceThreatImageRule, SpaceThreatImageRuleBo, SpacePageReqBase> {
 
 	@Override
-	public void checkNameDuplication(SpaceThreatImageRule entity) {
-
+	public boolean checkNameDuplication(SpaceThreatImageRule entity) {
+		return true;
 	}
 }

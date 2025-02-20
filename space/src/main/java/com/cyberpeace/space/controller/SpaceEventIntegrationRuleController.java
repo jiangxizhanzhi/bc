@@ -63,6 +63,7 @@ public class SpaceEventIntegrationRuleController extends SpaceControllerBase<Spa
     }
 
     @Override
-    public void checkNameDuplication(SpaceEventIntegrationRule entity) {
+    public boolean checkNameDuplication(SpaceEventIntegrationRule entity) {
+        return true;
     }
 }

@@ -59,6 +59,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>ma.glasnost.orika</groupId>
+            <artifactId>orika-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.cyberpeace</groupId>
             <artifactId>common</artifactId>
             <version>${common.version}</version>

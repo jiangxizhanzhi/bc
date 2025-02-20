@@ -356,6 +356,8 @@ public class EvalTemplateController {
 			for (int i = 0; i < evalTaskStepContextList.size(); i++) {
 				if (map.containsKey(evalTaskStepContextList.get(i).getTitle())) {
 					evalTaskStepContextList.get(i).setEquip(map.get(evalTaskStepContextList.get(i).getTitle()));
+					evalTaskStepContextList.get(i).setAttachmentName(evalTaskStepContextList.get(i).getAttachmentName());
+					evalTaskStepContextList.get(i).setAttachmentPath(evalTaskStepContextList.get(i).getAttachmentPath());
 				}
 			}
 		}

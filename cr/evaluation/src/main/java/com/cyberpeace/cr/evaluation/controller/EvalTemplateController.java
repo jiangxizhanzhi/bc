@@ -339,6 +339,8 @@ public class EvalTemplateController {
 			phase = evalTask.getPhase();
 			List<EvalTaskStepConfig> stages = JsonUtil.toJsonObjectArray(phase, EvalTaskStepConfig.class);
 			Map<String, List<ToolBo>> map = stages.stream().collect(Collectors.toMap(EvalTaskStepConfig::getTitle, EvalTaskStepConfig::getEquip));
+			Map<String, String> nameMap = stages.stream().collect(Collectors.toMap(EvalTaskStepConfig::getTitle, EvalTaskStepConfig::getAttachmentName));
+			Map<String, String> urlMap = stages.stream().collect(Collectors.toMap(EvalTaskStepConfig::getTitle, EvalTaskStepConfig::getAttachmentPath));
 			for (EvalTaskStepConfig eva : stages) {
 				for (ToolBo toolBo : eva.getEquip()) {
 					Boolean isExecute = toolBo.getIsExecute();
@@ -356,8 +358,8 @@ public class EvalTemplateController {
 			for (int i = 0; i < evalTaskStepContextList.size(); i++) {
 				if (map.containsKey(evalTaskStepContextList.get(i).getTitle())) {
 					evalTaskStepContextList.get(i).setEquip(map.get(evalTaskStepContextList.get(i).getTitle()));
-					evalTaskStepContextList.get(i).setAttachmentName(evalTaskStepContextList.get(i).getAttachmentName());
-					evalTaskStepContextList.get(i).setAttachmentPath(evalTaskStepContextList.get(i).getAttachmentPath());
+					evalTaskStepContextList.get(i).setAttachmentName(nameMap.get(evalTaskStepContextList.get(i).getTitle()));
+					evalTaskStepContextList.get(i).setAttachmentPath(urlMap.get(evalTaskStepContextList.get(i).getTitle()));
 				}
 			}
 		}

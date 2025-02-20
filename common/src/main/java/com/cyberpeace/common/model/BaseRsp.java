@@ -38,7 +38,7 @@ public class BaseRsp<T> {
 	/**
 	 * 时间戳
 	 */
-	public long timestamp = System.currentTimeMillis();
+//	public long timestamp = System.currentTimeMillis();
 
 	public BaseRsp(T data) {
 		this.data = data;

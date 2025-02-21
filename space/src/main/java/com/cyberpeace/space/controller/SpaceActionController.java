@@ -14,7 +14,6 @@ import com.cyberpeace.space.dao.entity.SpaceStrategy;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.controller.SpaceActionFrameBaseController;
 import com.cyberpeace.space.service.SpaceActionMethodService;
-import com.cyberpeace.space.service.SpaceActionRelationService;
 import com.cyberpeace.space.service.SpaceActionService;
 import com.cyberpeace.space.service.SpaceStrategyService;
 import com.cyberpeace.space.service.context.frame.*;
@@ -61,13 +60,6 @@ public class SpaceActionController extends SpaceActionFrameBaseController<SpaceA
 	 */
 	@Autowired
 	private SpaceStrategyService strategyService;
-
-
-	/**
-	 * 关系Service
-	 */
-	@Autowired
-	private SpaceActionRelationService relationService;
 
 	/**
 	 * 获取adetail

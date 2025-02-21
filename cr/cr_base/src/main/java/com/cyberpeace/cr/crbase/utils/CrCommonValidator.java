@@ -183,7 +183,7 @@ public class CrCommonValidator {
 	 * @param errorCode 错误代号
 	 */
 	public static void validateNameLen(String target, String errorCode) {
-		validateLength(target, CrCommonConstants.MIN_STR_LEN, CrCommonConstants.MAX_NAME_STR_LEN,
+		validateLength(target, 1, 255,
 				errorCode);
 	}
 

@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.space.dao.entity.SpaceActionMethod;
-import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.model.SpaceFrameBaseTable;
 import com.cyberpeace.space.service.SpaceActionMethodService;
 import com.cyberpeace.space.service.SpaceActionRelationService;
@@ -30,8 +29,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(SpaceActionMethodController.class)
 class SpaceActionMethodControllerTest {

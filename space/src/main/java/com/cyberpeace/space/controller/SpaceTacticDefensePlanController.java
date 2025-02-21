@@ -28,9 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SpaceTacticDefensePlanController extends SpaceControllerBase<SpaceTacticDefensePlanService, SpaceTacticDefensePlan, SpaceTacticDefensePlanBo, SpacePageReqBase> {
 
-	@Autowired
-	private SpaceTacticDefensePlanService service;
-
 	/**
 	 * 获取adetail
 	 *
@@ -42,19 +39,19 @@ public class SpaceTacticDefensePlanController extends SpaceControllerBase<SpaceT
 	@Override
 	public BaseRsp<SpaceTacticDefensePlanBo>
 			getADetail(@ApiParam(value = "resource_id", name = "resource_id") String resource_id) {
-		SpaceTacticDefensePlan plan = service.getById(resource_id);
+		SpaceTacticDefensePlan plan = baseService.getById(resource_id);
 		if (null == plan) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		SpaceTacticDefensePlanBo bo = plan.entity2Bo(Maps.newHashMap());
-		bo.setLevel(service.getFrameLevels(plan));
+		bo.setLevel(baseService.getFrameLevels(plan));
 		return new BaseRsp<>(bo);
 	}
 
 	@ApiOperation("生成新框架")
 	@PostMapping("/renew")
 	public BaseRsp<SpaceFrameLevel> updatePlan(@RequestBody DefensePlanLevelUpdateReq req) {
-		SpaceFrameLevel level = service.renewFrame(req);
+		SpaceFrameLevel level = baseService.renewFrame(req);
 		return new BaseRsp(level);
 	}
 

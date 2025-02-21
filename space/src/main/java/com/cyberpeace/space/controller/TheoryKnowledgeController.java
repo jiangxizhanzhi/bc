@@ -150,7 +150,7 @@ public class TheoryKnowledgeController {
 	 * @param lessonAddReq
 	 * @return
 	 */
-	private CourseLesson addReqToEntity(LessonAddReq lessonAddReq) {
+	public CourseLesson addReqToEntity(LessonAddReq lessonAddReq) {
 
 		// 知识点转换
 		CourseLesson courseLesson = BeanUtils.copy(lessonAddReq, CourseLesson.class);

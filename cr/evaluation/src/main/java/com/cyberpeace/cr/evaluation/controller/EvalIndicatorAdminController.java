@@ -275,7 +275,7 @@ public class EvalIndicatorAdminController {
 	 * @param evalIndicator 评估指标
 	 * @return {@code EvalIndicatorRsp }
 	 */
-	private EvalIndicatorRsp convertEvalIndicatorToEvalSystemRsp(EvalIndicator evalIndicator) {
+	protected EvalIndicatorRsp convertEvalIndicatorToEvalSystemRsp(EvalIndicator evalIndicator) {
 		EvalIndicatorRsp evalSystemRsp = BeanUtils.copy(evalIndicator, EvalIndicatorRsp.class);
 
 		EvalIndicatorContext evalIndicatorContext = BeanUtils.copy(evalIndicator,

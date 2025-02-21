@@ -99,7 +99,7 @@ public class EvalAlgorithmAdminController {
 	 * @param req 请求体
 	 * @return {@code EvalAlgorithm }
 	 */
-	private EvalAlgorithm convertEvalAlgorithmReqToEvalAlgorithm(EvalAlgorithmReq req) {
+	protected EvalAlgorithm convertEvalAlgorithmReqToEvalAlgorithm(EvalAlgorithmReq req) {
 
 		validateReq(req);
 
@@ -118,7 +118,7 @@ public class EvalAlgorithmAdminController {
 	 *
 	 * @param req 请求体
 	 */
-	private void validateReq(EvalAlgorithmReq req) {
+	protected void validateReq(EvalAlgorithmReq req) {
 		String resourceId = req.getEvalAlgorithmId();
 
 		// 校验名称长度
@@ -195,7 +195,7 @@ public class EvalAlgorithmAdminController {
 	 *
 	 * @param evalAlgorithmId 评估算法id
 	 */
-	private void checkAlgorithmMode(String evalAlgorithmId) {
+	protected void checkAlgorithmMode(String evalAlgorithmId) {
 		LambdaQueryWrapper<EvalAlgorithm> queryWrapper =  new LambdaQueryWrapper<>();
 		queryWrapper.eq(EvalAlgorithm::getBuiltin, EvalAlgorithm.Builtin.SCORING_ALGORITHM.getCode());
 		List<EvalAlgorithm> evalAlgorithms = evalAlgorithmMapper.selectList(queryWrapper);

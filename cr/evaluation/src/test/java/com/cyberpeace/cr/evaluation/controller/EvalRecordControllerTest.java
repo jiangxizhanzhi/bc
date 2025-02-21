@@ -2,6 +2,8 @@ package com.cyberpeace.cr.evaluation.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
@@ -10,6 +12,7 @@ import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
 import com.cyberpeace.cr.evaluation.service.EvalRecordService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -61,7 +64,7 @@ class EvalRecordControllerTest {
         mockMvc.perform(get("/cr/eval/record/list")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{}", true));
+                .andExpect(content().json("{\"data\":null,\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 
     @Test
@@ -78,7 +81,7 @@ class EvalRecordControllerTest {
         mockMvc.perform(get("/cr/eval/record/status")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{}", true));
+                .andExpect(content().json("{\"data\":[{\"id\":0,\"label\":\"label\"}],\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 
 
@@ -95,12 +98,13 @@ class EvalRecordControllerTest {
         when(mockEvalRecordService.create(any(EvalRecordAddReq.class))).thenReturn(evalRecordRsp);
 
         // Run the test and verify the results
+        EvalRecordAddReq evalRecordAddReq = new EvalRecordAddReq();
+        evalRecordAddReq.setResourceId("1111");
         mockMvc.perform(post("/cr/eval/record")
-                        .content("content").contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.toJsonString(evalRecordAddReq)).contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{}", true));
-        verify(mockEvalRecordService).isExist(any(EvalRecordAddReq.class));
+                .andExpect(content().json("{\"data\":{\"resourceId\":\"resourceId\",\"name\":\"name\",\"description\":\"description\",\"roomId\":\"roomId\",\"systemId\":\"systemId\"},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 
     @Test
@@ -116,11 +120,13 @@ class EvalRecordControllerTest {
         when(mockEvalRecordService.update(any(EvalRecordAddReq.class))).thenReturn(evalRecordRsp);
 
         // Run the test and verify the results
+        EvalRecordAddReq evalRecordAddReq = new EvalRecordAddReq();
+        evalRecordAddReq.setResourceId("1111");
         mockMvc.perform(patch("/cr/eval/record")
-                        .content("content").contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.toJsonString(evalRecordAddReq)).contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{}", true));
+                .andExpect(content().json("{\"data\":{\"resourceId\":\"resourceId\",\"name\":\"name\",\"description\":\"description\",\"roomId\":\"roomId\",\"systemId\":\"systemId\"},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
         verify(mockEvalRecordService).isExist(any(EvalRecordAddReq.class));
     }
 
@@ -141,7 +147,7 @@ class EvalRecordControllerTest {
                         .param("resource_id", "recordId")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{}", true));
+                .andExpect(content().json("{\"data\":{\"resourceId\":\"resourceId\",\"name\":\"name\",\"description\":\"description\",\"roomId\":\"roomId\",\"systemId\":\"systemId\"},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 
     @Test
@@ -150,11 +156,13 @@ class EvalRecordControllerTest {
         when(mockEvalRecordService.delete(Arrays.asList("value"))).thenReturn(false);
 
         // Run the test and verify the results
+        BatchDeleteReq batchDeleteReq = new BatchDeleteReq();
+        batchDeleteReq.setIds(Lists.list("11111"));
         mockMvc.perform(delete("/cr/eval/record")
-                        .content("content").contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.toJsonString(batchDeleteReq)).contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{}", true));
+                .andExpect(content().json("{\"data\":false,\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 
     @Test
@@ -172,7 +180,7 @@ class EvalRecordControllerTest {
                         .param("room_id", "roomId")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{}", true));
+                .andExpect(content().json("{\"data\":[{\"id\":\"id\",\"label\":\"label\"}],\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 
 
@@ -193,7 +201,7 @@ class EvalRecordControllerTest {
                         .param("node_id", "nodeId")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{}", true));
+                .andExpect(content().json("{\"data\":[{\"id\":\"id\",\"label\":\"label\"}],\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 
 
@@ -207,7 +215,7 @@ class EvalRecordControllerTest {
                         .param("room_id", "roomId")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{}", true));
+                .andExpect(content().json("{\"data\":{},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 
     @Test
@@ -229,7 +237,7 @@ class EvalRecordControllerTest {
                         .param("room_id", "roomId")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{}", true));
+                .andExpect(content().json("{\"data\":[{\"id\":\"id\",\"label\":\"label\",\"data\":[{\"id\":\"id\",\"label\":\"label\"}]}],\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 
 

@@ -1,7 +1,6 @@
 package com.cyberpeace.oj.course.controller.req;
 
 import com.cyberpeace.common.baseinterface.Create;
-import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import io.swagger.annotations.ApiModel;
@@ -131,14 +130,14 @@ public class CourseAddReq implements Serializable {
 
 	public void validate() {
 		// 校验分数最大值
-		int scoreMax = Integer.parseInt(ConfigUtil.getContextProperty("oj.score.max"));
+		int scoreMax = 1000;
 		if (null != score ) {
 			CrCommonValidator.validateScore(score, scoreMax, OjBusinessErrorCode.MAX_SCORE_1000);
 		}
 		// 验证名称长度
 		if(null != lecturer && !lecturer.isEmpty()){
-			int lenMin = Integer.parseInt(ConfigUtil.getContextProperty("oj.str.len.name.min"));
-			int lenMax = Integer.parseInt(ConfigUtil.getContextProperty("oj.str.len.name.max"));
+			int lenMin = 1;
+			int lenMax = 64;
 			CrCommonValidator.validateRange(lecturer.length(),lenMin, lenMax, OjBusinessErrorCode.MAX_64_CHARACTERS);
 		}
 	}

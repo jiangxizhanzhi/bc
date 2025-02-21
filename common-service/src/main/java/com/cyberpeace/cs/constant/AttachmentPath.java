@@ -1,11 +1,9 @@
 package com.cyberpeace.cs.constant;
 
-import java.io.File;
-
 import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.util.ConfigUtil;
-
 import lombok.Getter;
+
+import java.io.File;
 
 /**
  * 目录划分
@@ -126,7 +124,7 @@ public enum AttachmentPath implements GenericEnum {
 	/**
 	 * 初始化值
 	 */
-	private String parentPath = ConfigUtil.getContextProperty("cr.local.upload.path");
+	private String parentPath = "/cpms";
 
 	AttachmentPath(Integer code, String desc) {
 		this.code = code;

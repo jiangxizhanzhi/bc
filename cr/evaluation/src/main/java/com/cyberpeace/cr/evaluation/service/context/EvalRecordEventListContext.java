@@ -25,4 +25,10 @@ public class EvalRecordEventListContext implements Serializable {
 
     @ApiModelProperty(value = "告警匹配名称",required = false)
     private String alarmMatchName;
+
+    @ApiModelProperty(value = "是否自定义分数",required = false)
+    private Boolean isCustomScore;
+
+    @ApiModelProperty(value = "自定义分数",required = false)
+    private Integer customScore;
 }

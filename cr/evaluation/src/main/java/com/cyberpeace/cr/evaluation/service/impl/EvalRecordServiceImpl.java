@@ -303,7 +303,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     String eventName = evalRecordIndexContext.getEvent().getEventName();
                     // 告警匹配名称
                     String alarmMatchName = evalRecordIndexContext.getEvent().getAlarmMatchName();
-                    int value= remoteSceneService.getEventValue(nodeId,eventName,alarmMatchName);
+                    int value = 0;
+                    if (evalRecordIndexContext.getEvent().getIsCustomScore() != null && evalRecordIndexContext.getEvent().getIsCustomScore()) {
+                        value = evalRecordIndexContext.getEvent().getCustomScore();
+                    } else {
+                        value = remoteSceneService.getEventValue(nodeId, eventName, alarmMatchName);
+                    }
                     thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(),value);
                     thirdEventName.put(evalRecordIndexContext.getResourceId(),eventName);
                     thirdAlarmMatchName.put(evalRecordIndexContext.getResourceId(),alarmMatchName);

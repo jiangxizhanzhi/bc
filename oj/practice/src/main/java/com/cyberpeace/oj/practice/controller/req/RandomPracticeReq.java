@@ -1,15 +1,13 @@
 package com.cyberpeace.oj.practice.controller.req;
 
-import java.util.List;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 import com.cyberpeace.common.model.PatternBase;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * 随机实践请求体
@@ -30,9 +28,9 @@ public class RandomPracticeReq extends PatternBase {
 	 *
 	 * @see String
 	 */
-	@ApiModelProperty("习题集编号")
-	@NotBlank
-	private String practiceSetId;
+//	@ApiModelProperty("习题集编号")
+//	@NotBlank
+//	private String practiceSetId;
 
 	/**
 	 * 类别id

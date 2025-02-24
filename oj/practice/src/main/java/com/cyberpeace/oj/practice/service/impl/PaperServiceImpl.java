@@ -12,7 +12,6 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.*;
@@ -330,68 +329,34 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			Double score, AuthContext authContext) {
 
 		// 数据校验
-		practiceValidateHandler.validatePracticeSetPermission(practiceQuery.getPracticeSetId(),
-				authContext);
 
-		PracticeSet practiceSet = practiceSetMapper.selectById(practiceQuery.getPracticeSetId());
+		List<String> practiceIds = practiceTheoryMapper
+				.selectBySetIds(Lists.newArrayList(practiceQuery.getPracticeSetId()), true);
+		practiceIds.removeAll(practiceQuery.getSelectIds());
 
-		// 根据习题集类型不同查询不同的习题
-		if (practiceSet.getPracticeType().intValue() == PracticeCategory.PracticeType.THEORY
-				.getCode()) {
-
-			List<String> practiceIds = practiceTheoryMapper
-					.selectBySetIds(Lists.newArrayList(practiceQuery.getPracticeSetId()), true);
-			practiceIds.removeAll(practiceQuery.getSelectIds());
-
-			// 习题集下数据量判断
-			if (practiceIds.size() < practiceQuery.getCount()) {
-				log.error("practiceIds.size() < practiceQuery.getCount() ,PracticeSetId =[{}]",practiceQuery.getPracticeSetId());
-				throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
-			}
-
-			// 执行数据查询
-			TheoryListQuery theoryListQuery = BeanUtils.copy(practiceQuery, TheoryListQuery.class);
-			theoryListQuery.setResourceIds(practiceIds);
-			theoryListQuery.setPracticeSetIds(Lists.newArrayList(practiceQuery.getPracticeSetId()));
-			List<PracticeTheory> theories = practiceTheoryMapper.randomChoice(theoryListQuery,
-					practiceQuery.getCount());
-
-			// 其他条件下数据量判断
-			if (theories.size() < practiceQuery.getCount()) {
-				log.error("theories.size() < practiceQuery.getCount(),PracticeSetId =[{}]",practiceQuery.getPracticeSetId());
-				throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
-			}
-
-			theories.forEach(practiceTheory -> practiceTheory.setScore(score));
-			return StreamApiUtils.map(theories, practiceTheory -> theoryToListBo(practiceTheory));
-		} else {
-
-			// 习题集数量校验
-			List<String> practiceIds = practiceOperationMapper
-					.selectBySetIds(Lists.newArrayList(practiceQuery.getPracticeSetId()), true);
-			practiceIds.removeAll(practiceQuery.getSelectIds());
-
-			// 习题集下数据量判断
-			if (practiceIds.size() < practiceQuery.getCount()) {
-				log.error("theories.size() < practiceQuery.getCount(),PracticeSetId =[{}]",practiceQuery.getPracticeSetId());
-				throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
-			}
-
-			// 实操习题数据查询
-			OperationListQuery listQuery = BeanUtils.copy(practiceQuery, OperationListQuery.class);
-			listQuery.setResourceIds(practiceIds);
-			List<PracticeOperation> operations = practiceOperationMapper.randomChoice(listQuery,
-					practiceQuery.getCount());
-
-			// 其他条件下数据量判断
-			if (operations.size() < practiceQuery.getCount()) {
-				log.error("operations.size() < practiceQuery.getCount(),PracticeSetId =[{}]",practiceQuery.getPracticeSetId());
-				throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
-			}
-
-			operations.forEach(operation -> operation.setScore(score));
-			return StreamApiUtils.map(operations, operation -> operationToListBo(operation));
+		// 习题集下数据量判断
+		if (practiceIds.size() < practiceQuery.getCount()) {
+			log.error("practiceIds.size() < practiceQuery.getCount() ,PracticeSetId =[{}]",
+					practiceQuery.getPracticeSetId());
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
 		}
+
+		// 执行数据查询
+		TheoryListQuery theoryListQuery = BeanUtils.copy(practiceQuery, TheoryListQuery.class);
+		theoryListQuery.setResourceIds(practiceIds);
+		theoryListQuery.setPracticeSetIds(Lists.newArrayList(practiceQuery.getPracticeSetId()));
+		List<PracticeTheory> theories = practiceTheoryMapper.randomChoice(theoryListQuery,
+				practiceQuery.getCount());
+
+		// 其他条件下数据量判断
+		if (theories.size() < practiceQuery.getCount()) {
+			log.error("theories.size() < practiceQuery.getCount(),PracticeSetId =[{}]",
+					practiceQuery.getPracticeSetId());
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
+		}
+
+		theories.forEach(practiceTheory -> practiceTheory.setScore(score));
+		return StreamApiUtils.map(theories, practiceTheory -> theoryToListBo(practiceTheory));
 	}
 
 	/**

@@ -3,10 +3,8 @@ package com.cyberpeace.space.controller;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.space.dao.entity.SpaceBaseAlgorithm;
-import com.cyberpeace.space.dao.entity.SpaceEventIntegrationRule;
 import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.service.SpaceBaseAlgorithmService;
 import com.cyberpeace.space.service.context.IdListReq;
@@ -65,7 +63,7 @@ class SpaceBaseAlgorithmControllerTest {
     void testPage() throws Exception {
         // Setup
         // Run the test and verify the results
-        mockMvc.perform(get("/space/rule/space_apt_threat_detect_rule/list")
+        mockMvc.perform(get("/space/algorithm/base_algorithm/list")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\"data\":{\"list\":[],\"total\":0,\"lastPage\":0,\"currentPage\":1},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
@@ -77,7 +75,7 @@ class SpaceBaseAlgorithmControllerTest {
         // Run the test and verify the results
         SpaceWarningDictionaryBo spaceWarningDictionaryBo = new SpaceWarningDictionaryBo();
         spaceWarningDictionaryBo.setResourceId("resource_id");
-        mockMvc.perform(post("/space/rule/space_apt_threat_detect_rule")
+        mockMvc.perform(post("/space/algorithm/base_algorithm")
                         .content(JsonUtil.toJsonString(spaceWarningDictionaryBo)).contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -90,7 +88,7 @@ class SpaceBaseAlgorithmControllerTest {
         // Run the test and verify the results
         SpaceWarningDictionaryBo spaceWarningDictionaryBo = new SpaceWarningDictionaryBo();
         spaceWarningDictionaryBo.setResourceId("resource_id");
-        mockMvc.perform(patch("/space/rule/space_apt_threat_detect_rule")
+        mockMvc.perform(patch("/space/algorithm/base_algorithm")
                         .content(JsonUtil.toJsonString(spaceWarningDictionaryBo)).contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -103,7 +101,7 @@ class SpaceBaseAlgorithmControllerTest {
         // Run the test and verify the results
         IdListReq req = new IdListReq();
         req.setIds(Arrays.asList("value"));
-        mockMvc.perform(delete("/space/rule/space_apt_threat_detect_rule")
+        mockMvc.perform(delete("/space/algorithm/base_algorithm")
                         .content(JsonUtil.toJsonString(req)).contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -114,7 +112,7 @@ class SpaceBaseAlgorithmControllerTest {
     void testGetADetail() throws Exception {
         // Setup
         // Run the test and verify the results
-        mockMvc.perform(get("/space/rule/space_apt_threat_detect_rule")
+        mockMvc.perform(get("/space/algorithm/base_algorithm")
                         .param("resource_id", "resource_id")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

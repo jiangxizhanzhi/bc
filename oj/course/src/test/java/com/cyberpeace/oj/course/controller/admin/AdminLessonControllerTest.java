@@ -336,7 +336,7 @@ class AdminLessonControllerTest {
 		AddLessonPracticeReq req = new AddLessonPracticeReq();
 		req.setResourceId("lesson1");
 		req.setPracticeList(practiceList);
-		when(mockCourseLessonService.addLessonPractice("lesson1", practiceList))
+		when(mockCourseLessonService.addLessonPractice(eq("lesson1"), any()))
 				.thenReturn(true);
 
 		// Run the test and verify the results

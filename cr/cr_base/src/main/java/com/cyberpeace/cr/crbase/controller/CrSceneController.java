@@ -55,7 +55,8 @@ public class CrSceneController {
 	@RequiresPermissions(
 			value = { MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
 					MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.WEB_CR_SINGLE_TRAIN,
-					MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE },
+					MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE,
+					MenuConstant.WEB_CR_EVALUATION },
 			logical = Logical.OR)
 	public BaseRsp<Boolean> updateScene(@Valid @RequestBody SceneUpdateReq req) {
 		LocalScene localScene = localSceneService.getOrExceptionByMpSceneId(req.getMpSceneId());

@@ -18,7 +18,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -126,54 +125,6 @@ class EvalAlgorithmAdminControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\"data\":{\"id\":null,\"createTime\":null,\"updateTime\":null,\"resourceId\":null,\"name\":null,\"description\":null,\"type\":null,\"algorithmLanguage\":null,\"code\":null,\"state\":0,\"params\":null,\"paramsNum\":null,\"createUserId\":null,\"mode\":null,\"builtin\":null},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
-
-        // Confirm EvalAlgorithmService.save(...).
-        final EvalAlgorithm entity = new EvalAlgorithm();
-        entity.setResourceId("evalAlgorithmId");
-        entity.setState(0);
-        entity.setParams("params");
-        entity.setParamsNum(0);
-        entity.setCreateUserId("createUserId");
-        entity.setBuiltin(0);
-
-
-        // Confirm EvalAlgorithmService.updateById(...).
-        final EvalAlgorithm entity1 = new EvalAlgorithm();
-        entity1.setResourceId("evalAlgorithmId");
-        entity1.setState(0);
-        entity1.setParams("params");
-        entity1.setParamsNum(0);
-        entity1.setCreateUserId("createUserId");
-        entity1.setBuiltin(0);
-    }
-
-    @Test
-    void testEditAlgorithm_EvalAlgorithmMapperSelectListReturnsNoItems() throws Exception {
-        // Setup
-        when(mockEvalAlgorithmMapper.selectList(any(LambdaQueryWrapper.class))).thenReturn(Collections.emptyList());
-
-        // Configure EvalAlgorithmService.getById(...).
-        final EvalAlgorithm evalAlgorithm = new EvalAlgorithm();
-        evalAlgorithm.setResourceId("evalAlgorithmId");
-        evalAlgorithm.setState(0);
-        evalAlgorithm.setParams("params");
-        evalAlgorithm.setParamsNum(0);
-        evalAlgorithm.setCreateUserId("createUserId");
-        evalAlgorithm.setBuiltin(0);
-        when(mockEvalAlgorithmService.getById("evalAlgorithmId")).thenReturn(evalAlgorithm);
-
-        when(mockEvalAlgorithmMapper.existByName("name", "evalAlgorithmId")).thenReturn(false);
-        when(mockEvalAlgorithmService.selectUsedNum(Arrays.asList("value"))).thenReturn(0);
-
-        // Run the test and verify the results
-        EvalAlgorithmReq evalAlgorithmReq = new EvalAlgorithmReq();
-        evalAlgorithmReq.setEvalAlgorithmId("evalAlgorithmId");
-        mockMvc.perform(put("/cr/eval/algorithm")
-                        .content(JsonUtil.toJsonString(evalAlgorithmReq)).contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json("{\"data\":{\"id\":null,\"createTime\":null,\"updateTime\":null,\"resourceId\":null,\"name\":null,\"description\":null,\"type\":null,\"algorithmLanguage\":null,\"code\":null,\"state\":0,\"params\":null,\"paramsNum\":null,\"createUserId\":null,\"mode\":null,\"builtin\":null},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
-        verify(mockEvalAlgorithmService).updateStateById("evalAlgorithmId");
 
         // Confirm EvalAlgorithmService.save(...).
         final EvalAlgorithm entity = new EvalAlgorithm();

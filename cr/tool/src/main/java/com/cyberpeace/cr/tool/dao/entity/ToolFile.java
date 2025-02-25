@@ -3,7 +3,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.util.ConfigUtil;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -51,6 +50,6 @@ public class ToolFile implements Serializable {
 		if (StringUtils.isBlank(savePath)) {
 			return "";
 		}
-		return ConfigUtil.getContextProperty("cr.local.file.prefix") + savePath;
+		return "/cpms/" + savePath;
 	}
 }

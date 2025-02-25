@@ -67,7 +67,7 @@ public class CommonController {
 	 */
 	@PostConstruct
 	public void init() {
-		MD_UPLOAD_NAME_LEN = ConfigUtil.getContextProperty("md.upload.name.len.max");
+		MD_UPLOAD_NAME_LEN = "100";
 	}
 
 	/**
@@ -223,7 +223,7 @@ public class CommonController {
 	 */
 	private void validateFileNameLen(String fileName) {
 		int fileNameLen = fileName == null ? 0 : fileName.length();
-		if (fileNameLen > Integer.parseInt(MD_UPLOAD_NAME_LEN)) {
+		if (fileNameLen > 100) {
 			log.error("upload fileName length cannot be larger than [{}] ! name.length = [{}]",
 					MD_UPLOAD_NAME_LEN, fileNameLen);
 			throw new BusinessException(ErrorCode.FILE_NAME_UPPER_LIMIT,

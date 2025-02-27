@@ -104,7 +104,7 @@ public class AHPComputeWeight {
                 w1[j] = t;
                 sum += w1[j];
             }
-
+			sum = sum == 0 ? 1 : sum;
             // 向量归一化
             for (int k = 0; k < N; k++) {
                 w2[k] = w1[k] / sum;

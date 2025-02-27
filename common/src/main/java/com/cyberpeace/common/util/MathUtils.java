@@ -1,10 +1,10 @@
 package com.cyberpeace.common.util;
 
+import com.cyberpeace.common.constant.CommonConstant;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Random;
-
-import com.cyberpeace.common.constant.CommonConstant;
 
 /**
  * math utils
@@ -32,6 +32,8 @@ public class MathUtils {
 			'K','L','M','N','O','P','Q','R','S','T',
 			'U','V','W','X','Y','Z'};
 
+	private static final Random random = new Random();
+
 	/**
 	 * 返回随机字符串，同时包含数字、大写字母
 	 *
@@ -44,7 +46,6 @@ public class MathUtils {
 		}
 		//数组，用于存放随机字符
 		char[] chArr = new char[len];
-		Random random = new Random();
 
 		for(int i = 0; i < len; i++){
 			chArr[i] = codes[random.nextInt(codes.length)];
@@ -209,7 +210,7 @@ public class MathUtils {
 	 * @return
 	 */
 	public static int randomRange(int max) {
-		return new Random().nextInt(max);
+		return random.nextInt(max);
 	}
 
 	/**

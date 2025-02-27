@@ -8,7 +8,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Random;
 
 public class TimeUtil {
 
@@ -47,22 +46,6 @@ public class TimeUtil {
 		end = getEndOfDay(end);
 
 		return (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
-	}
-
-	/**
-	 * 获取指定位数的验证码
-	 *
-	 * @param bits 验证码位数，比如bits=6代表6位的验证码
-	 * @return
-	 */
-	public static String getVerifyCode(int bits) {
-		StringBuilder stringBuilder = new StringBuilder();
-
-		for (int i = 0; i < bits; i++) {
-			stringBuilder.append(new Random().nextInt(10));
-		}
-
-		return stringBuilder.toString();
 	}
 
 	/**

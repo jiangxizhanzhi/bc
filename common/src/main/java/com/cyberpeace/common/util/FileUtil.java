@@ -226,7 +226,6 @@ public class FileUtil {
 				osw.close();
 			} catch (IOException e) {
 				log.error("failed to close OutputStreamWriter", e);
-				throw new IOException(e);
 			}
 		}
 	}

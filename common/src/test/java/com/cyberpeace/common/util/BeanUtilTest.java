@@ -1,15 +1,16 @@
 package com.cyberpeace.common.util;
 
-import java.util.*;
-
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.Assert;
 
-import com.google.common.collect.Lists;
+import java.util.*;
 
 public class BeanUtilTest {
+
+	private static final Random RANDOM = new Random();
 
 	@Test
 	public void copy() {
@@ -58,7 +59,7 @@ public class BeanUtilTest {
 		modelA.setTime(new Date());
 		modelA.setA(UUID.randomUUID().toString());
 		modelA.setName(UUID.randomUUID().toString());
-		modelA.setNum(new Random().nextInt());
+		modelA.setNum(RANDOM.nextInt());
 
 		return modelA;
 	}

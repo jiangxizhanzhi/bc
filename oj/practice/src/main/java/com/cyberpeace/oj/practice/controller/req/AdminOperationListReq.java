@@ -45,11 +45,24 @@ public class AdminOperationListReq extends PageReqBase {
     @ApiModelProperty(name = "difficulty", value = "难度")
     private Integer difficulty;
 
+    /**
+     * 是否使用动态FLAG (拥有场景时使用)
+     *
+     * @see Integer
+     */
+    @ApiModelProperty(value = "是否使用动态FLAG,type=52", name = "dynamic_flag")
+    private Integer dynamicFlag;
+
+
     public void setPractice_set_id(String practiceSetId) {
         this.practiceSetId = practiceSetId;
     }
 
     public void setCategory_id(String categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public void setDynamic_flag(Integer dynamicFlag) {
+        this.dynamicFlag = dynamicFlag;
     }
 }

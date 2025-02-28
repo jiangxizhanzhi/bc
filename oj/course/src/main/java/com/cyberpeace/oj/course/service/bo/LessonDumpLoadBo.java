@@ -141,6 +141,8 @@ public class LessonDumpLoadBo implements Serializable {
 	 */
 	private Boolean paperPublic;
 
+	private Integer videoDuration;
+
 	/**
 	 * 理论实践
 	 *

@@ -23,6 +23,12 @@ public class IndexTheory {
 	@ApiModelProperty(value = "理论知识库使用次数")
 	private Integer use = 0;
 
+	@ApiModelProperty(value = "今日新增理论知识库")
+	private Integer addedToday = 0;
+
+	@ApiModelProperty(value = "今日修改理论知识库")
+	private Integer updatedToday = 0;
+
 	private Integer sum;
 
 	public void calSum() {

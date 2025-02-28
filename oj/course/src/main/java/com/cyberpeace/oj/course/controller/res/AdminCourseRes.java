@@ -86,6 +86,14 @@ public class AdminCourseRes implements Serializable {
 	private Integer difficulty;
 
 	/**
+	 * 等级
+	 *
+	 * @see Integer
+	 */
+	@ApiModelProperty("等级,type=51")
+	private Integer rank;
+
+	/**
 	 * 课程类型
 	 *
 	 * @see Integer

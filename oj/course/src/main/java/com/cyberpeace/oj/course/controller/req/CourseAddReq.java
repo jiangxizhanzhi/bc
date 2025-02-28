@@ -79,6 +79,14 @@ public class CourseAddReq implements Serializable {
 	private Integer difficulty;
 
 	/**
+	 * 等级
+	 *
+	 * @see Integer
+	 */
+	@ApiModelProperty("等级,type=51")
+	private Integer rank;
+
+	/**
 	 * 是否公开
 	 *
 	 * @see Boolean

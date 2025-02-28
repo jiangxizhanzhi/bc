@@ -1,11 +1,11 @@
 package com.cyberpeace.oj.course.service.bo;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * 课程 dump load bo
@@ -63,6 +63,13 @@ public class CourseDumpLoadBo implements Serializable {
 	private Integer difficulty;
 
 	/**
+	 * 等级
+	 *
+	 * @see Integer
+	 */
+	private Integer rank;
+
+	/**
 	 * 创造用户id
 	 *
 	 * @see String
@@ -103,6 +110,13 @@ public class CourseDumpLoadBo implements Serializable {
 	 * @see Integer
 	 */
 	private Integer score;
+
+	/**
+	 * 岗位
+	 *
+	 * @see Integer
+	 */
+	private Integer role;
 
 	/**
 	 * 课程数量

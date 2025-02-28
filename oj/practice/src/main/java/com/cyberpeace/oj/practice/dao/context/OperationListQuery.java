@@ -54,4 +54,11 @@ public class OperationListQuery extends PatternBase {
 	 */
 	private Integer difficulty;
 
+	/**
+	 * flag类型
+	 *
+	 * @see Integer
+	 */
+	private Integer dynamicFlag;
+
 }

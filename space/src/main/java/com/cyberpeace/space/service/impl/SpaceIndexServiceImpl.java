@@ -11,9 +11,14 @@ import com.cyberpeace.cr.tool.service.ToolService;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.space.dao.entity.SpaceActionFrame;
+import com.cyberpeace.space.dao.entity.SpaceStrategy;
+import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
+import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
 import com.cyberpeace.space.dao.mapper.SpaceBaseAlgorithmMapper;
 import com.cyberpeace.space.dao.mapper.SpaceTacticAttackMapper;
 import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseMapper;
@@ -99,10 +104,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		theory.setExpExam(practiceOperationMapper.selectCount(null));
 		theory.setUse(callCountService.getCountByName(CallType.THEORY));
 		theory.calSum();
+		this.getAddedToday(theory);
+		this.getUpdatedToday(theory);
 		res.setTheory(theory);
 		// 策略库
 		IndexStrategy strategy = strategyService.getStatistics();
 		strategy.setUse(callCountService.getCountByName(CallType.STRATEGY));
+		this.getAddAndUpdateToday(strategy);
 		res.setStrategy(strategy);
 		// 战法
 		IndexTactic tactic = new IndexTactic();
@@ -110,6 +118,8 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		tactic.setDefense(spaceTacticDefenseMapper.selectCount(null));
 		tactic.setUse(callCountService.getCountByName(CallType.TACTIC));
 		tactic.calSum();
+		this.getAddedToday(tactic);
+		this.getUpdatedToday(tactic);
 		res.setTactic(tactic);
 		// 规则
 		IndexRule rule = new IndexRule();
@@ -214,5 +224,98 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 			chart.getTarget().add(list.get((j + i) % 40));
 		}
 		return chart;
+	}
+
+	/**
+	 * 获取今日新增
+	 *
+	 * @param theory 理论
+	 * @throws
+	 * @see IndexTheory
+	 */
+	private void getAddedToday(IndexTheory theory) {
+		Date start = TimeUtil.getStartOfDay(new Date());
+		LambdaQueryWrapper<CourseLesson> wrapperLesson = new LambdaQueryWrapper<>();
+		wrapperLesson.ge(CourseLesson::getCreateTime, start);
+		int lesson = courseLessonMapper.selectCount(wrapperLesson);
+		LambdaQueryWrapper<PracticeTheory> wrapperTheory = new LambdaQueryWrapper<>();
+		wrapperTheory.ge(PracticeTheory::getCreateTime, start);
+		int practiceTheory = practiceTheoryMapper.selectCount(wrapperTheory);
+		LambdaQueryWrapper<PracticeOperation> wrapperOperation = new LambdaQueryWrapper<>();
+		wrapperOperation.ge(PracticeOperation::getCreateTime, start);
+		int practiceOperation = practiceOperationMapper.selectCount(wrapperOperation);
+		theory.setAddedToday(lesson + practiceTheory + practiceOperation);
+	}
+
+	/**
+	 * 获取今日新增
+	 *
+	 * @param theory 理论
+	 * @throws
+	 * @see IndexTheory
+	 */
+	private void getUpdatedToday(IndexTheory theory) {
+		Date start = TimeUtil.getStartOfDay(new Date());
+		LambdaQueryWrapper<CourseLesson> wrapperLesson = new LambdaQueryWrapper<>();
+		wrapperLesson.ge(CourseLesson::getUpdateTime, start);
+		int lesson = courseLessonMapper.selectCount(wrapperLesson);
+		LambdaQueryWrapper<PracticeTheory> wrapperTheory = new LambdaQueryWrapper<>();
+		wrapperTheory.ge(PracticeTheory::getUpdateTime, start);
+		int practiceTheory = practiceTheoryMapper.selectCount(wrapperTheory);
+		LambdaQueryWrapper<PracticeOperation> wrapperOperation = new LambdaQueryWrapper<>();
+		wrapperOperation.ge(PracticeOperation::getUpdateTime, start);
+		int practiceOperation = practiceOperationMapper.selectCount(wrapperOperation);
+		theory.setUpdatedToday(lesson + practiceTheory + practiceOperation);
+	}
+
+	/**
+	 * 获取今日新增和更新
+	 *
+	 * @param strategy 策略
+	 * @throws
+	 * @see IndexStrategy
+	 */
+	private void getAddAndUpdateToday(IndexStrategy strategy) {
+		Date start = TimeUtil.getStartOfDay(new Date());
+		LambdaQueryWrapper<SpaceStrategy> wrapperAdd = new LambdaQueryWrapper<>();
+		wrapperAdd.ge(SpaceStrategy::getCreateTime, start);
+		LambdaQueryWrapper<SpaceStrategy> wrapperUpdate = new LambdaQueryWrapper<>();
+		wrapperUpdate.ge(SpaceStrategy::getUpdateTime, start);
+		strategy.setAddedToday(strategyService.count(wrapperAdd));
+		strategy.setUpdatedToday(strategyService.count(wrapperUpdate));
+	}
+
+	/**
+	 * 获取今日新增
+	 *
+	 * @param tactic 战法
+	 * @throws
+	 * @see IndexTactic
+	 */
+	private void getAddedToday(IndexTactic tactic) {
+		Date start = TimeUtil.getStartOfDay(new Date());
+		LambdaQueryWrapper<SpaceTacticAttack> attackWrapper = new LambdaQueryWrapper<>();
+		attackWrapper.ge(SpaceTacticAttack::getCreateTime, start);
+		LambdaQueryWrapper<SpaceTacticDefense> defenseWrapper = new LambdaQueryWrapper<>();
+		defenseWrapper.ge(SpaceTacticDefense::getCreateTime, start);
+		tactic.setAddedToday(spaceTacticAttackMapper.selectCount(attackWrapper)
+				+ spaceTacticDefenseMapper.selectCount(defenseWrapper));
+	}
+
+	/**
+	 * 获取今日更新
+	 *
+	 * @param tactic 战法
+	 * @throws
+	 * @see IndexTactic
+	 */
+	private void getUpdatedToday(IndexTactic tactic) {
+		Date start = TimeUtil.getStartOfDay(new Date());
+		LambdaQueryWrapper<SpaceTacticAttack> attackWrapper = new LambdaQueryWrapper<>();
+		attackWrapper.ge(SpaceTacticAttack::getUpdateTime, start);
+		LambdaQueryWrapper<SpaceTacticDefense> defenseWrapper = new LambdaQueryWrapper<>();
+		defenseWrapper.ge(SpaceTacticDefense::getUpdateTime, start);
+		tactic.setUpdatedToday(spaceTacticAttackMapper.selectCount(attackWrapper)
+				+ spaceTacticDefenseMapper.selectCount(defenseWrapper));
 	}
 }

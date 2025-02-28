@@ -44,6 +44,12 @@ public class IndexStrategy {
 	@ApiModelProperty(value = "总数")
 	private Integer sum = 0;
 
+	@ApiModelProperty(value = "今日新增理论知识库")
+	private Integer addedToday = 0;
+
+	@ApiModelProperty(value = "今日修改理论知识库")
+	private Integer updatedToday = 0;
+
 	public void calSum() {
 		this.sum = this.os + this.database + this.middleware + this.switchboard + this.router
 				+ this.bigData + this.antiVirus + this.terminal + this.border + this.invasionCheck;

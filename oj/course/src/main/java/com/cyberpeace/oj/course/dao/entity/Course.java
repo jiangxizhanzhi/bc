@@ -6,11 +6,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.AuthTable;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.Getter;
 
 /**
  * 课程
@@ -90,6 +88,14 @@ public class Course extends AuthTable {
      */
     @ApiModelProperty("难度")
 	private Integer difficulty;
+
+    /**
+     * 等级
+     *
+     * @see Integer
+     */
+    @ApiModelProperty("等级")
+    private Integer rank;
 
     /**
      * 创造用户id

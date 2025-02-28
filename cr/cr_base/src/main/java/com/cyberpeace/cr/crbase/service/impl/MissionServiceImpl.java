@@ -999,7 +999,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			taskLogs.add(taskLog);
 		}
 
-
+		List<Mission> finalMissions = missions;
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -1008,6 +1008,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 				crTaskLogMapper.batchInsert(taskLogs);
 				crBadgeService.createBatch(role.getRoomId(),
 						CrBadge.BadgeType.MISSION_RELEASE.getCode(), role.getUserIdList());
+				missionMapper.batchUpdateTime(finalMissions);
 			}
 		});
 		return true;

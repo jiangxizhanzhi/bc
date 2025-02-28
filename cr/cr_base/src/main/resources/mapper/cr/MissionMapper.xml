@@ -37,5 +37,14 @@
         </foreach>)
         then 1 else 0 end as result;
     </select>
-
+    <update id="batchUpdateTime" parameterType="java.util.List">
+     update cr_mission set update_time=
+        <foreach collection="missions" item="mission" index="index" separator=" " open="case" close="end">
+            when resource_id=#{mission.resourceId} then now()
+        </foreach>
+     where resource_id in
+        <foreach collection="missions" item="mission" separator="," open="(" close=")">
+            #{mission.resourceId}
+        </foreach>
+    </update>
 </mapper>

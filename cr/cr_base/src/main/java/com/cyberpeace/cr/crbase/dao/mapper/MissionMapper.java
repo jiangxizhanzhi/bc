@@ -51,4 +51,12 @@ public interface MissionMapper extends BaseMapper<Mission> {
 	 */
 	Boolean existByTitleAndIds(@Param("title") String title,
 			@Param("missionIds") List<String> missionIds);
+
+	/**
+	 * @description: 批量更新任务信息
+	 * @param missions
+	 * @throws
+	 * @return int
+	 */
+	int batchUpdateTime(List<Mission> missions);
 }

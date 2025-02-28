@@ -13,6 +13,7 @@ import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationMissionRsp;
+import com.cyberpeace.cr.crbase.service.context.mission.TaskMissionWsData;
 import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
 import com.cyberpeace.cr.crbase.service.context.task.CrTaskRejectRsp;
 
@@ -245,6 +246,9 @@ public interface CrTaskService {
 	 * @param code 推送代号
 	 */
 	void pushMissionWS(String businessId, Integer code);
+
+
+	void pushMissionDataWS(TaskMissionWsData taskMissionWsData);
 
 	/**
 	 * 向指定用户列表推送任务ws

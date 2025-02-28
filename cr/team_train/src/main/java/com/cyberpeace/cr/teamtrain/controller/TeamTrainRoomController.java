@@ -795,7 +795,11 @@ public class TeamTrainRoomController {
 				releaseMissionReq.getRoleResourceId(),
 				UserInfoContext.getUserContext().getUserId());
 		if (Boolean.TRUE.equals(res)) {
-			crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.TEAM_MISSION_CODE);
+			TaskMissionWsData taskMissionWsData =
+				TaskMissionWsData.builder().roomId(crRole.getRoomId()).roleResourceId(crRole.getResourceId())
+					.roleResourceName(crRole.getName()).missionResourceIds(releaseMissionReq.getMissionResourceIds())
+					.code(MissionWsCode.TEAM_MISSION_CODE).build();
+			crTaskService.pushMissionDataWS(taskMissionWsData);
 			crTaskService.pushMissionWsToUsers(crRole.getRoomId(), crRole.getUserIdList(),
 					MissionWsCode.MISSION_RELEASE);
 		}

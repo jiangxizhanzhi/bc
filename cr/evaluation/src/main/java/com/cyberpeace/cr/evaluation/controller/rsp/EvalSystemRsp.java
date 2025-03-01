@@ -1,13 +1,11 @@
 package com.cyberpeace.cr.evaluation.controller.rsp;
 
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
 import com.cyberpeace.cr.evaluation.service.context.IndexContext;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 public class EvalSystemRsp {
@@ -26,6 +24,10 @@ public class EvalSystemRsp {
 	@ApiModelProperty(value = "连接线", required = true)
 	@NotNull
 	private String connlist;
+
+	@ApiModelProperty(value = "错误信息", required = true)
+	@NotNull
+	private String msg;
 
 	@ApiModelProperty(value = "一级指标列表", required = true)
 	@NotNull

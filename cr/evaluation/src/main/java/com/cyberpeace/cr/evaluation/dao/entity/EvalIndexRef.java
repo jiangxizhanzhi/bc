@@ -56,6 +56,11 @@ public class EvalIndexRef extends BaseTable {
     private Integer specialistValue;
 
     /**
+     * 五级指标专家设置
+     */
+    private String specialistFifthIndexContext;
+
+    /**
      * 专家评分设置类型（三级指标包含）百分比/周期/整数值
      */
     private Integer specialistType;

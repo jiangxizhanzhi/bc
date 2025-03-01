@@ -1,17 +1,5 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.compress.utils.Lists;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -28,11 +16,21 @@ import com.cyberpeace.cr.evaluation.service.EvalIndicatorService;
 import com.cyberpeace.cr.evaluation.service.EvalSystemService;
 import com.cyberpeace.cr.evaluation.service.context.IndexContext;
 import com.google.common.collect.Maps;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "前台-测试靶场-获取树形指标体系")
 @RestController
@@ -122,6 +120,7 @@ public class EvalSystemController {
 						systemTreeRsp.setName(evalCollection.getName());
 						systemTreeRsp.setLevel(5);
 						systemTreeRsp.setResourceId(evalCollection.getResourceId());
+						systemTreeRsp.setEvalIndicatorId(evalCollection.getEvalIndicatorId());
 
 						return systemTreeRsp;
 					}).collect(Collectors.toList());
@@ -166,6 +165,7 @@ public class EvalSystemController {
 			Integer code) {
 		EvalSystemTreeRsp evalSystemTreeRsp = new EvalSystemTreeRsp();
 		evalSystemTreeRsp.setResourceId(indexContext.getIndexId());
+		evalSystemTreeRsp.setEvalIndicatorId(indexContext.getEvalIndicatorId());
 		evalSystemTreeRsp.setLevel(code);
 		evalSystemTreeRsp.setName(indexContext.getName());
 

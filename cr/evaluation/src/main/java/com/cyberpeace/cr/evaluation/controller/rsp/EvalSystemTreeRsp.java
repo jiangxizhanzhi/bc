@@ -1,9 +1,9 @@
 package com.cyberpeace.cr.evaluation.controller.rsp;
 
-import java.util.List;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class EvalSystemTreeRsp {
@@ -13,6 +13,9 @@ public class EvalSystemTreeRsp {
 
 	@ApiModelProperty(value = "ID")
 	private String resourceId;
+
+	@ApiModelProperty(value = "评估指标ID")
+	private String evalIndicatorId;
 
 	@ApiModelProperty(value = "级别")
 	private Integer level;

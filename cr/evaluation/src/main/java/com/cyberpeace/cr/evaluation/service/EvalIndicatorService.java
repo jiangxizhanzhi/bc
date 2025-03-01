@@ -1,13 +1,14 @@
 package com.cyberpeace.cr.evaluation.service;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalIndicatorRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
 import com.cyberpeace.cr.evaluation.service.context.EvalIndicatorContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+
+import java.util.List;
 
 /**
  *
@@ -53,4 +54,6 @@ public interface EvalIndicatorService extends IService<EvalIndicator> {
 	 * @return
 	 */
 	Integer selectIndexUsedNum(List<String> ids);
+
+	EvalIndicatorRsp convertEvalIndicatorToEvalSystemRsp(EvalIndicator evalIndicator);
 }

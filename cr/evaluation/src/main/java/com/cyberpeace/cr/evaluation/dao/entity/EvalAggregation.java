@@ -1,10 +1,7 @@
 package com.cyberpeace.cr.evaluation.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.cyberpeace.common.model.BaseTable;
-
 import lombok.Data;
 
 /**
@@ -52,5 +49,11 @@ public class EvalAggregation extends BaseTable {
 	 * 矩阵内容
 	 */
 	private String matrixData;
+
+	@TableField(updateStrategy = FieldStrategy.IGNORED)
+	private Integer score;
+
+	@TableField(updateStrategy = FieldStrategy.IGNORED)
+	private String message;
 
 }

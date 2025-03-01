@@ -1,10 +1,10 @@
 package com.cyberpeace.cr.evaluation.service;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
 import com.cyberpeace.cr.evaluation.service.context.IndexContext;
+
+import java.util.List;
 
 /**
  *
@@ -17,6 +17,8 @@ public interface EvalIndexService extends IService<EvalIndex> {
      * @return
      */
     List<IndexContext> getIndexesByEvalSystemId(String systemId, Integer level);
+
+    List<IndexContext> getIndexesByEvalSystemId(String systemId, Integer level, Boolean isTest);
 
     /** 删除体系id的指标项
      * @param evalSystemId

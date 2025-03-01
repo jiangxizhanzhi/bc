@@ -1,11 +1,10 @@
 package com.cyberpeace.cr.evaluation.service.context;
 
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 public class IndexContext {
@@ -43,5 +42,14 @@ public class IndexContext {
 
 	@ApiModelProperty(value = "层次分析法json数组", required = false)
 	private String matrixData;
+
+	@ApiModelProperty(value = "指标计算错误信息")
+	private String message;
+
+	@ApiModelProperty(value = "得分")
+	private Integer score;
+
+	@ApiModelProperty(value = "进度")
+	private Integer progress;
 
 }

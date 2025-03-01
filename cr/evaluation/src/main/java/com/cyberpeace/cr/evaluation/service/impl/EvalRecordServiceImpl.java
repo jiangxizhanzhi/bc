@@ -1,28 +1,6 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.common.model.AuthTable;
-import com.cyberpeace.cr.evaluation.service.context.EvalRecordEventListContext;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -37,6 +15,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -51,9 +30,7 @@ import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.*;
-import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalRecordVariableContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalSystemIndexesContext;
+import com.cyberpeace.cr.evaluation.service.context.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.mp.MpCollectionEvent;
@@ -62,8 +39,26 @@ import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.impl.RemoteServerEnvService;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -273,7 +268,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalRecord.setResourceId(IDGeneratorUtil.getID());
             evalRecord.setStatus(EvalRecord.Status.NOT_START.getCode());
         }
-
         // 获取"系统评分"指标项下的变量项节点、探针信息
         Map<String, EvalRecordVariableContext> evalRecordVariableContextMap = Maps.newHashMap();
         // 获取"三级指标"评分类型
@@ -285,10 +279,14 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         HashMap<String, String> thirdEventName = Maps.newHashMap();
         //存放告警事件的告警匹配名称
         HashMap<String, String> thirdAlarmMatchName = Maps.newHashMap();
+        //存放三级指标下的专家评分信息
+        HashMap<String, List<EvalRecordSpecialistFifthIndexContext>> thirdSpecialFifthIndexMap = Maps.newHashMap();
+
         requestData.getIndexes().forEach(evalRecordIndexContext -> {
             thirdIndexesTypeMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getType());
             if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
                 thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getSpecialist().getValue());
+                thirdSpecialFifthIndexMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getSpecialist().getFifthIndexes());
             }
             //事件评分
             if(evalRecordIndexContext.getType().equals(EvalIndexRef.Type.EVENT.getCode())){
@@ -529,6 +527,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalIndexRef.setSpecialistType(evalIndicator.getDatatype());
                 evalIndexRef.setSpecialistAttr(evalIndicator.getAttribute());
                 evalIndexRef.setSpecialistAttrValue(evalIndicator.getAttributeValue());
+                if(thirdSpecialFifthIndexMap.get(evalIndex.getResourceId()) != null){
+                    List<EvalRecordSpecialistFifthIndexContext> evalRecordSpecialistFifthIndexContexts = thirdSpecialFifthIndexMap.get(evalIndex.getResourceId());
+                    String s = JSONArray.toJSONString(evalRecordSpecialistFifthIndexContexts);
+                    evalIndexRef.setSpecialistFifthIndexContext(s);
+                }
                 evalIndexRef.setSpecialistValue(thirdSpecialistMap.get(evalIndex.getResourceId()));
                 if (evalIndexRef.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
                     evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
@@ -668,6 +671,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalIndexRef.setType(evalRecordIndexContext.getType());
                 if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
                     evalIndexRef.setSpecialistValue(evalRecordIndexContext.getSpecialist().getValue());
+//                    evalIndexRef.setSpecialistFifthIndexContext(evalRecordIndexContext.getSpecialist().getFifthIndexes() != null ? evalRecordIndexContext.getSpecialist().getFifthIndexes().toString() : null);
                     evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
                 }
@@ -757,6 +761,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
                 evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());
                 evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getSpecialistType());
+                // 获取五级指标专家设置
+                List<EvalRecordSpecialistFifthIndexContext> evalRecordSpecialistFifthIndexContexts = JsonUtil.toJsonObjectArray(evalIndexRef.getSpecialistFifthIndexContext(), EvalRecordSpecialistFifthIndexContext.class);
+                evalSystemIndexesContext.getSpecialist().setFifthIndexes(evalRecordSpecialistFifthIndexContexts);
             }
             EvalIndexRef evalIndexRef1 = fullIndexesMap.get(nextId);
             // 如果"ifFull"为真，跳过第四级直接由"EvalVariableRef"获取第五级

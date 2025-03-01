@@ -67,6 +67,7 @@ public class EvalIndexRefController {
             if(type.equals(EvalIndexRef.Type.SPECIALIST.getCode())){
                 evalIndexRef.setSpecialistValue(specialist.getValue());
                 evalIndexRef.setScore(specialist.getValue());
+//                evalIndexRef.setSpecialistFifthIndexContext(specialist.getFifthIndexes() != null ? specialist.getFifthIndexes().toString() : null);
             }
             evalIndexRefMapper.updateById(evalIndexRef);
 
@@ -95,6 +96,7 @@ public class EvalIndexRefController {
                 evalIndexRef.setSpecialistValue(specialist.getValue());
                 evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
                 evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
+//                evalIndexRef.setSpecialistFifthIndexContext(specialist.getFifthIndexes() != null ? specialist.getFifthIndexes().toString() : null);
             }
             if (type.equals(EvalIndexRef.Type.EVENT.getCode())){
                 List<EvalRoomPairRsp> nodes = evalRecordService.getNodes(requestData.getTaskId());

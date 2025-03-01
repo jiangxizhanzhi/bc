@@ -1,10 +1,6 @@
 package com.cyberpeace.cr.evaluation.service;
 
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultIndexRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
@@ -12,6 +8,10 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithmRef;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndexRef;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public interface EvalIndexRefService extends IService<EvalIndexRef> {
     /**
@@ -59,4 +59,8 @@ public interface EvalIndexRefService extends IService<EvalIndexRef> {
      * @return 指标项与其子级
      */
     EvalRecordResultIndexRsp resultIndex(String indexId);
+
+    Integer indexAhpPerform(String matrixData, List<Integer> data);
+
+    String getLevelText(Integer level);
 }

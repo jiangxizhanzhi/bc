@@ -1,11 +1,14 @@
 package com.cyberpeace.cr.evaluation.service;
 
-import java.util.List;
-
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemTestReq;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalSystem;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+
+import java.util.List;
 
 /**
  *
@@ -23,4 +26,8 @@ public interface EvalSystemService extends IService<EvalSystem> {
 	 * @return
 	 */
 	IPage<EvalSystem> page(EvalListQuery listQuery);
+
+	JSONObject testWithStr(EvalSystemTestReq evalSystemTestReq);
+
+	EvalSystemRsp convertEvalSystemToEvalSystemRsp(EvalSystem evalSystem, Boolean isTest);
 }

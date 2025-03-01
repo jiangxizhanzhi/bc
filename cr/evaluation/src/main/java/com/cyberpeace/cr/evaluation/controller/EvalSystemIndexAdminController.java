@@ -1,19 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -30,20 +17,44 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.EvalNameListReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalSystemAllRsp;
 import com.cyberpeace.cr.evaluation.controller.req.EvalSystemReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.CollectWithStrContext;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalIndicatorRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemTestReq;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalSystem;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndicatorMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalSystemMapper;
 import com.cyberpeace.cr.evaluation.service.EvalIndexService;
+import com.cyberpeace.cr.evaluation.service.EvalIndicatorService;
 import com.cyberpeace.cr.evaluation.service.EvalSystemService;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 import com.cyberpeace.cr.evaluation.service.context.IndexContext;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "后台-测试靶场-指标体系")
 @RestController
@@ -63,6 +74,18 @@ public class EvalSystemIndexAdminController {
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private EvalIndexMapper evalIndexMapper;
+
+	@Autowired
+	private EvalIndicatorMapper evalIndicatorMapper;
+
+	@Autowired
+	private EvalIndicatorService evalIndicatorService;
+
+	@Autowired
+	private EvalAlgorithmMapper evalAlgorithmMapper;
 
 	@ApiOperation("新增体系指标")
 	@PostMapping("")
@@ -258,5 +281,88 @@ public class EvalSystemIndexAdminController {
 		IPage<EvalSystem> data = evalSystemService.page(listQuery);
 
 		return new BaseRsp<>(PageUtil.getListResult(data));
+	}
+
+	@PostMapping("test")
+	@ApiOperation("根据专家对五级指标自定义评分得出三级指标评分")
+	public BaseRsp test(@RequestBody @Validated EvalSystemTestReq evalSystemTestReq) {
+		// 处理参数值中的key
+		for (CollectWithStrContext collectWithStrContext : evalSystemTestReq.getFifthIndex()) {
+			try {
+				// 提取格式化算法名称
+				EvalIndicator evalIndicator = evalIndicatorService.getById(collectWithStrContext.getEvalIndicatorId());
+				EvalIndicatorRsp evalIndicatorRsp = evalIndicatorService.convertEvalIndicatorToEvalSystemRsp(evalIndicator);
+				String key = evalAlgorithmMapper.selectById(evalIndicatorRsp.getEvalCollections().get(0).getFormatAlgorithmId()).getName();
+
+				// 依据名称，替换原始数据中的值
+				Map<String, String> replaceMap = new HashMap<>();
+				replaceMap.put("内存使用率", "memoryPercent");
+				replaceMap.put("磁盘使用率", "diskPercent");
+				replaceMap.put("CPU使用率", "cpuPercent");
+
+				if (!StringUtils.isEmpty(key) && (replaceMap.containsKey(key))) {
+					collectWithStrContext.setStr(collectWithStrContext.getStr().replace("data", replaceMap.get(key)));
+				}
+
+				if (!StringUtils.isEmpty(key) && key.equals("JSON属性获取")) {
+					String formatAlgorithmParams = evalIndicatorRsp.getEvalCollections().get(0).getFormatAlgorithmParams();
+					String nextKey = JsonUtil.toJsonObjectArray(formatAlgorithmParams, JSONObject.class).get(0).getString("default_value");
+					collectWithStrContext.setStr(collectWithStrContext.getStr().replace("data", nextKey));
+				}
+
+			} catch (Exception e) {
+				log.error("参数值处理异常", e);
+			}
+		}
+		JSONObject result = evalSystemService.testWithStr(evalSystemTestReq);
+		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("查询体系指标All(全)")
+	@GetMapping("all")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
+	public BaseRsp<EvalSystemAllRsp> getEvalIndexAll(
+			@ApiParam(name = "resource_id", value = "模板id", required = true)
+			@RequestParam(value = "resource_id") String resourceId) {
+		// 调试时 前端展示全体系数据
+		EvalSystem evalSystem = evalSystemService.getById(resourceId);
+		if (null == evalSystem) {
+			log.info("EvalSystem not found! EvalSystemId=[{}]", resourceId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		EvalSystemRsp evalSystemRsp = evalSystemService.convertEvalSystemToEvalSystemRsp(evalSystem, true);
+		EvalSystemAllRsp rsp = new EvalSystemAllRsp();
+		BeanUtils.copyProperties(evalSystemRsp, rsp);
+		List<EvalIndex> evalIndexList = evalIndexMapper.selectListBySystemIdAndLevel(resourceId,
+				EvalIndex.Level.THIRD.getCode());
+
+		List<String> column = StreamApiUtils.getColumn(evalIndexList, EvalIndex::getEvalIndicatorId);
+		List<EvalIndicator> evalIndicators = evalIndicatorMapper.selectIndexes(column);
+		List<EvalIndex> indexList = evalIndexMapper.selectListBySystemIdAndLevel(resourceId, EvalIndex.Level.THIRD.getCode());
+		Map<String, String> collect = indexList.stream().collect(Collectors.toMap(EvalIndex::getEvalIndicatorId, EvalIndex::getResourceId));
+		List<IndexContext> thirdIndexes = evalSystemRsp.getThirdIndexes();
+		Map<String, IndexContext> contextMap = StreamApiUtils.toMap(thirdIndexes, IndexContext::getEvalIndicatorId, s -> s);
+		List<IndexContext> thirdIndex = new ArrayList<>();
+		evalIndicators.forEach(evalIndicator -> {
+			EvalIndicatorRsp evalIndicatorRsp = evalIndicatorService.convertEvalIndicatorToEvalSystemRsp(evalIndicator);
+			// 待前端确认返回展示格式  3级指标项 链接 聚合项和采集项时 使用的是 指标项id 非指标项resource_id
+			String connlist = evalIndicatorRsp.getConnlist();
+			connlist = connlist.replaceAll(evalIndicator.getResourceId(),collect.get(evalIndicator.getResourceId()));
+
+			List<String> aggregationIds = JsonUtil
+					.toJsonObjectArray(evalIndicator.getAggregationIds(), String.class);
+			String evalIndicatorId = evalIndicator.getResourceId();
+			IndexContext indexContext = contextMap.get(evalIndicatorId);
+			indexContext.setChildrenIds(aggregationIds);
+			indexContext.setAlgorithmId(evalIndicator.getAggregatingAlgorithmId());
+			thirdIndex.add(indexContext);
+			String rspConnlist = rsp.getConnlist();
+			rsp.setConnlist(rspConnlist + connlist);
+			rsp.getFourthIndexes().addAll(evalIndicatorRsp.getEvalAggregations());
+			rsp.getFifthIndexes().addAll(evalIndicatorRsp.getEvalCollections());
+
+		});
+		rsp.setThirdIndexes(thirdIndex);
+		return new BaseRsp<>(rsp);
 	}
 }

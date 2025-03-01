@@ -1,15 +1,5 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
-import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -32,8 +22,16 @@ import com.cyberpeace.cr.evaluation.utils.AHPComputeWeight;
 import com.cyberpeace.cr.evaluation.utils.MatrixData;
 import com.cyberpeace.integratation.service.RemotePythonService;
 import com.google.common.collect.Sets;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -61,14 +59,16 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		}
 	};
 
-	private String getLevelText(Integer level) {
+	@Override
+	public String getLevelText(Integer level) {
 		if (CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN)) {
 			return Integer.toString(level);
 		}
 		return int2cn.get(level);
 	}
 
-	private Integer indexAhpPerform(String matrixData, List<Integer> data) {
+	@Override
+	public Integer indexAhpPerform(String matrixData, List<Integer> data) {
 		int res = 0;
 		JSONArray objects = JSON.parseArray(matrixData);
 		if (objects.size() != data.size()) {

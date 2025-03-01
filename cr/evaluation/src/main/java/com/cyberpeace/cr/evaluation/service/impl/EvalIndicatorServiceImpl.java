@@ -1,14 +1,5 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -16,6 +7,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalIndicatorRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalAggregation;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalCollection;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndexRef;
@@ -23,9 +15,20 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalAggregationMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalCollectionMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndicatorMapper;
+import com.cyberpeace.cr.evaluation.service.EvalAggregationService;
+import com.cyberpeace.cr.evaluation.service.EvalCollectionService;
 import com.cyberpeace.cr.evaluation.service.EvalIndicatorService;
 import com.cyberpeace.cr.evaluation.service.context.EvalIndicatorContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+import com.google.common.collect.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -44,6 +47,12 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 
 	@Autowired
 	private EvalCollectionMapper evalCollectionMapper;
+
+	@Autowired
+	private EvalCollectionService evalCollectionService;
+
+	@Autowired
+	private EvalAggregationService evalAggregationService;
 
 	@Override
 	public void saveBatchContext(EvalIndicatorReq evalIndicatorReq, String userId,
@@ -141,6 +150,27 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 	@Override
 	public Integer selectIndexUsedNum(List<String> ids) {
 		return evalIndicatorMapper.selectIndexUsedNum(ids);
+	}
+
+	@Override
+	public EvalIndicatorRsp convertEvalIndicatorToEvalSystemRsp(EvalIndicator evalIndicator) {
+
+		EvalIndicatorRsp evalSystemRsp = BeanUtils.copy(evalIndicator, EvalIndicatorRsp.class);
+
+		EvalIndicatorContext evalIndicatorContext = BeanUtils.copy(evalIndicator,
+				EvalIndicatorContext.class);
+		evalIndicatorContext.setAggregationIds(
+				JsonUtil.toJsonObjectArray(evalIndicator.getAggregationIds(), String.class));
+		evalIndicatorContext.setEvalIndicatorId(evalIndicator.getResourceId());
+
+		evalSystemRsp.setEvalIndicatorId(evalIndicator.getResourceId());
+		evalSystemRsp.setEvalCollections(
+				evalCollectionService.getContextByEvalIndicatorId(evalIndicator.getResourceId()));
+		evalSystemRsp.setEvalAggregations(
+				evalAggregationService.getContextByEvalIndicatorId(evalIndicator.getResourceId()));
+		evalSystemRsp.setEvalIndicators(Lists.newArrayList(evalIndicatorContext));
+
+		return evalSystemRsp;
 	}
 
 }

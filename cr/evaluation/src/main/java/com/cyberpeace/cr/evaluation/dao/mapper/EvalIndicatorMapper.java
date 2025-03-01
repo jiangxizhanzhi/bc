@@ -1,15 +1,14 @@
 package com.cyberpeace.cr.evaluation.dao.mapper;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @Entity com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator
@@ -27,4 +26,6 @@ public interface EvalIndicatorMapper extends BaseMapper<EvalIndicator> {
 	List<String> selectUsedAlgorithmIds(List<String> algorithmIds);
 
 	Integer selectIndexUsedNum(List<String> ids);
+
+	List<EvalIndicator> selectIndexes(List<String> ids);
 }

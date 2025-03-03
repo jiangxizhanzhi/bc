@@ -113,6 +113,7 @@ public class EvalSystemController {
 		for (IndexContext thirdIndex : thirdIndexes) {
 			EvalIndicator evalIndicator = evalIndicatorService
 					.getById(thirdIndex.getEvalIndicatorId());
+			log.info("thirdIndex.index_id :{} evalIndicator is null :{}", thirdIndex.getIndexId(),evalIndicator==null);
 
 			List<EvalCollection> evalCollections = evalCollectionMapper
 					.selectBythirdIndexId(thirdIndex.getIndexId());

@@ -75,7 +75,7 @@ public class CourseAddReq implements Serializable {
 	 * @see Integer
 	 */
 	@NotNull(groups = { Create.class })
-	@ApiModelProperty("难度")
+	@ApiModelProperty("难度，type=51")
 	private Integer difficulty;
 
 	/**
@@ -83,7 +83,7 @@ public class CourseAddReq implements Serializable {
 	 *
 	 * @see Integer
 	 */
-	@ApiModelProperty("等级,type=51")
+	@ApiModelProperty("等级,type=9")
 	private Integer rank;
 
 	/**

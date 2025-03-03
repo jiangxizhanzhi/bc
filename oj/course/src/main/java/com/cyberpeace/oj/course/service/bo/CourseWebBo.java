@@ -74,7 +74,7 @@ public class CourseWebBo implements Serializable {
      *
      * @see Integer
      */
-    @ApiModelProperty("课程难度")
+    @ApiModelProperty("课程难度，type=51")
 	private Integer difficulty;
 
     /**
@@ -82,7 +82,7 @@ public class CourseWebBo implements Serializable {
      *
      * @see Integer
      */
-    @ApiModelProperty("等级, type=51")
+    @ApiModelProperty("等级, type=9")
     private Integer rank;
 
     /**

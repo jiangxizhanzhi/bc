@@ -671,7 +671,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalIndexRef.setType(evalRecordIndexContext.getType());
                 if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
                     evalIndexRef.setSpecialistValue(evalRecordIndexContext.getSpecialist().getValue());
-//                    evalIndexRef.setSpecialistFifthIndexContext(evalRecordIndexContext.getSpecialist().getFifthIndexes() != null ? evalRecordIndexContext.getSpecialist().getFifthIndexes().toString() : null);
+                    List<EvalRecordSpecialistFifthIndexContext> fifthIndexes = evalRecordIndexContext.getSpecialist().getFifthIndexes();
+                    String s = JSONArray.toJSONString(fifthIndexes);
+                    evalIndexRef.setSpecialistFifthIndexContext(s);
                     evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
                 }

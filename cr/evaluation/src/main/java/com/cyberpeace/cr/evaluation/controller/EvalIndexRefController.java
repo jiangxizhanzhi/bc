@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import com.cyberpeace.cr.evaluation.service.context.EvalRecordLoadListContext;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +79,17 @@ public class EvalIndexRefController {
             if(type.equals(EvalIndexRef.Type.SPECIALIST.getCode())){
                 // TODO 设置回显 speciallist的其他值
                 evalIndexRef.setSpecialistValue(specialist.getValue());
+                evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
+                evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
+            } else if (type.equals(EvalIndexRef.Type.LOAD.getCode())){
+//            处理载荷记录评分
+                int value = requestData.getRecordLoad().getValue() == null ? 100 : requestData.getRecordLoad().getValue();
+                value = EvalRecordLoadListContext.JudgmentResult.SUCCESS.getCode() == requestData.getRecordLoad().getJudgmentStatus() ? value : 0;
+                evalIndexRef.setLoadValue(value);
+                evalIndexRef.setLoadExecutionName(requestData.getRecordLoad().getLoadExecutionName());
+                evalIndexRef.setLoadExecutionId(requestData.getRecordLoad().getLoadExecutionId());
+                evalIndexRef.setJudgmentStatus(requestData.getRecordLoad().getJudgmentStatus());
+                evalIndexRef.setSpecialistValue(value);
                 evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
                 evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
             }

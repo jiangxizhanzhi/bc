@@ -720,7 +720,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         nextIds.forEach(nextId -> {
             if (evalIndexRef.getType()==3){
                 evalSystemIndexesContext.setRecordLoad(new EvalRecordLoadListContext());
-                evalSystemIndexesContext.getRecordLoad().setType(evalIndexRef.getLoadType());
+                evalSystemIndexesContext.getRecordLoad().setType(evalIndexRef.getType());
                 evalSystemIndexesContext.getRecordLoad().setLoadExecutionId(evalIndexRef.getLoadExecutionId());
                 evalSystemIndexesContext.getRecordLoad().setLoadExecutionName(evalIndexRef.getLoadExecutionName());
                 evalSystemIndexesContext.getRecordLoad().setJudgmentStatus(evalIndexRef.getJudgmentStatus());

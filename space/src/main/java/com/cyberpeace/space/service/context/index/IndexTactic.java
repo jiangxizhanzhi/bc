@@ -20,10 +20,10 @@ public class IndexTactic {
     @ApiModelProperty(value = "总数:")
     private Integer sum = 0;
 
-    @ApiModelProperty(value = "今日新增理论知识库")
+    @ApiModelProperty(value = "今日新增战法库")
     private Integer addedToday = 0;
 
-    @ApiModelProperty(value = "今日修改理论知识库")
+    @ApiModelProperty(value = "今日修改战法库")
     private Integer updatedToday = 0;
 
     public void calSum() {

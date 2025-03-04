@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -18,5 +19,5 @@ public class EvalRecordSpecialistContext implements Serializable {
     private Integer value;
 
     @ApiModelProperty(value = "关联的五级指标专家设置")
-    private List<EvalRecordSpecialistFifthIndexContext> fifthIndexes;
+    private List<EvalRecordSpecialistFifthIndexContext> fifthIndexes = new ArrayList<>(); // 初始化空集合
 }

@@ -30,7 +30,9 @@ import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.*;
-import com.cyberpeace.cr.evaluation.service.context.*;
+import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistFifthIndexContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalRecordVariableContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalSystemIndexesContext;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.mp.MpCollectionEvent;
@@ -289,10 +291,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 thirdSpecialFifthIndexMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getSpecialist().getFifthIndexes());
             }
             //事件评分
-            if(evalRecordIndexContext.getType().equals(EvalIndexRef.Type.EVENT.getCode())){
+            if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.EVENT.getCode())) {
                 List<EvalRoomPairRsp> nodes = this.getNodes(requestData.getTaskId());
-                    Map<String, EvalRoomPairRsp> map = nodes.stream().collect(Collectors.toMap(EvalRoomPairRsp::getId, eval -> eval));
-                    //节点设备名称
+                Map<String, EvalRoomPairRsp> map = nodes.stream().collect(Collectors.toMap(EvalRoomPairRsp::getId, eval -> eval));
+                //节点设备名称
                 if (!StringUtils.isBlank(evalRecordIndexContext.getEvent().getEventNodeId())) {
                     String nodeName = map.get(evalRecordIndexContext.getEvent().getEventNodeId()).getLabel();
                     // 节点id
@@ -307,15 +309,15 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     } else {
                         value = remoteSceneService.getEventValue(nodeId, eventName, alarmMatchName);
                     }
-                    thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(),value);
-                    thirdEventName.put(evalRecordIndexContext.getResourceId(),eventName);
-                    thirdAlarmMatchName.put(evalRecordIndexContext.getResourceId(),alarmMatchName);
-                    thirdNodeId.put(evalRecordIndexContext.getResourceId(),evalRecordIndexContext.getEvent().getEventNodeId());
-                }else {
-                    thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(),0);
-                    thirdEventName.put(evalRecordIndexContext.getResourceId(),"");
-                    thirdAlarmMatchName.put(evalRecordIndexContext.getResourceId(),"");
-                    thirdNodeId.put(evalRecordIndexContext.getResourceId(),evalRecordIndexContext.getEvent().getEventNodeId().equals("")?"":evalRecordIndexContext.getEvent().getEventNodeId());
+                    thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(), value);
+                    thirdEventName.put(evalRecordIndexContext.getResourceId(), eventName);
+                    thirdAlarmMatchName.put(evalRecordIndexContext.getResourceId(), alarmMatchName);
+                    thirdNodeId.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getEvent().getEventNodeId());
+                } else {
+                    thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(), 0);
+                    thirdEventName.put(evalRecordIndexContext.getResourceId(), "");
+                    thirdAlarmMatchName.put(evalRecordIndexContext.getResourceId(), "");
+                    thirdNodeId.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getEvent().getEventNodeId().equals("") ? "" : evalRecordIndexContext.getEvent().getEventNodeId());
                 }
 
             }
@@ -527,7 +529,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalIndexRef.setSpecialistType(evalIndicator.getDatatype());
                 evalIndexRef.setSpecialistAttr(evalIndicator.getAttribute());
                 evalIndexRef.setSpecialistAttrValue(evalIndicator.getAttributeValue());
-                if(thirdSpecialFifthIndexMap.get(evalIndex.getResourceId()) != null){
+                if (thirdSpecialFifthIndexMap.get(evalIndex.getResourceId()) != null) {
                     List<EvalRecordSpecialistFifthIndexContext> evalRecordSpecialistFifthIndexContexts = thirdSpecialFifthIndexMap.get(evalIndex.getResourceId());
                     String s = JSONArray.toJSONString(evalRecordSpecialistFifthIndexContexts);
                     evalIndexRef.setSpecialistFifthIndexContext(s);
@@ -546,7 +548,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalIndexRef.setAlarmMatchName(thirdAlarmMatchName.get(evalIndex.getResourceId()));
                 evalIndexRef.setNodeId(thirdNodeId.get(evalIndex.getResourceId()));
                 if (evalIndexRef.getType().equals(EvalIndexRef.Type.EVENT.getCode())) {
-                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getEventType(),evalIndexRef.getEventAttr(),evalIndexRef.getEventAttrValue(),evalIndexRef.getEventValue()));
+                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getEventType(), evalIndexRef.getEventAttr(), evalIndexRef.getEventAttrValue(), evalIndexRef.getEventValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
                 }
 
@@ -645,7 +647,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
 
-
     @Override
     public EvalRecordRsp update(EvalRecordAddReq requestData) {
         EvalRecord originEvalRecord = getEntity(requestData.getResourceId());
@@ -676,8 +677,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     evalIndexRef.setSpecialistFifthIndexContext(s);
                     evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
-                }
-                else if(evalRecordIndexContext.getType().equals(EvalIndexRef.Type.EVENT.getCode())) {
+                } else if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.EVENT.getCode())) {
                     List<EvalRoomPairRsp> nodes = this.getNodes(requestData.getTaskId());
                     Map<String, EvalRoomPairRsp> map = nodes.stream().collect(Collectors.toMap(EvalRoomPairRsp::getId, eval -> eval));
                     //节点设备名称
@@ -689,12 +689,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     // 告警匹配名称
                     String alarmMatchName = evalRecordIndexContext.getEvent().getAlarmMatchName();
                     //请求参数
-                    int value= remoteSceneService.getEventValue(eventNodeId,eventName,alarmMatchName);
+                    int value = remoteSceneService.getEventValue(eventNodeId, eventName, alarmMatchName);
                     evalIndexRef.setEventValue(value);
-                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(),evalIndexRef.getEventAttr(),evalIndexRef.getEventAttrValue(),evalIndexRef.getEventValue()));
+                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getEventAttr(), evalIndexRef.getEventAttrValue(), evalIndexRef.getEventValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
-                }
-                else {
+                } else {
                     evalIndexRef.setProgress(EvalIndexRef.Progress.NOT_START.getCode());
                 }
                 evalIndexRefs.add(evalIndexRef);
@@ -752,20 +751,20 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 同三级指标项下变量项过滤
         Set<String> variablesMap = Sets.newHashSet();
         nextIds.forEach(nextId -> {
-            if (evalIndexRef.getType()==3){
-                evalSystemIndexesContext.setEvent(new EvalRecordEventListContext());
+            if (evalIndexRef.getType() == 3) {// 告警事件评分
                 evalSystemIndexesContext.getEvent().setEventValue(evalIndexRef.getEventValue());
-                evalSystemIndexesContext.getEvent().setType(evalIndexRef.getEventType());
+                evalSystemIndexesContext.getEvent().setType(evalIndexRef.getType());// 默认赋值方式百分比
                 evalSystemIndexesContext.getEvent().setEventNodeId(evalIndexRef.getNodeId());
                 evalSystemIndexesContext.getEvent().setEventName(evalIndexRef.getEvenName());
                 evalSystemIndexesContext.getEvent().setAlarmMatchName(evalIndexRef.getAlarmMatchName());
-            }else {
-                evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
+            } else if (evalIndexRef.getType() == 2) {// 专家评分
+                evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getType());// 默认赋值方式百分比
                 evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());
-                evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getSpecialistType());
                 // 获取五级指标专家设置
                 List<EvalRecordSpecialistFifthIndexContext> evalRecordSpecialistFifthIndexContexts = JsonUtil.toJsonObjectArray(evalIndexRef.getSpecialistFifthIndexContext(), EvalRecordSpecialistFifthIndexContext.class);
                 evalSystemIndexesContext.getSpecialist().setFifthIndexes(evalRecordSpecialistFifthIndexContexts);
+            } else {// 系统评分(探针采集数据方式)
+
             }
             EvalIndexRef evalIndexRef1 = fullIndexesMap.get(nextId);
             // 如果"ifFull"为真，跳过第四级直接由"EvalVariableRef"获取第五级
@@ -1142,7 +1141,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         List<MpCollectionEvent> collectionEventList = Lists.newArrayList();
         // 第一次、非迭代调用, 并且分页不为第一页. 视作数据同步过程中断
-		if (Boolean.TRUE.equals(isFirstCall) && !collectionEventPageContext.getPage().equals(1L)) {
+        if (Boolean.TRUE.equals(isFirstCall) && !collectionEventPageContext.getPage().equals(1L)) {
             // es需要循环数次跳过已同步数据
             if (evalVariableRefService.ES_PROBES.contains(collectionEventPageContext.getProbeId())) {
                 EvalLog.info(evalRecord, evalVariableRef, "synced data skipping...");

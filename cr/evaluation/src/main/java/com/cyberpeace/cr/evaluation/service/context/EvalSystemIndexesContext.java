@@ -1,12 +1,11 @@
 package com.cyberpeace.cr.evaluation.service.context;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -33,8 +32,8 @@ public class EvalSystemIndexesContext implements Serializable {
     private String probeId;
 
     @ApiModelProperty("指标项专家评分配置")
-    private EvalRecordSpecialistContext specialist;
+    private EvalRecordSpecialistContext specialist = new EvalRecordSpecialistContext();
 
     @ApiModelProperty("告警事件评分配置")
-    private EvalRecordEventListContext event;
+    private EvalRecordEventListContext event = new EvalRecordEventListContext();
 }

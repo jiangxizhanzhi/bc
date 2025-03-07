@@ -30,9 +30,7 @@ import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.*;
-import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistFifthIndexContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalRecordVariableContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalSystemIndexesContext;
+import com.cyberpeace.cr.evaluation.service.context.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.mp.MpCollectionEvent;
@@ -275,12 +273,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 获取"三级指标"评分类型
         Map<String, Integer> thirdIndexesTypeMap = Maps.newHashMap();
         Map<String, Integer> thirdSpecialistMap = Maps.newHashMap();
-        //存放告警事件的节点id
-        HashMap<String, String> thirdNodeId = Maps.newHashMap();
-        //存放告警事件的告警事件名称
-        HashMap<String, String> thirdEventName = Maps.newHashMap();
-        //存放告警事件的告警匹配名称
-        HashMap<String, String> thirdAlarmMatchName = Maps.newHashMap();
+        //三级指标关联的五级告警相关信息
+        HashMap<String, List<EvalRecordEventFifthIndexContext>> thirdEventFifthIndexMap = Maps.newHashMap();
+        //存放三级指标的专家评分信息
+        HashMap<String, EvalRecordEventListContext> thirdEventIndexMap = Maps.newHashMap();
         //存放三级指标下的专家评分信息
         HashMap<String, List<EvalRecordSpecialistFifthIndexContext>> thirdSpecialFifthIndexMap = Maps.newHashMap();
 
@@ -292,34 +288,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             }
             //事件评分
             if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.EVENT.getCode())) {
-                List<EvalRoomPairRsp> nodes = this.getNodes(requestData.getTaskId());
-                Map<String, EvalRoomPairRsp> map = nodes.stream().collect(Collectors.toMap(EvalRoomPairRsp::getId, eval -> eval));
-                //节点设备名称
-                if (!StringUtils.isBlank(evalRecordIndexContext.getEvent().getEventNodeId())) {
-                    String nodeName = map.get(evalRecordIndexContext.getEvent().getEventNodeId()).getLabel();
-                    // 节点id
-                    String nodeId = evalRecordIndexContext.getEvent().getEventNodeId();
-                    // 事件名称
-                    String eventName = evalRecordIndexContext.getEvent().getEventName();
-                    // 告警匹配名称
-                    String alarmMatchName = evalRecordIndexContext.getEvent().getAlarmMatchName();
-                    int value = 0;
-                    if (evalRecordIndexContext.getEvent().getIsCustomScore() != null && evalRecordIndexContext.getEvent().getIsCustomScore()) {
-                        value = evalRecordIndexContext.getEvent().getCustomScore();
-                    } else {
-                        value = remoteSceneService.getEventValue(nodeId, eventName, alarmMatchName);
-                    }
-                    thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(), value);
-                    thirdEventName.put(evalRecordIndexContext.getResourceId(), eventName);
-                    thirdAlarmMatchName.put(evalRecordIndexContext.getResourceId(), alarmMatchName);
-                    thirdNodeId.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getEvent().getEventNodeId());
-                } else {
-                    thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(), 0);
-                    thirdEventName.put(evalRecordIndexContext.getResourceId(), "");
-                    thirdAlarmMatchName.put(evalRecordIndexContext.getResourceId(), "");
-                    thirdNodeId.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getEvent().getEventNodeId().equals("") ? "" : evalRecordIndexContext.getEvent().getEventNodeId());
-                }
-
+//                List<EvalRoomPairRsp> nodes = this.getNodes(requestData.getTaskId());
+//                Map<String, EvalRoomPairRsp> map = nodes.stream().collect(Collectors.toMap(EvalRoomPairRsp::getId, eval -> eval));
+                thirdEventFifthIndexMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getEvent().getEventIndexes());
+                thirdEventIndexMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getEvent());
             }
             evalRecordIndexContext.getVariables().forEach(evalRecordVariableContext -> evalRecordVariableContextMap.put(evalRecordVariableContext.getResourceId(), evalRecordVariableContext));
         });
@@ -534,24 +506,25 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     String s = JSONArray.toJSONString(evalRecordSpecialistFifthIndexContexts);
                     evalIndexRef.setSpecialistFifthIndexContext(s);
                 }
+                if (thirdEventFifthIndexMap.get(evalIndex.getResourceId()) != null) {
+                    List<EvalRecordEventFifthIndexContext> evalRecordEventFifthIndexContexts = thirdEventFifthIndexMap.get(evalIndex.getResourceId());
+                    String s = JSONArray.toJSONString(evalRecordEventFifthIndexContexts);
+                    evalIndexRef.setEventFifthIndexContext(s);
+                }
+
                 evalIndexRef.setSpecialistValue(thirdSpecialistMap.get(evalIndex.getResourceId()));
                 if (evalIndexRef.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
                     evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
                 }
-                //事件评分
-                evalIndexRef.setEventType(evalIndicator.getDatatype());
-                evalIndexRef.setEventAttr(evalIndicator.getAttribute());
-                evalIndexRef.setEventAttrValue(evalIndicator.getAttributeValue());
-                evalIndexRef.setEventValue(thirdSpecialistMap.get(evalIndex.getResourceId()));
-                evalIndexRef.setEvenName(thirdEventName.get(evalIndex.getResourceId()));
-                evalIndexRef.setAlarmMatchName(thirdAlarmMatchName.get(evalIndex.getResourceId()));
-                evalIndexRef.setNodeId(thirdNodeId.get(evalIndex.getResourceId()));
+
+                //告警事件评分
                 if (evalIndexRef.getType().equals(EvalIndexRef.Type.EVENT.getCode())) {
-                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getEventType(), evalIndexRef.getEventAttr(), evalIndexRef.getEventAttrValue(), evalIndexRef.getEventValue()));
+                    if (thirdEventIndexMap.get(evalIndex.getResourceId()) != null) {
+                        evalIndexRef.setScore(thirdEventIndexMap.get(evalIndex.getResourceId()).getValue());
+                    }
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
                 }
-
             }
 
             evalIndexRef.setAlgorithmId(evalAlgorithmRef.getResourceId());
@@ -678,22 +651,16 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
                 } else if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.EVENT.getCode())) {
-                    List<EvalRoomPairRsp> nodes = this.getNodes(requestData.getTaskId());
-                    Map<String, EvalRoomPairRsp> map = nodes.stream().collect(Collectors.toMap(EvalRoomPairRsp::getId, eval -> eval));
-                    //节点设备名称
-                    String nodeName = map.get(evalRecordIndexContext.getEvent().getEventNodeId()).getLabel();
-                    // 节点id
-                    String eventNodeId = evalRecordIndexContext.getEvent().getEventNodeId();
-                    //事件名称
-                    String eventName = evalRecordIndexContext.getEvent().getEventName();
-                    // 告警匹配名称
-                    String alarmMatchName = evalRecordIndexContext.getEvent().getAlarmMatchName();
-                    //请求参数
-                    int value = remoteSceneService.getEventValue(eventNodeId, eventName, alarmMatchName);
-                    evalIndexRef.setEventValue(value);
-                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getEventAttr(), evalIndexRef.getEventAttrValue(), evalIndexRef.getEventValue()));
+                    List<EvalRecordEventFifthIndexContext> eventIndexes = evalRecordIndexContext.getEvent().getEventIndexes();
+                    String s = JSONArray.toJSONString(eventIndexes);
+                    evalIndexRef.setEventFifthIndexContext(s);
+//                    List<EvalRoomPairRsp> nodes = this.getNodes(requestData.getTaskId());
+//                    Map<String, EvalRoomPairRsp> map = nodes.stream().collect(Collectors.toMap(EvalRoomPairRsp::getId, eval -> eval));// 查询节点名称
+                    evalIndexRef.setEventValue(evalRecordIndexContext.getEvent().getValue());
+                    evalIndexRef.setScore(evalIndexRef.getEventValue());// 告警分数默认百分比
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
                 } else {
+                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getEventAttr(), evalIndexRef.getEventAttrValue(), evalIndexRef.getEventValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.NOT_START.getCode());
                 }
                 evalIndexRefs.add(evalIndexRef);
@@ -752,11 +719,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         Set<String> variablesMap = Sets.newHashSet();
         nextIds.forEach(nextId -> {
             if (evalIndexRef.getType() == 3) {// 告警事件评分
-                evalSystemIndexesContext.getEvent().setEventValue(evalIndexRef.getEventValue());
                 evalSystemIndexesContext.getEvent().setType(evalIndexRef.getType());// 默认赋值方式百分比
-                evalSystemIndexesContext.getEvent().setEventNodeId(evalIndexRef.getNodeId());
-                evalSystemIndexesContext.getEvent().setEventName(evalIndexRef.getEvenName());
-                evalSystemIndexesContext.getEvent().setAlarmMatchName(evalIndexRef.getAlarmMatchName());
+                evalSystemIndexesContext.getEvent().setValue(evalIndexRef.getEventValue());
+                // 获取五级指标告警设置
+                List<EvalRecordEventFifthIndexContext> evalRecordEventFifthIndexContexts = JsonUtil.toJsonObjectArray(evalIndexRef.getEventFifthIndexContext(), EvalRecordEventFifthIndexContext.class);
+                evalSystemIndexesContext.getEvent().setEventIndexes(evalRecordEventFifthIndexContexts);
             } else if (evalIndexRef.getType() == 2) {// 专家评分
                 evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getType());// 默认赋值方式百分比
                 evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());

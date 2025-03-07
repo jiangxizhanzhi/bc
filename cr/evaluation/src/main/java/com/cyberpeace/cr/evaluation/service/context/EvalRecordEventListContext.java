@@ -1,34 +1,24 @@
 package com.cyberpeace.cr.evaluation.service.context;
 
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class EvalRecordEventListContext implements Serializable {
-    @ApiModelProperty(value = "数据类型 3级指标时 value不为空 百分比:1,周期:2,延时:3" ,required = false)
+
+    @ApiModelProperty("数据类型 3级指标时 value不为空 百分比:1,周期:2,延时:3")
     private Integer type;
 
-    @ApiModelProperty(value = "数据属性",required = false)
+    @ApiModelProperty("数据属性")
     private Integer property;
 
-    @ApiModelProperty(value = "节点id",required = false)
-    private String eventNodeId;
+    @ApiModelProperty(value = "值")
+    private Integer value;
 
-    @ApiModelProperty(value = "值",required = false)
-    private Integer eventValue;
-
-    @ApiModelProperty(value = "告警事件名称",required = false)
-    private String eventName;
-
-    @ApiModelProperty(value = "告警匹配名称",required = false)
-    private String alarmMatchName;
-
-    @ApiModelProperty(value = "是否自定义分数",required = false)
-    private Boolean isCustomScore;
-
-    @ApiModelProperty(value = "自定义分数",required = false)
-    private Integer customScore;
+    @ApiModelProperty(value = "关联的五级指标告警设置")
+    private List<EvalRecordEventFifthIndexContext> eventIndexes = new ArrayList<>(); // 初始化空集合
 }

@@ -1,16 +1,14 @@
 package com.cyberpeace.cr.evaluation.dao.entity;
 
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
-
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
+
+import java.util.Date;
 
 @Data
 @TableName("cr_eval_index_ref")
@@ -59,6 +57,11 @@ public class EvalIndexRef extends BaseTable {
      * 五级指标专家设置
      */
     private String specialistFifthIndexContext;
+
+    /**
+     * 五级指标告警设置
+     */
+    private String eventFifthIndexContext;
 
     /**
      * 专家评分设置类型（三级指标包含）百分比/周期/整数值
@@ -135,7 +138,7 @@ public class EvalIndexRef extends BaseTable {
     private String matrixData;
 
     public enum Type implements GenericEnum {
-        SYSTEM(1, "系统评分"), SPECIALIST(2, "专家评分"),EVENT(3,"告警事件");
+        SYSTEM(1, "系统评分"), SPECIALIST(2, "专家评分"), EVENT(3, "告警事件");
 
         @Getter
         private final Integer code;

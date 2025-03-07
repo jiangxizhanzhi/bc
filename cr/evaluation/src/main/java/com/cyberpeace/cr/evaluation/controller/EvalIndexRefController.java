@@ -85,7 +85,7 @@ public class EvalIndexRefController {
 //            处理载荷记录评分
                 int value = requestData.getRecordLoad().getValue() == null ? 100 : requestData.getRecordLoad().getValue();
                 value = EvalRecordLoadListContext.JudgmentResult.SUCCESS.getCode() == requestData.getRecordLoad().getJudgmentStatus() ? value : 0;
-                evalIndexRef.setLoadValue(value);
+                evalIndexRef.setLoadValue(requestData.getRecordLoad().getValue());
                 evalIndexRef.setLoadExecutionName(requestData.getRecordLoad().getLoadExecutionName());
                 evalIndexRef.setLoadExecutionId(requestData.getRecordLoad().getLoadExecutionId());
                 evalIndexRef.setJudgmentStatus(requestData.getRecordLoad().getJudgmentStatus());

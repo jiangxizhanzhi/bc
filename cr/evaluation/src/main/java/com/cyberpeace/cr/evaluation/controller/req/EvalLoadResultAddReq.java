@@ -187,4 +187,9 @@ public class EvalLoadResultAddReq implements Serializable {
      */
     private String executionRecordId;
 
+    /**
+     * 命令
+     */
+    private String command;
+
 }

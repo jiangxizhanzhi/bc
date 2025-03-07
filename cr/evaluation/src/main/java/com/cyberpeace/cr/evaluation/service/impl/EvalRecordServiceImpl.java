@@ -518,7 +518,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 //事件评分
                 evalIndexRef.setLoadType(evalIndicator.getDatatype());
                 evalIndexRef.setLoadAttrValue(evalIndicator.getAttributeValue());
-                evalIndexRef.setLoadValue(thirdSpecialistMap.get(evalIndex.getResourceId()));
+                evalIndexRef.setLoadValue(thirdIndexesRecordLoadMap.get(evalIndex.getResourceId())==null?0:thirdIndexesRecordLoadMap.get(evalIndex.getResourceId()).getRecordLoad().getValue());
                 evalIndexRef.setLoadExecutionName(thirdIndexesRecordLoadMap.get(evalIndex.getResourceId())==null?"":thirdIndexesRecordLoadMap.get(evalIndex.getResourceId()).getRecordLoad().getLoadExecutionName());
                 evalIndexRef.setLoadExecutionId(thirdIndexesRecordLoadMap.get(evalIndex.getResourceId())==null?"":thirdIndexesRecordLoadMap.get(evalIndex.getResourceId()).getRecordLoad().getLoadExecutionId());
                 evalIndexRef.setJudgmentStatus(thirdIndexesRecordLoadMap.get(evalIndex.getResourceId())==null?0:thirdIndexesRecordLoadMap.get(evalIndex.getResourceId()).getRecordLoad().getJudgmentStatus());
@@ -653,7 +653,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 //            处理载荷记录评分
                     int value = evalRecordIndexContext.getRecordLoad().getValue() == null ? 100 : evalRecordIndexContext.getRecordLoad().getValue();
                     value = EvalRecordLoadListContext.JudgmentResult.SUCCESS.getCode() == evalRecordIndexContext.getRecordLoad().getJudgmentStatus() ? value : 0;
-                    evalIndexRef.setLoadValue(value);
+                    evalIndexRef.setLoadValue(evalRecordIndexContext.getRecordLoad().getValue());
                     evalIndexRef.setLoadExecutionName(evalRecordIndexContext.getRecordLoad().getLoadExecutionName());
                     evalIndexRef.setLoadExecutionId(evalRecordIndexContext.getRecordLoad().getLoadExecutionId());
                     evalIndexRef.setJudgmentStatus(evalRecordIndexContext.getRecordLoad().getJudgmentStatus());

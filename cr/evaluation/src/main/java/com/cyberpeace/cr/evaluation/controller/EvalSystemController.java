@@ -123,6 +123,7 @@ public class EvalSystemController {
 						systemTreeRsp.setName(evalCollection.getName());
 						systemTreeRsp.setLevel(5);
 						systemTreeRsp.setResourceId(evalCollection.getResourceId());
+						systemTreeRsp.setEvalIndicatorId(evalCollection.getEvalIndicatorId());
 
 						return systemTreeRsp;
 					}).collect(Collectors.toList());

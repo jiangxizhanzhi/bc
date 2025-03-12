@@ -283,6 +283,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         // 获取"系统评分"指标项下的变量项节点、探针信息
         Map<String, EvalRecordVariableContext> evalRecordVariableContextMap = Maps.newHashMap();
+        //三级指标关联的五级告警相关信息
+        HashMap<String, List<EvalRecordLoadFifthIndexContext>> thirdEventFifthIndexMap = Maps.newHashMap();
+        //存放三级指标的专家评分信息
+        HashMap<String, EvalRecordLoadListContext> thirdEventIndexMap = Maps.newHashMap();
+        //存放三级指标下的专家评分信息
+        HashMap<String, List<EvalRecordSpecialistFifthIndexContext>> thirdSpecialFifthIndexMap = Maps.newHashMap();
         // 获取"三级指标"评分类型
         Map<String, Integer> thirdIndexesTypeMap = Maps.newHashMap();
         Map<String, EvalRecordIndexContext> thirdIndexesRecordLoadMap = Maps.newHashMap();
@@ -291,16 +297,20 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             thirdIndexesTypeMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getType());
             if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
                 thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getSpecialist().getValue());
+                thirdSpecialFifthIndexMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getSpecialist().getFifthIndexes());
             } else if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.LOAD.getCode())){
 //            处理载荷记录评分
-                if (!StringUtils.isBlank(evalRecordIndexContext.getRecordLoad().getLoadExecutionId())) {
+                /*if (!StringUtils.isBlank(evalRecordIndexContext.getRecordLoad().getLoadExecutionId())) {
                     int value = evalRecordIndexContext.getRecordLoad().getValue() == null ? 100 : evalRecordIndexContext.getRecordLoad().getValue();
                     value = EvalRecordLoadListContext.JudgmentResult.SUCCESS.getCode() == evalRecordIndexContext.getRecordLoad().getJudgmentStatus() ? value : 0;
                     thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(), value);
                 }else {
                     thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(),0);
                 }
-                thirdIndexesRecordLoadMap.put(evalRecordIndexContext.getResourceId(),evalRecordIndexContext);
+                thirdIndexesRecordLoadMap.put(evalRecordIndexContext.getResourceId(),evalRecordIndexContext);*/
+
+                thirdEventFifthIndexMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getRecordLoad().getEventIndexes());
+                thirdEventIndexMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getRecordLoad());
             }
             evalRecordIndexContext.getVariables().forEach(evalRecordVariableContext -> evalRecordVariableContextMap.put(evalRecordVariableContext.getResourceId(), evalRecordVariableContext));
         });
@@ -510,19 +520,33 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalIndexRef.setSpecialistType(evalIndicator.getDatatype());
                 evalIndexRef.setSpecialistAttr(evalIndicator.getAttribute());
                 evalIndexRef.setSpecialistAttrValue(evalIndicator.getAttributeValue());
+                if (thirdSpecialFifthIndexMap.get(evalIndex.getResourceId()) != null) {
+                    List<EvalRecordSpecialistFifthIndexContext> evalRecordSpecialistFifthIndexContexts = thirdSpecialFifthIndexMap.get(evalIndex.getResourceId());
+                    String s = JSONArray.toJSONString(evalRecordSpecialistFifthIndexContexts);
+                    evalIndexRef.setSpecialistFifthIndexContext(s);
+                }
+                if (thirdEventFifthIndexMap.get(evalIndex.getResourceId()) != null) {
+                    List<EvalRecordLoadFifthIndexContext> evalRecordEventFifthIndexContexts = thirdEventFifthIndexMap.get(evalIndex.getResourceId());
+                    String s = JSONArray.toJSONString(evalRecordEventFifthIndexContexts);
+                    evalIndexRef.setEventFifthIndexContext(s);
+                }
                 evalIndexRef.setSpecialistValue(thirdSpecialistMap.get(evalIndex.getResourceId()));
                 if (evalIndexRef.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
                     evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
                 }
                 //事件评分
-                evalIndexRef.setLoadType(evalIndicator.getDatatype());
+                /*evalIndexRef.setLoadType(evalIndicator.getDatatype());
                 evalIndexRef.setLoadAttrValue(evalIndicator.getAttributeValue());
                 evalIndexRef.setLoadValue(thirdIndexesRecordLoadMap.get(evalIndex.getResourceId())==null?0:thirdIndexesRecordLoadMap.get(evalIndex.getResourceId()).getRecordLoad().getValue());
                 evalIndexRef.setLoadExecutionName(thirdIndexesRecordLoadMap.get(evalIndex.getResourceId())==null?"":thirdIndexesRecordLoadMap.get(evalIndex.getResourceId()).getRecordLoad().getLoadExecutionName());
                 evalIndexRef.setLoadExecutionId(thirdIndexesRecordLoadMap.get(evalIndex.getResourceId())==null?"":thirdIndexesRecordLoadMap.get(evalIndex.getResourceId()).getRecordLoad().getLoadExecutionId());
                 evalIndexRef.setJudgmentStatus(thirdIndexesRecordLoadMap.get(evalIndex.getResourceId())==null?0:thirdIndexesRecordLoadMap.get(evalIndex.getResourceId()).getRecordLoad().getJudgmentStatus());
+                */
                 if (evalIndexRef.getType().equals(EvalIndexRef.Type.LOAD.getCode())) {
+                    if (thirdEventIndexMap.get(evalIndex.getResourceId()) != null) {
+                        evalIndexRef.setScore(thirdEventIndexMap.get(evalIndex.getResourceId()).getLoadValue());
+                    }
                     evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getLoadType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getLoadAttrValue(), evalIndexRef.getLoadValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
                 }
@@ -647,11 +671,14 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalIndexRef.setType(evalRecordIndexContext.getType());
                 if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
                     evalIndexRef.setSpecialistValue(evalRecordIndexContext.getSpecialist().getValue());
+                    List<EvalRecordSpecialistFifthIndexContext> fifthIndexes = evalRecordIndexContext.getSpecialist().getFifthIndexes();
+                    String s = JSONArray.toJSONString(fifthIndexes);
+                    evalIndexRef.setSpecialistFifthIndexContext(s);
                     evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
                 } else if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.LOAD.getCode())){
 //            处理载荷记录评分
-                    int value = evalRecordIndexContext.getRecordLoad().getValue() == null ? 100 : evalRecordIndexContext.getRecordLoad().getValue();
+                    /*int value = evalRecordIndexContext.getRecordLoad().getValue() == null ? 100 : evalRecordIndexContext.getRecordLoad().getValue();
                     value = EvalRecordLoadListContext.JudgmentResult.SUCCESS.getCode() == evalRecordIndexContext.getRecordLoad().getJudgmentStatus() ? value : 0;
                     evalIndexRef.setLoadValue(evalRecordIndexContext.getRecordLoad().getValue());
                     evalIndexRef.setLoadExecutionName(evalRecordIndexContext.getRecordLoad().getLoadExecutionName());
@@ -659,6 +686,15 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     evalIndexRef.setJudgmentStatus(evalRecordIndexContext.getRecordLoad().getJudgmentStatus());
                     evalIndexRef.setSpecialistValue(value);
                     evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
+                    evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());*/
+
+                    List<EvalRecordLoadFifthIndexContext> eventIndexes = evalRecordIndexContext.getRecordLoad().getEventIndexes();
+                    String s = JSONArray.toJSONString(eventIndexes);
+                    evalIndexRef.setEventFifthIndexContext(s);
+//                    List<EvalRoomPairRsp> nodes = this.getNodes(requestData.getTaskId());
+//                    Map<String, EvalRoomPairRsp> map = nodes.stream().collect(Collectors.toMap(EvalRoomPairRsp::getId, eval -> eval));// 查询节点名称
+                    evalIndexRef.setLoadValue(evalRecordIndexContext.getRecordLoad().getLoadValue());
+                    evalIndexRef.setScore(evalIndexRef.getLoadValue());// 告警分数默认百分比
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
                 }else {
                     evalIndexRef.setProgress(EvalIndexRef.Progress.NOT_START.getCode());
@@ -718,19 +754,29 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 同三级指标项下变量项过滤
         Set<String> variablesMap = Sets.newHashSet();
         nextIds.forEach(nextId -> {
-            if (evalIndexRef.getType()==3){
-                evalSystemIndexesContext.setRecordLoad(new EvalRecordLoadListContext());
+            // 载荷记录评分
+            if (evalIndexRef.getType()==EvalIndexRef.Type.LOAD.getCode()){
+                /*evalSystemIndexesContext.setRecordLoad(new EvalRecordLoadListContext());
                 evalSystemIndexesContext.getRecordLoad().setType(evalIndexRef.getType());
                 evalSystemIndexesContext.getRecordLoad().setLoadExecutionId(evalIndexRef.getLoadExecutionId());
                 evalSystemIndexesContext.getRecordLoad().setLoadExecutionName(evalIndexRef.getLoadExecutionName());
                 evalSystemIndexesContext.getRecordLoad().setJudgmentStatus(evalIndexRef.getJudgmentStatus());
                 evalSystemIndexesContext.getRecordLoad().setValue(evalIndexRef.getLoadValue());
                 evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
-                evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getSpecialistType());
-            } else {
-                evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
+                evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getSpecialistType());*/
+
+                evalSystemIndexesContext.getRecordLoad().setType(evalIndexRef.getType());// 默认赋值方式百分比
+                evalSystemIndexesContext.getRecordLoad().setLoadValue(evalIndexRef.getLoadValue());
+                // 获取五级指标告警设置
+                List<EvalRecordLoadFifthIndexContext> evalRecordEventFifthIndexContexts = JsonUtil.toJsonObjectArray(evalIndexRef.getEventFifthIndexContext(), EvalRecordLoadFifthIndexContext.class);
+                evalSystemIndexesContext.getRecordLoad().setEventIndexes(evalRecordEventFifthIndexContexts);
+            } else if (evalIndexRef.getType() == EvalIndexRef.Type.SPECIALIST.getCode()) {
+                // 专家评分
+                evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getType());// 默认赋值方式百分比
                 evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());
-                evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getSpecialistType());
+                // 获取五级指标专家设置
+                List<EvalRecordSpecialistFifthIndexContext> evalRecordSpecialistFifthIndexContexts = JsonUtil.toJsonObjectArray(evalIndexRef.getSpecialistFifthIndexContext(), EvalRecordSpecialistFifthIndexContext.class);
+                evalSystemIndexesContext.getSpecialist().setFifthIndexes(evalRecordSpecialistFifthIndexContexts);
             }
             EvalIndexRef evalIndexRef1 = fullIndexesMap.get(nextId);
             // 如果"ifFull"为真，跳过第四级直接由"EvalVariableRef"获取第五级

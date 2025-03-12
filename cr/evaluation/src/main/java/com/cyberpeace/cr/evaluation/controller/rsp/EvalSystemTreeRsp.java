@@ -14,6 +14,9 @@ public class EvalSystemTreeRsp {
 	@ApiModelProperty(value = "ID")
 	private String resourceId;
 
+	@ApiModelProperty(value = "评估指标ID")
+	private String evalIndicatorId;
+
 	@ApiModelProperty(value = "级别")
 	private Integer level;
 

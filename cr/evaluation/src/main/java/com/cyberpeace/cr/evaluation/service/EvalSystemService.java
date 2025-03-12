@@ -1,7 +1,9 @@
 package com.cyberpeace.cr.evaluation.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.evaluation.controller.req.EvalSystemTestLoadReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalSystemTestReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemAllRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemRsp;
@@ -35,4 +37,6 @@ public interface EvalSystemService extends IService<EvalSystem> {
 	EvalSystemRsp convertEvalSystemToEvalSystemRsp(EvalSystem evalSystem);
 
     EvalSystemAllRsp testWithStr(EvalSystemTestReq evalSystemTestReq);
+
+	JSONObject testWithLoad(EvalSystemTestLoadReq evalSystemTestLoadReq);
 }

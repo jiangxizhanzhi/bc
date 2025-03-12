@@ -120,6 +120,16 @@ public class EvalIndexRef extends BaseTable {
      */
     private String loadExecutionName;
 
+    /**
+     * 五级指标专家设置
+     */
+    private String specialistFifthIndexContext;
+
+    /**
+     * 五级指标告警设置
+     */
+    private String eventFifthIndexContext;
+
     public enum Type implements GenericEnum {
         SYSTEM(1, "系统评分"), SPECIALIST(2, "专家评分"), LOAD(3, "载荷记录");
 

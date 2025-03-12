@@ -20,9 +20,7 @@ import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.*;
-import com.cyberpeace.cr.evaluation.service.context.CollectWithStrContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
-import com.cyberpeace.cr.evaluation.service.context.IndexContext;
+import com.cyberpeace.cr.evaluation.service.context.*;
 import com.cyberpeace.cr.evaluation.service.impl.GXPTIndexServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -433,6 +431,46 @@ public class EvalSystemIndexAdminController {
 
 		EvalSystemAllRsp result = evalSystemService.testWithStr(evalSystemTestReq);
 
+		return new BaseRsp<>(result);
+	}
+
+	@PostMapping("test_with_load")
+	@ApiOperation("根据载荷记录对五级指标自定义评分得出三级指标评分")
+	public BaseRsp testLoad(@RequestBody @Validated EvalSystemTestLoadReq evalSystemTestLoadReq) {
+		// 处理参数值中的key
+		for (CollectWithLoadContext collectWithLoadContext : evalSystemTestLoadReq.getFifthIndex()) {
+			try {
+				int value = collectWithLoadContext.getValue() == null ? 100 : collectWithLoadContext.getValue();
+				value = EvalRecordLoadListContext.JudgmentResult.SUCCESS.getCode() == collectWithLoadContext.getJudgmentStatus() ? value : 0;
+				String str = String.format("{\"data\":%d}", value);
+				collectWithLoadContext.setStr(str);
+
+				// 提取格式化算法名称
+				EvalIndicator evalIndicator = evalIndicatorService.getById(collectWithLoadContext.getEvalIndicatorId());
+				EvalIndicatorRsp evalIndicatorRsp = evalIndicatorService.convertEvalIndicatorToEvalSystemRsp(evalIndicator);
+				String key = evalAlgorithmMapper.selectById(evalIndicatorRsp.getEvalCollections().get(0).getFormatAlgorithmId()).getName();
+
+				// 依据名称，替换原始数据中的值
+				Map<String, String> replaceMap = new HashMap<>();
+				replaceMap.put("内存使用率", "memoryPercent");
+				replaceMap.put("磁盘使用率", "diskPercent");
+				replaceMap.put("CPU使用率", "cpuPercent");
+
+				if (!StringUtils.isEmpty(key) && (replaceMap.containsKey(key))) {
+					collectWithLoadContext.setStr(collectWithLoadContext.getStr().replace("data", replaceMap.get(key)));
+				}
+
+				if (!StringUtils.isEmpty(key) && key.equals("JSON属性获取")) {
+					String formatAlgorithmParams = evalIndicatorRsp.getEvalCollections().get(0).getFormatAlgorithmParams();
+					String nextKey = JsonUtil.toJsonObjectArray(formatAlgorithmParams, JSONObject.class).get(0).getString("default_value");
+					collectWithLoadContext.setStr(collectWithLoadContext.getStr().replace("data", nextKey));
+				}
+
+			} catch (Exception e) {
+				log.error("参数值处理异常", e);
+			}
+		}
+		JSONObject result = evalSystemService.testWithLoad(evalSystemTestLoadReq);
 		return new BaseRsp<>(result);
 	}
 

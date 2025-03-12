@@ -1,11 +1,5 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import com.cyberpeace.cr.evaluation.service.context.EvalRecordLoadListContext;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -19,11 +13,14 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefMapper;
 import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "靶场测评-评估关联算法")
 @RestController
@@ -79,17 +76,6 @@ public class EvalIndexRefController {
             if(type.equals(EvalIndexRef.Type.SPECIALIST.getCode())){
                 // TODO 设置回显 speciallist的其他值
                 evalIndexRef.setSpecialistValue(specialist.getValue());
-                evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
-                evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
-            } else if (type.equals(EvalIndexRef.Type.LOAD.getCode())){
-//            处理载荷记录评分
-                int value = requestData.getRecordLoad().getValue() == null ? 100 : requestData.getRecordLoad().getValue();
-                value = EvalRecordLoadListContext.JudgmentResult.SUCCESS.getCode() == requestData.getRecordLoad().getJudgmentStatus() ? value : 0;
-                evalIndexRef.setLoadValue(requestData.getRecordLoad().getValue());
-                evalIndexRef.setLoadExecutionName(requestData.getRecordLoad().getLoadExecutionName());
-                evalIndexRef.setLoadExecutionId(requestData.getRecordLoad().getLoadExecutionId());
-                evalIndexRef.setJudgmentStatus(requestData.getRecordLoad().getJudgmentStatus());
-                evalIndexRef.setSpecialistValue(value);
                 evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
                 evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
             }

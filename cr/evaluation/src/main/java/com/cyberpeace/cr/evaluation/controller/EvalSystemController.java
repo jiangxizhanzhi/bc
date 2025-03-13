@@ -170,6 +170,7 @@ public class EvalSystemController {
 		evalSystemTreeRsp.setResourceId(indexContext.getIndexId());
 		evalSystemTreeRsp.setLevel(code);
 		evalSystemTreeRsp.setName(indexContext.getName());
+		evalSystemTreeRsp.setEvalIndicatorId(indexContext.getEvalIndicatorId());
 
 		return evalSystemTreeRsp;
 	}

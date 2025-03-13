@@ -12,10 +12,10 @@ public class EvalRecordLoadListContext {
     private Integer type;
 
     @ApiModelProperty(value = "值")
-    private Integer loadValue;
+    private Integer value;
 
     @ApiModelProperty(value = "关联的五级指标载荷设置")
-    private List<EvalRecordLoadFifthIndexContext> eventIndexes = new ArrayList<>(); // 初始化空集合
+    private List<EvalRecordLoadFifthIndexContext> loadIndexes = new ArrayList<>(); // 初始化空集合
 
     public enum JudgmentResult {
 

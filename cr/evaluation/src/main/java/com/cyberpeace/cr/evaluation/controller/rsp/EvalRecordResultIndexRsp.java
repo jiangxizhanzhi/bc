@@ -32,6 +32,12 @@ public class EvalRecordResultIndexRsp implements Serializable {
     private Integer level;
 
     @JsonIgnore
+    private String specialistFifthIndexContext;
+
+    @JsonIgnore
+    private String eventFifthIndexContext;
+
+    @JsonIgnore
     private String nextIds;
 
     @JsonIgnore

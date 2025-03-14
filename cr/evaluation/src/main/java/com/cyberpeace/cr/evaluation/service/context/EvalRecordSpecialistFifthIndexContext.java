@@ -8,6 +8,9 @@ import java.io.Serializable;
 @Data
 public class EvalRecordSpecialistFifthIndexContext implements Serializable {
 
+    @ApiModelProperty
+    private String resourceId;
+
     @ApiModelProperty(value = "关联的五级指标resourceId")
     private String fifthIndexResourceId;
 

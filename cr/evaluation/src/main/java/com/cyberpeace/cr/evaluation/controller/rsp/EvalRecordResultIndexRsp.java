@@ -39,4 +39,10 @@ public class EvalRecordResultIndexRsp implements Serializable {
 
     @ApiModelProperty("算法是否为层次分析法")
     private Integer mode;
+
+    @ApiModelProperty("五级指标专家设置")
+    private String specialistFifthIndexContext;
+
+    @ApiModelProperty("五级指标告警设置")
+    private String eventFifthIndexContext;
 }

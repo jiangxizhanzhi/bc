@@ -8,6 +8,9 @@ import lombok.Data;
 @Data
 public class EvalCollectionContext {
 
+	@ApiModelProperty
+	private String resourceId;
+
 	@ApiModelProperty(value = "采集项id", required = true)
 	@NotNull
 	private String evalCollectionId;

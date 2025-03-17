@@ -14,6 +14,9 @@ import lombok.Data;
 @Data
 public class EvalIndicatorRsp {
 
+	@ApiModelProperty
+	private String resourceId;
+
 	@ApiModelProperty(value = "指标项Id", required = true)
 	@NotNull
 	private String evalIndicatorId;

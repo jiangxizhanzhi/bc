@@ -34,4 +34,6 @@ public interface SpaceActionFrameService extends IService<SpaceActionFrame> {
      * @param req 请求体
      */
     boolean saveFrame(SpaceFrameLevel req);
+
+    void recordUsage(String type);
 }

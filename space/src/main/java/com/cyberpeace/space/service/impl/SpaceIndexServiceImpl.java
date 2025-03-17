@@ -2,6 +2,7 @@ package com.cyberpeace.space.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.constant.CallType;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
@@ -15,14 +16,8 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
-import com.cyberpeace.space.dao.entity.SpaceActionFrame;
-import com.cyberpeace.space.dao.entity.SpaceStrategy;
-import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
-import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
-import com.cyberpeace.space.dao.mapper.SpaceBaseAlgorithmMapper;
-import com.cyberpeace.space.dao.mapper.SpaceTacticAttackMapper;
-import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseMapper;
-import com.cyberpeace.space.dao.mapper.SpaceWarningDictionaryMapper;
+import com.cyberpeace.space.dao.entity.*;
+import com.cyberpeace.space.dao.mapper.*;
 import com.cyberpeace.space.service.*;
 import com.cyberpeace.space.service.context.index.*;
 import com.cyberpeace.space.service.context.rule.BaseDataRuleStatistics;
@@ -89,6 +84,9 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	@Autowired
 	private SpaceCallCountService callCountService;
 
+	@Autowired
+	private SpaceActionFrameUseMapper spaceActionFrameUseMapper;
+
 	@Override
 	public IndexKnowledge getKnowledgeRepositoryStatistics() {
 		IndexKnowledge res = new IndexKnowledge();
@@ -149,6 +147,7 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		IndexAlgorithm algorithm = new IndexAlgorithm();
 		algorithm.setBase(evalAlgorithmService.count());
 		algorithm.calSum();
+		algorithm.setUse(callCountService.getCountByName(CallType.ALGORITHM));
 		res.setAlgorithm(algorithm);
 		// 场景
 		return res;
@@ -189,7 +188,8 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		count.setTarget(spaceActionFrameService.countByType(SpaceActionFrame.Type.TARGET.getCode()));
 		count.calSum();
 		frame.setFrameCount(count);
-		frame.setTrending(this.defaultChart());
+//		frame.setTrending(this.defaultChart());
+		frame.setTrending(this.getActionFrameUseChart());
 		return frame;
 
 	}
@@ -201,6 +201,31 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 			ip = "10.4.2.3";
 		}
 		return ip;
+	}
+
+	private IndexActionFrameChart getActionFrameUseChart() {
+		IndexActionFrameChart chart = new IndexActionFrameChart();
+		Date date = TimeUtil.addDates(new Date(), -6);
+		for (int i = 0; i < 7; i++) {
+			chart.getXDates().add(TimeUtil.format6(date));
+			date = TimeUtil.addDates(date, 1);
+		}
+		LambdaQueryWrapper<SpaceActionFrameUse> wrapper = new LambdaQueryWrapper<>();
+		wrapper.in(SpaceActionFrameUse::getDate, chart.getXDates());
+		List<SpaceActionFrameUse> useList = spaceActionFrameUseMapper.selectList(wrapper);
+		Map<String, Integer> processMap = StreamApiUtils.toMap(
+				StreamApiUtils.filter(useList,
+						u -> SpaceActionFrame.Type.PROCESS.getName().equals(u.getType())),
+				SpaceActionFrameUse::getDate, SpaceActionFrameUse::getCount);
+		Map<String, Integer> targetMap = StreamApiUtils.toMap(
+				StreamApiUtils.filter(useList,
+						u -> SpaceActionFrame.Type.TARGET.getName().equals(u.getType())),
+				SpaceActionFrameUse::getDate, SpaceActionFrameUse::getCount);
+		for (String xDate : chart.getXDates()) {
+			chart.getProcess().add(processMap.getOrDefault(xDate, 0));
+			chart.getTarget().add(targetMap.getOrDefault(xDate, 0));
+		}
+		return chart;
 	}
 
 	/**

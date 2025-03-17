@@ -23,6 +23,9 @@ public class IndexAlgorithm {
     @ApiModelProperty(value = "总数")
     private Integer sum = 0;
 
+    @ApiModelProperty(value = "使用次数")
+    private Integer use = 0;
+
     public void calSum() {
         this.sum = this.base + this.ability + this.efficiency + this.equipment;
     }

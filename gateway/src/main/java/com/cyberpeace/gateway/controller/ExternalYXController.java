@@ -52,6 +52,7 @@ import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalTheoryBo;
 import com.cyberpeace.space.dao.entity.SpaceActionFrame;
 import com.cyberpeace.space.dao.mapper.SpaceActionFrameMapper;
+import com.cyberpeace.space.service.SpaceActionFrameService;
 import com.cyberpeace.space.service.context.frame.ActionStatisticsBo;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
@@ -126,6 +127,12 @@ public class ExternalYXController {
 	 */
 	@Autowired
 	private SpaceActionFrameMapper spaceActionFrameMapper;
+
+	/**
+	 * 空间行动框架service
+	 */
+	@Autowired
+	private SpaceActionFrameService spaceActionFrameService;
 
 	/**
 	 * 评估算法Service
@@ -580,5 +587,40 @@ public class ExternalYXController {
 		return new BaseRsp<>(PageUtil.getListResult(boIPage));
 	}
 
+	@ApiOperation("理论知识库使用次数+1")
+	@GetMapping("/use/theory")
+	@CallCount(CallType.THEORY)
+	public BaseRsp<Boolean> useTheory() {
+		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("策略库使用次数+1")
+	@GetMapping("/use/strategy")
+	@CallCount(CallType.STRATEGY)
+	public BaseRsp<Boolean> useStrategy() {
+		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("战法库使用次数+1")
+	@GetMapping("/use/tactic")
+	@CallCount(CallType.TACTIC)
+	public BaseRsp<Boolean> useTactic() {
+		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("算法库使用次数+1")
+	@GetMapping("/use/algorithm")
+	@CallCount(CallType.ALGORITHM)
+	public BaseRsp<Boolean> useAlgorithm() {
+		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("记录行动框架使用")
+	@GetMapping("/use/action/frame/{type}")
+	public BaseRsp<Boolean> useActionFrame(@ApiParam(name = "type",
+			value = "框架类型，process or target", required = true) @PathVariable String type) {
+		spaceActionFrameService.recordUsage(type);
+		return new BaseRsp<>(true);
+	}
 
 }

@@ -6,11 +6,10 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.space.dao.entity.SpaceAction;
-import com.cyberpeace.space.dao.entity.SpaceActionFrame;
-import com.cyberpeace.space.dao.entity.SpaceActionMethod;
-import com.cyberpeace.space.dao.entity.SpaceActionRelation;
+import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.space.dao.entity.*;
 import com.cyberpeace.space.dao.mapper.SpaceActionFrameMapper;
+import com.cyberpeace.space.dao.mapper.SpaceActionFrameUseMapper;
 import com.cyberpeace.space.service.SpaceActionFrameService;
 import com.cyberpeace.space.service.SpaceActionMethodService;
 import com.cyberpeace.space.service.SpaceActionService;
@@ -21,6 +20,7 @@ import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +37,9 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 
 	@Autowired
 	private SpaceActionService actionService;
+	
+	@Autowired
+	private SpaceActionFrameUseMapper useMapper;
 
 
 	@Override
@@ -139,7 +142,31 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 		return this.updateById(frame);
 	}
 
-	private SpaceActionRelation createRel(String upperId, String lowerId) {
+	@Override
+	public void recordUsage(String type) {
+		if (!SpaceActionFrame.Type.TARGET.getName().equals(type)
+				&& !SpaceActionFrame.Type.PROCESS.getName().equals(type)) {
+			return;
+		}
+		String date = TimeUtil.format6(new Date());
+		LambdaQueryWrapper<SpaceActionFrameUse> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(SpaceActionFrameUse::getType, type);
+		queryWrapper.eq(SpaceActionFrameUse::getDate, date);
+		SpaceActionFrameUse use = useMapper.selectOne(queryWrapper);
+		if (null == use) {
+			use = new SpaceActionFrameUse();
+			use.setType(type);
+			use.setDate(date);
+			use.setCount(1);
+			useMapper.insert(use);
+		} else {
+			use.setCount(use.getCount() + 1);
+			useMapper.updateById(use);
+		}
+	}
+	
+
+    private SpaceActionRelation createRel(String upperId, String lowerId) {
 		SpaceActionRelation rel = new SpaceActionRelation();
 		rel.setUpperId(upperId);
 		rel.setLowerId(lowerId);

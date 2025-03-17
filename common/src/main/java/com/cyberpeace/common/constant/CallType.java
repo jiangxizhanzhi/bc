@@ -30,4 +30,12 @@ public class CallType {
 	 * @see String
 	 */
 	public static final String TACTIC = "tactic";
+
+
+	/**
+	 * 算法
+	 *
+	 * @see String
+	 */
+	public static final String ALGORITHM = "algorithm";
 }

@@ -117,6 +117,7 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 	@ApiOperation("删除")
 	@DeleteMapping("")
 	public BaseRsp deleteA(@RequestBody IdListReq req) {
+		this.checkReference(req.getIds());
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
@@ -189,5 +190,14 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 	protected List<String> getUpperIds(B req){
 		return Lists.newArrayList();
 	}
+
+	/**
+	 * 检查引用
+	 *
+	 * @param ids id列表
+	 * @throws
+	 * @see List<String>
+	 */
+	protected void checkReference(List<String> ids) {}
 
 }

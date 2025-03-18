@@ -11,4 +11,18 @@ public class SpaceError {
      * @see String
      */
     public static final String STRATEGY_EXIST = "105002";
+
+    /**
+     * 交战方法[]被行动框架[]引用，无法删除
+     *
+     * @see String
+     */
+    public static final String METHOD_REFERENCE_EXIST = "105003";
+
+    /**
+     * 交战活动[]被行动框架[]引用，无法删除
+     *
+     * @see String
+     */
+    public static final String ACTION_REFERENCE_EXIST = "105004";
 }

@@ -1,5 +1,6 @@
 package com.cyberpeace.space.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -8,11 +9,14 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
 import com.cyberpeace.cr.tool.service.ToolService;
+import com.cyberpeace.space.constant.SpaceError;
 import com.cyberpeace.space.dao.entity.SpaceAction;
+import com.cyberpeace.space.dao.entity.SpaceActionFrame;
 import com.cyberpeace.space.dao.entity.SpaceActionMethod;
 import com.cyberpeace.space.dao.entity.SpaceStrategy;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.controller.SpaceActionFrameBaseController;
+import com.cyberpeace.space.service.SpaceActionFrameService;
 import com.cyberpeace.space.service.SpaceActionMethodService;
 import com.cyberpeace.space.service.SpaceActionService;
 import com.cyberpeace.space.service.SpaceStrategyService;
@@ -60,6 +64,9 @@ public class SpaceActionController extends SpaceActionFrameBaseController<SpaceA
 	 */
 	@Autowired
 	private SpaceStrategyService strategyService;
+
+	@Autowired
+	private SpaceActionFrameService frameService;
 
 	/**
 	 * 获取adetail
@@ -148,5 +155,21 @@ public class SpaceActionController extends SpaceActionFrameBaseController<SpaceA
 			}
 		}
 		return res;
+	}
+
+	@Override
+	protected void checkReference(List<String> ids) {
+		for (String methodId : ids) {
+			LambdaQueryWrapper<SpaceActionFrame> wrapper = new LambdaQueryWrapper<>();
+			wrapper.like(SpaceActionFrame::getFrame, "\"" + methodId + "\"");
+			List<SpaceActionFrame> frameList = frameService.list(wrapper);
+			if (!frameList.isEmpty()) {
+				SpaceAction action = baseService.getById(methodId);
+				if (action != null) {
+					String frameNames = String.join(",", StreamApiUtils.map(frameList, SpaceActionFrame::getName));
+					throw new BusinessException(SpaceError.ACTION_REFERENCE_EXIST, action.getName(), frameNames);
+				}
+			}
+		}
 	}
 }

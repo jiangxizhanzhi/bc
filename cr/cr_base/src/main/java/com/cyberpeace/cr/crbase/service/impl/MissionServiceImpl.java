@@ -1015,6 +1015,71 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	/**
+	 * @description: 重置任务信息
+	 * @param roomId
+	 * @param roleId
+	 * @param currentUserId
+	 * @throws
+	 * @return Boolean
+	 */
+	@Override
+	public Boolean batchResetMission(String roomId, String roleId, String currentUserId) {
+		List<Mission> missions = missionMapper.selectByRoomId(roomId);
+		if (CollectionUtils.isEmpty(missions)) {
+			log.error("missions does not exist! roomId is {}", roomId);
+			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
+		}
+		List<String> missionIds = missions.stream().map(Mission::getResourceId).collect(Collectors.toList());
+		//已下发的任务(未下发的任务不会添加到crTask)
+		List<CrTask> crTasks = new ArrayList<>();
+		crTasks = crTaskMapper.selectByMissionIds(missionIds);
+		if(StringUtils.isNotEmpty(roleId)){
+			CrRole role = this.getRoleOrException(roleId);
+			if(Objects.isNull(role)){
+				return Boolean.FALSE;
+			}
+			crTasks = crTasks.stream().filter(crTask -> crTask.getRoleId().equals(role.getResourceId())).collect(Collectors.toList());
+		}
+		if(CollectionUtils.isEmpty(crTasks)){
+			log.warn("cancel crTasks does not exist! roomId is {}", roomId);
+			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
+		}
+		//对应需要重置处理的已下发的mission id
+		Set<String> releasedMissionIds = crTasks.stream().map(CrTask::getMissionId).collect(Collectors.toSet());
+		//任务
+		List<Mission> missionList =
+			missions.stream().filter(mission -> releasedMissionIds.contains(mission.getResourceId()))
+				.collect(Collectors.toList());
+
+		//课程任务日志
+		List<CrTaskLog> crTaskLogs = missionList.stream().map(mission -> {
+			return CrTaskLog.builder().roomId(mission.getRoomId()).missionId(mission.getResourceId())
+				.actionCode(CrTaskLog.ActionCode.RESET.getCode()).userId(currentUserId).build();
+		}).collect(Collectors.toList());
+
+		//相关用户信息
+		List<String> userIds = crTasks.stream().map(CrTask::getUserId).collect(Collectors.toList());
+
+		//对应crTaskid
+		List<String> crTaskIds = crTasks.stream().map(CrTask::getResourceId).collect(Collectors.toList());
+
+		//撤销操作
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				//删除任务表中的数据
+				crTaskMapper.deleteBatchIds(crTaskIds);
+				//插入课程任务日志
+				crTaskLogMapper.batchInsert(crTaskLogs);
+				//任务下发列表去除
+				crBadgeService.removeBadgeByUserIds(roomId, CrBadge.BadgeType.MISSION_RELEASE.getCode(),userIds);
+			}
+		});
+		return Boolean.TRUE;
+	}
+
+
+	/**
 	 * 获取详情由id
 	 *
 	 * @param resourceId 资源id

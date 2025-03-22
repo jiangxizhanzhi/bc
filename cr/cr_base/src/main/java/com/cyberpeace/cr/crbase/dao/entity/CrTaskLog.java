@@ -62,6 +62,11 @@ public class CrTaskLog extends BaseTable {
 		/**
 		 * 下发
 		 */
+		RESET(0, "撤回任务"),
+
+		/**
+		 * 下发
+		 */
 		RELEASE(1, "下发任务"),
 		/**
 		 * 开放题解

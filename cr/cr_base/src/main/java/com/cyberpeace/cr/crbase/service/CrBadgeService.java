@@ -34,6 +34,17 @@ public interface CrBadgeService {
 	 */
 	void removeBadge(String businessId, Integer type, String userId);
 
+
+	/**
+	 * @description: 批量删除badge
+	 * @param businessId
+	 * @param type
+	 * @param userIds
+	 * @throws
+	 * @return void
+	 */
+	void removeBadgeByUserIds(String businessId, Integer type, List<String> userIds);
+
 	/**
 	 * 获取任务裁决红点
 	 *

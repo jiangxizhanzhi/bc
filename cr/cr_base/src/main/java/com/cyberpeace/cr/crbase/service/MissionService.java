@@ -316,6 +316,17 @@ public interface MissionService extends IService<Mission> {
 	 */
 	Boolean batchRelease(List<String> missionIds, String roleId, String currentUserId);
 
+
+	/**
+	 * @description: 重置任务信息
+	 * @param roomId
+	 * @param roleId
+	 * @param currentUserId
+	 * @throws
+	 * @return Boolean
+	 */
+	Boolean batchResetMission(String roomId, String roleId, String currentUserId);
+
 	/**
 	 * 获取详情通过id
 	 *

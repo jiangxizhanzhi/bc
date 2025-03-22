@@ -37,6 +37,9 @@ public interface CrBadgeMapper extends BaseMapper<CrBadge> {
 	Boolean existByBusinessIdAndTypeAndUserId(@Param("businessId") String businessId,
 			@Param("type") Integer type, @Param("userId") String userId);
 
+
+
+
 	/**
 	 * 删除批量由业务id和类型和用户id
 	 *
@@ -46,4 +49,14 @@ public interface CrBadgeMapper extends BaseMapper<CrBadge> {
 	 */
 	void removeBatchByBusinessIdAndTypeAndUserId(@Param("businessId") String businessId,
 			@Param("type") Integer type, @Param("userId") String userId);
+
+	/**
+	 * 批量删除业务id和类型和多个用户id
+	 * @param businessId
+	 * @param type
+	 * @param userIds
+	 * @return
+	 */
+	Boolean removeBatchByBusinessIdAndTypeAndUserIds(@Param("businessId") String businessId,
+		@Param("type") Integer type, @Param("userId") List<String> userIds);
 }

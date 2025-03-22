@@ -77,6 +77,19 @@ public class CrBadgeServiceImpl implements CrBadgeService {
 	}
 
 	/**
+	 * @description: 批量删除badge
+	 * @param businessId
+	 * @param type
+	 * @param userIds
+	 * @throws
+	 * @return void
+	 */
+	@Override
+	public void removeBadgeByUserIds(String businessId, Integer type, List<String> userIds) {
+		crBadgeMapper.removeBatchByBusinessIdAndTypeAndUserIds(businessId, type, userIds);
+	}
+
+	/**
 	 * 获取评估徽章
 	 *
 	 * @param roomId 房间id

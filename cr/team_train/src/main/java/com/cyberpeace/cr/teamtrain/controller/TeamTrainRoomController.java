@@ -27,10 +27,7 @@ import com.cyberpeace.common.util.HtmlToPdfUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
-import com.cyberpeace.cr.crbase.controller.req.FlowOpsReq;
-import com.cyberpeace.cr.crbase.controller.req.ListQuery;
-import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
-import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
+import com.cyberpeace.cr.crbase.controller.req.*;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
@@ -772,6 +769,20 @@ public class TeamTrainRoomController {
 		return baseRole;
 	}
 
+
+	@ApiOperation("批量重置任务状态")
+	@PostMapping("/batch_reset_mission")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<Boolean> batchResetMission(@RequestBody @Validated ResetMissionReq resetMissionReq) {
+		//鉴权
+		teamRoomService.checkTeacherPermission(resetMissionReq.getResourceId(),
+			UserInfoContext.getUserContext().getUserId());
+		//重置任务
+		Boolean res = missionService.batchResetMission(resetMissionReq.getResourceId(),
+			resetMissionReq.getRoleId(),
+			UserInfoContext.getUserContext().getUserId());
+		return new BaseRsp<>(res);
+	}
 
 	/**
 	 * 下发批量任务

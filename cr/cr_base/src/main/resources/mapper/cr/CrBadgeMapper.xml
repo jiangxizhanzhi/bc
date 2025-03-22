@@ -16,6 +16,16 @@
           and type = #{type}
           and user_id = #{userId}
     </delete>
+    <delete id="removeBatchByBusinessIdAndTypeAndUserIds">
+        delete
+        from cr_badge
+        where business_id = #{businessId}
+          and type = #{type}
+          and user_id in
+        <foreach collection="userIds" item="userId" separator="," open="(" close=")">
+            #{userId}
+        </foreach>
+    </delete>
     <select id="existByBusinessIdAndTypeAndUserId" resultType="java.lang.Boolean">
         select case
                    when exists(select 1

@@ -58,5 +58,5 @@ public interface CrBadgeMapper extends BaseMapper<CrBadge> {
 	 * @return
 	 */
 	Boolean removeBatchByBusinessIdAndTypeAndUserIds(@Param("businessId") String businessId,
-		@Param("type") Integer type, @Param("userId") List<String> userIds);
+		@Param("type") Integer type, @Param("userIds") List<String> userIds);
 }

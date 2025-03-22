@@ -778,10 +778,15 @@ public class TeamTrainRoomController {
 		teamRoomService.checkTeacherPermission(resetMissionReq.getResourceId(),
 			UserInfoContext.getUserContext().getUserId());
 		//重置任务
-		Boolean res = missionService.batchResetMission(resetMissionReq.getResourceId(),
+		List<String> userIds = missionService.batchResetMission(resetMissionReq.getResourceId(),
 			resetMissionReq.getRoleId(),
 			UserInfoContext.getUserContext().getUserId());
-		return new BaseRsp<>(res);
+		if(CollectionUtils.isEmpty(userIds)){
+			return new BaseRsp<>(Boolean.FALSE);
+		}
+		crTaskService.pushMissionWS(resetMissionReq.getResourceId(), MissionWsCode.TEAM_MISSION_CODE);
+		crTaskService.pushMissionWsToUsers(resetMissionReq.getResourceId(), userIds, MissionWsCode.MISSION_RELEASE);
+		return new BaseRsp<>(Boolean.TRUE);
 	}
 
 	/**

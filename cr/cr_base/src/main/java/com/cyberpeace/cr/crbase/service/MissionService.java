@@ -323,9 +323,9 @@ public interface MissionService extends IService<Mission> {
 	 * @param roleId
 	 * @param currentUserId
 	 * @throws
-	 * @return Boolean
+	 * @return List<String> 受影响的用户id</>
 	 */
-	Boolean batchResetMission(String roomId, String roleId, String currentUserId);
+	List<String> batchResetMission(String roomId, String roleId, String currentUserId);
 
 	/**
 	 * 获取详情通过id

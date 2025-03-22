@@ -3,6 +3,8 @@ package com.cyberpeace.cr.crbase.controller.req;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
+
 /**
  * @BelongsPackage: com.cyberpeace.cr.crbase.controller.req
  * @Author: hhuang
@@ -23,6 +25,7 @@ public class ResetMissionReq {
     /**
      * 任务资源id
      */
-    @ApiModelProperty(value = "任务id", required = true)
+    @ApiModelProperty(value = "训练资源id", required = true)
+    @NotEmpty(message = "训练资源id不能为空")
     private String resourceId;
 }

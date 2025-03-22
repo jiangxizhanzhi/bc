@@ -1020,10 +1020,10 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * @param roleId
 	 * @param currentUserId
 	 * @throws
-	 * @return Boolean
+	 * @return List<String> 受影响的用户id
 	 */
 	@Override
-	public Boolean batchResetMission(String roomId, String roleId, String currentUserId) {
+	public List<String> batchResetMission(String roomId, String roleId, String currentUserId) {
 		List<Mission> missions = missionMapper.selectByRoomId(roomId);
 		if (CollectionUtils.isEmpty(missions)) {
 			log.error("missions does not exist! roomId is {}", roomId);
@@ -1036,7 +1036,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		if(StringUtils.isNotEmpty(roleId)){
 			CrRole role = this.getRoleOrException(roleId);
 			if(Objects.isNull(role)){
-				return Boolean.FALSE;
+				return new ArrayList<>();
 			}
 			crTasks = crTasks.stream().filter(crTask -> crTask.getRoleId().equals(role.getResourceId())).collect(Collectors.toList());
 		}
@@ -1075,7 +1075,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 				crBadgeService.removeBadgeByUserIds(roomId, CrBadge.BadgeType.MISSION_RELEASE.getCode(),userIds);
 			}
 		});
-		return Boolean.TRUE;
+		return userIds;
 	}
 
 

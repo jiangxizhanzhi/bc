@@ -12,6 +12,7 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.space.constant.SpaceError;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.model.SpaceBoBase;
@@ -50,6 +51,7 @@ public abstract class SpaceControllerBase<S extends IService<E>, E extends Space
 		req.setResourceId(IDGeneratorUtil.getID());
 		E entity = (E) req.bo2Entity();
 		this.checkNameDuplication(entity);
+		this.checkValue(entity);
 		baseService.save(entity);
 		return new BaseRsp();
 	}
@@ -62,6 +64,7 @@ public abstract class SpaceControllerBase<S extends IService<E>, E extends Space
 		}
 		E entity = (E) req.bo2Entity();
 		this.checkNameDuplication(entity);
+		this.checkValue(entity);
 		baseService.updateById(entity);
 		return new BaseRsp();
 	}
@@ -95,6 +98,15 @@ public abstract class SpaceControllerBase<S extends IService<E>, E extends Space
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 		return true;
+	}
+
+	public void checkValue(E entity){
+	}
+
+	public void checkPercentageValue(Integer value){
+		if(value > 100){
+			throw new BusinessException(SpaceError.PERCENTAGE_LARGER_THAN_100);
+		}
 	}
 
 	protected Map<String, IdAndName> getRelatedMap(List<E> eList) {

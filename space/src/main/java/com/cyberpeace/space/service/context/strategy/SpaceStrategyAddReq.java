@@ -31,4 +31,7 @@ public class SpaceStrategyAddReq {
 
 	@ApiModelProperty("策略执行成功判定方法")
 	private String method;
+
+	@ApiModelProperty("处置建议")
+	private String suggest;
 }

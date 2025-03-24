@@ -36,8 +36,16 @@ public class AdminOperationListBo implements Serializable {
 	 *
 	 * @see String
 	 */
-	@ApiModelProperty("方向")
+	@ApiModelProperty("分类")
 	private String categoryId;
+
+	/**
+	 * 方向id
+	 *
+	 * @see String
+	 */
+	@ApiModelProperty("方向")
+	private String courseCategoryId;
 
 	/**
 	 * 标题

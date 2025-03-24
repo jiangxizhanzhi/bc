@@ -48,5 +48,10 @@ public class SpaceAlgorithmRoleController extends SpaceControllerBase<SpaceAlgor
         }
         return res;
     }
+
+    @Override
+    public void checkValue(SpaceAlgorithmRole entity){
+        this.checkPercentageValue(entity.getCoursePercent() + entity.getTrainingPercent());
+    }
 }
     

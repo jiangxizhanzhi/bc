@@ -50,8 +50,7 @@ public class TheoryAddReq implements Serializable {
 	 * @see String
 	 */
 	@ApiModelProperty(value = "分类", required = true)
-	@NotBlank(groups = { Create.class })
-	private String categoryId;
+	private String categoryId = "";
 
 	/**
 	 * 课程分类id

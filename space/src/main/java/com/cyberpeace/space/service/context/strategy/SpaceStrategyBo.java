@@ -50,4 +50,7 @@ public class SpaceStrategyBo {
 	private String method;
 
 	private String route;
+
+	@ApiModelProperty("处置建议")
+	private String suggest;
 }

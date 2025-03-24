@@ -268,12 +268,6 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);
 
-		if (StringUtils.isNotBlank(listReq.getCategoryId())) {
-			List<String> categoryIds = practiceCategoryService
-					.selectChildrenIds(listReq.getCategoryId(), CommonConstant.TRUE);
-			listQuery.setCategoryIds(categoryIds);
-		}
-
 		Page page = listReq.toPageParam();
 		if (CollectionUtils.isEmpty(page.getOrders())) {
 			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);

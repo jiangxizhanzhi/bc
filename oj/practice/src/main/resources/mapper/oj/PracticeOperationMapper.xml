@@ -31,6 +31,12 @@
                         #{categoryId}
                     </foreach>
                 </if>
+                <if test="listQuery.courseCategoryIds != null and listQuery.courseCategoryIds.size() != 0">
+                    and course_category_id in
+                    <foreach collection="listQuery.courseCategoryIds" open="(" close=")" separator="," item="courseCategoryId">
+                        #{courseCategoryId}
+                    </foreach>
+                </if>
                 <if test="listQuery.pattern != null and listQuery.pattern != ''">
                     <bind name="title" value="'%' + listQuery.pattern + '%'"/>
                     and title like #{title}

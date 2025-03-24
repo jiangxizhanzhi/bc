@@ -35,6 +35,8 @@ public class OperationListQueryBo extends PatternBase {
 	 */
 	private List<String> categoryIds;
 
+	private String courseCategoryId;
+
 	/**
 	 * 难度
 	 *

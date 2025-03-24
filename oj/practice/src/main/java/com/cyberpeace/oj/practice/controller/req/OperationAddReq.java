@@ -57,8 +57,7 @@ public class OperationAddReq implements Serializable, CustomValidate {
 	 * @see String
 	 */
 	@ApiModelProperty(name = "category_id", value = "方向")
-	@NotBlank(groups = { Create.class })
-	private String categoryId;
+	private String categoryId = "";
 
 	/**
 	 * 课程类别id

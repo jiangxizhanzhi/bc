@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,5 +34,7 @@ public class SpaceStrategy extends BaseTable {
 	private String frameId;
 
 	private String method;
+
+	private String suggest;
 
 }

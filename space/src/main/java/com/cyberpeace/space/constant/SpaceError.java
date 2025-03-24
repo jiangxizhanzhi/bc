@@ -25,4 +25,11 @@ public class SpaceError {
      * @see String
      */
     public static final String ACTION_REFERENCE_EXIST = "105004";
+
+    /**
+     * 占比输入之和不能大于100%
+     *
+     * @see String
+     */
+    public static final String PERCENTAGE_LARGER_THAN_100 = "105005";
 }

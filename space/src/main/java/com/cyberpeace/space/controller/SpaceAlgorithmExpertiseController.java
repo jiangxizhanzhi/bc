@@ -1,5 +1,14 @@
 package com.cyberpeace.space.controller;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.compress.utils.Lists;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.service.CourseService;
@@ -10,16 +19,9 @@ import com.cyberpeace.space.model.req.SpacePageReqBase;
 import com.cyberpeace.space.service.SpaceAlgorithmExpertiseService;
 import com.cyberpeace.space.service.context.algorithm.SpaceAlgorithmExpertiseBo;
 import com.google.common.collect.Maps;
+
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * 空间算法专业知识控制器
@@ -62,5 +64,10 @@ public class SpaceAlgorithmExpertiseController extends SpaceControllerBase<Space
 					new IdAndName(course.getResourceId(), course.getName()));
 		}
 		return res;
+	}
+
+	@Override
+	public void checkValue(SpaceAlgorithmExpertise entity) {
+		this.checkPercentageValue(entity.getCoursePercent() + entity.getTrainingPercent());
 	}
 }

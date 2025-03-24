@@ -37,6 +37,9 @@ public class AdminOperationListReq extends PageReqBase {
     @ApiModelProperty(name = "course_category_id", value = "方向")
     private String courseCategoryId;
 
+    @ApiModelProperty(name = "category_id", value = "方向")
+    private String categoryId;
+
     /**
      * 难度
      *
@@ -60,6 +63,10 @@ public class AdminOperationListReq extends PageReqBase {
 
     public void setCourse_category_id(String courseCategoryId) {
         this.courseCategoryId = courseCategoryId;
+    }
+
+    public void setCategory_id(String categoryId) {
+        this.categoryId = categoryId;
     }
 
     public void setDynamic_flag(Integer dynamicFlag) {

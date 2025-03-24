@@ -765,7 +765,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			// 设置动效配置
 			attackEvent.setLineStyle(
 					new LineStyle(Color.RED.getCode(), 5, LineType.DASHED_FLY.getCode()));
-			attackEvent.setLookAtTarget(new SecureRandom().nextBoolean());
+			attackEvent.setLookAtTarget(SituationConfigConstant.IS_LOOK_TARGET?new SecureRandom().nextBoolean():Boolean.FALSE);
 
 			// 设置事件描述
 			String sourceIp = flowLog.getString("source_ip");
@@ -833,7 +833,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		// 设置动效配置
 		wsEvent.setLineStyle(new LineStyle(Color.getRandomValue(Color.values()), 5,
 				LineType.getRandomValue(LineType.values())));
-		wsEvent.setLookAtTarget(new SecureRandom().nextBoolean());
+		wsEvent.setLookAtTarget(SituationConfigConstant.IS_LOOK_TARGET?new SecureRandom().nextBoolean():Boolean.FALSE);
 
 		// 补充动态描述
 		wsEvent.setDescription(wsEvent.getDescription().replace("$攻击$", actionType.getDesc()));

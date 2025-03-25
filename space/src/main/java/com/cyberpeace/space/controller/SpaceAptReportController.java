@@ -1,7 +1,6 @@
 package com.cyberpeace.space.controller;
 
 import com.cyberpeace.common.constant.FileSunffixConstant;
-import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -19,7 +18,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +42,6 @@ public class SpaceAptReportController extends SpaceControllerBase<SpaceAptReport
 
     @ApiOperation("数据导出")
     @GetMapping("/batch_dump")
-    @RequiresPermissions(MenuConstant.CMS_COURSES)
     public BaseRsp<Boolean> exportReport(
             @ApiParam(name = "ids",
                     value = "课程编号") @RequestParam("ids") @NotEmpty List<String> ids,
@@ -65,7 +62,6 @@ public class SpaceAptReportController extends SpaceControllerBase<SpaceAptReport
      */
     @ApiOperation("数据导入")
     @PostMapping("/batch_load")
-    @RequiresPermissions(MenuConstant.CMS_COURSES)
     public BaseRsp<Boolean> importCourse(@Validated LoadCourseReq loadCourseReq) {
         FileUtil.validateSuffix(loadCourseReq.getFile(), FileSunffixConstant.ZIP.getDesc());
 

@@ -28,7 +28,7 @@ public class LoadCourseReq implements Serializable {
 	 *
 	 * @see MultipartFile
 	 */
-	@ApiModelProperty("课程数据文件")
+	@ApiModelProperty("数据文件")
 	@NotNull
 	private MultipartFile file;
 

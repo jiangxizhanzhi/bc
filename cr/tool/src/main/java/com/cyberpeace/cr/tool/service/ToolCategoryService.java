@@ -48,6 +48,7 @@ public interface ToolCategoryService extends IService<ToolCategory> {
 	 * @return 工具分类数据对象
 	 */
 	ToolCategory getByName(String name);
+	List<ToolCategory> getByType(String type);
 
 	/**
 	 * 创建工具分类

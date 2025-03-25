@@ -46,4 +46,16 @@ public class ToolImport {
 		return new BaseRsp<>();
 	}
 
+	@ApiOperation("工具导入2")
+	@GetMapping("tool/import2")
+	public BaseRsp<String> importTool2(@ApiParam(name = "excelPath", value = "excel文件路径",
+			required = true) @RequestParam("excelPath") @NotBlank String excelPath,
+									   @ApiParam(name = "toolsPath", value = "工具文件路径",
+			required = true) @RequestParam("toolsPath") @NotBlank String toolsPath,
+									   @ApiParam(name = "publicPhotoPath", value = "公共图片路径",
+			required = true) @RequestParam("publicPhotoPath") @NotBlank String publicPhotoPath) {
+
+		toolResourceImportService.importResource2(excelPath, toolsPath, publicPhotoPath);
+		return new BaseRsp<>();
+	}
 }

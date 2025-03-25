@@ -54,6 +54,15 @@
         </where>
     </select>
 
+    <select id="getByType" resultType="com.cyberpeace.cr.tool.dao.entity.ToolCategory">
+        select * from cr_tool_toolcategory
+        <where>
+            <if test="type != null and type != ''">
+                and `type` = #{type}
+            </if>
+        </where>
+    </select>
+
     <select id="getByEnName" resultType="com.cyberpeace.cr.tool.dao.entity.ToolCategory">
         select * from cr_tool_toolcategory
         <where>

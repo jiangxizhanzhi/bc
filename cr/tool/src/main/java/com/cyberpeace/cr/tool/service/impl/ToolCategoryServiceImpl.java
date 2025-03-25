@@ -111,6 +111,18 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	}
 
 	/**
+	 * 获取由类型
+	 *
+	 * @param type 类型
+	 * @return {@code ToolCategory }
+	 */
+	@Override
+	@Cacheable
+	public List<ToolCategory> getByType(String type) {
+		return toolCategoryMapper.getByType(type);
+	}
+
+	/**
 	 * 保存类别
 	 *
 	 * @param name 名称

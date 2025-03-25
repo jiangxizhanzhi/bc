@@ -1,12 +1,21 @@
 package com.cyberpeace.cr.tool.service.impl;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.cyberpeace.common.component.ExcelDataHandler;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.tool.dao.context.ToolMessage;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,6 +115,47 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		log.info("tool import finish!");
 	}
 
+	@Override
+	public void importResource2(String excelPath, String toolsPath, String publicPhotoPath) {
+
+		// 导入文件路径校验
+		if (!excelPath.endsWith(".xlsx")) {
+			throw new BusinessException(CrBusinessErrorCode.NOT_PATH);
+		}
+		File excelFile = new File(excelPath);
+		if (excelFile.isDirectory()) {
+			throw new BusinessException(CrBusinessErrorCode.NOT_PATH);
+		}
+
+		//解析工具名单
+		ExcelDataHandler excelDataHandler = new ExcelDataHandler(excelPath, "Sheet1");
+		List<List<String>> sheetData = excelDataHandler.getSheetData(CommonConstant.ONE);
+
+		excelDataHandler.closeIO();
+
+		// 数据类型转换
+		for (int i = 0 ; i < sheetData.size(); i++){
+			List<String> data = sheetData.get(i);
+			ToolMessage toolMessage = data2ToolMessage(data);
+			try {
+				log.info("tool=[{}] start import", toolMessage.getToolName());
+				importTool2(toolMessage, toolsPath, publicPhotoPath);
+				log.info("tool=[{}] import success", toolMessage.getToolName());
+			} catch (Exception e) {
+				log.error("tool=[{}] import error,", toolMessage.getToolName(), e);
+			}
+		}
+
+
+		log.info("tool import finish!");
+	}
+
+	private ToolMessage data2ToolMessage(List<String> data) {
+		return ToolMessage.builder().
+		toolName(data.get(0)).version(data.get(1)).type(data.get(8)).subType(data.get(2)).platform(data.get(3))
+				.language(data.get(4)).title(data.get(6)).message(data.get(7)).build();
+	}
+
 	/**
 	 * 将markdown中数据导成tool数据
 	 *
@@ -123,6 +173,28 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		ArrayListMultimap<String, String> mdData = parseMdFile(mdFile);
 
 		Tool tool = convertTool(mdData, mdFile);
+
+		if (StringUtils.isBlank(tool.getResourceId())) {
+			toolService.save(tool);
+		}
+
+		return tool;
+	}
+
+	private Tool importTool2(ToolMessage toolMessage, String toolsPath, String publicPhotoPath) {
+
+		String toolPath = toolsPath + File.separator + toolMessage.getToolName();
+		File toolDir = new File(toolPath);
+		File mdFile = getMdFile(toolDir);
+		if (mdFile == null) {
+			//目录下没有找到md文件在
+			log.error("md file not found in directory{}", toolDir.getPath());
+			throw new BusinessException(CrBusinessErrorCode.NOT_MD_PATH);
+		}
+
+		ArrayListMultimap<String, String> mdData = parseMdFile(mdFile);
+
+		Tool tool = convertTool2(toolMessage, mdData, mdFile, publicPhotoPath);
 
 		if (StringUtils.isBlank(tool.getResourceId())) {
 			toolService.save(tool);
@@ -199,6 +271,58 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		return tool;
 	}
 
+	private Tool convertTool2(ToolMessage toolMessage, ArrayListMultimap<String, String> data, File mdFile, String publicPhotoPath) {
+		Tool tool = new Tool();
+		List<String> title = data.get(ParseMarkdown.TITLE);
+		tool.setName(toStr(title));
+
+		// 重复工具不导入
+		Tool dbTool = toolService.getByName(tool.getName());
+		if (dbTool != null) {
+			log.info("tool=[{}] already existed, skip actual import", dbTool.getName());
+			return dbTool;
+		}
+
+		setCover2(tool, data.get("LOGO"), mdFile, publicPhotoPath);
+
+		List<String> homepage = data.get("官方地址");
+		tool.setHomepage(toStr(homepage));
+
+		List<String> category = data.get("分类");
+		setCategory2(tool, toolMessage.getType(), toolMessage.getSubType(), category);
+
+		List<String> manual = data.get("官方手册");
+		tool.setManual(toStr(manual));
+
+		List<String> imageResourceId = data.get("镜像");
+		setImageResourceIdAndToolType(tool, imageResourceId);
+
+		tool.setVisible(true);
+
+		List<String> platforms = data.get("平台");
+		tool.setPlatforms(toStr(platforms));
+
+		List<String> language = data.get("语言支持");
+		setLanguage(tool, language);
+
+		List<String> introduction = data.get("描述");
+		setIntroduction(tool, introduction);
+
+		List<String> cracked = data.get("是否授权");
+		if (cracked == null) {
+			cracked = data.get("是否破解");
+		}
+		setCracked(tool, cracked);
+
+		List<String> tag = data.get("tag");
+		tool.setTag(toStr2(tag));
+		tool.setDisabled(false);
+
+		List<String> version = data.get("版本号");
+		setVersionAndFiles(tool, version, mdFile);
+		return tool;
+	}
+
 	/**
 	 * 设置介绍
 	 *
@@ -244,6 +368,72 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		}
 		tool.setCategory(Joiner.on(",").join(resourceIds));
 	}
+
+	private static Integer toolTypeNum = 0;
+	private void setCategory2(Tool tool, String type, String subType, List<String> category) {
+		// 先确定大的分类
+		if ("探测类".equals(type)){
+			type = "probe";
+		}else if ("防御类".equals(type)){
+			type = "defense";
+		}else if ("攻击类".equals(type)){
+			type = "attack";
+		}else if ("控制类".equals(type)){
+			type = "control";
+		}else {
+			// 其他分类，随机分
+			if (0 == toolTypeNum){
+				type = "probe";
+			}else if (1 == toolTypeNum){
+				type = "defense";
+			}else if (2 == toolTypeNum){
+				type = "attack";
+			}else{
+				type = "control";
+			}
+
+			if (toolTypeNum < 4){
+				toolTypeNum ++;
+			}else {
+				toolTypeNum = 0;
+			}
+		}
+		tool.setType(type);
+
+		// 匹配大的分类下面小的分类
+		List<ToolCategory> toolCategories= toolCategoryService.getByType(type);
+
+		ToolCategory targetToolCategory = toolCategories.get(0);
+		double maxSimilarity = stringSimilarity(targetToolCategory.getCnName(), subType);
+		for (ToolCategory toolCategory : toolCategories){
+			double similarity = stringSimilarity(toolCategory.getCnName(), subType);
+			if (similarity > maxSimilarity){
+				targetToolCategory = toolCategory;
+				maxSimilarity = similarity;
+			}
+		}
+
+		tool.setCategory(targetToolCategory.getResourceId());
+	}
+
+	/**
+	 * 计算两个字符串重复率
+	 */
+	public static double stringSimilarity(String s1, String s2) {
+		int len1 = s1.length();
+		int len2 = s2.length();
+		int common = 0;
+		for (int i = 0; i < len1; i++) {
+			for (int j = 0; j < len2; j++) {
+				if (s1.charAt(i) == s2.charAt(j)) {
+					common++;
+					break;
+				}
+			}
+		}
+		return (double) common / (double) Math.max(len1, len2);
+	}
+
 
 	/**
 	 * 设置图像资源id和工具类型
@@ -351,6 +541,20 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		}
 	}
 
+	private void setCover2(Tool tool, List<String> logo, File mdFile, String publicPhotoPath) {
+		ToolFile toolFile = uploadFile(toStr(logo), mdFile, true);
+		if (toolFile == null) {
+			tool.setCover("");
+		} else {
+			String coverPath = toolFile.getSavePath();
+			if (StringUtils.isNotBlank(coverPath)){
+				tool.setCover(coverPath);
+			}else {
+				tool.setCover(publicPhotoPath);
+			}
+		}
+	}
+
 	/**
 	 * 上传文件
 	 *
@@ -386,6 +590,18 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 			return "";
 		}
 		return String.join(",", stringList);
+	}
+
+	private String toStr2(List<String> stringList) {
+		if (stringList == null || stringList.isEmpty()) {
+			return "[]";
+		}
+		StringBuilder result = new StringBuilder("[");
+		for (String s : stringList){
+			result.append("\"").append(s).append("\"").append(",");
+		}
+		result.append("]");
+		return result.toString().replace(",]", "]");
 	}
 
 	/**

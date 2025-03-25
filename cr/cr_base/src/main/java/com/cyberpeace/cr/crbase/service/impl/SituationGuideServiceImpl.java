@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.situation.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,10 +49,6 @@ import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.SituationGuideScheme;
 import com.cyberpeace.situation.constant.ws.MessageType;
-import com.cyberpeace.situation.model.ElementInfo;
-import com.cyberpeace.situation.model.LineStyle;
-import com.cyberpeace.situation.model.SceneData;
-import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsMultiNodeEffect;
 import com.cyberpeace.situation.service.SituationHandlerService;
@@ -156,16 +153,36 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         }
         Integer businessType = result.getList().get(0).getBusinessType();
         SituationTopo situationTopo = getSituationTopoByRoomId(req.getRoomId(), businessType);
+        Map<String, ElementInfo> elementMap = situationTopo.getElements();
+        Map<String, AreaInfo> areaInfoMap = situationTopo.getAreas();
 
         for (SituationGuideListRsp situationGuideListRsp : result.getList()) {
-            Map<String, ElementInfo> elementMap = situationTopo.getElements();
             ElementInfo sourceElement = elementMap.get(situationGuideListRsp.getSource());
             ElementInfo targetElement = elementMap.get(situationGuideListRsp.getTarget());
-            situationGuideListRsp.setSourceName(Objects.isNull(sourceElement) ? situationGuideListRsp.getSource() : sourceElement.getName());
-            situationGuideListRsp.setTargetName(Objects.isNull(targetElement) ? situationGuideListRsp.getTarget() : targetElement.getName());
-			if (Objects.isNull(sourceElement) || Objects.isNull(targetElement)) {
-				situationGuideListRsp.setIsExecuted(false);
-			}
+            //兼容源区域处理
+            if(Objects.nonNull(sourceElement)){
+                situationGuideListRsp.setSourceName(sourceElement.getName());
+            }else{
+                AreaInfo sourceAreaInfo = areaInfoMap.get(situationGuideListRsp.getSource());
+                if(Objects.nonNull(sourceAreaInfo)){
+                    situationGuideListRsp.setSourceName(sourceAreaInfo.getName());
+                }else {
+                    situationGuideListRsp.setIsExecuted(false);
+                    situationGuideListRsp.setSourceName(situationGuideListRsp.getSource());
+                }
+            }
+            //兼容目标区域处理
+            if(Objects.nonNull(targetElement)){
+                situationGuideListRsp.setTargetName(targetElement.getName());
+            }else{
+                AreaInfo targetAreaInfo = areaInfoMap.get(situationGuideListRsp.getTarget());
+                if(Objects.nonNull(targetAreaInfo)){
+                    situationGuideListRsp.setTargetName(targetAreaInfo.getName());
+                }else {
+                    situationGuideListRsp.setIsExecuted(false);
+                    situationGuideListRsp.setTargetName(situationGuideListRsp.getTarget());
+                }
+            }
 
 			if(SituationGuideScheme.EventType.BELONGING.getCode().equals(situationGuideListRsp.getEventType()) && !situationGuideListRsp.getTargetName().equals(situationGuideListRsp.getTarget())){
 			    situationGuideListRsp.setIsExecuted(true);
@@ -224,12 +241,32 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
         SituationTopo situationTopo = getSituationTopoByRoomId(situationGuideScheme.getRoomId(), situationGuideScheme.getBusinessType());
         Map<String, ElementInfo> elementMap = situationTopo.getElements();
+        Map<String, AreaInfo> areaInfoMap = situationTopo.getAreas();
 
         ElementInfo sourceElement = elementMap.get(resp.getSource());
         ElementInfo targetElement = elementMap.get(resp.getTarget());
-        resp.setSourceName(Objects.isNull(sourceElement) ? resp.getSource() : sourceElement.getName());
-        resp.setTargetName(Objects.isNull(targetElement) ? resp.getTarget() : targetElement.getName());
-
+        //兼容区域处理
+        if(Objects.nonNull(sourceElement)){
+            resp.setSourceName(sourceElement.getName());
+        }else{
+            AreaInfo sourceAreaInfo = areaInfoMap.get(resp.getSource());
+            if(Objects.nonNull(sourceAreaInfo)){
+                resp.setSourceName(sourceAreaInfo.getName());
+            }else {
+                resp.setSourceName(resp.getSource());
+            }
+        }
+        //兼容区域处理
+        if(Objects.nonNull(targetElement)){
+            resp.setTargetName(targetElement.getName());
+        }else{
+            AreaInfo targetAreaInfo = areaInfoMap.get(resp.getTarget());
+            if(Objects.nonNull(targetAreaInfo)){
+                resp.setTargetName(targetAreaInfo.getName());
+            }else {
+                resp.setTargetName(resp.getTarget());
+            }
+        }
         SituationGuideScheme.ResultType resultType = SituationGuideScheme.ResultType.getResultTypeByCode(resp.getResult());
         resp.setResultName(Objects.isNull(resultType) ? null : resultType.getMsg());
 
@@ -718,7 +755,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             return result;
         }
         List<MissionCategoryRsp> areaList = situationTopo.getAreas().values().stream()
-                .map(areaInfo -> new MissionCategoryRsp(areaInfo.getAreaId(), "area-" + areaInfo.getAreaId()))
+                .map(areaInfo -> new MissionCategoryRsp(areaInfo.getAreaId(), areaInfo.getName()))
                 .collect(Collectors.toList());
         result.setAreaType(areaList);
 

@@ -13,7 +13,7 @@ public interface ToolResourceImportService {
 	 *
 	 * @param path 路径
 	 */
-	void importResource(String path);
+	void importResource(String path, String type);
 
 	/**
 	 * 导入工具资源

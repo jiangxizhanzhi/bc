@@ -47,7 +47,8 @@ public interface ToolCategoryService extends IService<ToolCategory> {
 	 * @param name 工具分类名称
 	 * @return 工具分类数据对象
 	 */
-	ToolCategory getByName(String name);
+	ToolCategory getByName(String name, String type);
+
 	List<ToolCategory> getByType(String type);
 
 	/**
@@ -56,7 +57,7 @@ public interface ToolCategoryService extends IService<ToolCategory> {
 	 * @param name 工具分类名称
 	 * @return 工具分类数据对象
 	 */
-	ToolCategory saveCategory(String name);
+	ToolCategory saveCategory(String name, String type);
 
 	/**
 	 * 批量删除工具分类

@@ -105,9 +105,8 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	 */
 	@Override
 	@Cacheable(key = "#p0")
-	public ToolCategory getByName(String name) {
-
-		return toolCategoryMapper.getByCnName(name, null);
+	public ToolCategory getByName(String name, String type) {
+		return toolCategoryMapper.getByCnNameType(name, null, type);
 	}
 
 	/**
@@ -130,11 +129,12 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	 */
 	@Override
 	@CacheEvict(allEntries = true)
-	public ToolCategory saveCategory(String name) {
+	public ToolCategory saveCategory(String name, String type) {
 		ToolCategory newCategory = new ToolCategory();
 
 		newCategory.setCnName(name);
 		newCategory.setEnName(name);
+		newCategory.setType(type);
 		toolCategoryMapper.insert(newCategory);
 
 		return newCategory;

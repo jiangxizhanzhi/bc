@@ -1,21 +1,15 @@
 package com.cyberpeace.cr.tool.service.impl;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.tool.dao.context.ToolMessage;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.common.util.ZipUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
@@ -78,7 +71,20 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 * @param path 服务器工具存放目录
 	 */
 	@Override
-	public void importResource(String path) {
+	public void importResource(String path, String type) {
+		boolean isValidType = false;
+		for (Tool.Type value : Tool.Type.values()) {
+			if (value.getCode().equals(type)) {
+				isValidType = true;
+				break;
+			}
+		}
+		if (!isValidType) {
+			// 处理 type 不在枚举中的情况，例如返回错误信息
+			log.error("[TOOL] invalid training category: {}", type);
+			throw new BusinessException(CrBusinessErrorCode.INVALID_TRAINING_CATEGORY);
+		}
+
 		// 兼容目录和单个压缩包
 		try {
 			if (path.endsWith(".zip")) {
@@ -105,7 +111,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 
 			try {
 				log.info("tool=[{}] start import", subFile.getName());
-				importTool(subFile);
+				importTool(subFile, type);
 				log.info("tool=[{}] import success", subFile.getName());
 			} catch (Exception e) {
 				log.error("tool=[{}] import error,", subFile.getName(), e);
@@ -162,7 +168,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 * @param toolDir 单个tool所在目录
 	 * @return
 	 */
-	private Tool importTool(File toolDir) {
+	private Tool importTool(File toolDir, String type) {
 		File mdFile = getMdFile(toolDir);
 		if (mdFile == null) {
 			//目录下没有找到md文件在
@@ -172,7 +178,8 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 
 		ArrayListMultimap<String, String> mdData = parseMdFile(mdFile);
 
-		Tool tool = convertTool(mdData, mdFile);
+		Tool tool = convertTool(mdData, mdFile, type);
+		tool.setType(type);
 
 		if (StringUtils.isBlank(tool.getResourceId())) {
 			toolService.save(tool);
@@ -222,7 +229,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 * @param mdFile markdown文件
 	 * @return
 	 */
-	private Tool convertTool(ArrayListMultimap<String, String> data, File mdFile) {
+	private Tool convertTool(ArrayListMultimap<String, String> data, File mdFile, String type) {
 		Tool tool = new Tool();
 		List<String> title = data.get(ParseMarkdown.TITLE);
 		tool.setName(toStr(title));
@@ -238,7 +245,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		tool.setHomepage(toStr(homepage));
 
 		List<String> category = data.get("分类");
-		setCategory(tool, category);
+		setCategory(tool, category, type);
 
 		List<String> manual = data.get("官方手册");
 		tool.setManual(toStr(manual));
@@ -264,7 +271,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		setCracked(tool, cracked);
 
 		List<String> tag = data.get("tag");
-		tool.setTag(toStr(tag));
+		tool.setTag(JsonUtil.arrayToString(tag));
 
 		List<String> version = data.get("版本号");
 		setVersionAndFiles(tool, version, mdFile);
@@ -355,13 +362,13 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 * @param tool     工具
 	 * @param category 类别
 	 */
-	private void setCategory(Tool tool, List<String> category) {
+	private void setCategory(Tool tool, List<String> category, String type) {
 		List<String> resourceIds = Lists.newArrayList();
 		for (String s : category) {
-			ToolCategory toolCategory = toolCategoryService.getByName(s);
+			ToolCategory toolCategory = toolCategoryService.getByName(s, type);
 
 			if (null == toolCategory) {
-				toolCategory = toolCategoryService.saveCategory(s);
+				toolCategory = toolCategoryService.saveCategory(s, type);
 			}
 
 			resourceIds.add(toolCategory.getResourceId());

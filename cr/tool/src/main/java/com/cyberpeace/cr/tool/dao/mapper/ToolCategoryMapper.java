@@ -55,6 +55,10 @@ public interface ToolCategoryMapper extends BaseMapper<ToolCategory> {
 	 * @return {@code ToolCategory }
 	 */
 	ToolCategory getByCnName(@NotEmpty @Param("name") String name, @Param("resourceId") String resourceId);
+
+	ToolCategory getByCnNameType(@NotEmpty @Param("name") String name, @Param("resourceId") String resourceId, @Param("pattern") String type);
+
+
 	List<ToolCategory> getByType(@NotEmpty @Param("type") String type);
 
 	/**

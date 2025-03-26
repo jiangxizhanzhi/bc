@@ -41,8 +41,11 @@ public class ToolImport {
 	@ApiOperation("工具导入")
 	@GetMapping("tool/import")
 	public BaseRsp<String> importTool(@ApiParam(name = "path", value = "存放服务器路径",
-			required = true) @RequestParam("path") @NotBlank String path) {
-		toolResourceImportService.importResource(path);
+			required = true) @RequestParam("path") @NotBlank String path,
+									  @ApiParam(name = "type", value = "类型， probe：探测类,attack：攻击类，control：控制类，defense：防御类",
+		    required = true) @RequestParam("type") @NotBlank String type) {
+
+		toolResourceImportService.importResource(path, type);
 		return new BaseRsp<>();
 	}
 

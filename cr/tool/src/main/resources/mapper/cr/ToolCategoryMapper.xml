@@ -62,7 +62,20 @@
             </if>
         </where>
     </select>
-
+    <select id="getByCnNameType" resultType="com.cyberpeace.cr.tool.dao.entity.ToolCategory">
+        select * from cr_tool_toolcategory
+        <where>
+            <if test="name != null and name != ''">
+                and cn_name = #{name}
+            </if>
+            <if test="resourceId != null and resourceId != ''">
+                and resource_id != #{resourceId}
+            </if>
+            <if test="pattern != null and pattern != ''">
+                and `type` = #{pattern}
+            </if>
+        </where>
+    </select>
     <select id="getByEnName" resultType="com.cyberpeace.cr.tool.dao.entity.ToolCategory">
         select * from cr_tool_toolcategory
         <where>

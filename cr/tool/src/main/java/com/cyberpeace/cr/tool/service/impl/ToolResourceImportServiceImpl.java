@@ -1,24 +1,12 @@
 package com.cyberpeace.cr.tool.service.impl;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.tool.dao.context.ToolMessage;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ZipUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.tool.dao.context.ToolMessage;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
 import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
 import com.cyberpeace.cr.tool.dao.entity.ToolFile;
@@ -30,8 +18,18 @@ import com.cyberpeace.cr.tool.utils.ParseMarkdown;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
-
 import net.lingala.zip4j.exception.ZipException;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 工具资源导入Service实现
@@ -256,6 +254,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		tool.setVisible(true);
 
 		List<String> platforms = data.get("平台");
+		platforms = this.removePlatform(platforms);
 		tool.setPlatforms(toStr(platforms));
 
 		List<String> language = data.get("语言支持");
@@ -307,6 +306,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		tool.setVisible(true);
 
 		List<String> platforms = data.get("平台");
+		platforms = this.removePlatform(platforms);
 		tool.setPlatforms(toStr(platforms));
 
 		List<String> language = data.get("语言支持");
@@ -329,6 +329,27 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		setVersionAndFiles(tool, version, mdFile);
 		return tool;
 	}
+
+	/**
+	 * 去除Win,linux,others之外的平台
+	 *
+	 * @param platforms 平台
+	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
+	 */
+	private List<String> removePlatform(List<String> platforms) {
+		List<String> res = Lists.newArrayList();
+		for (String platform : platforms) {
+			if (platform.equalsIgnoreCase("Windows") || platform.equalsIgnoreCase("Linux")
+					|| platform.equalsIgnoreCase("Others")) {
+				res.add(platform);
+			}
+		}
+		return res;
+	}
+
 
 	/**
 	 * 设置介绍

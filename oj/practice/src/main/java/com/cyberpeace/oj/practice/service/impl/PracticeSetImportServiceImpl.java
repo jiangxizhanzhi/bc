@@ -160,9 +160,7 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 				operationList.add(operation);
 				String topoId = operation.getTopoId();
 				if (StringUtils.isNotBlank(topoId)) {
-					String envKey = new File(path).getName();
-					String scriptFilePath = scriptFileMap.get(envKey);
-					PracticeOperationTarget target = this.createTarget(topoId, operation, scriptFilePath);
+					PracticeOperationTarget target = this.createTarget(topoId, operation, scriptFileMap);
 					if (target != null) {
 						targetList.add(target);
 					}
@@ -204,7 +202,7 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 	}
 
 	private PracticeOperationTarget createTarget(String topoId, PracticeOperation operation,
-			String scriptFilePath) {
+			Map<String, String> scriptFileMap) {
 		JSONObject rsp = remoteTopoService.getTopoById(topoId);
 		TopoData topoData = rsp.getJSONObject("scene_config").toJavaObject(TopoData.class);
 		TopoElement element = null;
@@ -228,9 +226,12 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 			target.setNodeId(pluginElement.getImageUuid());
 		}
 		// script file zip
-		AttachmentBo attachmentBo = attachmentService.copyFile(scriptFilePath,
-				AttachmentPath.PRACTICE_ATTACHMENT.getCode(), true, true);
-		target.setAttachmentId(attachmentBo.getResourceId());
+		String scriptFilePath = scriptFileMap.get(operation.getTitle());
+		if (StringUtils.isNotBlank(scriptFilePath)) {
+			AttachmentBo attachmentBo = attachmentService.copyFile(scriptFilePath,
+					AttachmentPath.PRACTICE_ATTACHMENT.getCode(), true, true);
+			target.setAttachmentId(attachmentBo.getResourceId());
+		}
 		return target;
 	}
 

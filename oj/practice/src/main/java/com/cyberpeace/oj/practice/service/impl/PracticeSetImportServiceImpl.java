@@ -8,10 +8,17 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.cs.service.context.scene.PluginElement;
+import com.cyberpeace.cs.service.context.scene.TopoData;
+import com.cyberpeace.cs.service.context.scene.TopoElement;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperationTarget;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
@@ -101,11 +108,22 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 	@Autowired
 	private PracticeTheoryImportService practiceTheoryImportService;
 
+
+	@Autowired
+	private RemoteTopoService remoteTopoService;
+	
+	@Autowired
+	private PracticeOperationTargetService practiceOperationTargetService;
+	
+	@Autowired
+	private AttachmentService attachmentService;
+
 	/**
-	 * 导入马币CTF设置
+	 * 导入资管CTF设置
 	 *
 	 * @param path    路径
 	 * @param envReqs env reqs
+	 * @param scriptFileMap
 	 * @return {@code List<String> }
 	 * @throws
 	 * @see String
@@ -113,7 +131,7 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 	 * @see List<String>
 	 */
 	@Override
-	public List<String> importRmCtfSet(String path, Map<String, String> envReqs) {
+	public List<String> importRmCtfSet(String path, Map<String, String> envReqs, Map<String, String> scriptFileMap) {
 		// 习题集数据处理
 		PracticeSet practiceSet = handlerPracticeSet(path);
 
@@ -132,6 +150,7 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 		// 构建数据存储
 		List<String> existOperations = Lists.newArrayList();
 		List<PracticeOperation> operationList = Lists.newArrayList();
+		List<PracticeOperationTarget> targetList = Lists.newArrayList();
 
 		// 执行数据导入
 		for (String ctfPracticeDir : ctfPracticeDirs) {
@@ -139,6 +158,15 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 				PracticeOperation operation = practiceOperationImportService
 						.parseRmCtf(ctfPracticeDir, envReqs, practiceSet);
 				operationList.add(operation);
+				String topoId = operation.getTopoId();
+				if (StringUtils.isNotBlank(topoId)) {
+					String envKey = new File(path).getName();
+					String scriptFilePath = scriptFileMap.get(envKey);
+					PracticeOperationTarget target = this.createTarget(topoId, operation, scriptFilePath);
+					if (target != null) {
+						targetList.add(target);
+					}
+				}
 			} catch (BusinessException e) {
 
 				if (OjBusinessErrorCode.NAME_IS_EXIST.equals(e.getMessage())) {
@@ -166,14 +194,48 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 				if (CollectionUtils.isNotEmpty(operations)) {
 					practiceOperationService.saveBatch(operationList);
 				}
+				if (!targetList.isEmpty()) {
+					practiceOperationTargetService.saveBatch(targetList);
+				}
 			}
 		});
 
 		return existOperations;
 	}
 
+	private PracticeOperationTarget createTarget(String topoId, PracticeOperation operation,
+			String scriptFilePath) {
+		JSONObject rsp = remoteTopoService.getTopoById(topoId);
+		TopoData topoData = rsp.getJSONObject("scene_config").toJavaObject(TopoData.class);
+		TopoElement element = null;
+		for (TopoElement e : topoData.getTopology().getElements()) {
+			if (e.getType() != 1) {
+				element = e;
+				break;
+			}
+		}
+		if (element == null) {
+			return null;
+		}
+		PracticeOperationTarget target = new PracticeOperationTarget();
+		target.setOperationId(operation.getResourceId());
+		target.setNodeCommand(element.getNodeCommand());
+		target.setResourceId(IDGeneratorUtil.getID());
+		String id = element.getId();
+		PluginElement pluginElement = topoData.getPlugins().getCpcloud().getElements().get(id);
+		if (pluginElement != null) {
+			target.setNodeName(pluginElement.getImage());
+			target.setNodeId(pluginElement.getImageUuid());
+		}
+		// script file zip
+		AttachmentBo attachmentBo = attachmentService.copyFile(scriptFilePath,
+				AttachmentPath.PRACTICE_ATTACHMENT.getCode(), true, true);
+		target.setAttachmentId(attachmentBo.getResourceId());
+		return target;
+	}
+
 	/**
-	 * 导入马币理论设置
+	 * 导入资管理论设置
 	 *
 	 * @param path 路径
 	 * @return boolean

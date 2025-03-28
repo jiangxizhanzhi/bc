@@ -1646,7 +1646,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 					log.error("Operation batch delete topo failed!, topo_ids={}, catch error:",
 							JsonUtil.toJsonString(topoIds), e);
 				}
-
+				if (!practiceIds.isEmpty()) {
+					LambdaQueryWrapper<PracticeOperationTarget> wrapper = new LambdaQueryWrapper<>();
+					wrapper.in(PracticeOperationTarget::getOperationId, practiceIds);
+					practiceOperationTargetMapper.delete(wrapper);
+				}
 				return practiceOperationMapper.deleteBatchIds(practiceIds);
 			}
 		});

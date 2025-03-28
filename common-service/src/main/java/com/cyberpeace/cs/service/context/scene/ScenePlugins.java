@@ -1,10 +1,9 @@
 package com.cyberpeace.cs.service.context.scene;
 
-import java.io.Serializable;
-
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * 场景插件
@@ -25,4 +24,6 @@ public class ScenePlugins implements Serializable {
 	 * CP 集合
 	 */
 	private CpCollection cpCollection;
+
+	private CpCloud cpcloud;
 }

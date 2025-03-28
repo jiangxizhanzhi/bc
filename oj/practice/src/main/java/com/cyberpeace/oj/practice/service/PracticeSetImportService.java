@@ -22,13 +22,14 @@ public interface PracticeSetImportService extends IService<PracticeSet> {
      *
      * @param path    习题集路径
      * @param envReqs key=习题名称 value=拓扑编号
+     * @param scriptFileMap
      * @return
      * @throws
      * @see String
      * @see Map<String, String>
      * @see List<String>
      */
-    List<String> importRmCtfSet(String path, Map<String, String> envReqs);
+    List<String> importRmCtfSet(String path, Map<String, String> envReqs, Map<String, String> scriptFileMap);
 
     /**
      * 资管理论习题集数据导入

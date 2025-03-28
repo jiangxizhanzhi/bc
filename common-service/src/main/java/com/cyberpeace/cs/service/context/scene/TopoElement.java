@@ -1,10 +1,9 @@
 package com.cyberpeace.cs.service.context.scene;
 
-import java.io.Serializable;
-
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * 拓扑元素
@@ -30,4 +29,10 @@ public class TopoElement implements Serializable {
 	 * 系统类型
 	 */
 	private String systemType;
+
+	private Integer type;
+
+	private String file;
+
+	private String nodeCommand;
 }

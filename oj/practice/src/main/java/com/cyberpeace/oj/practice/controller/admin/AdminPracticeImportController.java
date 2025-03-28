@@ -1,26 +1,24 @@
 package com.cyberpeace.oj.practice.controller.admin;
 
-import java.util.List;
-
-import com.cyberpeace.common.util.JsonUtil;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.oj.ojbase.controller.req.RMImportReq;
 import com.cyberpeace.oj.practice.controller.req.DuplicatePracticeSetInspectReq;
 import com.cyberpeace.oj.practice.controller.req.RmPracticeImportReq;
 import com.cyberpeace.oj.practice.service.PracticeSetImportService;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 管理实践导入Controller
@@ -55,7 +53,7 @@ public class AdminPracticeImportController {
     /**
      * 导入 rmtheory
      *
-     * @param rmImportReq 马币导入请求体
+     * @param rmImportReq 资管导入请求体
      * @return {@code BaseRsp<Boolean> }
      * @throws
      * @see RMImportReq
@@ -93,7 +91,7 @@ public class AdminPracticeImportController {
 			log.info("Resource management operation import start! info=[{}]",
 					JsonUtil.toJsonString(practiceImportReq));
 			List<String> existListPath = practiceSetImportService
-					.importRmCtfSet(practiceImportReq.getPath(), practiceImportReq.getEnvReqs());
+					.importRmCtfSet(practiceImportReq.getPath(), practiceImportReq.getEnvReqs(), practiceImportReq.getScriptFileMap());
 
 			// 设置返回值
 			BaseRsp<Boolean> baseRsp = new BaseRsp<>(true);

@@ -12,6 +12,7 @@ import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
@@ -33,6 +34,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 实践实操导入Service实现
@@ -301,6 +303,11 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 			operation.setWriteup(writeup);
 		}
 		operation.setWriteupPublic(CommonConstant.TRUE);
+
+		if (Objects.equals(operation.getDynamicFlag(),
+				PracticeOperation.DynamicFlag.RANDOM.getCode())) {
+			throw new BusinessException(OjBusinessErrorCode.RANDOM_FLAG_NOT_SUPPORTED);
+		}
 
 		return operation;
 	}

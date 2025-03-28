@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.util.Map;
 
 /**
- * 马币实践导入请求体
+ * 资管实践导入请求体
  *
  * @author SN
  * @version 1.0.0
@@ -27,5 +27,7 @@ public class RmPracticeImportReq extends RMImportReq {
      */
     @ApiModelProperty("资源和topo映射关系")
     private Map<String, String> envReqs;
+
+    private Map<String, String> scriptFileMap;
 
 }

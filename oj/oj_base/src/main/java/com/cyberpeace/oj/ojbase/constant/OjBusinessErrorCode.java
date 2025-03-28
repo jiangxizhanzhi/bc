@@ -802,4 +802,10 @@ public interface OjBusinessErrorCode {
 	 */
 	String WRITEUP_INVALID = "102132";
 	String VIDEO_DURATION_NOT_NULL = "102133";
+	/**
+	 * 不支持随机FLAG
+	 *
+	 * @see String
+	 */
+	String RANDOM_FLAG_NOT_SUPPORTED = "102134";
 }

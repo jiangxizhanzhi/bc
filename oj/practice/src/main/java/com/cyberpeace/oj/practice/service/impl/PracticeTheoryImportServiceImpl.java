@@ -166,7 +166,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 	}
 
     /**
-     * 解析马币理论
+     * 解析资管理论
      *
      * @param path        路径
      * @param practiceSet 实践设置

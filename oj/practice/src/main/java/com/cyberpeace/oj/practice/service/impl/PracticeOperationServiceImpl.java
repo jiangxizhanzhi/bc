@@ -663,7 +663,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				Attachment attachment = attachmentMap.getOrDefault(target.getAttachmentId(), null);
 				if (attachment != null) {
 					bo.setFileName(attachment.getFileName());
-					bo.setFileUrl(attachment.getFilePath());
+					bo.setFileUrl(utilService.handlerFileUrl(attachment.getFilePath()));
 				}
 			}
 			targetBoList.add(bo);

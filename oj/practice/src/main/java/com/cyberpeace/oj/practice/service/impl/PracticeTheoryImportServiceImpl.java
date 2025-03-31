@@ -19,6 +19,7 @@ import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.dao.mapper.CourseDirectionMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
@@ -109,6 +110,9 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
      */
     @Autowired
 	private PracticeSetMapper practiceSetMapper;
+
+	@Autowired
+	private CourseDirectionMapper courseDirectionMapper;
 
     /**
      * 最大内容长度
@@ -557,24 +561,33 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		// 校验方向长度
 		CrCommonValidator.validateLength(categoryName, CrCommonConstants.ZERO_STR_LEN,
 				MAX_CATEGORY_LENGTH, CrBusinessErrorCode.ILLEGAL_TITLE_LEN);
-
-		String categoryId = practiceCategoryMapper
-				.selectByName(PracticeCategory.PracticeType.THEORY.getCode(), categoryName);
-		if (StringUtils.isBlank(categoryId)) {
-			PracticeCategory category = new PracticeCategory();
-			category.setResourceId(IDGeneratorUtil.getID());
-			category.setCode(category.getResourceId());
-			// 跟页面导入区分人员
-			category.setCreateUserId(
-					null == userId ? ResourceImportConstant.SUPER_ADMIN_HASH : userId);
-			category.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
-			category.setName(excelRowData.get(1));
-			practiceCategoryMapper.insert(category);
-
-			practiceTheory.setCategoryId(category.getResourceId());
-		} else {
-			practiceTheory.setCategoryId(categoryId);
+		// 方向
+		String courseCategoryId = courseDirectionMapper.selectByName(categoryName);
+		if (StringUtils.isBlank(courseCategoryId)) {
+			courseCategoryId = IDGeneratorUtil.getID();
+			courseDirectionMapper.create(categoryName, courseCategoryId);
 		}
+		practiceTheory.setCourseCategoryId(courseCategoryId);
+		// 理论题类型
+		practiceTheory.setType(3);
+
+//		String categoryId = practiceCategoryMapper
+//				.selectByName(PracticeCategory.PracticeType.THEORY.getCode(), categoryName);
+//		if (StringUtils.isBlank(categoryId)) {
+//			PracticeCategory category = new PracticeCategory();
+//			category.setResourceId(IDGeneratorUtil.getID());
+//			category.setCode(category.getResourceId());
+//			// 跟页面导入区分人员
+//			category.setCreateUserId(
+//					null == userId ? ResourceImportConstant.SUPER_ADMIN_HASH : userId);
+//			category.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
+//			category.setName(excelRowData.get(1));
+//			practiceCategoryMapper.insert(category);
+//
+//			practiceTheory.setCategoryId(category.getResourceId());
+//		} else {
+//			practiceTheory.setCategoryId(categoryId);
+//		}
 
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SINGLE.getCode()
 				|| practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.MULTIPLE

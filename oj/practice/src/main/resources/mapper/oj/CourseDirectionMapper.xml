@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.oj.practice.dao.mapper.CourseDirectionMapper">
+    <insert id="create">
+        insert into oj_course_category(resource_id, name, course_type, code, create_time, update_time, parent_id)
+        values (#{courseCategoryId}, #{categoryName}, 0, #{courseCategoryId}, now(), now(), NULL)
+    </insert>
+    <select id="selectByName" resultType="java.lang.String">
+        select resource_id
+        from oj_course_category
+        where name = #{categoryName}
+    </select>
+</mapper>

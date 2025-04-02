@@ -37,4 +37,7 @@ public class EvalSystemIndexesContext implements Serializable {
 
     @ApiModelProperty("指标项载荷记录")
     private EvalRecordLoadListContext recordLoad;
+
+    @ApiModelProperty(value = "关联的五级指标信息", required = false)
+    private EvalRecordLoadFifthIndexContext evalRecordLoadFifthIndexContext;
 }

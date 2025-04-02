@@ -390,7 +390,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             if(EvalIndexRef.Type.LOAD.getCode()==evalRecordVariableContext.getType()){
                 evalVariableRef.setType(EvalIndexRef.Type.LOAD.getCode());
                 int value = evalRecordVariableContext.getEvalRecordLoadFifthIndexContext().getLoadValue() == null ? 100 : evalRecordVariableContext.getEvalRecordLoadFifthIndexContext().getLoadValue();
-                value = EvalRecordLoadListContext.JudgmentResult.SUCCESS.getCode() == evalRecordVariableContext.getEvalRecordLoadFifthIndexContext().getJudgmentStatus() ? value : 0;
+                value = null!= evalRecordVariableContext.getEvalRecordLoadFifthIndexContext().getJudgmentStatus() && EvalRecordLoadListContext.JudgmentResult.SUCCESS.getCode() == evalRecordVariableContext.getEvalRecordLoadFifthIndexContext().getJudgmentStatus() ? value : 0;
                 evalVariableRef.setScore(value);
 
                 String s = JSONArray.toJSONString(evalRecordVariableContext.getEvalRecordLoadFifthIndexContext());
@@ -679,35 +679,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         requestData.getIndexes().forEach(evalRecordIndexContext -> {
             EvalIndexRef evalIndexRef = evalIndexRefMap.get(evalRecordIndexContext.getResourceId());
-
             if (!indexesSet.contains(evalIndexRef.getResourceId())) {
                 evalIndexRef.setType(evalRecordIndexContext.getType());
                 if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
                     evalIndexRef.setSpecialistValue(evalRecordIndexContext.getSpecialist().getValue());
-                    List<EvalRecordSpecialistFifthIndexContext> fifthIndexes = evalRecordIndexContext.getSpecialist().getFifthIndexes();
-                    String s = JSONArray.toJSONString(fifthIndexes);
-                    evalIndexRef.setSpecialistFifthIndexContext(s);
                     evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
-                    evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
-                } else if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.LOAD.getCode())) {
-//            处理载荷记录评分
-                    /*int value = evalRecordIndexContext.getRecordLoad().getValue() == null ? 100 : evalRecordIndexContext.getRecordLoad().getValue();
-                    value = EvalRecordLoadListContext.JudgmentResult.SUCCESS.getCode() == evalRecordIndexContext.getRecordLoad().getJudgmentStatus() ? value : 0;
-                    evalIndexRef.setLoadValue(evalRecordIndexContext.getRecordLoad().getValue());
-                    evalIndexRef.setLoadExecutionName(evalRecordIndexContext.getRecordLoad().getLoadExecutionName());
-                    evalIndexRef.setLoadExecutionId(evalRecordIndexContext.getRecordLoad().getLoadExecutionId());
-                    evalIndexRef.setJudgmentStatus(evalRecordIndexContext.getRecordLoad().getJudgmentStatus());
-                    evalIndexRef.setSpecialistValue(value);
-                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
-                    evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());*/
-
-                    List<EvalRecordLoadFifthIndexContext> eventIndexes = evalRecordIndexContext.getRecordLoad().getLoadIndexes();
-                    String s = JSONArray.toJSONString(eventIndexes);
-                    evalIndexRef.setEventFifthIndexContext(s);
-//                    List<EvalRoomPairRsp> nodes = this.getNodes(requestData.getTaskId());
-//                    Map<String, EvalRoomPairRsp> map = nodes.stream().collect(Collectors.toMap(EvalRoomPairRsp::getId, eval -> eval));// 查询节点名称
-                    evalIndexRef.setLoadValue(evalRecordIndexContext.getRecordLoad().getValue());
-                    evalIndexRef.setScore(evalIndexRef.getLoadValue());// 告警分数默认百分比
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
                 } else {
                     evalIndexRef.setProgress(EvalIndexRef.Progress.NOT_START.getCode());
@@ -723,6 +699,15 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     evalVariableRef.setResourceId(evalRecordVariableContext.getResourceId());
                     evalVariableRef.setDeviceId(evalRecordVariableContext.getDeviceId());
                     evalVariableRef.setProbeId(evalRecordVariableContext.getProbeId());
+                    if(EvalIndexRef.Type.LOAD.getCode()==evalRecordVariableContext.getType()){
+                        evalVariableRef.setType(EvalIndexRef.Type.LOAD.getCode());
+                        int value = evalRecordVariableContext.getEvalRecordLoadFifthIndexContext().getLoadValue() == null ? 100 : evalRecordVariableContext.getEvalRecordLoadFifthIndexContext().getLoadValue();
+                        value = null!= evalRecordVariableContext.getEvalRecordLoadFifthIndexContext().getJudgmentStatus() && EvalRecordLoadListContext.JudgmentResult.SUCCESS.getCode() == evalRecordVariableContext.getEvalRecordLoadFifthIndexContext().getJudgmentStatus() ? value : 0;
+                        evalVariableRef.setScore(value);
+
+                        String s = JSONArray.toJSONString(evalRecordVariableContext.getEvalRecordLoadFifthIndexContext());
+                        evalVariableRef.setEventFifthIndexContext(s);
+                    }
                     evalVariableRefs.add(evalVariableRef);
                     variablesSet.add(evalVariableRef.getResourceId());
                 }
@@ -767,30 +752,24 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 同三级指标项下变量项过滤
         Set<String> variablesMap = Sets.newHashSet();
         nextIds.forEach(nextId -> {
-            // 载荷记录评分
+            /*// 载荷记录评分
             if (evalIndexRef.getType() == EvalIndexRef.Type.LOAD.getCode()) {
                 evalSystemIndexesContext.setRecordLoad(new EvalRecordLoadListContext());
-                /*evalSystemIndexesContext.getRecordLoad().setType(evalIndexRef.getType());
-                evalSystemIndexesContext.getRecordLoad().setLoadExecutionId(evalIndexRef.getLoadExecutionId());
-                evalSystemIndexesContext.getRecordLoad().setLoadExecutionName(evalIndexRef.getLoadExecutionName());
-                evalSystemIndexesContext.getRecordLoad().setJudgmentStatus(evalIndexRef.getJudgmentStatus());
-                evalSystemIndexesContext.getRecordLoad().setValue(evalIndexRef.getLoadValue());
-                evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
-                evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getSpecialistType());*/
 
                 evalSystemIndexesContext.getRecordLoad().setType(evalIndexRef.getType());// 默认赋值方式百分比
                 evalSystemIndexesContext.getRecordLoad().setValue(evalIndexRef.getLoadValue());
                 // 获取五级指标告警设置
                 List<EvalRecordLoadFifthIndexContext> evalRecordEventFifthIndexContexts = JsonUtil.toJsonObjectArray(evalIndexRef.getEventFifthIndexContext(), EvalRecordLoadFifthIndexContext.class);
                 evalSystemIndexesContext.getRecordLoad().setLoadIndexes(evalRecordEventFifthIndexContexts);
-            } else if (evalIndexRef.getType() == EvalIndexRef.Type.SPECIALIST.getCode()) {
+            } else */
+            /*if (evalIndexRef.getType() == EvalIndexRef.Type.SPECIALIST.getCode()) {
                 // 专家评分
                 evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getType());// 默认赋值方式百分比
                 evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());
                 // 获取五级指标专家设置
                 List<EvalRecordSpecialistFifthIndexContext> evalRecordSpecialistFifthIndexContexts = JsonUtil.toJsonObjectArray(evalIndexRef.getSpecialistFifthIndexContext(), EvalRecordSpecialistFifthIndexContext.class);
                 evalSystemIndexesContext.getSpecialist().setFifthIndexes(evalRecordSpecialistFifthIndexContexts);
-            }
+            }*/
             EvalIndexRef evalIndexRef1 = fullIndexesMap.get(nextId);
             // 如果"ifFull"为真，跳过第四级直接由"EvalVariableRef"获取第五级
             Integer condition = Boolean.TRUE.equals(isFull) ? EvalIndexRef.Level.AGGREGATION.getCode() : EvalIndex.Level.THIRD.getCode();
@@ -806,7 +785,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                         return;
                     }
                     EvalVariableRef evalVariableRef = fullVariablesMap.get(variableId);
-                    evalSystemIndexesContext.getChildren().add(evalVariableRefToEvalSystemIndexesContext.from(evalVariableRef));
+                    EvalSystemIndexesContext variableEvalSystemIndexesContext = evalVariableRefToEvalSystemIndexesContext.from(evalVariableRef);
+                    variableEvalSystemIndexesContext.setEvalRecordLoadFifthIndexContext(JsonUtil.toJsonObject(evalVariableRef.getEventFifthIndexContext(), EvalRecordLoadFifthIndexContext.class));
+                    evalSystemIndexesContext.getChildren().add(variableEvalSystemIndexesContext);
                     variablesMap.add(variableId);
                 });
             } else {

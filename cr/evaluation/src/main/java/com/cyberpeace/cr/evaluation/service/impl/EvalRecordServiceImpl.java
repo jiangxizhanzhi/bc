@@ -389,7 +389,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalVariableRef.setProgress(EvalVariableRef.Progress.NOT_START.getCode());
             if(EvalIndexRef.Type.LOAD.getCode()==evalRecordVariableContext.getType()){
                 evalVariableRef.setType(EvalIndexRef.Type.LOAD.getCode());
-                evalVariableRef.setScore(evalRecordVariableContext.getScore());
+                int value = evalRecordVariableContext.getEvalRecordLoadFifthIndexContext().getLoadValue() == null ? 100 : evalRecordVariableContext.getEvalRecordLoadFifthIndexContext().getLoadValue();
+                value = EvalRecordLoadListContext.JudgmentResult.SUCCESS.getCode() == evalRecordVariableContext.getEvalRecordLoadFifthIndexContext().getJudgmentStatus() ? value : 0;
+                evalVariableRef.setScore(value);
 
                 String s = JSONArray.toJSONString(evalRecordVariableContext.getEvalRecordLoadFifthIndexContext());
                 evalVariableRef.setEventFifthIndexContext(s);

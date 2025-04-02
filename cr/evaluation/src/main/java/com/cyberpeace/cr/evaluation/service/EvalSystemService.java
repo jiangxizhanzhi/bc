@@ -37,6 +37,4 @@ public interface EvalSystemService extends IService<EvalSystem> {
 	EvalSystemRsp convertEvalSystemToEvalSystemRsp(EvalSystem evalSystem);
 
     EvalSystemAllRsp testWithStr(EvalSystemTestReq evalSystemTestReq);
-
-	JSONObject testWithLoad(EvalSystemTestLoadReq evalSystemTestLoadReq);
 }

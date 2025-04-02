@@ -20,6 +20,9 @@ public class EvalRecordLoadFifthIndexContext implements Serializable {
     @ApiModelProperty(value = "载荷执行记录名称",required = false)
     private String loadExecutionName;
 
+    @ApiModelProperty(value = "研判结果(0:未研判 1:成功 2:失败)", required = false)
+    private Integer judgmentStatus;
+
     @ApiModelProperty(value = "值",required = false)
     private Integer loadValue;
 }

@@ -25,7 +25,4 @@ public class EvalRecordIndexContext implements Serializable {
 
     @ApiModelProperty("指标项专家评分配置")
     private EvalRecordSpecialistContext specialist;
-
-    @ApiModelProperty("指标项载荷记录")
-    private EvalRecordLoadListContext recordLoad;
 }

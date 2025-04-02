@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -13,6 +14,7 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefMapper;
 import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
+import com.cyberpeace.cr.evaluation.service.context.JudgmentResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -64,6 +66,13 @@ public class EvalIndexRefController {
                 evalVariableRef.setDeviceId(requestData.getDeviceId());
                 evalVariableRef.setProbeId(requestData.getProbeId());
                 evalVariableRef.setType(EvalIndexRef.Type.SYSTEM.getCode());
+            } else if(type.equals(EvalIndexRef.Type.LOAD.getCode())){
+                evalVariableRef.setType(EvalIndexRef.Type.LOAD.getCode());
+                int value = requestData.getEvalRecordLoadFifthIndexContext().getLoadValue() == null ? 100 : requestData.getEvalRecordLoadFifthIndexContext().getLoadValue();
+                value = null!= requestData.getEvalRecordLoadFifthIndexContext().getJudgmentStatus() && JudgmentResult.SUCCESS.getCode() == requestData.getEvalRecordLoadFifthIndexContext().getJudgmentStatus() ? value : 0;
+                evalVariableRef.setScore(value);
+                String s = JSONArray.toJSONString(requestData.getEvalRecordLoadFifthIndexContext());
+                evalVariableRef.setEventFifthIndexContext(s);
             } else {
                 throw new BusinessException(CrBusinessErrorCode.INVALID_TYPE);
             }

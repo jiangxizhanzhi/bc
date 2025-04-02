@@ -2,7 +2,7 @@ package com.cyberpeace.cr.evaluation.controller.req;
 
 import javax.validation.constraints.NotEmpty;
 
-import com.cyberpeace.cr.evaluation.service.context.EvalRecordLoadListContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalRecordLoadFifthIndexContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -30,8 +30,8 @@ public class EvalIndexRefReq {
 	@ApiModelProperty("系统评分时 需要探针id")
 	private String probeId;
 
-	@ApiModelProperty("指标项载荷记录")
-	private EvalRecordLoadListContext recordLoad;
+	@ApiModelProperty(value = "关联的五级指标信息", required = false)
+	private EvalRecordLoadFifthIndexContext evalRecordLoadFifthIndexContext;
 
 
 }

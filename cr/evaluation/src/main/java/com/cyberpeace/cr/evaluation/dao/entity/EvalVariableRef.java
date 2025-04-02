@@ -110,6 +110,12 @@ public class EvalVariableRef extends BaseTable {
      */
     private Date markEndTime;
 
+    /**
+     * 五级指标信息
+     */
+    private String eventFifthIndexContext;
+
+
     public enum Progress implements GenericEnum {
         NOT_START(1, "未开始"),
         START(2, "开始/数据同步中"),

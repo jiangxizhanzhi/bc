@@ -14,7 +14,6 @@
                T1.algorithm_id,
                T1.level,
                T1.specialist_fifth_index_context,
-               T1.event_fifth_index_context,
                T1.next_ids,
                T2.name as algorithm_name,
                T2.mode as mode

@@ -41,7 +41,6 @@ public class ToolAddReq implements Serializable {
 	 * 盖
 	 */
 	@ApiModelProperty("封面")
-	@NotBlank
 	private String cover;
 
 	/**

@@ -1,0 +1,1 @@
+INSERT INTO cr_constants_config (`id`, `resource_id`, `code`, `type`, `cn_name`, `en_name`) VALUES (NULL, 'other', NULL, 43, '其他工具', 'Practice');

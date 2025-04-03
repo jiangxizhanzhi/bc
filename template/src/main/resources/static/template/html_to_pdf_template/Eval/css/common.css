@@ -190,15 +190,3 @@ body {
   justify-content: space-between;
   margin-top: 10px;
 }
-
-.load-name, .event-name {
-  display: flex;
-  align-items: center;
-  color: #fff;
-}
-
-.load-name span:first-child,
-.event-name span:first-child {
-  font-weight: bold;
-  margin-right: 10px;
-}

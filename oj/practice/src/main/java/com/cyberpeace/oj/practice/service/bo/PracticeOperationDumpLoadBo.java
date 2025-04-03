@@ -26,6 +26,8 @@ public class PracticeOperationDumpLoadBo extends PracticeDumpLoadBo {
 	 */
 	private List<String> attachmentPath;
 
+	private List<OperationTargetAddBo> target;
+
 	/**
 	 * 题解
 	 *
@@ -67,6 +69,12 @@ public class PracticeOperationDumpLoadBo extends PracticeDumpLoadBo {
 	 * @see Integer
 	 */
 	private Integer destroyDelay;
+
+	private Integer type;
+
+	private Boolean needOuter;
+
+	private Boolean networking;
 
 	/**
 	 * topo配置数据

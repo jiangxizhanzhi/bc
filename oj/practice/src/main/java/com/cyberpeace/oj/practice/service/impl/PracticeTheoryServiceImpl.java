@@ -1,22 +1,26 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
+import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.controller.req.WebTheoryRecordReq;
@@ -36,6 +40,7 @@ import com.cyberpeace.oj.practice.service.md.MdTheoryParser;
 import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 import com.cyberpeace.oj.practice.service.md.TheoryBaseMd;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +54,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -381,6 +387,77 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			theoryListBo.setCreateUserName(null != userName ? userName : "");
 			return theoryListBo;
 		});
+	}
+
+	@Override
+	public File dumpBatch(List<String> ids) {
+
+		// 设置数据存储
+		String destDir = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID();
+		String destFilePath = destDir + File.separatorChar
+				+ ResourceImportConstant.DUMP_LOAD_FILE_STORE_PATH;
+		FileUtil.mkdirs(destFilePath);
+
+		List<PracticeTheoryDumpLoadBo> boList = this.dumpTheory(ids);
+
+		Map<String, String> fileMap = Maps.newHashMap();
+
+		PracticeSetDumpLoadBo setDumpLoadBo = new PracticeSetDumpLoadBo();
+
+		for (PracticeTheoryDumpLoadBo bo : boList) {
+			List<String> filePathList = Lists.newArrayList();
+			if (StringUtils.isNotBlank(bo.getVideo())) {
+				filePathList.add(bo.getVideo());
+			}
+			filePathList.addAll(LocalStringUtil.getAllMatchStr(JsonUtil.toJsonString(bo),
+					"\\[[^]]*]\\((/cpms/upload/.+\\..+)\\)", 1));
+			for (String realPath : filePathList) {
+				String fileName = FileUtil.getFileName(realPath, true);
+				String newName = FileUtil.getNewName(fileName);
+				String destPath = destFilePath + CommonConstant.LEFT_OBLIQUE_LINE + newName;
+				FileUtil.copyFile(realPath, destPath, false);
+
+				fileMap.put(newName, realPath);
+			}
+
+		}
+		setDumpLoadBo.setPractice(boList);
+		setDumpLoadBo.setFilePathMap(fileMap);
+
+		String dataPath = destDir + File.separatorChar + ResourceImportConstant.DATA_JSON;
+		FileUtil.writeToDestFile(JsonUtil.toJsonString(setDumpLoadBo), dataPath);
+
+		// 压缩当前文件夹
+		String zipDest = ZipUtil.toZipDest(destDir, AttachmentPath.OTHER.getDesc());
+		FileUtil.deleteDir(destDir, true);
+		return new File(zipDest);
+	}
+
+	@Override
+	public Boolean loadBatch(String realPath, String userId) {
+		String destPath = realPath.substring(0, realPath.lastIndexOf(CommonConstant.PERIOD));
+		ZipUtil.unzipToDest(realPath, destPath);
+
+		// 解析数据
+		String filePath = destPath + File.separatorChar
+				+ ResourceImportConstant.DUMP_LOAD_FILE_STORE_PATH;
+		String dataPath = destPath + File.separatorChar + ResourceImportConstant.DATA_JSON;
+		String data = FileUtil.getContent(new File(dataPath));
+		JSONObject dumpLoadBo = JsonUtil.toJsonObject(data, JSONObject.class);
+		List<PracticeTheoryDumpLoadBo> theoryDumpLoadBos = dumpLoadBo.getJSONArray(JsonKeyConstant.PRACTICE_KEY)
+				.toJavaList(PracticeTheoryDumpLoadBo.class);
+		String setId = IDGeneratorUtil.getID();
+		List<PracticeTheory> theories =  StreamApiUtils.map(theoryDumpLoadBos, bo->loadPracticeTheory(setId,
+				bo, userId));
+		Map<String, String> fileMap = dumpLoadBo.toJavaObject(PracticeSetDumpLoadBo.class).getFilePathMap();
+		fileMap.forEach((key, value) -> {
+			String path = filePath + CommonConstant.LEFT_OBLIQUE_LINE + key;
+			FileUtil.copyFile(path, value, false);
+		});
+
+		this.saveBatch(theories);
+
+		return true;
 	}
 
 	/**
@@ -740,9 +817,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		}
 
 		// 分类数据
-		String categoryId = practiceCategoryService.selectCategoryOrCreate(dumpBo.getCategoryName(),
-				PracticeCategory.PracticeType.THEORY.getCode(), userId);
-		practiceTheory.setCategoryId(categoryId);
+		practiceTheory.setCategoryId("");
 
 		return practiceTheory;
 	}
@@ -762,9 +837,6 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				PracticeTheoryDumpLoadBo.class);
 
 		// 分类数据处理
-		PracticeCategory category = practiceValidateHandler
-				.validateCategoryExist(practiceTheory.getCategoryId());
-		dumpLoadBo.setCategoryName(category.getName());
 		return dumpLoadBo;
 	}
 
@@ -1176,5 +1248,16 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		theoryBaseMd.setTitle(title);
 
+	}
+
+	private List<PracticeTheoryDumpLoadBo> dumpTheory(List<String> theoryIds) {
+		// 数据查询
+		List<PracticeTheory> practiceTheories = Lists.newArrayList();
+		if (!theoryIds.isEmpty()) {
+			practiceTheories = practiceTheoryMapper.selectBatchIds(theoryIds);
+		}
+
+		// 数据转换
+		return StreamApiUtils.map(practiceTheories, this::dumpTheory);
 	}
 }

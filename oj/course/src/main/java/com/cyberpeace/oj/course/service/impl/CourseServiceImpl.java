@@ -761,8 +761,6 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	public String dumpCourse(List<String> courseIds, AuthContext authContext) {
 
 		// 数据校验
-		courseIds.forEach(
-				courseId -> courseValidateHandler.validateCoursePermission(courseId, authContext));
 		List<Course> courseList = StreamApiUtils.map(courseIds,
 				courseId -> courseValidateHandler.validateCourseExist(courseId));
 //		if (!systemPropertyService.getExportBuiltin()) {

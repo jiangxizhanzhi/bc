@@ -45,4 +45,8 @@ public class PracticeTheoryDumpLoadBo extends PracticeDumpLoadBo {
      */
     private String keyword;
 
+    private Integer type;
+
+    private String video;
+
 }

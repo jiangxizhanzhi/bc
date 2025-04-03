@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -1675,14 +1676,16 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		PracticeOperationDumpLoadBo dumpLoadBo = BeanUtils.copy(operation,
 				PracticeOperationDumpLoadBo.class);
 		// 分类
-		PracticeCategory category = practiceValidateHandler
-				.validateCategoryExist(operation.getCategoryId());
-		dumpLoadBo.setCategoryName(category.getName());
+		dumpLoadBo.setCategoryName("");
 
 		// 附件
 		List<String> filePathList = dumpOperationFilePathList(operation, fileStorePath,
 				filePathMap);
 		dumpLoadBo.setAttachmentPath(filePathList);
+
+		List<OperationTargetAddBo> targets = this.dumpTargets(operation.getResourceId(),
+				fileStorePath);
+		dumpLoadBo.setTarget(targets);
 
 		// 场景
 		if (operation.getDynamicEnv() && StringUtils.isNotBlank(operation.getTopoId())) {
@@ -1713,6 +1716,38 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 
 		return dumpLoadBo;
+	}
+
+	private List<OperationTargetAddBo> dumpTargets(String resourceId, String fileStorePath) {
+		// target
+		List<PracticeOperationTarget> operationTargetList = practiceOperationTargetMapper
+				.getAllByOperationIds(Collections.singletonList(resourceId));
+		List<OperationTargetAddBo> res = Lists.newArrayList();
+		for (PracticeOperationTarget target : operationTargetList) {
+			OperationTargetAddBo bo = BeanUtils.copy(target, OperationTargetAddBo.class);
+			if (StringUtils.isNotBlank(target.getAttachmentId())) {
+				Attachment attachment = attachmentMapper.selectById(target.getAttachmentId());
+				if (null == attachment) {
+					log.error("operation practice file not found！target_id={}, attachment_id={}",
+							target.getResourceId(), target.getAttachmentId());
+					throw new BusinessException(
+							OjBusinessErrorCode.PRACTICE_OPERATION_FILE_NOT_FOUNT);
+				}
+
+				// 重命名文件防止重复
+				String realPath = utilService.getRealPath(attachment.getFilePath());
+				String fileName = FileUtil.getFileName(realPath, true);
+				String destFilePath = fileStorePath + File.separatorChar
+						+ FileUtil.getNewName(fileName);
+				FileUtil.copyFile(realPath, destFilePath, false);
+
+				String relativePath = destFilePath.replace(fileStorePath,
+						CommonConstant.EMPTY_STRING);
+				bo.setAttachmentId(relativePath);
+			}
+			res.add(bo);
+		}
+		return res;
 	}
 
 	/**
@@ -1886,6 +1921,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		String attachmentIds = loadOperationPathList(dumpLoadBo.getAttachmentPath(), filePathMap,
 				filePath);
 		operation.setAttachmentId(attachmentIds);
+		// targets
+		List<PracticeOperationTarget> targetList = this.loadTargets(dumpBo, filePath,
+				operation.getResourceId());
+		practiceOperationTargetService.saveBatch(targetList);
 
 		// 场景
 		if (dumpLoadBo.getDynamicEnv()) {
@@ -2278,6 +2317,80 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return operationList.stream().map(practiceOperation -> entityToListBo(practiceOperation, authContext, null, operationTargetMap, attachmentMap)).collect(Collectors.toList());
 	}
 
+	@Override
+	public File dumpBatch(List<String> ids) {
+		// 设置数据存储
+		String destDir = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID();
+		String destFilePath = destDir + File.separatorChar
+				+ ResourceImportConstant.DUMP_LOAD_FILE_STORE_PATH;
+		FileUtil.mkdirs(destFilePath);
+
+		Map<String, String> filePathMap = Maps.newHashMap();
+		List<PracticeOperationDumpLoadBo> boList = this.dumpOperation(ids, destFilePath,
+				filePathMap);
+
+		PracticeSetDumpLoadBo setDumpLoadBo = new PracticeSetDumpLoadBo();
+
+		setDumpLoadBo.setPractice(boList);
+		setDumpLoadBo.setFilePathMap(filePathMap);
+
+		String dataPath = destDir + File.separatorChar + ResourceImportConstant.DATA_JSON;
+		FileUtil.writeToDestFile(JsonUtil.toJsonString(setDumpLoadBo), dataPath);
+
+		// 压缩当前文件夹
+		String zipDest = ZipUtil.toZipDest(destDir, AttachmentPath.OTHER.getDesc());
+		FileUtil.deleteDir(destDir, true);
+		return new File(zipDest);
+	}
+
+	@Override
+	public Boolean loadBatch(String realPath, String userId) {
+		String destPath = realPath.substring(0, realPath.lastIndexOf(CommonConstant.PERIOD));
+		ZipUtil.unzipToDest(realPath, destPath);
+
+		// 解析数据
+		String filePath = destPath + File.separatorChar
+				+ ResourceImportConstant.DUMP_LOAD_FILE_STORE_PATH;
+		String dataPath = destPath + File.separatorChar + ResourceImportConstant.DATA_JSON;
+		String data = FileUtil.getContent(new File(dataPath));
+		JSONObject dumpLoadBo = JsonUtil.toJsonObject(data, JSONObject.class);
+
+		JSONArray practice = (JSONArray) dumpLoadBo.remove(JsonKeyConstant.PRACTICE_KEY);
+		// 习题集
+		PracticeSetDumpLoadBo setDumpLoadBo = dumpLoadBo.toJavaObject(PracticeSetDumpLoadBo.class);
+		List<PracticeOperationDumpLoadBo> operationDumpLoadBos = practice
+				.toJavaList(PracticeOperationDumpLoadBo.class);
+		String setId = IDGeneratorUtil.getID();
+		List<PracticeOperationTarget> targetList = Lists.newArrayList();
+		List<PracticeOperation> operations = StreamApiUtils.map(operationDumpLoadBos,
+				bo -> loadPracticeOperation(setId, bo, setDumpLoadBo.getFilePathMap(), filePath,
+						userId));
+
+		this.saveBatch(operations);
+
+		return true;
+	}
+
+	private List<PracticeOperationTarget> loadTargets(
+			PracticeOperationDumpLoadBo operationDumpLoadBos, String filePath, String operationId) {
+		List<OperationTargetAddBo> targetAddBoList = operationDumpLoadBos.getTarget();
+		List<PracticeOperationTarget> targetList = Lists.newArrayList();
+		for (OperationTargetAddBo addBo : targetAddBoList) {
+			String relativePath = addBo.getAttachmentId();
+			if (StringUtils.isNotBlank(relativePath)) {
+				String path = filePath + relativePath;
+				AttachmentBo attachmentBo = attachmentService.copyFile(path,
+						AttachmentPath.PRACTICE_ATTACHMENT.getCode(), true, true);
+				addBo.setAttachmentId(attachmentBo.getResourceId());
+			}
+			PracticeOperationTarget target = BeanUtils.copy(addBo, PracticeOperationTarget.class);
+			target.setResourceId(IDGeneratorUtil.getID());
+			target.setOperationId(operationId);
+			targetList.add(target);
+		}
+		return targetList;
+	}
+
 	/**
 	 * do export （执行导出）
 	 *
@@ -2569,6 +2682,19 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			res.add(e);
 		}
 		return res;
+	}
+
+	private List<PracticeOperationDumpLoadBo> dumpOperation(List<String> operationIds,
+			String fileStorePath, Map<String, String> filePathMap) {
+		// 数据查询
+		List<PracticeOperation> operationList = Lists.newArrayList();
+		if (!operationIds.isEmpty()) {
+			operationList = practiceOperationMapper.selectBatchIds(operationIds);
+		}
+
+		// 数据转换
+		return StreamApiUtils.map(operationList,
+				operation -> this.handlerDumpOperation(operation, fileStorePath, filePathMap));
 	}
 
 }

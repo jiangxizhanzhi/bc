@@ -14,6 +14,7 @@ import com.cyberpeace.oj.practice.service.externalbo.ExternalTheoryBo;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalTheoryCountBo;
 import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -256,4 +257,16 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 */
 	IPage<ExternalTheoryBo> pageByQuery(Page page, TheoryListQueryBo listQuery);
 
+	/**
+	 * 导出批量
+	 *
+	 * @param ids id列表
+	 * @return {@code File }
+	 * @throws
+	 * @see List<String>
+	 * @see File
+	 */
+	File dumpBatch(List<String> ids);
+
+    Boolean loadBatch(String realPath, String userId);
 }

@@ -4,10 +4,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.FileSunffixConstant;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.constant.OrderNameConstant;
+import com.cyberpeace.common.constant.*;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -16,7 +14,9 @@ import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
@@ -36,6 +36,8 @@ import com.cyberpeace.oj.practice.service.bo.PracticeTheoryListBo;
 import com.cyberpeace.oj.practice.service.bo.TheoryListQueryBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -43,6 +45,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotEmpty;
 import java.io.File;
 import java.util.List;
 
@@ -59,6 +63,7 @@ import java.util.List;
 @RestController
 @RequestMapping("oj/admin/theory")
 @RequiresAuthentication
+@Slf4j
 public class AdminPracticeTheoryController extends PublicController<PracticeTheoryService, PracticeTheory> {
 
 	/**
@@ -303,6 +308,67 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 		new File(realPath).deleteOnExit();
 		return new BaseRsp<>(result);
 
+	}
+
+	/**
+	 * 导出理论题
+	 *
+	 * @param ids      id列表
+	 * @param response 响应
+	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
+	 * @see List<String>
+	 */
+	@ApiOperation("理论习题资源导出")
+	@GetMapping("/batch_dumps")
+	@RequiresPermissions(MenuConstant.CMS_EXERCISES)
+	public BaseRsp<Boolean> exportPracticeSet(
+			@ApiParam(name = "ids",
+					value = "编号") @RequestParam("ids") @NotEmpty List<String> ids,
+			HttpServletResponse response) {
+		if (CollectionUtils.isEmpty(ids)) {
+			throw new BusinessException(ErrorCode.BLANK_ID);
+		}
+		File dumpFile = practiceTheoryService.dumpBatch(ids);
+		FileUtil.setResponse(dumpFile, true, response);
+		return new BaseRsp(Boolean.TRUE);
+	}
+
+	/**
+	 * 导入实践设置
+	 *
+	 * @param loadReq 加载请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see LoadResourceReq
+	 * @see LoadResourceReq
+	 */
+	@ApiOperation("习题集资源数据导入")
+	@PostMapping("/batch_loads")
+	@RequiresPermissions(MenuConstant.CMS_EXERCISES)
+	public BaseRsp<Boolean> importPracticeSet(@Validated LoadResourceReq loadReq) {
+
+		FileUtil.validateFileSuffix(loadReq.getFile().getOriginalFilename(),
+				FileTypeContant.RESOURCE_DATA_IMPORT_TYPE);
+
+		// 文件上传
+		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),
+				false, loadReq.getFile(), true);
+		String realPath = utilService.getRealPath(attachmentBo.getFilePath());
+		// 文件加载
+		Boolean result;
+		try {
+			result = practiceTheoryService.loadBatch(realPath, UserInfoContext.getUserContext().getUserId());
+		} catch (Exception e) {
+			if (e instanceof BusinessException) {
+				throw e;
+			}
+			log.error("error file:{}:{}", realPath, e);
+			throw new BusinessException(CrBusinessErrorCode.INVALID_RESOURCE_ZIP);
+		}
+		return new BaseRsp(result);
 	}
 
 }

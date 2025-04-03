@@ -15,6 +15,7 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -435,4 +436,28 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @see List<AdminOperationListBo>
 	 */
 	List<AdminOperationListBo> getOperationByBodeIds(List<String> nodeIds);
+
+	/**
+	 * 导出批量
+	 *
+	 * @param ids id列表
+	 * @return {@code File }
+	 * @throws
+	 * @see List<String>
+	 * @see File
+	 */
+	File dumpBatch(List<String> ids);
+
+	/**
+	 * 加载批量
+	 *
+	 * @param realPath 真实路径
+	 * @param userId   用户id
+	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
+	 */
+	Boolean loadBatch(String realPath, String userId);
 }

@@ -1952,18 +1952,18 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		}
 
 		// 实操课后练习题数据导出
-		List<PracticeOperationRef> operationRefs = practiceOperationRefMapper
-				.selectByPaperId(courseLesson.getPaperId());
-		if (CollectionUtils.isNotEmpty(operationRefs)) {
-			List<PracticeOperationDumpLoadBo> dumpLoadBos = StreamApiUtils.map(operationRefs,
-					practiceOperationRef -> {
-						PracticeOperation practiceOperation = JsonUtil.toJsonObject(
-								practiceOperationRef.getSnapshot(), PracticeOperation.class);
-						return practiceOperationService.handlerDumpOperation(practiceOperation,
-								destFilePath, filePathMap);
-					});
-			dumpLoadBo.setOperationPractice(dumpLoadBos);
-		}
+//		List<PracticeOperationRef> operationRefs = practiceOperationRefMapper
+//				.selectByPaperId(courseLesson.getPaperId());
+//		if (CollectionUtils.isNotEmpty(operationRefs)) {
+//			List<PracticeOperationDumpLoadBo> dumpLoadBos = StreamApiUtils.map(operationRefs,
+//					practiceOperationRef -> {
+//						PracticeOperation practiceOperation = JsonUtil.toJsonObject(
+//								practiceOperationRef.getSnapshot(), PracticeOperation.class);
+//						return practiceOperationService.handlerDumpOperation(practiceOperation,
+//								destFilePath, filePathMap);
+//					});
+//			dumpLoadBo.setOperationPractice(dumpLoadBos);
+//		}
 
 		// 场景数据导出
 		if (courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()

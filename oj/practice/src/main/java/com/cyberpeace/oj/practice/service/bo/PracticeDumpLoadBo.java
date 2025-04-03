@@ -1,9 +1,9 @@
 package com.cyberpeace.oj.practice.service.bo;
 
-import java.io.Serializable;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * 习题数据导出Bo类
@@ -17,6 +17,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PracticeDumpLoadBo implements Serializable {
+
+	private Boolean builtin;
 
 	/**
 	 * 分类名称
@@ -88,5 +90,7 @@ public class PracticeDumpLoadBo implements Serializable {
 	 * @see Double
 	 */
 	private Double score;
+
+	private String courseCategoryId;
 
 }

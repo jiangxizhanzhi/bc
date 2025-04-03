@@ -410,7 +410,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				filePathList.add(bo.getVideo());
 			}
 			filePathList.addAll(LocalStringUtil.getAllMatchStr(JsonUtil.toJsonString(bo),
-					"\\[[^]]*]\\((/cpms/upload/.+\\.[^\\)]+)\\)", 1));
+					"\\[[^]]*]\\((/cpms/upload/.+\\.\\w+)\\)", 1));
 			for (String realPath : filePathList) {
 				String fileName = FileUtil.getFileName(realPath, true);
 				String newName = FileUtil.getNewName(fileName);

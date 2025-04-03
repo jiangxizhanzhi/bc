@@ -66,6 +66,9 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 	@Override
 	public void modify(SpaceStrategyFrameModifyReq req) {
 		SpaceStrategyFrame frame = frameMapper.selectById(req.getResourceId()) ;
+		if (Boolean.TRUE.equals(frame.getBuiltin())) {
+			throw new BusinessException(ErrorCode.BUILT_IN);
+		}
 		frame.setName(req.getName());
 		frameMapper.updateById(frame);
 	}

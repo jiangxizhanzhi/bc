@@ -61,6 +61,13 @@ public class CourseCategory extends BaseTable {
 	 */
 	private String parentId;
 
+	/**
+	 * 内置
+	 *
+	 * @see Boolean
+	 */
+	private Boolean builtin;
+
 	public enum CourseType implements GenericEnum {
 
 		BASE(0, "基础"), ATTACK(2, "攻击"), DEFENSE(3, "防御");

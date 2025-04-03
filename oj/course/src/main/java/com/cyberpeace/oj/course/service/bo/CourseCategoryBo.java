@@ -1,13 +1,12 @@
 package com.cyberpeace.oj.course.service.bo;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * 课程类别 bo
@@ -61,5 +60,7 @@ public class CourseCategoryBo implements Serializable {
 	 */
 	@ApiModelProperty("课程类型 0=基础 2=攻击 3=防御")
 	private Integer courseType;
+
+	private Boolean builtin;
 
 }

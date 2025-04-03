@@ -1,20 +1,10 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.cyberpeace.common.constant.ErrorCode;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
@@ -24,10 +14,17 @@ import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.bo.CategoryAddBo;
 import com.cyberpeace.oj.course.service.bo.CourseCategoryBo;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 课程类别Service实现
@@ -146,6 +143,10 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 
 		CourseCategory courseCategory = BeanUtils.copy(categoryAddBo, CourseCategory.class);
 		if (StringUtils.isNotBlank(categoryAddBo.getResourceId())) {
+			CourseCategory old = this.getById(categoryAddBo.getResourceId());
+			if (old.getBuiltin()){
+				throw new BusinessException(ErrorCode.BUILT_IN);
+			}
 			courseCategoryMapper.updateById(courseCategory);
 
 		} else {
@@ -165,6 +166,7 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 			}
 
 			courseCategory.setResourceId(resourceId);
+			courseCategory.setBuiltin(CommonConstant.FALSE);
 			courseCategoryMapper.insert(courseCategory);
 		}
 
@@ -187,16 +189,17 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 				categoryId -> courseValidateHandler.validateEnableDeleteCategory(categoryId));
 
 		List<CourseCategory> categories = courseCategoryMapper.selectBatchIds(resourceIds);
-		List<String> codeList = StreamApiUtils.getColumn(categories, CourseCategory::getCode);
-
-		for (String code : codeList) {
-			List<CourseCategory> categoryList = courseCategoryMapper.selectChildrenByCode(code);
-			List<String> childrenIds = StreamApiUtils.map(categoryList,
-					CourseCategory::getResourceId);
-			resourceIds.addAll(childrenIds);
+		List<String> toDelete = Lists.newArrayList();
+		for (CourseCategory category : categories) {
+			if (!category.getBuiltin()) {
+				toDelete.add(category.getResourceId());
+			}
 		}
-
-		return courseCategoryMapper.deleteBatchIds(resourceIds);
+		if (CollectionUtils.isNotEmpty(toDelete)) {
+			return courseCategoryMapper.deleteBatchIds(toDelete);
+		} else {
+			throw new BusinessException(ErrorCode.BUILT_IN);
+		}
 	}
 
 	/**

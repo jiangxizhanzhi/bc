@@ -430,4 +430,10 @@ public interface ErrorCode {
     String DUPLICATE_ID = "104022";
 
     String NAME_CONTENT_DUPLICATE = "104023";
+    /**
+     * 内置数据无法删除或修改
+     *
+     * @see String
+     */
+    String BUILT_IN = "104024";
 }

@@ -28,7 +28,6 @@ import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.CourseService;
-import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
@@ -395,7 +394,6 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	 */
 	@ApiOperation("后台课程数据导出")
 	@GetMapping("/batch_dumps")
-	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Boolean> exportCourse(
 			@ApiParam(name = "ids",
 					value = "课程编号") @RequestParam("ids") @NotEmpty List<String> courseIds,
@@ -418,7 +416,6 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	 */
 	@ApiOperation("后台课程数据导入")
 	@PostMapping("/batch_loads")
-	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Boolean> importCourse(@Validated LoadCourseReq loadCourseReq) {
 		FileUtil.validateSuffix(loadCourseReq.getFile(), FileSunffixConstant.ZIP.getDesc());
 

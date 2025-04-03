@@ -323,7 +323,6 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 	 */
 	@ApiOperation("理论习题资源导出")
 	@GetMapping("/batch_dumps")
-	@RequiresPermissions(MenuConstant.CMS_EXERCISES)
 	public BaseRsp<Boolean> exportPracticeSet(
 			@ApiParam(name = "ids",
 					value = "编号") @RequestParam("ids") @NotEmpty List<String> ids,
@@ -347,7 +346,6 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 	 */
 	@ApiOperation("习题集资源数据导入")
 	@PostMapping("/batch_loads")
-	@RequiresPermissions(MenuConstant.CMS_EXERCISES)
 	public BaseRsp<Boolean> importPracticeSet(@Validated LoadResourceReq loadReq) {
 
 		FileUtil.validateFileSuffix(loadReq.getFile().getOriginalFilename(),

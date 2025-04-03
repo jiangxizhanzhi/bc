@@ -449,6 +449,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		String setId = IDGeneratorUtil.getID();
 		List<PracticeTheory> theories =  StreamApiUtils.map(theoryDumpLoadBos, bo->loadPracticeTheory(setId,
 				bo, userId));
+		dumpLoadBo.remove(JsonKeyConstant.PRACTICE_KEY);
 		Map<String, String> fileMap = dumpLoadBo.toJavaObject(PracticeSetDumpLoadBo.class).getFilePathMap();
 		fileMap.forEach((key, value) -> {
 			String path = filePath + CommonConstant.LEFT_OBLIQUE_LINE + key;

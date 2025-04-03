@@ -301,8 +301,14 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		for (SpaceStrategyFrame strategyFrame : strategyFrameList) {
 			SpaceStrategyFrameBo bo = this.entity2Bo(strategyFrame);
 			map.put(bo.getResourceId(), bo);
-			if (map.containsKey(bo.getParent())) {
-				map.get(bo.getParent()).getChildren().add(bo);
+		}
+		for (SpaceStrategyFrame strategyFrame : strategyFrameList) {
+			SpaceStrategyFrameBo bo = map.get(strategyFrame.getResourceId());
+			if (null != bo.getParent()) {
+				SpaceStrategyFrameBo parent = map.get(bo.getParent());
+				if (null != parent) {
+					parent.getChildren().add(bo);
+				}
 			}
 		}
 		return map;

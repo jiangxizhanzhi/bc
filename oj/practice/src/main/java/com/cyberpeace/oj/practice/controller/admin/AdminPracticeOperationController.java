@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.constant.OrderNameConstant;
+import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
@@ -17,7 +14,6 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
@@ -57,6 +53,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotEmpty;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -556,15 +553,12 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	 */
 	@ApiOperation("实操资源数据导入")
 	@PostMapping("/batch_loads")
-	public BaseRsp<Boolean> importPracticeSet(@Validated LoadResourceReq loadReq) {
+	public BaseRsp<Boolean> importPracticeSet(@Validated LoadResourceReq loadReq) throws IOException {
 
-		FileUtil.validateFileSuffix(loadReq.getFile().getOriginalFilename(),
-				FileTypeContant.RESOURCE_DATA_IMPORT_TYPE);
-
-		// 文件上传
-		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),
-				false, loadReq.getFile(), true);
-		String realPath = utilService.getRealPath(attachmentBo.getFilePath());
+		FileUtil.validateSuffix(loadReq.getFile(), FileSunffixConstant.ZIP.getDesc());
+		// 1. save file to temp dir
+		File localFile = FileUtil.saveFile(loadReq.getFile(), ZipUtil.generatePath());
+		String realPath = localFile.getAbsolutePath();
 		// 文件加载
 		Boolean result;
 		try {

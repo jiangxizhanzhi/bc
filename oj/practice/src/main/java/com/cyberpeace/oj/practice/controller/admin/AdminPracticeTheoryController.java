@@ -10,13 +10,9 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
@@ -48,6 +44,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotEmpty;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -346,19 +343,18 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 	 */
 	@ApiOperation("习题集资源数据导入")
 	@PostMapping("/batch_loads")
-	public BaseRsp<Boolean> importPracticeSet(@Validated LoadResourceReq loadReq) {
+	public BaseRsp<Boolean> importPracticeSet(@Validated LoadResourceReq loadReq)
+			throws IOException {
 
-		FileUtil.validateFileSuffix(loadReq.getFile().getOriginalFilename(),
-				FileTypeContant.RESOURCE_DATA_IMPORT_TYPE);
-
-		// 文件上传
-		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),
-				false, loadReq.getFile(), true);
-		String realPath = utilService.getRealPath(attachmentBo.getFilePath());
+		FileUtil.validateSuffix(loadReq.getFile(), FileSunffixConstant.ZIP.getDesc());
+		// 1. save file to temp dir
+		File localFile = FileUtil.saveFile(loadReq.getFile(), ZipUtil.generatePath());
+		String realPath = localFile.getAbsolutePath();
 		// 文件加载
 		Boolean result;
 		try {
-			result = practiceTheoryService.loadBatch(realPath, UserInfoContext.getUserContext().getUserId());
+			result = practiceTheoryService.loadBatch(realPath,
+					UserInfoContext.getUserContext().getUserId());
 		} catch (Exception e) {
 			if (e instanceof BusinessException) {
 				throw e;

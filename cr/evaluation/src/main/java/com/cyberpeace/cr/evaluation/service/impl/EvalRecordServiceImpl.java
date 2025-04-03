@@ -713,24 +713,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 同三级指标项下变量项过滤
         Set<String> variablesMap = Sets.newHashSet();
         nextIds.forEach(nextId -> {
-            /*// 载荷记录评分
-            if (evalIndexRef.getType() == EvalIndexRef.Type.LOAD.getCode()) {
-                evalSystemIndexesContext.setRecordLoad(new EvalRecordLoadListContext());
-
-                evalSystemIndexesContext.getRecordLoad().setType(evalIndexRef.getType());// 默认赋值方式百分比
-                evalSystemIndexesContext.getRecordLoad().setValue(evalIndexRef.getLoadValue());
-                // 获取五级指标告警设置
-                List<EvalRecordLoadFifthIndexContext> evalRecordEventFifthIndexContexts = JsonUtil.toJsonObjectArray(evalIndexRef.getEventFifthIndexContext(), EvalRecordLoadFifthIndexContext.class);
-                evalSystemIndexesContext.getRecordLoad().setLoadIndexes(evalRecordEventFifthIndexContexts);
-            } else */
-            /*if (evalIndexRef.getType() == EvalIndexRef.Type.SPECIALIST.getCode()) {
-                // 专家评分
-                evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getType());// 默认赋值方式百分比
-                evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());
-                // 获取五级指标专家设置
-                List<EvalRecordSpecialistFifthIndexContext> evalRecordSpecialistFifthIndexContexts = JsonUtil.toJsonObjectArray(evalIndexRef.getSpecialistFifthIndexContext(), EvalRecordSpecialistFifthIndexContext.class);
-                evalSystemIndexesContext.getSpecialist().setFifthIndexes(evalRecordSpecialistFifthIndexContexts);
-            }*/
+            evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
+            evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());
+            evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getSpecialistType());
             EvalIndexRef evalIndexRef1 = fullIndexesMap.get(nextId);
             // 如果"ifFull"为真，跳过第四级直接由"EvalVariableRef"获取第五级
             Integer condition = Boolean.TRUE.equals(isFull) ? EvalIndexRef.Level.AGGREGATION.getCode() : EvalIndex.Level.THIRD.getCode();

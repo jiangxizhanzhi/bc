@@ -1688,32 +1688,38 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		dumpLoadBo.setTarget(targets);
 
 		// 场景
-//		if (operation.getDynamicEnv() && StringUtils.isNotBlank(operation.getTopoId())) {
-//			JSONObject topoData = remoteTopoService.exportTopo(operation.getTopoId());
-//			dumpLoadBo.setTopoConfig(topoData);
-//		}
+		// if (operation.getDynamicEnv() &&
+		// StringUtils.isNotBlank(operation.getTopoId())) {
+		// JSONObject topoData = remoteTopoService.exportTopo(operation.getTopoId());
+		// dumpLoadBo.setTopoConfig(topoData);
+		// }
+		List<String> contents = Lists.newArrayList(operation.getWriteup(), operation.getContent());
+		for (String text : contents) {
+			if (StringUtils.isNotBlank(text)) {
+				String content = MdUtil.filterCodeContent(text);
+				List<String> matchList = LocalStringUtil.getMatchStr(content,
+						PatternConstant.MARKDOWN_IMAGE);
+				List<String> matchPathList = StreamApiUtils.map(matchList,
+						matchStr -> LocalStringUtil.getFirstMatchStr(matchStr,
+								PatternConstant.MARKDOWN_IMAGE_URL));
+
+				matchPathList.forEach(str -> {
+					// 文件拷贝
+					String realPath = utilService.getRealPath(str);
+					String fileName = FileUtil.getFileName(realPath, true);
+					String newName = FileUtil.getNewName(fileName);
+					String destFilePath = fileStorePath + File.separatorChar + newName;
+					FileUtil.copyFile(realPath, destFilePath, false);
+
+					String relativePath = destFilePath.replace(fileStorePath,
+							CommonConstant.EMPTY_STRING);
+					filePathMap.put(str, relativePath);
+				});
+			}
+		}
 
 		// 题解 题解文件拷贝
-		if (StringUtils.isNotBlank(operation.getWriteup())) {
-			String content = MdUtil.filterCodeContent(operation.getWriteup());
-			List<String> matchList = LocalStringUtil.getMatchStr(content,
-					PatternConstant.MARKDOWN_IMAGE);
-			List<String> matchPathList = StreamApiUtils.map(matchList, matchStr -> LocalStringUtil
-					.getFirstMatchStr(matchStr, PatternConstant.MARKDOWN_IMAGE_URL));
-
-			matchPathList.forEach(str -> {
-				// 文件拷贝
-				String realPath = utilService.getRealPath(str);
-				String fileName = FileUtil.getFileName(realPath, true);
-				String newName = FileUtil.getNewName(fileName);
-				String destFilePath = fileStorePath + File.separatorChar + newName;
-				FileUtil.copyFile(realPath, destFilePath, false);
-
-				String relativePath = destFilePath.replace(fileStorePath,
-						CommonConstant.EMPTY_STRING);
-				filePathMap.put(str, relativePath);
-			});
-		}
+		
 
 		return dumpLoadBo;
 	}
@@ -1935,32 +1941,42 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// 题解
 		if (StringUtils.isNotBlank(dumpLoadBo.getWriteup())) {
-			String filterCodeContent = MdUtil.filterCodeContent(dumpLoadBo.getWriteup());
-			List<String> matchList = LocalStringUtil.getMatchStr(filterCodeContent,
-					PatternConstant.MARKDOWN_IMAGE);
-			List<String> matchPathList = StreamApiUtils.map(matchList, matchStr -> LocalStringUtil
-					.getFirstMatchStr(matchStr, PatternConstant.MARKDOWN_IMAGE_URL));
+			operation.setWriteup(
+					handleTextWithImage(dumpLoadBo.getWriteup(), filePathMap, filePath));
+		}
 
-			List<String> urlList = StreamApiUtils.map(matchPathList, url -> {
-				// 获取文件路径
-				String relativePath = filePathMap.get(url);
-				String imagePath = filePath + File.separatorChar + relativePath;
-
-				// copy文件
-				String fileSuffix = FileUtil.getFileSuffix(imagePath);
-				String destFilePath = AttachmentPath.NOTE.getDesc() + IDGeneratorUtil.getID()
-						+ CommonConstant.PERIOD + fileSuffix;
-				FileUtil.copyFile(imagePath, destFilePath, false);
-				// 替换文件路径为数据库可存储
-				String storePath = utilService.replaceFileUrl(destFilePath);
-				// 获取页面可访问
-				return utilService.handlerFileUrl(storePath);
-			});
-			String content = LocalStringUtil.replaceAll(dumpLoadBo.getWriteup(), matchPathList,
-					urlList);
-			operation.setWriteup(content);
+		if (StringUtils.isNotBlank(dumpLoadBo.getContent())) {
+			operation.setContent(
+					handleTextWithImage(dumpLoadBo.getContent(), filePathMap, filePath));
 		}
 		return operation;
+	}
+	
+	private String handleTextWithImage(String writeup, Map<String, String> filePathMap,
+			String filePath) {
+		String filterCodeContent = MdUtil.filterCodeContent(writeup);
+		List<String> matchList = LocalStringUtil.getMatchStr(filterCodeContent,
+				PatternConstant.MARKDOWN_IMAGE);
+		List<String> matchPathList = StreamApiUtils.map(matchList, matchStr -> LocalStringUtil
+				.getFirstMatchStr(matchStr, PatternConstant.MARKDOWN_IMAGE_URL));
+
+		List<String> urlList = StreamApiUtils.map(matchPathList, url -> {
+			// 获取文件路径
+			String relativePath = filePathMap.get(url);
+			String imagePath = filePath + File.separatorChar + relativePath;
+
+			// copy文件
+			String fileSuffix = FileUtil.getFileSuffix(imagePath);
+			String destFilePath = AttachmentPath.NOTE.getDesc() + IDGeneratorUtil.getID()
+					+ CommonConstant.PERIOD + fileSuffix;
+			FileUtil.copyFile(imagePath, destFilePath, false);
+			// 替换文件路径为数据库可存储
+			String storePath = utilService.replaceFileUrl(destFilePath);
+			// 获取页面可访问
+			return utilService.handlerFileUrl(storePath);
+		});
+		String content = LocalStringUtil.replaceAll(writeup, matchPathList, urlList);
+		return content;
 	}
 
 	/**

@@ -1688,10 +1688,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		dumpLoadBo.setTarget(targets);
 
 		// 场景
-		if (operation.getDynamicEnv() && StringUtils.isNotBlank(operation.getTopoId())) {
-			JSONObject topoData = remoteTopoService.exportTopo(operation.getTopoId());
-			dumpLoadBo.setTopoConfig(topoData);
-		}
+//		if (operation.getDynamicEnv() && StringUtils.isNotBlank(operation.getTopoId())) {
+//			JSONObject topoData = remoteTopoService.exportTopo(operation.getTopoId());
+//			dumpLoadBo.setTopoConfig(topoData);
+//		}
 
 		// 题解 题解文件拷贝
 		if (StringUtils.isNotBlank(operation.getWriteup())) {
@@ -1927,11 +1927,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		practiceOperationTargetService.saveBatch(targetList);
 
 		// 场景
-		if (dumpLoadBo.getDynamicEnv()) {
-			String topoId = localSceneService.saveTopo(dumpLoadBo.getTopoConfig(),
-					LocalScene.BusinessCode.PRACTICE.getCode());
-			operation.setTopoId(topoId);
-		}
+//		if (dumpLoadBo.getDynamicEnv()) {
+//			String topoId = localSceneService.saveTopo(dumpLoadBo.getTopoConfig(),
+//					LocalScene.BusinessCode.PRACTICE.getCode());
+//			operation.setTopoId(topoId);
+//		}
 
 		// 题解
 		if (StringUtils.isNotBlank(dumpLoadBo.getWriteup())) {
@@ -2361,7 +2361,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		List<PracticeOperationDumpLoadBo> operationDumpLoadBos = practice
 				.toJavaList(PracticeOperationDumpLoadBo.class);
 		String setId = IDGeneratorUtil.getID();
-		List<PracticeOperationTarget> targetList = Lists.newArrayList();
 		List<PracticeOperation> operations = StreamApiUtils.map(operationDumpLoadBos,
 				bo -> loadPracticeOperation(setId, bo, setDumpLoadBo.getFilePathMap(), filePath,
 						userId));

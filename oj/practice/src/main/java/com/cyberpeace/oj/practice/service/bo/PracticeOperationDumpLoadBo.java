@@ -83,4 +83,6 @@ public class PracticeOperationDumpLoadBo extends PracticeDumpLoadBo {
 	 */
 	private JSONObject topoConfig;
 
+	private String topoId;
+
 }

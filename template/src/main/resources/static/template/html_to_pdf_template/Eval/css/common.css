@@ -187,6 +187,8 @@ body {
 
 .load-execution-info {
   display: flex;
+  display: -webkit-box;
+  display: -webkit-flex;
   justify-content: space-between;
   margin-top: 10px;
 }

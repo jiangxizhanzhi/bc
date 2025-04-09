@@ -280,6 +280,7 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
         position2.put("x", addReq.getX());
         position2.put("y", addReq.getY());
         sceneConfigElement.put("position2", position2.toString());
+        sceneConfigElement.put("default_cmd", addReq.getCommand() != null ? addReq.getCommand() : "");
         JSONObject pluginSceneConfigElement = new JSONObject();
         pluginSceneConfigElement.put("image_type", "load");
         pluginSceneConfigElement.put("load_task_name", addReq.getLoadName());

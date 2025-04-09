@@ -38,7 +38,8 @@ public class IndicatorServiceImpl implements IndicatorService {
 		Map<Integer, List<Integer>> parentMap = Maps.newHashMap();
 		for (IndicatorMetrics metrics : metricsList) {
 			parentMap.putIfAbsent(metrics.getIndicatorId(), Lists.newArrayList());
-			if (!parentMap.get(metrics.getIndicatorId()).contains(metrics.getParentId())) {
+			if (!parentMap.get(metrics.getIndicatorId()).contains(metrics.getParentId())
+					&& !metrics.getIndicatorId().equals(metrics.getParentId())) {
 				parentMap.get(metrics.getIndicatorId()).add(metrics.getParentId());
 			}
 		}

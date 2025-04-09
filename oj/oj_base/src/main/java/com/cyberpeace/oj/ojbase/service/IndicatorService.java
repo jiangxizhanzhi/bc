@@ -6,7 +6,7 @@ import com.cyberpeace.oj.ojbase.service.bo.IndicatorBo;
 import java.util.List;
 
 public interface IndicatorService {
-    List<IndicatorBo> getIndicators(Integer type);
+    IndicatorBo getIndicators(Integer type);
 
     List<Indicator> selectIndicators(String attackIdJson);
 }

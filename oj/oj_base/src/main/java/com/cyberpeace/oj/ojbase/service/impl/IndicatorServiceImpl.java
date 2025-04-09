@@ -29,7 +29,7 @@ public class IndicatorServiceImpl implements IndicatorService {
 	private IndicatorMetricsMapper metricsMapper;
 
 	@Override
-	public List<IndicatorBo> getIndicators(Integer type) {
+	public IndicatorBo getIndicators(Integer type) {
 
 		List<Indicator> indicators = indicatorMapper.selectList(null);
 		List<IndicatorMetrics> metricsList = metricsMapper.selectList(null);
@@ -64,17 +64,7 @@ public class IndicatorServiceImpl implements IndicatorService {
 				}
 			}
 		});
-		// 防止无限循环
-		for (IndicatorBo child : first.getChildren()) {
-			for (IndicatorBo indicatorBo : child.getChildren()) {
-				for (IndicatorBo bo : indicatorBo.getChildren()) {
-					if (!bo.getChildren().isEmpty()){
-						bo.setChildren(Lists.newArrayList());
-					}
-				}
-			}
-		}
-		return first.getChildren();
+		return first;
 	}
 
 	@Override

@@ -31,8 +31,14 @@ public class EvalAlgorithm extends BaseTable {
     /**
      * 描述
      */
-    @ApiModelProperty("描述")
-    private String description;
+	@ApiModelProperty("基本原理")
+	private String description;
+
+	@ApiModelProperty("使用说明")
+	private String instructions;
+
+	@ApiModelProperty("运用优势")
+	private String advantage;
 
     /**
      * 格式化算法：1，匹配算法：2，评分算法：3，聚合算法：4

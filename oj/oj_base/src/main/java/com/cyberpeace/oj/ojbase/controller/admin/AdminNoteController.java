@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.ojbase.controller.admin;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
@@ -7,6 +9,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.ojbase.controller.req.AdminListNoteReq;
 import com.cyberpeace.oj.ojbase.controller.req.DeleteResourceReq;
@@ -28,7 +31,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * 管理注意Controller
@@ -70,6 +72,8 @@ public class AdminNoteController {
 
 	@Autowired
 	private IndicatorService indicatorService;
+
+	private String CHILDREN_KEY = "children";
 
 	/**
 	 * 列表
@@ -148,11 +152,21 @@ public class AdminNoteController {
 	 */
 	@ApiOperation("获取三级标签")
 	@GetMapping("/indicator")
-	public BaseRsp<List<IndicatorBo>> getIndicator(@ApiParam(value = "1: 2：", name = "type")Integer type) {
+	public BaseRsp<JSONArray> getIndicator(@ApiParam(value = "1:攻击 2：防御", name = "type")Integer type) {
 
-		List<IndicatorBo> indicatorBoList = indicatorService.getIndicators(type);
-
-		return new BaseRsp<>(indicatorBoList);
+		IndicatorBo first = indicatorService.getIndicators(type);
+		JSONObject res = JsonUtil.java2JsonObject(first);
+		for (Object c1 : res.getJSONArray(CHILDREN_KEY)) {
+			JSONObject level1 = (JSONObject) c1;
+			for (Object c2 : level1.getJSONArray(CHILDREN_KEY)) {
+				JSONObject level2 = (JSONObject) c2;
+				for (Object c3 : level2.getJSONArray(CHILDREN_KEY)) {
+					JSONObject level3 = (JSONObject) c3;
+					level3.remove(CHILDREN_KEY);
+				}
+			}
+		}
+		return new BaseRsp<>(res.getJSONArray(CHILDREN_KEY));
 	}
 
 

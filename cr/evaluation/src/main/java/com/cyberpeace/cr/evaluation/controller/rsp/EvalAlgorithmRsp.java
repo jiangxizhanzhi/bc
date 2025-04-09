@@ -36,8 +36,14 @@ public class EvalAlgorithmRsp {
 	/**
 	 * 描述
 	 */
-	@ApiModelProperty(value = "描述", required = false)
+	@ApiModelProperty("基本原理")
 	private String description;
+
+	@ApiModelProperty("使用说明")
+	private String instructions;
+
+	@ApiModelProperty("运用优势")
+	private String advantage;
 
 	/**
 	 * 类型

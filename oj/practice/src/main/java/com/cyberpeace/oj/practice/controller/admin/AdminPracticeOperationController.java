@@ -217,6 +217,8 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 		updateReq.validate();
 		PracticeOperation updateOperation = BeanUtils.copy(updateReq, PracticeOperation.class);
+		updateOperation.setAttack(updateReq.getAttackTag());
+		updateOperation.setDefense(updateReq.getDefenseTag());
 
 		Integer result = practiceOperationService.updateOperation(updateOperation,
 				updateReq.getTarget());

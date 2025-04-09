@@ -76,10 +76,10 @@ public class OperationAddReq implements Serializable, CustomValidate {
 	@ApiModelProperty("知识点")
 	private String knowledge;
 
-	@ApiModelProperty("攻击知识点")
+	@ApiModelProperty(name = "attack_tag", value = "攻击知识点")
 	private String attackTag;
 
-	@ApiModelProperty("防御知识点")
+	@ApiModelProperty(name = "defense_tag", value = "防御知识点")
 	private String defenseTag;
 
 	/**
@@ -279,7 +279,7 @@ public class OperationAddReq implements Serializable, CustomValidate {
 	public void setAttack_tag(String attackTag) {
 		this.attackTag = attackTag;
 	}
-	public void setDefense_tag(String attackTag) {
+	public void setDefense_tag(String defenseTag) {
 		this.defenseTag = defenseTag;
 	}
 

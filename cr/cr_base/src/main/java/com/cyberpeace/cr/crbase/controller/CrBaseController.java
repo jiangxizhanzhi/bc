@@ -54,7 +54,8 @@ public class CrBaseController {
 		List<CrConstantsConfig> constants = crConstantsService.getByType(type);
 		// 任务类型
 		if (type.equals(CrConstantsConfig.ConstantsType.MISSION_CATEGORY.getCode()) ||
-				type.equals(CrConstantsConfig.ConstantsType.TOOL_TYPE.getCode())) {
+				type.equals(CrConstantsConfig.ConstantsType.TOOL_TYPE.getCode())
+				|| type.equals(CrConstantsConfig.ConstantsType.ALGORITHM_APPLY_TYPE.getCode())) {
 			List<MissionCategoryRsp> rsp = StreamApiUtils.map(constants,
 					constant -> new MissionCategoryRsp(constant.getResourceId(),
 							constant.selectI18nName()));

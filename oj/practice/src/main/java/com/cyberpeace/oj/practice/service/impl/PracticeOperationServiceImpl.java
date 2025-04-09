@@ -43,6 +43,7 @@ import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
+import com.cyberpeace.oj.ojbase.service.IndicatorService;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
@@ -302,6 +303,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	 */
 	@Autowired
 	private PracticeOperationTargetService practiceOperationTargetService;
+
+	@Autowired
+	private IndicatorService indicatorService;
 
 	/**
 	 * 导出日志
@@ -607,6 +611,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		OperationBo operationBo = BeanUtils.copy(operation, OperationBo.class);
+		operationBo.setAttackTag(indicatorService.selectIndicators(operation.getAttack()));
+		operationBo.setDefenseTag(indicatorService.selectIndicators(operation.getDefense()));
 
 //		if (operation.getDynamicEnv() && StringUtils.isNotBlank(operation.getTopoId())) {
 //			JSONObject sceneConfig = remoteTopoService.getTopoById(operation.getTopoId());

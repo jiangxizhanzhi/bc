@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 理论新增请求体
@@ -86,6 +87,12 @@ public class TheoryAddReq implements Serializable {
 	 */
 	@ApiModelProperty("知识点")
 	private String knowledge;
+
+	@ApiModelProperty("攻击知识点")
+	private List<Integer> attackTag;
+
+	@ApiModelProperty("防御知识点")
+	private List<Integer> defenseTag;
 
 	/**
 	 * 选择

@@ -1,33 +1,34 @@
 package com.cyberpeace.oj.ojbase.controller.admin;
 
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.oj.ojbase.controller.req.DeleteResourceReq;
-import com.cyberpeace.oj.ojbase.controller.req.EvaluateNoteReq;
-import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
-import com.cyberpeace.oj.ojbase.dao.mapper.NoteEvaluateMapper;
-import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.ojbase.controller.req.AdminListNoteReq;
+import com.cyberpeace.oj.ojbase.controller.req.DeleteResourceReq;
+import com.cyberpeace.oj.ojbase.controller.req.EvaluateNoteReq;
+import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
+import com.cyberpeace.oj.ojbase.dao.mapper.NoteEvaluateMapper;
+import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
+import com.cyberpeace.oj.ojbase.service.IndicatorService;
 import com.cyberpeace.oj.ojbase.service.NoteService;
+import com.cyberpeace.oj.ojbase.service.bo.IndicatorBo;
 import com.cyberpeace.oj.ojbase.service.bo.NoteListBo;
 import com.cyberpeace.oj.ojbase.service.context.AdminNoteListQuery;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 管理注意Controller
@@ -40,7 +41,7 @@ import java.util.Date;
 @Api(tags = "oj-后台笔记相关api")
 @RestController
 @RequestMapping("/oj/admin/note")
-@RequiresAuthentication
+//@RequiresAuthentication
 public class AdminNoteController {
 
 	/**
@@ -66,6 +67,9 @@ public class AdminNoteController {
 	 */
 	@Autowired
 	private NoteEvaluateMapper noteEvaluateMapper;
+
+	@Autowired
+	private IndicatorService indicatorService;
 
 	/**
 	 * 列表
@@ -132,5 +136,24 @@ public class AdminNoteController {
 
 		return new BaseRsp<>(true);
 	}
+
+	/**
+	 * 指标
+	 *
+	 * @param type 类型
+	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see EvaluateNoteReq
+	 * @see EvaluateNoteReq
+	 */
+	@ApiOperation("获取三级标签")
+	@GetMapping("/indicator")
+	public BaseRsp<List<IndicatorBo>> getIndicator(@ApiParam(value = "1: 2：", name = "type")Integer type) {
+
+		List<IndicatorBo> indicatorBoList = indicatorService.getIndicators(type);
+
+		return new BaseRsp<>(indicatorBoList);
+	}
+
 
 }

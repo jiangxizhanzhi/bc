@@ -21,6 +21,7 @@ import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.oj.ojbase.controller.PublicController;
+import com.cyberpeace.oj.ojbase.service.IndicatorService;
 import com.cyberpeace.oj.practice.controller.req.*;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
@@ -119,6 +120,9 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 	@Autowired
 	private PracticeTheoryImportService practiceTheoryImportService;
 
+	@Autowired
+	private IndicatorService indicatorService;
+
 	/**
 	 * 新增
 	 *
@@ -136,6 +140,8 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 		PracticeTheory practiceTheory = BeanUtils.copy(theoryAddReq, PracticeTheory.class);
 		practiceTheory.setTitle(theoryAddReq.getContent());
+		practiceTheory.setAttack(JsonUtil.arrayToString(theoryAddReq.getAttackTag()));
+		practiceTheory.setDefense(JsonUtil.arrayToString(theoryAddReq.getDefenseTag()));
 
 		practiceTheory.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -183,6 +189,8 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);
 		PracticeTheory practiceTheory = BeanUtils.copy(theoryUpdateReq, PracticeTheory.class);
+		practiceTheory.setAttack(JsonUtil.arrayToString(theoryUpdateReq.getAttackTag()));
+		practiceTheory.setDefense(JsonUtil.arrayToString(theoryUpdateReq.getDefenseTag()));
 
 		int result = practiceTheoryService.updateTheory(practiceTheory, authContext);
 
@@ -210,6 +218,8 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(resourceId);
 		AdminTheoryBo theoryRes = BeanUtils.copy(practiceTheory, AdminTheoryBo.class);
 		theoryRes.setVideo(utilService.handlerFileUrl(practiceTheory.getVideo()));
+		theoryRes.setAttackTag(indicatorService.selectIndicators(practiceTheory.getAttack()));
+		theoryRes.setDefenseTag(indicatorService.selectIndicators(practiceTheory.getDefense()));
 
 		return new BaseRsp<>(theoryRes);
 	}

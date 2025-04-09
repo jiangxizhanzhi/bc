@@ -31,6 +31,7 @@ import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
+import com.cyberpeace.oj.ojbase.service.IndicatorService;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -122,6 +123,9 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
+
+	@Autowired
+	private IndicatorService indicatorService;
 
 	/**
 	 * 获取列表
@@ -224,6 +228,9 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		course.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
 		course.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
 		course.setCourseType(CommonConstant.ZERO);
+		course.setAttack(JsonUtil.arrayToString(addReq.getAttackTag()));
+		course.setDefense(JsonUtil.arrayToString(addReq.getDefenseTag()));
+
 
 		CourseCategory courseCategory = courseCategoryMapper.selectById(addReq.getCategoryId());
 		if (null == courseCategory) {
@@ -258,6 +265,8 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		Course course = BeanUtils.copy(updateReq, Course.class);
+		course.setAttack(JsonUtil.arrayToString(updateReq.getAttackTag()));
+		course.setDefense(JsonUtil.arrayToString(updateReq.getDefenseTag()));
 
 		Course courseRsp = courseService.updateCourse(userId, course);
 
@@ -290,6 +299,8 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		AdminCourseRes adminCourseRes = BeanUtils.copy(course, AdminCourseRes.class);
+		adminCourseRes.setAttackTag(indicatorService.selectIndicators(course.getAttack()));
+		adminCourseRes.setDefenseTag(indicatorService.selectIndicators(course.getDefense()));
 		adminCourseRes.setLogo(utilService.handlerFileUrl(course.getLogo()));
 		return new BaseRsp<>(adminCourseRes);
 	}

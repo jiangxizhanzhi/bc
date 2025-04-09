@@ -171,6 +171,8 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 		PracticeOperation addOperation = BeanUtils.copy(addReq, PracticeOperation.class);
 		addOperation.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+		addOperation.setAttack(JsonUtil.arrayToString(addReq.getAttackTag()));
+		addOperation.setDefense(JsonUtil.arrayToString(addReq.getDefenseTag()));
 
 		Integer result = practiceOperationService.addPracticeOperation(addOperation, addReq.getTarget(), authContext);
 
@@ -217,6 +219,8 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 		updateReq.validate();
 		PracticeOperation updateOperation = BeanUtils.copy(updateReq, PracticeOperation.class);
+		updateOperation.setAttack(JsonUtil.arrayToString(updateReq.getAttackTag()));
+		updateOperation.setDefense(JsonUtil.arrayToString(updateReq.getDefenseTag()));
 
 		Integer result = practiceOperationService.updateOperation(updateOperation,
 				updateReq.getTarget());

@@ -76,6 +76,12 @@ public class OperationAddReq implements Serializable, CustomValidate {
 	@ApiModelProperty("知识点")
 	private String knowledge;
 
+	@ApiModelProperty("攻击知识点")
+	private List<Integer> attackTag;
+
+	@ApiModelProperty("防御知识点")
+	private List<Integer> defenseTag;
+
 	/**
 	 * 难度
 	 *

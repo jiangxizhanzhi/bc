@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 课程新增请求体
@@ -85,6 +86,12 @@ public class CourseAddReq implements Serializable {
 	 */
 	@ApiModelProperty("等级,type=9")
 	private Integer rank;
+
+	@ApiModelProperty("攻击知识点")
+	private List<Integer> attackTag;
+
+	@ApiModelProperty("防御知识点")
+	private List<Integer> defenseTag;
 
 	/**
 	 * 是否公开

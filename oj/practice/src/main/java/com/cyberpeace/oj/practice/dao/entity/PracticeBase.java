@@ -116,6 +116,12 @@ public class PracticeBase extends BaseTable implements Serializable {
 	@ApiModelProperty("知识点")
 	private String knowledge;
 
+	@ApiModelProperty("攻击知识点")
+	private String attack;
+
+	@ApiModelProperty("防御知识点")
+	private String defense;
+
 	/**
 	 * 分值
 	 *

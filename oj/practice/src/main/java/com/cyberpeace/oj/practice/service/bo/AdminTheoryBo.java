@@ -1,11 +1,13 @@
 package com.cyberpeace.oj.practice.service.bo;
 
+import com.cyberpeace.oj.ojbase.dao.entity.Indicator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 管理理论博
@@ -87,6 +89,12 @@ public class AdminTheoryBo implements Serializable {
 	 */
 	@ApiModelProperty("知识点")
 	private String knowledge;
+
+	@ApiModelProperty("攻击知识点")
+	private List<Indicator> attackTag;
+
+	@ApiModelProperty("防御知识点")
+	private List<Indicator> defenseTag;
 
 	/**
 	 * 选择

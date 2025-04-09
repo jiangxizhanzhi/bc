@@ -94,8 +94,14 @@ public class Course extends AuthTable {
      *
      * @see Integer
      */
-    @ApiModelProperty("等级")
-    private Integer rank;
+	@ApiModelProperty("等级")
+	private Integer rank;
+
+	@ApiModelProperty("攻击知识点")
+	private String attack;
+
+	@ApiModelProperty("防御知识点")
+	private String defense;
 
     /**
      * 创造用户id

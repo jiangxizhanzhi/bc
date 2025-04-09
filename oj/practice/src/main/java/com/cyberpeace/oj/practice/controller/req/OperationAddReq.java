@@ -276,6 +276,14 @@ public class OperationAddReq implements Serializable, CustomValidate {
 		this.courseCategoryId = courseCategoryId;
 	}
 
+	public void setAttack_tag(String attackTag) {
+		this.attackTag = attackTag;
+	}
+	public void setDefense_tag(String attackTag) {
+		this.defenseTag = defenseTag;
+	}
+
+
 	@Override
 	public void validate() {
 		if (null != dynamicFlag) {

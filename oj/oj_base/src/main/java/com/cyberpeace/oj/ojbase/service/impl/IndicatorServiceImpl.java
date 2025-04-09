@@ -33,9 +33,10 @@ public class IndicatorServiceImpl implements IndicatorService {
 
 		List<Indicator> indicators = indicatorMapper.selectList(null);
 		List<IndicatorMetrics> metricsList = metricsMapper.selectList(null);
-		Map<Integer, Integer> parentMap = Maps.newHashMap();
+		Map<Integer, List<Integer>> parentMap = Maps.newHashMap();
 		for (IndicatorMetrics metrics : metricsList) {
-			parentMap.put(metrics.getIndicatorId(), metrics.getParentId());
+			parentMap.putIfAbsent(metrics.getIndicatorId(), Lists.newArrayList());
+			parentMap.get(metrics.getIndicatorId()).add(metrics.getParentId());
 		}
 		Map<Integer, IndicatorBo> indicatorMap = Maps.newLinkedHashMap();
 		IndicatorBo first = new IndicatorBo();
@@ -50,14 +51,29 @@ public class IndicatorServiceImpl implements IndicatorService {
 			indicatorMap.put(indicator.getId(), indicatorBo);
 		}
 		indicatorMap.forEach((id, indicatorBo) -> {
-			Integer parentId = parentMap.get(id);
-			if (parentId != null) {
-				IndicatorBo parent = indicatorMap.get(parentId);
-				if (parent != null) {
-					parent.getChildren().add(indicatorBo);
+			List<Integer> parentIds = parentMap.get(id);
+			if (parentIds != null) {
+				for (Integer parentId : parentIds) {
+					if (Objects.equals(parentId, id)){
+						continue;
+					}
+					IndicatorBo parent = indicatorMap.get(parentId);
+					if (parent != null) {
+						parent.getChildren().add(indicatorBo);
+					}
 				}
 			}
 		});
+		// 防止无限循环
+		for (IndicatorBo child : first.getChildren()) {
+			for (IndicatorBo indicatorBo : child.getChildren()) {
+				for (IndicatorBo bo : indicatorBo.getChildren()) {
+					if (!bo.getChildren().isEmpty()){
+						bo.setChildren(Lists.newArrayList());
+					}
+				}
+			}
+		}
 		return first.getChildren();
 	}
 

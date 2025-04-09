@@ -611,8 +611,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		OperationBo operationBo = BeanUtils.copy(operation, OperationBo.class);
-		operationBo.setAttackTag(indicatorService.selectIndicators(operation.getAttack()));
-		operationBo.setDefenseTag(indicatorService.selectIndicators(operation.getDefense()));
+		operationBo.setAttackTag(indicatorService.parseIds(operation.getAttack()));
+		operationBo.setDefenseTag(indicatorService.parseIds(operation.getDefense()));
 
 //		if (operation.getDynamicEnv() && StringUtils.isNotBlank(operation.getTopoId())) {
 //			JSONObject sceneConfig = remoteTopoService.getTopoById(operation.getTopoId());

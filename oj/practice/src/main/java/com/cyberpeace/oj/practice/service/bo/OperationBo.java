@@ -1,9 +1,8 @@
 package com.cyberpeace.oj.practice.service.bo;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.oj.ojbase.dao.entity.Indicator;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -67,9 +66,9 @@ public class OperationBo extends PracticeOperation {
 
 
 	@ApiModelProperty("攻击知识点")
-	private List<Indicator> attackTag;
+	private JSONArray attackTag;
 
 	@ApiModelProperty("防御知识点")
-	private List<Indicator> defenseTag;
+	private JSONArray defenseTag;
 
 }

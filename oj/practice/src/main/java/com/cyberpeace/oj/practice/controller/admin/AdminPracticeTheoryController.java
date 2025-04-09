@@ -218,8 +218,8 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(resourceId);
 		AdminTheoryBo theoryRes = BeanUtils.copy(practiceTheory, AdminTheoryBo.class);
 		theoryRes.setVideo(utilService.handlerFileUrl(practiceTheory.getVideo()));
-		theoryRes.setAttackTag(indicatorService.selectIndicators(practiceTheory.getAttack()));
-		theoryRes.setDefenseTag(indicatorService.selectIndicators(practiceTheory.getDefense()));
+		theoryRes.setAttackTag(indicatorService.parseIds(practiceTheory.getAttack()));
+		theoryRes.setDefenseTag(indicatorService.parseIds(practiceTheory.getDefense()));
 
 		return new BaseRsp<>(theoryRes);
 	}

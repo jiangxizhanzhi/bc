@@ -33,6 +33,9 @@ public class EvalListQuery extends PageReqBase {
 	@ApiModelProperty(value = "类型")
 	private Integer type;
 
+	@ApiModelProperty(value = "算法应用类型", required = false)
+	private String apply_type;
+
 	@ApiModelProperty(value = "算法语言 0:python,1:java")
 	private Integer algorithm_language;
 

@@ -49,6 +49,9 @@
     </select>
 
     <select id="listEvalAlgorithm" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm">
+        <if test="listQuery.apply_type != null and listQuery.apply_type != ''">
+            <bind name="search" value="'%' + listQuery.apply_type + '%'"/>
+        </if>
         select * from cr_eval_algorithm
         <where>
             `state` = 0
@@ -58,6 +61,9 @@
             </if>
             <if test="listQuery.type != null and listQuery.type != ''">
                 and `type` = #{listQuery.type}
+            </if>
+            <if test="listQuery.apply_type != null and listQuery.apply_type != ''">
+                and `apply_type` like #{search}
             </if>
             <if test="listQuery.algorithm_language != null">
                 and `algorithm_language` = #{listQuery.algorithm_language}

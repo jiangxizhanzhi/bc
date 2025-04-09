@@ -299,8 +299,8 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		AdminCourseRes adminCourseRes = BeanUtils.copy(course, AdminCourseRes.class);
-		adminCourseRes.setAttackTag(indicatorService.selectIndicators(course.getAttack()));
-		adminCourseRes.setDefenseTag(indicatorService.selectIndicators(course.getDefense()));
+		adminCourseRes.setAttackTag(indicatorService.parseIds(course.getAttack()));
+		adminCourseRes.setDefenseTag(indicatorService.parseIds(course.getDefense()));
 		adminCourseRes.setLogo(utilService.handlerFileUrl(course.getLogo()));
 		return new BaseRsp<>(adminCourseRes);
 	}

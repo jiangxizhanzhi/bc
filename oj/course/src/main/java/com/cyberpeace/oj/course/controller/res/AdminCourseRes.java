@@ -1,13 +1,13 @@
 package com.cyberpeace.oj.course.controller.res;
 
-import com.cyberpeace.oj.ojbase.dao.entity.Indicator;
+import com.alibaba.fastjson.JSONArray;
+import com.mysql.cj.xdevapi.JsonArray;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * 管理课程结果
@@ -96,10 +96,10 @@ public class AdminCourseRes implements Serializable {
 	private Integer rank;
 
 	@ApiModelProperty("攻击知识点")
-	private List<Indicator> attackTag;
+	private JSONArray attackTag;
 
 	@ApiModelProperty("防御知识点")
-	private List<Indicator> defenseTag;
+	private JSONArray defenseTag;
 
 	/**
 	 * 课程类型

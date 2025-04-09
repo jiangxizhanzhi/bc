@@ -40,6 +40,9 @@ public class EvalAlgorithm extends BaseTable {
 	@ApiModelProperty("运用优势")
 	private String advantage;
 
+    @ApiModelProperty("算法应用类型")
+    private String applyType;
+
     /**
      * 格式化算法：1，匹配算法：2，评分算法：3，聚合算法：4
      */

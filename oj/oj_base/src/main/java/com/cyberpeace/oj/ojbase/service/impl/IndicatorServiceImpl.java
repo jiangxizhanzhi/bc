@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.ojbase.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.ojbase.dao.entity.Indicator;
@@ -11,6 +12,7 @@ import com.cyberpeace.oj.ojbase.service.bo.IndicatorBo;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,8 +70,7 @@ public class IndicatorServiceImpl implements IndicatorService {
 	}
 
 	@Override
-	public List<Indicator> selectIndicators(String attackIdJson) {
-		List<Integer> ids = JsonUtil.toJsonObjectArray(attackIdJson, Integer.class);
+	public List<Indicator> selectIndicators(List<Integer> ids) {
 		if (ids.isEmpty()) {
 			return Lists.newArrayList();
 		}
@@ -83,5 +84,13 @@ public class IndicatorServiceImpl implements IndicatorService {
 			}
 		}
 		return res;
+	}
+
+	@Override
+	public JSONArray parseIds(String attackIdJson) {
+		if (StringUtils.isBlank(attackIdJson)){
+			return new JSONArray();
+		}
+		return JsonUtil.stringToArray(attackIdJson);
 	}
 }

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public interface EvalAlgorithmMapper extends BaseMapper<EvalAlgorithm> {
 	 * @param type 类型
 	 * @return {@code List<EvalAlgorithm> }
 	 */
-	List<EvalAlgorithm> selectByType(String type);
+	List<EvalAlgorithm> selectByType(@Param("type") String type);
 
 	/**
 	 * 存在由名称

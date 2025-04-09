@@ -45,6 +45,9 @@ public class EvalAlgorithmRsp {
 	@ApiModelProperty("运用优势")
 	private String advantage;
 
+	@ApiModelProperty("算法应用类型")
+	private List<String> applyType;
+
 	/**
 	 * 类型
 	 */

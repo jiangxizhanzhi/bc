@@ -23,6 +23,9 @@ public class EvalAlgorithmListReq extends PageReqBase implements Serializable {
 	@ApiModelProperty(value = "算法类型", required = false)
 	private Integer type;
 
+	@ApiModelProperty(value = "算法应用类型", required = false)
+	private String apply_type;
+
 	@ApiModelProperty(value = "算法语言 0:python,1:java")
 	private Integer algorithm_language;
 }

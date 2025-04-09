@@ -88,10 +88,10 @@ public class CourseAddReq implements Serializable {
 	private Integer rank;
 
 	@ApiModelProperty("攻击知识点")
-	private List<Integer> attackTag;
+	private List<List<Integer>> attackTag;
 
 	@ApiModelProperty("防御知识点")
-	private List<Integer> defenseTag;
+	private List<List<Integer>> defenseTag;
 
 	/**
 	 * 是否公开

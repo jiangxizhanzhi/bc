@@ -109,6 +109,7 @@ public class EvalAlgorithmAdminController {
 		evalAlgorithm.setParamsNum(req.getParams().size());
 		evalAlgorithm.setParams(JsonUtil.arrayToString(req.getParams()));
 		evalAlgorithm.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+		evalAlgorithm.setApplyType(JsonUtil.arrayToString(req.getApplyType()));
 
 		return evalAlgorithm;
 	}
@@ -271,6 +272,7 @@ public class EvalAlgorithmAdminController {
 		evalAlgorithmRsp.setParams(
 				JsonUtil.toJsonObjectArray(evalAlgorithm.getParams(), AlgorithmParamContext.class));
 		evalAlgorithmRsp.setParamsNum(evalAlgorithmRsp.getParams().size());
+		evalAlgorithmRsp.setApplyType(JsonUtil.toJsonObjectArray(evalAlgorithm.getApplyType(), String.class));
 
 		return new BaseRsp(evalAlgorithmRsp);
 	}
@@ -358,6 +360,8 @@ public class EvalAlgorithmAdminController {
 			evalAlgorithmRsp.setParams(JsonUtil.toJsonObjectArray(evalAlgorithm.getParams(),
 					AlgorithmParamContext.class));
 			evalAlgorithmRsp.setParamsNum(evalAlgorithmRsp.getParams().size());
+			evalAlgorithmRsp.setApplyType(JsonUtil.toJsonObjectArray(evalAlgorithm.getApplyType(),
+					String.class));
 
 			return evalAlgorithmRsp;
 		});

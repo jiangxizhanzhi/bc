@@ -11,13 +11,11 @@ import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
-import com.cyberpeace.oj.ojbase.constant.Difficulty;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
-import com.cyberpeace.oj.ojbase.constant.SceneShare;
+import com.cyberpeace.oj.ojbase.constant.*;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
+import com.cyberpeace.oj.practice.dao.mapper.CourseDirectionMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeOperationImportService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
@@ -88,6 +86,9 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 	 */
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
+
+	@Autowired
+	private CourseDirectionMapper courseDirectionMapper;
 
 	/**
 	 * 实践理论Service
@@ -340,6 +341,12 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 					operationFilePath, JsonUtil.toJsonString(operationData));
 			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, operationFilePath, "方向不能为空");
 		}
+		String directionId = courseDirectionMapper.selectByName(categoryName);
+		if (StringUtils.isBlank(directionId)) {
+			directionId = IDGeneratorUtil.getID();
+			courseDirectionMapper.create(categoryName, directionId);
+		}
+		operation.setCourseCategoryId(directionId);
 		String categoryId = practiceCategoryMapper
 				.selectByName(PracticeCategory.PracticeType.OPERATION.getCode(), categoryName);
 		if (StringUtils.isBlank(categoryId)) {
@@ -389,6 +396,14 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, operationFilePath, "难度不在范围" + listDesc.toString());
 		}
 		operation.setDifficulty(difficulty);
+
+		// 类型处理
+		String typeStr = (String) operationData.remove("type");
+		Integer type = EnumUtils.getEnumCodeByDesc(typeStr, OperationType.class);
+		if (type == null) {
+			type = OperationType.OTHER.getCode();
+		}
+		operation.setType(type);
 
 		operation.setScore(CommonConstant.HUNDRED.doubleValue());
 		operation.setResourceId(IDGeneratorUtil.getID());

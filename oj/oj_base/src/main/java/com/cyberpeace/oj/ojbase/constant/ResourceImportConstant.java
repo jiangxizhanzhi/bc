@@ -165,7 +165,7 @@ public interface ResourceImportConstant {
 	 *
 	 * @see String
 	 */
-	String OPERATION_PRACTICE_DATA_MAPPING = "{\"标题\":\"title\", \"作者\":\"create_user_id\", \"方向\":\"category_id\", \"知识点\":\"knowledge\", \"难度\":\"difficulty\", \"内容\":\"content\", \"是否可共享\":\"scene_share_mode\", \"FLAG\":\"answer\"}";
+	String OPERATION_PRACTICE_DATA_MAPPING = "{\"标题\":\"title\", \"作者\":\"create_user_id\", \"方向\":\"category_id\", \"类型\":\"type\", \"知识点\":\"knowledge\", \"难度\":\"difficulty\", \"内容\":\"content\", \"是否可共享\":\"scene_share_mode\", \"FLAG\":\"answer\"}";
 
 	/**
 	 * 内置导入超级管理员编号

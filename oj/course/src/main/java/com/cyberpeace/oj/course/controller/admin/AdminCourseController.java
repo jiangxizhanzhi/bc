@@ -49,7 +49,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import java.io.File;
 import java.util.List;
 
 /**
@@ -405,15 +404,15 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	 */
 	@ApiOperation("后台课程数据导出")
 	@GetMapping("/batch_dumps")
-	public BaseRsp<Boolean> exportCourse(
+	public BaseRsp<String> exportCourse(
 			@ApiParam(name = "ids",
 					value = "课程编号") @RequestParam("ids") @NotEmpty List<String> courseIds,
 			HttpServletResponse response) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 		String zipPath = courseService.dumpCourse(courseIds, authContext);
-		FileUtil.setResponse(new File(zipPath), true, response);
-		return new BaseRsp(Boolean.TRUE);
+//		FileUtil.setResponse(new File(zipPath), true, response);
+		return new BaseRsp<>(zipPath);
 	}
 
 	/**

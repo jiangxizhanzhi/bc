@@ -1,11 +1,11 @@
 package com.cyberpeace.cr.crbase.controller;
 
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.cr.crbase.controller.req.FilePathReq;
 import org.apache.shiro.authc.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -56,5 +56,12 @@ public class CrNoAuthController {
 			throw new AuthenticationException();
 		}
 		return new BaseRsp();
+	}
+
+	@ApiOperation("删除导出文件")
+	@DeleteMapping("/file")
+	public BaseRsp<Boolean> deleteExportFile(@RequestBody FilePathReq req) {
+		FileUtil.deleteDir(req.getPath(), true);
+		return new BaseRsp<>(true);
 	}
 }

@@ -241,6 +241,9 @@ public class EvalSceneMapController {
 
 			if(null != imagesByIdVO.getExtGateway()){
 				AccessProtocol consoleConfig = imagesByIdVO.getExtGateway().getConsoleConfig();
+				if(consoleConfig == null){
+					consoleConfig = new AccessProtocol();
+				}
 				JSONObject first = new JSONObject();
 				first.put("protocol", consoleConfig.getProtocol());
 				first.put("password", consoleConfig.getPassword());

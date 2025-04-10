@@ -1,6 +1,8 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -533,7 +535,8 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 			PracticeTheoryRef theoryRef = new PracticeTheoryRef();
 			practiceTheory.setScore(practiceMap.get(practiceTheory.getResourceId()).getScore());
-			theoryRef.setSnapshot(JsonUtil.toJsonString(practiceTheory));
+//			theoryRef.setSnapshot(JsonUtil.toJsonString(practiceTheory));
+			theoryRef.setSnapshot(JSON.toJSONString(practiceTheory, SerializerFeature.WriteMapNullValue));
 			theoryRef.setPaperId(paper.getResourceId());
 			theoryRef.setOriginId(practiceTheory.getResourceId());
 

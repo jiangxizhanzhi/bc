@@ -641,8 +641,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		// 数据校验
 		practiceValidateHandler.validateTheoryContentExist("",
 				practiceTheory.getContent());
-		practiceValidateHandler.validateCategoryType(practiceTheory.getCategoryId(),
-				PracticeCategory.PracticeType.THEORY.getCode());
+//		practiceValidateHandler.validateCategoryType(practiceTheory.getCategoryId(),
+//				PracticeCategory.PracticeType.THEORY.getCode());
 //		PracticeSet practiceSet = practiceValidateHandler.validateSetType(
 //				practiceTheory.getPracticeSetId(), PracticeSet.PracticeType.THEORY.getCode());
 		practiceValidateHandler.validateFillBlankKeyword(practiceTheory.getTheoryType() ,practiceTheory.getKeyword());
@@ -678,8 +678,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		// 数据校验
 		practiceValidateHandler.validateTheoryContentExistExcludeItself("",
 				practiceTheory.getContent(), practiceTheory);
-		practiceValidateHandler.validateCategoryType(practiceTheory.getCategoryId(),
-				PracticeCategory.PracticeType.THEORY.getCode());
+//		practiceValidateHandler.validateCategoryType(practiceTheory.getCategoryId(),
+//				PracticeCategory.PracticeType.THEORY.getCode());
 //		practiceValidateHandler.validateSetType(practiceTheory.getPracticeSetId(),
 //				PracticeSet.PracticeType.THEORY.getCode());
 		practiceValidateHandler.validateFillBlankKeyword(practiceTheory.getTheoryType() ,practiceTheory.getKeyword());

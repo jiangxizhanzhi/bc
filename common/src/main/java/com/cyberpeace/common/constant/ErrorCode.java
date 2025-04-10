@@ -436,4 +436,11 @@ public interface ErrorCode {
      * @see String
      */
     String BUILT_IN = "104024";
+
+    /**
+     * 文件流错误
+     *
+     * @see String
+     */
+    String FILE_STREAM_ERROR = "104025";
 }

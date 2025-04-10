@@ -306,6 +306,44 @@ public class FileUtil {
 	}
 
 	/**
+	 * @Author 陈卓
+	 * 生成文件响应
+	 * @param file 返回的文件
+	 * @param delete 是否删除本地文件
+	 * @param response 响应
+	 */
+	public static void setZipStream(File file, Boolean delete, HttpServletResponse response) {
+
+		// 设置响应头
+		response.setContentType("application/zip");
+		response.setContentLength((int) file.length());
+		response.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
+
+		try (FileInputStream fis = new FileInputStream(file);
+				OutputStream os = response.getOutputStream()) {
+			response.setContentType("application/zip");
+			response.setContentLength((int) file.length());
+			response.setHeader("Content-disposition", "attachment;filename="
+					+ URLEncoder.encode(file.getName(), "UTF-8").replaceAll("\\+", "%20"));
+			// 清空response
+			response.reset();
+
+			byte[] buffer = new byte[4096];
+			int bytesRead;
+			while ((bytesRead = fis.read(buffer)) != -1) {
+				os.write(buffer, 0, bytesRead);
+			}
+		} catch (IOException e) {
+			log.error("Error occurred while streaming file: {}", e.getMessage());
+			throw new BusinessException(ErrorCode.FILE_STREAM_ERROR);
+		} finally {
+			if (delete && file.exists()) {
+				deleteDir(file);
+			}
+		}
+	}
+
+	/**
 	 * 递归删除文件夹
 	 * @param dir 要删除的文件夹
 	 * @return true: 删除成功； false: 删除失败

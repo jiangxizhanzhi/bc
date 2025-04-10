@@ -49,6 +49,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -411,7 +412,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 		String zipPath = courseService.dumpCourse(courseIds, authContext);
-//		FileUtil.setResponse(new File(zipPath), true, response);
+		FileUtil.setZipStream(new File(zipPath), true, response);
 		return new BaseRsp<>(zipPath);
 	}
 

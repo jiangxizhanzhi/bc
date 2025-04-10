@@ -314,11 +314,6 @@ public class FileUtil {
 	 */
 	public static void setZipStream(File file, Boolean delete, HttpServletResponse response) {
 
-		// 设置响应头
-		response.setContentType("application/zip");
-		response.setContentLength((int) file.length());
-		response.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
-
 		try (FileInputStream fis = new FileInputStream(file);
 				OutputStream os = response.getOutputStream()) {
 			response.setContentType("application/zip");

@@ -338,7 +338,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 			throw new BusinessException(ErrorCode.BLANK_ID);
 		}
 		File dumpFile = practiceTheoryService.dumpBatch(ids);
-		FileUtil.setResponse(dumpFile, true, response);
+		FileUtil.setZipStream(dumpFile, true, response);
 		return new BaseRsp(Boolean.TRUE);
 	}
 

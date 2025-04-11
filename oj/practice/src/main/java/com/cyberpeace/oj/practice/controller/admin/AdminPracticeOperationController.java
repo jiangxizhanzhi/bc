@@ -540,7 +540,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 			throw new BusinessException(ErrorCode.BLANK_ID);
 		}
 		File dumpFile = practiceOperationService.dumpBatch(ids);
-		FileUtil.setResponse(dumpFile, true, response);
+		FileUtil.setZipStream(dumpFile, true, response);
 		return new BaseRsp(Boolean.TRUE);
 	}
 

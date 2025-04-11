@@ -92,7 +92,7 @@ public class ToolController {
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<String> update(@RequestBody @Validated ToolUpdateReq toolupdateReq) {
 		Tool tool = BeanUtils.copy(toolupdateReq, Tool.class);
-		toolService.validateEditToolNameExist(tool);
+		toolService.validateEditToolNameExistExceptSelf(tool);
 		toolService.updateById(tool);
 
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TOOL,

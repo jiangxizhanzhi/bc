@@ -718,8 +718,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
     }
 
     @Override
-    public void addLoadResult(JSONObject addReq) {
-        HttpClientUtil.post(ADD_LOAD_RESULT, addReq, Boolean.class);
+    public String addLoadResult(JSONObject addReq) {
+        return HttpClientUtil.post(ADD_LOAD_RESULT, addReq, String.class);
     }
 
     @Override

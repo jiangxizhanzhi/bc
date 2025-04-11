@@ -308,14 +308,15 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 
     @Override
     @Transactional
-    public void addLoadExecutionResult(EvalLoadResultAddReq addReq) {
+    public String addLoadExecutionResult(EvalLoadResultAddReq addReq) {
+        String pk;
         JSONObject scene = remoteSceneService.getById(addReq.getSceneId(), null);
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
             String json = objectMapper.writeValueAsString(addReq);
             JSONObject addReqJson = JSON.parseObject(json);
-            remoteSceneService.addLoadResult(addReqJson);
+            pk = remoteSceneService.addLoadResult(addReqJson);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -323,6 +324,7 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
         if ("1".equals(addReq.getSource())) {
             sendAttackData(addReq, scene);
         }
+        return pk;
     }
 
     @Override

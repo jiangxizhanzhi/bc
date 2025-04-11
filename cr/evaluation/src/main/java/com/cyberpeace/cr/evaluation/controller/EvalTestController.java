@@ -291,9 +291,9 @@ public class EvalTestController {
 
 	@ApiOperation("添加载荷执行结果")
 	@PostMapping("/addLoadExecutionResult")
-	public BaseRsp<Boolean> addLoadExecutionResult(@RequestBody EvalLoadResultAddReq addReq) {
-		evalStepService.addLoadExecutionResult(addReq);
-		return new BaseRsp<>(Boolean.TRUE);
+	public BaseRsp<String> addLoadExecutionResult(@RequestBody EvalLoadResultAddReq addReq) {
+		String pk = evalStepService.addLoadExecutionResult(addReq);
+		return new BaseRsp<>(pk);
 	}
 
 	@ApiOperation("修改载荷执行结果")

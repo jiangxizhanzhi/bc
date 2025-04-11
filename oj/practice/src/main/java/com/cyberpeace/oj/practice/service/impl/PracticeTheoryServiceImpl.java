@@ -434,6 +434,23 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	@Override
+	public File dumpBatchSlim(List<String> ids) {
+		String destDir = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID();
+		List<PracticeTheory> practiceTheories = practiceTheoryMapper.selectBatchIds(ids);
+		
+		TheoryDumpSlimBo bo = new TheoryDumpSlimBo();
+		bo.setTheoryList(ListUtil.washBaseTable(practiceTheories));
+
+		String dataPath = destDir + File.separatorChar + ResourceImportConstant.DATA_JSON;
+		FileUtil.writeToDestFile(JsonUtil.toJsonString(bo), dataPath);
+
+		// 压缩当前文件夹
+		String zipDest = ZipUtil.toZipDest(destDir, AttachmentPath.OTHER.getDesc());
+		FileUtil.deleteDir(destDir, true);
+		return new File(zipDest);
+	}
+
+	@Override
 	public Boolean loadBatch(String realPath, String userId) {
 		String destPath = realPath.substring(0, realPath.lastIndexOf(CommonConstant.PERIOD));
 		ZipUtil.unzipToDest(realPath, destPath);
@@ -458,6 +475,24 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		this.saveBatch(theories);
 
+		return true;
+	}
+
+	@Override
+	public Boolean loadBatchSlim(String realPath, String userId) {
+		String destPath = realPath.substring(0, realPath.lastIndexOf(CommonConstant.PERIOD));
+		ZipUtil.unzipToDest(realPath, destPath);
+		String dataPath = destPath + File.separatorChar + ResourceImportConstant.DATA_JSON;
+		String data = FileUtil.getContent(new File(dataPath));
+		
+		TheoryDumpSlimBo bo = JsonUtil.toJsonObject(data, TheoryDumpSlimBo.class);
+		List<PracticeTheory> theoryList = bo.getTheoryList();
+		theoryList.forEach(theory -> {
+			theory.setCreateUserId(userId);
+		});
+		this.saveOrUpdateBatch(theoryList);
+		FileUtil.deleteDir(destPath, true);
+		FileUtil.deleteDir(realPath, true);
 		return true;
 	}
 

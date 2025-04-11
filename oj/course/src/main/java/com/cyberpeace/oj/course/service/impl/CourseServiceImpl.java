@@ -806,8 +806,45 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		FileUtil.deleteDir(destPath, true);
 		return zipPath;
 	}
+	@Override
+	public String dumpCourseSlim(List<String> courseIds, AuthContext authContext) {
+		List<Course> courseList = StreamApiUtils.map(courseIds,
+				courseId -> courseValidateHandler.validateCourseExist(courseId));
+		// 创建文件夹
+		String destPath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID();
+		List<CourseLesson> lessonListAll = Lists.newArrayList();
+		List<LessonConfig> configListAll = Lists.newArrayList();
+		List<PracticeTheoryRef> theoryRefsAll = Lists.newArrayList();
+		for (Course course : courseList) {
+			course.setCreateUserId(null);
+			List<CourseLesson> courseLessonList = courseLessonMapper
+					.selectByCourse(course.getResourceId(), authContext.getIsWeb());
+			for (CourseLesson lesson : courseLessonList) {
+				lesson.setCreateUserId(null);
+				List<PracticeTheoryRef> theoryRefs = practiceTheoryRefMapper.selectRefByPaper(lesson.getPaperId());
+				theoryRefsAll.addAll(theoryRefs);
+			}
+			lessonListAll.addAll(courseLessonList);
+			List<LessonConfig> configList = lessonConfigMapper.selectByCourse(course.getResourceId());
+			configListAll.addAll(configList);
+		}
+		CourseSlimDumpBo bo = new CourseSlimDumpBo();
+		bo.setCourseList(ListUtil.washBaseTable(courseList));
+		bo.setLessonList(ListUtil.washBaseTable(lessonListAll));
+		bo.setConfigList(ListUtil.washBaseTable(configListAll));
+		bo.setRefList(ListUtil.washBaseTable(theoryRefsAll));
 
-    /**
+		// 数据写入
+		String dataPath = destPath + File.separatorChar + ResourceImportConstant.DATA_JSON;
+		FileUtil.writeToDestFile(JsonUtil.toJsonString(bo), dataPath);
+
+		// 文件压缩
+		String zipPath = ZipUtil.toZipDest(destPath, AttachmentPath.OTHER.getDesc());
+		FileUtil.deleteDir(destPath, true);
+		return zipPath;
+	}
+
+	/**
      * 载荷课程
      *
      * @param realPath    实路
@@ -906,6 +943,52 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 				return saveOrUpdateBatch(courseList);
 			}
 		});
+	}
+
+	@Override
+	public Boolean loadCourseSlim(String realPath, AuthContext authContext) {
+		// 文件解压
+		String destFilePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID();
+		ZipUtil.unzipToDest(realPath, destFilePath);
+
+		// 文件数据读取
+		String dataPath = destFilePath + File.separatorChar + ResourceImportConstant.DATA_JSON;
+		String content = FileUtil.getContent(new File(dataPath));
+		CourseSlimDumpBo bo = JsonUtil.toJsonObject(content, CourseSlimDumpBo.class);
+
+		List<Course> courseList = bo.getCourseList();
+		List<CourseLesson> lessonList = bo.getLessonList();
+		List<LessonConfig> configList = bo.getConfigList();
+		List<PracticeTheoryRef> refList = bo.getRefList();
+		String userId = authContext.getUserId();
+		for (Course course : courseList) {
+			course.setCreateUserId(userId);
+		}
+		for (CourseLesson lesson : lessonList) {
+			lesson.setCreateUserId(userId);
+		}
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				if(CollectionUtils.isNotEmpty(courseList)){
+					saveOrUpdateBatch(courseList);
+				}
+				if(CollectionUtils.isNotEmpty(lessonList)){
+					courseLessonService.saveOrUpdateBatch(lessonList);
+				}
+				if(CollectionUtils.isNotEmpty(configList)){
+					lessonConfigService.saveOrUpdateBatch(configList);
+				}
+				if(CollectionUtils.isNotEmpty(refList)){
+					practiceTheoryRefService.saveOrUpdateBatch(refList);
+				}
+			}
+		});
+		FileUtil.deleteDir(destFilePath, true);
+		FileUtil.deleteDir(realPath, true);
+
+		return true;
 	}
 
     /**
@@ -1336,6 +1419,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 				.convert(this::transferToBo);
 		return PageUtil.getListResult(webBoIPage);
 	}
+
+
 
     /**
      * 数据格式转换

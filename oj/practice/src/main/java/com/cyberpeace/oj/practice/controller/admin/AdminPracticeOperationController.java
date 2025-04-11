@@ -539,7 +539,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		if (CollectionUtils.isEmpty(ids)) {
 			throw new BusinessException(ErrorCode.BLANK_ID);
 		}
-		File dumpFile = practiceOperationService.dumpBatch(ids);
+		File dumpFile = practiceOperationService.dumpBatchSlim(ids);
 		FileUtil.setZipStream(dumpFile, true, response);
 		return new BaseRsp(Boolean.TRUE);
 	}
@@ -564,7 +564,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		// 文件加载
 		Boolean result;
 		try {
-			result = practiceOperationService.loadBatch(realPath, UserInfoContext.getUserContext().getUserId());
+			result = practiceOperationService.loadBatchSlim(realPath, UserInfoContext.getUserContext().getUserId());
 		} catch (Exception e) {
 			if (e instanceof BusinessException) {
 				throw e;

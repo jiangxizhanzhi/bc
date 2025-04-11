@@ -1589,38 +1589,43 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	public Integer batchDelete(List<String> practiceIds, AuthContext authContext) {
 
 		// 查询前后台场景
-		List<OjLocalScene> adminOjScenes = StreamApiUtils.map(practiceIds, operationId -> {
-			PracticeOperation operation = practiceOperationMapper.selectById(operationId);
-			return ojLocalSceneService.selectOjLocalScene(operationId,
-					operation.getSceneShareMode(), authContext);
-		});
-
-		authContext.setIsWeb(true);
-		List<OjLocalScene> webOjScene = StreamApiUtils.map(practiceIds, operationId -> {
-			PracticeOperation operation = practiceOperationMapper.selectById(operationId);
-			return ojLocalSceneService.selectOjLocalScene(operationId,
-					operation.getSceneShareMode(), authContext);
-		});
-		adminOjScenes.addAll(webOjScene);
+		// List<OjLocalScene> adminOjScenes = StreamApiUtils.map(practiceIds,
+		// operationId -> {
+		// PracticeOperation operation =
+		// practiceOperationMapper.selectById(operationId);
+		// return ojLocalSceneService.selectOjLocalScene(operationId,
+		// operation.getSceneShareMode(), authContext);
+		// });
+		//
+		// authContext.setIsWeb(true);
+		// List<OjLocalScene> webOjScene = StreamApiUtils.map(practiceIds, operationId
+		// -> {
+		// PracticeOperation operation =
+		// practiceOperationMapper.selectById(operationId);
+		// return ojLocalSceneService.selectOjLocalScene(operationId,
+		// operation.getSceneShareMode(), authContext);
+		// });
+		// adminOjScenes.addAll(webOjScene);
 
 		// 获取全部远程场景并删除
-		List<String> ojLocalSceneIds = StreamApiUtils.map(adminOjScenes,
-				OjLocalScene::getResourceId);
-		List<String> localSceneIds = StreamApiUtils.map(adminOjScenes,
-				OjLocalScene::getLocalSceneId);
+		// List<String> ojLocalSceneIds = StreamApiUtils.map(adminOjScenes,
+		// OjLocalScene::getResourceId);
+		// List<String> localSceneIds = StreamApiUtils.map(adminOjScenes,
+		// OjLocalScene::getLocalSceneId);
 
-		if (CollectionUtils.isNotEmpty(localSceneIds)) {
-			List<LocalScene> localScenes = localSceneMapper.selectBatchIds(localSceneIds);
-			for (LocalScene localScene : localScenes) {
-				try {
-					localSceneService.deleteRemoteScene(localScene);
-				} catch (Exception e) {
-					log.warn("Scene delete failed! local_scene_id=[{}], catch error:",
-							localScene.getResourceId(), e);
-					continue;
-				}
-			}
-		}
+// if (CollectionUtils.isNotEmpty(localSceneIds)) {
+// List<LocalScene> localScenes =
+// localSceneMapper.selectBatchIds(localSceneIds);
+// for (LocalScene localScene : localScenes) {
+// try {
+// localSceneService.deleteRemoteScene(localScene);
+// } catch (Exception e) {
+// log.warn("Scene delete failed! local_scene_id=[{}], catch error:",
+// localScene.getResourceId(), e);
+// continue;
+// }
+// }
+// }
 
 //		String practiceId = practiceIds.get(CommonConstant.ZERO);
 //		PracticeOperation operation = practiceValidateHandler.validateOperationExist(practiceId);
@@ -1630,7 +1635,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 //				|| practiceSet.getPracticeCount() <= practiceIds.size() ? CommonConstant.ZERO
 //						: practiceSet.getPracticeCount() - practiceIds.size());
 
-		List<String> topoIds = practiceOperationMapper.topoIdsByIds(practiceIds);
+// List<String> topoIds = practiceOperationMapper.topoIdsByIds(practiceIds);
 
 		return transactionTemplate.execute(new TransactionCallback<Integer>() {
 
@@ -1639,20 +1644,20 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				practiceMistakeMapper.deleteByPracticeIds(practiceIds, null);
 				practiceSolvedMapper.deleteByPracticeIds(practiceIds);
 
-				if (CollectionUtils.isNotEmpty(localSceneIds)) {
-					localSceneMapper.deleteBatchIds(localSceneIds);
-				}
-				if (CollectionUtils.isNotEmpty(ojLocalSceneIds)) {
-					ojLocalSceneMapper.deleteBatchIds(ojLocalSceneIds);
-				}
+				// if (CollectionUtils.isNotEmpty(localSceneIds)) {
+				// localSceneMapper.deleteBatchIds(localSceneIds);
+				// }
+				// if (CollectionUtils.isNotEmpty(ojLocalSceneIds)) {
+				// ojLocalSceneMapper.deleteBatchIds(ojLocalSceneIds);
+				// }
 
 //				practiceSetMapper.updateById(practiceSet);
-				try {
-					remoteTopoService.batchDeleteTopo(topoIds);
-				} catch (Exception e) {
-					log.error("Operation batch delete topo failed!, topo_ids={}, catch error:",
-							JsonUtil.toJsonString(topoIds), e);
-				}
+				// try {
+				// remoteTopoService.batchDeleteTopo(topoIds);
+				// } catch (Exception e) {
+				// log.error("Operation batch delete topo failed!, topo_ids={}, catch error:",
+				// JsonUtil.toJsonString(topoIds), e);
+				// }
 				if (!practiceIds.isEmpty()) {
 					LambdaQueryWrapper<PracticeOperationTarget> wrapper = new LambdaQueryWrapper<>();
 					wrapper.in(PracticeOperationTarget::getOperationId, practiceIds);
@@ -2366,6 +2371,27 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
+	public File dumpBatchSlim(List<String> ids) {
+		// 设置数据存储
+		String destDir = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID();
+
+		List<PracticeOperation> operationList = practiceOperationMapper.selectBatchIds(ids);
+		List<PracticeOperationTarget> targetList = practiceOperationTargetMapper
+				.getAllByOperationIds(ids);
+
+		OperationDumpSlimBo bo = new OperationDumpSlimBo();
+		bo.setOperationList(ListUtil.washBaseTable(operationList));
+		bo.setTargetList(ListUtil.washBaseTable(targetList));
+
+		String dataPath = destDir + File.separatorChar + ResourceImportConstant.DATA_JSON;
+		FileUtil.writeToDestFile(JsonUtil.toJsonString(bo), dataPath);
+		// 压缩当前文件夹
+		String zipDest = ZipUtil.toZipDest(destDir, AttachmentPath.OTHER.getDesc());
+		FileUtil.deleteDir(destDir, true);
+		return new File(zipDest);
+	}
+
+	@Override
 	public Boolean loadBatch(String realPath, String userId) {
 		String destPath = realPath.substring(0, realPath.lastIndexOf(CommonConstant.PERIOD));
 		ZipUtil.unzipToDest(realPath, destPath);
@@ -2389,6 +2415,33 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		this.saveBatch(operations);
 
+		return true;
+	}
+
+	@Override
+	public Boolean loadBatchSlim(String realPath, String userId) {
+		String destPath = realPath.substring(0, realPath.lastIndexOf(CommonConstant.PERIOD));
+		ZipUtil.unzipToDest(realPath, destPath);
+
+		String dataPath = destPath + File.separatorChar + ResourceImportConstant.DATA_JSON;
+		String data = FileUtil.getContent(new File(dataPath));
+		OperationDumpSlimBo bo = JsonUtil.toJsonObject(data, OperationDumpSlimBo.class);
+		List<PracticeOperation> operationList = bo.getOperationList();
+		List<PracticeOperationTarget> targetList = bo.getTargetList();
+		for (PracticeOperation operation : operationList) {
+			operation.setCreateUserId(userId);
+		}
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				saveOrUpdateBatch(operationList);
+				practiceOperationTargetService.saveOrUpdateBatch(targetList);
+			}
+		});
+		FileUtil.deleteDir(destPath, true);
+		FileUtil.deleteDir(realPath, true);
 		return true;
 	}
 

@@ -50,6 +50,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -411,7 +412,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 			HttpServletResponse response) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
-		String zipPath = courseService.dumpCourse(courseIds, authContext);
+		String zipPath = courseService.dumpCourseSlim(courseIds, authContext);
 		FileUtil.setZipStream(new File(zipPath), true, response);
 		return new BaseRsp<>(zipPath);
 	}
@@ -427,16 +428,15 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	 */
 	@ApiOperation("后台课程数据导入")
 	@PostMapping("/batch_loads")
-	public BaseRsp<Boolean> importCourse(@Validated LoadCourseReq loadCourseReq) {
-		FileUtil.validateSuffix(loadCourseReq.getFile(), FileSunffixConstant.ZIP.getDesc());
-
-		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),
-				false, loadCourseReq.getFile(), true);
-		String realPath = utilService.getRealPath(attachmentBo.getFilePath());
+	public BaseRsp<Boolean> importCourse(@Validated LoadCourseReq loadCourseReq)
+			throws IOException {
+		// 1. save file to temp dir
+		File localFile = FileUtil.saveFile(loadCourseReq.getFile(), ZipUtil.generatePath());
+		String realPath = localFile.getAbsolutePath();
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
-		Boolean result = courseService.loadCourse(realPath, authContext);
+		Boolean result = courseService.loadCourseSlim(realPath, authContext);
 		return new BaseRsp(result);
 
 	}

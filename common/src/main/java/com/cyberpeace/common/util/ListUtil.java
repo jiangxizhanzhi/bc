@@ -1,17 +1,17 @@
 package com.cyberpeace.common.util;
 
+import com.alibaba.fastjson.JSON;
+import com.cyberpeace.common.model.BaseTable;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import com.alibaba.fastjson.JSON;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * 列出实用程序
@@ -239,5 +239,23 @@ public class ListUtil {
 			}
 		}
 		return res;
+	}
+
+	/**
+	 * 洗掉baseTable的数据，用于导出
+	 *
+	 * @param list 列表
+	 * @return {@code List<E> }
+	 * @throws
+	 * @see List<E>
+	 * @see List<E>
+	 */
+	public static <E extends BaseTable> List<E> washBaseTable(List<E> list) {
+		for (E e : list) {
+			e.setId(null);
+			e.setCreateTime(null);
+			e.setUpdateTime(null);
+		}
+		return list;
 	}
 }

@@ -460,4 +460,28 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @see Boolean
 	 */
 	Boolean loadBatch(String realPath, String userId);
+
+	/**
+	 * 导出批量简洁
+	 *
+	 * @param ids id列表
+	 * @return {@code File }
+	 * @throws
+	 * @see List<String>
+	 * @see File
+	 */
+	File dumpBatchSlim(List<String> ids);
+
+	/**
+	 * 加载批量简洁
+	 *
+	 * @param realPath 真实路径
+	 * @param userId   用户id
+	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
+	 */
+	Boolean loadBatchSlim(String realPath, String userId);
 }

@@ -205,4 +205,19 @@ public interface CourseService extends IService<Course> {
 	 * @see ListRsp<CourseWebBo>
 	 */
 	ListRsp<CourseWebBo> selectPage(Page page, CourseQueryBo courseContext);
+
+	/**
+	 * 导出课程,只导出json
+	 *
+	 * @param courseIds   课程id列表
+	 * @param authContext auth 上下文
+	 * @return {@code String }
+	 * @throws
+	 * @see List<String>
+	 * @see AuthContext
+	 * @see String
+	 */
+	String dumpCourseSlim(List<String> courseIds, AuthContext authContext);
+
+	Boolean loadCourseSlim(String realPath, AuthContext authContext);
 }

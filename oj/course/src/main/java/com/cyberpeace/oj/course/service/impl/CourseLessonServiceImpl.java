@@ -1464,7 +1464,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// 运行场景
 		List<CourseLesson> lessonList = courseLessonMapper.selectBatchIds(resourceIds);
-		CourseSceneContext sceneContext = this.selectCourseScene(lessonList, authContext);
+//		CourseSceneContext sceneContext = this.selectCourseScene(lessonList, authContext);
 
 		// 收藏
 		List<String> collectionIds = lessonList.stream()
@@ -1503,14 +1503,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		});
 		// 删除课件和视频
 		String prefix = ConfigUtil.getContextProperty("cr.local.file.prefix");
-		for (CourseLesson lesson : lessonList) {
-			String handoutUrl = lesson.getHandoutUrl();
-			String videoUrl = lesson.getVideoUrl();
-			this.deleteAttachment(handoutUrl, prefix);
-			this.deleteAttachment(videoUrl, prefix);
-		}
+//		for (CourseLesson lesson : lessonList) {
+//			String handoutUrl = lesson.getHandoutUrl();
+//			String videoUrl = lesson.getVideoUrl();
+//			this.deleteAttachment(handoutUrl, prefix);
+//			this.deleteAttachment(videoUrl, prefix);
+//		}
 
-		this.clearSceneAndTopos(sceneContext.getScenes(), sceneContext.getTopos());
+//		this.clearSceneAndTopos(sceneContext.getScenes(), sceneContext.getTopos());
 		return resourceIds.size();
 	}
 

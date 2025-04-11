@@ -337,7 +337,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 		if (CollectionUtils.isEmpty(ids)) {
 			throw new BusinessException(ErrorCode.BLANK_ID);
 		}
-		File dumpFile = practiceTheoryService.dumpBatch(ids);
+		File dumpFile = practiceTheoryService.dumpBatchSlim(ids);
 		FileUtil.setZipStream(dumpFile, true, response);
 		return new BaseRsp(Boolean.TRUE);
 	}
@@ -351,7 +351,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 	 * @see LoadResourceReq
 	 * @see LoadResourceReq
 	 */
-	@ApiOperation("习题集资源数据导入")
+	@ApiOperation("理论习题资源导入")
 	@PostMapping("/batch_loads")
 	public BaseRsp<Boolean> importPracticeSet(@Validated LoadResourceReq loadReq)
 			throws IOException {
@@ -363,7 +363,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 		// 文件加载
 		Boolean result;
 		try {
-			result = practiceTheoryService.loadBatch(realPath,
+			result = practiceTheoryService.loadBatchSlim(realPath,
 					UserInfoContext.getUserContext().getUserId());
 		} catch (Exception e) {
 			if (e instanceof BusinessException) {

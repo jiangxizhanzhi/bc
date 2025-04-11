@@ -34,4 +34,8 @@
         select resource_id from oj_practice_theory_ref
         where paper_id = #{paperId}
     </select>
+    <select id="selectRefByPaper" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeTheoryRef">
+        select * from oj_practice_theory_ref
+        where paper_id = #{paperId}
+    </select>
 </mapper>

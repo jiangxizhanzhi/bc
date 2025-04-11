@@ -68,4 +68,6 @@ public interface PracticeTheoryRefMapper extends BaseMapper<PracticeTheoryRef> {
 	 * @see List<String>
 	 */
 	List<String> selectByPaper(@Param("paperId") String paperId);
+
+	List<PracticeTheoryRef> selectRefByPaper(@Param("paperId") String paperId);
 }

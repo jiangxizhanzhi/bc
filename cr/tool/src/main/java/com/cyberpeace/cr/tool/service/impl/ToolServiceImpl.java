@@ -156,14 +156,15 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 
 	@Override
 	public void validateEditToolNameExistExceptSelf(Tool tool){
-		// 名称重复性校验
+
+		// 获取除本工具外重名的工具
 		Tool toolObject = toolMapper.selectOtherByName(tool.getName(),tool.getResourceId());
-		if(tool.getId().equals(toolObject.getId())){
+
+		if(toolObject == null){
 			return;
 		}
-		if (toolObject != null) {
-			log.error("toolObject is  null,tool =[{}]", JsonUtil.toJsonString(tool));
-			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_TOOL_NAME);
-		}
+
+		log.error("toolObject is  null,tool =[{}]", JsonUtil.toJsonString(tool));
+		throw new BusinessException(CrBusinessErrorCode.DUPLICATED_TOOL_NAME);
 	}
 }

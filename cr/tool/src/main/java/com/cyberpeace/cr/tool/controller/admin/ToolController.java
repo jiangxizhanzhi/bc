@@ -94,6 +94,7 @@ public class ToolController {
 	public BaseRsp<String> update(@RequestBody @Validated ToolUpdateInfoReq toolupdateReq) {
 		Tool tool = BeanUtils.copy(toolupdateReq, Tool.class);
 		toolService.validateEditToolNameExistExceptSelf(tool);
+		tool.setCover(utilService.replaceFileUrl(tool.getCover()));
 		toolService.updateById(tool);
 
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TOOL,

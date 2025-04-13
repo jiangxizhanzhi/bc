@@ -12,6 +12,7 @@ import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.tool.controller.req.DeleteReq;
 import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
+import com.cyberpeace.cr.tool.controller.req.ToolUpdateInfoReq;
 import com.cyberpeace.cr.tool.controller.req.ToolUpdateReq;
 import com.cyberpeace.cr.tool.controller.res.ToolRsp;
 import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
@@ -90,7 +91,7 @@ public class ToolController {
 	@ApiOperation("工具更新")
 	@PatchMapping()
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
-	public BaseRsp<String> update(@RequestBody @Validated ToolUpdateReq toolupdateReq) {
+	public BaseRsp<String> update(@RequestBody @Validated ToolUpdateInfoReq toolupdateReq) {
 		Tool tool = BeanUtils.copy(toolupdateReq, Tool.class);
 		toolService.validateEditToolNameExistExceptSelf(tool);
 		toolService.updateById(tool);

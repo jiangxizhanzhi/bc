@@ -5,8 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
-
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 /**
  * 课时记录
@@ -24,65 +25,76 @@ import lombok.*;
 @TableName("oj_lesson_record")
 public class LessonRecord extends BaseTable {
 
-	/**
-	 * 资源id
-	 *
-	 * @see String
-	 */
-	@TableId(type = IdType.UUID, value = "resource_id")
-	private String resourceId;
+    /**
+     * 资源id
+     *
+     * @see String
+     */
+    @TableId(type = IdType.UUID, value = "resource_id")
+    private String resourceId;
 
-	/**
-	 * 课时id
-	 *
-	 * @see String
-	 */
-	private String lessonId;
+    /**
+     * 课时id
+     *
+     * @see String
+     */
+    private String lessonId;
 
-	/**
-	 * 用户id
-	 *
-	 * @see String
-	 */
-	private String userId;
+    /**
+     * 用户id
+     *
+     * @see String
+     */
+    private String userId;
 
-	/**
-	 * 课程id
-	 *
-	 * @see String
-	 */
-	private String courseId;
+    /**
+     * 课程id
+     *
+     * @see String
+     */
+    private String courseId;
 
-	/**
-	 * 房间id
-	 *
-	 * @see String
-	 */
-	private String roomId;
+    /**
+     * 开始学习时间
+     */
+    private LocalDateTime learnedTime;
 
-	/**
-	 * 学习类型
-	 *
-	 * @see Integer
-	 */
-	private Integer learnedType;
+    /**
+     * 学习时长统计
+     * 单位:s
+     */
+    private Integer learnedDuration;
 
-	public enum LearnedType implements GenericEnum {
+    /**
+     * 房间id
+     *
+     * @see String
+     */
+    private String roomId;
 
-		COURSE(0, "课程"),
+    /**
+     * 学习类型
+     *
+     * @see Integer
+     */
+    private Integer learnedType;
 
-		CLASS_SCHEDULE(1, "课程表");
+    public enum LearnedType implements GenericEnum {
 
-		@Getter
-		private Integer code;
+        COURSE(0, "课程"),
 
-		@Getter
-		private String desc;
+        CLASS_SCHEDULE(1, "课程表");
 
-		LearnedType(Integer code, String desc) {
-			this.code = code;
-			this.desc = desc;
-		}
+        @Getter
+        private Integer code;
 
-	}
+        @Getter
+        private String desc;
+
+        LearnedType(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+    }
 }

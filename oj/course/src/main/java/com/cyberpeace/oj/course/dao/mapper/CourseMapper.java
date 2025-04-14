@@ -1,11 +1,5 @@
 package com.cyberpeace.oj.course.dao.mapper;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -13,6 +7,12 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.dao.context.SpecialCourseContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * 课程Mapper
@@ -162,4 +162,8 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 * @see String
 	 */
 	void updateCourseHeat(@Param("heat") Integer heat,@Param("resourceId") String resourceId);
+
+	CourseInfoBo getCourseInfoByResourceId(@Param("resourceId") String courseId);
+
+	String getCategoryName(@Param("categoryId") String categoryId);
 }

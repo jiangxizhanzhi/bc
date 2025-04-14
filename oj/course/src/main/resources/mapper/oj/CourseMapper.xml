@@ -179,4 +179,16 @@
             read_auth_ids like #{likeOrganization}
         </where>
     </select>
+
+    <select id="getCourseInfoByResourceId" resultType="com.cyberpeace.oj.course.service.bo.CourseInfoBo">
+        select *
+        from oj_course
+        where resource_id = #{resourceId}
+    </select>
+
+    <select id="getCategoryName" resultType="java.lang.String">
+        select name
+        from oj_course_category
+        where resource_id = #{categoryId}
+    </select>
 </mapper>

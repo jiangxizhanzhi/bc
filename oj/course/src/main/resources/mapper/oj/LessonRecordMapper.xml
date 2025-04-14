@@ -53,6 +53,25 @@
         </where>
     </select>
 
+    <select id="getTrainingDurationByCourseId" resultType="java.lang.Integer">
+        SELECT
+            sum( learned_duration )
+        FROM
+            oj_lesson_record
+        WHERE
+                lesson_id IN ( SELECT resource_id FROM oj_course_lesson WHERE course_id = #{courseId} )
+          AND user_id = #{userId}
+    </select>
+
+    <select id="getRecord" resultType="com.cyberpeace.oj.course.dao.entity.LessonRecord">
+        select * from oj_lesson_record
+        <where>
+            lesson_id = #{lessonId}
+            and course_id = #{courseId}
+            and user_id = #{userId}
+        </where>
+    </select>
+
     <update id="updateLearnedTime">
         update oj_lesson_record
         <set>
@@ -66,5 +85,20 @@
         and user_id = #{userId}
     </update>
 
+    <update id="recordTime">
+        update oj_lesson_record
+        <set>
+            <if test="learnedTime != null and learnedTime != ''">
+                learned_time = #{learnedTime}
+            </if>
+            <if test="learnedDuration != null">
+                learned_duration = #{learnedDuration}
+            </if>
+        </set>
+        where
+        lesson_id = #{lessonId}
+        and course_id = #{courseId}
+        and user_id = #{userId}
+    </update>
 
 </mapper>

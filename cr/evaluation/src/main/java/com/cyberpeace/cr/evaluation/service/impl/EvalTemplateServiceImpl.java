@@ -99,19 +99,23 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 	@Override
 	public List<EvalTaskSlimContext> listTask(EvalTemplate evalTemplate, Boolean isFinished) {
-
+		List<EvalTaskSlimContext> evalTaskSlimContexts = null;
 		if (isFinished != null && isFinished) {
-			return evalTaskMapper.selectSlimTaskListByTemplateIdAndStatus(
+			evalTaskSlimContexts = evalTaskMapper.selectSlimTaskListByTemplateIdAndStatus(
 					evalTemplate.getResourceId(), EvalTask.Status.FINISHED.getCode());
+			return evalTaskSlimContexts;
+		} else {
+			evalTaskSlimContexts = evalTaskMapper
+					.selectSlimTaskListByTemplateIdAndStatus(evalTemplate.getResourceId(), null);
+			if (StringUtils.isEmpty(evalTemplate.getCurrentTaskId())) {
+				evalTaskSlimContexts.add(new EvalTaskSlimContext());
+			}
 		}
-
-		List<EvalTaskSlimContext> evalTaskSlimContexts = evalTaskMapper
-				.selectSlimTaskListByTemplateIdAndStatus(evalTemplate.getResourceId(), null);
-
-		if (StringUtils.isEmpty(evalTemplate.getCurrentTaskId())) {
-			evalTaskSlimContexts.add(new EvalTaskSlimContext());
+		for(EvalTaskSlimContext task : evalTaskSlimContexts){
+			task.setStartSearchTime(task.getStartTime());
+			// 防止开始时间和结束时间是同一天
+			task.setEndSearchTime(task.getEndTime().plusDays(1));
 		}
-
 		return evalTaskSlimContexts;
 	}
 

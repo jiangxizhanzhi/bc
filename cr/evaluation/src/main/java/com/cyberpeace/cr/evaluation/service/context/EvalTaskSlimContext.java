@@ -2,6 +2,8 @@ package com.cyberpeace.cr.evaluation.service.context;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class EvalTaskSlimContext {
 
@@ -11,9 +13,13 @@ public class EvalTaskSlimContext {
 
 	private String mpSceneId;
 
-	private String startTime;
+	private LocalDateTime startTime;
 
-	private String endTime;
+	private LocalDateTime endTime;
+
+	private LocalDateTime startSearchTime;
+
+	private LocalDateTime endSearchTime;
 
 	public void setResourceId(String resourceId) {
 		this.taskId = resourceId;

@@ -17,13 +17,13 @@ public class AttackListBo {
 	/**
 	 * 资源id
 	 */
-	@ApiModelProperty(value = "")
+	@ApiModelProperty(value = "资源id")
 	private String resourceId;
 
 	/**
 	 * 名称
 	 */
-	@ApiModelProperty(value = "")
+	@ApiModelProperty(value = "名称")
 	private String name;
 
 	/**
@@ -35,19 +35,19 @@ public class AttackListBo {
 	/**
 	 * 类别id
 	 */
-	@ApiModelProperty(value = "")
+	@ApiModelProperty(value = "类别id")
 	private String categoryId;
 
 	/**
 	 * 类别
 	 */
-	@ApiModelProperty(value = "")
+	@ApiModelProperty(value = "类别")
 	private String category;
 
 	/**
 	 * 描述
 	 */
-	@ApiModelProperty(value = "")
+	@ApiModelProperty(value = "描述")
 	private String description;
 
 	/**
@@ -61,4 +61,35 @@ public class AttackListBo {
 	 */
 	@ApiModelProperty(value = "")
 	private String feature;
+
+	/**
+	 * 技战法体系id
+	 */
+	@ApiModelProperty(value = "技战法体系id")
+	private String systemId;
+
+	/**
+	 * 技战法体系
+	 */
+	@ApiModelProperty(value = "技战法体系")
+	private String system;
+
+	/**
+	 * 战法来源
+	 */
+	@ApiModelProperty(value = "战法来源")
+	private String source;
+
+	/**
+	 * 行动计数
+	 */
+	@ApiModelProperty(value = "行动计数")
+	private Integer actionCount;
+
+	/**
+	 * 工具计数
+	 */
+	@ApiModelProperty(value = "工具计数")
+	private Integer toolCount;
+
 }

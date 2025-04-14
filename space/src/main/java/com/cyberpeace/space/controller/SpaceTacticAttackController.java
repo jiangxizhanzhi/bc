@@ -1,18 +1,16 @@
 package com.cyberpeace.space.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.space.service.SpaceTacticAttackService;
 import com.cyberpeace.space.service.context.IdListReq;
 import com.cyberpeace.space.service.context.tactic.*;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "知识空间-知识库-战法库-攻击战法")
 @RestController
@@ -24,8 +22,8 @@ public class SpaceTacticAttackController {
 
 	@ApiOperation("攻击战法列表")
 	@GetMapping("/page")
-	public BaseRsp<ListRsp<AttackListBo>> listAttack(PageReqBase reqBase) {
-		ListRsp<AttackListBo> res = attackService.pageAttack(reqBase);
+	public BaseRsp<ListRsp<AttackListBo>> listAttack(SpaceTacticPageReq req) {
+		ListRsp<AttackListBo> res = attackService.pageAttack(req);
 		return new BaseRsp(res);
 	}
 

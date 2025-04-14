@@ -1,5 +1,6 @@
 package com.cyberpeace.space.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -11,13 +12,14 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.tool.service.ToolService;
 import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
 import com.cyberpeace.space.dao.entity.SpaceTacticAttackCategory;
+import com.cyberpeace.space.dao.entity.SpaceTacticDefenseSystem;
 import com.cyberpeace.space.dao.mapper.SpaceTacticAttackCategoryMapper;
 import com.cyberpeace.space.dao.mapper.SpaceTacticAttackMapper;
+import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseSystemMapper;
 import com.cyberpeace.space.service.SpaceTacticAttackService;
 import com.cyberpeace.space.service.context.tactic.*;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,15 +37,15 @@ public class SpaceTacticAttackServiceImpl implements SpaceTacticAttackService {
 	private SpaceTacticAttackCategoryMapper categoryMapper;
 
 	@Autowired
+	private SpaceTacticDefenseSystemMapper systemMapper;
+
+	@Autowired
 	private ToolService toolService;
 
 	@Override
-	public ListRsp<AttackListBo> pageAttack(PageReqBase req) {
+	public ListRsp<AttackListBo> pageAttack(SpaceTacticPageReq req) {
 		Page page = req.toPageParam();
-		LambdaQueryWrapper<SpaceTacticAttack> wrapper = new LambdaQueryWrapper<>();
-		if (StringUtils.isNotBlank(req.getPattern())) {
-			wrapper.like(SpaceTacticAttack::getName, req.getPattern());
-		}
+		LambdaQueryWrapper<SpaceTacticAttack> wrapper = req.req2QueryWrapper();
 		IPage<SpaceTacticAttack> iPage = mapper.selectPage(page, wrapper);
 		List<String> categoryIds = StreamApiUtils.map(iPage.getRecords(),
 				SpaceTacticAttack::getCategoryId);
@@ -55,9 +57,24 @@ public class SpaceTacticAttackServiceImpl implements SpaceTacticAttackService {
 				categoryMap.put(category.getResourceId(), category.getName());
 			}
 		}
+		Map<String, String> systemMap = Maps.newHashMap();
+		List<String> systemIds = StreamApiUtils.map(iPage.getRecords(),
+				SpaceTacticAttack::getSystemId);
+		if (!systemIds.isEmpty()) {
+			List<SpaceTacticDefenseSystem> systemList = systemMapper
+					.selectBatchIds(systemIds);
+			for (SpaceTacticDefenseSystem system : systemList) {
+				systemMap.put(system.getResourceId(), system.getName());
+			}
+		}
 		IPage<AttackListBo> res = iPage.convert(attack -> {
 			AttackListBo bo = BeanUtils.copy(attack, AttackListBo.class);
 			bo.setCategory(categoryMap.get(bo.getCategoryId()));
+			bo.setSystem(systemMap.get(bo.getSystemId()));
+			List<String> toolIds = JsonUtil.toJsonObjectArray(attack.getTool(), String.class);
+			bo.setToolCount(toolIds.size());
+			JSONArray actions = JsonUtil.stringToArray(attack.getAction());
+			bo.setActionCount(actions.size());
 			return bo;
 		});
 		return PageUtil.getListResult(res);
@@ -127,13 +144,9 @@ public class SpaceTacticAttackServiceImpl implements SpaceTacticAttackService {
 	private SpaceTacticAttack req2Entity(AttackAddReq req) {
 		SpaceTacticAttack attack = new SpaceTacticAttack();
 		attack.setName(req.getName());
-		attack.setTacticId(req.getTacticId());
 		attack.setCategoryId(req.getCategoryId());
-		attack.setRole(req.getRole());
-		attack.setTag(JsonUtil.arrayToString(req.getTag()));
-		attack.setDescription(req.getDescription());
-		attack.setScene(req.getScene());
-		attack.setFeature(req.getFeature());
+		attack.setSource(req.getSource());
+		attack.setSystemId(req.getSystemId());
 		attack.setAction(JsonUtil.arrayToString(req.getAction()));
 		attack.setTool(JsonUtil.arrayToString(req.getTool()));
 		return attack;
@@ -141,13 +154,16 @@ public class SpaceTacticAttackServiceImpl implements SpaceTacticAttackService {
 
 	private AttackDetail entity2Bo(SpaceTacticAttack attack) {
 		AttackDetail detail = BeanUtils.copy(attack, AttackDetail.class);
-		detail.setTag(JsonUtil.toJsonObjectArray(attack.getTag(), String.class));
 		detail.setAction(JsonUtil.toJsonObjectArray(attack.getAction(), TacticAction.class));
 
 		SpaceTacticAttackCategory category = categoryMapper.selectById(attack.getCategoryId());
 		if (category != null) {
 			detail.setCategoryName(category.getName());
 		}
+//		SpaceTacticDefenseSystem spaceTacticDefenseSystem = systemMapper.selectById(attack.getSystemId());
+//		if (spaceTacticDefenseSystem != null) {
+//			detail.setSystem(spaceTacticDefenseSystem.getName());
+//		}
 		// tool
 		List<String> toolIds = JsonUtil.toJsonObjectArray(attack.getTool(), String.class);
 		detail.setTool(toolService.listTacticTool(toolIds));

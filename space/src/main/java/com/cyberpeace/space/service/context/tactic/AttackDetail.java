@@ -38,6 +38,25 @@ public class AttackDetail {
 	@ApiModelProperty(value = "拓扑特征")
 	private String feature;
 
+	/**
+	 * 技战法体系id
+	 */
+	@ApiModelProperty(value = "技战法体系id")
+	private String systemId;
+
+	/**
+	 * 技战法体系
+	 */
+	@ApiModelProperty(value = "技战法体系")
+	private String system;
+
+	/**
+	 * 战法来源
+	 */
+	@ApiModelProperty(value = "战法来源")
+	private String source;
+
+
 	@ApiModelProperty(value = "行动")
 	private List<TacticAction> action;
 

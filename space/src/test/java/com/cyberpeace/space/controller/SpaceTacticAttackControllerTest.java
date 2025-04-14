@@ -42,7 +42,7 @@ class SpaceTacticAttackControllerTest {
         attackListBo.setCategoryId("categoryId");
         attackListBo.setCategory("category");
         final ListRsp<AttackListBo> attackListBoListRsp = new ListRsp<>(Arrays.asList(attackListBo), 0L, 0L, 0L);
-        final PageReqBase req = new PageReqBase();
+        final SpaceTacticPageReq req = new SpaceTacticPageReq();
         req.setPage(0);
         req.setPerPage(0);
         req.setSort("sort");
@@ -60,7 +60,7 @@ class SpaceTacticAttackControllerTest {
         // Setup
         // Run the test and verify the results
         AttackAddReq attackAddReq = new AttackAddReq();
-        attackAddReq.setTacticId("tactic_id");
+        attackAddReq.setSystemId("tactic_id");
         mockMvc.perform(post("/space/tactic/attack")
                         .content(JsonUtil.toJsonString(attackAddReq)).contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

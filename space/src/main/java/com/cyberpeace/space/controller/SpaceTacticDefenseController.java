@@ -28,8 +28,8 @@ public class SpaceTacticDefenseController {
 
 	@ApiOperation("防御战法列表")
 	@GetMapping("/page")
-	public BaseRsp<ListRsp<DefenseListBo>> listAttack(PageReqBase reqBase) {
-		ListRsp<DefenseListBo> res = defenseService.page(reqBase);
+	public BaseRsp<ListRsp<DefenseListBo>> listAttack(SpaceTacticPageReq req) {
+		ListRsp<DefenseListBo> res = defenseService.page(req);
 		return new BaseRsp(res);
 	}
 

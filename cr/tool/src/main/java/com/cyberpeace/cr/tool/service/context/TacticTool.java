@@ -24,6 +24,8 @@ public class TacticTool {
 	 */
 	private String name;
 
+	private String type;
+
 	/**
 	 * 类型
 	 */

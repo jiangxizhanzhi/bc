@@ -21,11 +21,6 @@ public class AttackAddReq {
 	 */
 	private String name;
 
-	/**
-	 * 策略id
-	 */
-	@ApiModelProperty(value = "ID")
-	private String tacticId;
 
 	/**
 	 * 类别id
@@ -33,35 +28,11 @@ public class AttackAddReq {
 	@ApiModelProperty(value = "类别")
 	private String categoryId;
 
-	/**
-	 * 岗位
-	 */
-	@ApiModelProperty(value = "岗位，常量type=45")
-	private Integer role;
+	@ApiModelProperty(value = "来源")
+	private String source;
 
-	/**
-	 * 标记
-	 */
-	@ApiModelProperty(value = "标签")
-	private List<String> tag;
-
-	/**
-	 * 描述
-	 */
-	@ApiModelProperty(value = "描述")
-	private String description;
-
-	/**
-	 * 场景
-	 */
-	@ApiModelProperty(value = "技术场景")
-	private String scene;
-
-	/**
-	 * 特征
-	 */
-	@ApiModelProperty(value = "拓扑特征")
-	private String feature;
+	@ApiModelProperty(value = "防御技战术体系id")
+	private String systemId;
 
 	/**
 	 * 行动

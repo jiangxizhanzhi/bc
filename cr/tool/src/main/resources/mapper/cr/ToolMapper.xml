@@ -5,6 +5,7 @@
     <select id="list" resultType="com.cyberpeace.cr.tool.dao.entity.Tool">
         select * from cr_tool_tool
         <where>
+            `visible` = 1
             <if test="listQuery.type != null and listQuery.type != ''">
                 and `type` = #{listQuery.type}
             </if>

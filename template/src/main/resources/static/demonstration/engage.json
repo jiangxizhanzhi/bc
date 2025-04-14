@@ -1,0 +1,333 @@
+{
+  "data": [
+    {
+      "category_name": "准备",
+      "sub_categories": [
+        {
+          "sub_category_name": "规划",
+          "engages": [
+            {
+              "resource_id": "SAC0004",
+              "name": "网络威胁情报",
+              "count": 3
+            },
+            {
+              "resource_id": "SAC0012",
+              "name": "参与环境",
+              "count": 0
+            },
+            {
+              "resource_id": "SAC0005",
+              "name": "选通标准",
+              "count": 0
+            },
+            {
+              "resource_id": "SAC0001",
+              "name": "作战目标",
+              "count": 0
+            },
+            {
+              "resource_id": "SAC0002",
+              "name": "角色创建",
+              "count": 0
+            },
+            {
+              "resource_id": "SAC0003",
+              "name": "故事板",
+              "count": 0
+            },
+            {
+              "resource_id": "SAC0009",
+              "name": "威胁模型",
+              "count": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category_name": "暴露",
+      "sub_categories": [
+        {
+          "sub_category_name": "收集",
+          "engages": [
+            {
+              "resource_id": "EAC0001",
+              "name": "API监控",
+              "count": 10
+            },
+            {
+              "resource_id": "EAC0002",
+              "name": "网络监控",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0014",
+              "name": "软件操作",
+              "count": 2
+            },
+            {
+              "resource_id": "EAC0003",
+              "name": "系统活动监控",
+              "count": 0
+            }
+          ]
+        },
+        {
+          "sub_category_name": "发现",
+          "engages": [
+            {
+              "resource_id": "EAC0023",
+              "name": "引入漏洞",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0005",
+              "name": "诱饵",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0013",
+              "name": "引爆恶意软件",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0004",
+              "name": "网络分析",
+              "count": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category_name": "影响",
+      "sub_categories": [
+        {
+          "sub_category_name": "防御",
+          "engages": [
+            {
+              "resource_id": "EAC0019",
+              "name": "基线",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0017",
+              "name": "硬件操作",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0020",
+              "name": "隔离",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0016",
+              "name": "网络操纵",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0018",
+              "name": "安全控制",
+              "count": 0
+            }
+          ]
+        },
+        {
+          "sub_category_name": "转移",
+          "engages": [
+            {
+              "resource_id": "EAC0021",
+              "name": "攻击向量转移",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0009",
+              "name": "邮件管理",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0023",
+              "name": "引入漏洞",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0005",
+              "name": "诱饵",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0013",
+              "name": "引爆恶意软件",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0016",
+              "name": "网络操纵",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0010",
+              "name": "外设管理",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0018",
+              "name": "安全控制",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0014",
+              "name": "软件操作",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "sub_category_name": "破坏",
+          "engages": [
+            {
+              "resource_id": "EAC0020",
+              "name": "隔离",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0005",
+              "name": "诱饵",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0016",
+              "name": "网络操纵",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0014",
+              "name": "软件操作",
+              "count": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category_name": "引出",
+      "sub_categories": [
+        {
+          "sub_category_name": "保证",
+          "engages": [
+            {
+              "resource_id": "EAC0006",
+              "name": "应用多样性",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0022",
+              "name": "工件多样性",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0008",
+              "name": "磨合",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0009",
+              "name": "邮件管理",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0015",
+              "name": "信息处理",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0007",
+              "name": "网络多样性",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0010",
+              "name": "外设管理",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0011",
+              "name": "杂项信息",
+              "count": 0
+            }
+          ]
+        },
+        {
+          "sub_category_name": "激励",
+          "engages": [
+            {
+              "resource_id": "EAC0006",
+              "name": "应用多样性",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0022",
+              "name": "工件多样性",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0015",
+              "name": "信息处理",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0023",
+              "name": "引入漏洞",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0013",
+              "name": "引爆恶意软件",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0007",
+              "name": "网络多样性",
+              "count": 0
+            },
+            {
+              "resource_id": "EAC0012",
+              "name": "人物角色",
+              "count": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category_name": "理解",
+      "sub_categories": [
+        {
+          "sub_category_name": "分析",
+          "engages": [
+            {
+              "resource_id": "SAC0006",
+              "name": "行动后审查",
+              "count": 0
+            },
+            {
+              "resource_id": "SAC0004",
+              "name": "网络威胁情报",
+              "count": 3
+            },
+            {
+              "resource_id": "SAC0009",
+              "name": "威胁模型",
+              "count": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "code": "OJ-000000",
+  "message": null,
+  "detail": null,
+  "timestamp": 1744621662632
+}

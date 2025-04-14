@@ -125,6 +125,9 @@ public class JsonUtil {
 	 * @return
 	 */
 	public static JSONArray stringToArray(String text) {
+		if (StringUtils.isBlank(text)) {
+			return new JSONArray();
+		}
 		return JSONArray.parseArray(text);
 	}
 

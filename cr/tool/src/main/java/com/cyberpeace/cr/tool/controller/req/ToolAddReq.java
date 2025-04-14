@@ -110,4 +110,6 @@ public class ToolAddReq implements Serializable {
 	 * 工具 public
 	 */
 	private Boolean toolPublic = true;
+
+	private Boolean visible = true;
 }

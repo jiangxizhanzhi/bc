@@ -7,7 +7,7 @@ import com.cyberpeace.space.service.context.tactic.*;
 import java.util.List;
 
 public interface SpaceTacticAttackService {
-    ListRsp<AttackListBo> pageAttack(PageReqBase req);
+    ListRsp<AttackListBo> pageAttack(SpaceTacticPageReq req);
 
     void addAttack(AttackAddReq req);
 

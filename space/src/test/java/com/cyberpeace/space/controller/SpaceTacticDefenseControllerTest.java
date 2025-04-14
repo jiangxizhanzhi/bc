@@ -46,7 +46,7 @@ class SpaceTacticDefenseControllerTest {
         defenseListBo.setCategoryId("categoryId");
         defenseListBo.setCategory("category");
         final ListRsp<DefenseListBo> defenseListBoListRsp = new ListRsp<>(Arrays.asList(defenseListBo), 0L, 0L, 0L);
-        final PageReqBase reqBase = new PageReqBase();
+        final SpaceTacticPageReq reqBase = new SpaceTacticPageReq();
         reqBase.setPage(0);
         reqBase.setPerPage(0);
         reqBase.setSort("sort");
@@ -64,9 +64,7 @@ class SpaceTacticDefenseControllerTest {
         // Setup
         // Run the test and verify the results
         DefenseAddReq defenseAddReq = new DefenseAddReq();
-        defenseAddReq.setTacticId("resourceId");
         defenseAddReq.setName("name");
-        defenseAddReq.setTacticId("tacticId");
         mockMvc.perform(post("/space/tactic/defense")
                         .content(JsonUtil.toJsonString(defenseAddReq)).contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -82,7 +80,6 @@ class SpaceTacticDefenseControllerTest {
         DefenseModifyReq defenseModifyReq = new DefenseModifyReq();
         defenseModifyReq.setResourceId("resourceId");
         defenseModifyReq.setName("name");
-        defenseModifyReq.setTacticId("tacticId");
         mockMvc.perform(patch("/space/tactic/defense")
                         .content(JsonUtil.toJsonString(defenseModifyReq)).contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

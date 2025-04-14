@@ -18,19 +18,11 @@ public class SpaceTacticAttack extends BaseTable {
 
 	private String name;
 
-	private String tacticId;
-
 	private String categoryId;
 
-	private Integer role;
+	private String source;
 
-	private String tag;
-
-	private String description;
-
-	private String scene;
-
-	private String feature;
+	private String systemId;
 
 	private String action;
 

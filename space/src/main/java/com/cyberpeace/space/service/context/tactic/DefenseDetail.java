@@ -86,4 +86,16 @@ public class DefenseDetail {
 	 */
 	@ApiModelProperty(value = "工具")
 	private List<TacticTool> tool;
+
+	/**
+	 * 行动
+	 */
+	@ApiModelProperty(value = "行动")
+	private List<TacticAction> action;
+
+	@ApiModelProperty(value = "来源")
+	private String source;
+
+	@ApiModelProperty(value = "体系id")
+	private String systemId;
 }

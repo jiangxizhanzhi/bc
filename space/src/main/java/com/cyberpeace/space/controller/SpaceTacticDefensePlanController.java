@@ -21,7 +21,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(tags = "知识空间-知识库-战法库-防御战法方案")
+@Api(tags = "战法库-防御战法方案")
 @RestController
 @RequestMapping("/space/tactic/defense_plan")
 @RequiresAuthentication

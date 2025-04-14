@@ -12,7 +12,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@Api(tags = "知识空间-知识库-战法库-攻击战法")
+@Api(tags = "战法库-攻击战法")
 @RestController
 @RequestMapping("/space/tactic/attack")
 public class SpaceTacticAttackController {

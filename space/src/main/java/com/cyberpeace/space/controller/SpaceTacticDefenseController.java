@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Api(tags = "知识空间-知识库-战法库-防御战法")
+@Api(tags = "战法库-防御战法")
 @RestController
 @RequestMapping("/space/tactic/defense")
 public class SpaceTacticDefenseController {

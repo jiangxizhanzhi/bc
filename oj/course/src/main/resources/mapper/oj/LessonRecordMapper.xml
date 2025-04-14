@@ -89,10 +89,10 @@
         update oj_lesson_record
         <set>
             <if test="learnedTime != null and learnedTime != ''">
-                learned_time = #{learnedTime}
+                learned_time = #{learnedTime},
             </if>
             <if test="learnedDuration != null">
-                learned_duration = #{learnedDuration}
+                learned_duration = #{learnedDuration},
             </if>
         </set>
         where

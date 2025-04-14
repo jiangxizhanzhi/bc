@@ -2341,7 +2341,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
     }
 
     @Override
-    public Integer recordTime(String courseId, String lessonId, LocalDateTime learnedTime, Integer learnedDuration, AuthContext authContext) {
+    public Integer recordTime(String courseId, String lessonId, String learnedTime, Integer learnedDuration, AuthContext authContext) {
         String userId = authContext.getUserId();
         if (learnedTime != null) {
             LessonRecord record = lessonRecordMapper.getRecord(lessonId, courseId, userId);

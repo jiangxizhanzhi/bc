@@ -385,7 +385,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
     /**
      * 学员学习时间统计
      */
-    Integer recordTime(String courseId, String lessonId, LocalDateTime learnedTime, Integer learnedDuration, AuthContext authContext);
+    Integer recordTime(String courseId, String lessonId, String learnedTime, Integer learnedDuration, AuthContext authContext);
 
     Integer getTrainingTimeByCourseId(String courseId, String userId);
 

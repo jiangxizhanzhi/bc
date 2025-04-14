@@ -297,7 +297,7 @@ public class WebLessonController {
             target = "lesson_id")
     public BaseRsp<Boolean> lessonDetailRecordTime(@RequestParam(value = "course_id") String courseId,
                                                    @RequestParam(value = "lesson_id") String lessonId,
-                                                   @RequestParam(value = "learned_time", required = false) LocalDateTime learnedTime,
+                                                   @RequestParam(value = "learned_time", required = false) String learnedTime,
                                                    @RequestParam(value = "learned_duration") Integer learnedDuration) {
         AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
                 CommonConstant.TRUE);

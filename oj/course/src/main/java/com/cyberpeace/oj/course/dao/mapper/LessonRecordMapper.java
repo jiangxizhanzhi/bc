@@ -99,7 +99,7 @@ public interface LessonRecordMapper extends BaseMapper<LessonRecord> {
     Integer getTrainingDurationByCourseId(@Param("courseId") String courseId, @Param("userId") String userId);
 
     Integer recordTime(@Param("lessonId") String lessonId, @Param("courseId") String courseId,
-                       @Param("learnedTime") LocalDateTime learnedTime, @Param("learnedDuration") Integer learnedDuration,
+                       @Param("learnedTime") String learnedTime, @Param("learnedDuration") Integer learnedDuration,
                        @Param("userId") String userId);
 
     LessonRecord getRecord(@Param("lessonId") String lessonId, @Param("courseId") String courseId, @Param("userId") String userId);

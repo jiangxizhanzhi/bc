@@ -11,6 +11,10 @@ public class EvalTaskSlimContext {
 
 	private String mpSceneId;
 
+	private String startTime;
+
+	private String endTime;
+
 	public void setResourceId(String resourceId) {
 		this.taskId = resourceId;
 	}

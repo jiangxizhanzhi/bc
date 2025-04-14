@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.io.IOException;
 
-@Api(tags = "知识库-知识库-战法库-防御技战法体系")
+@Api(tags = "知识空间-知识库-战法库-防御技战法体系")
 @RestController
 @RequestMapping("/space/tactic/system")
 @RequiresAuthentication

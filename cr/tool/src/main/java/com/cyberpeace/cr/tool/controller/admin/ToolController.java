@@ -114,7 +114,7 @@ public class ToolController {
 	@ApiOperation("工具创建")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
-	public BaseRsp<String> create(@RequestBody @Validated ToolAddReq toolReq) {
+	public BaseRsp<ToolRsp> create(@RequestBody @Validated ToolAddReq toolReq) {
 		Tool tool = BeanUtils.copy(toolReq, Tool.class);
 
 		tool.setCover(utilService.replaceFileUrl(tool.getCover()));
@@ -125,7 +125,7 @@ public class ToolController {
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TOOL,
 				OperationType.CREATE, tool.getName());
 
-		return new BaseRsp<>();
+		return this.getDetail(tool.getResourceId());
 	}
 
 	/**

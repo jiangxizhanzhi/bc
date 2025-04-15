@@ -60,4 +60,12 @@ public class WebToolRsp implements Serializable {
     @ApiModelProperty("介绍")
     private String introduction;
 
+	@ApiModelProperty("分类")
+	private String type;
+
+	@ApiModelProperty("是否破解")
+	private Boolean cracked;
+
+	@ApiModelProperty("工具语言")
+	private List<String> language;
 }

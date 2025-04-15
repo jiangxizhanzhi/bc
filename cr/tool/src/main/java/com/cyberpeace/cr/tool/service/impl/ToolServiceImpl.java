@@ -314,7 +314,7 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 			categoryNames = StreamApiUtils.filter(categoryNames, Objects::nonNull);
 			tacticTool.setCategoryName(StringUtils.join(categoryNames, ","));
 			tacticTool.setCategoryI18nName(tacticTool.getCategoryName());
-
+			tacticTool.setPlatforms(Arrays.asList(StringUtils.split(tool.getPlatforms(), ",")));
 
 			res.add(tacticTool);
 		}

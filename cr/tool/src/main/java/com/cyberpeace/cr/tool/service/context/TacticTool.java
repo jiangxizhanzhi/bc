@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * 战术工具
  *
@@ -47,5 +49,9 @@ public class TacticTool {
 	/**
 	 * 介绍
 	 */
+	@ApiModelProperty("介绍")
 	private String introduction;
+
+	@ApiModelProperty("平台名称")
+	private List<String> platforms;
 }

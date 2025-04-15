@@ -27,4 +27,6 @@ public class SpaceTacticAttack extends BaseTable {
 	private String action;
 
 	private String tool;
+
+	private String strategy;
 }

@@ -1,5 +1,6 @@
 package com.cyberpeace.space.service.context.tactic;
 
+import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,4 +46,7 @@ public class AttackAddReq {
 	 */
 	@ApiModelProperty(value = "工具")
 	private List<String> tool;
+
+	@ApiModelProperty(value = "相关策略")
+	private List<SpaceActionStrategy> strategy;
 }

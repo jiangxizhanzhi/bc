@@ -13,15 +13,16 @@ import com.cyberpeace.space.constant.SpaceError;
 import com.cyberpeace.space.dao.entity.SpaceAction;
 import com.cyberpeace.space.dao.entity.SpaceActionFrame;
 import com.cyberpeace.space.dao.entity.SpaceActionMethod;
-import com.cyberpeace.space.dao.entity.SpaceStrategy;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.controller.SpaceActionFrameBaseController;
 import com.cyberpeace.space.service.SpaceActionFrameService;
 import com.cyberpeace.space.service.SpaceActionMethodService;
 import com.cyberpeace.space.service.SpaceActionService;
 import com.cyberpeace.space.service.SpaceStrategyService;
-import com.cyberpeace.space.service.context.frame.*;
-import com.google.common.collect.Maps;
+import com.cyberpeace.space.service.context.frame.SpaceActionBo;
+import com.cyberpeace.space.service.context.frame.SpaceActionOfflineTool;
+import com.cyberpeace.space.service.context.frame.SpaceActionPageReq;
+import com.cyberpeace.space.service.context.frame.SpaceActionTool;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -33,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 空间操作控制器
@@ -88,7 +88,7 @@ public class SpaceActionController extends SpaceActionFrameBaseController<SpaceA
 		List<String> strategyIds = JsonUtil.toJsonObjectArray(e.getStrategy(), String.class);
 		List<Tool> toolList = toolService.listByIdsInOrder(toolIds);
 		bo.setTool(BeanUtils.deepCopyList(toolList, SpaceActionTool.class));
-		bo.setStrategy(this.convert(strategyIds));
+		bo.setStrategy(strategyService.convert2ActionStrategy(strategyIds));
 		bo.setOfflineTool(JsonUtil.toJsonObjectArray(e.getOfflineTool(), SpaceActionOfflineTool.class));
 
 		List<String> upperIds = relationService.getUpperIdsByLowerId(e.getResourceId());
@@ -122,39 +122,6 @@ public class SpaceActionController extends SpaceActionFrameBaseController<SpaceA
 	@Override
 	protected List<String> getUpperIds(SpaceActionBo req) {
 		return StreamApiUtils.distinct(StreamApiUtils.map(req.getMethod(), IdAndName::getResourceId));
-	}
-
-
-	/**
-	 * 转换
-	 *
-	 * @param ids id列表
-	 * @return {@code List<SpaceActionStrategy> }
-	 */
-	private List<SpaceActionStrategy> convert(List<String> ids) {
-		List<SpaceActionStrategy> res = Lists.newArrayList();
-		if (ids.isEmpty()) {
-			return res;
-		}
-		List<SpaceStrategy> strategyList = strategyService.listByIds(ids);
-		Map<String, SpaceActionStrategy> map = Maps.newHashMap();
-
-		for (SpaceStrategy strategy : strategyList) {
-			SpaceActionStrategy bo = new SpaceActionStrategy();
-			bo.setResourceId(strategy.getResourceId());
-			bo.setName(strategy.getName());
-			bo.setContent(strategy.getContent());
-			String frameRoute = strategyService.getFrameRouteById(strategy.getFrameId());
-			bo.setRoute(frameRoute);
-
-			map.put(bo.getResourceId(), bo);
-		}
-		for (String id : ids) {
-			if (map.containsKey(id)) {
-				res.add(map.get(id));
-			}
-		}
-		return res;
 	}
 
 	@Override

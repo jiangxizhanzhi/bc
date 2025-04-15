@@ -16,7 +16,9 @@ import com.cyberpeace.space.dao.entity.SpaceTacticDefenseSystem;
 import com.cyberpeace.space.dao.mapper.SpaceTacticAttackCategoryMapper;
 import com.cyberpeace.space.dao.mapper.SpaceTacticAttackMapper;
 import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseSystemMapper;
+import com.cyberpeace.space.service.SpaceStrategyService;
 import com.cyberpeace.space.service.SpaceTacticAttackService;
+import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
 import com.cyberpeace.space.service.context.tactic.*;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +43,9 @@ public class SpaceTacticAttackServiceImpl implements SpaceTacticAttackService {
 
 	@Autowired
 	private ToolService toolService;
+
+	@Autowired
+	private SpaceStrategyService strategyService;
 
 	@Override
 	public ListRsp<AttackListBo> pageAttack(SpaceTacticPageReq req) {
@@ -149,6 +154,8 @@ public class SpaceTacticAttackServiceImpl implements SpaceTacticAttackService {
 		attack.setSystemId(req.getSystemId());
 		attack.setAction(JsonUtil.arrayToString(req.getAction()));
 		attack.setTool(JsonUtil.arrayToString(req.getTool()));
+		attack.setStrategy(JsonUtil.arrayToString(
+				StreamApiUtils.map(req.getStrategy(), SpaceActionStrategy::getResourceId)));
 		return attack;
 	}
 
@@ -167,6 +174,9 @@ public class SpaceTacticAttackServiceImpl implements SpaceTacticAttackService {
 		// tool
 		List<String> toolIds = JsonUtil.toJsonObjectArray(attack.getTool(), String.class);
 		detail.setTool(toolService.listTacticTool(toolIds));
+
+		List<String> strategyIds = JsonUtil.toJsonObjectArray(attack.getStrategy(), String.class);
+		detail.setStrategy(strategyService.convert2ActionStrategy(strategyIds));
 		return detail;
 	}
 

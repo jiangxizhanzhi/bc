@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.space.dao.entity.SpaceStrategy;
+import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
 import com.cyberpeace.space.service.context.index.IndexStrategy;
 import com.cyberpeace.space.service.context.strategy.*;
 
@@ -98,4 +99,11 @@ public interface SpaceStrategyService extends IService<SpaceStrategy> {
     IndexStrategy getStatistics();
 
     ListRsp<SpaceStrategyBo> pageStrategiesByFrame(PageReqBase req, String frameId, String name);
+    /**
+     * 转换
+     *
+     * @param ids id列表
+     * @return {@code List<SpaceActionStrategy> }
+     */
+    List<SpaceActionStrategy> convert2ActionStrategy(List<String> ids);
 }

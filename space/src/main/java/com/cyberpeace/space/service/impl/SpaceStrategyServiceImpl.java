@@ -21,6 +21,7 @@ import com.cyberpeace.space.dao.entity.SpaceStrategyFrame;
 import com.cyberpeace.space.dao.mapper.SpaceStrategyFrameMapper;
 import com.cyberpeace.space.dao.mapper.SpaceStrategyMapper;
 import com.cyberpeace.space.service.SpaceStrategyService;
+import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
 import com.cyberpeace.space.service.context.index.IndexStrategy;
 import com.cyberpeace.space.service.context.strategy.*;
 import com.google.common.collect.Maps;
@@ -203,6 +204,38 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 			return simple;
 		});
 		return PageUtil.getListResult(resPage);
+	}
+	/**
+	 * 转换
+	 *
+	 * @param ids id列表
+	 * @return {@code List<SpaceActionStrategy> }
+	 */
+	@Override
+	public List<SpaceActionStrategy> convert2ActionStrategy(List<String> ids) {
+		List<SpaceActionStrategy> res = Lists.newArrayList();
+		if (ids.isEmpty()) {
+			return res;
+		}
+		List<SpaceStrategy> strategyList = this.listByIds(ids);
+		Map<String, SpaceActionStrategy> map = Maps.newHashMap();
+
+		for (SpaceStrategy strategy : strategyList) {
+			SpaceActionStrategy bo = new SpaceActionStrategy();
+			bo.setResourceId(strategy.getResourceId());
+			bo.setName(strategy.getName());
+			bo.setContent(strategy.getContent());
+			String frameRoute = this.getFrameRouteById(strategy.getFrameId());
+			bo.setRoute(frameRoute);
+
+			map.put(bo.getResourceId(), bo);
+		}
+		for (String id : ids) {
+			if (map.containsKey(id)) {
+				res.add(map.get(id));
+			}
+		}
+		return res;
 	}
 
 	private void collectFrameId(List<String> frameIds, SpaceStrategyFrameBo bo) {

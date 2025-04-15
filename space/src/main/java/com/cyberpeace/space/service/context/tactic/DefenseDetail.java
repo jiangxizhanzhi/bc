@@ -1,6 +1,7 @@
 package com.cyberpeace.space.service.context.tactic;
 
 import com.cyberpeace.cr.tool.service.context.TacticTool;
+import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -98,4 +99,7 @@ public class DefenseDetail {
 
 	@ApiModelProperty(value = "体系id")
 	private String systemId;
+
+	@ApiModelProperty(value = "策略")
+	private List<SpaceActionStrategy> strategy;
 }

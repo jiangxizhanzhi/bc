@@ -27,23 +27,26 @@ public class SocServiceImpl implements SocService {
     private String SOC_COURSE_SEND_URL = SystemPropUtil.getProp("SOC_COURSE_SEND_URL");
 
     // 山东移动接收方CODE
-    public static final String  CALLER_CODE = "SD";
+    public static final String CALLER_CODE = "SD";
 
     // 山东移动课程类型信息接收默认值
-    public static final String  STUDY_TYPE = "网络攻防";
+    public static final String STUDY_TYPE = "网络攻防";
 
     @Override
     public void lessonDetailRecordUpload(UserInfo localUser, String courseId, String lessonId) {
+        log.info("function lessonDetailRecordUpload start");
         // 查询该课程信息
         CourseInfoBo course = courseLessonService.getCourseInfoByResourceId(courseId);
         // 查询该课程总共发费时间
-        Integer trainingTime = courseLessonService.getTrainingTimeByCourseId(courseId,localUser.getUserId());
+        Integer trainingTime = courseLessonService.getTrainingTimeByCourseId(courseId, localUser.getUserId());
+        log.info("course:{}", course.getName());
+        log.info("trainingTime:{}", trainingTime);
         // 上报课程记录
-        recordUpload(localUser,course, trainingTime);
+        recordUpload(localUser, course, trainingTime);
     }
 
     @Data
-    class Course{
+    class Course {
         private String caller;
         private String courseName;
         private String courseType;
@@ -54,8 +57,8 @@ public class SocServiceImpl implements SocService {
         private String userId;
     }
 
-    public void recordUpload(UserInfo localUser, CourseInfoBo course,Integer trainingTime) {
-        if(trainingTime == null || trainingTime == 0){
+    public void recordUpload(UserInfo localUser, CourseInfoBo course, Integer trainingTime) {
+        if (trainingTime == null || trainingTime == 0) {
             return;
         }
         String categoryName = courseLessonService.getCategoryName(course.getCategoryId());
@@ -70,21 +73,22 @@ public class SocServiceImpl implements SocService {
         courseRecord.setTotalLearningTime(trainingTime);
         courseRecord.setUserId(localUser.getUserId());
         JSONObject jsonObject = (JSONObject) JSON.toJSON(courseRecord);
-        sendMessage(jsonObject,SOC_COURSE_SEND_URL,WebConstant.POST);
+        sendMessage(jsonObject, SOC_COURSE_SEND_URL, WebConstant.POST);
     }
 
-    public void sendMessage(JSONObject message,String url,String urlType){
-        log.info("sendMessage:{}",message.toJSONString());
-        if(urlType == null){
+    public void sendMessage(JSONObject message, String url, String urlType) {
+        log.info("sendMessage:{}", message.toJSONString());
+        if (urlType == null) {
             return;
         }
-        if(urlType.equalsIgnoreCase("post")){
+        if (urlType.equalsIgnoreCase("post")) {
             try {
                 JSONObject result = HttpClientUtil.post(url, message, JSONObject.class);
+                log.info("sendMessage result:{}", result.toJSONString());
             } catch (Exception e) {
                 log.info("Failed to send message to SOC.", e);
             }
-        }else{
+        } else {
         }
     }
 

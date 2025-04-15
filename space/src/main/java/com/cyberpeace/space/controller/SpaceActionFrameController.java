@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiParam;
  * @author SN
  * @date 2024/11/05
  */
-@Api(tags = "知识库-防御行动框架-行动框架管理")
+@Api(tags = "防御行动框架-行动框架管理")
 @RestController
 @RequestMapping("/space/action_frame/action_frame")
 @RequiresAuthentication

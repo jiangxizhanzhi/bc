@@ -41,7 +41,7 @@ import java.util.Map;
  * @author SN
  * @date 2024/11/07
  */
-@Api(tags = "知识库-防御行动框架-攻击、防御活动管理")
+@Api(tags = "防御行动框架-攻击、防御活动管理")
 @RestController
 @RequestMapping("/space/action_frame/action")
 @RequiresAuthentication

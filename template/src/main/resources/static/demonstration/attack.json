@@ -5,53 +5,43 @@
       "attacks": [
         {
           "resource_id": "T1595",
-          "name": "主动扫描",
-          "count": 1
+          "name": "主动扫描"
         },
         {
           "resource_id": "T1592",
-          "name": "收集目标主机信息",
-          "count": 1
+          "name": "收集目标主机信息"
         },
         {
           "resource_id": "T1589",
-          "name": "收集目标身份信息",
-          "count": 0
+          "name": "收集目标身份信息"
         },
         {
           "resource_id": "T1590",
-          "name": "收集目标网络信息",
-          "count": 1
+          "name": "收集目标网络信息"
         },
         {
           "resource_id": "T1591",
-          "name": "收集目标组织信息",
-          "count": 1
+          "name": "收集目标组织信息"
         },
         {
           "resource_id": "T1598",
-          "name": "信息钓鱼",
-          "count": 1
+          "name": "信息钓鱼"
         },
         {
           "resource_id": "T1597",
-          "name": "搜索闭源",
-          "count": 0
+          "name": "搜索闭源"
         },
         {
           "resource_id": "T1596",
-          "name": "搜索开放数据库",
-          "count": 0
+          "name": "搜索开放数据库"
         },
         {
           "resource_id": "T1593",
-          "name": "搜索开放的网站、域名",
-          "count": 0
+          "name": "搜索开放的网站、域名"
         },
         {
           "resource_id": "T1594",
-          "name": "搜索目标拥有的网站",
-          "count": 0
+          "name": "搜索目标拥有的网站"
         }
       ]
     },
@@ -60,38 +50,31 @@
       "attacks": [
         {
           "resource_id": "T1583",
-          "name": "获取基础架构",
-          "count": 2
+          "name": "获取基础架构"
         },
         {
           "resource_id": "T1586",
-          "name": "入侵账户",
-          "count": 1
+          "name": "入侵账户"
         },
         {
           "resource_id": "T1584",
-          "name": "破坏基础设施",
-          "count": 0
+          "name": "破坏基础设施"
         },
         {
           "resource_id": "T1587",
-          "name": "开发能力",
-          "count": 0
+          "name": "开发能力"
         },
         {
           "resource_id": "T1585",
-          "name": "建立账户",
-          "count": 0
+          "name": "建立账户"
         },
         {
           "resource_id": "T1588",
-          "name": "获得能力",
-          "count": 0
+          "name": "获得能力"
         },
         {
           "resource_id": "T1608",
-          "name": "伪装能力",
-          "count": 0
+          "name": "伪装能力"
         }
       ]
     },
@@ -100,48 +83,39 @@
       "attacks": [
         {
           "resource_id": "T1189",
-          "name": "网站挂马攻击",
-          "count": 1
+          "name": "网站挂马攻击"
         },
         {
           "resource_id": "T1190",
-          "name": "利用互联网上应用程序的缺陷",
-          "count": 2
+          "name": "利用互联网上应用程序的缺陷"
         },
         {
           "resource_id": "T1133",
-          "name": "外部远程服务",
-          "count": 1
+          "name": "外部远程服务"
         },
         {
           "resource_id": "T1200",
-          "name": "硬件接入",
-          "count": 1
+          "name": "硬件接入"
         },
         {
           "resource_id": "T1598",
-          "name": "网络钓鱼",
-          "count": 1
+          "name": "网络钓鱼"
         },
         {
           "resource_id": "T1091",
-          "name": "通过可移动介质进行复制",
-          "count": 1
+          "name": "通过可移动介质进行复制"
         },
         {
           "resource_id": "T1195",
-          "name": "供应链攻击",
-          "count": 0
+          "name": "供应链攻击"
         },
         {
           "resource_id": "T1199",
-          "name": "可信关系",
-          "count": 1
+          "name": "可信关系"
         },
         {
           "resource_id": "T1078",
-          "name": "有效凭证",
-          "count": 1
+          "name": "有效凭证"
         }
       ]
     },
@@ -150,68 +124,55 @@
       "attacks": [
         {
           "resource_id": "T1059",
-          "name": "命令行界面",
-          "count": 2
+          "name": "命令行界面"
         },
         {
           "resource_id": "T1609",
-          "name": "容器管理命令",
-          "count": 0
+          "name": "容器管理命令"
         },
         {
           "resource_id": "T1610",
-          "name": "部署容器",
-          "count": 0
+          "name": "部署容器"
         },
         {
           "resource_id": "T1203",
-          "name": "利用客户端漏洞获取执行权限",
-          "count": 1
+          "name": "利用客户端漏洞获取执行权限"
         },
         {
           "resource_id": "T1559",
-          "name": "跨进程通信",
-          "count": 0
+          "name": "跨进程通信"
         },
         {
           "resource_id": "T1106",
-          "name": "通过API执行",
-          "count": 0
+          "name": "通过API执行"
         },
         {
           "resource_id": "T1053",
-          "name": "计划任务",
-          "count": 0
+          "name": "计划任务"
         },
         {
           "resource_id": "T1648",
-          "name": "云服务器执行",
-          "count": 0
+          "name": "云服务器执行"
         },
         {
           "resource_id": "T1129",
-          "name": "通过模块加载执行",
-          "count": 0
+          "name": "通过模块加载执行"
         },
         {
           "resource_id": "T1072",
-          "name": "利用第三方软件部署工具",
-          "count": 0
+          "name": "利用第三方软件部署工具"
         },
         {
           "resource_id": "T1569",
-          "name": "系统服务",
-          "count": 0
+          "name": "系统服务"
         },
         {
           "resource_id": "T1204",
-          "name": "用户执行",
-          "count": 0
+          "name": "用户执行"
         },
         {
           "resource_id": "T1047",
-          "name": "Windows管理规范技术",
-          "count": 0
+          "name": "Windows管理规范技术"
         }
       ]
     },
@@ -220,98 +181,79 @@
       "attacks": [
         {
           "resource_id": "T1098",
-          "name": "账户修改、监控",
-          "count": 0
+          "name": "账户修改、监控"
         },
         {
           "resource_id": "T1197",
-          "name": "BITS  作业",
-          "count": 1
+          "name": "BITS  作业"
         },
         {
           "resource_id": "T1547",
-          "name": "启动或登录自动执行",
-          "count": 1
+          "name": "启动或登录自动执行"
         },
         {
           "resource_id": "T1037",
-          "name": "登录脚本",
-          "count": 1
+          "name": "登录脚本"
         },
         {
           "resource_id": "T1176",
-          "name": "浏览器扩展",
-          "count": 0
+          "name": "浏览器扩展"
         },
         {
           "resource_id": "T1554",
-          "name": "攻击客户的软件二进制文件",
-          "count": 0
+          "name": "攻击客户的软件二进制文件"
         },
         {
           "resource_id": "T1136",
-          "name": "创建账户",
-          "count": 1
+          "name": "创建账户"
         },
         {
           "resource_id": "T1543",
-          "name": "创建或修改系统进程",
-          "count": 1
+          "name": "创建或修改系统进程"
         },
         {
           "resource_id": "T1546",
-          "name": "事件触发执行",
-          "count": 0
+          "name": "事件触发执行"
         },
         {
           "resource_id": "T1133",
-          "name": "外部远程服务",
-          "count": 1
+          "name": "外部远程服务"
         },
         {
           "resource_id": "T1574",
-          "name": "劫持执行流量",
-          "count": 0
+          "name": "劫持执行流量"
         },
         {
           "resource_id": "T1525",
-          "name": "植入容器镜像",
-          "count": 0
+          "name": "植入容器镜像"
         },
         {
           "resource_id": "T1556",
-          "name": "修改身份验证流程",
-          "count": 1
+          "name": "修改身份验证流程"
         },
         {
           "resource_id": "T1137",
-          "name": "启动Office应用程序",
-          "count": 0
+          "name": "启动Office应用程序"
         },
         {
           "resource_id": "T1542",
-          "name": "预启动操作系统",
-          "count": 0
+          "name": "预启动操作系统"
         },
         {
           "resource_id": "T1053",
-          "name": "计划任务",
-          "count": 0
+          "name": "计划任务"
         },
         {
           "resource_id": "T1505",
-          "name": "服务器软件组件",
-          "count": 1
+          "name": "服务器软件组件"
         },
         {
           "resource_id": "T1205",
-          "name": "流量特征",
-          "count": 0
+          "name": "流量特征"
         },
         {
           "resource_id": "T1078",
-          "name": "有效凭证",
-          "count": 1
+          "name": "有效凭证"
         }
       ]
     },
@@ -320,68 +262,55 @@
       "attacks": [
         {
           "resource_id": "T1548",
-          "name": "滥用提权控制机制",
-          "count": 1
+          "name": "滥用提权控制机制"
         },
         {
           "resource_id": "T1134",
-          "name": "篡改访问令牌",
-          "count": 1
+          "name": "篡改访问令牌"
         },
         {
           "resource_id": "T1547",
-          "name": "启动或登录自动执行",
-          "count": 1
+          "name": "启动或登录自动执行"
         },
         {
           "resource_id": "T1037",
-          "name": "登录脚本",
-          "count": 1
+          "name": "登录脚本"
         },
         {
           "resource_id": "T1543",
-          "name": "创建或修改系统进程",
-          "count": 1
+          "name": "创建或修改系统进程"
         },
         {
           "resource_id": "T1484",
-          "name": "修改组策略",
-          "count": 0
+          "name": "修改组策略"
         },
         {
           "resource_id": "T1611",
-          "name": "主机逃逸",
-          "count": 0
+          "name": "主机逃逸"
         },
         {
           "resource_id": "T1546",
-          "name": "事件触发执行",
-          "count": 0
+          "name": "事件触发执行"
         },
         {
           "resource_id": "T1068",
-          "name": "利用漏洞进行权限升级",
-          "count": 1
+          "name": "利用漏洞进行权限升级"
         },
         {
           "resource_id": "T1574",
-          "name": "劫持执行流量",
-          "count": 0
+          "name": "劫持执行流量"
         },
         {
           "resource_id": "T1055",
-          "name": "进程注入",
-          "count": 0
+          "name": "进程注入"
         },
         {
           "resource_id": "T1053",
-          "name": "计划任务",
-          "count": 0
+          "name": "计划任务"
         },
         {
           "resource_id": "T1078",
-          "name": "有效凭证",
-          "count": 1
+          "name": "有效凭证"
         }
       ]
     },
@@ -390,213 +319,171 @@
       "attacks": [
         {
           "resource_id": "T1548",
-          "name": "滥用提权控制机制",
-          "count": 1
+          "name": "滥用提权控制机制"
         },
         {
           "resource_id": "T1134",
-          "name": "篡改访问令牌",
-          "count": 1
+          "name": "篡改访问令牌"
         },
         {
           "resource_id": "T1197",
-          "name": "BITS  作业",
-          "count": 1
+          "name": "BITS  作业"
         },
         {
           "resource_id": "T1612",
-          "name": "在主机上构建镜像",
-          "count": 1
+          "name": "在主机上构建镜像"
         },
         {
           "resource_id": "T1622",
-          "name": "绕过排错程序",
-          "count": 1
+          "name": "绕过排错程序"
         },
         {
           "resource_id": "T1140",
-          "name": "反混淆/解码文件或信息",
-          "count": 0
+          "name": "反混淆/解码文件或信息"
         },
         {
           "resource_id": "T1610",
-          "name": "部署容器",
-          "count": 0
+          "name": "部署容器"
         },
         {
           "resource_id": "T1006",
-          "name": "直接访问卷",
-          "count": 0
+          "name": "直接访问卷"
         },
         {
           "resource_id": "T1484",
-          "name": "修改组策略",
-          "count": 0
+          "name": "修改组策略"
         },
         {
           "resource_id": "T1480",
-          "name": "执行防护",
-          "count": 0
+          "name": "执行防护"
         },
         {
           "resource_id": "T1211",
-          "name": "利用漏洞实现防御绕过",
-          "count": 2
+          "name": "利用漏洞实现防御绕过"
         },
         {
           "resource_id": "T1222",
-          "name": "修改文件或目录权限",
-          "count": 1
+          "name": "修改文件或目录权限"
         },
         {
           "resource_id": "T1564",
-          "name": "隐藏工件",
-          "count": 0
+          "name": "隐藏工件"
         },
         {
           "resource_id": "T1574",
-          "name": "劫持执行流量",
-          "count": 0
+          "name": "劫持执行流量"
         },
         {
           "resource_id": "T1562",
-          "name": "破坏防御",
-          "count": 0
+          "name": "破坏防御"
         },
         {
           "resource_id": "T1070",
-          "name": "删除主机上的指标",
-          "count": 0
+          "name": "删除主机上的指标"
         },
         {
           "resource_id": "T1202",
-          "name": "间接命令执行",
-          "count": 1
+          "name": "间接命令执行"
         },
         {
           "resource_id": "T1036",
-          "name": "伪装",
-          "count": 0
+          "name": "伪装"
         },
         {
           "resource_id": "T1556",
-          "name": "修改身份验证流程",
-          "count": 1
+          "name": "修改身份验证流程"
         },
         {
           "resource_id": "T1578",
-          "name": "修改云计算基础架构",
-          "count": 0
+          "name": "修改云计算基础架构"
         },
         {
           "resource_id": "T1112",
-          "name": "修改注册表",
-          "count": 0
+          "name": "修改注册表"
         },
         {
           "resource_id": "T1601",
-          "name": "修改系统镜像",
-          "count": 0
+          "name": "修改系统镜像"
         },
         {
           "resource_id": "T1599",
-          "name": "网络边界桥接",
-          "count": 0
+          "name": "网络边界桥接"
         },
         {
           "resource_id": "T1027",
-          "name": "混淆的文件或信息",
-          "count": 0
+          "name": "混淆的文件或信息"
         },
         {
           "resource_id": "T1647",
-          "name": "属性列表文件修改",
-          "count": 0
+          "name": "属性列表文件修改"
         },
         {
           "resource_id": "T1542",
-          "name": "预启动操作系统",
-          "count": 0
+          "name": "预启动操作系统"
         },
         {
           "resource_id": "T1055",
-          "name": "进程注入",
-          "count": 0
+          "name": "进程注入"
         },
         {
           "resource_id": "T1620",
-          "name": "反射代码加载",
-          "count": 0
+          "name": "反射代码加载"
         },
         {
           "resource_id": "T1207",
-          "name": "域控制器",
-          "count": 0
+          "name": "域控制器"
         },
         {
           "resource_id": "T1014",
-          "name": "恶意软件",
-          "count": 0
+          "name": "恶意软件"
         },
         {
           "resource_id": "T1553",
-          "name": "破坏可信控件",
-          "count": 0
+          "name": "破坏可信控件"
         },
         {
           "resource_id": "T1218",
-          "name": "系统二进制文件代理执行",
-          "count": 0
+          "name": "系统二进制文件代理执行"
         },
         {
           "resource_id": "T1216",
-          "name": "系统脚本代理执行",
-          "count": 0
+          "name": "系统脚本代理执行"
         },
         {
           "resource_id": "T1221",
-          "name": "模板注入",
-          "count": 0
+          "name": "模板注入"
         },
         {
           "resource_id": "T1205",
-          "name": "流量特征",
-          "count": 0
+          "name": "流量特征"
         },
         {
           "resource_id": "T1127",
-          "name": "受信任的开发工具",
-          "count": 0
+          "name": "受信任的开发工具"
         },
         {
           "resource_id": "T1535",
-          "name": "未使用/不支持的云区域",
-          "count": 0
+          "name": "未使用/不支持的云区域"
         },
         {
           "resource_id": "T1550",
-          "name": "使用备用身份验证材料",
-          "count": 0
+          "name": "使用备用身份验证材料"
         },
         {
           "resource_id": "T1078",
-          "name": "有效凭证",
-          "count": 1
+          "name": "有效凭证"
         },
         {
           "resource_id": "T1497",
-          "name": "逃避虚拟化/沙箱检测",
-          "count": 0
+          "name": "逃避虚拟化/沙箱检测"
         },
         {
           "resource_id": "T1600",
-          "name": "弱加密",
-          "count": 0
+          "name": "弱加密"
         },
         {
           "resource_id": "T1220",
-          "name": "XSL脚本处理",
-          "count": 0
+          "name": "XSL脚本处理"
         }
       ]
     },
@@ -605,88 +492,71 @@
       "attacks": [
         {
           "resource_id": "T1557",
-          "name": "中间人",
-          "count": 0
+          "name": "中间人"
         },
         {
           "resource_id": "T1110",
-          "name": "暴力破解",
-          "count": 1
+          "name": "暴力破解"
         },
         {
           "resource_id": "T1555",
-          "name": "密钥库中的凭据",
-          "count": 0
+          "name": "密钥库中的凭据"
         },
         {
           "resource_id": "T1212",
-          "name": "利用漏洞获取凭证访问的权限",
-          "count": 0
+          "name": "利用漏洞获取凭证访问的权限"
         },
         {
           "resource_id": "T1187",
-          "name": "强制身份验证",
-          "count": 0
+          "name": "强制身份验证"
         },
         {
           "resource_id": "T1606",
-          "name": "伪造web凭据",
-          "count": 0
+          "name": "伪造web凭据"
         },
         {
           "resource_id": "T1056",
-          "name": "捕获用户输入",
-          "count": 0
+          "name": "捕获用户输入"
         },
         {
           "resource_id": "T1556",
-          "name": "修改身份验证流程",
-          "count": 1
+          "name": "修改身份验证流程"
         },
         {
           "resource_id": "T1111",
-          "name": "多因素身份认证拦截",
-          "count": 0
+          "name": "多因素身份认证拦截"
         },
         {
           "resource_id": "T1621",
-          "name": "多因素身份认证请求",
-          "count": 0
+          "name": "多因素身份认证请求"
         },
         {
           "resource_id": "T1040",
-          "name": "网络嗅探",
-          "count": 0
+          "name": "网络嗅探"
         },
         {
           "resource_id": "T1003",
-          "name": "OS凭据转储",
-          "count": 0
+          "name": "OS凭据转储"
         },
         {
           "resource_id": "T1528",
-          "name": "窃取应用访问令牌",
-          "count": 0
+          "name": "窃取应用访问令牌"
         },
         {
           "resource_id": "T1539",
-          "name": "窃取网络会话Cookie",
-          "count": 0
+          "name": "窃取网络会话Cookie"
         },
         {
           "resource_id": "T1649",
-          "name": "窃取或伪造认证证书",
-          "count": 0
+          "name": "窃取或伪造认证证书"
         },
         {
           "resource_id": "T1558",
-          "name": "窃取或伪造Kerberos票据",
-          "count": 1
+          "name": "窃取或伪造Kerberos票据"
         },
         {
           "resource_id": "T1552",
-          "name": "不安全凭据",
-          "count": 0
+          "name": "不安全凭据"
         }
       ]
     },
@@ -695,153 +565,123 @@
       "attacks": [
         {
           "resource_id": "T1087",
-          "name": "账户发现",
-          "count": 1
+          "name": "账户发现"
         },
         {
           "resource_id": "T1010",
-          "name": "应用程序窗口发现",
-          "count": 0
+          "name": "应用程序窗口发现"
         },
         {
           "resource_id": "T1217",
-          "name": "发现浏览器书签发",
-          "count": 0
+          "name": "发现浏览器书签发"
         },
         {
           "resource_id": "T1580",
-          "name": "云基础架构发现",
-          "count": 0
+          "name": "云基础架构发现"
         },
         {
           "resource_id": "T1538",
-          "name": "云服务仪表盘",
-          "count": 0
+          "name": "云服务仪表盘"
         },
         {
           "resource_id": "T1526",
-          "name": "云服务发现",
-          "count": 0
+          "name": "云服务发现"
         },
         {
           "resource_id": "T1619",
-          "name": "云存储对象发现",
-          "count": 0
+          "name": "云存储对象发现"
         },
         {
           "resource_id": "T1613",
-          "name": "容器与资源发现",
-          "count": 0
+          "name": "容器与资源发现"
         },
         {
           "resource_id": "T1622",
-          "name": "绕过排错程序",
-          "count": 1
+          "name": "绕过排错程序"
         },
         {
           "resource_id": "T1482",
-          "name": "域信任发现",
-          "count": 0
+          "name": "域信任发现"
         },
         {
           "resource_id": "T1083",
-          "name": "文件与目录发现",
-          "count": 0
+          "name": "文件与目录发现"
         },
         {
           "resource_id": "T1615",
-          "name": "组策略发现",
-          "count": 0
+          "name": "组策略发现"
         },
         {
           "resource_id": "T1046",
-          "name": "服务发现",
-          "count": 0
+          "name": "服务发现"
         },
         {
           "resource_id": "T1135",
-          "name": "网络共享发现",
-          "count": 0
+          "name": "网络共享发现"
         },
         {
           "resource_id": "T1040",
-          "name": "网络嗅探",
-          "count": 0
+          "name": "网络嗅探"
         },
         {
           "resource_id": "T1201",
-          "name": "密码策略发现",
-          "count": 0
+          "name": "密码策略发现"
         },
         {
           "resource_id": "T1120",
-          "name": "外围设备发现",
-          "count": 0
+          "name": "外围设备发现"
         },
         {
           "resource_id": "T1069",
-          "name": "组权限发现",
-          "count": 0
+          "name": "组权限发现"
         },
         {
           "resource_id": "T1057",
-          "name": "进程发现",
-          "count": 1
+          "name": "进程发现"
         },
         {
           "resource_id": "T1012",
-          "name": "查询注册表",
-          "count": 0
+          "name": "查询注册表"
         },
         {
           "resource_id": "T1018",
-          "name": "远程系统发现",
-          "count": 0
+          "name": "远程系统发现"
         },
         {
           "resource_id": "T1518",
-          "name": "软件发现",
-          "count": 0
+          "name": "软件发现"
         },
         {
           "resource_id": "T1082",
-          "name": "系统信息发现",
-          "count": 0
+          "name": "系统信息发现"
         },
         {
           "resource_id": "T1614",
-          "name": "系统位置发现",
-          "count": 0
+          "name": "系统位置发现"
         },
         {
           "resource_id": "T1016",
-          "name": "系统网络配置发现",
-          "count": 0
+          "name": "系统网络配置发现"
         },
         {
           "resource_id": "T1049",
-          "name": "系统网络连接发现",
-          "count": 0
+          "name": "系统网络连接发现"
         },
         {
           "resource_id": "T1033",
-          "name": "系统所有者/用户发现",
-          "count": 0
+          "name": "系统所有者/用户发现"
         },
         {
           "resource_id": "T1007",
-          "name": "系统服务发现",
-          "count": 1
+          "name": "系统服务发现"
         },
         {
           "resource_id": "T1124",
-          "name": "系统时间发现",
-          "count": 0
+          "name": "系统时间发现"
         },
         {
           "resource_id": "T1497",
-          "name": "逃避虚拟化/沙箱检测",
-          "count": 0
+          "name": "逃避虚拟化/沙箱检测"
         }
       ]
     },
@@ -850,48 +690,39 @@
       "attacks": [
         {
           "resource_id": "T1210",
-          "name": "利用远程服务",
-          "count": 1
+          "name": "利用远程服务"
         },
         {
           "resource_id": "T1534",
-          "name": "内部鱼叉式攻击",
-          "count": 1
+          "name": "内部鱼叉式攻击"
         },
         {
           "resource_id": "T1570",
-          "name": "工具横向转移",
-          "count": 2
+          "name": "工具横向转移"
         },
         {
           "resource_id": "T1563",
-          "name": "远程服务会话劫持",
-          "count": 1
+          "name": "远程服务会话劫持"
         },
         {
           "resource_id": "T1021",
-          "name": "远程服务",
-          "count": 1
+          "name": "远程服务"
         },
         {
           "resource_id": "T1091",
-          "name": "通过可移动介质进行复制",
-          "count": 1
+          "name": "通过可移动介质进行复制"
         },
         {
           "resource_id": "T1072",
-          "name": "利用第三方软件部署工具",
-          "count": 0
+          "name": "利用第三方软件部署工具"
         },
         {
           "resource_id": "T1080",
-          "name": "污染共享内容",
-          "count": 1
+          "name": "污染共享内容"
         },
         {
           "resource_id": "T1550",
-          "name": "使用备用身份验证材料",
-          "count": 0
+          "name": "使用备用身份验证材料"
         }
       ]
     },
@@ -900,88 +731,71 @@
       "attacks": [
         {
           "resource_id": "T1557",
-          "name": "中间人",
-          "count": 0
+          "name": "中间人"
         },
         {
           "resource_id": "T1560",
-          "name": "存档已收集的数据",
-          "count": 0
+          "name": "存档已收集的数据"
         },
         {
           "resource_id": "T1123",
-          "name": "音频捕获",
-          "count": 0
+          "name": "音频捕获"
         },
         {
           "resource_id": "T1119",
-          "name": "自动收集",
-          "count": 1
+          "name": "自动收集"
         },
         {
           "resource_id": "T1185",
-          "name": "浏览器中间人",
-          "count": 0
+          "name": "浏览器中间人"
         },
         {
           "resource_id": "T1115",
-          "name": "剪贴板数据",
-          "count": 0
+          "name": "剪贴板数据"
         },
         {
           "resource_id": "T1074",
-          "name": "暂存数据",
-          "count": 1
+          "name": "暂存数据"
         },
         {
           "resource_id": "T1530",
-          "name": "云数据获取",
-          "count": 0
+          "name": "云数据获取"
         },
         {
           "resource_id": "T1602",
-          "name": "配置存储库中的数据",
-          "count": 0
+          "name": "配置存储库中的数据"
         },
         {
           "resource_id": "T1213",
-          "name": "信息存储库中的数据",
-          "count": 0
+          "name": "信息存储库中的数据"
         },
         {
           "resource_id": "T1005",
-          "name": "从本地系统收集敏感数据",
-          "count": 1
+          "name": "从本地系统收集敏感数据"
         },
         {
           "resource_id": "T1039",
-          "name": "网络共享驱动器中的数据",
-          "count": 0
+          "name": "网络共享驱动器中的数据"
         },
         {
           "resource_id": "T1025",
-          "name": "来自可移动介质的数据",
-          "count": 0
+          "name": "来自可移动介质的数据"
         },
         {
           "resource_id": "T1114",
-          "name": "电子邮件收集",
-          "count": 1
+          "name": "电子邮件收集"
         },
         {
           "resource_id": "T1056",
-          "name": "捕获用户输入",
-          "count": 0
+          "name": "捕获用户输入"
         },
         {
           "resource_id": "T1113",
-          "name": "屏幕截图",
-          "count": 0
+          "name": "屏幕截图"
         },
         {
           "resource_id": "T1125",
-          "name": "视频捕获",
-          "count": 0
+          "name": "视频捕获"
         }
       ]
     },
@@ -990,83 +804,67 @@
       "attacks": [
         {
           "resource_id": "T1071",
-          "name": "标准应用层协议",
-          "count": 1
+          "name": "标准应用层协议"
         },
         {
           "resource_id": "T1092",
-          "name": "通过可移动介质进行通信",
-          "count": 0
+          "name": "通过可移动介质进行通信"
         },
         {
           "resource_id": "T1132",
-          "name": "数据编码",
-          "count": 0
+          "name": "数据编码"
         },
         {
           "resource_id": "T1001",
-          "name": "数据混淆",
-          "count": 0
+          "name": "数据混淆"
         },
         {
           "resource_id": "T1568",
-          "name": "动态解决方案",
-          "count": 0
+          "name": "动态解决方案"
         },
         {
           "resource_id": "T1573",
-          "name": "加密信道",
-          "count": 0
+          "name": "加密信道"
         },
         {
           "resource_id": "T1008",
-          "name": "备用通信信道",
-          "count": 0
+          "name": "备用通信信道"
         },
         {
           "resource_id": "T1105",
-          "name": "远程文件拷贝",
-          "count": 0
+          "name": "远程文件拷贝"
         },
         {
           "resource_id": "T1104",
-          "name": "多阶段通信信道",
-          "count": 0
+          "name": "多阶段通信信道"
         },
         {
           "resource_id": "T1095",
-          "name": "标准非应用层协议",
-          "count": 0
+          "name": "标准非应用层协议"
         },
         {
           "resource_id": "T1571",
-          "name": "非标准端口",
-          "count": 0
+          "name": "非标准端口"
         },
         {
           "resource_id": "T1572",
-          "name": "隧道协议",
-          "count": 0
+          "name": "隧道协议"
         },
         {
           "resource_id": "T1090",
-          "name": "连接代理",
-          "count": 1
+          "name": "连接代理"
         },
         {
           "resource_id": "T1219",
-          "name": "远程访问工具",
-          "count": 0
+          "name": "远程访问工具"
         },
         {
           "resource_id": "T1205",
-          "name": "流量特征",
-          "count": 0
+          "name": "流量特征"
         },
         {
           "resource_id": "T1102",
-          "name": "网络服务",
-          "count": 0
+          "name": "网络服务"
         }
       ]
     },
@@ -1075,48 +873,39 @@
       "attacks": [
         {
           "resource_id": "T1020",
-          "name": "自动化数据渗出",
-          "count": 0
+          "name": "自动化数据渗出"
         },
         {
           "resource_id": "T1030",
-          "name": "限制数据传输大小",
-          "count": 0
+          "name": "限制数据传输大小"
         },
         {
           "resource_id": "T1048",
-          "name": "备用协议上的数据渗出",
-          "count": 0
+          "name": "备用协议上的数据渗出"
         },
         {
           "resource_id": "T1041",
-          "name": "使用命令与控制信道窃取",
-          "count": 0
+          "name": "使用命令与控制信道窃取"
         },
         {
           "resource_id": "T1011",
-          "name": "其他网络介质的数据渗漏",
-          "count": 0
+          "name": "其他网络介质的数据渗漏"
         },
         {
           "resource_id": "T1052",
-          "name": "物理介质上的数据渗出",
-          "count": 0
+          "name": "物理介质上的数据渗出"
         },
         {
           "resource_id": "T1567",
-          "name": "通过Web服务进行数据渗出",
-          "count": 0
+          "name": "通过Web服务进行数据渗出"
         },
         {
           "resource_id": "T1029",
-          "name": "计划传输",
-          "count": 0
+          "name": "计划传输"
         },
         {
           "resource_id": "T1537",
-          "name": "将数据传输到云账户中",
-          "count": 0
+          "name": "将数据传输到云账户中"
         }
       ]
     },
@@ -1125,68 +914,55 @@
       "attacks": [
         {
           "resource_id": "T1531",
-          "name": "删除账户访问权限",
-          "count": 0
+          "name": "删除账户访问权限"
         },
         {
           "resource_id": "T1485",
-          "name": "销毁数据",
-          "count": 0
+          "name": "销毁数据"
         },
         {
           "resource_id": "T1486",
-          "name": "数据加密",
-          "count": 0
+          "name": "数据加密"
         },
         {
           "resource_id": "T1565",
-          "name": "数据修改、监控",
-          "count": 0
+          "name": "数据修改、监控"
         },
         {
           "resource_id": "T1491",
-          "name": "篡改",
-          "count": 0
+          "name": "篡改"
         },
         {
           "resource_id": "T1561",
-          "name": "删除磁盘数据",
-          "count": 0
+          "name": "删除磁盘数据"
         },
         {
           "resource_id": "T1499",
-          "name": "端点拒绝服务",
-          "count": 0
+          "name": "端点拒绝服务"
         },
         {
           "resource_id": "T1495",
-          "name": "固件损坏",
-          "count": 0
+          "name": "固件损坏"
         },
         {
           "resource_id": "T1490",
-          "name": "禁用系统恢复",
-          "count": 0
+          "name": "禁用系统恢复"
         },
         {
           "resource_id": "T1498",
-          "name": "网络拒绝服务",
-          "count": 0
+          "name": "网络拒绝服务"
         },
         {
           "resource_id": "T1496",
-          "name": "资源劫持",
-          "count": 0
+          "name": "资源劫持"
         },
         {
           "resource_id": "T1489",
-          "name": "服务停止",
-          "count": 0
+          "name": "服务停止"
         },
         {
           "resource_id": "T1529",
-          "name": "系统关闭/重启",
-          "count": 0
+          "name": "系统关闭/重启"
         }
       ]
     }

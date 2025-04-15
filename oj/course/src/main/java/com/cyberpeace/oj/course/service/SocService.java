@@ -4,6 +4,6 @@ import com.cyberpeace.common.model.user.UserInfo;
 
 public interface SocService {
 
-    void lessonDetailRecordUpload(UserInfo localUser, String courseId, String lessonId);
+    void lessonDetailRecordUpload(UserInfo localUser, String courseId);
 
 }

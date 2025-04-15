@@ -30,10 +30,13 @@ public class SocServiceImpl implements SocService {
     public static final String CALLER_CODE = "SD";
 
     // 山东移动课程类型信息接收默认值
-    public static final String STUDY_TYPE = "网络攻防";
+    public static final String STUDY_TYPE = "红蓝对抗";
 
     @Override
-    public void lessonDetailRecordUpload(UserInfo localUser, String courseId, String lessonId) {
+    public void lessonDetailRecordUpload(UserInfo localUser, String courseId) {
+        if(localUser == null || localUser.getOutUserType() == null || !localUser.getOutUserType().equals("soc")){
+            return;
+        }
         log.info("function lessonDetailRecordUpload start");
         // 查询该课程信息
         CourseInfoBo course = courseLessonService.getCourseInfoByResourceId(courseId);
@@ -71,7 +74,7 @@ public class SocServiceImpl implements SocService {
         courseRecord.setPathName(categoryName);
         courseRecord.setStudyType(STUDY_TYPE);
         courseRecord.setTotalLearningTime(trainingTime);
-        courseRecord.setUserId(localUser.getUserId());
+        courseRecord.setUserId(localUser.getAccountId());
         JSONObject jsonObject = (JSONObject) JSON.toJSON(courseRecord);
         sendMessage(jsonObject, SOC_COURSE_SEND_URL, WebConstant.POST);
     }

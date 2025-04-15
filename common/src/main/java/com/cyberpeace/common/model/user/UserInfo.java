@@ -7,6 +7,7 @@ import java.util.Set;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
@@ -26,6 +27,15 @@ public class UserInfo implements Serializable {
 	 * 用户名（对前端显示，登录使用）
 	 */
     private String userName;
+
+    @ApiModelProperty(value = "外部平台用户id")
+    private String accountId;
+
+    @ApiModelProperty(value = "外部平台用户类型")
+    private String outUserType;
+
+    @ApiModelProperty(value = "外部平台用户ticket")
+    private String fourATicket;
 
     /**
      * 头像地址

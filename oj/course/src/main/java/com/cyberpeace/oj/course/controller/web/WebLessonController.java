@@ -12,6 +12,7 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.controller.req.LessonPracticeSubmitReq;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.LessonSceneService;
@@ -70,6 +71,9 @@ public class WebLessonController {
 
     @Autowired
     private SocService socService;
+
+    @Autowired
+    private RemoteUserService remoteUserService;
 
     /**
      * 课时详情
@@ -308,9 +312,9 @@ public class WebLessonController {
     @ApiOperation("课程完成上报")
     @GetMapping("/record_upload")
     @RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
-    public BaseRsp<Boolean> lessonDetailRecordUpload(@RequestParam("course_id") String courseId, @RequestParam(value = "lesson_id") String lessonId) {
-        UserInfo localUser = UserInfoContext.getUserContext();
-        socService.lessonDetailRecordUpload(localUser, courseId, lessonId);
+    public BaseRsp<Boolean> lessonDetailRecordUpload(@RequestParam("course_id") String courseId) {
+        UserInfo userInfo = remoteUserService.getById(UserInfoContext.getUserContext().getUserId());
+        socService.lessonDetailRecordUpload(userInfo, courseId);
         return new BaseRsp<>(true);
     }
 

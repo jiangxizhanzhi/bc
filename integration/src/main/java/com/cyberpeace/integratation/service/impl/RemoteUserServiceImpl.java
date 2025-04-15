@@ -571,6 +571,9 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		UserInfo userInfo = new UserInfo();
 		userInfo.setUserId(jsonObject.getObject("id", String.class));
 		userInfo.setUserName(jsonObject.getObject("username", String.class));
+		userInfo.setAccountId(jsonObject.getObject("account_id", String.class));
+		userInfo.setOutUserType(jsonObject.getObject("out_user_type", String.class));
+		userInfo.setFourATicket(jsonObject.getObject("four_aticket", String.class));
 		userInfo.setName(jsonObject.getObject("name", String.class));
 		userInfo.setAvatarUrl(jsonObject.getObject("avatar", String.class));
 		userInfo.setRoles(jsonObject.getJSONArray("roles").toJavaList(JSONObject.class));

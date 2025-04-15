@@ -88,6 +88,19 @@ public abstract class SpaceControllerBase<S extends IService<E>, E extends Space
 		return new BaseRsp<>(bo);
 	}
 
+	@ApiOperation("列出全部")
+	@GetMapping("/list_all")
+	public BaseRsp<List<B>> listAll() {
+		LambdaQueryWrapper<E> wrapper = new LambdaQueryWrapper<>();
+		wrapper.orderByAsc(E::getId);
+		List<E> eList = baseService.list(wrapper);
+		List<B> res = Lists.newArrayList();
+		for (E e : eList) {
+			res.add((B) e.entity2Bo(getRelatedMap(eList)));
+		}
+		return new BaseRsp<>(res);
+	}
+
 	public boolean checkNameDuplication(E entity) {
 		CrCommonValidator.validateNameLen(entity.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		LambdaQueryWrapper<E> wrapper = new LambdaQueryWrapper<>();

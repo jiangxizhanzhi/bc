@@ -34,6 +34,8 @@ public class SpaceActionFrame extends SpaceFrameBaseTable {
 
 	private String frame;
 
+	private String categoryId;
+
 	public SpaceActionFrameBo entity2Bo(Map<String, List<IdAndName>> relatedMap) {
 		SpaceActionFrameBo bo = BeanUtils.copy(this, SpaceActionFrameBo.class);
 		bo.setTag(JsonUtil.toJsonObjectArray(this.tag, String.class));

@@ -20,8 +20,11 @@ public class SpaceActionFrameBo extends SpaceFrameBoBase {
 	@ApiModelProperty(value = "名称")
 	private String name;
 
-	@ApiModelProperty(value = "分类")
+	@ApiModelProperty(value = "分类，面向流程，面向目标")
 	private Integer type;
+
+	@ApiModelProperty(value = "类型id")
+	private String categoryId;
 
 	@ApiModelProperty(value = "岗位")
 	private Integer role;
@@ -32,13 +35,13 @@ public class SpaceActionFrameBo extends SpaceFrameBoBase {
 	@ApiModelProperty(value = "防御类型")
 	private String defense;
 
-	@ApiModelProperty(value = "标签")
+	@ApiModelProperty(value = "应用场景")
 	private List<String> tag;
 
 	@ApiModelProperty(value = "拓扑特征")
 	private String topo;
 
-	@ApiModelProperty(value = "介绍")
+	@ApiModelProperty(value = "使用说明")
 	private String description;
 
 	public SpaceActionFrame bo2Entity() {

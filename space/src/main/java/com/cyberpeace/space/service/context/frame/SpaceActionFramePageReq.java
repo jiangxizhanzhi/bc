@@ -20,6 +20,9 @@ public class SpaceActionFramePageReq extends FrameBasePageReq {
 	@Setter
 	private Integer role;
 
+	@Getter
+	@Setter
+	private String category_id;
 	public LambdaQueryWrapper<SpaceActionFrame> req2QueryWrapper() {
 		LambdaQueryWrapper<SpaceActionFrame> wrapper = new LambdaQueryWrapper<>();
 		if (null != this.type) {
@@ -28,6 +31,9 @@ public class SpaceActionFramePageReq extends FrameBasePageReq {
 
 		if (null != this.role) {
 			wrapper.eq(SpaceActionFrame::getRole, this.role);
+		}
+		if (null != this.category_id) {
+			wrapper.eq(SpaceActionFrame::getCategoryId, this.category_id);
 		}
 		if (StringUtils.isNotBlank(this.getPattern())) {
 			wrapper.like(SpaceActionFrame::getName, this.getPattern());

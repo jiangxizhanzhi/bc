@@ -2347,6 +2347,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
             LessonRecord record = lessonRecordMapper.getRecord(lessonId, courseId, userId);
             if(record != null && record.getLearnedTime() != null){
                 learnedTime = null;
+                learnedDuration = learnedDuration + record.getLearnedDuration();
             }
         }
         return lessonRecordMapper.recordTime(lessonId, courseId, learnedTime, learnedDuration, userId);

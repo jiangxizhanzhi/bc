@@ -31,6 +31,12 @@ public class SpaceTrafficDetectRule extends SpaceBaseTable {
 	@ApiModelProperty(value = "工具")
 	private String tool;
 
+	@ApiModelProperty(value = "防御阶段， type=57")
+	private Integer stage;
+
+	@ApiModelProperty(value = "攻击类型， type=58")
+	private Integer attackType;
+
 
 	public SpaceTrafficDetectRuleBo entity2Bo(Map<String, IdAndName> relatedMap) {
 		SpaceTrafficDetectRuleBo bo = BeanUtils.copy(this, SpaceTrafficDetectRuleBo.class);

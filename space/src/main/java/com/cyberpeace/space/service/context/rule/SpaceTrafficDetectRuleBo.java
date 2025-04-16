@@ -18,7 +18,6 @@ public class SpaceTrafficDetectRuleBo extends SpaceBoBase {
 
 	@ApiModelProperty(value = "名称")
 	private String name;
-    
 
 	@ApiModelProperty(value = "规则内容")
 	private String ruleContent;
@@ -35,6 +34,11 @@ public class SpaceTrafficDetectRuleBo extends SpaceBoBase {
 	@ApiModelProperty(value = "工具")
 	private String tool;
 
+	@ApiModelProperty(value = "防御阶段， type=57")
+	private Integer stage;
+
+	@ApiModelProperty(value = "攻击类型， type=58")
+	private Integer attackType;
 
 	public SpaceTrafficDetectRule bo2Entity() {
 		SpaceTrafficDetectRule entity = BeanUtils.copy(this, SpaceTrafficDetectRule.class);

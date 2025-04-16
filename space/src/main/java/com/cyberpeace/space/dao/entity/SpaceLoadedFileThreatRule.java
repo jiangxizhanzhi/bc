@@ -31,6 +31,8 @@ public class SpaceLoadedFileThreatRule extends SpaceBaseTable {
 	@ApiModelProperty(value = "执行方式，自动2，手动1")
 	private Integer executeType;
 
+	private Integer stage;
+
 
 	public SpaceLoadedFileThreatRuleBo entity2Bo(Map<String, IdAndName> relatedMap) {
 		SpaceLoadedFileThreatRuleBo bo = BeanUtils.copy(this, SpaceLoadedFileThreatRuleBo.class);

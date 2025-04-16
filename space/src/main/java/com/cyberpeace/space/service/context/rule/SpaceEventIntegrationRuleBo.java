@@ -28,6 +28,9 @@ public class SpaceEventIntegrationRuleBo extends SpaceBoBase {
 	@ApiModelProperty(value = "应用工具")
 	private String tool;
 
+	@ApiModelProperty(value = "防御阶段， type=57")
+	private Integer stage;
+
 	public SpaceEventIntegrationRule bo2Entity() {
 		SpaceEventIntegrationRule entity = BeanUtils.copy(this, SpaceEventIntegrationRule.class);
 		return entity;

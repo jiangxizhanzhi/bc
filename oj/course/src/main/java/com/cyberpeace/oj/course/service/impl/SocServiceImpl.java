@@ -4,29 +4,26 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.SocService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContexts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.cert.X509Certificate;
 import java.util.UUID;
 
 @Slf4j
@@ -47,7 +44,7 @@ public class SocServiceImpl implements SocService {
 
     @Override
     public void lessonDetailRecordUpload(UserInfo localUser, String courseId) {
-        if(localUser == null || localUser.getOutUserType() == null || !localUser.getOutUserType().equals("soc")){
+        if (localUser == null || localUser.getOutUserType() == null || !localUser.getOutUserType().equals("soc")) {
             return;
         }
         log.info("function lessonDetailRecordUpload start");
@@ -89,91 +86,85 @@ public class SocServiceImpl implements SocService {
         courseRecord.setTotalLearningTime(trainingTime);
         courseRecord.setUserId(localUser.getAccountId());
         JSONObject jsonObject = (JSONObject) JSON.toJSON(courseRecord);
-        sendRecordMessage(jsonObject, SOC_COURSE_SEND_URL, WebConstant.POST);
+        SOC_COURSE_SEND_URL = "https://jsonplaceholder.typicode.com/posts";
+        log.info("sendCourseRecordMessage start and request:" + jsonObject.toJSONString());
+        log.info("sendCourseRecordMessage url:" + SOC_COURSE_SEND_URL + " and type:" + WebConstant.POST);
+        sendMessage(jsonObject, SOC_COURSE_SEND_URL, WebConstant.POST);
     }
 
-//    public void sendMessage(JSONObject message, String url, String urlType) {
-//        log.info("sendMessage:{}", message.toJSONString());
-//        if (urlType == null) {
-//            return;
-//        }
-//        // 创建HttpClient
-//        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-//            // 根据urlType决定请求类型
-//            HttpRequestBase request = null;
-//            if ("POST".equalsIgnoreCase(urlType)) {
-//                // 创建POST请求
-//                HttpPost postRequest = new HttpPost(url);
-//                postRequest.setHeader("Content-Type", "application/json");
-//                // 设置请求体
-//                StringEntity entity = new StringEntity(message.toString());
-//                postRequest.setEntity(entity);
-//                request = postRequest;
-//            } else if ("GET".equalsIgnoreCase(urlType)) {
-//                // 创建GET请求
-//                request = new org.apache.http.client.methods.HttpGet(url);
-//            }
-//
-//            if (request != null) {
-//                // 执行请求
-//                HttpResponse response = httpClient.execute(request);
-//                HttpEntity entity = response.getEntity();
-//            } else {
-//                throw new IllegalArgumentException("Unsupported URL type: " + urlType);
-//            }
-//        } catch (Exception e) {
-//            log.info("sendMessage error:{}", e.getMessage());
-//        }
-//    }
-
-    public void sendRecordMessage(JSONObject message, String url, String urlType) {
-        log.info("sendMessage: {}", message.toJSONString());
-        if (urlType == null || url == null) {
-            log.warn("urlType 或 url 参数为空");
+    public void sendMessage(JSONObject message, String url, String urlType) {
+        if (urlType == null) {
             return;
         }
-
-        try (CloseableHttpClient httpClient = buildHttpClient(url)) {
-            HttpRequestBase request = createRequest(message, url, urlType);
-            if (request == null) {
-                throw new Exception("不支持的请求类型: " + urlType);
+        String result = null;
+        try {
+            if (urlType.equalsIgnoreCase(WebConstant.POST)) {
+                result = HttpClientUtil.post(url, message, String.class);
+            } else if (urlType.equalsIgnoreCase(WebConstant.GET)) {
+                result = HttpClientUtil.rawGet(url, String.class);
             }
-
-            try (CloseableHttpResponse response = httpClient.execute(request)) {
-                int statusCode = response.getStatusLine().getStatusCode();
-                log.info("响应状态码: {}", statusCode);
-            }
+            log.info("sendMessage result:{}", result);
         } catch (Exception e) {
-            log.error("请求失败 - URL: {}, 类型: {}", url, urlType, e);
+            log.info("发送课程记录失败," + e.getMessage());
         }
     }
 
-    // 创建支持 HTTPS 的 HttpClient（带绕过验证逻辑）
-    private CloseableHttpClient buildHttpClient(String url) throws Exception {
-        if (url.startsWith("https://")) {
-            SSLContext sslContext = SSLContexts.custom()
-                    .loadTrustMaterial((chain, authType) -> true)
-                    .build();
-            return HttpClients.custom()
-                    .setSSLContext(sslContext)
-                    .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
-                    .build();
-        } else {
-            return HttpClients.createDefault();
-        }
-    }
+    public void sendCourseRecordMessage(JSONObject message, String url, String urlType) {
+        try {
+            // 创建信任管理器
+            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
 
-    // 创建请求对象
-    private HttpRequestBase createRequest(JSONObject message, String url, String urlType) throws Exception {
-        if ("POST".equalsIgnoreCase(urlType)) {
-            HttpPost post = new HttpPost(url);
-            post.setHeader("Content-Type", "application/json");
-            post.setEntity(new StringEntity(message.toString()));
-            return post;
-        } else if ("GET".equalsIgnoreCase(urlType)) {
-            return new HttpGet(url);
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
+
+                public X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+            }};
+
+            // 获取默认的SSL上下文
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+
+            // 打开HTTPS连接
+            HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
+
+            // 设置请求方法
+            connection.setRequestMethod(urlType);
+
+            // 设置请求头和数据体（仅限非GET请求）
+            if (!"GET".equalsIgnoreCase(urlType)) {
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                try (OutputStream os = connection.getOutputStream()) {
+                    os.write(message.toString().getBytes(StandardCharsets.UTF_8));
+                }
+            }
+
+            // 获取响应状态码
+            int responseCode = connection.getResponseCode();
+            log.info("Response Code: " + responseCode);
+
+            // 读取响应内容
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
+            String line;
+            StringBuilder response = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+
+            // 打印响应内容
+            log.info("Response Body: " + response);
+
+            // 关闭连接
+            connection.disconnect();
+        } catch (Exception e) {
+            log.info("发送课程记录失败," + e.getMessage());
         }
-        return null;
     }
 
 }

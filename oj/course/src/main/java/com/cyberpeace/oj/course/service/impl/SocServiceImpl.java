@@ -8,6 +8,9 @@ import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.SocService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
@@ -20,6 +23,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -112,23 +116,33 @@ public class SocServiceImpl implements SocService {
                 log.info("响应状态码: {}", statusCode);
                 // 获取响应体内容
                 HttpEntity entity = response.getEntity();
-                if (entity != null) {
-                    // 使用UTF-8编码读取响应内容
-                    try (InputStreamReader reader = new InputStreamReader(entity.getContent(), StandardCharsets.UTF_8);
-                         BufferedReader bufferedReader = new BufferedReader(reader)) {
-                        StringBuilder responseBody = new StringBuilder();
-                        String line;
-                        while ((line = bufferedReader.readLine()) != null) {
-                            responseBody.append(line);
-                        }
+                String result = EntityUtils.toString(entity, StandardCharsets.UTF_8);
+                log.info("response result: ", result);
+                if(result != null){
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    // 忽略未知属性
+                    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                    SSOResult convertingContext = null;
+                    try {
+                        convertingContext = objectMapper.readValue(result, SSOResult.class);
                         // 打印响应内容
-                        log.info("响应内容: {}", responseBody);
+                        log.info("响应内容: {}", JSONObject.toJSONString(convertingContext));
+                    } catch (JsonProcessingException e) {
+                        log.info("响应内容解析错误:" + e.getMessage());
                     }
                 }
             }
         } catch (Exception e) {
             log.error("请求失败 - URL: {}, 类型: {}", url, urlType, e);
         }
+    }
+
+    @Data
+    class SSOResult {
+        private String messageSn;
+        private String message;
+        private Integer code;
+        private String result;
     }
 
     // 创建支持 HTTPS 的 HttpClient（带绕过验证逻辑）

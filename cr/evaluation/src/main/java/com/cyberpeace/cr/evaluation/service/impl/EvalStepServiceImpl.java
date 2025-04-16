@@ -355,6 +355,39 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
         }
     }
 
+    @Override
+    public JSONObject deliveryLoadFile(DeliveryLoadFileReq deliveryLoadFileReq) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+            String json = objectMapper.writeValueAsString(deliveryLoadFileReq);
+            JSONObject deliveryJson = JSON.parseObject(json);
+            JSONObject jsonObject = remoteSceneService.deliveryLoadFile(deliveryJson);
+            return jsonObject;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Override
+    public JSONArray getDeliveryNodes(String sceneId) {
+        JSONObject scene = remoteSceneService.getById(sceneId, null).getJSONObject("scene");
+        JSONObject plugins = scene.getJSONObject("plugins");
+        JSONObject extendElementInfo = (JSONObject) ((JSONObject) plugins.getOrDefault("cpcloud",
+                new JSONObject())).getOrDefault("elements", new JSONObject());
+        JSONArray elements = new JSONArray();
+        for (String elementId : extendElementInfo.keySet()) {
+            JSONObject elementInfo = (JSONObject) extendElementInfo.get(elementId);
+            String imageType = elementInfo.getString("image_type");
+            if("laasVm".equals(imageType)){
+                elementInfo.put("id", elementId);
+                elements.add(elementInfo);
+            }
+        }
+        return elements;
+    }
+
     private void sendAttackData(EvalLoadResultAddReq addReq, JSONObject scene) {
         if (StringUtils.isBlank(addReq.getTaskId())) return;
         log.info("载荷态势动效开始执行");

@@ -156,6 +156,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
     private String GET_EXECUTION_RECORD;
 
+    private String DELIVERY_LOAD_FILE;
+
     @PostConstruct
     public void init() {
         String MP_HOST = mpEnvService.getMpHost();
@@ -278,6 +280,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
         UPDATE_LOAD_EXECUTION_RESULT_BY_PK = MP_HOST + ConfigUtil.getContextProperty("update.load.execution.result.by.pk");
 
         GET_EXECUTION_RECORD = MP_HOST + ConfigUtil.getContextProperty("get.execution.record");
+
+        DELIVERY_LOAD_FILE = MP_HOST + ConfigUtil.getContextProperty("delivery.load.file");
     }
 
     @Override
@@ -760,6 +764,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
         JSONObject jsonObject = HttpClientUtil.rawGet(requestUrl, JSONObject.class);
         log.info("getExecutionRecords:{}", jsonObject);
         return jsonObject;
+    }
+
+    @Override
+    public JSONObject deliveryLoadFile(JSONObject deliveryJson) {
+        return HttpClientUtil.post(DELIVERY_LOAD_FILE, deliveryJson, JSONObject.class);
     }
 
 }

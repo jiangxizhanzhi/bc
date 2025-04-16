@@ -338,4 +338,6 @@ public interface RemoteSceneService {
     void updateLoadExecutionResultByPk(JSONObject addReqJson);
 
     JSONObject getExecutionRecord(String executionRecordId);
+
+    JSONObject deliveryLoadFile(JSONObject deliveryJson);
 }

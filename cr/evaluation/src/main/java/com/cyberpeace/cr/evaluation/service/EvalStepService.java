@@ -1,10 +1,9 @@
 package com.cyberpeace.cr.evaluation.service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.evaluation.controller.req.EvalLoadResultAddReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalMpDevopsLoadSceneLogAddReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalStepLoadAddReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalStepLoadDeleteReq;
+import com.cyberpeace.cr.evaluation.controller.req.*;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestStepListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalStep;
 
@@ -40,4 +39,8 @@ public interface EvalStepService extends IService<EvalStep> {
 	void packageAndSendAttackData(String scene, String srcNode, String targetId);
 
 	void updateLoadExecutionResultByPk(EvalMpDevopsLoadSceneLogAddReq addReq);
+
+	JSONObject deliveryLoadFile(DeliveryLoadFileReq deliveryLoadFileReq);
+
+	JSONArray getDeliveryNodes(String sceneId);
 }

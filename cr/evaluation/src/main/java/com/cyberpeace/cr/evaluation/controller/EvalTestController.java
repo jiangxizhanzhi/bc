@@ -16,6 +16,7 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTest;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTestInstance;
 import com.cyberpeace.cr.evaluation.service.*;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -287,6 +288,20 @@ public class EvalTestController {
 	public BaseRsp<Boolean> addLoad(@RequestBody EvalStepLoadAddReq addReq) {
 		evalStepService.addLoad(addReq);
 		return new BaseRsp<>(Boolean.TRUE);
+	}
+
+	@ApiOperation("投递载荷文件")
+	@PostMapping("/delivery_load_file")
+	public BaseRsp<JSONObject> deliveryLoadFile(@RequestBody DeliveryLoadFileReq deliveryLoadFileReq) {
+		return new BaseRsp<>(evalStepService.deliveryLoadFile(deliveryLoadFileReq));
+	}
+
+
+	@ApiOperation("查询场景内可投递节点信息")
+	@GetMapping("/get_delivery_nodes")
+	public BaseRsp<JSONArray> getDeliveryNodes(
+			@ApiParam(name = "scene_id", value = "场景实例id", required = true) @RequestParam("scene_id") String scene_id) {
+		return new BaseRsp<>(evalStepService.getDeliveryNodes(scene_id));
 	}
 
 	@ApiOperation("添加载荷执行结果")

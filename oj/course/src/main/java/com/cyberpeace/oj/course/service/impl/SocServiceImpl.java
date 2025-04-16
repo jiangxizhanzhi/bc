@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.SocService;
@@ -86,27 +85,9 @@ public class SocServiceImpl implements SocService {
         courseRecord.setTotalLearningTime(trainingTime);
         courseRecord.setUserId(localUser.getAccountId());
         JSONObject jsonObject = (JSONObject) JSON.toJSON(courseRecord);
-        SOC_COURSE_SEND_URL = "https://jsonplaceholder.typicode.com/posts";
         log.info("sendCourseRecordMessage start and request:" + jsonObject.toJSONString());
         log.info("sendCourseRecordMessage url:" + SOC_COURSE_SEND_URL + " and type:" + WebConstant.POST);
-        sendMessage(jsonObject, SOC_COURSE_SEND_URL, WebConstant.POST);
-    }
-
-    public void sendMessage(JSONObject message, String url, String urlType) {
-        if (urlType == null) {
-            return;
-        }
-        String result = null;
-        try {
-            if (urlType.equalsIgnoreCase(WebConstant.POST)) {
-                result = HttpClientUtil.post(url, message, String.class);
-            } else if (urlType.equalsIgnoreCase(WebConstant.GET)) {
-                result = HttpClientUtil.rawGet(url, String.class);
-            }
-            log.info("sendMessage result:{}", result);
-        } catch (Exception e) {
-            log.info("发送课程记录失败," + e.getMessage());
-        }
+        sendCourseRecordMessage(jsonObject, SOC_COURSE_SEND_URL, WebConstant.POST);
     }
 
     public void sendCourseRecordMessage(JSONObject message, String url, String urlType) {

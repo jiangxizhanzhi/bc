@@ -30,5 +30,5 @@ INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 6, 57, '驱逐', '');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 7, 57, '恢复', '');
 
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 58, '异常流量', '');
-INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 58, '未授权访问', '');
-INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 58, '其他', '');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, 58, '未授权访问', '');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, 58, '其他', '');

@@ -19,6 +19,9 @@ public class SpaceTrafficDetectRulePageReq extends SpaceToolPageReq {
 		if (StringUtils.isNotBlank(this.getTool())) {
 			wrapper.like(SpaceTrafficDetectRule::getTool, this.getTool());
 		}
+		if (null != this.getStage()) {
+			wrapper.eq(SpaceTrafficDetectRule::getStage, this.getStage());
+		}
 		wrapper.setEntityClass(SpaceTrafficDetectRule.class);
 		return wrapper;
 	}

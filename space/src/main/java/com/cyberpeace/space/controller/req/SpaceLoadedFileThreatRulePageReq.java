@@ -28,6 +28,9 @@ public class SpaceLoadedFileThreatRulePageReq extends SpaceToolPageReq {
 		if (StringUtils.isNotBlank(this.getType())) {
 			wrapper.like(SpaceLoadedFileThreatRule::getType, this.getType());
 		}
+		if (null != this.getStage()) {
+			wrapper.eq(SpaceLoadedFileThreatRule::getStage, this.getStage());
+		}
 
 		wrapper.orderByDesc(SpaceLoadedFileThreatRule::getExecuteType,
 				SpaceLoadedFileThreatRule::getUpdateTime);

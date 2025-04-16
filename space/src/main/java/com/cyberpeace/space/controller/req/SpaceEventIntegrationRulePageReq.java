@@ -26,7 +26,9 @@ public class SpaceEventIntegrationRulePageReq extends SpaceToolPageReq {
         if (StringUtils.isNotBlank(this.getType())) {
             wrapper.like(SpaceEventIntegrationRule::getType, this.getType());
         }
-
+        if (null != this.getStage()) {
+            wrapper.eq(SpaceEventIntegrationRule::getStage, this.getStage());
+        }
         wrapper.setEntityClass(SpaceEventIntegrationRule.class);
         return wrapper;
     }

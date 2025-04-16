@@ -13,4 +13,9 @@ public class SpaceToolPageReq extends SpacePageReqBase {
     @ApiModelProperty(value = "工具搜索")
 	private String tool;
 
+    @Getter
+    @Setter
+    @ApiModelProperty(value = "阶段")
+    private Integer stage;
+
 }

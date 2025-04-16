@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
@@ -42,7 +43,7 @@ import java.util.Map;
  */
 @Service
 @Slf4j
-public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService {
+public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefenseMapper, SpaceTacticDefense> implements SpaceTacticDefenseService {
 
 	/**
 	 * 映射

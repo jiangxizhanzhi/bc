@@ -1,5 +1,6 @@
 package com.cyberpeace.space.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
@@ -8,7 +9,7 @@ import com.cyberpeace.space.service.context.tactic.*;
 
 import java.util.List;
 
-public interface SpaceTacticDefenseService {
+public interface SpaceTacticDefenseService extends IService<SpaceTacticDefense> {
     ListRsp<DefenseListBo> page(SpaceTacticPageReq req);
 
     void add(DefenseAddReq req);

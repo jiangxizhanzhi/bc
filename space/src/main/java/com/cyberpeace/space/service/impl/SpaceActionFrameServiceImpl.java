@@ -7,13 +7,14 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.dao.entity.*;
 import com.cyberpeace.space.dao.mapper.SpaceActionFrameMapper;
 import com.cyberpeace.space.dao.mapper.SpaceActionFrameUseMapper;
-import com.cyberpeace.space.service.SpaceActionFrameService;
-import com.cyberpeace.space.service.SpaceActionMethodService;
-import com.cyberpeace.space.service.SpaceActionService;
-import com.cyberpeace.space.service.SpaceActionTargetService;
+import com.cyberpeace.space.service.*;
+import com.cyberpeace.space.service.context.frame.ActionFrameArrangeBo;
+import com.cyberpeace.space.service.context.frame.ActionFrameStep;
+import com.cyberpeace.space.service.context.frame.ActionFrameTactic;
 import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
@@ -40,6 +41,12 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 	
 	@Autowired
 	private SpaceActionFrameUseMapper useMapper;
+
+	@Autowired
+	private SpaceTacticAttackService attackService;
+
+	@Autowired
+	private SpaceTacticDefenseService defenseService;
 
 
 	@Override
@@ -143,6 +150,13 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 	}
 
 	@Override
+	public void saveFrame(ActionFrameArrangeBo req) {
+		SpaceActionFrame frame = this.getOrException(req.getResourceId());
+		frame.setFrame(JsonUtil.toJsonString(req));
+		this.updateById(frame);
+	}
+
+	@Override
 	public void recordUsage(String type) {
 		if (!SpaceActionFrame.Type.TARGET.getName().equals(type)
 				&& !SpaceActionFrame.Type.PROCESS.getName().equals(type)) {
@@ -164,7 +178,48 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 			useMapper.updateById(use);
 		}
 	}
-	
+
+    @Override
+    public ActionFrameArrangeBo getFrame(String resourceId) {
+		SpaceActionFrame frame = this.getOrException(resourceId);
+		ActionFrameArrangeBo bo = JsonUtil.toJsonObject(frame.getFrame(), ActionFrameArrangeBo.class);
+		List<String> attackIds = Lists.newArrayList();
+		List<String> defenseIds = Lists.newArrayList();
+		for (ActionFrameStep step : bo.getSteps()) {
+			for (ActionFrameTactic tactic : step.getTactics()) {
+				if(SpaceCommonConstant.TacticType.ATTACK.equals(tactic.getType())){
+					attackIds.add(tactic.getResourceId());
+				} else if(SpaceCommonConstant.TacticType.DEFENSE.equals(tactic.getType())){
+					defenseIds.add(tactic.getResourceId());
+				}
+			}
+		}
+		List<SpaceTacticAttack> attackList = attackService.listByIds((attackIds));
+		List<SpaceTacticDefense> defenseList = defenseService.listByIds((defenseIds));
+		Map<String, SpaceTacticAttack> attackMap = StreamApiUtils.toMap(attackList,
+				SpaceTacticAttack::getResourceId, t -> t);
+		Map<String, SpaceTacticDefense> defenseMap = StreamApiUtils.toMap(defenseList,
+				SpaceTacticDefense::getResourceId, t -> t);
+		for (ActionFrameStep step : bo.getSteps()) {
+			List<ActionFrameTactic> tactics = Lists.newArrayList();
+			for (ActionFrameTactic tactic : step.getTactics()) {
+				if(SpaceCommonConstant.TacticType.ATTACK.equals(tactic.getType())){
+					if(attackMap.containsKey(tactic.getResourceId())){
+						tactic.setName(attackMap.get(tactic.getResourceId()).getName());
+						tactics.add(tactic);
+					}
+				} else if(SpaceCommonConstant.TacticType.DEFENSE.equals(tactic.getType())){
+					if(defenseMap.containsKey(tactic.getResourceId())){
+						tactic.setName(defenseMap.get(tactic.getResourceId()).getName());
+						tactics.add(tactic);
+					}
+				}
+			}
+			step.setTactics(tactics);
+		}
+		return bo;
+    }
+
 
     private SpaceActionRelation createRel(String upperId, String lowerId) {
 		SpaceActionRelation rel = new SpaceActionRelation();

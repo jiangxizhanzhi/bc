@@ -8,8 +8,8 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.space.dao.entity.SpaceActionFrame;
 import com.cyberpeace.space.model.controller.SpaceActionFrameBaseController;
 import com.cyberpeace.space.service.SpaceActionFrameService;
+import com.cyberpeace.space.service.context.frame.ActionFrameArrangeBo;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameBo;
-import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
 import com.cyberpeace.space.service.context.frame.SpaceActionFramePageReq;
 
 import io.swagger.annotations.Api;
@@ -42,10 +42,10 @@ public class SpaceActionFrameController extends SpaceActionFrameBaseController<S
 	 */
 	@ApiOperation("获取框架")
     @GetMapping("/frame")
-	public BaseRsp<SpaceFrameLevel>
+	public BaseRsp<ActionFrameArrangeBo>
 			getFrame(@ApiParam(value = "resource_id", name = "resource_id") String resource_id) {
-		SpaceFrameLevel level = service.getFrameLevels(resource_id);
-		return new BaseRsp<>(level);
+		ActionFrameArrangeBo res = service.getFrame(resource_id);
+		return new BaseRsp<>(res);
     }
 
 	/**
@@ -56,7 +56,7 @@ public class SpaceActionFrameController extends SpaceActionFrameBaseController<S
 	 */
 	@ApiOperation("保存框架")
 	@PostMapping("/frame")
-	public BaseRsp saveFrame(@RequestBody SpaceFrameLevel req) {
+	public BaseRsp saveFrame(@RequestBody ActionFrameArrangeBo req) {
 		service.saveFrame(req);
 		return new BaseRsp<>();
 	}

@@ -31,6 +31,20 @@ public class SpaceCommonConstant {
         public static final Integer POST = 3;
 	}
 
+	public static final class TacticType {
+
+		/**
+		 * ATTACK
+		 */
+		public static final Integer ATTACK = 1;
+
+		/**
+		 * DEFENSE
+		 */
+		public static final Integer DEFENSE = 2;
+	}
+
+
 	public static final class KnowledgeType {
 
 		public static final Integer COURSE = 3;

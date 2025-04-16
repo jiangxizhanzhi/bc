@@ -376,16 +376,27 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
         JSONObject plugins = scene.getJSONObject("plugins");
         JSONObject extendElementInfo = (JSONObject) ((JSONObject) plugins.getOrDefault("cpcloud",
                 new JSONObject())).getOrDefault("elements", new JSONObject());
-        JSONArray elements = new JSONArray();
+        JSONArray elements = (JSONArray) scene.getJSONObject("topology").getOrDefault("elements", new JSONArray());
+        Map<String, String> nameMap = elements.stream()
+                .map(obj -> (JSONObject) obj)
+                .collect(Collectors.toMap(
+                        element -> element.getString("id"),
+                        element -> element.getString("name"),
+                        (oldValue, newValue) -> newValue
+                ));
+
+        JSONArray deliveryNodes = new JSONArray();
         for (String elementId : extendElementInfo.keySet()) {
             JSONObject elementInfo = (JSONObject) extendElementInfo.get(elementId);
             String imageType = elementInfo.getString("image_type");
             if("laasVm".equals(imageType)){
-                elementInfo.put("id", elementId);
-                elements.add(elementInfo);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id", elementId);
+                jsonObject.put("name",nameMap.get(elementId));
+                deliveryNodes.add(jsonObject);
             }
         }
-        return elements;
+        return deliveryNodes;
     }
 
     private void sendAttackData(EvalLoadResultAddReq addReq, JSONObject scene) {

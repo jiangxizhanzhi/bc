@@ -31,8 +31,8 @@ public class SpaceIndexController {
 		return new BaseRsp<>(res);
 	}
 
-	@ApiOperation("防御知识库统计")
-	@GetMapping("/knowledge")
+	@ApiOperation("知识图谱")
+	@GetMapping("/knowledge_chart")
 	public BaseRsp<KnowledgeChart> getKChart() {
 		KnowledgeChart res = indexService.getKChart();
 		return new BaseRsp<>(res);

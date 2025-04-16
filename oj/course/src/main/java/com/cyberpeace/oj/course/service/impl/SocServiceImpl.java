@@ -91,7 +91,6 @@ public class SocServiceImpl implements SocService {
         JSONObject jsonObject = (JSONObject) JSON.toJSON(courseRecord);
         log.info("sendCourseRecordMessage start and request:" + jsonObject.toJSONString());
         log.info("sendCourseRecordMessage url:" + SOC_COURSE_SEND_URL + " and type:" + WebConstant.POST);
-        SOC_COURSE_SEND_URL = "https://git.cp.com/mg/9k/envproxy";
         sendRecordMessage(jsonObject, SOC_COURSE_SEND_URL, WebConstant.POST);
     }
 

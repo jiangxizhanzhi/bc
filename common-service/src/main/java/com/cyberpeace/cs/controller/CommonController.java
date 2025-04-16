@@ -137,6 +137,32 @@ public class CommonController {
 		return new BaseRsp<>(attachmentBo);
 	}
 
+	/**
+	 * 载荷上传文件加时间戳
+	 * 去掉权限校验
+	 *
+	 * @param adMdUploadReq 文件常见上传请求体
+	 * @return {@code BaseRsp<AttachmentBo>}
+	 */
+	@ApiOperation("载荷上传文件加时间戳")
+	@PostMapping("/ad_upload_timestamp")
+	public BaseRsp<AttachmentBo> mdUploadTimestamp(AdMdUploadReq adMdUploadReq) {
+		long timestampSeconds = System.currentTimeMillis() / 1000;
+		// 校验权限和文件
+		String fileName = adMdUploadReq.getFile().getOriginalFilename();
+
+		validateFileNameLen(fileName);
+		// 文件上传
+		AttachmentBo attachmentBo = attachmentService.uploadDest(
+				AttachmentPath.UPLOAD_ATTACHMENT.getDesc(), true, adMdUploadReq.getFile());
+
+		String viewPath = utilService.handlerFileUrl(attachmentBo.getFilePath());
+		attachmentBo.setFilePath(viewPath);
+		attachmentBo.setFileName(timestampSeconds + "_" + fileName);
+
+		return new BaseRsp<>(attachmentBo);
+	}
+
 	@ApiOperation("解析md压缩包")
 	@PostMapping("/parse/md")
 	public BaseRsp<ExtractBase> parseMDFile(@RequestParam("md") MultipartFile md){

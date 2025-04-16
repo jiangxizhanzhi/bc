@@ -33,7 +33,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-@Api(tags = "知识库-规则库-负载文件威胁检测规则")
+@Api(tags = "规则库-病毒威胁防御规则")
 @RestController
 @RequestMapping("/space/rule/space_loaded_file_threat_rule")
 @RequiresAuthentication

@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.List;
 
-@Api(tags = "知识库-规则库-特定APT威胁检测规则")
+@Api(tags = "规则库-特定APT威胁检测规则")
 @RestController
 @RequestMapping("/space/rule/space_apt_threat_detect_rule")
 @RequiresAuthentication

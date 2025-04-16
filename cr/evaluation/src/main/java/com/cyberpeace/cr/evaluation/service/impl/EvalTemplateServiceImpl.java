@@ -113,13 +113,16 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			}
 		}
 		for(EvalTaskSlimContext task : evalTaskSlimContexts){
+			if(task.getStartTime() == null){
+				continue;
+			}
 			task.setStartSearchTime(task.getStartTime());
 			// 防止开始时间和结束时间是同一天
 			try {
 				task.setEndSearchTime(task.getEndTime().plusDays(1));
 			} catch (Exception e) {
 				// 当前时间
-				task.setEndSearchTime(LocalDateTime.now());
+				task.setEndSearchTime(LocalDateTime.now().plusDays(1));
 			}
 		}
 		return evalTaskSlimContexts;

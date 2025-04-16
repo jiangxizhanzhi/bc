@@ -47,4 +47,12 @@ public class SpaceTacticDefenseSystemController extends SpaceControllerBase<Spac
         String content = FileUtil.getContent(json);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(content);
     }
+
+    @ApiOperation("D3FEND框架")
+    @GetMapping("/defend_frame")
+    public ResponseEntity<String> getDefendFrame() throws IOException {
+        File json = ResourceUtils.getFile(JsonFileResponseEnum.DEFEND.getFilePath());
+        String content = FileUtil.getContent(json);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(content);
+    }
 }

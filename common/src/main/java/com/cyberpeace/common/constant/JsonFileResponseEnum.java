@@ -18,6 +18,7 @@ public enum JsonFileResponseEnum {
     ATTACK("attack.json", "static/demonstration/attack.json"),
 
     ENGAGE("engage.json", "static/demonstration/engage.json"),
+    DEFEND("engage.json", "static/demonstration/defend.json"),
     ;
 
     /**

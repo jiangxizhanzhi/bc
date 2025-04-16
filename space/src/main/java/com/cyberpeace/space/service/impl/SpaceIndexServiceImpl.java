@@ -203,6 +203,11 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return ip;
 	}
 
+	@Override
+	public KnowledgeChart getKChart() {
+		return null;
+	}
+
 	private IndexActionFrameChart getActionFrameUseChart() {
 		IndexActionFrameChart chart = new IndexActionFrameChart();
 		Date date = TimeUtil.addDates(new Date(), -6);

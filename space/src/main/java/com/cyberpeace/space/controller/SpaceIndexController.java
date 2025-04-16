@@ -5,6 +5,7 @@ import com.cyberpeace.space.service.SpaceIndexService;
 import com.cyberpeace.space.service.context.index.IndexFrame;
 import com.cyberpeace.space.service.context.index.IndexKnowledge;
 import com.cyberpeace.space.service.context.index.IndexTool;
+import com.cyberpeace.space.service.context.index.KnowledgeChart;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -27,21 +28,28 @@ public class SpaceIndexController {
 	public BaseRsp<IndexKnowledge> getKRepository() {
 		IndexKnowledge res = indexService.getKnowledgeRepositoryStatistics();
 		res.calSum();
-		return new BaseRsp(res);
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("防御知识库统计")
+	@GetMapping("/knowledge")
+	public BaseRsp<KnowledgeChart> getKChart() {
+		KnowledgeChart res = indexService.getKChart();
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("训练工具集数据统计")
 	@GetMapping("/tool")
 	public BaseRsp<IndexTool> getTRepository() {
 		IndexTool res = indexService.getToolStatistics();
-		return new BaseRsp(res);
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("防御行动框架")
 	@GetMapping("/frame")
 	public BaseRsp<IndexFrame> getF() {
 		IndexFrame res = indexService.getFrameIndex();
-		return new BaseRsp(res);
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("获取大模型地址")

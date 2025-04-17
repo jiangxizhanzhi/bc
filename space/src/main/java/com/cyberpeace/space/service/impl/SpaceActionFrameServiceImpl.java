@@ -202,7 +202,7 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 		List<SpaceTacticAttack> attackList = attackIds.isEmpty() ? Lists.newArrayList()
 				: attackService.listByIds((attackIds));
 		List<SpaceTacticDefense> defenseList = attackIds.isEmpty() ? Lists.newArrayList()
-				: defenseService.listByIds((attackIds));
+				: defenseService.listByIds((defenseIds));
 		Map<String, SpaceTacticAttack> attackMap = StreamApiUtils.toMap(attackList,
 				SpaceTacticAttack::getResourceId, t -> t);
 		Map<String, SpaceTacticDefense> defenseMap = StreamApiUtils.toMap(defenseList,

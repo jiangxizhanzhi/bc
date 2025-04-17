@@ -183,6 +183,11 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
     public ActionFrameArrangeBo getFrame(String resourceId) {
 		SpaceActionFrame frame = this.getOrException(resourceId);
 		ActionFrameArrangeBo bo = JsonUtil.toJsonObject(frame.getFrame(), ActionFrameArrangeBo.class);
+		if (null == bo) {
+			bo = new ActionFrameArrangeBo();
+			bo.setResourceId(resourceId);
+			return bo;
+		}
 		List<String> attackIds = Lists.newArrayList();
 		List<String> defenseIds = Lists.newArrayList();
 		for (ActionFrameStep step : bo.getSteps()) {

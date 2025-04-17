@@ -2,36 +2,26 @@ package com.cyberpeace.oj.course.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.oj.course.client.SocClient;
+import com.cyberpeace.oj.course.client.SocResponse;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.SocService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
+import com.cyberpeace.oj.course.service.bo.SocCourseBo;
+import com.cyberpeace.oj.course.service.bo.SocRequestAuthBo;
+import com.cyberpeace.oj.course.service.bo.SocTokenInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContexts;
-import org.apache.http.util.EntityUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.net.ssl.SSLContext;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
+
+import java.util.*;
 
 @Slf4j
 @Service
@@ -39,6 +29,33 @@ public class SocServiceImpl implements SocService {
 
     @Autowired
     private CourseLessonService courseLessonService;
+
+
+    @Autowired
+    private SocClient socClient;
+
+    /**
+     * 消息标识前缀
+     */
+    public static final String MESSAGE_PREFIX = "SD";
+
+
+    /**
+     * 请求认证头
+     */
+    public static final String SOC_REQUEST_AUTH_HEADER = "Authorization";
+
+
+    private String SOC_REQUEST_AUTH_URL = SystemPropUtil.getProp("SOC_REQUEST_AUTH_URL");
+
+    /**
+     * SOC标识我们的系统id
+     */
+    private String SOC_AUTH_SYSTEM_ID = SystemPropUtil.getProp("SOC_AUTH_SYSTEM_ID");
+    /**
+     * SOC AUTH密钥
+     */
+    private String SOC_AUTH_HASH_CODE = SystemPropUtil.getProp("SOC_AUTH_HASH_CODE");
 
     // 课程上报url
     private String SOC_COURSE_SEND_URL = SystemPropUtil.getProp("SOC_COURSE_SEND_URL");
@@ -65,29 +82,31 @@ public class SocServiceImpl implements SocService {
         recordUpload(localUser, course, trainingTime);
     }
 
-    @Data
-    class Course {
-        private String caller;
-        private String courseName;
-        private String courseType;
-        private String messageSn;
-        private String pathName;
-        private String studyType;
-        private Integer totalLearningTime;
-        private String userId;
-    }
 
+    /**
+     * 课程情况上报
+     * @param localUser
+     * @param course
+     * @param trainingTime
+     */
     public void recordUpload(UserInfo localUser, CourseInfoBo course, Integer trainingTime) {
         if (trainingTime == null || trainingTime == 0) {
             return;
         }
         String categoryName = courseLessonService.getCategoryName(course.getCategoryId());
+        String token = getAuthInfo();
+        if(StringUtils.isEmpty(token)){
+            log.warn("get soc request auth token failed!");
+            return;
+        }
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put(SOC_REQUEST_AUTH_HEADER,token);
         // 上报时间
-        Course courseRecord = new Course();
+        SocCourseBo courseRecord = new SocCourseBo();
         courseRecord.setCaller(CALLER_CODE);
         courseRecord.setCourseName(course.getName());
         courseRecord.setCourseType(categoryName);
-        courseRecord.setMessageSn(UUID.randomUUID().toString());
+        courseRecord.setMessageSn(getMessageSn());
         courseRecord.setPathName(categoryName);
         courseRecord.setStudyType(STUDY_TYPE);
         courseRecord.setTotalLearningTime(trainingTime);
@@ -95,84 +114,91 @@ public class SocServiceImpl implements SocService {
         JSONObject jsonObject = (JSONObject) JSON.toJSON(courseRecord);
         log.info("sendCourseRecordMessage start and request:" + jsonObject.toJSONString());
         log.info("sendCourseRecordMessage url:" + SOC_COURSE_SEND_URL + " and type:" + WebConstant.POST);
-        sendRecordMessage(jsonObject, SOC_COURSE_SEND_URL, WebConstant.POST);
-    }
-
-    public void sendRecordMessage(JSONObject message, String url, String urlType) {
-        log.info("sendMessage: {}", message.toJSONString());
-        if (urlType == null || url == null) {
-            log.warn("urlType 或 url 参数为空");
+        String result = sendRecordMessage(jsonObject, headers);
+        if(StringUtils.isEmpty(result)){
+            log.warn("soc report lesson info response is empty!");
+        }
+        SocResponse<Object> socTokenInfoSocResponse = JSON.parseObject(result,
+                new TypeReference<SocResponse<Object>>() {
+                });
+        if(Objects.isNull(socTokenInfoSocResponse)){
+            log.warn("soc report lesson info response is null!");
             return;
         }
+        if(WebConstant.HTTP_200.equals(socTokenInfoSocResponse.getCode())){
+            log.info("soc report lesson info success! messageSn is {}",socTokenInfoSocResponse.getMessageSn());
+            return;
+        }
+        log.warn("oc report lesson info failed! error message is {}",socTokenInfoSocResponse.getMessage());
+    }
 
-        try (CloseableHttpClient httpClient = buildHttpClient(url)) {
-            HttpRequestBase request = createRequest(message, url, urlType);
-            if (request == null) {
-                throw new Exception("不支持的请求类型: " + urlType);
-            }
+    /**
+     * 获取请求鉴权token
+     * @return
+     */
+    private String getAuthInfo() {
+        if(StringUtils.isAnyEmpty(SOC_AUTH_SYSTEM_ID,SOC_AUTH_HASH_CODE)){
+            log.warn("request auth param is empty!");
+            return StringUtils.EMPTY;
+        }
+        SocRequestAuthBo socRequestAuthBo = SocRequestAuthBo.builder()
+                .systemId(SOC_AUTH_SYSTEM_ID)
+                .hashCode(SOC_AUTH_HASH_CODE)
+                .messageSn(getMessageSn())
+                .build();
+        String socRequestAuth = getSocRequestAuth(socRequestAuthBo);
+        if(StringUtils.isEmpty(socRequestAuth)){
+            log.warn("soc auth response if empty!");
+            return StringUtils.EMPTY;
+        }
+        SocResponse<SocTokenInfo> socTokenInfoSocResponse = JSON.parseObject(socRequestAuth,
+                new TypeReference<SocResponse<SocTokenInfo>>() {
+                });
+        //todo 考虑是否需要处理过期时间，默认3600s
+        if(Objects.isNull(socTokenInfoSocResponse) || Objects.isNull(socTokenInfoSocResponse.getResult())){
+            return StringUtils.EMPTY;
+        }
+        return socTokenInfoSocResponse.getResult().getToken();
+    }
 
-            try (CloseableHttpResponse response = httpClient.execute(request)) {
-                int statusCode = response.getStatusLine().getStatusCode();
-                log.info("响应状态码: {}", statusCode);
-                // 获取响应体内容
-                HttpEntity entity = response.getEntity();
-                String result = EntityUtils.toString(entity, StandardCharsets.UTF_8);
-                log.info("response result: ", result);
-                if(result != null){
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    // 忽略未知属性
-                    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                    SSOResult convertingContext = null;
-                    try {
-                        convertingContext = objectMapper.readValue(result, SSOResult.class);
-                        // 打印响应内容
-                        log.info("响应内容: {}", JSONObject.toJSONString(convertingContext));
-                    } catch (JsonProcessingException e) {
-                        log.info("响应内容解析错误:" + e.getMessage());
-                    }
-                }
-            }
+    /**
+     * 获取消息序号
+     * @return
+     */
+    private String getMessageSn(){
+        return MESSAGE_PREFIX+TimeUtil.format3(new Date())+System.currentTimeMillis();
+    }
+
+    /**
+     * 获取鉴权token信息
+     * @param socRequestAuthBo
+     * @return
+     */
+    private String getSocRequestAuth(SocRequestAuthBo socRequestAuthBo) {
+        try {
+            JSONObject jsonObject = (JSONObject) JSON.toJSON(socRequestAuthBo);
+            return socClient.sendRequestToSocServer(jsonObject, SOC_REQUEST_AUTH_URL, WebConstant.POST,null);
         } catch (Exception e) {
-            log.error("请求失败 - URL: {}, 类型: {}", url, urlType, e);
-        }
-    }
-
-    @Data
-    class SSOResult {
-        private String messageSn;
-        private String message;
-        private Integer code;
-        private String result;
-    }
-
-    // 创建支持 HTTPS 的 HttpClient（带绕过验证逻辑）
-    private CloseableHttpClient buildHttpClient(String url) throws Exception {
-        if (url.startsWith("https://")) {
-            SSLContext sslContext = SSLContexts.custom()
-                    .loadTrustMaterial((chain, authType) -> true)
-                    .build();
-            return HttpClients.custom()
-                    .setSSLContext(sslContext)
-                    .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
-                    .build();
-        } else {
-            return HttpClients.createDefault();
-        }
-    }
-
-    // 创建请求对象
-    private HttpRequestBase createRequest(JSONObject message, String url, String urlType) throws Exception {
-        if (WebConstant.POST.equalsIgnoreCase(urlType)) {
-            HttpPost post = new HttpPost(url);
-            // 设置Content-Type为application/json并指定编码为UTF-8
-            post.setHeader("Content-Type", "application/json; charset=UTF-8");
-            // 使用UTF-8编码将message写入请求体
-            post.setEntity(new StringEntity(message.toString(), StandardCharsets.UTF_8));
-            return post;
-        } else if (WebConstant.GET.equalsIgnoreCase(urlType)) {
-            return new HttpGet(url);
+            log.error("get soc request auth info failed!",e);
         }
         return null;
     }
+
+    /**
+     * 上报请求发送
+     * @param jsonObject
+     * @param headers
+     * @return
+     */
+    private String sendRecordMessage(JSONObject jsonObject,Map<String, String> headers) {
+        try {
+            return socClient.sendRequestToSocServer(jsonObject, SOC_COURSE_SEND_URL, WebConstant.POST,headers);
+        } catch (Exception e) {
+            log.error("soc report lesson info failed!",e);
+        }
+        return null;
+    }
+
+
 
 }

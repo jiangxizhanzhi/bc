@@ -72,6 +72,10 @@
         <oj.course.version>0.0.1-SNAPSHOT</oj.course.version>
         <oj.person.version>0.0.1-SNAPSHOT</oj.person.version>
         <aop-version>2.7.3</aop-version>
+
+        <sonar.projectKey>zhanxy_zhongxuyuan_AZJq4W4RwzgFrA-6jJFa</sonar.projectKey>
+        <sonar.host.url>http://10.100.2.52:9000</sonar.host.url>
+        <sonar.login>a2758a68fe2046e61582091ff796466ffb160ef9</sonar.login>
     </properties>
 
     <modules>

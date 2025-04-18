@@ -205,7 +205,103 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 
 	@Override
 	public KnowledgeChart getKChart() {
+		KnowledgeChart chart = new KnowledgeChart();
+		// 理论知识库
+		KnowledgeChart theoryChart = this.getTheoryChart();
+
+		// 策略库
+		KnowledgeChart strategyChart = this.getStrategyChart();
+
+		// 战法
+		KnowledgeChart tacticChart = this.getTacticChart();
+
+		// 规则
+		KnowledgeChart ruleChart = this.getRuleChart();
+		// 流量
+		KnowledgeChart trafficChart = this.getTrafficChart();
+
+		// 算法
+		KnowledgeChart algorithmChart = this.getAlgorithmChart();
+
+		// 场景
+		KnowledgeChart sceneChart = this.getSceneChart();
+
 		return null;
+	}
+
+	private KnowledgeChart getSceneChart() {
+		KnowledgeChart chart = new KnowledgeChart();
+
+		return chart;
+	}
+
+	private KnowledgeChart getAlgorithmChart() {
+		KnowledgeChart chart = new KnowledgeChart();
+		IndexAlgorithm algorithm = new IndexAlgorithm();
+		algorithm.setBase(evalAlgorithmService.count());
+		algorithm.calSum();
+		algorithm.setUse(callCountService.getCountByName(CallType.ALGORITHM));
+
+		return chart;
+	}
+
+	private KnowledgeChart getTrafficChart() {
+		KnowledgeChart chart = new KnowledgeChart();
+
+
+		return chart;
+	}
+
+	private KnowledgeChart getRuleChart() {
+		KnowledgeChart chart = new KnowledgeChart();
+		IndexRule rule = new IndexRule();
+		BaseDataRuleStatistics baseDataRuleStatistics = spaceRuleCommonService
+				.getBaseDataStatistics();
+		rule.setBase(baseDataRuleStatistics.getApt() + baseDataRuleStatistics.getIoc()
+				+ baseDataRuleStatistics.getFingerPrint() + baseDataRuleStatistics.getVuln());
+		rule.setWarning(spaceWarningDictionaryMapper.selectCount(null));
+
+		ThreatDetectStatistics threatDetectStatistics = spaceRuleCommonService
+				.getThreatDetectStatistics();
+		rule.setThreat(
+				threatDetectStatistics.getAptThreat() + threatDetectStatistics.getThreatImage()
+						+ threatDetectStatistics.getTrafficDetect()
+						+ threatDetectStatistics.getLoadedFileThreat()
+						+ threatDetectStatistics.getTrafficExtraction()
+						+ threatDetectStatistics.getEventIntegration()
+						+ threatDetectStatistics.getSourceAnalyze());
+		RaceStatistics raceStatistics = spaceRuleCommonService.getRaceStatistics();
+		rule.setRace(raceStatistics.getScoreRanking() + raceStatistics.getRoundMechanism()
+				+ raceStatistics.getViolationJudge());
+		rule.calSum();
+
+		return chart;
+	}
+
+	private KnowledgeChart getTacticChart() {
+		KnowledgeChart chart = new KnowledgeChart();
+		int attack = spaceTacticAttackMapper.selectCount(null);
+		int defense = spaceTacticDefenseMapper.selectCount(null);
+		return chart;
+	}
+
+	private KnowledgeChart getTheoryChart() {
+		KnowledgeChart chart = new KnowledgeChart();
+		LambdaQueryWrapper<CourseLesson> wrapperTheory = new LambdaQueryWrapper<>();
+		wrapperTheory.eq(CourseLesson::getType, CourseLesson.LessonType.THEORY.getCode());
+		int theoryCourse = courseLessonMapper.selectCount(wrapperTheory);
+		LambdaQueryWrapper<CourseLesson> wrapperExp = new LambdaQueryWrapper<>();
+		wrapperExp.eq(CourseLesson::getType, CourseLesson.LessonType.EXPERIMENT.getCode());
+		int onlineExp = courseLessonMapper.selectCount(wrapperExp);
+		int theoryExam = practiceTheoryMapper.selectCount(null);
+		int expExam = practiceOperationMapper.selectCount(null);
+		return chart;
+	}
+
+	private KnowledgeChart getStrategyChart() {
+		KnowledgeChart chart = new KnowledgeChart();
+		IndexStrategy strategy = strategyService.getStatistics();
+		return chart;
 	}
 
 	private IndexActionFrameChart getActionFrameUseChart() {

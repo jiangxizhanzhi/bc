@@ -10,4 +10,9 @@ public class KnowledgeChartLink {
 	private String source;
 
 	private String target;
+
+	public KnowledgeChartLink(String source, String target) {
+		this.source = source;
+		this.target = target;
+	}
 }

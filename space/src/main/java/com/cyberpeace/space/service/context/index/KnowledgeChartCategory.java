@@ -8,4 +8,8 @@ import lombok.Setter;
 public class KnowledgeChartCategory {
 
 	private String name;
+
+	public KnowledgeChartCategory(String name) {
+		this.name = name;
+	}
 }

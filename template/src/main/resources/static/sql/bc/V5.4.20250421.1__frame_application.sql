@@ -135,3 +135,6 @@ UPDATE `space_action_frame_target_type`
 SET `key_words`         = '["应用"]',
     `key_words_primary` = '["攻击"]'
 WHERE `resource_id` = '6fcb908b2df64b31936b9188fedf8033';
+
+ALTER TABLE `space_strategy`
+ADD COLUMN `gauge` text NULL;

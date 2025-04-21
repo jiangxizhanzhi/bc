@@ -188,8 +188,8 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		count.setTarget(spaceActionFrameService.countByType(SpaceActionFrame.Type.TARGET.getCode()));
 		count.calSum();
 		frame.setFrameCount(count);
-//		frame.setTrending(this.defaultChart());
-		frame.setTrending(this.getActionFrameUseChart());
+		frame.setTrending(this.defaultChart());
+//		frame.setTrending(this.getActionFrameUseChart());
 		return frame;
 
 	}

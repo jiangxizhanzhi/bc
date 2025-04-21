@@ -4,10 +4,13 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.space.dao.entity.SpaceActionFrameApplication;
 import com.cyberpeace.space.model.controller.SpaceControllerBase;
+import com.cyberpeace.space.model.req.IdReq;
 import com.cyberpeace.space.service.SpaceActionFrameApplicationService;
+import com.cyberpeace.space.service.SpaceActionFrameOrderService;
 import com.cyberpeace.space.service.SpaceActionFrameReleaseService;
 import com.cyberpeace.space.service.SpaceActionFrameService;
 import com.cyberpeace.space.service.context.frame.*;
@@ -34,6 +37,9 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 
 	@Autowired
 	private SpaceActionFrameService frameService;
+
+	@Autowired
+	private SpaceActionFrameOrderService orderService;
 
 	/**
 	 * 搜索框架
@@ -96,7 +102,7 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 	 * @param req 请求体
 	 * @return {@code BaseRsp }
 	 */
-	@ApiOperation("下发步骤")
+	@ApiOperation("指挥员下发步骤")
 	@PostMapping("/release")
 	public BaseRsp releaseStep(@RequestBody SpaceActionFrameReleaseReq req) {
 		releaseService.create(req);
@@ -111,8 +117,46 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 	 */
 	@ApiOperation("中位线查询分配到的步骤")
 	@GetMapping("/step")
-	public BaseRsp<List<SpaceActionFrameOrderBo>> mySteps(@ApiParam(value = "红蓝对抗id", name = "rvb_id")String rvb_id) {
-		releaseService.getMySteps(rvb_id);
+	public BaseRsp<List<SpaceActionFrameOrderBo>> mySteps(
+			@ApiParam(value = "红蓝对抗id", name = "rvb_id") String rvb_id,
+			@ApiParam(value = "用户id, 不传默认当前用户", name = "user_id") String user_id) {
+		List<SpaceActionFrameOrderBo> res = releaseService.getMySteps(rvb_id, user_id);
+		return new BaseRsp<>(res);
+	}
+
+	/**
+	 * 中位线下发战法指令
+	 *
+	 * @return {@code BaseRsp }
+	 */
+	@ApiOperation("中位线下发战法指令")
+	@PostMapping("/order")
+	public BaseRsp releaseOrder(@RequestBody SpaceActionFrameOrderReq req) {
+		orderService.create(req);
+		return new BaseRsp<>();
+	}
+
+	/**
+	 * 工位线查询分配到的战法指令
+	 *
+	 * @return {@code BaseRsp }
+	 */
+	@ApiOperation("工位线查询分配到的战法指令")
+	@GetMapping("/order")
+	public BaseRsp<ListRsp<SpaceActionFrameOrderBo>> myOrders(SpaceActionFrameOrderListReq req) {
+		ListRsp<SpaceActionFrameOrderBo> res = orderService.pageMyOrders(req);
+		return new BaseRsp<>(res);
+	}
+
+	/**
+	 * 工位线确认完成战法指令
+	 *
+	 * @return {@code BaseRsp }
+	 */
+	@ApiOperation("工位线确认完成战法指令")
+	@PostMapping("/order/complete")
+	public BaseRsp completeOrder(@RequestBody IdReq req) {
+		orderService.complete(req.getResourceId());
 		return new BaseRsp<>();
 	}
 }

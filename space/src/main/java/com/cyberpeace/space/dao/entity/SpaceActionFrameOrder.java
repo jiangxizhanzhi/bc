@@ -7,7 +7,6 @@ import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderBo;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Map;
@@ -16,9 +15,8 @@ import java.util.Map;
 @TableName("space_action_frame_order")
 public class SpaceActionFrameOrder extends BaseTable {
 
-	@ApiModelProperty("自增ID")
-	@TableId(type = IdType.AUTO)
-	private Integer id;
+	@TableId(type = IdType.ASSIGN_UUID)
+	private String resourceId;
 
 	private String applicationId;
 
@@ -35,6 +33,10 @@ public class SpaceActionFrameOrder extends BaseTable {
 	private String userId;
 
 	private String userName;
+
+	private String sender;
+
+	private String senderName;
 
 	private Integer status;
 

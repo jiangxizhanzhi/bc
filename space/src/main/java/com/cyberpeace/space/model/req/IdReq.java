@@ -6,5 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class IdReq {
-    private String resourceId;
-    }
+
+	private String resourceId;
+}

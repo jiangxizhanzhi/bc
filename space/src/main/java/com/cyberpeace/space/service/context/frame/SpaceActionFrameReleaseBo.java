@@ -13,4 +13,7 @@ public class SpaceActionFrameReleaseBo extends SpaceActionFrameReleaseReq {
 
 	@ApiModelProperty(value = "进度")
 	private String progress;
+
+	@ApiModelProperty(value = "下发状态")
+	private Boolean released = false;
 }

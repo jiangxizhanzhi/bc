@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.space.dao.entity.SpaceActionFrame;
 import com.cyberpeace.space.model.controller.SpaceActionFrameBaseController;
+import com.cyberpeace.space.service.SpaceActionFrameApplicationService;
 import com.cyberpeace.space.service.SpaceActionFrameService;
 import com.cyberpeace.space.service.context.frame.ActionFrameArrangeBo;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameBo;
@@ -33,6 +34,9 @@ public class SpaceActionFrameController extends SpaceActionFrameBaseController<S
 	 */
 	@Autowired
 	private SpaceActionFrameService service;
+
+	@Autowired
+	private SpaceActionFrameApplicationService applicationService;
 
 	/**
 	 * 获取框架

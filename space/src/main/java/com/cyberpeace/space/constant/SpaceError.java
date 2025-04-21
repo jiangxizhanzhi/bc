@@ -32,4 +32,16 @@ public class SpaceError {
      * @see String
      */
     public static final String PERCENTAGE_LARGER_THAN_100 = "105005";
+    /**
+     * 一个框架在一次红蓝对抗业务中只能运用一次
+     *
+     * @see String
+     */
+    public static final String RVB_FRAME_USED = "105006";
+    /**
+     * 阶段已下发
+     *
+     * @see String
+     */
+    public static final String STAGE_RELEASED = "105007";
 }

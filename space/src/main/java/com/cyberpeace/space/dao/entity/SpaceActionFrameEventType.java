@@ -13,7 +13,9 @@ import java.util.Map;
 @Data
 @TableName("space_action_frame_event_type")
 public class SpaceActionFrameEventType extends SpaceBaseTable {
+	private String keyWords;
 
+	private String keyWordsPrimary;
 	public SpaceActionFrameEventTypeBo entity2Bo(Map<String, IdAndName> relatedMap) {
 		SpaceActionFrameEventTypeBo bo = BeanUtils.copy(this, SpaceActionFrameEventTypeBo.class);
 		return bo;

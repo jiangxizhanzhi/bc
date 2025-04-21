@@ -9,13 +9,14 @@ import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.dao.entity.*;
+import com.cyberpeace.space.dao.mapper.SpaceActionFrameEventTypeMapper;
 import com.cyberpeace.space.dao.mapper.SpaceActionFrameMapper;
+import com.cyberpeace.space.dao.mapper.SpaceActionFrameTargetTypeMapper;
 import com.cyberpeace.space.dao.mapper.SpaceActionFrameUseMapper;
 import com.cyberpeace.space.service.*;
-import com.cyberpeace.space.service.context.frame.ActionFrameArrangeBo;
-import com.cyberpeace.space.service.context.frame.ActionFrameStep;
-import com.cyberpeace.space.service.context.frame.ActionFrameTactic;
-import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
+import com.cyberpeace.space.service.context.frame.*;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -47,6 +49,12 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 
 	@Autowired
 	private SpaceTacticDefenseService defenseService;
+
+	@Autowired
+	private SpaceActionFrameTargetTypeMapper targetTypeMapper;
+
+	@Autowired
+	private SpaceActionFrameEventTypeMapper eventTypeMapper;
 
 
 	@Override
@@ -225,6 +233,55 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 			step.setTactics(tactics);
 		}
 		return bo;
+	}
+
+	@Override
+	public List<SpaceActionFrameBo> searchFrame(String req) {
+		List<SpaceActionFrameTargetType> targetTypes = targetTypeMapper.selectList(null);
+		List<SpaceActionFrameEventType> eventTypes = eventTypeMapper.selectList(null);
+		Map<String, List<String>> keyWordsMap = Maps.newHashMap();
+		Map<String, List<String>> keyWordsPrimaryMap = Maps.newHashMap();
+		for (SpaceActionFrameTargetType type : targetTypes) {
+			keyWordsMap.put(type.getResourceId(),
+					JsonUtil.toJsonObjectArray(type.getKeyWords(), String.class));
+			keyWordsPrimaryMap.put(type.getResourceId(),
+					JsonUtil.toJsonObjectArray(type.getKeyWordsPrimary(), String.class));
+		}
+		for (SpaceActionFrameEventType type : eventTypes) {
+			keyWordsMap.put(type.getResourceId(),
+					JsonUtil.toJsonObjectArray(type.getKeyWords(), String.class));
+			keyWordsPrimaryMap.put(type.getResourceId(),
+					JsonUtil.toJsonObjectArray(type.getKeyWordsPrimary(), String.class));
+		}
+
+		Set<String> types = Sets.newHashSet();
+		// 先匹配关键字
+		keyWordsMap.forEach((k, v) -> {
+			for (String word : v) {
+				if (req.contains(word)) {
+					types.add(k);
+				}
+			}
+		});
+		// 未匹配到关键字，匹配基础关键字
+		if (types.isEmpty()) {
+			keyWordsPrimaryMap.forEach((k, v) -> {
+				for (String word : v) {
+					if (req.contains(word)) {
+						types.add(k);
+					}
+				}
+			});
+		}
+		// 都没匹配到，返回空列表
+		if (types.isEmpty()) {
+			return Lists.newArrayList();
+		}
+		LambdaQueryWrapper<SpaceActionFrame> wrapper = new LambdaQueryWrapper<>();
+		wrapper.in(SpaceActionFrame::getCategoryId, types);
+		List<SpaceActionFrame> frames = this.list(wrapper);
+		List<SpaceActionFrameBo> res = StreamApiUtils.map(frames, frame -> frame.entity2Bo(null));
+		return res;
     }
 
 

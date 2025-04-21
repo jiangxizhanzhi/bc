@@ -14,6 +14,10 @@ import java.util.Map;
 @TableName("space_action_frame_target_type")
 public class SpaceActionFrameTargetType extends SpaceBaseTable {
 
+	private String keyWords;
+
+	private String keyWordsPrimary;
+
 	public SpaceActionFrameTargetTypeBo entity2Bo(Map<String, IdAndName> relatedMap) {
 		SpaceActionFrameTargetTypeBo bo = BeanUtils.copy(this, SpaceActionFrameTargetTypeBo.class);
 		return bo;

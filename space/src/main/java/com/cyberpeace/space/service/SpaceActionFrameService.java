@@ -3,7 +3,10 @@ package com.cyberpeace.space.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.space.dao.entity.SpaceActionFrame;
 import com.cyberpeace.space.service.context.frame.ActionFrameArrangeBo;
+import com.cyberpeace.space.service.context.frame.SpaceActionFrameBo;
 import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
+
+import java.util.List;
 
 /**
  * 空间行动框架Service
@@ -41,4 +44,6 @@ public interface SpaceActionFrameService extends IService<SpaceActionFrame> {
     void recordUsage(String type);
 
     ActionFrameArrangeBo getFrame(String resourceId);
+
+    List<SpaceActionFrameBo> searchFrame(String req);
 }

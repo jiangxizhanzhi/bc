@@ -37,4 +37,6 @@ public class SpaceStrategy extends BaseTable {
 
 	private String suggest;
 
+	private String gauge;
+
 }

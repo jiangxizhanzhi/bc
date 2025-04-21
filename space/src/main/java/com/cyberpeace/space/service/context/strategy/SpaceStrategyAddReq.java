@@ -34,4 +34,7 @@ public class SpaceStrategyAddReq {
 
 	@ApiModelProperty("处置建议")
 	private String suggest;
+
+	@ApiModelProperty("策略依据")
+	private String gauge;
 }

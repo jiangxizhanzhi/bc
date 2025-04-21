@@ -53,4 +53,7 @@ public class SpaceStrategyBo {
 
 	@ApiModelProperty("处置建议")
 	private String suggest;
+
+	@ApiModelProperty("策略依据")
+	private String gauge;
 }

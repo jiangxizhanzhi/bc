@@ -15,6 +15,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
+import com.cyberpeace.space.constant.SpaceError;
 import com.cyberpeace.space.dao.entity.SpaceActionFrameOrder;
 import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
 import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
@@ -52,13 +53,24 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 
 	@Override
 	public void create(SpaceActionFrameOrderReq req) {
+		this.checkRelease(req.getApplicationId(), req.getStep(), req.getTacticId());
 		SpaceActionFrameOrder entity = BeanUtils.copy(req, SpaceActionFrameOrder.class);
 		entity.setResourceId(IDGeneratorUtil.getID());
 		entity.setStatus(SpaceCommonConstant.OrderStatus.UNFINISHED);
 		UserInfo userInfo = UserInfoContext.getUserContext();
-		entity.setSender(userInfo.getUserId());
+		entity.setSender(userInfo.getUserName());
 		entity.setSenderName(userInfo.getName());
 		this.save(entity);
+	}
+
+	private void checkRelease(String applicationId, String step, String tacticId) {
+		LambdaQueryWrapper<SpaceActionFrameOrder> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(SpaceActionFrameOrder::getApplicationId, applicationId);
+		wrapper.eq(SpaceActionFrameOrder::getStep, step);
+		wrapper.eq(SpaceActionFrameOrder::getTacticId, tacticId);
+		if (this.count(wrapper) > 0) {
+			throw new BusinessException(SpaceError.TACTIC_RELEASED);
+		}
 	}
 
 	@Override

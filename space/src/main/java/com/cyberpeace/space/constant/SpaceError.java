@@ -44,4 +44,10 @@ public class SpaceError {
      * @see String
      */
     public static final String STAGE_RELEASED = "105007";
+    /**
+     * 技法已下发
+     *
+     * @see String
+     */
+    public static final String TACTIC_RELEASED = "105008";
 }

@@ -19,6 +19,7 @@ public enum JsonFileResponseEnum {
 
     ENGAGE("engage.json", "static/demonstration/engage.json"),
     DEFEND("engage.json", "static/demonstration/defend.json"),
+    USERS("users.json", "static/demonstration/users.json"),
     ;
 
     /**

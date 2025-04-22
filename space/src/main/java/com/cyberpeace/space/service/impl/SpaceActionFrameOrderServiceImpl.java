@@ -21,6 +21,7 @@ import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
 import com.cyberpeace.space.dao.mapper.SpaceActionFrameOrderMapper;
 import com.cyberpeace.space.dao.mapper.SpaceTacticAttackMapper;
 import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseMapper;
+import com.cyberpeace.space.service.SpaceActionFrameApplicationService;
 import com.cyberpeace.space.service.SpaceActionFrameOrderService;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderBo;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderListReq;
@@ -45,6 +46,9 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 
 	@Autowired
 	private SpaceTacticDefenseMapper defenseMapper;
+
+	@Autowired
+	private SpaceActionFrameApplicationService applicationService;
 
 	@Override
 	public void create(SpaceActionFrameOrderReq req) {
@@ -81,12 +85,13 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 				wrapper.in(SpaceActionFrameOrder::getTacticId, tacticNameMap.keySet());
 			}
 		}
+		Map<String, String> userMap = applicationService.getUserMap(req.getRvb_id(), SpaceCommonConstant.RvbUserGroup.MIDDLE);
 		IPage<SpaceActionFrameOrder> iPage = mapper.selectPage(page, wrapper);
 		IPage<SpaceActionFrameOrderBo> resPage = iPage.convert(item -> {
 			SpaceActionFrameOrderBo bo = BeanUtils.copy(item, SpaceActionFrameOrderBo.class);
 			bo.setReleased(true);
 			bo.setTacticName(tacticNameMap.get(item.getTacticId()));
-			// todo sender name
+			bo.setSenderName(userMap.get(item.getSender()));
 			return bo;
 		});
 

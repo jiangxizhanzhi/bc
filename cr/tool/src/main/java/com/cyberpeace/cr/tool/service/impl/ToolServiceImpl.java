@@ -316,6 +316,16 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 			tacticTool.setCategoryI18nName(tacticTool.getCategoryName());
 			tacticTool.setPlatforms(Arrays.asList(StringUtils.split(tool.getPlatforms(), ",")));
 
+//			List<Integer> fileList = LocalStringUtil.strToList(tool.getFiles());
+//
+//			List<ToolFile> toolFiles;
+//			if (null == fileList || fileList.isEmpty()) {
+//				toolFiles = Lists.newArrayList();
+//			} else {
+//				toolFiles = toolFileMapper.selectByIds(fileList);
+//			}
+//			toolRsp.setToolFiles(toolFiles);
+
 			res.add(tacticTool);
 		}
 		return res;

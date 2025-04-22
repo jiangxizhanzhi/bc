@@ -159,4 +159,17 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 		orderService.complete(req.getResourceId());
 		return new BaseRsp<>();
 	}
+
+	/**
+	 * 获取红蓝用户列表
+	 *
+	 * @return {@code BaseRsp }
+	 */
+	@ApiOperation("获取红蓝用户列表")
+	@GetMapping("/users")
+	public BaseRsp<List<ApplicationUser>> getUsers(
+			@ApiParam(value = "红蓝对抗id", name = "rvb_id") String rvb_id,
+			@ApiParam(value = "用户组，指挥1，中位线2，工位线3", name = "group") Integer group) {
+		return new BaseRsp<>(baseService.getUsers(rvb_id, group));
+	}
 }

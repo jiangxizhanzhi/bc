@@ -76,4 +76,14 @@ public class SpaceCommonConstant {
 		public static final Integer FINISHED = 1;
 		public static final Integer UNFINISHED = 2;
 	}
+
+	public static class RvbUserGroup {
+
+		public static final Integer COMMANDER = 1;
+
+		public static final Integer MIDDLE = 2;
+
+		public static final Integer WORKER = 3;
+	}
+
 }

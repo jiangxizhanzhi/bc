@@ -1,0 +1,23 @@
+{
+  "commander": [
+    {
+      "id": 7,
+      "name": "参训蓝方",
+      "username": "blue"
+    }
+  ],
+  "middle": [
+    {
+      "id": 5,
+      "name": "参训人员",
+      "username": "student"
+    }
+  ],
+  "worker": [
+    {
+      "id": 6,
+      "name": "参训红方",
+      "username": "red"
+    }
+  ]
+}

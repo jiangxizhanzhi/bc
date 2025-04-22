@@ -12,6 +12,7 @@ import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.constant.SpaceError;
 import com.cyberpeace.space.dao.entity.*;
 import com.cyberpeace.space.dao.mapper.*;
+import com.cyberpeace.space.service.SpaceActionFrameApplicationService;
 import com.cyberpeace.space.service.SpaceActionFrameReleaseService;
 import com.cyberpeace.space.service.context.frame.*;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,9 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 
 	@Autowired
 	private SpaceActionFrameOrderMapper orderMapper;
+
+	@Autowired
+	private SpaceActionFrameApplicationService applicationService;
 
 	@Override
 	public void create(SpaceActionFrameReleaseReq req) {
@@ -79,7 +83,8 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 		orderWrapper.eq(SpaceActionFrameOrder::getRvbId, application.getRvbId());
 		Map<String, List<SpaceActionFrameOrder>> orderMap = StreamApiUtils
 				.groupBy(orderMapper.selectList(orderWrapper), SpaceActionFrameOrder::getStep);
-
+		Map<String, String> userMap = applicationService.getUserMap(application.getRvbId(),
+				SpaceCommonConstant.RvbUserGroup.MIDDLE);
 		for (ActionFrameStep step : actionFrameArrangeBo.getSteps()) {
 			SpaceActionFrameReleaseBo bo = new SpaceActionFrameReleaseBo();
 			bo.setApplicationId(applicationId);
@@ -88,8 +93,7 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 			int complete = 0;
 			if (releaseMap.containsKey(step.getName())) {
 				bo.setUserId(releaseMap.get(step.getName()).getUserId());
-				// bo.setUserName(releaseMap.get(step.getName()).getUserName());
-
+				bo.setUserName(userMap.get(bo.getUserId()));
 				List<SpaceActionFrameOrder> orderList = orderMap.getOrDefault(step.getName(),
 						Lists.newArrayList());
 				for (SpaceActionFrameOrder order : orderList) {
@@ -129,6 +133,8 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 		Map<String, List<SpaceActionFrameOrder>> orderMap = StreamApiUtils.groupBy(orderList,
 				SpaceActionFrameOrder::getStep);
 		List<String> tacticIds = Lists.newArrayList();
+		Map<String, String> userMap = applicationService.getUserMap(rvbId,
+				SpaceCommonConstant.RvbUserGroup.WORKER);
 		for (SpaceActionFrameRelease release : releaseList) {
 			List<ActionFrameTactic> tactics = JsonUtil.toJsonObjectArray(release.getTactics(),
 					ActionFrameTactic.class);
@@ -147,7 +153,7 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 							bo.setStatus(order.getStatus());
 							bo.setUserId(order.getUserId());
 							bo.setReleased(true);
-							// bo.setUserName(order.getUserName());
+							bo.setUserName(userMap.get(order.getUserId()));
 							break;
 						}
 					}

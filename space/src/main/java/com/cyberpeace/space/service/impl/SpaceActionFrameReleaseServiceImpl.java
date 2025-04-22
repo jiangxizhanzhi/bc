@@ -67,9 +67,6 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 		LambdaQueryWrapper<SpaceActionFrameRelease> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(SpaceActionFrameRelease::getApplicationId, applicationId);
 		List<SpaceActionFrameRelease> releaseList = this.list(wrapper);
-		if (releaseList.isEmpty()) {
-			return Lists.newArrayList();
-		}
 		Map<String, SpaceActionFrameRelease> releaseMap = StreamApiUtils.toMap(releaseList,
 				SpaceActionFrameRelease::getStep, a -> a);
 		SpaceActionFrameApplication application = applicationMapper.selectById(applicationId);

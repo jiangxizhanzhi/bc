@@ -23,6 +23,5 @@ public class SpaceActionFrameReleaseReq {
 	private String userId;
 
 	@ApiModelProperty(value = "用户名", required = true)
-	@NotBlank
 	private String userName;
 }

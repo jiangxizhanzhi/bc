@@ -61,6 +61,7 @@ public class SpaceActionFrameController extends SpaceActionFrameBaseController<S
 	@ApiOperation("保存框架")
 	@PostMapping("/frame")
 	public BaseRsp saveFrame(@RequestBody ActionFrameArrangeBo req) {
+		req.checkTacticDuplication();
 		service.saveFrame(req);
 		return new BaseRsp<>();
 	}

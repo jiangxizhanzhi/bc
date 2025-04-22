@@ -50,4 +50,10 @@ public class SpaceError {
      * @see String
      */
     public static final String TACTIC_RELEASED = "105008";
+    /**
+     * 单个步骤下战法不能重复
+     *
+     * @see String
+     */
+    public static final String TACTIC_DUPLICATED = "105009";
 }

@@ -80,6 +80,7 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 		}
 		//  can only update frame
 		SpaceActionFrameApplication entity = baseService.getById(req.getResourceId());
+		req.getFrame().checkTacticDuplication();
 		entity.setFrame(JsonUtil.toJsonString(req.getFrame()));
 		baseService.updateById(entity);
 		return new BaseRsp<>();

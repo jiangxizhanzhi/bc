@@ -151,7 +151,7 @@ public class EvalTestInstanceServiceImpl extends ServiceImpl<EvalTestInstanceMap
 			EvalRoomPairRsp result = new EvalRoomPairRsp();
 			result.setId(nodeItem.getString("id"));
 			result.setLabel(nodeItem.getString("name"));
-			if(probesMap.get(nodeItem.getString("id"))){
+			if(null != probesMap.get(nodeItem.getString("id")) && probesMap.get(nodeItem.getString("id"))){
 				results.add(result);
 			}
 		});

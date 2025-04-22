@@ -21,6 +21,7 @@ import com.cyberpeace.space.service.context.frame.ApplicationUser;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameApplicationReq;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -59,6 +60,9 @@ public class SpaceActionFrameApplicationServiceImpl extends ServiceImpl<SpaceAct
 
 	@Override
 	public List<ApplicationUser> getUsers(String rvbId, Integer userGroup) {
+		if (StringUtils.isBlank(rvbId) || null == userGroup) {
+			return Lists.newArrayList();
+		}
 		Integer realRvbId = Integer.valueOf(rvbId);
 		YxRvbUserColl coll = yxUserService.getYxRvbUsers(realRvbId);
 		if (null == coll) {

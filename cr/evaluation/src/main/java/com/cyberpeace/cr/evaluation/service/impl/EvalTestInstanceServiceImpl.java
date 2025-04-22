@@ -32,6 +32,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -136,6 +137,13 @@ public class EvalTestInstanceServiceImpl extends ServiceImpl<EvalTestInstanceMap
 
 		JSONObject jsonObject = remoteSceneService.getById(instance.getMpSceneId(), UserInfoContext.getUserContext()
 																								   .getUserId());
+		JSONObject probesJsonObject = jsonObject.getJSONObject(SCENE).getJSONObject(PLUGINS).getJSONObject(CPCOLLECTION).getJSONObject(ELEMENTS);
+		HashMap<String, Boolean> probesMap = new HashMap<>();
+		probesJsonObject.forEach((key, value) -> {
+			value = (JSONObject) value;
+			boolean enableProbeCollect = ((JSONObject) value).getBooleanValue("enable_probe_collect");
+			probesMap.put(key, enableProbeCollect);
+		});
 		JSONArray nodes = jsonObject.getJSONObject(SCENE).getJSONObject(TOPOLOGY).getJSONArray(ELEMENTS);
 		nodes.forEach(item -> {
 			JSONObject nodeItem = (JSONObject) item;
@@ -143,7 +151,9 @@ public class EvalTestInstanceServiceImpl extends ServiceImpl<EvalTestInstanceMap
 			EvalRoomPairRsp result = new EvalRoomPairRsp();
 			result.setId(nodeItem.getString("id"));
 			result.setLabel(nodeItem.getString("name"));
-			results.add(result);
+			if(probesMap.get(nodeItem.getString("id"))){
+				results.add(result);
+			}
 		});
 		return results;
 	}

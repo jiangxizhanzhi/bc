@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "防御行动框架-目标类型")
 @RestController
 @RequestMapping("/space/action_frame/target_type")
-@RequiresAuthentication
 @Slf4j
 public class SpaceActionFrameTargetTypeController extends SpaceControllerBase<SpaceActionFrameTargetTypeService, SpaceActionFrameTargetType, SpaceActionFrameTargetTypeBo, SpacePageReqBase> {
 }

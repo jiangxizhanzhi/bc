@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "防御行动框架-威胁事件类型")
 @RestController
 @RequestMapping("/space/action_frame/event_type")
-@RequiresAuthentication
 @Slf4j
 public class SpaceActionFrameEventTypeController extends SpaceControllerBase<SpaceActionFrameEventTypeService, SpaceActionFrameEventType, SpaceActionFrameEventTypeBo, SpacePageReqBase> {
 }

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -30,7 +31,7 @@ public class SpaceActionFrameOrderReq {
     private String tacticId;
 
     @ApiModelProperty("战法类型")
-    @NotBlank
+    @NotNull
     private Integer tacticType;
 
     @ApiModelProperty("用户id")

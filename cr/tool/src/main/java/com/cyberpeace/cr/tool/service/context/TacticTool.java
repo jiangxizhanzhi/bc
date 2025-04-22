@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.tool.service.context;
 
+import com.cyberpeace.cr.tool.dao.entity.ToolFile;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -54,4 +55,7 @@ public class TacticTool {
 
 	@ApiModelProperty("平台名称")
 	private List<String> platforms;
+
+	@ApiModelProperty("工具文件")
+	private List<ToolFile> toolFiles;
 }

@@ -25,6 +25,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -307,6 +308,16 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 		}
 		List<ToolCategory> toolCategories = toolCategoryService.selectAll();
 		Map<String, String> categoryMap = StreamApiUtils.toMap(toolCategories, ToolCategory::getResourceId, ToolCategory::getCnName);
+		List<Integer> toolFileIds = Lists.newArrayList();
+		for (Tool tool : toolList) {
+			List<Integer> fileList = LocalStringUtil.strToList(tool.getFiles());
+			if (CollectionUtils.isNotEmpty(fileList)) {
+				toolFileIds.addAll(fileList);
+			}
+		}
+		List<ToolFile> toolFiles = toolFileMapper.selectByIds(toolFileIds);
+		Map<Integer, ToolFile> toolFileMap = StreamApiUtils.toMap(toolFiles, ToolFile::getId,
+				toolFile -> toolFile);
 		for (Tool tool : toolList) {
 			TacticTool tacticTool = BeanUtils.copy(tool, TacticTool.class);
 			List<String> categoryIds = LocalStringUtil.strToListStr(tool.getCategory());
@@ -315,17 +326,9 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 			tacticTool.setCategoryName(StringUtils.join(categoryNames, ","));
 			tacticTool.setCategoryI18nName(tacticTool.getCategoryName());
 			tacticTool.setPlatforms(Arrays.asList(StringUtils.split(tool.getPlatforms(), ",")));
-
-//			List<Integer> fileList = LocalStringUtil.strToList(tool.getFiles());
-//
-//			List<ToolFile> toolFiles;
-//			if (null == fileList || fileList.isEmpty()) {
-//				toolFiles = Lists.newArrayList();
-//			} else {
-//				toolFiles = toolFileMapper.selectByIds(fileList);
-//			}
-//			toolRsp.setToolFiles(toolFiles);
-
+			List<Integer> fileList = LocalStringUtil.strToList(tool.getFiles());
+			List<ToolFile> toolFileList = StreamApiUtils.map(fileList, toolFileMap::get);
+			tacticTool.setToolFiles(StreamApiUtils.filter(toolFileList, Objects::nonNull));
 			res.add(tacticTool);
 		}
 		return res;

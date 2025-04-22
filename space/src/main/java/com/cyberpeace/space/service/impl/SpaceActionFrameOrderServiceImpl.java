@@ -12,6 +12,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.constant.SpaceError;
 import com.cyberpeace.space.dao.entity.SpaceActionFrameOrder;
@@ -56,8 +57,6 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 		entity.setResourceId(IDGeneratorUtil.getID());
 		entity.setStatus(SpaceCommonConstant.OrderStatus.UNFINISHED);
 		entity.setSender(req.getSender());
-//		entity.setSender(userInfo.getUserName());
-//		entity.setSenderName(userInfo.getName());
 		this.save(entity);
 	}
 
@@ -74,10 +73,10 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 	@Override
 	public ListRsp<SpaceActionFrameOrderBo> pageMyOrders(SpaceActionFrameOrderListReq req) {
 		Page page = req.toPageParam();
-		LambdaQueryWrapper<SpaceActionFrameOrder> wrapper =  req.req2QueryWrapper();
+		LambdaQueryWrapper<SpaceActionFrameOrder> wrapper = req.req2QueryWrapper();
 		wrapper.eq(SpaceActionFrameOrder::getUserId, req.getUser_id());
 		Map<String, String> tacticNameMap = Maps.newHashMap();
-		if(StringUtils.isNotBlank(req.getPattern())){
+		if (StringUtils.isNotBlank(req.getPattern())) {
 			LambdaQueryWrapper<SpaceTacticAttack> attackLambdaQueryWrapper = new LambdaQueryWrapper<>();
 			attackLambdaQueryWrapper.like(SpaceTacticAttack::getName, req.getPattern());
 			List<SpaceTacticAttack> attackList = attackMapper.selectList(attackLambdaQueryWrapper);
@@ -86,9 +85,10 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 			}
 			LambdaQueryWrapper<SpaceTacticDefense> defenseLambdaQueryWrapper = new LambdaQueryWrapper<>();
 			defenseLambdaQueryWrapper.like(SpaceTacticDefense::getName, req.getPattern());
-			List<SpaceTacticDefense> defenseList = defenseMapper.selectList(defenseLambdaQueryWrapper);
+			List<SpaceTacticDefense> defenseList = defenseMapper
+					.selectList(defenseLambdaQueryWrapper);
 			for (SpaceTacticDefense defense : defenseList) {
-				tacticNameMap.put(defense.getResourceId(),defense.getName());
+				tacticNameMap.put(defense.getResourceId(), defense.getName());
 			}
 			if (tacticNameMap.isEmpty()) {
 				return PageUtil.getListResult(page);
@@ -96,8 +96,21 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 				wrapper.in(SpaceActionFrameOrder::getTacticId, tacticNameMap.keySet());
 			}
 		}
-		Map<String, String> userMap = applicationService.getUserMap(req.getRvb_id(), SpaceCommonConstant.RvbUserGroup.MIDDLE);
+		Map<String, String> userMap = applicationService.getUserMap(req.getRvb_id(),
+				SpaceCommonConstant.RvbUserGroup.MIDDLE);
 		IPage<SpaceActionFrameOrder> iPage = mapper.selectPage(page, wrapper);
+		List<String> tacticIds = StreamApiUtils.map(iPage.getRecords(),
+				SpaceActionFrameOrder::getTacticId);
+		if (StringUtils.isBlank(req.getPattern()) && !tacticIds.isEmpty()) {
+			List<SpaceTacticAttack> attackList = attackMapper.selectBatchIds(tacticIds);
+			for (SpaceTacticAttack attack : attackList) {
+				tacticNameMap.put(attack.getResourceId(), attack.getName());
+			}
+			List<SpaceTacticDefense> defenseList = defenseMapper.selectBatchIds(tacticIds);
+			for (SpaceTacticDefense defense : defenseList) {
+				tacticNameMap.put(defense.getResourceId(), defense.getName());
+			}
+		}
 		IPage<SpaceActionFrameOrderBo> resPage = iPage.convert(item -> {
 			SpaceActionFrameOrderBo bo = BeanUtils.copy(item, SpaceActionFrameOrderBo.class);
 			bo.setReleased(true);
@@ -111,7 +124,7 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 
 	@Override
 	public void complete(String resourceId) {
-		if(StringUtils.isBlank(resourceId)){
+		if (StringUtils.isBlank(resourceId)) {
 			throw new BusinessException(ErrorCode.BLANK_ID);
 		}
 		SpaceActionFrameOrder entity = mapper.selectById(resourceId);
@@ -120,5 +133,3 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 	}
 
 }
-
-    

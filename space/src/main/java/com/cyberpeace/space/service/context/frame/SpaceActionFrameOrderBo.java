@@ -3,9 +3,10 @@ package com.cyberpeace.space.service.context.frame;
 
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.space.dao.entity.SpaceActionFrameOrder;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class SpaceActionFrameOrderBo {
@@ -48,6 +49,8 @@ public class SpaceActionFrameOrderBo {
 
 	@ApiModelProperty("是否下发")
 	private Boolean released = false;
+
+	private Date createTime;
 
 	public SpaceActionFrameOrder bo2Entity() {
 		SpaceActionFrameOrder entity = BeanUtils.copy(this, SpaceActionFrameOrder.class);

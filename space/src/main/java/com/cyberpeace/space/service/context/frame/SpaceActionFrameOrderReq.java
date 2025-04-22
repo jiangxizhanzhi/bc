@@ -41,4 +41,7 @@ public class SpaceActionFrameOrderReq {
     @ApiModelProperty("用户名称")
     @NotBlank
     private String userName;
+
+    @ApiModelProperty("当前用户的username")
+    private String sender;
 }

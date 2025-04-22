@@ -9,8 +9,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.PageUtil;
@@ -57,9 +55,9 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 		SpaceActionFrameOrder entity = BeanUtils.copy(req, SpaceActionFrameOrder.class);
 		entity.setResourceId(IDGeneratorUtil.getID());
 		entity.setStatus(SpaceCommonConstant.OrderStatus.UNFINISHED);
-		UserInfo userInfo = UserInfoContext.getUserContext();
-		entity.setSender(userInfo.getUserName());
-		entity.setSenderName(userInfo.getName());
+		entity.setSender(req.getSender());
+//		entity.setSender(userInfo.getUserName());
+//		entity.setSenderName(userInfo.getName());
 		this.save(entity);
 	}
 
@@ -77,12 +75,7 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 	public ListRsp<SpaceActionFrameOrderBo> pageMyOrders(SpaceActionFrameOrderListReq req) {
 		Page page = req.toPageParam();
 		LambdaQueryWrapper<SpaceActionFrameOrder> wrapper =  req.req2QueryWrapper();
-		if (StringUtils.isNotBlank(req.getUser_id())) {
-			wrapper.eq(SpaceActionFrameOrder::getUserId, req.getUser_id());
-		} else {
-			wrapper.eq(SpaceActionFrameOrder::getUserId,
-					UserInfoContext.getUserContext().getUserName());
-		}
+		wrapper.eq(SpaceActionFrameOrder::getUserId, req.getUser_id());
 		Map<String, String> tacticNameMap = Maps.newHashMap();
 		if(StringUtils.isNotBlank(req.getPattern())){
 			LambdaQueryWrapper<SpaceTacticAttack> attackLambdaQueryWrapper = new LambdaQueryWrapper<>();

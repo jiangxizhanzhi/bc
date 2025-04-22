@@ -19,7 +19,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +28,6 @@ import java.util.List;
 @Api(tags = "防御行动框架-框架应用")
 @RestController
 @RequestMapping("/space/action_frame/application")
-@RequiresAuthentication
 @Slf4j
 public class SpaceActionFrameApplicationController extends SpaceControllerBase<SpaceActionFrameApplicationService, SpaceActionFrameApplication, SpaceActionFrameApplicationBo, SpaceActionFrameApplicationListReq> {
 
@@ -121,7 +119,7 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 	@GetMapping("/step")
 	public BaseRsp<List<SpaceActionFrameOrderBo>> mySteps(
 			@ApiParam(value = "红蓝对抗id", name = "rvb_id") String rvb_id,
-			@ApiParam(value = "用户id, 不传默认当前用户", name = "user_id") String user_id) {
+			@ApiParam(value = "当前用户id, 必传", name = "user_id") String user_id) {
 		List<SpaceActionFrameOrderBo> res = releaseService.getMySteps(rvb_id, user_id);
 		return new BaseRsp<>(res);
 	}

@@ -1,10 +1,8 @@
 package com.cyberpeace.space.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -111,9 +109,6 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 
 	@Override
 	public List<SpaceActionFrameOrderBo> getMySteps(String rvbId, String userId) {
-		if (StringUtils.isBlank(userId)) {
-			userId = UserInfoContext.getUserContext().getUserName();
-		}
 		List<SpaceActionFrameOrderBo> res = Lists.newArrayList();
 		LambdaQueryWrapper<SpaceActionFrameRelease> wrapperRelease = new LambdaQueryWrapper<>();
 		wrapperRelease.eq(SpaceActionFrameRelease::getRvbId, rvbId);

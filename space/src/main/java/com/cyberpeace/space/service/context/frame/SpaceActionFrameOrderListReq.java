@@ -2,7 +2,6 @@ package com.cyberpeace.space.service.context.frame;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.space.dao.entity.SpaceActionFrameOrder;
 import com.cyberpeace.space.model.req.SpacePageReqBase;
 
@@ -19,7 +18,7 @@ public class SpaceActionFrameOrderListReq extends SpacePageReqBase {
 	@Setter
 	private String rvb_id;
 
-	@ApiModelProperty(value = "用户id, 不传默认当前用户")
+	@ApiModelProperty(value = "当前用户id,必传")
 	@Getter
 	@Setter
 	private String user_id;

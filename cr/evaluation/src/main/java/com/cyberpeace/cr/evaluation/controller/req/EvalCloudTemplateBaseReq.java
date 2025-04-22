@@ -20,6 +20,15 @@ public class EvalCloudTemplateBaseReq implements Serializable {
 	@ApiModelProperty("试验类型")
 	private Integer type;
 
+	@ApiModelProperty("实验类型名称")
+	private String typeName;
+
+	@ApiModelProperty("节点数")
+	private Integer nodeCount;
+
+	@ApiModelProperty("创建人")
+	private String createUser;
+
 	@ApiModelProperty("计划时长")
 	private Integer time;
 

@@ -4,11 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
@@ -536,8 +534,16 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		if (template.getReadAuthType()==null) {
 			template.setReadAuthType(2);
 		}
+
+//		Map<String, TopoDigest> nodeCountMap = remoteTopoService.batchGetTopoDigest(Arrays.asList(template.getTopoId()));
 		// 2. 生成导出模型, 包含 template, missions
 		ResourceDumpContext<Object> context = businessTemplateHandler.dumpBusiness(template);
+//		template.setNodeCount(nodeCountMap.get(template.getTopoId()).getNodeCounts());
+		Map<String, String> userMap = remoteUserService.getIdNameMap(Arrays.asList(template.getCreateUserId()));
+		template.setCreateUser(userMap.get(template.getCreateUserId()));
+		String createTimeStr = TimeUtil.format1(template.getCreateTime());
+		template.setCreateTimeStr(createTimeStr);
+
 		context.setBusinessTemplate(template);
 
 		// 3. 获取拓扑

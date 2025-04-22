@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.AuthTable;
@@ -37,5 +38,13 @@ public class BusinessTemplate extends AuthTable {
 	 * 用于关联后台测试场景
 	 */
 	private String localSceneId;
+
+	@TableField(exist = false)
+	private Integer nodeCount;
+	@TableField(exist = false)
+	private String createUser;
+	@TableField(exist = false)
+	private String createTimeStr;
+
 
 }

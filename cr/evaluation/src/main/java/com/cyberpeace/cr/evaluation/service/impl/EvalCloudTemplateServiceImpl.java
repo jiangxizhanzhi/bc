@@ -1,6 +1,8 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -168,12 +170,19 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
     @Override
     public EvalCloudTemplateAddReq getCloudTemplate(String resourceId) {
         EvalCloudTemplate evalCloudTemplate = evalCloudTemplateMapper.selectById(resourceId);
+        JSONObject topoData = localSceneService.getTopoData(evalCloudTemplate.getTopoId());
+        JSONArray jsonArray = topoData.getJSONObject("scene_config").getJSONObject("topology").getJSONArray("elements");
+        Map<String, String> userMap = remoteUserService.getIdNameMap(Arrays.asList(evalCloudTemplate.getCreateUserId()));
         EvalCloudTemplateBaseReq evalCloudTemplateBaseReq = BeanUtils.copy(evalCloudTemplate, EvalCloudTemplateBaseReq.class);
+        String typeName = EnumUtils.getEnumDescByCode(evalCloudTemplateBaseReq.getType(), EvalCloudTemplate.TestType.class);
+        evalCloudTemplateBaseReq.setNodeCount(jsonArray.size());
+        evalCloudTemplateBaseReq.setTypeName(typeName);
+        evalCloudTemplateBaseReq.setCreateUser(userMap.get(evalCloudTemplate.getCreateUserId()));
         EvalCloudTemplateAddReq evalCloudTemplateAddReq = new EvalCloudTemplateAddReq();
         evalCloudTemplateAddReq.setBaseInfo(evalCloudTemplateBaseReq);
         evalCloudTemplateAddReq.setCloudTemplateId(evalCloudTemplate.getResourceId());
         evalCloudTemplateAddReq.setStepIds(evalCloudTemplate.getStepIdList());
-        evalCloudTemplateAddReq.setSceneConfigData(localSceneService.getTopoData(evalCloudTemplate.getTopoId()));
+        evalCloudTemplateAddReq.setSceneConfigData(topoData);
         return evalCloudTemplateAddReq;
     }
 

@@ -39,12 +39,7 @@ public class SpaceActionFrameOrderListReq extends SpacePageReqBase {
 		if (StringUtils.isNotBlank(this.rvb_id)) {
 			wrapper.eq(SpaceActionFrameOrder::getRvbId, this.rvb_id);
 		}
-		if (StringUtils.isNotBlank(this.user_id)) {
-			wrapper.eq(SpaceActionFrameOrder::getUserId, this.user_id);
-		} else {
-			wrapper.eq(SpaceActionFrameOrder::getUserId,
-					UserInfoContext.getUserContext().getUserId());
-		}
+
 		wrapper.setEntityClass(SpaceActionFrameOrder.class);
 		return wrapper;
 	}

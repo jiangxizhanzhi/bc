@@ -4,19 +4,25 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 @Setter
 public class SpaceActionFrameReleaseReq {
 
-	@ApiModelProperty(value = "框架实体id")
+	@ApiModelProperty(value = "框架实体id", required = true)
+	@NotBlank
 	private String applicationId;
 
-	@ApiModelProperty(value = "阶段")
+	@ApiModelProperty(value = "阶段", required = true)
+	@NotBlank
 	private String step;
 
-	@ApiModelProperty(value = "用户id")
+	@ApiModelProperty(value = "用户id", required = true)
+	@NotBlank
 	private String userId;
 
-	@ApiModelProperty(value = "用户名")
+	@ApiModelProperty(value = "用户名", required = true)
+	@NotBlank
 	private String userName;
 }

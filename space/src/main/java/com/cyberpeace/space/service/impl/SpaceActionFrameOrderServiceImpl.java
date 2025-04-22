@@ -65,6 +65,12 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 	public ListRsp<SpaceActionFrameOrderBo> pageMyOrders(SpaceActionFrameOrderListReq req) {
 		Page page = req.toPageParam();
 		LambdaQueryWrapper<SpaceActionFrameOrder> wrapper =  req.req2QueryWrapper();
+		if (StringUtils.isNotBlank(req.getUser_id())) {
+			wrapper.eq(SpaceActionFrameOrder::getUserId, req.getUser_id());
+		} else {
+			wrapper.eq(SpaceActionFrameOrder::getUserId,
+					UserInfoContext.getUserContext().getUserName());
+		}
 		Map<String, String> tacticNameMap = Maps.newHashMap();
 		if(StringUtils.isNotBlank(req.getPattern())){
 			LambdaQueryWrapper<SpaceTacticAttack> attackLambdaQueryWrapper = new LambdaQueryWrapper<>();

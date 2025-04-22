@@ -23,6 +23,7 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Api(tags = "防御行动框架-框架应用")
@@ -104,7 +105,7 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 	 */
 	@ApiOperation("指挥员下发步骤")
 	@PostMapping("/release")
-	public BaseRsp releaseStep(@RequestBody SpaceActionFrameReleaseReq req) {
+	public BaseRsp releaseStep(@RequestBody @Valid SpaceActionFrameReleaseReq req) {
 		releaseService.create(req);
 		return new BaseRsp<>();
 	}
@@ -131,7 +132,7 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 	 */
 	@ApiOperation("中位线下发战法指令")
 	@PostMapping("/order")
-	public BaseRsp releaseOrder(@RequestBody SpaceActionFrameOrderReq req) {
+	public BaseRsp releaseOrder(@RequestBody @Valid SpaceActionFrameOrderReq req) {
 		orderService.create(req);
 		return new BaseRsp<>();
 	}

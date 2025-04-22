@@ -115,7 +115,7 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 	@Override
 	public List<SpaceActionFrameOrderBo> getMySteps(String rvbId, String userId) {
 		if (StringUtils.isBlank(userId)) {
-			userId = UserInfoContext.getUserContext().getUserId();
+			userId = UserInfoContext.getUserContext().getUserName();
 		}
 		List<SpaceActionFrameOrderBo> res = Lists.newArrayList();
 		LambdaQueryWrapper<SpaceActionFrameRelease> wrapperRelease = new LambdaQueryWrapper<>();

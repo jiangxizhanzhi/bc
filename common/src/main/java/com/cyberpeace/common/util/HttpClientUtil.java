@@ -488,7 +488,7 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	private static boolean isSuccess(BaseRsp baseRsp) {
-		return StringUtils.endsWith(baseRsp.getCode(), SUCCESS_POSTFIX) || StringUtils.endsWith(baseRsp.getCode(), "200");
+		return StringUtils.endsWith(baseRsp.getCode(), SUCCESS_POSTFIX) || StringUtils.endsWith(baseRsp.getCode(), "200") || "0".equals(baseRsp.getCode());
 	}
 
 	/**

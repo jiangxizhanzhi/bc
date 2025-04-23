@@ -26,7 +26,7 @@ import java.io.IOException;
 @Api(tags = "战法库-防御技战法体系")
 @RestController
 @RequestMapping("/space/tactic/system")
-@RequiresAuthentication
+//@RequiresAuthentication
 @Slf4j
 public class SpaceTacticDefenseSystemController extends SpaceControllerBase<SpaceTacticDefenseSystemService, SpaceTacticDefenseSystem, SpaceTacticDefenseSystemBo, SpacePageReqBase> {
 

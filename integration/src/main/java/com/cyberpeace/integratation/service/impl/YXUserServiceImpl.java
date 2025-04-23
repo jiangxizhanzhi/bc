@@ -18,7 +18,7 @@ public class YXUserServiceImpl implements YXUserService {
 
     private String YX_HOST;
 
-    private String RVB_URL = "/openapi/get_match_user";
+    private String RVB_URL = "/api/v1/openapi/get_match_user";
 
     @PostConstruct
     public void init() {

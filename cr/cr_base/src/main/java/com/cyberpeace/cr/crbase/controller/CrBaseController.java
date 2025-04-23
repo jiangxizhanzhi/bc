@@ -33,7 +33,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping("/cr/common")
-@RequiresAuthentication
+//@RequiresAuthentication
 public class CrBaseController {
 
 	/**

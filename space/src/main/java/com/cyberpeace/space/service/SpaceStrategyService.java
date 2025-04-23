@@ -6,6 +6,7 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.space.dao.entity.SpaceStrategy;
 import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
 import com.cyberpeace.space.service.context.index.IndexStrategy;
+import com.cyberpeace.space.service.context.index.KnowledgeChart;
 import com.cyberpeace.space.service.context.strategy.*;
 
 import java.util.List;
@@ -106,4 +107,6 @@ public interface SpaceStrategyService extends IService<SpaceStrategy> {
      * @return {@code List<SpaceActionStrategy> }
      */
     List<SpaceActionStrategy> convert2ActionStrategy(List<String> ids);
+
+    KnowledgeChart getStrategyChart();
 }

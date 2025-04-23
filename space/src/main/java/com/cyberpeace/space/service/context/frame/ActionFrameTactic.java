@@ -14,4 +14,7 @@ public class ActionFrameTactic {
 
     @ApiModelProperty(value = "战法类型，1攻击2防御")
 	private Integer type;
+
+	@ApiModelProperty(value = "状态，0未下发，1已完成，2已下发未完成")
+	private Integer status = 0;
 }

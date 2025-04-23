@@ -84,6 +84,14 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 		return new BaseRsp<>();
 	}
 
+	@ApiOperation("详情")
+	@GetMapping("")
+	@Override
+	public BaseRsp<SpaceActionFrameApplicationBo> getADetail(@ApiParam(value = "resource_id", name = "resource_id") String resource_id) {
+		SpaceActionFrameApplicationBo bo = releaseService.getApplicationBo(resource_id);
+		return new BaseRsp<>(bo);
+	}
+
 	/**
 	 * 查询下发情况
 	 *

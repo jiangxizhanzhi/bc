@@ -2,6 +2,7 @@ package com.cyberpeace.space.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -13,6 +14,7 @@ import com.cyberpeace.space.dao.mapper.*;
 import com.cyberpeace.space.service.SpaceActionFrameApplicationService;
 import com.cyberpeace.space.service.SpaceActionFrameReleaseService;
 import com.cyberpeace.space.service.context.frame.*;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +106,6 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 			res.add(bo);
 		}
 		return res;
-
 	}
 
 	@Override
@@ -176,6 +177,56 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 		}
 
 		return res;
+	}
+
+	@Override
+	public SpaceActionFrameApplicationBo getApplicationBo(String resourceId) {
+		SpaceActionFrameApplication application = applicationService.getById(resourceId);
+		if (null == application) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		SpaceActionFrameApplicationBo bo = application.entity2Bo(Maps.newHashMap());
+
+		LambdaQueryWrapper<SpaceActionFrameRelease> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(SpaceActionFrameRelease::getApplicationId, application.getResourceId());
+		List<SpaceActionFrameRelease> releaseList = this.list(wrapper);
+		Map<String, SpaceActionFrameRelease> releaseMap = StreamApiUtils.toMap(releaseList,
+				SpaceActionFrameRelease::getStep, a -> a);
+		
+		// order complete status
+		LambdaQueryWrapper<SpaceActionFrameOrder> orderWrapper = new LambdaQueryWrapper<>();
+		orderWrapper.eq(SpaceActionFrameOrder::getApplicationId, application.getResourceId());
+		Map<String, List<SpaceActionFrameOrder>> orderMap = StreamApiUtils
+				.groupBy(orderMapper.selectList(orderWrapper), SpaceActionFrameOrder::getStep);
+		for (ActionFrameStep step : bo.getFrame().getSteps()) {
+			if (!orderMap.containsKey(step.getName())) {
+				if (releaseMap.containsKey(step.getName())) {
+					step.setStatus(SpaceCommonConstant.OrderStatus.UNFINISHED);
+				}
+				continue;
+			}
+			int complete = 0;
+			List<SpaceActionFrameOrder> orderList = orderMap.get(step.getName());
+			Map<String, SpaceActionFrameOrder> map = StreamApiUtils.toMap(orderList,
+					SpaceActionFrameOrder::getTacticId, o -> o);
+			for (ActionFrameTactic tactic : step.getTactics()) {
+				if (map.containsKey(tactic.getResourceId())) {
+					SpaceActionFrameOrder order = map.get(tactic.getResourceId());
+					tactic.setStatus(order.getStatus());
+					if (Objects.equals(order.getStatus(),
+							SpaceCommonConstant.OrderStatus.FINISHED)) {
+						complete++;
+					}
+				}
+			}
+			if (complete == step.getTactics().size()) {
+				step.setStatus(SpaceCommonConstant.OrderStatus.FINISHED);
+			} else {
+				step.setStatus(SpaceCommonConstant.OrderStatus.UNFINISHED);
+			}
+		}
+		return bo;
+
 	}
 
 	public void checkRelease(String applicationId, String stage) {

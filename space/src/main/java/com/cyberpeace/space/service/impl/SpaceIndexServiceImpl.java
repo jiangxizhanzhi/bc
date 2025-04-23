@@ -188,8 +188,8 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		count.setTarget(spaceActionFrameService.countByType(SpaceActionFrame.Type.TARGET.getCode()));
 		count.calSum();
 		frame.setFrameCount(count);
-		frame.setTrending(this.defaultChart());
-//		frame.setTrending(this.getActionFrameUseChart());
+//		frame.setTrending(this.defaultChart());
+		frame.setTrending(this.getActionFrameUseChart());
 		return frame;
 
 	}
@@ -206,11 +206,21 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	@Override
 	public KnowledgeChart getKChart() {
 		KnowledgeChart chart = new KnowledgeChart();
+		KnowledgeChartItem baseItem = new KnowledgeChartItem();
+		baseItem.setName("知识库管理子系统");
+		baseItem.setResourceId("knowledge");
+		chart.getData().add(baseItem);
+		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory("知识库管理子系统");
+		chart.getCategories().add(baseCategory);
 		// 理论知识库
 		KnowledgeChart theoryChart = this.getTheoryChart();
 
 		// 策略库
-		KnowledgeChart strategyChart = this.getStrategyChart();
+		KnowledgeChart strategyChart = strategyService.getStrategyChart();
+		chart.getData().addAll(strategyChart.getData());
+		chart.getLinks().addAll(strategyChart.getLinks());
+		chart.getCategories().addAll(strategyChart.getCategories());
+		chart.getLinks().add(new KnowledgeChartLink("knowledge", "strategy"));
 
 		// 战法
 		KnowledgeChart tacticChart = this.getTacticChart();
@@ -226,7 +236,7 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		// 场景
 		KnowledgeChart sceneChart = this.getSceneChart();
 
-		return null;
+		return chart;
 	}
 
 	private KnowledgeChart getSceneChart() {
@@ -297,12 +307,7 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		int expExam = practiceOperationMapper.selectCount(null);
 		return chart;
 	}
-
-	private KnowledgeChart getStrategyChart() {
-		KnowledgeChart chart = new KnowledgeChart();
-		IndexStrategy strategy = strategyService.getStatistics();
-		return chart;
-	}
+	
 
 	private IndexActionFrameChart getActionFrameUseChart() {
 		IndexActionFrameChart chart = new IndexActionFrameChart();

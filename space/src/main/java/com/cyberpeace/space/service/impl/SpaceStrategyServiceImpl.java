@@ -22,7 +22,7 @@ import com.cyberpeace.space.dao.mapper.SpaceStrategyFrameMapper;
 import com.cyberpeace.space.dao.mapper.SpaceStrategyMapper;
 import com.cyberpeace.space.service.SpaceStrategyService;
 import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
-import com.cyberpeace.space.service.context.index.IndexStrategy;
+import com.cyberpeace.space.service.context.index.*;
 import com.cyberpeace.space.service.context.strategy.*;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -236,6 +236,34 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 			}
 		}
 		return res;
+	}
+
+	@Override
+	public KnowledgeChart getStrategyChart() {
+		KnowledgeChart chart = new KnowledgeChart();
+		KnowledgeChartItem baseItem = new KnowledgeChartItem();
+		baseItem.setResourceId("strategy");
+		baseItem.setName("策略库");
+		chart.getCategories().add(new KnowledgeChartCategory("策略库"));
+		SpaceStrategyFrameBo frame = this.getFrame();
+		this.fillChart(chart, frame);
+		return chart;
+	}
+
+	private void fillChart(KnowledgeChart chart, SpaceStrategyFrameBo bo) {
+		KnowledgeChartItem item = new KnowledgeChartItem();
+		item.setName(bo.getName());
+		item.setResourceId(bo.getResourceId());
+		item.setType(SpaceCommonConstant.KnowledgeType.STRATEGY);
+		item.setValue(bo.getChildren().size());
+		chart.getData().add(item);
+		if (!bo.getChildren().isEmpty()) {
+			chart.getCategories().add(new KnowledgeChartCategory(bo.getName()));
+		}
+		for (SpaceStrategyFrameBo child : bo.getChildren()) {
+			chart.getLinks().add(new KnowledgeChartLink(bo.getResourceId(), child.getResourceId()));
+			fillChart(chart, child);
+		}
 	}
 
 	private void collectFrameId(List<String> frameIds, SpaceStrategyFrameBo bo) {

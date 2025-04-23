@@ -16,6 +16,9 @@ public class ActionFrameStep {
 	@ApiModelProperty(value = "描述")
 	private String description;
 
+	@ApiModelProperty(value = "状态，0未下发，1已完成，2已下发未完成")
+	private Integer status = 0;
+
 	@ApiModelProperty(value = "行动战法")
 	private List<ActionFrameTactic> tactics;
 }

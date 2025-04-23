@@ -142,4 +142,7 @@ public class TheoryAddReq implements Serializable {
 	 */
 	@ApiModelProperty(value = "视频链接")
 	private String video;
+
+	@ApiModelProperty(value = "图片链接")
+	private String picture;
 }

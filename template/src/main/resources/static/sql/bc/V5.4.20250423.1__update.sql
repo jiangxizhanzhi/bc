@@ -7,3 +7,6 @@ MODIFY COLUMN `description` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL
 
 ALTER TABLE `space_action_frame`
 MODIFY COLUMN `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL;
+
+ALTER TABLE `oj_practice_theory`
+ADD COLUMN `picture` varchar(255) NULL;

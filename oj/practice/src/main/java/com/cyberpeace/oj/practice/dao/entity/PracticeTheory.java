@@ -3,11 +3,9 @@ package com.cyberpeace.oj.practice.dao.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.Getter;
 
 /**
  * 实践理论
@@ -71,6 +69,10 @@ public class PracticeTheory extends PracticeBase {
 	 */
 	@ApiModelProperty(value = "视频链接")
 	private String video;
+
+	@ApiModelProperty(value = "图片链接")
+	private String picture;
+
 
 	public enum TheoryType implements GenericEnum {
 

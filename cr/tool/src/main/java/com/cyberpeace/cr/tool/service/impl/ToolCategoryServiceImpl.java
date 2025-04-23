@@ -168,7 +168,7 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	public void validateToolCategoryNameExist(ToolCategory toolCategory) {
 		// 名称重复性校验
 		ToolCategory toolCategoryObject = toolCategoryMapper.getByCnName(toolCategory.getCnName(), toolCategory.getResourceId());
-		if (toolCategoryObject != null) {
+		if (toolCategoryObject != null && toolCategory.getType().equals(toolCategoryObject.getType())) {
 			log.error("toolCategoryObject is not null,toolCategoryObject =[{}]", JsonUtil.toJsonString(toolCategoryObject));
 			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_TOOL_CATEGORY_NAME);
 		}

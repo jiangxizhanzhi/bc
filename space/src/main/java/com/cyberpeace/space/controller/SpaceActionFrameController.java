@@ -26,7 +26,7 @@ import io.swagger.annotations.ApiParam;
 @Api(tags = "防御行动框架-行动框架管理")
 @RestController
 @RequestMapping("/space/action_frame/action_frame")
-@RequiresAuthentication
+//@RequiresAuthentication
 public class SpaceActionFrameController extends SpaceActionFrameBaseController<SpaceActionFrameService, SpaceActionFrame, SpaceActionFrameBo, SpaceActionFramePageReq> {
 
 	/**

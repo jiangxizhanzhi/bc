@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
+import com.cyberpeace.space.service.context.index.KnowledgeChart;
 import com.cyberpeace.space.service.context.tactic.*;
 
 import java.util.List;
@@ -26,4 +27,7 @@ public interface SpaceTacticAttackService extends IService<SpaceTacticAttack> {
     void updateAttackCategory(TacticAttackCategoryModifyReq req);
 
     void deleteCategory(List<String> ids);
+
+    KnowledgeChart getTacticAttackChart();
+
 }

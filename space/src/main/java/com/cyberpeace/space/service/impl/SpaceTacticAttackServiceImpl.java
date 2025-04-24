@@ -11,6 +11,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.tool.service.ToolService;
+import com.cyberpeace.space.constant.SpaceKTypeEnum;
 import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
 import com.cyberpeace.space.dao.entity.SpaceTacticAttackCategory;
 import com.cyberpeace.space.dao.entity.SpaceTacticDefenseSystem;
@@ -20,6 +21,10 @@ import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseSystemMapper;
 import com.cyberpeace.space.service.SpaceStrategyService;
 import com.cyberpeace.space.service.SpaceTacticAttackService;
 import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
+import com.cyberpeace.space.service.context.index.KnowledgeChart;
+import com.cyberpeace.space.service.context.index.KnowledgeChartCategory;
+import com.cyberpeace.space.service.context.index.KnowledgeChartItem;
+import com.cyberpeace.space.service.context.index.KnowledgeChartLink;
 import com.cyberpeace.space.service.context.tactic.*;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -140,7 +145,28 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 		categoryMapper.deleteBatchIds(ids);
 	}
 
-	private SpaceTacticAttackCategory req2Entity(TacticAttackCategoryAddReq req) {
+    @Override
+    public KnowledgeChart getTacticAttackChart() {
+        KnowledgeChart chart = new KnowledgeChart();
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.TACTIC_ATTACK, SpaceKTypeEnum.TACTIC.getId());
+		chart.getData().add(baseItem);
+		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(SpaceKTypeEnum.TACTIC_ATTACK);
+		chart.getCategories().add(baseCategory);
+		for (SpaceTacticAttackCategory category : categoryMapper.selectList(null)) {
+			KnowledgeChartItem item = new KnowledgeChartItem();
+			item.setResourceId(category.getResourceId());
+			item.setName(category.getName());
+			item.setType(SpaceKTypeEnum.TACTIC_ATTACK.getType());
+			item.setCategory(baseItem.getResourceId());
+			chart.getData().add(item);
+			KnowledgeChartLink link = new KnowledgeChartLink(baseItem.getResourceId(),
+					category.getResourceId());
+			chart.getLinks().add(link);
+		}
+		return chart;
+    }
+
+    private SpaceTacticAttackCategory req2Entity(TacticAttackCategoryAddReq req) {
 		SpaceTacticAttackCategory category = new SpaceTacticAttackCategory();
 		category.setName(req.getName());
 		category.setResourceId(IDGeneratorUtil.getID());

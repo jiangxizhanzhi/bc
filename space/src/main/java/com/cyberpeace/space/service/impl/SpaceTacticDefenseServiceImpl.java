@@ -1,5 +1,13 @@
 package com.cyberpeace.space.service.impl;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -13,6 +21,7 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.tool.service.ToolService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
+import com.cyberpeace.space.constant.SpaceKTypeEnum;
 import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
 import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
 import com.cyberpeace.space.dao.entity.SpaceTacticDefenseCategory;
@@ -24,16 +33,14 @@ import com.cyberpeace.space.service.SpaceStrategyService;
 import com.cyberpeace.space.service.SpaceTacticDefenseService;
 import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
 import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
+import com.cyberpeace.space.service.context.index.KnowledgeChart;
+import com.cyberpeace.space.service.context.index.KnowledgeChartCategory;
+import com.cyberpeace.space.service.context.index.KnowledgeChartItem;
+import com.cyberpeace.space.service.context.index.KnowledgeChartLink;
 import com.cyberpeace.space.service.context.tactic.*;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.compress.utils.Lists;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 空间策略防御Service实现
@@ -316,7 +323,28 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 		return level;
 	}
 
-	/**
+    @Override
+    public KnowledgeChart getTacticDefenseChart() {
+		KnowledgeChart chart = new KnowledgeChart();
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.TACTIC_DEFENSE, SpaceKTypeEnum.TACTIC.getId());
+		chart.getData().add(baseItem);
+		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(SpaceKTypeEnum.TACTIC_DEFENSE);
+		chart.getCategories().add(baseCategory);
+		for (SpaceTacticDefense defense : mapper.selectList(null)) {
+			KnowledgeChartItem item = new KnowledgeChartItem();
+			item.setResourceId(defense.getResourceId());
+			item.setName(defense.getName());
+			item.setType(SpaceKTypeEnum.TACTIC_DEFENSE.getType());
+			item.setCategory(baseItem.getResourceId());
+			chart.getData().add(item);
+			KnowledgeChartLink link = new KnowledgeChartLink(baseItem.getResourceId(),
+					defense.getResourceId());
+			chart.getLinks().add(link);
+		}
+		return chart;
+    }
+
+    /**
 	 * 获取阶段框架
 	 *
 	 * @param stage       阶段

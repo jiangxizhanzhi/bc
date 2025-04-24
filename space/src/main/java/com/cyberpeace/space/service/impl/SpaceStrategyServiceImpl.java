@@ -16,6 +16,7 @@ import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.constant.SpaceError;
+import com.cyberpeace.space.constant.SpaceKTypeEnum;
 import com.cyberpeace.space.dao.entity.SpaceStrategy;
 import com.cyberpeace.space.dao.entity.SpaceStrategyFrame;
 import com.cyberpeace.space.dao.mapper.SpaceStrategyFrameMapper;
@@ -241,28 +242,30 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 	@Override
 	public KnowledgeChart getStrategyChart() {
 		KnowledgeChart chart = new KnowledgeChart();
-		KnowledgeChartItem baseItem = new KnowledgeChartItem();
-		baseItem.setResourceId("strategy");
-		baseItem.setName("策略库");
-		chart.getCategories().add(new KnowledgeChartCategory("策略库"));
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.STRATEGY, SpaceKTypeEnum.KNOWLEDGE.getId());
+		chart.getData().add(baseItem);
+		chart.getCategories().add(new KnowledgeChartCategory(SpaceKTypeEnum.STRATEGY));
 		SpaceStrategyFrameBo frame = this.getFrame();
-		this.fillChart(chart, frame);
+		for (SpaceStrategyFrameBo bo : frame.getChildren()) {
+			this.fillChart(chart, bo, SpaceKTypeEnum.STRATEGY.getId());
+		}
 		return chart;
 	}
 
-	private void fillChart(KnowledgeChart chart, SpaceStrategyFrameBo bo) {
+	private void fillChart(KnowledgeChart chart, SpaceStrategyFrameBo bo, String parentId) {
 		KnowledgeChartItem item = new KnowledgeChartItem();
 		item.setName(bo.getName());
 		item.setResourceId(bo.getResourceId());
-		item.setType(SpaceCommonConstant.KnowledgeType.STRATEGY);
+		item.setType(SpaceKTypeEnum.STRATEGY.getType());
+		item.setCategory(parentId);
 		item.setValue(bo.getChildren().size());
 		chart.getData().add(item);
 		if (!bo.getChildren().isEmpty()) {
-			chart.getCategories().add(new KnowledgeChartCategory(bo.getName()));
+			chart.getCategories().add(new KnowledgeChartCategory(bo.getName(), bo.getResourceId()));
 		}
 		for (SpaceStrategyFrameBo child : bo.getChildren()) {
 			chart.getLinks().add(new KnowledgeChartLink(bo.getResourceId(), child.getResourceId()));
-			fillChart(chart, child);
+			fillChart(chart, child, bo.getResourceId());
 		}
 	}
 

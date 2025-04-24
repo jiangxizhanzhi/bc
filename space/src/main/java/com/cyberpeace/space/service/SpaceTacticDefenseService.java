@@ -5,6 +5,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
 import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
+import com.cyberpeace.space.service.context.index.KnowledgeChart;
 import com.cyberpeace.space.service.context.tactic.*;
 
 import java.util.List;
@@ -50,4 +51,6 @@ public interface SpaceTacticDefenseService extends IService<SpaceTacticDefense> 
      * @return {@code SpaceFrameLevel }
      */
     SpaceFrameLevel getFrame();
+
+    KnowledgeChart getTacticDefenseChart();
 }

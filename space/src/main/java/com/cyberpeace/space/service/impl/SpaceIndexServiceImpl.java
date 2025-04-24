@@ -8,7 +8,7 @@ import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
 import com.cyberpeace.cr.tool.dao.mapper.ToolMapper;
-import com.cyberpeace.cr.tool.service.ToolService;
+import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
@@ -16,8 +16,12 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
+import com.cyberpeace.space.constant.SpaceKTypeEnum;
 import com.cyberpeace.space.dao.entity.*;
-import com.cyberpeace.space.dao.mapper.*;
+import com.cyberpeace.space.dao.mapper.SpaceActionFrameUseMapper;
+import com.cyberpeace.space.dao.mapper.SpaceTacticAttackMapper;
+import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseMapper;
+import com.cyberpeace.space.dao.mapper.SpaceWarningDictionaryMapper;
 import com.cyberpeace.space.service.*;
 import com.cyberpeace.space.service.context.index.*;
 import com.cyberpeace.space.service.context.rule.BaseDataRuleStatistics;
@@ -55,6 +59,12 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	private SpaceStrategyService strategyService;
 
 	@Autowired
+	private SpaceTacticAttackService tacticAttackService;
+
+	@Autowired
+	private SpaceTacticDefenseService tacticDefenseService;
+
+	@Autowired
 	private SpaceTacticAttackMapper spaceTacticAttackMapper;
 
 	@Autowired
@@ -65,12 +75,6 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 
 	@Autowired
 	private SpaceWarningDictionaryMapper spaceWarningDictionaryMapper;
-
-	@Autowired
-	private SpaceBaseAlgorithmMapper spaceBaseAlgorithmMapper;
-
-	@Autowired
-	private ToolService toolService;
 
 	@Autowired
 	private ToolMapper toolMapper;
@@ -86,6 +90,30 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 
 	@Autowired
 	private SpaceActionFrameUseMapper spaceActionFrameUseMapper;
+
+	@Autowired
+	private SpaceAptFeatureService spaceAptFeatureService;
+
+	@Autowired
+	private SpaceLoadedFileThreatRuleService spaceLoadedFileThreatRuleService;
+
+	@Autowired
+	private SpaceEventIntegrationRuleService spaceEventIntegrationRuleService;
+
+	@Autowired
+	private SpaceTrafficDetectRuleService spaceTrafficDetectRuleService;
+
+	@Autowired
+	private SpaceAptThreatDetectRuleService spaceAptThreatDetectRuleService;
+
+	@Autowired
+	private SpaceScoreRankingRuleService spaceScoreRankingRuleService;
+
+	@Autowired
+	private SpaceRoundMechanismRuleService spaceRoundMechanismRuleService;
+
+	@Autowired
+	private SpaceViolationJudgeRuleService spaceViolationJudgeRuleService;
 
 	@Override
 	public IndexKnowledge getKnowledgeRepositoryStatistics() {
@@ -206,32 +234,31 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	@Override
 	public KnowledgeChart getKChart() {
 		KnowledgeChart chart = new KnowledgeChart();
-		KnowledgeChartItem baseItem = new KnowledgeChartItem();
-		baseItem.setName("知识库管理子系统");
-		baseItem.setResourceId("knowledge");
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.KNOWLEDGE, null);
 		chart.getData().add(baseItem);
-		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory("知识库管理子系统");
+		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(SpaceKTypeEnum.KNOWLEDGE);
 		chart.getCategories().add(baseCategory);
 		// 理论知识库
 		KnowledgeChart theoryChart = this.getTheoryChart();
+		chart.addChart(theoryChart);
 
 		// 策略库
 		KnowledgeChart strategyChart = strategyService.getStrategyChart();
-		chart.getData().addAll(strategyChart.getData());
-		chart.getLinks().addAll(strategyChart.getLinks());
-		chart.getCategories().addAll(strategyChart.getCategories());
-		chart.getLinks().add(new KnowledgeChartLink("knowledge", "strategy"));
+		chart.addChart(strategyChart);
 
 		// 战法
 		KnowledgeChart tacticChart = this.getTacticChart();
+		chart.addChart(tacticChart);
 
 		// 规则
 		KnowledgeChart ruleChart = this.getRuleChart();
+		chart.addChart(ruleChart);
 		// 流量
 		KnowledgeChart trafficChart = this.getTrafficChart();
 
 		// 算法
 		KnowledgeChart algorithmChart = this.getAlgorithmChart();
+		chart.addChart(algorithmChart);
 
 		// 场景
 		KnowledgeChart sceneChart = this.getSceneChart();
@@ -247,11 +274,25 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 
 	private KnowledgeChart getAlgorithmChart() {
 		KnowledgeChart chart = new KnowledgeChart();
-		IndexAlgorithm algorithm = new IndexAlgorithm();
-		algorithm.setBase(evalAlgorithmService.count());
-		algorithm.calSum();
-		algorithm.setUse(callCountService.getCountByName(CallType.ALGORITHM));
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.ALGORITHM,
+				SpaceKTypeEnum.KNOWLEDGE.getId());
+		chart.getData().add(baseItem);
+		chart.getCategories().add(new KnowledgeChartCategory(SpaceKTypeEnum.ALGORITHM));
 
+		KnowledgeChart algorithmEvalChart = this.getAlgorithmEvalChart();
+		chart.addChart(algorithmEvalChart);
+		return chart;
+	}
+
+	private KnowledgeChart getAlgorithmEvalChart() {
+		KnowledgeChart chart = new KnowledgeChart();
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.ALGORITHM_EVAL,
+				SpaceKTypeEnum.ALGORITHM.getId());
+		int cnt = evalAlgorithmService.count();
+		// chart.getCategories().add(new
+		// KnowledgeChartCategory(SpaceKTypeEnum.ALGORITHM_EVAL));
+		baseItem.setValue(cnt);
+		chart.getData().add(baseItem);
 		return chart;
 	}
 
@@ -264,50 +305,166 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 
 	private KnowledgeChart getRuleChart() {
 		KnowledgeChart chart = new KnowledgeChart();
-		IndexRule rule = new IndexRule();
-		BaseDataRuleStatistics baseDataRuleStatistics = spaceRuleCommonService
-				.getBaseDataStatistics();
-		rule.setBase(baseDataRuleStatistics.getApt() + baseDataRuleStatistics.getIoc()
-				+ baseDataRuleStatistics.getFingerPrint() + baseDataRuleStatistics.getVuln());
-		rule.setWarning(spaceWarningDictionaryMapper.selectCount(null));
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE,
+				SpaceKTypeEnum.KNOWLEDGE.getId());
+		chart.getData().add(baseItem);
+		chart.getCategories().add(new KnowledgeChartCategory(SpaceKTypeEnum.RULE));
 
-		ThreatDetectStatistics threatDetectStatistics = spaceRuleCommonService
-				.getThreatDetectStatistics();
-		rule.setThreat(
-				threatDetectStatistics.getAptThreat() + threatDetectStatistics.getThreatImage()
-						+ threatDetectStatistics.getTrafficDetect()
-						+ threatDetectStatistics.getLoadedFileThreat()
-						+ threatDetectStatistics.getTrafficExtraction()
-						+ threatDetectStatistics.getEventIntegration()
-						+ threatDetectStatistics.getSourceAnalyze());
-		RaceStatistics raceStatistics = spaceRuleCommonService.getRaceStatistics();
-		rule.setRace(raceStatistics.getScoreRanking() + raceStatistics.getRoundMechanism()
-				+ raceStatistics.getViolationJudge());
-		rule.calSum();
+		KnowledgeChart baseRuleChart = this.getRuleBaseChart();
+		chart.addChart(baseRuleChart);
+		KnowledgeChart ruleThreatChart = this.getRuleThreatChart();
+		chart.addChart(ruleThreatChart);
+		KnowledgeChart ruleRaceChart = this.getRuleRaceChart();
+		chart.addChart(ruleRaceChart);
 
+		return chart;
+	}
+
+	private KnowledgeChart getRuleRaceChart() {
+		KnowledgeChart chart = new KnowledgeChart();
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE_RACE,
+				SpaceKTypeEnum.RULE.getId());
+		chart.getData().add(baseItem);
+		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(SpaceKTypeEnum.RULE_RACE);
+		chart.getCategories().add(baseCategory);
+
+		KnowledgeChart ruleScoreRankingChart = spaceScoreRankingRuleService
+				.getRuleScoreRankingChart();
+		chart.addChart(ruleScoreRankingChart);
+		KnowledgeChart ruleRoundMechanismChart = spaceRoundMechanismRuleService
+				.getRuleRoundMechanismChart();
+		chart.addChart(ruleRoundMechanismChart);
+		KnowledgeChart ruleViolationJudgeChart = spaceViolationJudgeRuleService
+				.getRuleViolationJudgeChart();
+		chart.addChart(ruleViolationJudgeChart);
+		return chart;
+	}
+
+	private KnowledgeChart getRuleThreatChart() {
+		KnowledgeChart chart = new KnowledgeChart();
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE_THREAT_DEFENSE,
+				SpaceKTypeEnum.RULE.getId());
+		chart.getData().add(baseItem);
+		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(
+				SpaceKTypeEnum.RULE_THREAT_DEFENSE);
+		chart.getCategories().add(baseCategory);
+
+		KnowledgeChart ruleVirusChart = spaceLoadedFileThreatRuleService.geRuleVirusChart();
+		chart.addChart(ruleVirusChart);
+		KnowledgeChart ruleHostChart = spaceEventIntegrationRuleService.getRuleHostChart();
+		chart.addChart(ruleHostChart);
+		KnowledgeChart ruleNetworkChart = spaceTrafficDetectRuleService.getRuleNetworkChart();
+		chart.addChart(ruleNetworkChart);
+		KnowledgeChart ruleAptThreatChart = spaceAptThreatDetectRuleService.getRuleAptThreatChart();
+		chart.addChart(ruleAptThreatChart);
+		return chart;
+	}
+
+	private KnowledgeChart getRuleBaseChart() {
+		KnowledgeChart chart = new KnowledgeChart();
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE_BASE,
+				SpaceKTypeEnum.RULE.getId());
+		chart.getData().add(baseItem);
+		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(SpaceKTypeEnum.RULE_BASE);
+		chart.getCategories().add(baseCategory);
+
+		KnowledgeChart ruleVulnChart = this.getRuleVulnChart();
+		chart.addChart(ruleVulnChart);
+		KnowledgeChart ruleAptOrgChart = spaceAptFeatureService.getRuleAptOrgChart();
+		chart.addChart(ruleAptOrgChart);
+
+		return chart;
+	}
+
+	private KnowledgeChart getRuleVulnChart() {
+		KnowledgeChart chart = new KnowledgeChart();
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE_VULN,
+				SpaceKTypeEnum.RULE_BASE.getId());
+		chart.getData().add(baseItem);
+		// chart.getCategories().add(new
+		// KnowledgeChartCategory(SpaceKTypeEnum.RULE_VULN));
 		return chart;
 	}
 
 	private KnowledgeChart getTacticChart() {
 		KnowledgeChart chart = new KnowledgeChart();
-		int attack = spaceTacticAttackMapper.selectCount(null);
-		int defense = spaceTacticDefenseMapper.selectCount(null);
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.TACTIC,
+				SpaceKTypeEnum.KNOWLEDGE.getId());
+		chart.getData().add(baseItem);
+		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(SpaceKTypeEnum.TACTIC);
+		chart.getCategories().add(baseCategory);
+		KnowledgeChart tacticAttackChart = tacticAttackService.getTacticAttackChart();
+		chart.addChart(tacticAttackChart);
+		KnowledgeChart tacticDefenseChart = tacticDefenseService.getTacticDefenseChart();
+		chart.addChart(tacticDefenseChart);
 		return chart;
 	}
 
 	private KnowledgeChart getTheoryChart() {
 		KnowledgeChart chart = new KnowledgeChart();
-		LambdaQueryWrapper<CourseLesson> wrapperTheory = new LambdaQueryWrapper<>();
-		wrapperTheory.eq(CourseLesson::getType, CourseLesson.LessonType.THEORY.getCode());
-		int theoryCourse = courseLessonMapper.selectCount(wrapperTheory);
-		LambdaQueryWrapper<CourseLesson> wrapperExp = new LambdaQueryWrapper<>();
-		wrapperExp.eq(CourseLesson::getType, CourseLesson.LessonType.EXPERIMENT.getCode());
-		int onlineExp = courseLessonMapper.selectCount(wrapperExp);
-		int theoryExam = practiceTheoryMapper.selectCount(null);
-		int expExam = practiceOperationMapper.selectCount(null);
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.THEORY,
+				SpaceKTypeEnum.KNOWLEDGE.getId());
+		chart.getData().add(baseItem);
+		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(SpaceKTypeEnum.THEORY);
+		chart.getCategories().add(baseCategory);
+
+		KnowledgeChart courseChart = this.getCourseChart();
+		chart.addChart(courseChart);
+		KnowledgeChart practiceTheoryChart = this.getPracticeTheoryChart();
+		chart.addChart(practiceTheoryChart);
+		KnowledgeChart practiceOperationChart = this.getPracticeOperationChart();
+		chart.addChart(practiceOperationChart);
+
 		return chart;
 	}
-	
+
+	private KnowledgeChart getPracticeOperationChart() {
+		KnowledgeChart chart = new KnowledgeChart();
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.PRACTICE_OPERATION,
+				SpaceKTypeEnum.THEORY.getId());
+		int operationCount = practiceOperationMapper.selectCount(null);
+		baseItem.setValue(operationCount);
+		chart.getData().add(baseItem);
+		return chart;
+	}
+
+	private KnowledgeChart getPracticeTheoryChart() {
+		KnowledgeChart chart = new KnowledgeChart();
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.PRACTICE_THEORY,
+				SpaceKTypeEnum.THEORY.getId());
+		int theoryExamCount = practiceTheoryMapper.selectCount(null);
+		baseItem.setValue(theoryExamCount);
+		chart.getData().add(baseItem);
+		// KnowledgeChartCategory baseCategory = new
+		// KnowledgeChartCategory(SpaceKTypeEnum.PRACTICE_THEORY);
+		// chart.getCategories().add(baseCategory);
+		return chart;
+	}
+
+	private KnowledgeChart getCourseChart() {
+		KnowledgeChart chart = new KnowledgeChart();
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.COURSE,
+				SpaceKTypeEnum.THEORY.getId());
+		chart.getData().add(baseItem);
+		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(SpaceKTypeEnum.COURSE);
+		chart.getCategories().add(baseCategory);
+		for (Course course : courseMapper.selectList(null)) {
+			KnowledgeChartItem item = new KnowledgeChartItem();
+			item.setResourceId(course.getResourceId());
+			item.setName(course.getName());
+			item.setType(SpaceKTypeEnum.COURSE.getType());
+			item.setCategory(baseItem.getResourceId());
+			item.setValue(course.getLessonCount());
+			chart.getData().add(item);
+			// KnowledgeChartCategory category = new
+			// KnowledgeChartCategory(course.getName(), course.getResourceId());
+			// chart.getCategories().add(category);
+			KnowledgeChartLink link = new KnowledgeChartLink(baseItem.getResourceId(),
+					course.getResourceId());
+			chart.getLinks().add(link);
+		}
+		return chart;
+	}
 
 	private IndexActionFrameChart getActionFrameUseChart() {
 		IndexActionFrameChart chart = new IndexActionFrameChart();

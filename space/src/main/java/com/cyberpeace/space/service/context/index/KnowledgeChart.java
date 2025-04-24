@@ -15,4 +15,13 @@ public class KnowledgeChart {
 	private List<KnowledgeChartLink> links = Lists.newArrayList();
 
 	private List<KnowledgeChartCategory> categories = Lists.newArrayList();
+
+	public void addChart(KnowledgeChart chart) {
+		this.data.addAll(chart.getData());
+		this.categories.addAll(chart.getCategories());
+		KnowledgeChartLink link = new KnowledgeChartLink(this.getData().get(0).getResourceId(),
+				chart.getData().get(0).getResourceId());
+		this.links.add(link);
+		this.links.addAll(chart.getLinks());
+	}
 }

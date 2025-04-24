@@ -14,7 +14,11 @@ import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.constant.SpaceError;
 import com.cyberpeace.space.dao.entity.SpaceActionFrame;
 import com.cyberpeace.space.dao.entity.SpaceActionFrameApplication;
+import com.cyberpeace.space.dao.entity.SpaceActionFrameOrder;
+import com.cyberpeace.space.dao.entity.SpaceActionFrameRelease;
 import com.cyberpeace.space.dao.mapper.SpaceActionFrameApplicationMapper;
+import com.cyberpeace.space.dao.mapper.SpaceActionFrameOrderMapper;
+import com.cyberpeace.space.dao.mapper.SpaceActionFrameReleaseMapper;
 import com.cyberpeace.space.service.SpaceActionFrameApplicationService;
 import com.cyberpeace.space.service.SpaceActionFrameService;
 import com.cyberpeace.space.service.context.frame.ApplicationUser;
@@ -24,6 +28,9 @@ import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ResourceUtils;
 
@@ -40,7 +47,16 @@ public class SpaceActionFrameApplicationServiceImpl extends ServiceImpl<SpaceAct
 	private SpaceActionFrameService frameService;
 
 	@Autowired
+	private SpaceActionFrameReleaseMapper releaseMapper;
+
+	@Autowired
+	private SpaceActionFrameOrderMapper orderMapper;
+
+	@Autowired
 	private YXUserService yxUserService;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 
 	@Override
 	public void create(SpaceActionFrameApplicationReq req) {
@@ -100,6 +116,24 @@ public class SpaceActionFrameApplicationServiceImpl extends ServiceImpl<SpaceAct
 		List<ApplicationUser> userList = this.getUsers(rvbId, userGroup);
 		return StreamApiUtils.toMap(userList, ApplicationUser::getUserId,
 				ApplicationUser::getUserName);
+	}
+
+	@Override
+	public void deleteByIds(List<String> ids) {
+		LambdaQueryWrapper<SpaceActionFrameRelease> wrapperRelease = new LambdaQueryWrapper<>();
+		wrapperRelease.in(SpaceActionFrameRelease::getApplicationId, ids);
+		LambdaQueryWrapper<SpaceActionFrameOrder> wrapperOrder = new LambdaQueryWrapper<>();
+		wrapperOrder.in(SpaceActionFrameOrder::getApplicationId, ids);
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				removeByIds(ids);
+				releaseMapper.delete(wrapperRelease);
+				orderMapper.delete(wrapperOrder);
+			}
+		});
 	}
 
 

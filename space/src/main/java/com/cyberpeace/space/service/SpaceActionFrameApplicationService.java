@@ -15,5 +15,7 @@ public interface SpaceActionFrameApplicationService extends IService<SpaceAction
     List<ApplicationUser> getUsers(String rvbId, Integer userGroup);
 
     Map<String, String> getUserMap(String rvbId, Integer userGroup);
+
+    void deleteByIds(List<String> ids);
 }
     

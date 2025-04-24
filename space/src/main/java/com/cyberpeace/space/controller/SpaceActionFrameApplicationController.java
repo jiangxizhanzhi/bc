@@ -13,6 +13,7 @@ import com.cyberpeace.space.service.SpaceActionFrameApplicationService;
 import com.cyberpeace.space.service.SpaceActionFrameOrderService;
 import com.cyberpeace.space.service.SpaceActionFrameReleaseService;
 import com.cyberpeace.space.service.SpaceActionFrameService;
+import com.cyberpeace.space.service.context.IdListReq;
 import com.cyberpeace.space.service.context.frame.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -90,6 +91,14 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 	public BaseRsp<SpaceActionFrameApplicationBo> getADetail(@ApiParam(value = "resource_id", name = "resource_id") String resource_id) {
 		SpaceActionFrameApplicationBo bo = releaseService.getApplicationBo(resource_id);
 		return new BaseRsp<>(bo);
+	}
+
+	@ApiOperation("删除框架应用")
+	@DeleteMapping("")
+	@Override
+	public BaseRsp deleteA(@RequestBody IdListReq req) {
+		baseService.deleteByIds(req.getIds());
+		return new BaseRsp();
 	}
 
 	/**

@@ -220,7 +220,7 @@ public class EvalSituationServiceImpl implements EvalSituationService {
                 List<List<String>> fileCount = excelDataHandler.getSheetData(1);
                 for (int i = 0; i < fileCount.size(); i++) {
                     List<String> countData = fileCount.get(i);
-                    if (countData.get(9) == null || !"1005010101".equals(countData.get(9))) continue;
+                    if (countData.get(5) == null || !"成功".equals(countData.get(5))) continue;
                     Date lastTime = dateMap.get(resourceId);
                     Date time = new Date();
                     if (lastTime == null || lastTime.before(time)) {

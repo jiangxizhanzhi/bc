@@ -535,10 +535,10 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 			template.setReadAuthType(2);
 		}
 
-//		Map<String, TopoDigest> nodeCountMap = remoteTopoService.batchGetTopoDigest(Arrays.asList(template.getTopoId()));
+		Map<String, TopoDigest> nodeCountMap = remoteTopoService.batchGetTopoDigest(Arrays.asList(template.getTopoId()));
 		// 2. 生成导出模型, 包含 template, missions
 		ResourceDumpContext<Object> context = businessTemplateHandler.dumpBusiness(template);
-//		template.setNodeCount(nodeCountMap.get(template.getTopoId()).getNodeCounts());
+		template.setNodeCount(nodeCountMap.get(template.getTopoId()).getNodeCounts());
 		Map<String, String> userMap = remoteUserService.getIdNameMap(Arrays.asList(template.getCreateUserId()));
 		template.setCreateUser(userMap.get(template.getCreateUserId()));
 		String createTimeStr = TimeUtil.format1(template.getCreateTime());
@@ -591,6 +591,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 					// 4. save topo
 					JSONObject topoData = resource.getSceneData();
+					topoData.put("deleted",false);
 					remoteTopoService.save(topoData);
 
 					// 5. save images

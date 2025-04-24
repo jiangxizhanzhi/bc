@@ -93,7 +93,7 @@ public class AdminLessonListBo implements Serializable {
 	 * @see String
 	 */
 	@ApiModelProperty("视频时长")
-	private String videoDuration;
+	private Integer videoDuration;
 
 	/**
 	 * 难度

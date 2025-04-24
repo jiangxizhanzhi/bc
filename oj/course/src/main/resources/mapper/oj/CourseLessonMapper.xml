@@ -103,4 +103,10 @@
         </where>
         and node_type = 1
     </select>
+
+    <select id="selectAllVideoLesson" resultType="com.cyberpeace.oj.course.dao.entity.CourseLesson">
+        select *
+        from `oj_course_lesson`
+        where `video_url` is not null and `video_url` != '' and `video_duration` = 0
+    </select>
 </mapper>

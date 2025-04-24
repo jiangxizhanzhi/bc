@@ -654,6 +654,13 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp(topoSceneData);
 	}
 
+	@ApiOperation("计算视频时长")
+	@GetMapping("/count_video")
+	public BaseRsp<Boolean> countVideo() {
+		courseLessonService.countVideo();
+		return new BaseRsp<>(Boolean.TRUE);
+	}
+
 	/**
 	 * 更新请求转换为实体类
 	 *

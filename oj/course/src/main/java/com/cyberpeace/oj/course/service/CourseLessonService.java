@@ -400,4 +400,9 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @see TopoSceneDataBo
 	 */
 	TopoSceneDataBo getTopoScene(String lessonId, String roomId, AuthContext authContext);
+
+	/**
+	 * 计算视频时长
+	 */
+	void countVideo();
 }

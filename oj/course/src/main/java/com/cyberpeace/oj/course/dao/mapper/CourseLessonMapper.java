@@ -152,4 +152,6 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	 * @see Integer
 	 */
 	Integer selectChapterCount(@Param("courseId") String courseId);
+
+	List<CourseLesson> selectAllVideoLesson();
 }

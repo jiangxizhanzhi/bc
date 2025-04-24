@@ -2319,4 +2319,15 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		return topoSceneDataRes;
 	}
+
+	public void countVideo() {
+		List<CourseLesson> lessonList = courseLessonMapper.selectAllVideoLesson();
+		for (CourseLesson courseLesson : lessonList) {
+			String url = courseLesson.getVideoUrl();
+			String path = url.startsWith("/cpms") ? url : "/cpms/" + url;
+			int duration = VideoUtil.getVideoDuration(path) / 60;
+			courseLesson.setVideoDuration(duration);
+		}
+		this.updateBatchById(lessonList);
+	}
 }

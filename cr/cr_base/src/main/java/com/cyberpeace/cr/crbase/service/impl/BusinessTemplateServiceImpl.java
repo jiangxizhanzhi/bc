@@ -543,7 +543,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		template.setCreateUser(userMap.get(template.getCreateUserId()));
 		String createTimeStr = TimeUtil.format1(template.getCreateTime());
 		template.setCreateTimeStr(createTimeStr);
-
+		template.setDifficultyName(getDifficultyName(template.getDifficulty()));
 		context.setBusinessTemplate(template);
 
 		// 3. 获取拓扑
@@ -566,6 +566,20 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		context.setType(template.getBusinessType());
 
 		return context;
+	}
+
+//	写一个方法 难度等级 1 初级 2中级 3 高级
+	public String getDifficultyName(Integer difficulty) {
+		if (difficulty == 1) {
+			return "初级";
+		}
+		if (difficulty == 2) {
+			return "中级";
+		}
+		if (difficulty == 3) {
+			return "高级";
+		}
+		return "";
 	}
 
 	@Override

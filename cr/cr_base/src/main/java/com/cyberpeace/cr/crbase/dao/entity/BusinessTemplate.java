@@ -45,6 +45,6 @@ public class BusinessTemplate extends AuthTable {
 	private String createUser;
 	@TableField(exist = false)
 	private String createTimeStr;
-
-
+	@TableField(exist = false)
+	private String difficultyName;
 }

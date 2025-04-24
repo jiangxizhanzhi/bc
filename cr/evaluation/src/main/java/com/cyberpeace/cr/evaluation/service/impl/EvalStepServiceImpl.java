@@ -454,7 +454,7 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
         mqRbSituationAttack.put("line_style", 1);
         mqRbSituationAttack.put("src_action", 1);
         mqRbSituationAttack.put("dst_action", 1);
-        mqRbSituationAttack.put("first_view", false);
+        mqRbSituationAttack.put("first_view", true);
 
         AttackType successAttack = AttackType.SUCCESS_ATTACK;
         mqRbSituationAttack.put("src_node", srcNode);

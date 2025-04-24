@@ -232,7 +232,7 @@ public class EvalSituationServiceImpl implements EvalSituationService {
                     rbSituationAttack.put("line_style", 1);
                     rbSituationAttack.put("src_action", 1);
                     rbSituationAttack.put("dst_action", 1);
-                    rbSituationAttack.put("first_view", false);
+                    rbSituationAttack.put("first_view", true);
 
                     AttackType successAttack = AttackType.SUCCESS_ATTACK;
                     String srcNode = map.get(countData.get(7));

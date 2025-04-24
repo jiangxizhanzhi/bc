@@ -235,7 +235,7 @@ public class EvalSituationServiceImpl implements EvalSituationService {
                     rbSituationAttack.put("first_view", false);
 
                     AttackType successAttack = AttackType.SUCCESS_ATTACK;
-                    String srcNode = map.get(countData.get(0));
+                    String srcNode = map.get(countData.get(7));
                     rbSituationAttack.put("src_node", srcNode);
                     rbSituationAttack.put("attack_type", successAttack.getMsg());
                     if (elementIds.size() > 0) {

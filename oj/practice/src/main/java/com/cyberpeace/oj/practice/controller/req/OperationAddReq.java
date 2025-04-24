@@ -232,6 +232,10 @@ public class OperationAddReq implements Serializable, CustomValidate {
 	private Boolean networking;
 
 
+	@ApiModelProperty(value = "关联漏洞")
+	private String vuln;
+
+
 	public void setCategory_id(String categoryId) {
 		this.categoryId = categoryId;
 	}

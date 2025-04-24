@@ -71,4 +71,8 @@ public class OperationBo extends PracticeOperation {
 	@ApiModelProperty("防御知识点")
 	private JSONArray defenseTag;
 
+
+	@ApiModelProperty(value = "关联漏洞")
+	private String vuln;
+
 }

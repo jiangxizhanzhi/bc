@@ -110,6 +110,9 @@ public class PracticeOperation extends PracticeBase {
 	@ApiModelProperty(value = "是否支持组网，0=不支持，1=支持")
 	private Boolean networking;
 
+	@ApiModelProperty(value = "关联漏洞")
+	private String vuln;
+
 	public enum DynamicFlag implements GenericEnum {
 
 		STATIC(0, "静态"), DYNAMIC(1, "动态"), RANDOM(2, "随机"), NOT(3, "非Flag");

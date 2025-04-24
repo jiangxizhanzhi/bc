@@ -23,7 +23,7 @@ public class SpaceAptThreatDetectRuleServiceImpl extends ServiceImpl<SpaceAptThr
 	public KnowledgeChart getRuleAptThreatChart() {
 
 		KnowledgeChart chart = new KnowledgeChart();
-		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE_NETWORK,
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE_APT_DETECT,
 				SpaceKTypeEnum.RULE_THREAT_DEFENSE.getId());
 		int cnt = this.count();
 		baseItem.setValue(cnt);

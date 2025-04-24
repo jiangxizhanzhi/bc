@@ -11,15 +11,15 @@ public class KnowledgeChartCategory {
 
 	private String name;
 
-	private String resourceId;
+	private String id;
 
 	public KnowledgeChartCategory(SpaceKTypeEnum typeEnum) {
 		this.name = typeEnum.getName();
-		this.resourceId = typeEnum.getId();
+		this.id = typeEnum.getId();
 	}
 
-	public KnowledgeChartCategory(String name, String resourceId) {
+	public KnowledgeChartCategory(String name, String id) {
 		this.name = name;
-		this.resourceId = resourceId;
+		this.id = id;
 	}
 }

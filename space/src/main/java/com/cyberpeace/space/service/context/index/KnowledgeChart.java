@@ -19,8 +19,8 @@ public class KnowledgeChart {
 	public void addChart(KnowledgeChart chart) {
 		this.data.addAll(chart.getData());
 		this.categories.addAll(chart.getCategories());
-		KnowledgeChartLink link = new KnowledgeChartLink(this.getData().get(0).getResourceId(),
-				chart.getData().get(0).getResourceId());
+		KnowledgeChartLink link = new KnowledgeChartLink(this.getData().get(0).getId(),
+				chart.getData().get(0).getId());
 		this.links.add(link);
 		this.links.addAll(chart.getLinks());
 	}

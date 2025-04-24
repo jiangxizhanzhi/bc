@@ -255,7 +255,7 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 	private void fillChart(KnowledgeChart chart, SpaceStrategyFrameBo bo, String parentId) {
 		KnowledgeChartItem item = new KnowledgeChartItem();
 		item.setName(bo.getName());
-		item.setResourceId(bo.getResourceId());
+		item.setId(bo.getResourceId());
 		item.setType(SpaceKTypeEnum.STRATEGY.getType());
 		item.setCategory(parentId);
 		item.setValue(bo.getChildren().size());

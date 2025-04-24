@@ -12,7 +12,7 @@ public class KnowledgeChartItem {
 
 	private String name;
 
-	private String resourceId;
+	private String id;
 
 	private String category;
 
@@ -25,7 +25,7 @@ public class KnowledgeChartItem {
 
 	public KnowledgeChartItem(SpaceKTypeEnum typeEnum, String parentId) {
 		this.name = typeEnum.getName();
-		this.resourceId = typeEnum.getId();
+		this.id = typeEnum.getId();
 		this.category = parentId;
 		this.type = typeEnum.getType();
 		this.symbolSize = 0;

@@ -1,13 +1,5 @@
 package com.cyberpeace.space.service.impl;
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.compress.utils.Lists;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -39,8 +31,14 @@ import com.cyberpeace.space.service.context.index.KnowledgeChartItem;
 import com.cyberpeace.space.service.context.index.KnowledgeChartLink;
 import com.cyberpeace.space.service.context.tactic.*;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 空间策略防御Service实现
@@ -332,12 +330,12 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 		chart.getCategories().add(baseCategory);
 		for (SpaceTacticDefense defense : mapper.selectList(null)) {
 			KnowledgeChartItem item = new KnowledgeChartItem();
-			item.setResourceId(defense.getResourceId());
+			item.setId(defense.getResourceId());
 			item.setName(defense.getName());
 			item.setType(SpaceKTypeEnum.TACTIC_DEFENSE.getType());
-			item.setCategory(baseItem.getResourceId());
+			item.setCategory(baseItem.getId());
 			chart.getData().add(item);
-			KnowledgeChartLink link = new KnowledgeChartLink(baseItem.getResourceId(),
+			KnowledgeChartLink link = new KnowledgeChartLink(baseItem.getId(),
 					defense.getResourceId());
 			chart.getLinks().add(link);
 		}

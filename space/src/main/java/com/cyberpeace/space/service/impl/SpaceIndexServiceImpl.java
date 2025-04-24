@@ -450,16 +450,16 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		chart.getCategories().add(baseCategory);
 		for (Course course : courseMapper.selectList(null)) {
 			KnowledgeChartItem item = new KnowledgeChartItem();
-			item.setResourceId(course.getResourceId());
+			item.setId(course.getResourceId());
 			item.setName(course.getName());
 			item.setType(SpaceKTypeEnum.COURSE.getType());
-			item.setCategory(baseItem.getResourceId());
+			item.setCategory(baseItem.getId());
 			item.setValue(course.getLessonCount());
 			chart.getData().add(item);
 			// KnowledgeChartCategory category = new
 			// KnowledgeChartCategory(course.getName(), course.getResourceId());
 			// chart.getCategories().add(category);
-			KnowledgeChartLink link = new KnowledgeChartLink(baseItem.getResourceId(),
+			KnowledgeChartLink link = new KnowledgeChartLink(baseItem.getId(),
 					course.getResourceId());
 			chart.getLinks().add(link);
 		}

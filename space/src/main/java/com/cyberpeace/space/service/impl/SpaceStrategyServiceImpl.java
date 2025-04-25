@@ -260,11 +260,12 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		item.setCategory(parentId);
 		item.setValue(bo.getChildren().size());
 		chart.getData().add(item);
+		KnowledgeChartLink link = new KnowledgeChartLink(parentId, bo.getResourceId());
+		chart.getLinks().add(link);
 		if (!bo.getChildren().isEmpty()) {
 			chart.getCategories().add(new KnowledgeChartCategory(bo.getName(), bo.getResourceId()));
 		}
 		for (SpaceStrategyFrameBo child : bo.getChildren()) {
-			chart.getLinks().add(new KnowledgeChartLink(bo.getResourceId(), child.getResourceId()));
 			fillChart(chart, child, bo.getResourceId());
 		}
 	}

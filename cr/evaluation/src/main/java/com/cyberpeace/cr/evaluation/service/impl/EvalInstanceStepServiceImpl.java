@@ -60,7 +60,7 @@ public class EvalInstanceStepServiceImpl extends ServiceImpl<EvalInstanceStepMap
 			List<EvalStageTimeNodeRsp> stageNodes = new ArrayList<>();
 			Date startTime = step.getStartTime();
 			Date endTime = step.getEndTime();
-			if (startTime == null) {
+			if (startTime == null || endTime == null) {
 				break;
 			}
 			stageNodes.add(new EvalStageTimeNodeRsp("开始", TimeUtil.format1(startTime)));

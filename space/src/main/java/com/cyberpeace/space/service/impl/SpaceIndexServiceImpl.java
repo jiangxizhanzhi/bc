@@ -5,6 +5,7 @@ import com.cyberpeace.common.constant.CallType;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
 import com.cyberpeace.cr.tool.dao.mapper.ToolMapper;
@@ -288,11 +289,21 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.ALGORITHM_EVAL,
 				SpaceKTypeEnum.ALGORITHM.getId());
-		int cnt = evalAlgorithmService.count();
-		// chart.getCategories().add(new
-		// KnowledgeChartCategory(SpaceKTypeEnum.ALGORITHM_EVAL));
-		baseItem.setValue(cnt);
+		chart.getCategories().add(new KnowledgeChartCategory(SpaceKTypeEnum.ALGORITHM_EVAL));
+		List<EvalAlgorithm> algorithmList = evalAlgorithmService.list();
+		baseItem.setValue(algorithmList.size());
 		chart.getData().add(baseItem);
+		for (EvalAlgorithm algorithm : algorithmList) {
+			KnowledgeChartItem item = new KnowledgeChartItem();
+			item.setId(algorithm.getResourceId());
+			item.setName(algorithm.getName());
+			item.setType(SpaceKTypeEnum.ALGORITHM_EVAL.getType());
+			item.setCategory(SpaceKTypeEnum.ALGORITHM_EVAL.getId());
+			chart.getData().add(item);
+			KnowledgeChartLink link = new KnowledgeChartLink(SpaceKTypeEnum.ALGORITHM_EVAL.getId(),
+					algorithm.getResourceId());
+			chart.getLinks().add(link);
+		}
 		return chart;
 	}
 

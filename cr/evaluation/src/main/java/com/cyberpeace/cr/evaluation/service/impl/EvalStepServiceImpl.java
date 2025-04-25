@@ -515,14 +515,16 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
         JSONObject rbSituationAttack = new JSONObject();
         rbSituationAttack.put("code", "director_scheduling_element-element");
         JSONObject data = new JSONObject();
-        data.put("category", 4);
+        data.put("category", "attack");
         data.put("duration", 3);
-        data.put("event_type", 1);
         data.put("result", 2);
         data.put("name", nodeName);
         data.put("scene_id", sceneId);
         data.put("source_id", sourceId);
         data.put("target_id", targetId);
+        data.put("description","动效1");
+        data.put("look_at_target",false);
+        data.put("type",5);
         JSONObject lineStyle = new JSONObject();
         lineStyle.put("color", "#FF0000");
         lineStyle.put("line_type", "straight");

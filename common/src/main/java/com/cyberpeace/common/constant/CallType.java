@@ -38,4 +38,6 @@ public class CallType {
 	 * @see String
 	 */
 	public static final String ALGORITHM = "algorithm";
+
+	public static final String RULE = "rule";
 }

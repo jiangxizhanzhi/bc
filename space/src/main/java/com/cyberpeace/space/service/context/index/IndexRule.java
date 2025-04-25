@@ -14,14 +14,17 @@ public class IndexRule {
 	@ApiModelProperty(value = "告警字典规则")
 	private Integer warning = 0;
 
-	@ApiModelProperty(value = "威胁检测规则")
+	@ApiModelProperty(value = "威胁防御规则")
 	private Integer threat = 0;
 
-	@ApiModelProperty(value = "比赛评估规则")
+	@ApiModelProperty(value = "比赛及训练评估规则")
 	private Integer race = 0;
 
 	@ApiModelProperty(value = "总数")
 	private Integer sum = 0;
+
+	@ApiModelProperty(value = "使用次数")
+	private Integer use = 0;
 
 	public void calSum() {
 		this.sum = this.base + this.warning + this.race + this.threat;

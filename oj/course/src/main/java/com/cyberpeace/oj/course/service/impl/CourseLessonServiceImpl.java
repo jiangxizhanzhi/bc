@@ -622,6 +622,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 					LocalScene.BusinessCode.LESSON.getCode());
 			courseLesson.setTopoId(topoId);
 		}
+		// video
+		if(StringUtils.isNotBlank(courseLesson.getVideoUrl())) {
+			String videoUrl = utilService.handlerFileUrl(courseLesson.getVideoUrl());
+			int videoDuration = VideoUtil.getVideoDuration(videoUrl);
+			courseLesson.setVideoDuration(MathUtils.roundDivide(videoDuration, 60));
+		} else {
+			courseLesson.setVideoDuration(0);
+		}
 
 		// 执行数据插入
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -702,6 +710,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			comment.setThemeName(themeName);
 			comment.setBusinessType(Comment.CommentType.LESSON.getCode());
 			comment.setBusinessId(courseLesson.getResourceId());
+		}
+		// video
+		if(StringUtils.isNotBlank(courseLesson.getVideoUrl())) {
+			String videoUrl = utilService.handlerFileUrl(courseLesson.getVideoUrl());
+			int videoDuration = VideoUtil.getVideoDuration(videoUrl);
+			courseLesson.setVideoDuration(MathUtils.roundDivide(videoDuration, 60));
+		} else {
+			courseLesson.setVideoDuration(0);
 		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -2325,7 +2341,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		for (CourseLesson courseLesson : lessonList) {
 			String url = courseLesson.getVideoUrl();
 			String path = url.startsWith("/cpms") ? url : "/cpms/" + url;
-			int duration = VideoUtil.getVideoDuration(path) / 60;
+			int duration = MathUtils.roundDivide(VideoUtil.getVideoDuration(path), 60);
 			courseLesson.setVideoDuration(duration);
 		}
 		this.updateBatchById(lessonList);

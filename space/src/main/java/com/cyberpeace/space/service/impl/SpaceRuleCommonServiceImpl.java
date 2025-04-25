@@ -70,21 +70,21 @@ public class SpaceRuleCommonServiceImpl implements SpaceRuleCommonService {
 	public ThreatDetectStatistics getThreatDetectStatistics() {
 		ThreatDetectStatistics statistics = new ThreatDetectStatistics();
 		statistics.setTrafficDetect(spaceTrafficDetectRuleMapper.selectCount(null));
-		statistics.setTrafficExtraction(spaceTrafficExtractionRuleMapper.selectCount(null));
+//		statistics.setTrafficExtraction(spaceTrafficExtractionRuleMapper.selectCount(null));
 		statistics.setLoadedFileThreat(spaceLoadedFileThreatRuleMapper.selectCount(null));
 		statistics.setAptThreat(spaceAptThreatDetectRuleMapper.selectCount(null));
 		statistics.setEventIntegration(spaceEventIntegrationRuleMapper.selectCount(null));
-		statistics.setThreatImage(spaceThreatImageRuleMapper.selectCount(null));
-		statistics.setSourceAnalyze(spaceSourceAnalyzeRuleMapper.selectCount(null));
+//		statistics.setThreatImage(spaceThreatImageRuleMapper.selectCount(null));
+//		statistics.setSourceAnalyze(spaceSourceAnalyzeRuleMapper.selectCount(null));
 		return statistics;
 	}
 
 	@Override
 	public BaseDataRuleStatistics getBaseDataStatistics() {
 		BaseDataRuleStatistics statistics = new BaseDataRuleStatistics();
-		statistics.setFingerPrint(spaceFingerPrintMapper.selectCount(null));
+//		statistics.setFingerPrint(spaceFingerPrintMapper.selectCount(null));
 		statistics.setApt(spaceAptFeatureMapper.selectCount(null));
-		statistics.setIoc(spaceIocThreatMapper.selectCount(null));
+//		statistics.setIoc(spaceIocThreatMapper.selectCount(null));
 		return statistics;
 	}
 }

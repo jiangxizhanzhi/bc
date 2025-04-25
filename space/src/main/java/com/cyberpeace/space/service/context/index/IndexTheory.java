@@ -29,6 +29,12 @@ public class IndexTheory {
 	@ApiModelProperty(value = "今日修改理论知识库")
 	private Integer updatedToday = 0;
 
+	@ApiModelProperty(value = "课程视频数")
+	private Integer videoCount = 0;
+
+	@ApiModelProperty(value = "课程视频时长")
+	private Integer videoDuration = 0;
+
 	private Integer sum;
 
 	public void calSum() {

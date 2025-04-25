@@ -3,6 +3,7 @@ package com.cyberpeace.space.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.constant.CallType;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.common.util.TimeUtil;
@@ -121,24 +122,12 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	public IndexKnowledge getKnowledgeRepositoryStatistics() {
 		IndexKnowledge res = new IndexKnowledge();
 		// 理论知识库
-		IndexTheory theory = new IndexTheory();
-		LambdaQueryWrapper<CourseLesson> wrapperTheory = new LambdaQueryWrapper<>();
-		wrapperTheory.eq(CourseLesson::getType, CourseLesson.LessonType.THEORY.getCode());
-		theory.setTheoryCourse(courseLessonMapper.selectCount(wrapperTheory));
-		LambdaQueryWrapper<CourseLesson> wrapperExp = new LambdaQueryWrapper<>();
-		wrapperExp.eq(CourseLesson::getType, CourseLesson.LessonType.EXPERIMENT.getCode());
-		theory.setOnlineExp(courseLessonMapper.selectCount(wrapperExp));
-		theory.setTheoryExam(practiceTheoryMapper.selectCount(null));
-		theory.setExpExam(practiceOperationMapper.selectCount(null));
-		theory.setUse(callCountService.getCountByName(CallType.THEORY));
-		theory.calSum();
-		this.getAddedToday(theory);
-		this.getUpdatedToday(theory);
+		IndexTheory theory = this.getIndexTheory();
 		res.setTheory(theory);
 		// 策略库
 		IndexStrategy strategy = strategyService.getStatistics();
 		strategy.setUse(callCountService.getCountByName(CallType.STRATEGY));
-		this.getAddAndUpdateToday(strategy);
+//		this.getAddAndUpdateToday(strategy);
 		res.setStrategy(strategy);
 		// 战法
 		IndexTactic tactic = new IndexTactic();
@@ -146,16 +135,31 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		tactic.setDefense(spaceTacticDefenseMapper.selectCount(null));
 		tactic.setUse(callCountService.getCountByName(CallType.TACTIC));
 		tactic.calSum();
-		this.getAddedToday(tactic);
-		this.getUpdatedToday(tactic);
+//		this.getAddedToday(tactic);
+//		this.getUpdatedToday(tactic);
 		res.setTactic(tactic);
 		// 规则
+		IndexRule rule = this.getIndexRule();
+		res.setRule(rule);
+		// 流量
+
+		// 算法
+		IndexAlgorithm algorithm = new IndexAlgorithm();
+		algorithm.setBase(evalAlgorithmService.count());
+		algorithm.calSum();
+		algorithm.setUse(callCountService.getCountByName(CallType.ALGORITHM));
+		res.setAlgorithm(algorithm);
+		// 场景
+		return res;
+	}
+
+	private IndexRule getIndexRule() {
 		IndexRule rule = new IndexRule();
 		BaseDataRuleStatistics baseDataRuleStatistics = spaceRuleCommonService
 				.getBaseDataStatistics();
 		rule.setBase(baseDataRuleStatistics.getApt() + baseDataRuleStatistics.getIoc()
 				+ baseDataRuleStatistics.getFingerPrint() + baseDataRuleStatistics.getVuln());
-		rule.setWarning(spaceWarningDictionaryMapper.selectCount(null));
+//		rule.setWarning(spaceWarningDictionaryMapper.selectCount(null));
 
 		ThreatDetectStatistics threatDetectStatistics = spaceRuleCommonService
 				.getThreatDetectStatistics();
@@ -170,17 +174,36 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		rule.setRace(raceStatistics.getScoreRanking() + raceStatistics.getRoundMechanism()
 				+ raceStatistics.getViolationJudge());
 		rule.calSum();
-		res.setRule(rule);
-		// 流量
+		rule.setUse(callCountService.getCountByName(CallType.RULE));
+		
+		return rule;
+	}
 
-		// 算法
-		IndexAlgorithm algorithm = new IndexAlgorithm();
-		algorithm.setBase(evalAlgorithmService.count());
-		algorithm.calSum();
-		algorithm.setUse(callCountService.getCountByName(CallType.ALGORITHM));
-		res.setAlgorithm(algorithm);
-		// 场景
-		return res;
+	private IndexTheory getIndexTheory() {
+		IndexTheory theory = new IndexTheory();
+		LambdaQueryWrapper<CourseLesson> wrapperTheory = new LambdaQueryWrapper<>();
+		wrapperTheory.eq(CourseLesson::getType, CourseLesson.LessonType.THEORY.getCode());
+		theory.setTheoryCourse(courseLessonMapper.selectCount(wrapperTheory));
+		LambdaQueryWrapper<CourseLesson> wrapperExp = new LambdaQueryWrapper<>();
+		wrapperExp.eq(CourseLesson::getType, CourseLesson.LessonType.EXPERIMENT.getCode());
+		theory.setOnlineExp(courseLessonMapper.selectCount(wrapperExp));
+		theory.setTheoryExam(practiceTheoryMapper.selectCount(null));
+		theory.setExpExam(practiceOperationMapper.selectCount(null));
+		theory.setUse(callCountService.getCountByName(CallType.THEORY));
+
+		LambdaQueryWrapper<CourseLesson> videoWrapper = new LambdaQueryWrapper<>();
+		videoWrapper.isNotNull(CourseLesson::getVideoUrl).ne(CourseLesson::getVideoUrl, "");
+		List<CourseLesson> videoList = courseLessonMapper.selectList(videoWrapper);
+		theory.setVideoCount(videoList.size());
+		int videoDuration = 0;
+		for (CourseLesson lesson : videoList) {
+			if (null != lesson.getDuration())
+				videoDuration += lesson.getDuration();
+		}
+		theory.setVideoDuration(MathUtils.roundDivide(videoDuration, 60));
+
+		theory.calSum();
+		return theory;
 	}
 
 	@Override

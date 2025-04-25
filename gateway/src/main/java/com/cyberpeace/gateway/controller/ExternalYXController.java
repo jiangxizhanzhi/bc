@@ -608,6 +608,13 @@ public class ExternalYXController {
 		return new BaseRsp<>(true);
 	}
 
+	@ApiOperation("规则库使用次数+1")
+	@GetMapping("/use/rule")
+	@CallCount(CallType.RULE)
+	public BaseRsp<Boolean> useRule() {
+		return new BaseRsp<>(true);
+	}
+
 	@ApiOperation("算法库使用次数+1")
 	@GetMapping("/use/algorithm")
 	@CallCount(CallType.ALGORITHM)

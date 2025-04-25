@@ -12,11 +12,11 @@ public class BaseDataRuleStatistics {
 	private Integer vuln = 0;
 
 	@ApiModelProperty(value = "指纹库")
-	private Integer fingerPrint;
+	private Integer fingerPrint = 0;
 
 	@ApiModelProperty(value = "apt特征")
-	private Integer apt;
+	private Integer apt = 0;
 
 	@ApiModelProperty(value = "ioc威胁情报")
-	private Integer ioc;
+	private Integer ioc = 0;
 }

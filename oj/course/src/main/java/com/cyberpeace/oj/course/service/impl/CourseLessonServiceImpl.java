@@ -1451,9 +1451,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		if (null != video) {
 			courseLesson.setVideoUrl(video);
-			if (null == courseLesson.getVideoDuration()) {
-				throw new BusinessException(OjBusinessErrorCode.VIDEO_DURATION_NOT_NULL);
-			}
+//			if (null == courseLesson.getVideoDuration()) {
+//				throw new BusinessException(OjBusinessErrorCode.VIDEO_DURATION_NOT_NULL);
+//			}
 		}
 	}
 

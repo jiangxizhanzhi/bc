@@ -346,7 +346,11 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
                 String destinationNode = jsonObject.getString("destination_node");
                 String resourceId = jsonObject.getString("resource_id");
 
-                buildAndSendSituationAttackData(scene, loadNodeName + "载荷执行", loadNode, destinationNode);
+                if ("1005010102".equals(addReq.getResultStatus())){
+                    buildAndSendFailSituationAttackData(scene, loadNodeName + "载荷执行", loadNode, destinationNode);
+                }else {
+                    buildAndSendSituationAttackData(scene, loadNodeName + "载荷执行", loadNode, destinationNode);
+                }
 
                 packageAndSendAttackData(resourceId, loadNode, destinationNode);
             }
@@ -485,6 +489,36 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
         data.put("duration", 3);
         data.put("event_type", 1);
         data.put("result", 1);
+        data.put("name", nodeName);
+        data.put("scene_id", sceneId);
+        data.put("source_id", sourceId);
+        data.put("target_id", targetId);
+        JSONObject lineStyle = new JSONObject();
+        lineStyle.put("color", "#FF0000");
+        lineStyle.put("line_type", "straight");
+        lineStyle.put("width", 3);
+        data.put("line_style", lineStyle);
+        rbSituationAttack.put("data", data);
+        log.info("addLoadExecutionResult sendMessage begin.");
+        situationHandlerService.pushDataToRoom(rbSituationAttack, rbSituationAttack.getJSONObject("data").getString("scene_id"));
+    }
+
+    /**
+     * 构建失败动效数据并发送至3D态势
+     *
+     * @param sceneId
+     * @param nodeName
+     * @param sourceId
+     * @param targetId
+     */
+    public void buildAndSendFailSituationAttackData(String sceneId, String nodeName, String sourceId, String targetId) {
+        JSONObject rbSituationAttack = new JSONObject();
+        rbSituationAttack.put("code", "director_scheduling_element-element");
+        JSONObject data = new JSONObject();
+        data.put("category", 4);
+        data.put("duration", 3);
+        data.put("event_type", 1);
+        data.put("result", 2);
         data.put("name", nodeName);
         data.put("scene_id", sceneId);
         data.put("source_id", sourceId);

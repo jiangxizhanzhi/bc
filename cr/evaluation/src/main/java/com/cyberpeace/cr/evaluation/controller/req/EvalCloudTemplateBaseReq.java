@@ -35,8 +35,14 @@ public class EvalCloudTemplateBaseReq implements Serializable {
 	@ApiModelProperty("试验难度")
 	private Integer difficulty;
 
+	@ApiModelProperty("试验难度名")
+	private String difficultyName;
+
 	@ApiModelProperty("云类型")
 	private Integer cloudType;
+
+	@ApiModelProperty(value = "云类型名称")
+	private String cloudTypeName;
 
 	@ApiModelProperty(value = "拓扑LOGO")
 	private String topo;

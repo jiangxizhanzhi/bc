@@ -35,6 +35,9 @@ public class EvalRuleTemplateDetailRsp implements Serializable {
     @ApiModelProperty("状态")
     private Integer status;
 
+    @ApiModelProperty("状态值")
+    private String statusName;
+
     @ApiModelProperty("创建人")
     private String createUser;
 

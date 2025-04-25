@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
@@ -165,6 +166,15 @@ public class EvalRuleTemplate extends BaseTable {
             this.code = code;
             this.desc = desc;
         }
+
+        public static String getDescByCode(String code) {
+            for (Operator operator : Operator.values()) {
+                if (operator.getCode().equals(code)) {
+                    return operator.getDesc();
+                }
+            }
+            return null;
+        }
     }
 
     public enum Aggregation {
@@ -184,6 +194,16 @@ public class EvalRuleTemplate extends BaseTable {
         Aggregation(String code, String desc) {
             this.code = code;
             this.desc = desc;
+        }
+
+//        根据code获取desc
+        public static String getDescByCode(String code) {
+            for (Aggregation condition : Aggregation.values()) {
+                if (condition.getCode().equals(code)) {
+                    return condition.getDesc();
+                }
+            }
+            return null;
         }
     }
 

@@ -178,12 +178,42 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
         evalCloudTemplateBaseReq.setNodeCount(jsonArray.size());
         evalCloudTemplateBaseReq.setTypeName(typeName);
         evalCloudTemplateBaseReq.setCreateUser(userMap.get(evalCloudTemplate.getCreateUserId()));
+        evalCloudTemplateBaseReq.setDifficultyName(getDifficultyName(evalCloudTemplate.getDifficulty()));
+        evalCloudTemplateBaseReq.setCloudTypeName(getCloudTypeName(evalCloudTemplate.getCloudType()));
         EvalCloudTemplateAddReq evalCloudTemplateAddReq = new EvalCloudTemplateAddReq();
         evalCloudTemplateAddReq.setBaseInfo(evalCloudTemplateBaseReq);
         evalCloudTemplateAddReq.setCloudTemplateId(evalCloudTemplate.getResourceId());
         evalCloudTemplateAddReq.setStepIds(evalCloudTemplate.getStepIdList());
         evalCloudTemplateAddReq.setSceneConfigData(topoData);
         return evalCloudTemplateAddReq;
+    }
+
+    //	写一个方法 难度等级 1 初级 2中级 3 高级
+    public String getDifficultyName(Integer difficulty) {
+        if (difficulty == 1) {
+            return "初级";
+        }
+        if (difficulty == 2) {
+            return "中级";
+        }
+        if (difficulty == 3) {
+            return "高级";
+        }
+        return "";
+    }
+
+//    写一个方法 云类型名 0 混合云 1 私有云 2 公有云
+    public String getCloudTypeName(Integer cloudType) {
+        if (cloudType == 0) {
+            return "混合云";
+        }
+        if (cloudType == 1) {
+            return "私有云";
+        }
+        if (cloudType == 2) {
+            return "公有云";
+        }
+        return "";
     }
 
     @Override

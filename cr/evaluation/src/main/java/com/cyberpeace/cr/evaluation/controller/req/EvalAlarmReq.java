@@ -19,4 +19,8 @@ public class EvalAlarmReq implements Serializable {
 
 	@ApiModelProperty(required = true, value = "告警事件级别")
 	private Integer level;
+
+	@ApiModelProperty(required = true, value = "告警级别名")
+	private String alarmLevelName;
+
 }

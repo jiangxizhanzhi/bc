@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import ch.qos.logback.core.util.AggregationType;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -221,6 +222,13 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
         }
 
         EvalRuleTemplateDetailRsp evalRuleTemplateDetail = BeanUtils.copy(evalRuleTemplate, EvalRuleTemplateDetailRsp.class);
+        Integer status = evalRuleTemplateDetail.getStatus();
+        if (0 == status) {
+            evalRuleTemplateDetail.setStatusName("关闭");
+        } else if (1 == status) {
+            evalRuleTemplateDetail.setStatusName("打开");
+        }
+
         evalRuleTemplateDetail.setRuleId(evalRuleTemplate.getResourceId());
         evalRuleTemplateDetail.setRuleName(evalRuleTemplate.getName());
         evalRuleTemplateDetail.setCreateUser(remoteUserService.getById(evalRuleTemplate.getCreateUserId()).getUserName());
@@ -256,6 +264,9 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
         List<EvalAlarmConditionReq> evalAlarmConditionReqList = evalAlarmConditionList.stream().map(evalAlarmCondition -> {
                     EvalAlarmConditionReq evalAlarmConditionReq = BeanUtils.copy(evalAlarmCondition, EvalAlarmConditionReq.class);
                     evalAlarmConditionReq.setCondition(evalAlarmCondition.getAlarmCondition());
+                    String aggregationType = evalAlarmConditionReq.getAggregationType();
+                    evalAlarmConditionReq.setAggregationTypeName(EvalRuleTemplate.Aggregation.getDescByCode(aggregationType));
+                    evalAlarmConditionReq.setOperatorName(EvalRuleTemplate.Operator.getDescByCode(evalAlarmConditionReq.getOperator()));
                     return evalAlarmConditionReq;
                 })
                 .collect(Collectors.toList());
@@ -265,6 +276,7 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
             evalAlarmReq.setAlarmName(evalRuleTemplate.getAlarmName());
             evalAlarmReq.setDescription(evalRuleTemplate.getAlarmDescription());
             evalAlarmReq.setLevel(evalRuleTemplate.getAlarmLevel());
+            evalAlarmReq.setAlarmLevelName(getAlarmLevelName(evalAlarmReq.getLevel()));
             evalRuleTemplateDetail.setAlarms(Arrays.asList(evalAlarmReq));
         }
         return evalRuleTemplateDetail;
@@ -306,6 +318,21 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
         });
         return getRuleTemplate(evalRuleTemplate.getResourceId());
     }
+
+    private String getAlarmLevelName(Integer alarmLevel){
+//        1 低 5 中 10 高
+        switch (alarmLevel) {
+            case 1:
+                return "低";
+            case 5:
+                return "中";
+            case 10:
+                return "高";
+            default:
+                return "";
+        }
+    }
+
 
     @Override
     public EvalRuleTemplateEnumRsp getRuleEnum() {

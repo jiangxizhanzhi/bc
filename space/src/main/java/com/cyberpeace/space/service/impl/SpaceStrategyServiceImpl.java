@@ -242,18 +242,19 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 	@Override
 	public KnowledgeChart getStrategyChart() {
 		KnowledgeChart chart = new KnowledgeChart();
-		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.STRATEGY, SpaceKTypeEnum.KNOWLEDGE.getId());
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.STRATEGY,
+				SpaceKTypeEnum.KNOWLEDGE.getId(), 1);
 		chart.getData().add(baseItem);
 		chart.getCategories().add(new KnowledgeChartCategory(SpaceKTypeEnum.STRATEGY));
 		SpaceStrategyFrameBo frame = this.getFrame();
 		for (SpaceStrategyFrameBo bo : frame.getChildren()) {
-			this.fillChart(chart, bo, SpaceKTypeEnum.STRATEGY.getId());
+			this.fillChart(chart, bo, SpaceKTypeEnum.STRATEGY.getId(), 2);
 		}
 		return chart;
 	}
 
-	private void fillChart(KnowledgeChart chart, SpaceStrategyFrameBo bo, String parentId) {
-		KnowledgeChartItem item = new KnowledgeChartItem();
+	private void fillChart(KnowledgeChart chart, SpaceStrategyFrameBo bo, String parentId, int level) {
+		KnowledgeChartItem item = new KnowledgeChartItem(level);
 		item.setName(bo.getName());
 		item.setId(bo.getResourceId());
 		item.setType(SpaceKTypeEnum.STRATEGY.getType());
@@ -266,7 +267,7 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 			chart.getCategories().add(new KnowledgeChartCategory(bo.getName(), bo.getResourceId()));
 		}
 		for (SpaceStrategyFrameBo child : bo.getChildren()) {
-			fillChart(chart, child, bo.getResourceId());
+			fillChart(chart, child, bo.getResourceId(), level + 1);
 		}
 	}
 

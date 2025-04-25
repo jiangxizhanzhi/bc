@@ -24,7 +24,7 @@ public class SpaceTrafficDetectRuleServiceImpl extends ServiceImpl<SpaceTrafficD
 
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE_NETWORK,
-				SpaceKTypeEnum.RULE_THREAT_DEFENSE.getId());
+				SpaceKTypeEnum.RULE_THREAT_DEFENSE.getId(), 3);
 		int cnt = this.count();
 		baseItem.setValue(cnt);
 		chart.getData().add(baseItem);

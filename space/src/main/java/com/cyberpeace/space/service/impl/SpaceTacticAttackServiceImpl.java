@@ -148,12 +148,13 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
     @Override
     public KnowledgeChart getTacticAttackChart() {
         KnowledgeChart chart = new KnowledgeChart();
-		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.TACTIC_ATTACK, SpaceKTypeEnum.TACTIC.getId());
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.TACTIC_ATTACK,
+				SpaceKTypeEnum.TACTIC.getId(), 2);
 		chart.getData().add(baseItem);
 		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(SpaceKTypeEnum.TACTIC_ATTACK);
 		chart.getCategories().add(baseCategory);
 		for (SpaceTacticAttackCategory category : categoryMapper.selectList(null)) {
-			KnowledgeChartItem item = new KnowledgeChartItem();
+			KnowledgeChartItem item = new KnowledgeChartItem(3);
 			item.setId(category.getResourceId());
 			item.setName(category.getName());
 			item.setType(SpaceKTypeEnum.TACTIC_ATTACK.getType());

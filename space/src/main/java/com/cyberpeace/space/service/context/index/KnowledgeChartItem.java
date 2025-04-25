@@ -23,15 +23,20 @@ public class KnowledgeChartItem {
 
 	private Integer value;
 
-	public KnowledgeChartItem(SpaceKTypeEnum typeEnum, String parentId) {
+	public KnowledgeChartItem(SpaceKTypeEnum typeEnum, String parentId, int level) {
 		this.name = typeEnum.getName();
 		this.id = typeEnum.getId();
 		this.category = parentId;
 		this.type = typeEnum.getType();
-		this.symbolSize = 0;
+		this.symbolSize = this.calSymbolSize(level);
 		this.value = 0;
 	}
 
-	public KnowledgeChartItem(){
+	public KnowledgeChartItem(int level){
+		this.symbolSize = calSymbolSize(level);
+	}
+
+	private int calSymbolSize(int level) {
+		return (64 >> level) + 4;
 	}
 }

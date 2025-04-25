@@ -24,7 +24,7 @@ public class SpaceViolationJudgeRuleServiceImpl extends ServiceImpl<SpaceViolati
 
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE_VIOLATION,
-				SpaceKTypeEnum.RULE_RACE.getId());
+				SpaceKTypeEnum.RULE_RACE.getId(), 3);
 
 		int cnt = this.count();
 		baseItem.setValue(cnt);

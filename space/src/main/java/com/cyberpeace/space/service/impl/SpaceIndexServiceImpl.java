@@ -235,7 +235,7 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	@Override
 	public KnowledgeChart getKChart() {
 		KnowledgeChart chart = new KnowledgeChart();
-		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.KNOWLEDGE, null);
+		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.KNOWLEDGE, null, 0);
 		chart.getData().add(baseItem);
 		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(SpaceKTypeEnum.KNOWLEDGE);
 		chart.getCategories().add(baseCategory);
@@ -276,7 +276,7 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	private KnowledgeChart getAlgorithmChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.ALGORITHM,
-				SpaceKTypeEnum.KNOWLEDGE.getId());
+				SpaceKTypeEnum.KNOWLEDGE.getId(), 1);
 		chart.getData().add(baseItem);
 		chart.getCategories().add(new KnowledgeChartCategory(SpaceKTypeEnum.ALGORITHM));
 
@@ -288,13 +288,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	private KnowledgeChart getAlgorithmEvalChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.ALGORITHM_EVAL,
-				SpaceKTypeEnum.ALGORITHM.getId());
+				SpaceKTypeEnum.ALGORITHM.getId(), 2);
 		chart.getCategories().add(new KnowledgeChartCategory(SpaceKTypeEnum.ALGORITHM_EVAL));
 		List<EvalAlgorithm> algorithmList = evalAlgorithmService.list();
 		baseItem.setValue(algorithmList.size());
 		chart.getData().add(baseItem);
 		for (EvalAlgorithm algorithm : algorithmList) {
-			KnowledgeChartItem item = new KnowledgeChartItem();
+			KnowledgeChartItem item = new KnowledgeChartItem(3);
 			item.setId(algorithm.getResourceId());
 			item.setName(algorithm.getName());
 			item.setType(SpaceKTypeEnum.ALGORITHM_EVAL.getType());
@@ -317,7 +317,7 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	private KnowledgeChart getRuleChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE,
-				SpaceKTypeEnum.KNOWLEDGE.getId());
+				SpaceKTypeEnum.KNOWLEDGE.getId(), 1);
 		chart.getData().add(baseItem);
 		chart.getCategories().add(new KnowledgeChartCategory(SpaceKTypeEnum.RULE));
 
@@ -334,7 +334,7 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	private KnowledgeChart getRuleRaceChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE_RACE,
-				SpaceKTypeEnum.RULE.getId());
+				SpaceKTypeEnum.RULE.getId(), 2);
 		chart.getData().add(baseItem);
 		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(SpaceKTypeEnum.RULE_RACE);
 		chart.getCategories().add(baseCategory);
@@ -354,7 +354,7 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	private KnowledgeChart getRuleThreatChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE_THREAT_DEFENSE,
-				SpaceKTypeEnum.RULE.getId());
+				SpaceKTypeEnum.RULE.getId(), 2);
 		chart.getData().add(baseItem);
 		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(
 				SpaceKTypeEnum.RULE_THREAT_DEFENSE);
@@ -374,7 +374,7 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	private KnowledgeChart getRuleBaseChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE_BASE,
-				SpaceKTypeEnum.RULE.getId());
+				SpaceKTypeEnum.RULE.getId(), 2);
 		chart.getData().add(baseItem);
 		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(SpaceKTypeEnum.RULE_BASE);
 		chart.getCategories().add(baseCategory);
@@ -390,7 +390,7 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	private KnowledgeChart getRuleVulnChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE_VULN,
-				SpaceKTypeEnum.RULE_BASE.getId());
+				SpaceKTypeEnum.RULE_BASE.getId(),3);
 		chart.getData().add(baseItem);
 		// chart.getCategories().add(new
 		// KnowledgeChartCategory(SpaceKTypeEnum.RULE_VULN));
@@ -400,7 +400,7 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	private KnowledgeChart getTacticChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.TACTIC,
-				SpaceKTypeEnum.KNOWLEDGE.getId());
+				SpaceKTypeEnum.KNOWLEDGE.getId(), 1);
 		chart.getData().add(baseItem);
 		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(SpaceKTypeEnum.TACTIC);
 		chart.getCategories().add(baseCategory);
@@ -414,7 +414,7 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	private KnowledgeChart getTheoryChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.THEORY,
-				SpaceKTypeEnum.KNOWLEDGE.getId());
+				SpaceKTypeEnum.KNOWLEDGE.getId(), 1);
 		chart.getData().add(baseItem);
 		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(SpaceKTypeEnum.THEORY);
 		chart.getCategories().add(baseCategory);
@@ -432,7 +432,7 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	private KnowledgeChart getPracticeOperationChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.PRACTICE_OPERATION,
-				SpaceKTypeEnum.THEORY.getId());
+				SpaceKTypeEnum.THEORY.getId(), 2);
 		int operationCount = practiceOperationMapper.selectCount(null);
 		baseItem.setValue(operationCount);
 		chart.getData().add(baseItem);
@@ -442,7 +442,7 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	private KnowledgeChart getPracticeTheoryChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.PRACTICE_THEORY,
-				SpaceKTypeEnum.THEORY.getId());
+				SpaceKTypeEnum.THEORY.getId(), 2);
 		int theoryExamCount = practiceTheoryMapper.selectCount(null);
 		baseItem.setValue(theoryExamCount);
 		chart.getData().add(baseItem);
@@ -455,12 +455,12 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	private KnowledgeChart getCourseChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.COURSE,
-				SpaceKTypeEnum.THEORY.getId());
+				SpaceKTypeEnum.THEORY.getId(), 2);
 		chart.getData().add(baseItem);
 		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(SpaceKTypeEnum.COURSE);
 		chart.getCategories().add(baseCategory);
 		for (Course course : courseMapper.selectList(null)) {
-			KnowledgeChartItem item = new KnowledgeChartItem();
+			KnowledgeChartItem item = new KnowledgeChartItem(3);
 			item.setId(course.getResourceId());
 			item.setName(course.getName());
 			item.setType(SpaceKTypeEnum.COURSE.getType());

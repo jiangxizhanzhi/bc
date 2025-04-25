@@ -21,7 +21,7 @@ public class SpaceLoadedFileThreatRuleServiceImpl extends ServiceImpl<SpaceLoade
 	public KnowledgeChart geRuleVirusChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE_VIRUS,
-				SpaceKTypeEnum.RULE_THREAT_DEFENSE.getId());
+				SpaceKTypeEnum.RULE_THREAT_DEFENSE.getId(), 3);
 		int cnt = this.count();
 		baseItem.setValue(cnt);
 		chart.getData().add(baseItem);

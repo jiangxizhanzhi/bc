@@ -21,7 +21,7 @@ public class SpaceRoundMechanismRuleServiceImpl extends ServiceImpl<SpaceRoundMe
 	public KnowledgeChart getRuleRoundMechanismChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE_ROUND,
-				SpaceKTypeEnum.RULE_RACE.getId());
+				SpaceKTypeEnum.RULE_RACE.getId(), 3);
 		int cnt = this.count();
 		baseItem.setValue(cnt);
 		chart.getData().add(baseItem);

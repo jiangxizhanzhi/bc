@@ -26,14 +26,14 @@ public class SpaceAptFeatureServiceImpl extends ServiceImpl<SpaceAptFeatureMappe
 
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE_APT_ORG,
-				SpaceKTypeEnum.RULE_BASE.getId());
+				SpaceKTypeEnum.RULE_BASE.getId(), 3);
         List<SpaceAptFeature> aptOrgList = this.list();
         baseItem.setValue(aptOrgList.size());
 		chart.getData().add(baseItem);
 		chart.getCategories().add(new KnowledgeChartCategory(SpaceKTypeEnum.RULE_APT_ORG));
 
         for (SpaceAptFeature spaceAptFeature : aptOrgList) {
-            KnowledgeChartItem item = new KnowledgeChartItem();
+            KnowledgeChartItem item = new KnowledgeChartItem(4);
             item.setId(spaceAptFeature.getResourceId());
             item.setName(spaceAptFeature.getName());
             item.setValue(spaceAptFeature.getFrequency());

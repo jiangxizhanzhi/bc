@@ -61,7 +61,10 @@ public class SocServiceImpl implements SocService {
     private String SOC_COURSE_SEND_URL = SystemPropUtil.getProp("SOC_COURSE_SEND_URL");
 
     // 山东移动接收方CODE
-    public static final String CALLER_CODE = "SD";
+    private String CALLER_CODE = SystemPropUtil.getProp("SOC_CALLER_CODE");
+
+    // 课程名称前缀，主要用于现场配置soc人员前期测试，后期直接配置空字符串即可
+    private String COURSE_NAME_PREFIX = SystemPropUtil.getProp("SOC_COURSE_NAME_PREFIX");
 
     // 山东移动课程类型信息接收默认值
     public static final String STUDY_TYPE = "红蓝对抗";
@@ -104,7 +107,7 @@ public class SocServiceImpl implements SocService {
         // 上报时间
         SocCourseBo courseRecord = new SocCourseBo();
         courseRecord.setCaller(CALLER_CODE);
-        courseRecord.setCourseName(course.getName());
+        courseRecord.setCourseName(COURSE_NAME_PREFIX+course.getName());
         courseRecord.setCourseType(categoryName);
         courseRecord.setMessageSn(getMessageSn());
         courseRecord.setPathName(categoryName);

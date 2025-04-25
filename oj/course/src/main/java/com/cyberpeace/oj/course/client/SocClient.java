@@ -44,13 +44,6 @@ public class SocClient {
                 .build();
     }
 
-    public static <T> List<T> toJsonObjectArray(String text, Class<T> clazz) {
-        if (StringUtils.isBlank(text)) {
-            return Lists.newArrayList();
-        }
-
-        return JSON.parseArray(text, clazz);
-    }
 
     public String sendRequestToSocServer(JSONObject message, String url, String urlType, Map<String, String> headers) throws Exception{
         log.info("sendMessage: {}", Objects.nonNull(message)?message.toJSONString():"");

@@ -2,6 +2,7 @@ package com.cyberpeace.space.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.constant.CallType;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.common.util.TimeUtil;
@@ -240,26 +241,40 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(SpaceKTypeEnum.KNOWLEDGE);
 		chart.getCategories().add(baseCategory);
 		// 理论知识库
-		KnowledgeChart theoryChart = this.getTheoryChart();
-		chart.addChart(theoryChart);
-
+		if (UserInfoContext.getUserContext().getPermissions()
+				.contains(SpaceKTypeEnum.THEORY.getMenuId())) {
+			KnowledgeChart theoryChart = this.getTheoryChart();
+			chart.addChart(theoryChart);
+		}
 		// 策略库
-		KnowledgeChart strategyChart = strategyService.getStrategyChart();
-		chart.addChart(strategyChart);
+		if (UserInfoContext.getUserContext().getPermissions()
+				.contains(SpaceKTypeEnum.STRATEGY.getMenuId())) {
+			KnowledgeChart strategyChart = strategyService.getStrategyChart();
+			chart.addChart(strategyChart);
+		}
 
 		// 战法
-		KnowledgeChart tacticChart = this.getTacticChart();
-		chart.addChart(tacticChart);
+		if (UserInfoContext.getUserContext().getPermissions()
+				.contains(SpaceKTypeEnum.TACTIC.getMenuId())) {
+			KnowledgeChart tacticChart = this.getTacticChart();
+			chart.addChart(tacticChart);
+		}
 
 		// 规则
-		KnowledgeChart ruleChart = this.getRuleChart();
-		chart.addChart(ruleChart);
+		if (UserInfoContext.getUserContext().getPermissions()
+				.contains(SpaceKTypeEnum.RULE.getMenuId())) {
+			KnowledgeChart ruleChart = this.getRuleChart();
+			chart.addChart(ruleChart);
+		}
 		// 流量
 		KnowledgeChart trafficChart = this.getTrafficChart();
 
 		// 算法
-		KnowledgeChart algorithmChart = this.getAlgorithmChart();
-		chart.addChart(algorithmChart);
+		if (UserInfoContext.getUserContext().getPermissions()
+				.contains(SpaceKTypeEnum.ALGORITHM.getMenuId())) {
+			KnowledgeChart algorithmChart = this.getAlgorithmChart();
+			chart.addChart(algorithmChart);
+		}
 
 		// 场景
 		KnowledgeChart sceneChart = this.getSceneChart();
@@ -280,8 +295,11 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		chart.getData().add(baseItem);
 		chart.getCategories().add(new KnowledgeChartCategory(SpaceKTypeEnum.ALGORITHM));
 
-		KnowledgeChart algorithmEvalChart = this.getAlgorithmEvalChart();
-		chart.addChart(algorithmEvalChart);
+		if (UserInfoContext.getUserContext().getPermissions()
+				.contains(SpaceKTypeEnum.ALGORITHM_EVAL.getMenuId())) {
+			KnowledgeChart algorithmEvalChart = this.getAlgorithmEvalChart();
+			chart.addChart(algorithmEvalChart);
+		}
 		return chart;
 	}
 
@@ -321,12 +339,21 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		chart.getData().add(baseItem);
 		chart.getCategories().add(new KnowledgeChartCategory(SpaceKTypeEnum.RULE));
 
-		KnowledgeChart baseRuleChart = this.getRuleBaseChart();
-		chart.addChart(baseRuleChart);
-		KnowledgeChart ruleThreatChart = this.getRuleThreatChart();
-		chart.addChart(ruleThreatChart);
-		KnowledgeChart ruleRaceChart = this.getRuleRaceChart();
-		chart.addChart(ruleRaceChart);
+		if (UserInfoContext.getUserContext().getPermissions()
+				.contains(SpaceKTypeEnum.RULE_BASE.getMenuId())) {
+			KnowledgeChart baseRuleChart = this.getRuleBaseChart();
+			chart.addChart(baseRuleChart);
+		}
+		if (UserInfoContext.getUserContext().getPermissions()
+				.contains(SpaceKTypeEnum.RULE_THREAT_DEFENSE.getMenuId())) {
+			KnowledgeChart ruleThreatChart = this.getRuleThreatChart();
+			chart.addChart(ruleThreatChart);
+		}
+		if (UserInfoContext.getUserContext().getPermissions()
+				.contains(SpaceKTypeEnum.RULE_RACE.getMenuId())) {
+			KnowledgeChart ruleRaceChart = this.getRuleRaceChart();
+			chart.addChart(ruleRaceChart);
+		}
 
 		return chart;
 	}
@@ -404,10 +431,16 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		chart.getData().add(baseItem);
 		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(SpaceKTypeEnum.TACTIC);
 		chart.getCategories().add(baseCategory);
-		KnowledgeChart tacticAttackChart = tacticAttackService.getTacticAttackChart();
-		chart.addChart(tacticAttackChart);
-		KnowledgeChart tacticDefenseChart = tacticDefenseService.getTacticDefenseChart();
-		chart.addChart(tacticDefenseChart);
+		if (UserInfoContext.getUserContext().getPermissions()
+				.contains(SpaceKTypeEnum.TACTIC_ATTACK.getMenuId())) {
+			KnowledgeChart tacticAttackChart = tacticAttackService.getTacticAttackChart();
+			chart.addChart(tacticAttackChart);
+		}
+		if (UserInfoContext.getUserContext().getPermissions()
+				.contains(SpaceKTypeEnum.TACTIC_DEFENSE.getMenuId())) {
+			KnowledgeChart tacticDefenseChart = tacticDefenseService.getTacticDefenseChart();
+			chart.addChart(tacticDefenseChart);
+		}
 		return chart;
 	}
 
@@ -419,12 +452,21 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(SpaceKTypeEnum.THEORY);
 		chart.getCategories().add(baseCategory);
 
-		KnowledgeChart courseChart = this.getCourseChart();
-		chart.addChart(courseChart);
-		KnowledgeChart practiceTheoryChart = this.getPracticeTheoryChart();
-		chart.addChart(practiceTheoryChart);
-		KnowledgeChart practiceOperationChart = this.getPracticeOperationChart();
-		chart.addChart(practiceOperationChart);
+		if (UserInfoContext.getUserContext().getPermissions()
+				.contains(SpaceKTypeEnum.COURSE.getMenuId())) {
+			KnowledgeChart courseChart = this.getCourseChart();
+			chart.addChart(courseChart);
+		}
+		if (UserInfoContext.getUserContext().getPermissions()
+				.contains(SpaceKTypeEnum.PRACTICE_THEORY.getMenuId())) {
+			KnowledgeChart practiceTheoryChart = this.getPracticeTheoryChart();
+			chart.addChart(practiceTheoryChart);
+		}
+		if (UserInfoContext.getUserContext().getPermissions()
+				.contains(SpaceKTypeEnum.PRACTICE_OPERATION.getMenuId())) {
+			KnowledgeChart practiceOperationChart = this.getPracticeOperationChart();
+			chart.addChart(practiceOperationChart);
+		}
 
 		return chart;
 	}

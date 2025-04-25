@@ -297,14 +297,13 @@ public class WebLessonController {
     @ApiImplicitParams({@ApiImplicitParam(name = "lesson_id", value = "课时编号", dataTypeClass = String.class),
             @ApiImplicitParam(name = "course_id", value = "课程编号", dataTypeClass = String.class)})
     @RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
-    @BehaviorRecord(module = BehaviorModuleEnum.COURSE, action = BehaviorTypeEnum.ACCESS_LESSON,
-            target = "lesson_id")
     public BaseRsp<Boolean> lessonDetailRecordTime(@RequestParam(value = "course_id") String courseId,
                                                    @RequestParam(value = "lesson_id") String lessonId,
                                                    @RequestParam(value = "learned_time", required = false) String learnedTime,
                                                    @RequestParam(value = "learned_duration") Integer learnedDuration) {
         AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
                 CommonConstant.TRUE);
+        log.info("course record param courseId is {},lessonId is {},learnedTime is {}, learnedDuration is {}",courseId,lessonId,learnedTime,learnedDuration);
         courseLessonService.recordTime(courseId, lessonId, learnedTime, learnedDuration, authContext);
         return new BaseRsp<>(true);
     }
@@ -313,6 +312,7 @@ public class WebLessonController {
     @GetMapping("/record_upload")
     @RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
     public BaseRsp<Boolean> lessonDetailRecordUpload(@RequestParam("course_id") String courseId) {
+        log.info("course record upload start ... ,courseId is {}",courseId);
         UserInfo userInfo = remoteUserService.getById(UserInfoContext.getUserContext().getUserId());
         socService.lessonDetailRecordUpload(userInfo, courseId);
         return new BaseRsp<>(true);

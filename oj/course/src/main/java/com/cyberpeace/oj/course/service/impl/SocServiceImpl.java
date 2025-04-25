@@ -71,7 +71,9 @@ public class SocServiceImpl implements SocService {
 
     @Override
     public void lessonDetailRecordUpload(UserInfo localUser, String courseId) {
+        log.info("localUser is {}", JSON.toJSONString(localUser));
         if (localUser == null || localUser.getOutUserType() == null || !localUser.getOutUserType().equals("soc")) {
+            log.info("UserInfo is not soc user,no need to report!");
             return;
         }
         log.info("function lessonDetailRecordUpload start");

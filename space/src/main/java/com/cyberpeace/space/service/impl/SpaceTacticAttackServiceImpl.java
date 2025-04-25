@@ -145,25 +145,37 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 		categoryMapper.deleteBatchIds(ids);
 	}
 
-    @Override
-    public KnowledgeChart getTacticAttackChart() {
-        KnowledgeChart chart = new KnowledgeChart();
+	@Override
+	public KnowledgeChart getTacticAttackChart() {
+		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.TACTIC_ATTACK,
 				SpaceKTypeEnum.TACTIC.getId(), 2);
 		chart.getData().add(baseItem);
-		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(SpaceKTypeEnum.TACTIC_ATTACK);
+		KnowledgeChartCategory baseCategory = new KnowledgeChartCategory(
+				SpaceKTypeEnum.TACTIC_ATTACK);
 		chart.getCategories().add(baseCategory);
-		for (SpaceTacticAttackCategory category : categoryMapper.selectList(null)) {
+		for (SpaceTacticAttack attack : mapper.selectList(null)) {
 			KnowledgeChartItem item = new KnowledgeChartItem(3);
-			item.setId(category.getResourceId());
-			item.setName(category.getName());
+			item.setId(attack.getResourceId());
+			item.setName(attack.getName());
 			item.setType(SpaceKTypeEnum.TACTIC_ATTACK.getType());
 			item.setCategory(baseItem.getId());
 			chart.getData().add(item);
 			KnowledgeChartLink link = new KnowledgeChartLink(baseItem.getId(),
-					category.getResourceId());
+					attack.getResourceId());
 			chart.getLinks().add(link);
 		}
+//		for (SpaceTacticAttackCategory category : categoryMapper.selectList(null)) {
+//			KnowledgeChartItem item = new KnowledgeChartItem(3);
+//			item.setId(category.getResourceId());
+//			item.setName(category.getName());
+//			item.setType(SpaceKTypeEnum.TACTIC_ATTACK.getType());
+//			item.setCategory(baseItem.getId());
+//			chart.getData().add(item);
+//			KnowledgeChartLink link = new KnowledgeChartLink(baseItem.getId(),
+//					category.getResourceId());
+//			chart.getLinks().add(link);
+//		}
 		return chart;
     }
 

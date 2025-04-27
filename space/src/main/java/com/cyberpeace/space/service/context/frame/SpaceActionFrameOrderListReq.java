@@ -31,14 +31,14 @@ public class SpaceActionFrameOrderListReq extends SpacePageReqBase {
 	@Override
 	public LambdaQueryWrapper req2QueryWrapper() {
 		LambdaQueryWrapper<SpaceActionFrameOrder> wrapper = new LambdaQueryWrapper<>();
-		wrapper.orderByDesc(SpaceActionFrameOrder::getUpdateTime);
+		wrapper.orderByAsc(SpaceActionFrameOrder::getId);
 		if (null != this.status) {
 			wrapper.eq(SpaceActionFrameOrder::getStatus, this.status);
 		}
 		if (StringUtils.isNotBlank(this.rvb_id)) {
 			wrapper.eq(SpaceActionFrameOrder::getRvbId, this.rvb_id);
 		}
-
+		wrapper.eq(SpaceActionFrameOrder::getUserId, this.user_id);
 		wrapper.setEntityClass(SpaceActionFrameOrder.class);
 		return wrapper;
 	}

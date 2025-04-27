@@ -1,16 +1,15 @@
 package com.cyberpeace.common.util;
 
+import com.cyberpeace.common.constant.CommonConstant;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import com.cyberpeace.common.constant.CommonConstant;
-import com.google.common.collect.Lists;
 
 /**
  * local string util （本地字符串 util）
@@ -95,6 +94,9 @@ public class LocalStringUtil {
 	 * @return {@code List<Integer> }
 	 */
 	public static List<Integer> strToList(String data) {
+		if(StringUtils.isBlank(data)){
+			return Lists.newArrayList();
+		}
 		return Arrays.stream(StringUtils.split(data, ',')).map(Integer::parseInt)
 				.collect(Collectors.toList());
 	}
@@ -106,6 +108,9 @@ public class LocalStringUtil {
 	 * @return {@code List<String> }
 	 */
 	public static List<String> strToListStr(String data) {
+		if(StringUtils.isBlank(data)){
+			return Lists.newArrayList();
+		}
 		return Arrays.stream(StringUtils.split(data, ',')).collect(Collectors.toList());
 	}
 

@@ -237,6 +237,13 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 
 	@Override
 	public List<SpaceActionFrameBo> searchFrame(String req) {
+		List<SpaceActionFrame> frameList = this.list();
+		Map<String, SpaceActionFrame> frameMap = StreamApiUtils.toMap(frameList,
+				SpaceActionFrame::getResourceId, t -> t);
+		Map<String, List<String>> frameKeyWordsMap = StreamApiUtils.toMap(frameList,
+				SpaceActionFrame::getResourceId,
+				f -> JsonUtil.toJsonObjectArray(f.getKeyWords(), String.class));
+
 		List<SpaceActionFrameTargetType> targetTypes = targetTypeMapper.selectList(null);
 		List<SpaceActionFrameEventType> eventTypes = eventTypeMapper.selectList(null);
 		Map<String, List<String>> keyWordsMap = Maps.newHashMap();
@@ -254,8 +261,19 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 					JsonUtil.toJsonObjectArray(type.getKeyWordsPrimary(), String.class));
 		}
 
+		Set<String> res = Sets.newLinkedHashSet();
+		// 先匹配框架的关键字
+		frameKeyWordsMap.forEach((k, v) -> {
+			for (String word : v) {
+				if (req.contains(word)) {
+					res.add(k);
+					break;
+				}
+			}
+		});
+		// 匹配到了名称和场景关键字，之后只匹配类型关键字，不匹配基础关键字；没匹配到名称和场景关键字，之后匹配类型关键字，为空再匹配基础关键字
 		Set<String> types = Sets.newHashSet();
-		// 先匹配关键字
+		// 匹配类型关键字
 		keyWordsMap.forEach((k, v) -> {
 			for (String word : v) {
 				if (req.contains(word)) {
@@ -263,8 +281,9 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 				}
 			}
 		});
-		// 未匹配到关键字，匹配基础关键字
-		if (types.isEmpty()) {
+
+		if (res.isEmpty() && types.isEmpty()) {
+			// 未匹配到类型关键字，匹配类型基础关键字
 			keyWordsPrimaryMap.forEach((k, v) -> {
 				for (String word : v) {
 					if (req.contains(word)) {
@@ -274,14 +293,19 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 			});
 		}
 		// 都没匹配到，返回空列表
-		if (types.isEmpty()) {
+		if (res.isEmpty() && types.isEmpty()) {
 			return Lists.newArrayList();
 		}
-		LambdaQueryWrapper<SpaceActionFrame> wrapper = new LambdaQueryWrapper<>();
-		wrapper.in(SpaceActionFrame::getCategoryId, types);
-		List<SpaceActionFrame> frames = this.list(wrapper);
-		List<SpaceActionFrameBo> res = StreamApiUtils.map(frames, frame -> frame.entity2Bo(null));
-		return res;
+		// 类型相符的加入结果
+		for (SpaceActionFrame frame : frameList) {
+			if (types.contains(frame.getCategoryId())) {
+				res.add(frame.getResourceId());
+			}
+		}
+		List<SpaceActionFrame> frames = StreamApiUtils.map(res, frameMap::get);
+		List<SpaceActionFrameBo> boList = StreamApiUtils.map(frames,
+				frame -> frame.entity2Bo(null));
+		return boList;
     }
 
 

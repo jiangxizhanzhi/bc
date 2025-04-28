@@ -8,13 +8,11 @@ import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderBo;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderListReq;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderReq;
 
-import java.util.List;
-
 public interface SpaceActionFrameOrderService extends IService<SpaceActionFrameOrder>{
     void create(SpaceActionFrameOrderReq req);
 
-    void complete(String resourceId);
+    ListRsp<SpaceActionFrameOrderBo> pageMyOrders(SpaceActionFrameOrderListReq req);
 
-    List<SpaceActionFrameOrderBo> listMyOrders(SpaceActionFrameOrderListReq req);
+    void complete(String resourceId);
 }
     

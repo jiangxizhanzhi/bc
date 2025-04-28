@@ -2,12 +2,16 @@
 package com.cyberpeace.space.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.constant.SpaceError;
@@ -24,7 +28,6 @@ import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderListReq;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderReq;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,19 +71,10 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 	}
 
 	@Override
-	public void complete(String resourceId) {
-		if (StringUtils.isBlank(resourceId)) {
-			throw new BusinessException(ErrorCode.BLANK_ID);
-		}
-		SpaceActionFrameOrder entity = mapper.selectById(resourceId);
-		entity.setStatus(SpaceCommonConstant.OrderStatus.FINISHED);
-		this.updateById(entity);
-	}
-
-	@Override
-	public List<SpaceActionFrameOrderBo> listMyOrders(SpaceActionFrameOrderListReq req) {
+	public ListRsp<SpaceActionFrameOrderBo> pageMyOrders(SpaceActionFrameOrderListReq req) {
+		Page page = req.toPageParam();
 		LambdaQueryWrapper<SpaceActionFrameOrder> wrapper = req.req2QueryWrapper();
-		List<SpaceActionFrameOrderBo> res = Lists.newArrayList();
+		wrapper.eq(SpaceActionFrameOrder::getUserId, req.getUser_id());
 		Map<String, String> tacticNameMap = Maps.newHashMap();
 		if (StringUtils.isNotBlank(req.getPattern())) {
 			LambdaQueryWrapper<SpaceTacticAttack> attackLambdaQueryWrapper = new LambdaQueryWrapper<>();
@@ -97,15 +91,16 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 				tacticNameMap.put(defense.getResourceId(), defense.getName());
 			}
 			if (tacticNameMap.isEmpty()) {
-				return res;
+				return PageUtil.getListResult(page);
 			} else {
 				wrapper.in(SpaceActionFrameOrder::getTacticId, tacticNameMap.keySet());
 			}
 		}
 		Map<String, String> userMap = applicationService.getUserMap(req.getRvb_id(),
-				SpaceCommonConstant.RvbUserGroup.STAFF);
-		List<SpaceActionFrameOrder> orderList = mapper.selectList(wrapper);
-		List<String> tacticIds = StreamApiUtils.map(orderList, SpaceActionFrameOrder::getTacticId);
+				SpaceCommonConstant.RvbUserGroup.MIDDLE);
+		IPage<SpaceActionFrameOrder> iPage = mapper.selectPage(page, wrapper);
+		List<String> tacticIds = StreamApiUtils.map(iPage.getRecords(),
+				SpaceActionFrameOrder::getTacticId);
 		if (StringUtils.isBlank(req.getPattern()) && !tacticIds.isEmpty()) {
 			List<SpaceTacticAttack> attackList = attackMapper.selectBatchIds(tacticIds);
 			for (SpaceTacticAttack attack : attackList) {
@@ -116,14 +111,25 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 				tacticNameMap.put(defense.getResourceId(), defense.getName());
 			}
 		}
-		for (SpaceActionFrameOrder order : orderList) {
-			SpaceActionFrameOrderBo bo = BeanUtils.copy(order, SpaceActionFrameOrderBo.class);
+		IPage<SpaceActionFrameOrderBo> resPage = iPage.convert(item -> {
+			SpaceActionFrameOrderBo bo = BeanUtils.copy(item, SpaceActionFrameOrderBo.class);
 			bo.setReleased(true);
-			bo.setTacticName(tacticNameMap.get(order.getTacticId()));
-			bo.setSenderName(userMap.get(order.getSender()));
-			res.add(bo);
+			bo.setTacticName(tacticNameMap.get(item.getTacticId()));
+			bo.setSenderName(userMap.get(item.getSender()));
+			return bo;
+		});
+
+		return PageUtil.getListResult(resPage);
+	}
+
+	@Override
+	public void complete(String resourceId) {
+		if (StringUtils.isBlank(resourceId)) {
+			throw new BusinessException(ErrorCode.BLANK_ID);
 		}
-		return res;
+		SpaceActionFrameOrder entity = mapper.selectById(resourceId);
+		entity.setStatus(SpaceCommonConstant.OrderStatus.FINISHED);
+		this.updateById(entity);
 	}
 
 }

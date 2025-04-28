@@ -1,12 +1,11 @@
 package com.cyberpeace.space.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.space.dao.entity.SpaceActionFrameApplication;
 import com.cyberpeace.space.model.controller.SpaceControllerBase;
 import com.cyberpeace.space.model.req.IdReq;
@@ -71,16 +70,6 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("列出当前红蓝的所有框架应用")
-	@GetMapping("/list_by_rvb")
-	public BaseRsp<List<SpaceActionFrameApplicationBo>>
-			list(SpaceActionFrameApplicationListReq req) {
-		LambdaQueryWrapper<SpaceActionFrameApplication> wrapper = req.req2QueryWrapper();
-		List<SpaceActionFrameApplication> eList = baseService.list(wrapper);
-		List<SpaceActionFrameApplicationBo> res = StreamApiUtils.map(eList, e -> e.entity2Bo(null));
-		return new BaseRsp<>(res);
-	}
-
 	@ApiOperation("更新")
 	@PatchMapping("")
     @Override
@@ -112,66 +101,52 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 		return new BaseRsp();
 	}
 
-//	/**
-//	 * 查询下发情况
-//	 *
-//	 * @return {@code BaseRsp }
-//	 */
-//	@ApiOperation("指挥员查询下发情况")
-//	@GetMapping("/release")
-//	public BaseRsp<List<SpaceActionFrameReleaseBo>> listRelease(@ApiParam(value = "框架应用id", name = "application_id") String application_id) {
-//		List<SpaceActionFrameReleaseBo> res = releaseService.listBo(application_id);
-//		return new BaseRsp<>(res);
-//	}
-
-
 	/**
-	 * 指挥、中位线查看下发情况
+	 * 查询下发情况
 	 *
 	 * @return {@code BaseRsp }
 	 */
-	@ApiOperation("指挥、中位线查看下发情况")
-	@GetMapping("/tactics")
-	public BaseRsp<List<SpaceActionFrameOrderBo>> getTactics(
-			@ApiParam(value = "框架应用id", name = "application_id") String application_id) {
-		List<SpaceActionFrameOrderBo> res = releaseService.getTactics(application_id);
+	@ApiOperation("指挥员查询下发情况")
+	@GetMapping("/release")
+	public BaseRsp<List<SpaceActionFrameReleaseBo>> listRelease(@ApiParam(value = "框架应用id", name = "application_id") String application_id) {
+		List<SpaceActionFrameReleaseBo> res = releaseService.listBo(application_id);
 		return new BaseRsp<>(res);
 	}
 
-//	/**
-//	 * 下发步骤
-//	 *
-//	 * @param req 请求体
-//	 * @return {@code BaseRsp }
-//	 */
-//	@ApiOperation("指挥员下发步骤")
-//	@PostMapping("/release")
-//	public BaseRsp releaseStep(@RequestBody @Valid SpaceActionFrameReleaseReq req) {
-//		releaseService.create(req);
-//		return new BaseRsp<>();
-//	}
+	/**
+	 * 下发步骤
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp }
+	 */
+	@ApiOperation("指挥员下发步骤")
+	@PostMapping("/release")
+	public BaseRsp releaseStep(@RequestBody @Valid SpaceActionFrameReleaseReq req) {
+		releaseService.create(req);
+		return new BaseRsp<>();
+	}
 
 
-//	/**
-//	 * 中位线查询分配到的步骤
-//	 *
-//	 * @return {@code BaseRsp }
-//	 */
-//	@ApiOperation("中位线查询分配到的步骤")
-//	@GetMapping("/step")
-//	public BaseRsp<List<SpaceActionFrameOrderBo>> mySteps(
-//			@ApiParam(value = "红蓝对抗id", name = "rvb_id") String rvb_id,
-//			@ApiParam(value = "当前用户id, 必传", name = "user_id") String user_id) {
-//		List<SpaceActionFrameOrderBo> res = releaseService.getMySteps(rvb_id, user_id);
-//		return new BaseRsp<>(res);
-//	}
+	/**
+	 * 中位线查询分配到的步骤
+	 *
+	 * @return {@code BaseRsp }
+	 */
+	@ApiOperation("中位线查询分配到的步骤")
+	@GetMapping("/step")
+	public BaseRsp<List<SpaceActionFrameOrderBo>> mySteps(
+			@ApiParam(value = "红蓝对抗id", name = "rvb_id") String rvb_id,
+			@ApiParam(value = "当前用户id, 必传", name = "user_id") String user_id) {
+		List<SpaceActionFrameOrderBo> res = releaseService.getMySteps(rvb_id, user_id);
+		return new BaseRsp<>(res);
+	}
 
 	/**
 	 * 中位线下发战法指令
 	 *
 	 * @return {@code BaseRsp }
 	 */
-	@ApiOperation("下发战法指令")
+	@ApiOperation("中位线下发战法指令")
 	@PostMapping("/order")
 	public BaseRsp releaseOrder(@RequestBody @Valid SpaceActionFrameOrderReq req) {
 		orderService.create(req);
@@ -185,8 +160,8 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 	 */
 	@ApiOperation("工位线查询分配到的战法指令")
 	@GetMapping("/order")
-	public BaseRsp<List<SpaceActionFrameOrderBo>> myOrders(SpaceActionFrameOrderListReq req) {
-		List<SpaceActionFrameOrderBo> res = orderService.listMyOrders(req);
+	public BaseRsp<ListRsp<SpaceActionFrameOrderBo>> myOrders(SpaceActionFrameOrderListReq req) {
+		ListRsp<SpaceActionFrameOrderBo> res = orderService.pageMyOrders(req);
 		return new BaseRsp<>(res);
 	}
 

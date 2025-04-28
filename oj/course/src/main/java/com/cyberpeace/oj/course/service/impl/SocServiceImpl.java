@@ -93,7 +93,7 @@ public class SocServiceImpl implements SocService {
         // 查询该课程总共发费时间
         Integer trainingTime = courseLessonService.getTrainingTimeByCourseId(courseId, localUser.getUserId());
         log.info("course:{}", course.getName());
-        log.info("trainingTime:{}", trainingTime);
+        log.info("trainingTime:{} s", trainingTime);
         // 上报课程记录
         recordUpload(localUser, course, trainingTime);
     }
@@ -134,7 +134,8 @@ public class SocServiceImpl implements SocService {
         }
         courseRecord.setMessageSn(getMessageSn());
         courseRecord.setPathName(categoryName);
-        courseRecord.setTotalLearningTime(trainingTime);
+        //上报时间单位为分钟
+        courseRecord.setTotalLearningTime(trainingTime/60);
         courseRecord.setUserId(localUser.getAccountId());
         JSONObject jsonObject = (JSONObject) JSON.toJSON(courseRecord);
         log.info("sendCourseRecordMessage start and request:" + jsonObject.toJSONString());

@@ -9,13 +9,16 @@ import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.oj.course.client.SocClient;
 import com.cyberpeace.oj.course.client.SocResponse;
+import com.cyberpeace.oj.course.dao.entity.CourseSocCategory;
 import com.cyberpeace.oj.course.service.CourseLessonService;
+import com.cyberpeace.oj.course.service.CourseSocCategoryService;
 import com.cyberpeace.oj.course.service.SocService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.SocCourseBo;
 import com.cyberpeace.oj.course.service.bo.SocRequestAuthBo;
 import com.cyberpeace.oj.course.service.bo.SocTokenInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +36,11 @@ public class SocServiceImpl implements SocService {
 
     @Autowired
     private SocClient socClient;
+
+
+
+    @Autowired
+    private CourseSocCategoryService courseSocCategoryService;
 
     /**
      * 消息标识前缀
@@ -67,7 +75,10 @@ public class SocServiceImpl implements SocService {
     private String COURSE_NAME_PREFIX = SystemPropUtil.getProp("SOC_COURSE_NAME_PREFIX");
 
     // 山东移动课程类型信息接收默认值
-    public static final String STUDY_TYPE = "红蓝对抗";
+    public static final String STUDY_TYPE = "网络空间安全基础";
+
+
+    public static final String COURSE_TYPE = "信息技术基础";
 
     @Override
     public void lessonDetailRecordUpload(UserInfo localUser, String courseId) {
@@ -110,10 +121,19 @@ public class SocServiceImpl implements SocService {
         SocCourseBo courseRecord = new SocCourseBo();
         courseRecord.setCaller(CALLER_CODE);
         courseRecord.setCourseName(COURSE_NAME_PREFIX+course.getName());
-        courseRecord.setCourseType(categoryName);
+        List<CourseSocCategory> courseSocCategoryList =
+            courseSocCategoryService.lambdaQuery().eq(CourseSocCategory::getCourseId, course.getResourceId()).list();
+        if(CollectionUtils.isNotEmpty(courseSocCategoryList)){
+            //直接取第一个结果，实际应该只有一个结果匹配
+            CourseSocCategory courseSocCategory = courseSocCategoryList.stream().findFirst().get();
+            courseRecord.setCourseType(courseSocCategory.getSocThirdCategory());
+            courseRecord.setStudyType(courseSocCategory.getSocSecondCategory());
+        }else {
+            courseRecord.setCourseType(COURSE_TYPE);
+            courseRecord.setStudyType(STUDY_TYPE);
+        }
         courseRecord.setMessageSn(getMessageSn());
         courseRecord.setPathName(categoryName);
-        courseRecord.setStudyType(STUDY_TYPE);
         courseRecord.setTotalLearningTime(trainingTime);
         courseRecord.setUserId(localUser.getAccountId());
         JSONObject jsonObject = (JSONObject) JSON.toJSON(courseRecord);

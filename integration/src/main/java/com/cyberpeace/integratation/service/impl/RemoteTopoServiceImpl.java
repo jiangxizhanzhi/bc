@@ -183,6 +183,28 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	}
 
 	@Override
+	public Map<String, TopoDigest> batchPostTopoDigest(List<String> topoIds) {
+		String targetUrl = TOPO_DIGEST_URL + "?ids=" + String.join("&ids=", topoIds);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("ids", topoIds);
+
+		String data = HttpClientUtil.post(targetUrl, jsonObject, String.class);
+		List<MpTopoStatistic> mpTopoStatistics = JsonUtil.toJsonObjectArray(data,
+				MpTopoStatistic.class);
+
+
+
+		return mpTopoStatistics.stream()
+				.collect(Collectors.toMap(MpTopoStatistic::getCsceneId, mpTopoStatistic -> {
+					TopoDigest topoDigest = new TopoDigest();
+					topoDigest.setTopoId(mpTopoStatistic.getCsceneId());
+					topoDigest.setNodeCounts(mpTopoStatistic.getNodesCount());
+					topoDigest.setResourceOccupiedNums(mpTopoStatistic.getResourceOccupiedNums());
+					return topoDigest;
+				}));
+	}
+
+	@Override
 	public JSONObject sync(JSONObject json) {
 		String targetUrl = TOPO_SYNC;
 		return HttpClientUtil.post(targetUrl, json, JSONObject.class);

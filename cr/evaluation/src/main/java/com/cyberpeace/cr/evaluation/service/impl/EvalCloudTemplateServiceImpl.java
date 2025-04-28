@@ -141,7 +141,7 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
         List<String> createUserIds = cloudList.stream().map(EvalCloudTemplateListContext::getCreateUserId).distinct().collect(Collectors.toList());
         Map<String, String> userMap = remoteUserService.getIdNameMap(createUserIds);
         List<String> topoIds = cloudList.stream().map(EvalCloudTemplateListContext::getTopoId).collect(Collectors.toList());
-        Map<String, TopoDigest> nodeCountMap = remoteTopoService.batchGetTopoDigest(topoIds);
+        Map<String, TopoDigest> nodeCountMap = remoteTopoService.batchPostTopoDigest(topoIds);
         return cloudList.stream().map(evalCloudTemplateListContext -> {
             EvalCloudTemplateListRsp evalCloudTemplateListRsp = BeanUtils.copy(evalCloudTemplateListContext, EvalCloudTemplateListRsp.class);
             evalCloudTemplateListRsp.setCloudTemplateId(evalCloudTemplateListContext.getResourceId());

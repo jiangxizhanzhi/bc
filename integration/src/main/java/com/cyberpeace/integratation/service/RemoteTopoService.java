@@ -96,4 +96,6 @@ public interface RemoteTopoService {
 	 * @return {@code JSONObject}
 	 */
 	JSONObject getNodeStatistics(String topoId);
+
+	Map<String, TopoDigest> batchPostTopoDigest(List<String> topoIds);
 }

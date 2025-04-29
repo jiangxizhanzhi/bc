@@ -111,7 +111,7 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
         evalRuleTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
         evalRuleTemplate.setLabelList(evalRuleTemplateAddReq.getLabels());
         List<EvalAlarmReq> alarms = evalRuleTemplateAddReq.getAlarms();
-        if (alarms.size() > 0) {
+        if (alarms != null && alarms.size() > 0) {
             EvalAlarmReq evalAlarmReq = alarms.get(0);
             evalRuleTemplate.setAlarmName(evalAlarmReq.getAlarmName());
             evalRuleTemplate.setAlarmLevel(evalAlarmReq.getLevel());

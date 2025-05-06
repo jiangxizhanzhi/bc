@@ -17,4 +17,6 @@ public interface SpaceActionFrameReleaseService extends IService<SpaceActionFram
     List<SpaceActionFrameOrderBo> getMySteps(String rvbId, String userId);
 
     SpaceActionFrameApplicationBo getApplicationBo(String resourceId);
+
+    List<SpaceActionFrameOrderBo> getTactics(String applicationId);
 }

@@ -98,6 +98,9 @@ public class SpaceActionFrameApplicationServiceImpl extends ServiceImpl<SpaceAct
 			yxUserInfos = coll.getMiddle();
 		} else if (SpaceCommonConstant.RvbUserGroup.WORKER.equals(userGroup)) {
 			yxUserInfos = coll.getWorker();
+		} else if (SpaceCommonConstant.RvbUserGroup.STAFF.equals(userGroup)){
+			yxUserInfos = coll.getCommander();
+			yxUserInfos.addAll(coll.getMiddle());
 		}
 		// username 作为 user_id
 		if (!CollectionUtils.isEmpty(yxUserInfos)) {

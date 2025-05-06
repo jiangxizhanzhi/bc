@@ -1,13 +1,11 @@
 package com.cyberpeace.space.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.space.dao.entity.SpaceActionFrameApplication;
 import com.cyberpeace.space.model.controller.SpaceControllerBase;
 import com.cyberpeace.space.model.req.IdReq;
@@ -70,16 +68,6 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 	public BaseRsp applyFrame(@RequestBody SpaceActionFrameApplicationReq req) {
 		baseService.create(req);
 		return new BaseRsp<>();
-	}
-
-	@ApiOperation("列出当前红蓝的所有框架应用")
-	@GetMapping("/list_by_rvb")
-	public BaseRsp<List<SpaceActionFrameApplicationBo>>
-	list(SpaceActionFrameApplicationListReq req) {
-		LambdaQueryWrapper<SpaceActionFrameApplication> wrapper = req.req2QueryWrapper();
-		List<SpaceActionFrameApplication> eList = baseService.list(wrapper);
-		List<SpaceActionFrameApplicationBo> res = StreamApiUtils.map(eList, e -> e.entity2Bo(null));
-		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("更新")

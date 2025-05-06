@@ -27,11 +27,9 @@ public class SpaceActionFrameApplicationListReq extends SpacePageReqBase {
 	@Override
 	public LambdaQueryWrapper req2QueryWrapper() {
 		LambdaQueryWrapper<SpaceActionFrameApplication> wrapper = new LambdaQueryWrapper<>();
-		wrapper.orderByAsc(SpaceActionFrameApplication::getId);
+		wrapper.orderByDesc(SpaceActionFrameApplication::getUpdateTime);
 		wrapper.eq(SpaceActionFrameApplication::getRvbId, this.getRvb_id());
-		if (null != this.getType()) {
-			wrapper.eq(SpaceActionFrameApplication::getType, this.getType());
-		}
+		wrapper.eq(SpaceActionFrameApplication::getType, this.getType());
 		wrapper.setEntityClass(SpaceActionFrameApplication.class);
 		return wrapper;
 	}

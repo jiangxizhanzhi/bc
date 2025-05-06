@@ -62,51 +62,6 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 	}
 
 	@Override
-	public List<SpaceActionFrameReleaseBo> listBo(String applicationId) {
-		LambdaQueryWrapper<SpaceActionFrameRelease> wrapper = new LambdaQueryWrapper<>();
-		wrapper.eq(SpaceActionFrameRelease::getApplicationId, applicationId);
-		List<SpaceActionFrameRelease> releaseList = this.list(wrapper);
-		Map<String, SpaceActionFrameRelease> releaseMap = StreamApiUtils.toMap(releaseList,
-				SpaceActionFrameRelease::getStep, a -> a);
-		SpaceActionFrameApplication application = applicationMapper.selectById(applicationId);
-
-		List<SpaceActionFrameReleaseBo> res = Lists.newArrayList();
-		ActionFrameArrangeBo actionFrameArrangeBo = application.getArrangeBo();
-
-		// order complete stats
-		LambdaQueryWrapper<SpaceActionFrameOrder> orderWrapper = new LambdaQueryWrapper<>();
-		orderWrapper.eq(SpaceActionFrameOrder::getRvbId, application.getRvbId());
-		Map<String, List<SpaceActionFrameOrder>> orderMap = StreamApiUtils
-				.groupBy(orderMapper.selectList(orderWrapper), SpaceActionFrameOrder::getStep);
-		Map<String, String> userMap = applicationService.getUserMap(application.getRvbId(),
-				SpaceCommonConstant.RvbUserGroup.MIDDLE);
-		for (ActionFrameStep step : actionFrameArrangeBo.getSteps()) {
-			SpaceActionFrameReleaseBo bo = new SpaceActionFrameReleaseBo();
-			bo.setApplicationId(applicationId);
-			bo.setFrameName(application.getName());
-			bo.setStep(step.getName());
-			int complete = 0;
-			if (releaseMap.containsKey(step.getName())) {
-				bo.setUserId(releaseMap.get(step.getName()).getUserId());
-				bo.setUserName(userMap.get(bo.getUserId()));
-				List<SpaceActionFrameOrder> orderList = orderMap.getOrDefault(step.getName(),
-						Lists.newArrayList());
-				for (SpaceActionFrameOrder order : orderList) {
-					if (Objects.equals(order.getStatus(),
-							SpaceCommonConstant.OrderStatus.FINISHED)) {
-						complete++;
-					}
-				}
-				bo.setReleased(true);
-			}
-			int tacticCount = step.getTactics().size();
-			bo.setProgress(complete + "/" + tacticCount);
-			res.add(bo);
-		}
-		return res;
-	}
-
-	@Override
 	public List<SpaceActionFrameOrderBo> getTactics(String applicationId) {
 		List<SpaceActionFrameOrderBo> res = Lists.newArrayList();
 		SpaceActionFrameApplication application = applicationMapper.selectById(applicationId);
@@ -126,7 +81,7 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 		
 		// keep order of step & tactic
 		for (ActionFrameStep step : actionFrameArrangeBo.getSteps()) {
-			List<SpaceActionFrameOrder> orderList = orderMap.getOrDefault(step.getName(),
+			List<SpaceActionFrameOrder> orderList = orderMap.getOrDefault(step.getResourceId(),
 					Lists.newArrayList());
 			Map<String, SpaceActionFrameOrder> map = StreamApiUtils.toMap(orderList,
 					SpaceActionFrameOrder::getTacticId, a -> a);
@@ -136,7 +91,8 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 				bo.setTacticName(tacticNameMap.containsKey(tactic.getResourceId())? tacticNameMap.get(tactic.getResourceId()):tactic.getName());
 				bo.setTacticId(tactic.getResourceId());
 				bo.setTacticType(tactic.getType());
-				bo.setStep(step.getName());
+				bo.setStepName(step.getName());
+				bo.setStepId(step.getResourceId());
 				bo.setApplicationId(applicationId);
 				if(map.containsKey(tactic.getResourceId())){
 					bo.setResourceId(map.get(tactic.getResourceId()).getResourceId());
@@ -152,77 +108,6 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 	}
 
 	@Override
-	public List<SpaceActionFrameOrderBo> getMySteps(String rvbId, String userId) {
-		List<SpaceActionFrameOrderBo> res = Lists.newArrayList();
-		LambdaQueryWrapper<SpaceActionFrameRelease> wrapperRelease = new LambdaQueryWrapper<>();
-		wrapperRelease.eq(SpaceActionFrameRelease::getRvbId, rvbId);
-		wrapperRelease.eq(SpaceActionFrameRelease::getUserId, userId);
-		List<SpaceActionFrameRelease> releaseList = this.list(wrapperRelease);
-		if (releaseList.isEmpty()) {
-			return res;
-		}
-		LambdaQueryWrapper<SpaceActionFrameOrder> wrapperOrder = new LambdaQueryWrapper<>();
-		wrapperOrder.eq(SpaceActionFrameOrder::getRvbId, rvbId);
-		wrapperOrder.in(SpaceActionFrameOrder::getStep,
-				StreamApiUtils.map(releaseList, SpaceActionFrameRelease::getStep));
-		List<SpaceActionFrameOrder> orderList = orderMapper.selectList(wrapperOrder);
-		Map<String, List<SpaceActionFrameOrder>> orderMap = StreamApiUtils.groupBy(orderList,
-				SpaceActionFrameOrder::getStep);
-		List<String> tacticIds = Lists.newArrayList();
-		Map<String, String> userMap = applicationService.getUserMap(rvbId,
-				SpaceCommonConstant.RvbUserGroup.WORKER);
-		for (SpaceActionFrameRelease release : releaseList) {
-			List<ActionFrameTactic> tactics = JsonUtil.toJsonObjectArray(release.getTactics(),
-					ActionFrameTactic.class);
-			for (ActionFrameTactic tactic : tactics) {
-				SpaceActionFrameOrderBo bo = new SpaceActionFrameOrderBo();
-				bo.setApplicationId(release.getApplicationId());
-				bo.setFrameName(release.getFrameName());
-				bo.setStep(release.getStep());
-				bo.setTacticId(tactic.getResourceId());
-				tacticIds.add(tactic.getResourceId());
-				bo.setTacticType(tactic.getType());
-
-				if (orderMap.containsKey(release.getStep())) {
-					for (SpaceActionFrameOrder order : orderMap.get(release.getStep())) {
-						if (tactic.getResourceId().equals(order.getTacticId())) {
-							bo.setStatus(order.getStatus());
-							bo.setUserId(order.getUserId());
-							bo.setReleased(true);
-							bo.setUserName(userMap.get(order.getUserId()));
-							break;
-						}
-					}
-				}
-
-				res.add(bo);
-			}
-		}
-		List<SpaceTacticAttack> attackList = tacticIds.isEmpty() ? Lists.newArrayList()
-				: tacticAttackMapper.selectBatchIds(tacticIds);
-		List<SpaceTacticDefense> defenseList = tacticIds.isEmpty() ? Lists.newArrayList()
-				: tacticDefenseMapper.selectBatchIds(tacticIds);
-		Map<String, SpaceTacticAttack> attackMap = StreamApiUtils.toMap(attackList,
-				SpaceTacticAttack::getResourceId, t -> t);
-		Map<String, SpaceTacticDefense> defenseMap = StreamApiUtils.toMap(defenseList,
-				SpaceTacticDefense::getResourceId, t -> t);
-
-		for (SpaceActionFrameOrderBo bo : res) {
-			if (SpaceCommonConstant.TacticType.ATTACK.equals(bo.getTacticType())) {
-				if (attackMap.containsKey(bo.getTacticId())) {
-					bo.setTacticName(attackMap.get(bo.getTacticId()).getName());
-				}
-			} else if (SpaceCommonConstant.TacticType.DEFENSE.equals(bo.getTacticType())) {
-				if (defenseMap.containsKey(bo.getTacticId())) {
-					bo.setTacticName(defenseMap.get(bo.getTacticId()).getName());
-				}
-			}
-		}
-
-		return res;
-	}
-
-	@Override
 	public SpaceActionFrameApplicationBo getApplicationBo(String resourceId) {
 		SpaceActionFrameApplication application = applicationService.getById(resourceId);
 		if (null == application) {
@@ -230,11 +115,11 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 		}
 		SpaceActionFrameApplicationBo bo = application.entity2Bo(Maps.newHashMap());
 
-		LambdaQueryWrapper<SpaceActionFrameRelease> wrapper = new LambdaQueryWrapper<>();
-		wrapper.eq(SpaceActionFrameRelease::getApplicationId, application.getResourceId());
-		List<SpaceActionFrameRelease> releaseList = this.list(wrapper);
-		Map<String, SpaceActionFrameRelease> releaseMap = StreamApiUtils.toMap(releaseList,
-				SpaceActionFrameRelease::getStep, a -> a);
+//		LambdaQueryWrapper<SpaceActionFrameRelease> wrapper = new LambdaQueryWrapper<>();
+//		wrapper.eq(SpaceActionFrameRelease::getApplicationId, application.getResourceId());
+//		List<SpaceActionFrameRelease> releaseList = this.list(wrapper);
+//		Map<String, SpaceActionFrameRelease> releaseMap = StreamApiUtils.toMap(releaseList,
+//				SpaceActionFrameRelease::getStep, a -> a);
 		
 		// order complete status
 		LambdaQueryWrapper<SpaceActionFrameOrder> orderWrapper = new LambdaQueryWrapper<>();
@@ -243,14 +128,14 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 				.groupBy(orderMapper.selectList(orderWrapper), SpaceActionFrameOrder::getStep);
 		Map<String, String> tacticNameMap = this.getTacticNameMap(bo.getFrame());
 		for (ActionFrameStep step : bo.getFrame().getSteps()) {
-			if (!orderMap.containsKey(step.getName())) {
-				if (releaseMap.containsKey(step.getName())) {
-					step.setStatus(SpaceCommonConstant.OrderStatus.UNFINISHED);
-				}
+			if (!orderMap.containsKey(step.getResourceId())) {
+//				if (releaseMap.containsKey(step.getName())) {
+//					step.setStatus(SpaceCommonConstant.OrderStatus.UNFINISHED);
+//				}
 				continue;
 			}
 			int complete = 0;
-			List<SpaceActionFrameOrder> orderList = orderMap.get(step.getName());
+			List<SpaceActionFrameOrder> orderList = orderMap.get(step.getResourceId());
 			Map<String, SpaceActionFrameOrder> map = StreamApiUtils.toMap(orderList,
 					SpaceActionFrameOrder::getTacticId, o -> o);
 			for (ActionFrameTactic tactic : step.getTactics()) {

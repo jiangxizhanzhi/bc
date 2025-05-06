@@ -11,6 +11,7 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.constant.SpaceError;
+import com.cyberpeace.space.dao.entity.SpaceActionFrameApplication;
 import com.cyberpeace.space.dao.entity.SpaceActionFrameOrder;
 import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
 import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
@@ -19,9 +20,7 @@ import com.cyberpeace.space.dao.mapper.SpaceTacticAttackMapper;
 import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseMapper;
 import com.cyberpeace.space.service.SpaceActionFrameApplicationService;
 import com.cyberpeace.space.service.SpaceActionFrameOrderService;
-import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderBo;
-import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderListReq;
-import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderReq;
+import com.cyberpeace.space.service.context.frame.*;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
@@ -49,8 +48,9 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 
 	@Override
 	public void create(SpaceActionFrameOrderReq req) {
-		this.checkRelease(req.getApplicationId(), req.getStep(), req.getTacticId());
+		this.checkRelease(req.getApplicationId(), req.getStepId(), req.getTacticId());
 		SpaceActionFrameOrder entity = BeanUtils.copy(req, SpaceActionFrameOrder.class);
+		entity.setStep(req.getStepId());
 		entity.setResourceId(IDGeneratorUtil.getID());
 		entity.setStatus(SpaceCommonConstant.OrderStatus.UNFINISHED);
 		entity.setSender(req.getSender());
@@ -116,12 +116,63 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 				tacticNameMap.put(defense.getResourceId(), defense.getName());
 			}
 		}
+		// get step name
+		List<String> applicationIds = StreamApiUtils.map(orderList,
+				SpaceActionFrameOrder::getApplicationId);
+		Map<String, String> stepMap = this.getStepMapByApplicationIds(applicationIds);
+
 		for (SpaceActionFrameOrder order : orderList) {
 			SpaceActionFrameOrderBo bo = BeanUtils.copy(order, SpaceActionFrameOrderBo.class);
+			if (stepMap.containsKey(order.getStep())) {
+				bo.setStepId(order.getStep());
+				bo.setStepName(stepMap.get(order.getStep()));
+			} else {
+				continue;
+			}
 			bo.setReleased(true);
 			bo.setTacticName(tacticNameMap.get(order.getTacticId()));
 			bo.setSenderName(userMap.get(order.getSender()));
 			res.add(bo);
+		}
+		return res;
+	}
+
+	@Override
+	public void deleteReleased(ActionFrameArrangeBo arrangeBo, String applicationId) {
+		List<String> stepIds = StreamApiUtils.map(arrangeBo.getSteps(),
+				ActionFrameStep::getResourceId);
+		LambdaQueryWrapper<SpaceActionFrameOrder> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(SpaceActionFrameOrder::getApplicationId, applicationId);
+		if (!stepIds.isEmpty()) {
+			queryWrapper.and(wrapper -> {
+				wrapper.notIn(SpaceActionFrameOrder::getStep, stepIds);
+				for (ActionFrameStep step : arrangeBo.getSteps()) {
+					List<String> tacticIds = StreamApiUtils.map(step.getTactics(),
+							ActionFrameTactic::getResourceId);
+					if (!tacticIds.isEmpty()) {
+						wrapper.or(wrapperTactic -> wrapperTactic
+								.eq(SpaceActionFrameOrder::getStep, step.getResourceId())
+								.notIn(SpaceActionFrameOrder::getTacticId, tacticIds));
+					} else {
+						wrapper.or(wrapperTactic -> wrapperTactic
+								.eq(SpaceActionFrameOrder::getStep, step.getResourceId()));
+					}
+				}
+			});
+		}
+
+		this.remove(queryWrapper);
+	}
+
+	private Map<String, String> getStepMapByApplicationIds(List<String> applicationIds) {
+		Map<String, String> res = Maps.newHashMap();
+		List<SpaceActionFrameApplication> applicationList = applicationService
+				.listByIds(applicationIds);
+		for (SpaceActionFrameApplication application : applicationList) {
+			ActionFrameArrangeBo arrangeBo = application.getArrangeBo();
+			for (ActionFrameStep step : arrangeBo.getSteps()) {
+				res.put(step.getResourceId(), step.getName());
+			}
 		}
 		return res;
 	}

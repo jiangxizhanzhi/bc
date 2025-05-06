@@ -22,6 +22,7 @@ import com.cyberpeace.space.dao.mapper.SpaceActionFrameReleaseMapper;
 import com.cyberpeace.space.service.SpaceActionFrameApplicationService;
 import com.cyberpeace.space.service.SpaceActionFrameService;
 import com.cyberpeace.space.service.context.frame.ActionFrameArrangeBo;
+import com.cyberpeace.space.service.context.frame.ActionFrameStep;
 import com.cyberpeace.space.service.context.frame.ApplicationUser;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameApplicationReq;
 import lombok.extern.slf4j.Slf4j;
@@ -75,6 +76,14 @@ public class SpaceActionFrameApplicationServiceImpl extends ServiceImpl<SpaceAct
 		if (StringUtils.isBlank(frameStr)) {
 			ActionFrameArrangeBo bo = new ActionFrameArrangeBo();
 			bo.setResourceId(frame.getResourceId());
+			frameStr = JsonUtil.toJsonString(bo);
+		} else {
+			ActionFrameArrangeBo bo = JsonUtil.toJsonObject(frameStr, ActionFrameArrangeBo.class);
+			for (ActionFrameStep step : bo.getSteps()) {
+				if (StringUtils.isBlank(step.getResourceId())) {
+					step.setResourceId(IDGeneratorUtil.getID());
+				}
+			}
 			frameStr = JsonUtil.toJsonString(bo);
 		}
 		application.setFrame(frameStr);

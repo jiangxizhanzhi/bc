@@ -12,10 +12,6 @@ import java.util.List;
 public interface SpaceActionFrameReleaseService extends IService<SpaceActionFrameRelease> {
     void create(SpaceActionFrameReleaseReq req);
 
-    List<SpaceActionFrameReleaseBo> listBo(String applicationId);
-
-    List<SpaceActionFrameOrderBo> getMySteps(String rvbId, String userId);
-
     SpaceActionFrameApplicationBo getApplicationBo(String resourceId);
 
     List<SpaceActionFrameOrderBo> getTactics(String applicationId);

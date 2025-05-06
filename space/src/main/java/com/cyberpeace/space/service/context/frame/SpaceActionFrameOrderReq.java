@@ -24,7 +24,11 @@ public class SpaceActionFrameOrderReq {
 
     @ApiModelProperty("步骤")
     @NotBlank
-    private String step;
+    private String stepName;
+
+    @ApiModelProperty("步骤id")
+    @NotBlank
+    private String stepId;
 
     @ApiModelProperty("战法id")
     @NotBlank

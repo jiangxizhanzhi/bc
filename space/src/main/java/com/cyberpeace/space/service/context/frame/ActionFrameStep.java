@@ -13,6 +13,9 @@ public class ActionFrameStep {
 	@ApiModelProperty(value = "名称")
 	private String name;
 
+	@ApiModelProperty(value = "id")
+	private String resourceId;
+
 	@ApiModelProperty(value = "描述")
 	private String description;
 

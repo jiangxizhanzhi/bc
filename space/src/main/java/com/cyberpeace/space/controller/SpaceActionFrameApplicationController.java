@@ -22,6 +22,9 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -41,6 +44,9 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 
 	@Autowired
 	private SpaceActionFrameOrderService orderService;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 搜索框架
@@ -92,7 +98,13 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 		SpaceActionFrameApplication entity = baseService.getById(req.getResourceId());
 		req.getFrame().checkTacticDuplication();
 		entity.setFrame(JsonUtil.toJsonString(req.getFrame()));
-		baseService.updateById(entity);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				baseService.updateById(entity);
+				orderService.deleteReleased(req.getFrame(), req.getResourceId());
+			}
+		});
 		return new BaseRsp<>();
 	}
 

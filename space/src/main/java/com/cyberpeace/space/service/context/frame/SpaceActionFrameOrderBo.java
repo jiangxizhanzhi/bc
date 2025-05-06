@@ -21,7 +21,10 @@ public class SpaceActionFrameOrderBo {
 	private String frameName;
 
 	@ApiModelProperty("步骤")
-	private String step;
+	private String stepName;
+
+	@ApiModelProperty("步骤id")
+	private String stepId;
 
 	@ApiModelProperty("战法id")
 	private String tacticId;

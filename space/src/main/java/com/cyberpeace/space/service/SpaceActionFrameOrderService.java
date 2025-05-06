@@ -2,8 +2,8 @@
 package com.cyberpeace.space.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.space.dao.entity.SpaceActionFrameOrder;
+import com.cyberpeace.space.service.context.frame.ActionFrameArrangeBo;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderBo;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderListReq;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderReq;
@@ -16,5 +16,16 @@ public interface SpaceActionFrameOrderService extends IService<SpaceActionFrameO
     void complete(String resourceId);
 
     List<SpaceActionFrameOrderBo> listMyOrders(SpaceActionFrameOrderListReq req);
+
+    /**
+     * 删除所有已经不关联框架的战法指令
+     *
+     * @param arrangeBo     arrangeBo
+     * @param applicationId 行动框架应用id
+     * @throws
+     * @see ActionFrameArrangeBo
+     * @see String
+     */
+    void deleteReleased(ActionFrameArrangeBo arrangeBo, String applicationId);
 }
     

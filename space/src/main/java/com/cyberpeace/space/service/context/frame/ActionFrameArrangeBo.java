@@ -1,11 +1,13 @@
 package com.cyberpeace.space.service.context.frame;
 
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.space.constant.SpaceError;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +35,9 @@ public class ActionFrameArrangeBo {
 				} else {
 					tacticIds.add(tactic.getResourceId());
 				}
+			}
+			if (StringUtils.isBlank(step.getResourceId())) {
+				step.setResourceId(IDGeneratorUtil.getID());
 			}
 		}
 	}

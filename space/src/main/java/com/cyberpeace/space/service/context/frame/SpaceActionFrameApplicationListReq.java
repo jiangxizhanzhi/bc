@@ -22,6 +22,7 @@ public class SpaceActionFrameApplicationListReq extends SpacePageReqBase {
 	@ApiModelProperty(value = "面向流程1，面向目标2")
 	@Getter
 	@Setter
+    @NotNull
 	private Integer type;
 
 	@Override

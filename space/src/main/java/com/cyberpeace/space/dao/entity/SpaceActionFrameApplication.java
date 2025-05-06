@@ -47,7 +47,16 @@ public class SpaceActionFrameApplication extends SpaceBaseTable {
 		SpaceActionFrameApplicationBo bo = BeanUtils.copy(this,
 				SpaceActionFrameApplicationBo.class);
 		bo.setTag(JsonUtil.toJsonObjectArray(this.getTag(), String.class));
-		bo.setFrame(JsonUtil.toJsonObject(this.getFrame(), ActionFrameArrangeBo.class));
+		bo.setFrame(this.getArrangeBo());
+		return bo;
+	}
+
+	public ActionFrameArrangeBo getArrangeBo() {
+		ActionFrameArrangeBo bo = JsonUtil.toJsonObject(this.frame, ActionFrameArrangeBo.class);
+		if (null == bo) {
+			bo = new ActionFrameArrangeBo();
+			bo.setResourceId(this.getResourceId());
+		}
 		return bo;
 	}
 }

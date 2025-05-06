@@ -52,8 +52,7 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 		entity.setFrameName(application.getName());
 		entity.setRvbId(application.getRvbId());
 
-		ActionFrameArrangeBo frame = JsonUtil.toJsonObject(application.getFrame(),
-				ActionFrameArrangeBo.class);
+		ActionFrameArrangeBo frame = application.getArrangeBo();
 		for (ActionFrameStep step : frame.getSteps()) {
 			if (req.getStep().equals(step.getName())) {
 				entity.setTactics(JsonUtil.arrayToString(step.getTactics()));
@@ -72,8 +71,7 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 		SpaceActionFrameApplication application = applicationMapper.selectById(applicationId);
 
 		List<SpaceActionFrameReleaseBo> res = Lists.newArrayList();
-		ActionFrameArrangeBo actionFrameArrangeBo = JsonUtil.toJsonObject(application.getFrame(),
-				ActionFrameArrangeBo.class);
+		ActionFrameArrangeBo actionFrameArrangeBo = application.getArrangeBo();
 
 		// order complete stats
 		LambdaQueryWrapper<SpaceActionFrameOrder> orderWrapper = new LambdaQueryWrapper<>();
@@ -115,8 +113,7 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 		if(null == application){
 			return res;
 		}
-		ActionFrameArrangeBo actionFrameArrangeBo = JsonUtil.toJsonObject(application.getFrame(),
-				ActionFrameArrangeBo.class);
+		ActionFrameArrangeBo actionFrameArrangeBo = application.getArrangeBo();
 
 		// order complete stats
 		LambdaQueryWrapper<SpaceActionFrameOrder> orderWrapper = new LambdaQueryWrapper<>();

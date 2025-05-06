@@ -114,6 +114,8 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		SpaceActionFrameApplicationBo bo = application.entity2Bo(Maps.newHashMap());
+		// 重置进度
+		bo.getFrame().resetStatus();
 
 //		LambdaQueryWrapper<SpaceActionFrameRelease> wrapper = new LambdaQueryWrapper<>();
 //		wrapper.eq(SpaceActionFrameRelease::getApplicationId, application.getResourceId());

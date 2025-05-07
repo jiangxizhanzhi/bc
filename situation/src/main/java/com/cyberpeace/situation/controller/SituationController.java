@@ -3,6 +3,7 @@ package com.cyberpeace.situation.controller;
 import java.util.List;
 import java.util.concurrent.Executor;
 
+import com.cyberpeace.situation.controller.req.ChangeTopoReq;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,6 +129,19 @@ public class SituationController {
 
 		return new BaseRsp<>(situationTopo);
 	}
+
+
+	@CrossOrigin("*")
+	@ApiOperation("获取场景拓扑")
+	@PostMapping("change_topo_info")
+	public BaseRsp<SituationTopo> changeTopologyInfo(@RequestBody@Validated ChangeTopoReq changeTopoReq) {
+		// 处理变更场景/拓扑数据
+		SceneData sceneData = topoHandlerService.changeSceneData(changeTopoReq);
+		// 处理态势数据
+		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
+		return new BaseRsp<>(situationTopo);
+	}
+
 
 	/**
 	 * 攻击动态

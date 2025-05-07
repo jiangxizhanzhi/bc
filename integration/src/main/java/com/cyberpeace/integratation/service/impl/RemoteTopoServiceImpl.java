@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.cyberpeace.integratation.service.bo.ChangeTopoConfigBo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +82,11 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	private String TOPO_RETRIEVE_BY_AREA_FOR_3D;
 
 	/**
+	 * 改变拓扑位置数据（3D态势）
+	 */
+	private String TOPO_CHANGE_TOPO_INFO_FOR_3D;
+
+	/**
 	 * 拓扑删除
 	 *
 	 * @see String
@@ -140,6 +147,8 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 				+ ConfigUtil.getContextProperty("scene.topo.retrieve");
 		TOPO_RETRIEVE_BY_AREA_FOR_3D = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.topo.retrieve_by_area_for_3d");
+		TOPO_CHANGE_TOPO_INFO_FOR_3D = mpEnvService.getMpHost()
+			+ ConfigUtil.getContextProperty("scene.topo.change_topo_info_for_3d");
 		TOPO_DELETE = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.delete");
 		TOPO_EXPORT = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.export");
 
@@ -200,6 +209,18 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 		}
 		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+	}
+
+
+	/**
+	 * @description: 改变拓扑位置信息数据
+	 * @param changeTopoConfigBo
+	 * @throws
+	 * @return JSONObject
+	 */
+	@Override
+	public JSONObject changeTopoInfoFor3D(ChangeTopoConfigBo changeTopoConfigBo) {
+		return HttpClientUtil.post(TOPO_CHANGE_TOPO_INFO_FOR_3D, JsonUtil.toJsonString(changeTopoConfigBo, PropertyNamingStrategy.SnakeCase), JSONObject.class);
 	}
 
 	/**

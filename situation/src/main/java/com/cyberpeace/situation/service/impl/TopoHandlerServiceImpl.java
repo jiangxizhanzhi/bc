@@ -9,7 +9,10 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.integratation.model.scene.SceneEventHostListReq;
+import com.cyberpeace.integratation.service.bo.ChangeTopoBo;
+import com.cyberpeace.integratation.service.bo.ChangeTopoConfigBo;
 import com.cyberpeace.situation.constant.SituationErrorCode;
+import com.cyberpeace.situation.controller.req.ChangeTopoReq;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -152,6 +155,29 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		}
 
 		return constructSceneData(csceneInstanceId, topology, plugins, situationConfigMap);
+	}
+
+	@Override
+	public SceneData changeSceneData(ChangeTopoReq changeTopoReq) {
+		// 获取中台变更场景数据，优先获取场景拓扑
+		JSONObject sceneTopo;
+		JSONObject topology;
+		JSONObject plugins;
+		Map<Integer, Map<String, List<SituationConfig>>> situationConfigMap;
+		if (StringUtils.isBlank(changeTopoReq.getSceneId())) {
+			ChangeTopoConfigBo changeTopoConfigBo = BeanUtils.deepCopy(changeTopoReq, ChangeTopoConfigBo.class);
+			sceneTopo = remoteTopoService.changeTopoInfoFor3D(changeTopoConfigBo);
+			topology = sceneTopo.getJSONObject("scene_config").getJSONObject("topology");
+			plugins = sceneTopo.getJSONObject("scene_config").getJSONObject("plugins");
+			situationConfigMap = getSituationConfigMap(changeTopoReq.getTopoId());
+		} else {
+			ChangeTopoBo changeTopoBo = BeanUtils.deepCopy(changeTopoReq, ChangeTopoBo.class);
+			sceneTopo = remoteSceneService.changeTopoInfoFor3D(changeTopoBo);
+			topology = sceneTopo.getJSONObject(SCENE).getJSONObject("topology");
+			plugins = sceneTopo.getJSONObject(SCENE).getJSONObject("plugins");
+			situationConfigMap = getSituationConfigMap(changeTopoReq.getSceneId());
+		}
+		return constructSceneData(changeTopoReq.getSceneId(), topology, plugins, situationConfigMap);
 	}
 
 	/**

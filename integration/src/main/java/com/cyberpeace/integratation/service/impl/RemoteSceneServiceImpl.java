@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.integratation.service.bo.ChangeTopoBo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -94,6 +95,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	 * @see String
 	 */
 	private String SCENE_RETRIEVE_BY_AREA_FOR_3D;
+
+	/**
+	 * 变更场景3D拓扑信息
+	 */
+	private String SCENE_CHANGE_TOPO_INFO_FOR_3D;
 
 	/**
 	 * 场景暂停网址
@@ -416,6 +422,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		SCENE_RETRIEVE_BY_AREA_FOR_3D = MP_HOST + ConfigUtil.getContextProperty("scene.retrieve_by_area_for_3d");
 
+		SCENE_CHANGE_TOPO_INFO_FOR_3D = MP_HOST + ConfigUtil.getContextProperty("scene.change_topo_info_for_3d");
+
 		SCENE_PAUSE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.pause");
 
 		SCENE_UNPAUSE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.unpause");
@@ -602,6 +610,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		}
 		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject changeTopoInfoFor3D(ChangeTopoBo changeTopoBo) {
+		return HttpClientUtil.post(SCENE_CHANGE_TOPO_INFO_FOR_3D, JsonUtil.toJsonString(changeTopoBo, PropertyNamingStrategy.SnakeCase), JSONObject.class);
 	}
 
 	/**

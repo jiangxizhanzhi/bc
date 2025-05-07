@@ -8,6 +8,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.model.scene.TopoNodeListReq;
+import com.cyberpeace.integratation.service.bo.ChangeTopoBo;
+import com.cyberpeace.integratation.service.bo.ChangeTopoConfigBo;
 
 /**
  * 远程拓扑Service
@@ -54,6 +56,15 @@ public interface RemoteTopoService {
      * @see JSONObject
      */
     JSONObject getTopoByIdAndAreaIdFor3D(String topoId, String areaId);
+
+
+    /**
+     * @description: 改变原始拓扑数据
+     * @param changeTopoConfigBo
+     * @throws
+     * @return JSONObject
+     */
+    JSONObject changeTopoInfoFor3D(ChangeTopoConfigBo changeTopoConfigBo);
 
     /**
      * 根据现有的topoid，生成一份新的拓扑拷贝数据

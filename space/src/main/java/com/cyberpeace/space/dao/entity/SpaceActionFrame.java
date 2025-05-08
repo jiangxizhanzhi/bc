@@ -1,5 +1,6 @@
 package com.cyberpeace.space.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.util.BeanUtils;
@@ -37,6 +38,9 @@ public class SpaceActionFrame extends SpaceFrameBaseTable {
 	private String categoryId;
 
 	private String keyWords;
+
+	@TableField(value = "`analyze`")
+	private String analyze;
 
 	public SpaceActionFrameBo entity2Bo(Map<String, List<IdAndName>> relatedMap) {
 		SpaceActionFrameBo bo = BeanUtils.copy(this, SpaceActionFrameBo.class);

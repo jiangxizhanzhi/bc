@@ -44,6 +44,9 @@ public class SpaceActionFrameBo extends SpaceFrameBoBase {
 	@ApiModelProperty(value = "使用说明")
 	private String description;
 
+	@ApiModelProperty(value = "攻防动作解析")
+	private String analyze;
+
 	public SpaceActionFrame bo2Entity() {
 		SpaceActionFrame entity = BeanUtils.copy(this, SpaceActionFrame.class);
 		entity.setTag(JsonUtil.arrayToString(this.tag));

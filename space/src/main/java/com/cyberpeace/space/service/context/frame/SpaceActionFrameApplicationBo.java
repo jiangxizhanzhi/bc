@@ -42,6 +42,9 @@ public class SpaceActionFrameApplicationBo extends SpaceBoBase {
 	@ApiModelProperty(value = "使用说明")
 	private String description;
 
+	@ApiModelProperty(value = "攻防动作解析")
+	private String analyze;
+
 	@ApiModelProperty(value = "框架编排")
 	private ActionFrameArrangeBo frame;
 

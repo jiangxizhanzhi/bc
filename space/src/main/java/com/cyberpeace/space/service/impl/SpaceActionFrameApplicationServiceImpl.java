@@ -71,6 +71,7 @@ public class SpaceActionFrameApplicationServiceImpl extends ServiceImpl<SpaceAct
         application.setName(frame.getName());
         application.setCategoryId(frame.getCategoryId());
         application.setType(frame.getType());
+		application.setAnalyze(frame.getAnalyze());
 		// frame may be null
 		String frameStr = frame.getFrame();
 		if (StringUtils.isBlank(frameStr)) {

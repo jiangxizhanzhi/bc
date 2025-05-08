@@ -1,5 +1,6 @@
 package com.cyberpeace.space.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -39,6 +40,9 @@ public class SpaceActionFrameApplication extends SpaceBaseTable {
 
 	@ApiModelProperty(value = "使用说明")
 	private String description;
+
+	@TableField(value = "`analyze`")
+	private String analyze;
 
 	@ApiModelProperty(value = "框架编排")
 	private String frame;

@@ -475,6 +475,10 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				businessTemplate.setTotalCpu(nodeCountMap.get(businessTemplate.getTopoId()).getTotalCpu());
 				businessTemplate.setTotalRam(nodeCountMap.get(businessTemplate.getTopoId()).getTotalRam());
 				businessTemplate.setTotalDisk(nodeCountMap.get(businessTemplate.getTopoId()).getTotalDisk());
+				String topoId = businessTemplate.getTopoId();
+				String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjNmNjU1ZDg3MTEyZjRhZTA5NGJiYWY3MDgzMGUyMGFhIiwiZXhwIjo2MDY1NDI4ODg0MDQsImtleSI6IjRjOWZmY2U5MTkzZjRjYjc4YjExMWVkNmYyZjgxOGE2IiwidXNlcm5hbWUiOiJhZG1pbiJ9.M61_O_t6S6Ud2XH23Oc95LGbGMX3IBYbk0qbg-t82Nk";
+				String url = "http://1010101/asdf/asdf?topo_id=" + topoId + "&token=" + token;
+				businessTemplate.setUrl(url);
 			}
 		}
 

@@ -35,5 +35,6 @@ public class BusinessTemplateData extends BusinessTemplate {
      * 总内存
      */
     private Integer totalRam;
+    private String url;
 
 }

@@ -148,7 +148,7 @@ public class BusinessTemplateController {
 			sceneConfigInfo.setTotalCpu(businessTemplateData.getTotalCpu());
 			sceneConfigInfo.setTotalDisk(businessTemplateData.getTotalDisk());
 			businessTemplateRsp.setSceneConfigInfo(sceneConfigInfo);
-
+			businessTemplateRsp.setUrl(businessTemplateData.getUrl());
 			return businessTemplateRsp;
 		});
 

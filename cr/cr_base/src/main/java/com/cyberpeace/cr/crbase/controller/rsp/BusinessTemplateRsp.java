@@ -87,5 +87,7 @@ public class BusinessTemplateRsp implements Serializable {
 	 */
 	@ApiModelProperty(value = "场景编排")
 	private SceneConfigRsp sceneConfigInfo;
+	@ApiModelProperty(value="url")
+	private String url;
 
 }

@@ -5,6 +5,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.model.user.UserInfo;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.springframework.http.HttpStatus;
 
@@ -68,9 +70,16 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 	@Override
 	protected boolean executeLogin(ServletRequest request, ServletResponse response)
 			throws Exception {
+		String token = ((HttpServletRequest) request).getHeader(WebConstant.AUTHORIZATION_HEADER);
 		// 提交给realm进行登入，如果错误他会抛出异常并被捕获
 		getSubject(request, response).login(createToken(request, response));
 		// 如果没有抛出异常则代表登入成功，返回true
+		// 获取UserInfo对象并设置token
+		Object principal = SecurityUtils.getSubject().getPrincipal();
+		if (principal instanceof UserInfo) {
+			UserInfo userInfo = (UserInfo) principal;
+			userInfo.setToken(token);
+		}
 		return true;
 	}
 
@@ -117,7 +126,6 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 	 */
 	@Override
 	protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
-
 		return super.isLoginAttempt(request, response);
 	}
 }

@@ -1,35 +1,19 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.io.File;
-import java.util.*;
-
-import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.cyberpeace.oj.course.service.bo.LessonPracticeImportBo;
-import com.cyberpeace.oj.practice.dao.entity.*;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
-import com.cyberpeace.oj.practice.service.*;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
@@ -39,18 +23,32 @@ import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
 import com.cyberpeace.oj.course.service.*;
 import com.cyberpeace.oj.course.service.bo.CombinedCourseImportContext;
+import com.cyberpeace.oj.course.service.bo.LessonPracticeImportBo;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
+import com.cyberpeace.oj.practice.dao.entity.*;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
+import com.cyberpeace.oj.practice.service.*;
 import com.cyberpeace.oj.practice.service.bo.PaperContext;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 import com.cyberpeace.oj.practice.service.md.MdTheoryParser;
 import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.io.File;
+import java.util.*;
 
 /**
  * 课程导入Service实现
@@ -400,6 +398,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 		} catch (BusinessException e) {
 			throw e;
 		} catch (Exception e) {
+			log.error("file parse Exception file: " + lessonPath, e);
 			throw new RemoteServiceException("file parse Exception file: " + lessonPath);
 		}
 

@@ -5,7 +5,7 @@ import com.cyberpeace.oj.practice.controller.res.PaperRecordRes;
 import com.cyberpeace.oj.practice.controller.res.PaperRecordSummaryRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticePaper;
 import org.apache.ibatis.annotations.Param;
-import org.mapstruct.Mapper;
+import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

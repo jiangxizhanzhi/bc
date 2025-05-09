@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.impl.TraceIdContext;
@@ -382,9 +383,10 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	@Override
 	public ListRsp<PersonalStatsDetail4CourseBo> getPersonalStatsDetail4Course(Page page,
 			String resourceId) {
-		return PageUtil.getListResult(learnStatsMapper.learnCourseStats(page, resourceId,
-				CourseLesson.LessonType.THEORY.getCode(),
-				CourseLesson.LessonType.EXPERIMENT.getCode(), Note.NoteType.REPORT.getCode()));
+		IPage<PersonalStatsDetail4CourseBo> iPage = learnStatsMapper.learnCourseStats(page,
+				resourceId, CourseLesson.LessonType.THEORY.getCode(),
+				CourseLesson.LessonType.EXPERIMENT.getCode(), Note.NoteType.REPORT.getCode());
+		return PageUtil.getListResult(iPage);
 	}
 
 	/**

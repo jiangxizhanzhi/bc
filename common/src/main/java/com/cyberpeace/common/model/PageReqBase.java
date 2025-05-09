@@ -2,6 +2,8 @@ package com.cyberpeace.common.model;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import org.apache.commons.lang3.StringUtils;
 
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
@@ -70,6 +72,12 @@ public class PageReqBase extends PatternBase {
 		if (StringUtils.startsWith(sort, "-")) {
 			sort = StringUtils.substring(sort, 1);
 			asc = false;
+		}
+
+		if (StringUtils.isNotEmpty(sort) && (sort.trim().contains(" ") || sort.trim().contains(";")
+				|| sort.contains("(") || sort.contains(")") || sort.contains("'")
+				|| sort.contains("\"") || sort.contains("%") || sort.contains("\\"))) {
+			throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
 		}
 
 		// 设置排序字段

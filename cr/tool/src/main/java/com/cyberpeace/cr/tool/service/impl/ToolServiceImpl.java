@@ -3,6 +3,7 @@ package com.cyberpeace.cr.tool.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.scene.DeviceInfo;
 import com.cyberpeace.common.util.*;
@@ -344,5 +345,13 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	public Map<String, String> getIdNameMap(List<String> toolIds) {
 		List<Tool> toolList = this.listByIdsInOrder(toolIds);
 		return StreamApiUtils.toMap(toolList, Tool::getResourceId, Tool::getName);
+	}
+
+	@Override
+	public void checkBuiltin(String resourceId) {
+		Tool tool = this.getById(resourceId);
+		if (tool.getBuiltin()) {
+			throw new BusinessException(ErrorCode.BUILT_IN);
+		}
 	}
 }

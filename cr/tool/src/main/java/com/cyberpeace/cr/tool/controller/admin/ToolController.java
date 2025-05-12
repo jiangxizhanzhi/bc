@@ -2,7 +2,9 @@ package com.cyberpeace.cr.tool.controller.admin;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
@@ -117,6 +119,7 @@ public class ToolController {
 	public BaseRsp<ToolRsp> create(@RequestBody @Validated ToolAddReq toolReq) {
 		Tool tool = BeanUtils.copy(toolReq, Tool.class);
 
+		tool.setBuiltin(false);
 		tool.setCover(utilService.replaceFileUrl(tool.getCover()));
 		tool.setTag(JsonUtil.arrayToString(toolReq.getTag()));
 		toolService.validateToolNameExist(tool);
@@ -138,6 +141,7 @@ public class ToolController {
 	@PatchMapping()
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<String> update(@RequestBody @Validated ToolUpdateReq toolupdateReq) {
+		toolService.checkBuiltin(toolupdateReq.getResourceId());
 		Tool tool = BeanUtils.copy(toolupdateReq, Tool.class);
 		tool.setTag(JsonUtil.arrayToString(toolupdateReq.getTag()));
 		toolService.validateEditToolNameExist(tool);
@@ -161,6 +165,11 @@ public class ToolController {
 	public BaseRsp<String> batchRemove(@RequestBody @Validated DeleteReq deleteReq) {
 
 		List<Tool> toolList = toolService.listByIds(deleteReq.getIds());
+		for (Tool tool : toolList) {
+			if (tool.getBuiltin()) {
+				throw new BusinessException(ErrorCode.BUILT_IN);
+			}
+		}
 
 		toolService.removeByIds(deleteReq.getIds());
 

@@ -91,4 +91,6 @@ public interface ToolService extends IService<Tool> {
 	 * @return {@code Map<String, String> }
 	 */
 	Map<String, String> getIdNameMap(List<String> toolIds);
+
+	void checkBuiltin(String resourceId);
 }

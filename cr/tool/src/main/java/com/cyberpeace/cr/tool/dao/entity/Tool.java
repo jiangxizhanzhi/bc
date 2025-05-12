@@ -8,7 +8,6 @@ import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.ConfigUtil;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -142,6 +141,8 @@ public class Tool extends BaseTable {
 	 * 类型
 	 */
 	private String type;
+
+	private Boolean builtin;
 
 	public String getCoverUrl() {
 		String prefix = ConfigUtil.getContextProperty("cr.local.file.prefix");

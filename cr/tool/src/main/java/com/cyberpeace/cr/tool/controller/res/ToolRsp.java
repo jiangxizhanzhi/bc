@@ -186,4 +186,10 @@ public class ToolRsp implements Serializable {
 	 */
 	@ApiModelProperty("类型， probe：探测类,attack：攻击类，control：控制类，defense：防御类")
 	private String type;
+
+	/**
+	 * 内置
+	 */
+	@ApiModelProperty("是否内置")
+	private Boolean builtin;
 }

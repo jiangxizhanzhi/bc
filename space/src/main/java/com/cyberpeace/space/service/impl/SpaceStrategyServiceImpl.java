@@ -33,10 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -51,6 +48,8 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	private final Map<String, SpaceStrategyFrameBo> frameCache = Maps.newConcurrentMap();
+
 	@Override
 	public SpaceStrategyFrameBo getFrame() {
 		Map<String, SpaceStrategyFrameBo> map = this.getFrameMap();
@@ -63,16 +62,18 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		SpaceStrategyFrame frame = this.req2Entity(req);
 		// todo 重名校验
 		frameMapper.insert(frame);
+		this.refreshFrameCache();
 	}
 
 	@Override
 	public void modify(SpaceStrategyFrameModifyReq req) {
-		SpaceStrategyFrame frame = frameMapper.selectById(req.getResourceId()) ;
+		SpaceStrategyFrame frame = frameMapper.selectById(req.getResourceId());
 		if (Boolean.TRUE.equals(frame.getBuiltin())) {
 			throw new BusinessException(ErrorCode.BUILT_IN);
 		}
 		frame.setName(req.getName());
 		frameMapper.updateById(frame);
+		this.refreshFrameCache();
 	}
 
 	@Override
@@ -93,6 +94,7 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 			throw new BusinessException(SpaceError.STRATEGY_EXIST);
 		}
 		frameMapper.deleteBatchIds(frameIds);
+		this.refreshFrameCache();
 	}
 
 	@Override
@@ -122,7 +124,7 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 
 	@Override
 	public void deleteStrategy(List<String> ids) {
-		if(null == ids || ids.isEmpty()){
+		if (null == ids || ids.isEmpty()) {
 			return;
 		}
 		mapper.deleteBatchIds(ids);
@@ -144,8 +146,12 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 	@Override
 	public String getFrameRouteById(String frameId) {
 		List<String> names = Lists.newArrayList();
-		while (!SpaceCommonConstant.DEFAULT_STRATEGY_FRAME.equals(frameId)){
-			SpaceStrategyFrame frame = this.getFrameOrException(frameId);
+		Map<String, SpaceStrategyFrameBo> frameMap = this.getFrameMap();
+		while (!SpaceCommonConstant.DEFAULT_STRATEGY_FRAME.equals(frameId)) {
+			SpaceStrategyFrameBo frame = frameMap.get(frameId);
+			if (null == frame) {
+				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+			}
 			names.add(frame.getName());
 			frameId = frame.getParent();
 		}
@@ -153,9 +159,9 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return String.join("/", names);
 	}
 
-    @Override
-    public IndexStrategy getStatistics() {
-		SpaceStrategyFrameBo frameBo = this.getFrame();
+	@Override
+	public IndexStrategy getStatistics() {
+		SpaceStrategyFrameBo frameBo = this.getUndecoratedFrame();
 		Map<String, List<String>> map = Maps.newHashMap();
 		for (SpaceStrategyFrameBo child : frameBo.getChildren()) {
 			if (null == child) {
@@ -166,26 +172,38 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 			map.put(child.getResourceId(), frameIds);
 		}
 		IndexStrategy strategy = new IndexStrategy();
-		strategy.setOs(this.countByFrameIds(map.get("47d82955780346d98f92250e1e4ecd10")));
-		strategy.setDatabase(this.countByFrameIds(map.get("f41c777715754d3c99c76f17f2b78975")));
-		strategy.setMiddleware(this.countByFrameIds(map.get("52e001b892ae4d38aced84842918a4ba")));
-		strategy.setSwitchboard(this.countByFrameIds(map.get("8114e09e4dee4ca6b15eaa4772f36bf9")));
-		strategy.setRouter(this.countByFrameIds(map.get("e0fafbc784c9486c967ab0952c0c3a3f")));
-		strategy.setBigData(this.countByFrameIds(map.get("da6a5308594e4cbab220d136bf1002d9")));
-		strategy.setAntiVirus(this.countByFrameIds(map.get("02ef1b4cf4d94a2bb9d2312defd3ed6f")));
-		strategy.setTerminal(this.countByFrameIds(map.get("5a4243d5c16b4376ab7a63da386ea993")));
-		strategy.setBorder(this.countByFrameIds(map.get("518eccd483a94d218b4994de4c714557")));
-		strategy.setInvasionCheck(this.countByFrameIds(map.get("ca6efb4d930b438badc1649f098eb966")));
+		List<SpaceStrategy> strategies = mapper.selectList(null);
+		strategy.setOs(
+				this.countByFrameIds(map.get("47d82955780346d98f92250e1e4ecd10"), strategies));
+		strategy.setDatabase(
+				this.countByFrameIds(map.get("f41c777715754d3c99c76f17f2b78975"), strategies));
+		strategy.setMiddleware(
+				this.countByFrameIds(map.get("52e001b892ae4d38aced84842918a4ba"), strategies));
+		strategy.setSwitchboard(
+				this.countByFrameIds(map.get("8114e09e4dee4ca6b15eaa4772f36bf9"), strategies));
+		strategy.setRouter(
+				this.countByFrameIds(map.get("e0fafbc784c9486c967ab0952c0c3a3f"), strategies));
+		strategy.setBigData(
+				this.countByFrameIds(map.get("da6a5308594e4cbab220d136bf1002d9"), strategies));
+		strategy.setAntiVirus(
+				this.countByFrameIds(map.get("02ef1b4cf4d94a2bb9d2312defd3ed6f"), strategies));
+		strategy.setTerminal(
+				this.countByFrameIds(map.get("5a4243d5c16b4376ab7a63da386ea993"), strategies));
+		strategy.setBorder(
+				this.countByFrameIds(map.get("518eccd483a94d218b4994de4c714557"), strategies));
+		strategy.setInvasionCheck(
+				this.countByFrameIds(map.get("ca6efb4d930b438badc1649f098eb966"), strategies));
 		strategy.calSum();
 
 		return strategy;
-    }
+	}
 
 	@Override
-	public ListRsp<SpaceStrategyBo> pageStrategiesByFrame(PageReqBase req, String frameId, String name) {
+	public ListRsp<SpaceStrategyBo> pageStrategiesByFrame(PageReqBase req, String frameId,
+			String name) {
 		Page page = req.toPageParam();
 		LambdaQueryWrapper<SpaceStrategy> wrapper = new LambdaQueryWrapper<>();
-		if(StringUtils.isNotBlank(name)){
+		if (StringUtils.isNotBlank(name)) {
 			wrapper.like(SpaceStrategy::getName, name);
 		}
 		Map<String, SpaceStrategyFrameBo> map = this.getFrameMap();
@@ -206,6 +224,7 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		});
 		return PageUtil.getListResult(resPage);
 	}
+
 	/**
 	 * 转换
 	 *
@@ -246,14 +265,20 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 				SpaceKTypeEnum.KNOWLEDGE.getId(), 1);
 		chart.getData().add(baseItem);
 		chart.getCategories().add(new KnowledgeChartCategory(SpaceKTypeEnum.STRATEGY));
-		SpaceStrategyFrameBo frame = this.getFrame();
+		SpaceStrategyFrameBo frame = this.getUndecoratedFrame();
 		for (SpaceStrategyFrameBo bo : frame.getChildren()) {
 			this.fillChart(chart, bo, SpaceKTypeEnum.STRATEGY.getId(), 2);
 		}
 		return chart;
 	}
 
-	private void fillChart(KnowledgeChart chart, SpaceStrategyFrameBo bo, String parentId, int level) {
+	private SpaceStrategyFrameBo getUndecoratedFrame() {
+		Map<String, SpaceStrategyFrameBo> map = this.getFrameMap();
+		return map.get(SpaceCommonConstant.DEFAULT_STRATEGY_FRAME);
+	}
+
+	private void fillChart(KnowledgeChart chart, SpaceStrategyFrameBo bo, String parentId,
+			int level) {
 		KnowledgeChartItem item = new KnowledgeChartItem(level);
 		item.setName(bo.getName());
 		item.setId(bo.getResourceId());
@@ -281,27 +306,32 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		}
 	}
 
-	private void collectFrameRoute(Map<String, String> routeMap, List<String> frameNames, SpaceStrategyFrameBo bo){
+	private void collectFrameRoute(Map<String, String> routeMap, List<String> frameNames,
+			SpaceStrategyFrameBo bo) {
 		if (null == bo) {
 			return;
 		}
 		frameNames.add(bo.getName());
-		routeMap.put(bo.getResourceId(), String.join("/", frameNames.subList(1, frameNames.size())));
+		routeMap.put(bo.getResourceId(),
+				String.join("/", frameNames.subList(1, frameNames.size())));
 		for (SpaceStrategyFrameBo child : bo.getChildren()) {
 			collectFrameRoute(routeMap, frameNames, child);
 		}
 		frameNames.remove(frameNames.size() - 1);
 	}
 
-	private Integer countByFrameIds(List<String> frameIds){
-		LambdaQueryWrapper<SpaceStrategy> wrapper = new LambdaQueryWrapper<>();
-		wrapper.in(SpaceStrategy::getFrameId, frameIds);
-		return mapper.selectCount(wrapper);
+	private Integer countByFrameIds(List<String> frameIds, List<SpaceStrategy> strategies) {
+		int cnt = 0;
+		Set<String> set = new HashSet<>(frameIds);
+		for (SpaceStrategy strategy : strategies) {
+			if (set.contains(strategy.getFrameId())) {
+				cnt++;
+			}
+		}
+		return cnt;
 	}
 
-
-
-    private SpaceStrategy req2Entity(SpaceStrategyAddReq req){
+	private SpaceStrategy req2Entity(SpaceStrategyAddReq req) {
 		SpaceStrategy strategy = BeanUtils.copy(req, SpaceStrategy.class);
 		return strategy;
 	}
@@ -324,17 +354,17 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return bo;
 	}
 
-	private SpaceStrategy getOrException(String resourceId){
+	private SpaceStrategy getOrException(String resourceId) {
 		SpaceStrategy strategy = mapper.selectById(resourceId);
-		if(null == strategy){
+		if (null == strategy) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		return strategy;
 	}
 
-	private SpaceStrategyFrame getFrameOrException(String resourceId){
+	private SpaceStrategyFrame getFrameOrException(String resourceId) {
 		SpaceStrategyFrame frame = frameMapper.selectById(resourceId);
-		if(null == frame){
+		if (null == frame) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		return frame;
@@ -360,24 +390,36 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 	}
 
 	private Map<String, SpaceStrategyFrameBo> getFrameMap() {
-		List<SpaceStrategyFrame> strategyFrameList = frameMapper.getAll();
-
-		Map<String, SpaceStrategyFrameBo> map = Maps.newHashMap();
-		map.put(SpaceCommonConstant.DEFAULT_STRATEGY_FRAME, new SpaceStrategyFrameBo());
-		for (SpaceStrategyFrame strategyFrame : strategyFrameList) {
-			SpaceStrategyFrameBo bo = this.entity2Bo(strategyFrame);
-			map.put(bo.getResourceId(), bo);
+		if (frameCache.isEmpty()) {
+			initFrameCache();
 		}
-		for (SpaceStrategyFrame strategyFrame : strategyFrameList) {
-			SpaceStrategyFrameBo bo = map.get(strategyFrame.getResourceId());
-			if (null != bo.getParent()) {
-				SpaceStrategyFrameBo parent = map.get(bo.getParent());
-				if (null != parent) {
-					parent.getChildren().add(bo);
+		return frameCache;
+	}
+
+	private synchronized void initFrameCache() {
+		if (frameCache.isEmpty()) {
+			List<SpaceStrategyFrame> strategyFrameList = frameMapper.getAll();
+
+			frameCache.put(SpaceCommonConstant.DEFAULT_STRATEGY_FRAME, new SpaceStrategyFrameBo());
+			for (SpaceStrategyFrame strategyFrame : strategyFrameList) {
+				SpaceStrategyFrameBo bo = this.entity2Bo(strategyFrame);
+				frameCache.put(bo.getResourceId(), bo);
+			}
+			for (SpaceStrategyFrame strategyFrame : strategyFrameList) {
+				SpaceStrategyFrameBo bo = frameCache.get(strategyFrame.getResourceId());
+				if (null != bo.getParent()) {
+					SpaceStrategyFrameBo parent = frameCache.get(bo.getParent());
+					if (null != parent) {
+						parent.getChildren().add(bo);
+					}
 				}
 			}
 		}
-		return map;
+	}
+
+	private synchronized void refreshFrameCache() {
+		frameCache.clear();
+		initFrameCache();
 	}
 
 }

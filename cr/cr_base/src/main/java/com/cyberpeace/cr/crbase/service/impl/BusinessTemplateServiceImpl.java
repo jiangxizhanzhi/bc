@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.CommonContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -455,6 +456,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		String userId = UserInfoContext.getUserContext().getUserId();
 		Page page = businessTemplateQuery.toPageParam();
 		UserInfo userInfo = UserInfoContext.getUserContext();
+		String token = CommonContext.getAuthorization();
 		if(userInfo.isSuperuser()){
 			businessTemplateQuery.setIds(businessTemplateMapper.getAllIds());
 		}else {
@@ -477,7 +479,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				businessTemplate.setTotalDisk(nodeCountMap.get(businessTemplate.getTopoId()).getTotalDisk());
 
 				String topoId = businessTemplate.getTopoId();
-				String token = UserInfoContext.getUserContext().getToken();
+
 				String url = "http://1010101/asdf/asdf?topo_id=" + topoId + "&token=" + token;
 				businessTemplate.setUrl(url);
 			}

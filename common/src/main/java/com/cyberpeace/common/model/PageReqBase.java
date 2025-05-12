@@ -1,17 +1,17 @@
 package com.cyberpeace.common.model;
 
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.google.common.collect.Lists;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 /**
  * 分页请求体基础
@@ -56,6 +56,12 @@ public class PageReqBase extends PatternBase {
 		if (StringUtils.startsWith(sort, "-")) {
 			sort = StringUtils.substring(sort, 1);
 			asc = false;
+		}
+
+		if (StringUtils.isNotEmpty(sort) && (sort.trim().contains(" ") || sort.trim().contains(";")
+				|| sort.contains("(") || sort.contains(")") || sort.contains("'")
+				|| sort.contains("\"") || sort.contains("%") || sort.contains("\\"))) {
+			throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
 		}
 
 		// 设置排序字段

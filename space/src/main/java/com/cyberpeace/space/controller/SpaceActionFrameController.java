@@ -1,21 +1,24 @@
 package com.cyberpeace.space.controller;
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.space.dao.entity.SpaceActionFrame;
+import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.controller.SpaceActionFrameBaseController;
-import com.cyberpeace.space.service.SpaceActionFrameApplicationService;
+import com.cyberpeace.space.service.SpaceActionFrameEventTypeService;
 import com.cyberpeace.space.service.SpaceActionFrameService;
+import com.cyberpeace.space.service.SpaceActionFrameTargetTypeService;
 import com.cyberpeace.space.service.context.frame.ActionFrameArrangeBo;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameBo;
 import com.cyberpeace.space.service.context.frame.SpaceActionFramePageReq;
-
+import com.cyberpeace.space.service.context.frame.SpaceActionFrameRecBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 空间动作帧控制器
@@ -36,7 +39,10 @@ public class SpaceActionFrameController extends SpaceActionFrameBaseController<S
 	private SpaceActionFrameService service;
 
 	@Autowired
-	private SpaceActionFrameApplicationService applicationService;
+	private SpaceActionFrameEventTypeService eventTypeService;
+
+	@Autowired
+	private SpaceActionFrameTargetTypeService targetTypeService;
 
 	/**
 	 * 获取框架
@@ -64,6 +70,44 @@ public class SpaceActionFrameController extends SpaceActionFrameBaseController<S
 		req.checkTacticDuplication();
 		service.saveFrame(req);
 		return new BaseRsp<>();
+	}
+
+	/**
+	 * 获取全部框架类型
+	 */
+	@ApiOperation("框架威胁类型列表")
+	@GetMapping("/type_list")
+	public BaseRsp<List<IdAndName>> getTypes() {
+		List<IdAndName> targetTypeList = StreamApiUtils.map(targetTypeService.list(),
+				e -> new IdAndName(e.getResourceId(), e.getName()));
+		List<IdAndName> eventTypeList = StreamApiUtils.map(eventTypeService.list(),
+				e -> new IdAndName(e.getResourceId(), e.getName()));
+		targetTypeList.addAll(eventTypeList);
+		return new BaseRsp<>(targetTypeList);
+	}
+
+	/**
+	 * 模拟推演子系统获取推荐行动框架
+	 */
+	@ApiOperation("模拟推演子系统获取推荐行动框架")
+	@GetMapping("/tuiyan")
+	public BaseRsp<List<SpaceActionFrameRecBo>> getTuiyanRecFrame(
+			@ApiParam(value = "类型id", name = "category_id") String category_id,
+			@ApiParam(value = "关键字", name = "key_word") String key_word) {
+		List<SpaceActionFrameRecBo> res = service.getTuiyanRecFrame(category_id, key_word);
+		return new BaseRsp<>(res);
+	}
+
+	/**
+	 * 能力评估子系统获取推荐行动框架
+	 */
+	@ApiOperation("能力评估子系统获取推荐行动框架")
+	@GetMapping("/nengli")
+	public BaseRsp<List<SpaceActionFrameRecBo>> getNengliRecFrame(
+			@ApiParam(value = "类型id", name = "category_id") String category_id,
+			@ApiParam(value = "关键字", name = "key_word") String key_word) {
+		List<SpaceActionFrameRecBo> res = service.getTuiyanRecFrame(category_id, key_word);
+		return new BaseRsp<>(res);
 	}
 
 }

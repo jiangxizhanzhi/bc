@@ -7,6 +7,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceFrameBaseTable;
+import com.cyberpeace.space.service.context.frame.ActionFrameArrangeBo;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameBo;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,6 +46,15 @@ public class SpaceActionFrame extends SpaceFrameBaseTable {
 	public SpaceActionFrameBo entity2Bo(Map<String, List<IdAndName>> relatedMap) {
 		SpaceActionFrameBo bo = BeanUtils.copy(this, SpaceActionFrameBo.class);
 		bo.setTag(JsonUtil.toJsonObjectArray(this.tag, String.class));
+		return bo;
+	}
+
+	public ActionFrameArrangeBo getArrangeBo() {
+		ActionFrameArrangeBo bo = JsonUtil.toJsonObject(this.frame, ActionFrameArrangeBo.class);
+		if (null == bo) {
+			bo = new ActionFrameArrangeBo();
+			bo.setResourceId(this.getResourceId());
+		}
 		return bo;
 	}
 

@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.space.dao.entity.SpaceActionFrame;
 import com.cyberpeace.space.service.context.frame.ActionFrameArrangeBo;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameBo;
+import com.cyberpeace.space.service.context.frame.SpaceActionFrameRecBo;
 import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 空间行动框架Service
@@ -46,4 +48,10 @@ public interface SpaceActionFrameService extends IService<SpaceActionFrame> {
     ActionFrameArrangeBo getFrame(String resourceId);
 
     List<SpaceActionFrameBo> searchFrame(String req);
+
+    Map<String, String> getTacticNameMap(ActionFrameArrangeBo bo);
+
+    List<SpaceActionFrameRecBo> getTuiyanRecFrame(String categoryId, String keyWord);
+
+//    List<SpaceActionFrameRecBo> getNengliRecFrame(String categoryId, String keyWord);
 }

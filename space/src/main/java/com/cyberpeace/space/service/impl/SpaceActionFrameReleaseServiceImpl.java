@@ -13,6 +13,7 @@ import com.cyberpeace.space.dao.entity.*;
 import com.cyberpeace.space.dao.mapper.*;
 import com.cyberpeace.space.service.SpaceActionFrameApplicationService;
 import com.cyberpeace.space.service.SpaceActionFrameReleaseService;
+import com.cyberpeace.space.service.SpaceActionFrameService;
 import com.cyberpeace.space.service.context.frame.*;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,9 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 
 	@Autowired
 	private SpaceActionFrameApplicationService applicationService;
+
+	@Autowired
+	private SpaceActionFrameService frameService;
 
 	@Override
 	public void create(SpaceActionFrameReleaseReq req) {
@@ -77,7 +81,7 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 				.groupBy(orderMapper.selectList(orderWrapper), SpaceActionFrameOrder::getStep);
 		Map<String, String> userMap = applicationService.getUserMap(application.getRvbId(),
 				SpaceCommonConstant.RvbUserGroup.WORKER);
-		Map<String, String> tacticNameMap = this.getTacticNameMap(actionFrameArrangeBo);
+		Map<String, String> tacticNameMap = frameService.getTacticNameMap(actionFrameArrangeBo);
 		
 		// keep order of step & tactic
 		for (ActionFrameStep step : actionFrameArrangeBo.getSteps()) {
@@ -128,7 +132,7 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 		orderWrapper.eq(SpaceActionFrameOrder::getApplicationId, application.getResourceId());
 		Map<String, List<SpaceActionFrameOrder>> orderMap = StreamApiUtils
 				.groupBy(orderMapper.selectList(orderWrapper), SpaceActionFrameOrder::getStep);
-		Map<String, String> tacticNameMap = this.getTacticNameMap(bo.getFrame());
+		Map<String, String> tacticNameMap = frameService.getTacticNameMap(bo.getFrame());
 		for (ActionFrameStep step : bo.getFrame().getSteps()) {
 			if (!orderMap.containsKey(step.getResourceId())) {
 //				if (releaseMap.containsKey(step.getName())) {
@@ -171,23 +175,4 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 			throw new BusinessException(SpaceError.STAGE_RELEASED);
 		}
 	}
-
-	private Map<String, String> getTacticNameMap(ActionFrameArrangeBo bo) {
-		List<String> tacticIds = Lists.newArrayList();
-		for (ActionFrameStep step : bo.getSteps()) {
-			for (ActionFrameTactic tactic : step.getTactics()) {
-				tacticIds.add(tactic.getResourceId());
-			}
-		}
-		List<SpaceTacticAttack> attackList = tacticIds.isEmpty() ? Lists.newArrayList()
-				: tacticAttackMapper.selectBatchIds(tacticIds);
-		List<SpaceTacticDefense> defenseList = tacticIds.isEmpty() ? Lists.newArrayList()
-				: tacticDefenseMapper.selectBatchIds(tacticIds);
-		Map<String, String> tacticNameMap = StreamApiUtils.toMap(attackList,
-				SpaceTacticAttack::getResourceId, SpaceTacticAttack::getName);
-		tacticNameMap.putAll(StreamApiUtils.toMap(defenseList, SpaceTacticDefense::getResourceId,
-				SpaceTacticDefense::getName));
-		return tacticNameMap;
-	}
-
 }

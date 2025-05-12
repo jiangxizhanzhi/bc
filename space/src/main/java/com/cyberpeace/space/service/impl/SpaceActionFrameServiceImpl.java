@@ -1,20 +1,22 @@
 package com.cyberpeace.space.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.dao.entity.*;
-import com.cyberpeace.space.dao.mapper.SpaceActionFrameEventTypeMapper;
-import com.cyberpeace.space.dao.mapper.SpaceActionFrameMapper;
-import com.cyberpeace.space.dao.mapper.SpaceActionFrameTargetTypeMapper;
-import com.cyberpeace.space.dao.mapper.SpaceActionFrameUseMapper;
+import com.cyberpeace.space.dao.mapper.*;
 import com.cyberpeace.space.service.*;
 import com.cyberpeace.space.service.context.frame.*;
+import com.cyberpeace.space.service.context.strategy.SpaceStrategyBo;
+import com.cyberpeace.space.service.context.tactic.SpaceTacticBo;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +57,15 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 
 	@Autowired
 	private SpaceActionFrameEventTypeMapper eventTypeMapper;
+
+	@Autowired
+	private SpaceTacticAttackMapper tacticAttackMapper;
+
+	@Autowired
+	private SpaceTacticDefenseMapper tacticDefenseMapper;
+
+	@Autowired
+	private SpaceStrategyService strategyService;
 
 
 	@Override
@@ -306,7 +317,109 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 		List<SpaceActionFrameBo> boList = StreamApiUtils.map(frames,
 				frame -> frame.entity2Bo(null));
 		return boList;
-    }
+	}
+
+	@Override
+	public List<SpaceActionFrameRecBo> getTuiyanRecFrame(String categoryId, String keyWord) {
+		LambdaQueryWrapper<SpaceActionFrame> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(SpaceActionFrame::getCategoryId, categoryId);
+		if (StringUtils.isNotBlank(keyWord)) {
+			wrapper.and(wrapperKeyWord -> getKeyWordWrapper(keyWord, wrapperKeyWord));
+		}
+		List<SpaceActionFrame> frameList = this.list(wrapper);
+
+		List<SpaceActionFrameRecBo> res = StreamApiUtils.map(frameList, this::entity2RecBo);
+		return res;
+	}
+
+	private SpaceActionFrameRecBo entity2RecBo(SpaceActionFrame frame){
+		SpaceActionFrameRecBo bo = BeanUtils.copy(frame, SpaceActionFrameRecBo.class);
+		bo.setTag(JsonUtil.toJsonObjectArray(frame.getTag(), String.class));
+		
+		bo.setFrame(frame.getArrangeBo());
+		// collect tacticIds
+		List<String> tacticIds = Lists.newArrayList();
+		for (ActionFrameStep step : bo.getFrame().getSteps()) {
+			for (ActionFrameTactic tactic : step.getTactics()) {
+				tacticIds.add(tactic.getResourceId());
+			}
+		}
+		// search tactics
+		List<SpaceTacticAttack> attackList = tacticIds.isEmpty() ? Lists.newArrayList()
+				: tacticAttackMapper.selectBatchIds(tacticIds);
+		List<SpaceTacticDefense> defenseList = tacticIds.isEmpty() ? Lists.newArrayList()
+				: tacticDefenseMapper.selectBatchIds(tacticIds);
+		Map<String, String> tacticNameMap = StreamApiUtils.toMap(attackList,
+				SpaceTacticAttack::getResourceId, SpaceTacticAttack::getName);
+		tacticNameMap.putAll(StreamApiUtils.toMap(defenseList, SpaceTacticDefense::getResourceId,
+				SpaceTacticDefense::getName));
+		// set tactic name
+		for (ActionFrameStep step : bo.getFrame().getSteps()) {
+			for (ActionFrameTactic tactic : step.getTactics()) {
+				if (tacticNameMap.containsKey(tactic.getResourceId())) {
+					tactic.setName(tacticNameMap.get(tactic.getResourceId()));
+				}
+			}
+		}
+		// tactic bo list
+		List<SpaceTacticBo> tactics = StreamApiUtils.map(attackList,attack -> {
+			SpaceTacticBo tacticBo = BeanUtils.copy(attack, SpaceTacticBo.class);
+			List<String> toolIds = JsonUtil.toJsonObjectArray(attack.getTool(), String.class);
+			tacticBo.setToolCount(toolIds.size());
+			JSONArray actions = JsonUtil.stringToArray(attack.getAction());
+			tacticBo.setActionCount(actions.size());
+			tacticBo.setType(SpaceCommonConstant.TacticType.ATTACK);
+			return tacticBo;
+		});
+		tactics.addAll(StreamApiUtils.map(defenseList,defense -> {
+			SpaceTacticBo tacticBo = BeanUtils.copy(defense, SpaceTacticBo.class);
+			List<String> toolIds = JsonUtil.toJsonObjectArray(defense.getTool(), String.class);
+			tacticBo.setToolCount(toolIds.size());
+			JSONArray actions = JsonUtil.stringToArray(defense.getAction());
+			tacticBo.setActionCount(actions.size());
+			tacticBo.setType(SpaceCommonConstant.TacticType.DEFENSE);
+			return tacticBo;
+		}));
+
+		bo.setTactics(tactics);
+
+		// strategy ids
+		List<String> strategyIds = Lists.newArrayList();
+		for (SpaceTacticAttack attack : attackList) {
+			strategyIds.addAll(JsonUtil.toJsonObjectArray(attack.getStrategy(), String.class));
+		}
+		for (SpaceTacticDefense defense : defenseList) {
+			strategyIds.addAll(JsonUtil.toJsonObjectArray(defense.getStrategy(), String.class));
+		}
+		if(!strategyIds.isEmpty()){
+			List<SpaceStrategy> strategyList = strategyService.listByIds(strategyIds);
+			List<SpaceStrategyBo> strategyBos = StreamApiUtils.map(strategyList, strategy -> {
+				SpaceStrategyBo strategyBo = BeanUtils.copy(strategy, SpaceStrategyBo.class);
+				strategyBo.setRoute(strategyService.getFrameRouteById(strategy.getFrameId()));
+				return strategyBo;
+			}) ;
+			bo.setStrategies(strategyBos);
+		}
+		return bo;
+	}
+
+	private void getKeyWordWrapper(String keyWord, LambdaQueryWrapper<SpaceActionFrame> wrapper) {
+		wrapper.like(SpaceActionFrame::getName, keyWord);
+		
+		List<String> tacticIds = Lists.newArrayList();
+		LambdaQueryWrapper<SpaceTacticAttack> attackLambdaQueryWrapper = new LambdaQueryWrapper<>();
+		attackLambdaQueryWrapper.like(SpaceTacticAttack::getName, keyWord);
+		List<SpaceTacticAttack> attackList = tacticAttackMapper.selectList(attackLambdaQueryWrapper);
+		tacticIds.addAll(StreamApiUtils.map(attackList, SpaceTacticAttack::getResourceId));
+
+		LambdaQueryWrapper<SpaceTacticDefense> defenseLambdaQueryWrapper = new LambdaQueryWrapper<>();
+		defenseLambdaQueryWrapper.like(SpaceTacticDefense::getName, keyWord);
+		List<SpaceTacticDefense> defenseList = tacticDefenseMapper.selectList(defenseLambdaQueryWrapper);
+		tacticIds.addAll(StreamApiUtils.map(defenseList, SpaceTacticDefense::getResourceId));
+		for (String tacticId : tacticIds) {
+			wrapper.or().like(SpaceActionFrame::getFrame, tacticId);
+		}
+	}
 
 
     private SpaceActionRelation createRel(String upperId, String lowerId) {
@@ -322,5 +435,24 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		return frame;
+	}
+	
+	@Override
+	public Map<String, String> getTacticNameMap(ActionFrameArrangeBo bo) {
+		List<String> tacticIds = Lists.newArrayList();
+		for (ActionFrameStep step : bo.getSteps()) {
+			for (ActionFrameTactic tactic : step.getTactics()) {
+				tacticIds.add(tactic.getResourceId());
+			}
+		}
+		List<SpaceTacticAttack> attackList = tacticIds.isEmpty() ? Lists.newArrayList()
+				: tacticAttackMapper.selectBatchIds(tacticIds);
+		List<SpaceTacticDefense> defenseList = tacticIds.isEmpty() ? Lists.newArrayList()
+				: tacticDefenseMapper.selectBatchIds(tacticIds);
+		Map<String, String> tacticNameMap = StreamApiUtils.toMap(attackList,
+				SpaceTacticAttack::getResourceId, SpaceTacticAttack::getName);
+		tacticNameMap.putAll(StreamApiUtils.toMap(defenseList, SpaceTacticDefense::getResourceId,
+				SpaceTacticDefense::getName));
+		return tacticNameMap;
 	}
 }

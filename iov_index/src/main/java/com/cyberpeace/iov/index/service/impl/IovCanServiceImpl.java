@@ -115,7 +115,7 @@ public class IovCanServiceImpl implements IovCanService {
 
 	@Override
 	public void startSendMsg(MsgSendReq req) {
-		req.getMsgs().forEach(msg -> msg.setMsgChn(MSG_CHN));
+//		req.getMsgs().forEach(msg -> msg.setMsgChn(MSG_CHN));
 		IovHttpClientUtil.postJson(START_SEND_MSG_URL, req);
 		this.sendFlashEffect(req);
 	}

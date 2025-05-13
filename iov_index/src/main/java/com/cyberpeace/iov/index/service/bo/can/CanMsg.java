@@ -15,7 +15,7 @@ public class CanMsg {
 	@Size(min = 3, max = 3, message = "参数长度必须为3个字符")
 	private String msgId;
 
-	@ApiModelProperty(value = "报文通道，后台指定")
+	@ApiModelProperty(value = "报文通道，对应不同的车架")
 	private String msgChn;
 
 	// 默认一般是8

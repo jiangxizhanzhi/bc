@@ -16,7 +16,10 @@ public class SpaceAptReportPageReq extends SpacePageReqBase {
 	@Setter
 	@ApiModelProperty(value = "APT组织")
 	private String apt_org;
-
+	@Getter
+	@Setter
+	@ApiModelProperty(value = "报告类型")
+	private Integer report_type;
 	@Override
 	public LambdaQueryWrapper<SpaceAptReport> req2QueryWrapper() {
 		LambdaQueryWrapper<SpaceAptReport> wrapper = new LambdaQueryWrapper<>();
@@ -26,6 +29,9 @@ public class SpaceAptReportPageReq extends SpacePageReqBase {
 		}
 		if (StringUtils.isNotBlank(this.apt_org)) {
 			wrapper.like(SpaceAptReport::getAptOrg, this.getApt_org());
+		}
+		if (this.report_type != null) {
+			wrapper.eq(SpaceAptReport::getType, this.getReport_type());
 		}
 		wrapper.setEntityClass(SpaceAptReport.class);
 		return wrapper;

@@ -118,14 +118,11 @@ public class SpaceStrategyController {
 		SpaceStrategy strategy = spaceStrategyService.getById(strategy_id);
 		return new BaseRsp<>(spaceStrategyService.getFrameRouteById(strategy.getFrameId()));
 	}
-	// todo 导出 转成pdf
 	@ApiOperation("导出策略")
 	@GetMapping("/export")
 	public void exportStrategy2PDF(
 			HttpServletResponse httpServletResponse,
-			List<String> strategy_ids) {
-
-		FileUtil.setResponse(new File
-				(spaceStrategyService.dumpStrategyPath(strategy_ids)), true, httpServletResponse);
+			@RequestParam List<String> strategy_ids) {
+		FileUtil.setResponse(new File(spaceStrategyService.dumpStrategyPath(strategy_ids)), false, httpServletResponse);
 	}
 }

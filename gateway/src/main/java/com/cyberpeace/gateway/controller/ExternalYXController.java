@@ -53,7 +53,9 @@ import com.cyberpeace.oj.practice.service.externalbo.ExternalTheoryBo;
 import com.cyberpeace.space.dao.entity.SpaceActionFrame;
 import com.cyberpeace.space.dao.mapper.SpaceActionFrameMapper;
 import com.cyberpeace.space.service.SpaceActionFrameService;
+import com.cyberpeace.space.service.SpaceStrategyService;
 import com.cyberpeace.space.service.context.frame.ActionStatisticsBo;
+import com.cyberpeace.space.service.context.strategy.SpaceStrategyBo;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -64,7 +66,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -163,6 +167,11 @@ public class ExternalYXController {
 	 */
 	@Autowired
 	private CourseService courseService;
+	/**
+	 * 策略service
+	 */
+	@Autowired
+	private SpaceStrategyService spaceStrategyService;
 
 	/**
 	 * 列表
@@ -628,6 +637,20 @@ public class ExternalYXController {
 			value = "框架类型，process or target", required = true) @PathVariable String type) {
 		spaceActionFrameService.recordUsage(type);
 		return new BaseRsp<>(true);
+	}
+	@ApiOperation("导出策略")
+	@GetMapping("/export")
+	public void exportStrategy2PDF(
+			HttpServletResponse httpServletResponse,
+			@ApiParam(value = "策略ids", name = "strategy_ids") @RequestParam List<String> strategy_ids) {
+		FileUtil.setResponse(new File(spaceStrategyService.dumpStrategyPath(strategy_ids)), false, httpServletResponse);
+	}
+	@ApiOperation("查看策略详情")
+	@GetMapping("")
+	public BaseRsp<SpaceStrategyBo>
+	getDetail(@ApiParam(value = "策略id", name = "resource_id") String resource_id) {
+		SpaceStrategyBo res = spaceStrategyService.getDetail(resource_id);
+		return new BaseRsp<>(res);
 	}
 
 }

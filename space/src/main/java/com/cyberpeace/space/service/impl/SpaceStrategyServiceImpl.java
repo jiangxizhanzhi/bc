@@ -38,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,8 +54,7 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 
 	@Autowired
 	private RemoteUserService remoteUserService;
-	@Autowired
-	private  SpaceStrategyService spaceStrategyService;
+
 	private final Map<String, SpaceStrategyFrameBo> frameCache = Maps.newConcurrentMap();
 
 	@Override
@@ -278,22 +278,22 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		}
 		return chart;
 	}
-	@Override
 	public String dumpStrategyPath(List<String> strategyIds) {
 		String destPdfPath;
 		JSONObject data = getStrategyJsonObject(strategyIds);
-		String destHtmlPath = String.format("%s.html",
-				AttachmentPath.STRATEGY.getDesc());
+		String basePath = AttachmentPath.STRATEGY.getDesc();
+		String timestamp = String.valueOf(System.currentTimeMillis());
+		String destHtmlPath = String.format("%s_%s.html", basePath, timestamp);
+//		String destHtmlPath = "C:/temp/strategy_" + timestamp + ".html";
 		try {
 			HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.Strategy, destHtmlPath);
 			destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html")) + "pdf";
 			HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
-
 		} finally {
+			log.info("生成的 HTML 文件路径: {}", destHtmlPath);
 			if (!new File(destHtmlPath).delete()) {
 				log.error("failed to delete file:{}", destHtmlPath);
 			}
@@ -308,10 +308,9 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		List<String> resourceIds = strategies.stream()
 				.map(SpaceStrategy::getResourceId)
 				.collect(Collectors.toList());
-
 		List<SpaceStrategyBo> bos = new ArrayList<>();
 		for (String resourceId : resourceIds) {
-			SpaceStrategyBo bo = spaceStrategyService.getDetail(resourceId);
+			SpaceStrategyBo bo = this.getDetail(resourceId);
 			bos.add(bo);
 		}
 		JSONArray dataArray = new JSONArray();
@@ -319,7 +318,9 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 			JSONObject boJson = new JSONObject();
 			boJson.put("name", bo.getName());
 			boJson.put("route", bo.getRoute());
-			boJson.put("groupe",bo.getExample());
+			boJson.put("example",bo.getExample());
+			boJson.put("content",bo.getContent());
+			boJson.put("gauge",bo.getGauge());
 			dataArray.add(boJson);
 		}
 		data.put("data", dataArray);

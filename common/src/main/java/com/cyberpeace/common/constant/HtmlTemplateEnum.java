@@ -50,8 +50,12 @@ public enum HtmlTemplateEnum {
 	 *
 	 * @see HtmlTemplateEnum
 	 */
-	LESSON("index.html", "static/template/html_to_pdf_template/Lesson");
-
+	LESSON("index.html", "static/template/html_to_pdf_template/Lesson"),
+	/**
+	 * 策略
+	 *
+	 */
+	 Strategy("index.html", "static/template/html_to_pdf_template/Strategy");
 	/**
 	 * 模板路径
 	 *

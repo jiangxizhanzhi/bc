@@ -98,6 +98,10 @@ public enum AttachmentPath implements GenericEnum {
 	 */
 	REDVSBLUE(18, "html_template/RussiaCopy/redvsblue/"),
 	/**
+	 * Strategy
+	 */
+	STRATEGY(19, "html_template/RussiaCopy/Strategy/"),
+	/**
 	 * 其他
 	 */
 	OTHER(99, "other/");

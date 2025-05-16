@@ -109,4 +109,5 @@ public interface SpaceStrategyService extends IService<SpaceStrategy> {
     List<SpaceActionStrategy> convert2ActionStrategy(List<String> ids);
 
     KnowledgeChart getStrategyChart();
+    String dumpStrategyPath(List<String> strategyIds);
 }

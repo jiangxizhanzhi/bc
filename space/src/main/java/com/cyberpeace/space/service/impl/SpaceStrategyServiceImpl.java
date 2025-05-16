@@ -1,18 +1,23 @@
 package com.cyberpeace.space.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.HtmlToPdfUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.constant.SpaceError;
@@ -34,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -47,7 +53,8 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 
 	@Autowired
 	private RemoteUserService remoteUserService;
-
+	@Autowired
+	private  SpaceStrategyService spaceStrategyService;
 	private final Map<String, SpaceStrategyFrameBo> frameCache = Maps.newConcurrentMap();
 
 	@Override
@@ -270,6 +277,53 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 			this.fillChart(chart, bo, SpaceKTypeEnum.STRATEGY.getId(), 2);
 		}
 		return chart;
+	}
+	@Override
+	public String dumpStrategyPath(List<String> strategyIds) {
+		String destPdfPath;
+		JSONObject data = getStrategyJsonObject(strategyIds);
+		String destHtmlPath = String.format("%s.html",
+				AttachmentPath.STRATEGY.getDesc());
+		try {
+			HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.Strategy, destHtmlPath);
+			destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html")) + "pdf";
+			HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+
+		} finally {
+			if (!new File(destHtmlPath).delete()) {
+				log.error("failed to delete file:{}", destHtmlPath);
+			}
+		}
+		return destPdfPath;
+	}
+
+	private JSONObject getStrategyJsonObject(List<String> strategyIds) {
+		JSONObject data = new JSONObject();
+		List<SpaceStrategy> strategies = this.listByIds(strategyIds);
+		//把其中的resourceid都拿出来
+		List<String> resourceIds = strategies.stream()
+				.map(SpaceStrategy::getResourceId)
+				.collect(Collectors.toList());
+
+		List<SpaceStrategyBo> bos = new ArrayList<>();
+		for (String resourceId : resourceIds) {
+			SpaceStrategyBo bo = spaceStrategyService.getDetail(resourceId);
+			bos.add(bo);
+		}
+		JSONArray dataArray = new JSONArray();
+		for (SpaceStrategyBo bo : bos) {
+			JSONObject boJson = new JSONObject();
+			boJson.put("name", bo.getName());
+			boJson.put("route", bo.getRoute());
+			boJson.put("groupe",bo.getExample());
+			dataArray.add(boJson);
+		}
+		data.put("data", dataArray);
+		return data;
 	}
 
 	private SpaceStrategyFrameBo getUndecoratedFrame() {

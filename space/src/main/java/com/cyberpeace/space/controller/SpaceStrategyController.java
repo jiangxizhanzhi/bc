@@ -3,6 +3,7 @@ package com.cyberpeace.space.controller;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.space.dao.entity.SpaceStrategy;
 import com.cyberpeace.space.model.req.IdReq;
 import com.cyberpeace.space.service.SpaceStrategyService;
@@ -16,6 +17,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.util.List;
 
 @Api(tags = "知识空间-知识库-策略库")
@@ -114,5 +117,15 @@ public class SpaceStrategyController {
 		}
 		SpaceStrategy strategy = spaceStrategyService.getById(strategy_id);
 		return new BaseRsp<>(spaceStrategyService.getFrameRouteById(strategy.getFrameId()));
+	}
+	// todo 导出 转成pdf
+	@ApiOperation("导出策略")
+	@GetMapping("/export")
+	public void exportStrategy2PDF(
+			HttpServletResponse httpServletResponse,
+			List<String> strategy_ids) {
+
+		FileUtil.setResponse(new File
+				(spaceStrategyService.dumpStrategyPath(strategy_ids)), true, httpServletResponse);
 	}
 }

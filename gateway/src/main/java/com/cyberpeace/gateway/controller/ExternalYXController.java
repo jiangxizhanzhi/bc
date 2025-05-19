@@ -639,14 +639,14 @@ public class ExternalYXController {
 		return new BaseRsp<>(true);
 	}
 	@ApiOperation("导出策略")
-	@GetMapping("/export")
+	@GetMapping("/strategy/export")
 	public void exportStrategy2PDF(
 			HttpServletResponse httpServletResponse,
 			@ApiParam(value = "策略ids", name = "strategy_ids") @RequestParam List<String> strategy_ids) {
 		FileUtil.setResponse(new File(spaceStrategyService.dumpStrategyPath(strategy_ids)), false, httpServletResponse);
 	}
 	@ApiOperation("查看策略详情")
-	@GetMapping("")
+	@GetMapping("/strategy/detail")
 	public BaseRsp<SpaceStrategyBo>
 	getDetail(@ApiParam(value = "策略id", name = "resource_id") String resource_id) {
 		SpaceStrategyBo res = spaceStrategyService.getDetail(resource_id);

@@ -135,6 +135,7 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 			return;
 		}
 		mapper.deleteBatchIds(ids);
+		refreshFrameCache();
 	}
 
 	@Override

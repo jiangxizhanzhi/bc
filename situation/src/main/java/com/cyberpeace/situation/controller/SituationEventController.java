@@ -1,5 +1,7 @@
 package com.cyberpeace.situation.controller;
 
+import com.cyberpeace.situation.dao.entity.ScenePro;
+import com.cyberpeace.situation.req.SceneProReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +14,8 @@ import com.cyberpeace.situation.service.SituationHandlerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+
+import java.util.List;
 
 /**
  * 态势事件Controller
@@ -133,5 +137,17 @@ public class SituationEventController {
 		WsMessage<WsAttackEffectDynamic> wsMessage = new WsMessage<>(code, wsAttackEffectDynamic);
 		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
 		return new BaseRsp<>(wsMessage);
+	}
+
+	@PostMapping("write/scene/property")
+	public BaseRsp writePro(@RequestBody SceneProReq req) {
+		situationHandlerService.writePro(req);
+		return new BaseRsp<>();
+	}
+
+	@GetMapping("read/scene/property")
+	public BaseRsp readPro(@RequestParam(value = "scene") String scene) {
+		List<ScenePro> result = situationHandlerService.readPro(scene);
+		return new BaseRsp<>(result);
 	}
 }

@@ -1,9 +1,12 @@
 package com.cyberpeace.situation.dao.mapper;
 
+import com.cyberpeace.situation.dao.entity.ScenePro;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.situation.dao.entity.AttackMessage;
+
+import java.util.List;
 
 /**
  * 攻击消息Mapper
@@ -35,4 +38,8 @@ public interface AttackMessageMapper extends BaseMapper<AttackMessage> {
 	 */
 	void deleteBySceneId(String sceneId);
 
+	List<ScenePro> readPro(String scene);
+	void updatePro(String id, String content);
+
+	void addPro(String scene, String content);
 }

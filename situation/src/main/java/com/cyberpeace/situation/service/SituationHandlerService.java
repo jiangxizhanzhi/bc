@@ -1,11 +1,13 @@
 package com.cyberpeace.situation.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.situation.dao.entity.ScenePro;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
 import com.cyberpeace.situation.model.ws.WsNodeStatus;
 import com.cyberpeace.situation.req.FlowLogReq;
+import com.cyberpeace.situation.req.SceneProReq;
 
 import java.util.List;
 import java.util.Map;
@@ -185,6 +187,10 @@ public interface SituationHandlerService {
 	 * @see String
 	 */
 	<T> void pushDataToRoom(T data, String sceneId);
+
+	void writePro(SceneProReq req);
+
+	List<ScenePro> readPro(String scene);
 
 	/**
 	 * 批量推送消息至房间

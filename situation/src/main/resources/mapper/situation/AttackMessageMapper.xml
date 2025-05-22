@@ -18,4 +18,21 @@
         from situation_attack_message
         where scene_id = #{sceneId}
     </delete>
+    <insert id="addPro">
+        insert into scene_property_config
+            (`scene`, `desc`, `content`)
+        values (#{scene}, null,#{content})
+    </insert>
+
+    <update id="updatePro">
+        update scene_property_config
+        set content = #{content}
+        where id = #{id}
+    </update>
+
+    <select id="readPro" resultType="com.cyberpeace.situation.dao.entity.ScenePro">
+        select *
+        from scene_property_config
+        where scene = #{scene}
+    </select>
 </mapper>

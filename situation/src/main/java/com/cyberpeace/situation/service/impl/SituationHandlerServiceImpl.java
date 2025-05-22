@@ -6,6 +6,9 @@ import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import com.cyberpeace.situation.dao.entity.ScenePro;
+import com.cyberpeace.situation.dao.mapper.AttackMessageMapper;
+import com.cyberpeace.situation.req.SceneProReq;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -86,6 +89,9 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	 */
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
+
+	@Autowired
+	private AttackMessageMapper attackMessageMapper;
 
 	/**
 	 * 记录流量事件最后时间
@@ -911,6 +917,26 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 				.messageIdentifier(identifier).build();
 
 		myWebSocketHandler.pushMessage(messageContext, true);
+	}
+
+	@Override
+	public void writePro(SceneProReq req) {
+		String id = req.getId();
+		String scene = req.getScene();
+		String content = req.getContent();
+		if (id != null) {
+			// 修改
+			attackMessageMapper.updatePro(id, content);
+		} else {
+			// 新增
+			attackMessageMapper.addPro(scene, content);
+		}
+	}
+
+	@Override
+	public List<ScenePro> readPro(String scene) {
+		List<ScenePro> pro = attackMessageMapper.readPro(scene);
+		return pro;
 	}
 
 	/**

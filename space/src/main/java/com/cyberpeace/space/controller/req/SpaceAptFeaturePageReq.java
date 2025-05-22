@@ -11,7 +11,7 @@ public class SpaceAptFeaturePageReq extends SpacePageReqBase {
     @Override
     public LambdaQueryWrapper<SpaceAptFeature> req2QueryWrapper() {
         LambdaQueryWrapper<SpaceAptFeature> wrapper = new LambdaQueryWrapper<>();
-        wrapper.orderByAsc(SpaceAptFeature::getId);
+        wrapper.orderByDesc(SpaceAptFeature::getUpdateTime);
         if (StringUtils.isNotBlank(this.getPattern())) {
             wrapper.like(SpaceAptFeature::getName, this.getPattern());
         }

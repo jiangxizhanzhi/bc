@@ -170,7 +170,9 @@ public class Tool extends BaseTable {
 
 	public enum Type {
 
-		PROBE("probe", "探测类"), ATTACK("attack", "攻击类"), CONTROL("control", "控制类"), DEFENSE("defense", "防御类");
+		PROBE("probe", "探测类"), ATTACK("attack", "攻击类"),
+		CONTROL("control", "控制类"), DEFENSE("defense", "防御类")
+		, OTHER("other", "其他类");
 
 		@Getter
 		private String code;

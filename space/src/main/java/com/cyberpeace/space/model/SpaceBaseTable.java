@@ -39,7 +39,8 @@ public abstract class SpaceBaseTable {
 
     @ApiModelProperty(value = "名称")
 	private String name;
-
+	@ApiModelProperty(value = "内置")
+	private Boolean builtin;
 	public abstract SpaceBoBase entity2Bo(Map<String, IdAndName> relatedMap);
 
 	public List<IdAndName> getListByJson(Map<String, IdAndName> relatedMap, String jsonStr) {

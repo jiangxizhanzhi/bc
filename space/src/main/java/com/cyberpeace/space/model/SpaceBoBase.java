@@ -13,7 +13,7 @@ import java.util.List;
 public abstract class SpaceBoBase {
 
 	private String resourceId;
-
+	private Boolean builtin;
 	public abstract SpaceBaseTable bo2Entity();
 
 	public String getIds(List<IdAndName> list){

@@ -22,6 +22,10 @@ public class IndexTool {
 	@ApiModelProperty(value = "防御类工具")
 	private Long defense = 0L;
 
+	@ApiModelProperty(value = "其他类工具")
+	private Long other = 0L;
+
+
 	@ApiModelProperty(value = "总数")
 	private Integer sum = 0;
 

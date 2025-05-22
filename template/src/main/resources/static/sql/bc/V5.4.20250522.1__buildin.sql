@@ -1,0 +1,10 @@
+ALTER TABLE space_apt_report ADD COLUMN builtin int(11);
+ALTER TABLE space_tactic_attack ADD COLUMN builtin int(11);
+ALTER TABLE space_apt_feature ADD COLUMN builtin int(11);
+ALTER TABLE space_loaded_file_threat_rule ADD COLUMN builtin int(11);
+ALTER TABLE space_event_integration_rule ADD COLUMN builtin int(11);
+ALTER TABLE space_traffic_detect_rule ADD COLUMN builtin int(11);
+ALTER TABLE space_apt_threat_detect_rule ADD COLUMN builtin int(11);
+ALTER TABLE space_score_ranking_rule ADD COLUMN builtin int(11);
+ALTER TABLE space_round_mechanism_rule ADD COLUMN builtin int(11);
+ALTER TABLE space_violation_judge_rule ADD COLUMN builtin int(11);

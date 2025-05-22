@@ -218,8 +218,8 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 				.filter(t -> Tool.Type.DEFENSE.getCode().equals(t.getType())).count());
 		indexTool.setControl(toolList.stream()
 				.filter(t -> Tool.Type.CONTROL.getCode().equals(t.getType())).count());
-		indexTool.setSum(toolList.size());
-
+		indexTool.setOther(toolList.stream()
+				.filter(t -> Tool.Type.OTHER.getCode().equals(t.getType())).count());
 		Map<String, Integer> map = Maps.newHashMap();
 		for (Tool tool : toolList) {
 			List<String> platforms = Arrays.asList(StringUtils.split(tool.getPlatforms(), ","));

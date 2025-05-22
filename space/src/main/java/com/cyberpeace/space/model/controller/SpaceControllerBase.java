@@ -50,6 +50,7 @@ public abstract class SpaceControllerBase<S extends IService<E>, E extends Space
 	public BaseRsp addAttack(@RequestBody B req) {
 		req.setResourceId(IDGeneratorUtil.getID());
 		E entity = (E) req.bo2Entity();
+		entity.setBuiltin(false);
 		this.checkNameDuplication(entity);
 		this.checkValue(entity);
 		baseService.save(entity);

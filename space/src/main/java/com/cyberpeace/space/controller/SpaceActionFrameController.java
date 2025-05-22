@@ -50,8 +50,9 @@ public class SpaceActionFrameController extends SpaceActionFrameBaseController<S
      * 重写新增
      */
     @ApiOperation("新增")
-    @PostMapping("/addAttack2")
-    public BaseRsp<SpaceActionFrame> addAttack2(@RequestBody SpaceActionFrameBo req) {
+    @PostMapping("")
+    @Override
+    public BaseRsp<SpaceActionFrame> addAttack(@RequestBody SpaceActionFrameBo req) {
 
         // 新增
         if (StringUtils.isBlank(req.getResourceId())) {

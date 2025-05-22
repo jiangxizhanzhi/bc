@@ -10,6 +10,8 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.dao.entity.*;
 import com.cyberpeace.space.dao.mapper.*;
@@ -23,6 +25,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Date;
 import java.util.List;
@@ -36,6 +41,12 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 
 	@Autowired
 	private SpaceActionTargetService targetService;
+
+	@Autowired
+	protected TransactionTemplate transactionTemplate;
+
+	@Autowired
+	protected SpaceActionRelationService relationService;
 
 	@Autowired
 	private SpaceActionMethodService methodService;
@@ -330,6 +341,28 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 
 		List<SpaceActionFrameRecBo> res = StreamApiUtils.map(frameList, this::entity2RecBo);
 		return res;
+	}
+
+	@Override
+	public void add(SpaceActionFrame entity) {
+
+		CrCommonValidator.validateNameLen(entity.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		LambdaQueryWrapper<SpaceActionFrame> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(SpaceActionFrame::getName, entity.getName());
+		wrapper.eq(SpaceActionFrame::getType, entity.getType());
+		SpaceActionFrame one = baseMapper.selectOne(wrapper);
+		if (null != one && (StringUtils.isBlank(entity.getResourceId())
+				|| !one.getResourceId().equals(entity.getResourceId()))) {
+			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+		}
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				baseMapper.insert(entity);
+				relationService.createRelation(com.google.common.collect.Lists.newArrayList(), entity.getResourceId());
+			}
+		});
 	}
 
 	private SpaceActionFrameRecBo entity2RecBo(SpaceActionFrame frame){

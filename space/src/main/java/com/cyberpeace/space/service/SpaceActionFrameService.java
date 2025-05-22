@@ -53,5 +53,7 @@ public interface SpaceActionFrameService extends IService<SpaceActionFrame> {
 
     List<SpaceActionFrameRecBo> getTuiyanRecFrame(String categoryId, String keyWord);
 
+    void add(SpaceActionFrame entity);
+
 //    List<SpaceActionFrameRecBo> getNengliRecFrame(String categoryId, String keyWord);
 }

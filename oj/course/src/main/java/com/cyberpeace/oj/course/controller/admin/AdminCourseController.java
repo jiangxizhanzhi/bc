@@ -324,7 +324,12 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 				false);
 
 		List<Course> courseList = courseService.listByIds(batchDeleteReq.getResourceIds());
+		boolean hasBuiltinCourse = courseList.stream()
+				.anyMatch(course -> course != null && Boolean.TRUE.equals(course.getBuiltin()));
 
+		if (hasBuiltinCourse) {
+			return new BaseRsp<>(false); // 返回false表示删除失败
+		}
 		Boolean result = courseService.batchDelete(batchDeleteReq.getResourceIds(), authContext);
 
 		courseList.forEach(course -> {

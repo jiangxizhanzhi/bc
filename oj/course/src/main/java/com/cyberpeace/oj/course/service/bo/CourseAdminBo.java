@@ -50,4 +50,11 @@ public class CourseAdminBo extends CourseWebBo {
      */
     @ApiModelProperty("授权操作数量")
     private Integer shareCount;
+    /**
+     * 内置
+     *
+     * @see Boolean
+     */
+    @ApiModelProperty("是否内置")
+    private Boolean builtin;
 }

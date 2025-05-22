@@ -170,5 +170,12 @@ public class CourseWebBo implements Serializable {
 
     @ApiModelProperty(value = "视频长度")
     private Integer videoDuration;
+    /**
+     * 内置
+     *
+     * @see Boolean
+     */
+    @ApiModelProperty("是否内置")
+    private Boolean builtin;
 
 }

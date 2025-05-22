@@ -44,6 +44,7 @@ import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -152,37 +153,13 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<ListRsp<AdminLessonListBo>> getLessonList(ListLessonReq lessonReq) {
 
-		// 分类课程筛选 权限数据过滤
-		List<String> courseIds = courseService.selectIdsByCategory(lessonReq.getCategoryId(),
-				AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), false));
-		if (CollectionUtils.isEmpty(courseIds)) {
-			return new BaseRsp<>(PageUtil.getNullResult());
-		}
-
-		// 课程数据过滤
-		if (StringUtils.isNotBlank(lessonReq.getCourseId())) {
-			if (!courseIds.contains(lessonReq.getCourseId())) {
-				return new BaseRsp<>(PageUtil.getNullResult());
-			}
-			courseIds.removeAll(courseIds);
-			courseIds.add(lessonReq.getCourseId());
-		}
-
-		// 排除课程过滤
-		if (StringUtils.isNotBlank(lessonReq.getExceptCourse())) {
-			courseIds.remove(lessonReq.getExceptCourse());
-		}
-
 		Page page = lessonReq.toPageParam();
 		if (CollectionUtils.isEmpty(page.getOrders())) {
 			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
 		}
 
 		LessonContext context = BeanUtils.copy(lessonReq, LessonContext.class);
-		if (CollectionUtils.isEmpty(courseIds)) {
-			return new BaseRsp<>(PageUtil.getNullResult());
-		}
-		context.setCourseIds(courseIds);
+		context.setCourseIds(Lists.newArrayList(lessonReq.getCourseId()));
 
 		// 数据查询
 		IPage<AdminLessonListBo> iPage = courseLessonService.pageByContext(page, context, false);

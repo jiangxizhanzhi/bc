@@ -346,7 +346,6 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 */
 	@ApiOperation("课后练习查询")
 	@GetMapping("/practice")
-	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<AdminLessonPracticeBo> getPracticeList(
 			@RequestParam("course_id") String courseId,
 			@RequestParam("lesson_id") String lessonId) {

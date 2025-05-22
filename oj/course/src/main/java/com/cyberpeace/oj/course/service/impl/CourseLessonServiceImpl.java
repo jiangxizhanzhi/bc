@@ -1244,7 +1244,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	public List<AdminLessonPracticeBo> adminLessonPractice(String courseId, String lessonId,
 			AuthContext authContext) {
 		// 数据校验
-		courseValidateHandler.validateCoursePermission(courseId, authContext);
 		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId,
 				authContext.getIsWeb());
 

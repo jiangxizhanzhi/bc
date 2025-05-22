@@ -161,7 +161,8 @@ public class CourseValidateHandler {
 	 * @see AuthContext
 	 */
 	public void validateCoursePermission(String courseId, AuthContext authContext) {
-
+		// 关闭权限校验
+		/*
 		// 查询授权
 		List<String> authIds = courseMapper.selectByAuth(authContext);
 		if (CollectionUtils.isEmpty(authIds)) {
@@ -181,6 +182,7 @@ public class CourseValidateHandler {
 			log.error("course:[{}] is non public", courseId);
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
+		*/
 	}
 
 	/**

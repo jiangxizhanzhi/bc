@@ -190,4 +190,7 @@ public class AdminLessonListBo implements Serializable {
 	 */
 	@ApiModelProperty("场景共享类型 1=个人 2=共享 3=小组")
 	private Integer sceneShareMode;
+
+	@ApiModelProperty("是否内置")
+	private Boolean builtin;
 }

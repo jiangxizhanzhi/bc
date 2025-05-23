@@ -196,5 +196,7 @@ public class AdminOperationListBo implements Serializable {
 	 */
 	@ApiModelProperty(value = "是否需要外部操作机，0=不需要，1=需要")
 	private Boolean needOuter;
+	@ApiModelProperty(value = "是否内置")
+	private Boolean builtin;
 
 }

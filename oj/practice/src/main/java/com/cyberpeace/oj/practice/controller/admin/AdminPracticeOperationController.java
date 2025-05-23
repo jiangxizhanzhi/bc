@@ -215,6 +215,15 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp<Integer> update(@Validated(Update.class) OperationUpdateReq updateReq) {
 
+		PracticeOperation oldOperation = practiceOperationMapper
+				.selectById(updateReq.getResourceId());
+		if (null == oldOperation) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		if (Boolean.TRUE.equals(oldOperation.getBuiltin())) {
+			throw new BusinessException(ErrorCode.BUILT_IN);
+		}
+
 		updateReq.validate();
 		PracticeOperation updateOperation = BeanUtils.copy(updateReq, PracticeOperation.class);
 		updateOperation.setAttack(updateReq.getAttackTag());

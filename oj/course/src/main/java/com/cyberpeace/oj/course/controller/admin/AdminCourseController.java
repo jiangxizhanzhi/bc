@@ -261,7 +261,13 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	@PatchMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Course> patch(@RequestBody @Validated(Update.class) CourseUpdateReq updateReq) {
-
+		Course oldCourse = courseService.getById(updateReq.getResourceId());
+		if (null == oldCourse) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		if (Boolean.TRUE.equals(oldCourse.getBuiltin())) {
+			throw new BusinessException(ErrorCode.BUILT_IN);
+		}
 		updateReq.validate();
 		String userId = UserInfoContext.getUserContext().getUserId();
 

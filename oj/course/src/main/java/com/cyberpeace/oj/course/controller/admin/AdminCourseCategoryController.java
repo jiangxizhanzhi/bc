@@ -1,20 +1,11 @@
 package com.cyberpeace.oj.course.controller.admin;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -34,11 +25,19 @@ import com.cyberpeace.oj.course.service.bo.CategoryAddBo;
 import com.cyberpeace.oj.course.service.bo.CourseCategoryBo;
 import com.cyberpeace.oj.course.service.impl.CourseValidateHandler;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 管理课程类别Controller
@@ -190,6 +189,14 @@ public class AdminCourseCategoryController {
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<CategoryRes>
 			patch(@RequestBody @Validated(Update.class) UpdateCategoryReq updateCategoryReq) {
+
+		CourseCategory oldCategory  =  courseCategoryMapper.selectById(updateCategoryReq.getResourceId());
+		if(null == oldCategory){
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		if(Boolean.TRUE.equals(oldCategory.getBuiltin())){
+			throw new BusinessException(ErrorCode.BUILT_IN);
+		}
 
 		if (StringUtils.isNotBlank(updateCategoryReq.getName())) {
 			courseValidateHandler.categoryNameLengthValidate(updateCategoryReq.getName());

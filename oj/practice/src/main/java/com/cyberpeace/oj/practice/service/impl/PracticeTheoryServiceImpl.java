@@ -709,7 +709,13 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	 */
 	@Override
 	public int updateTheory(PracticeTheory practiceTheory, AuthContext authContext) {
-
+		PracticeTheory oldTheory = practiceTheoryMapper.selectById(practiceTheory.getResourceId());
+		if (null == oldTheory) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		if (Boolean.TRUE.equals(oldTheory.getBuiltin())) {
+			throw new BusinessException(ErrorCode.BUILT_IN);
+		}
 		// 数据校验
 		practiceValidateHandler.validateTheoryContentExistExcludeItself("",
 				practiceTheory.getContent(), practiceTheory);
@@ -721,9 +727,6 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		PracticeTheory originPractice = practiceTheoryMapper.selectById(practiceTheory.getResourceId());
 		String originChangeBo = BeanUtils.copy(originPractice, TheoryChangeBo.class).toString();
 		String changeBo = BeanUtils.copy(practiceTheory, TheoryChangeBo.class).toString();
-		if(practiceTheory.getBuiltin()==true){
-			throw new BusinessException(ErrorCode.BUILT_IN);
-		}
 		// 数据更新
 		final int[] result = new int[1];
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

@@ -63,10 +63,15 @@ public abstract class SpaceControllerBase<S extends IService<E>, E extends Space
 		if (StringUtils.isBlank(req.getResourceId())) {
 			throw new BusinessException(ErrorCode.BLANK_ID);
 		}
-		E entity = (E) req.bo2Entity();
-		if (Boolean.TRUE.equals(entity.getBuiltin())) {
+		E old = baseService.getById(req.getResourceId());
+		if(null == old){
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		if(null != old.getBuiltin() && old.getBuiltin()){
 			throw new BusinessException(ErrorCode.BUILT_IN);
 		}
+		E entity = (E) req.bo2Entity();
+		entity.setBuiltin(false);
 		this.checkNameDuplication(entity);
 		this.checkValue(entity);
 		baseService.updateById(entity);
@@ -76,6 +81,12 @@ public abstract class SpaceControllerBase<S extends IService<E>, E extends Space
 	@ApiOperation("删除")
 	@DeleteMapping("")
 	public BaseRsp deleteA(@RequestBody IdListReq req) {
+		List<E> eList = baseService.listByIds(req.getIds());
+		for (E e : eList) {
+			if(null != e.getBuiltin() && e.getBuiltin()){
+				throw new BusinessException(ErrorCode.BUILT_IN);
+			}
+		}
 		baseService.removeByIds(req.getIds());
 		return new BaseRsp();
 	}

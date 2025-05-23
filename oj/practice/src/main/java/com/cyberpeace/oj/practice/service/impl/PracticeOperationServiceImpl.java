@@ -473,9 +473,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	 */
 	@Override
 	public Integer updateOperation(PracticeOperation updateOperation, String targetJson) {
-		if(updateOperation.getBuiltin()==true){
-			throw new BusinessException(ErrorCode.BUILT_IN);
-		}
 		// 数据校验
 		PracticeOperation operation = practiceValidateHandler
 				.validateOperationExist(updateOperation.getResourceId());

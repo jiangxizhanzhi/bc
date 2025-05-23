@@ -32,7 +32,7 @@ public class SpaceLoadedFileThreatRulePageReq extends SpaceToolPageReq {
 			wrapper.eq(SpaceLoadedFileThreatRule::getStage, this.getStage());
 		}
 
-		wrapper.orderByAsc(
+		wrapper.orderByDesc(
 				SpaceLoadedFileThreatRule::getUpdateTime);
 
 		wrapper.setEntityClass(SpaceLoadedFileThreatRule.class);

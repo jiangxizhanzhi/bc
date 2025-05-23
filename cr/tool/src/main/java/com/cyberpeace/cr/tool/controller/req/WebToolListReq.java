@@ -39,4 +39,6 @@ public class WebToolListReq extends PageReqBase {
      * 类型
      */
     private String type;
+    @ApiModelProperty("标签")
+    private String tag;
 }

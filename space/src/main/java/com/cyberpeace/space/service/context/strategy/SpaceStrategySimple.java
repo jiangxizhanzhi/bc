@@ -37,4 +37,6 @@ public class SpaceStrategySimple {
     private String content;
 
     private String route;
+
+    private Boolean builtin;
 }

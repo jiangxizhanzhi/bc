@@ -39,4 +39,5 @@ public class SpaceStrategy extends BaseTable {
 
 	private String gauge;
 
+	private Boolean builtin;
 }

@@ -64,6 +64,9 @@ public abstract class SpaceControllerBase<S extends IService<E>, E extends Space
 			throw new BusinessException(ErrorCode.BLANK_ID);
 		}
 		E entity = (E) req.bo2Entity();
+		if (Boolean.TRUE.equals(entity.getBuiltin())) {
+			throw new BusinessException(ErrorCode.BUILT_IN);
+		}
 		this.checkNameDuplication(entity);
 		this.checkValue(entity);
 		baseService.updateById(entity);

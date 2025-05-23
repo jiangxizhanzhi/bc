@@ -1,8 +1,11 @@
 package com.cyberpeace.space.controller;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
 import com.cyberpeace.space.service.SpaceTacticAttackService;
 import com.cyberpeace.space.service.context.IdListReq;
 import com.cyberpeace.space.service.context.tactic.*;
@@ -11,6 +14,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "战法库-攻击战法")
 @RestController
@@ -37,6 +42,10 @@ public class SpaceTacticAttackController {
 	@ApiOperation("更新攻击战法")
 	@PatchMapping("")
 	public BaseRsp updateA(@RequestBody AttackModifyReq req) {
+		SpaceTacticAttack old=attackService.getById(req.getResourceId());
+		if(old.getBuiltin()==true){
+			throw new BusinessException(ErrorCode.BUILT_IN);
+		}
 		attackService.updateAttack(req);
 		return new BaseRsp();
 	}
@@ -44,6 +53,13 @@ public class SpaceTacticAttackController {
 	@ApiOperation("删除攻击战法")
 	@DeleteMapping("")
 	public BaseRsp deleteA(@RequestBody IdListReq req) {
+		List<SpaceTacticAttack> attacks=attackService.listByIds(req.getIds());
+		for(SpaceTacticAttack attack:attacks){
+			if(attack.getBuiltin()==true){
+				throw new BusinessException(ErrorCode.BUILT_IN);
+			}
+		}
+
 		attackService.deleteBatch(req.getIds());
 		return new BaseRsp();
 	}

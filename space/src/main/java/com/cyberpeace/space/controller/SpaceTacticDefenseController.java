@@ -1,10 +1,14 @@
 package com.cyberpeace.space.controller;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
+import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
+import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
 import com.cyberpeace.space.service.SpaceTacticDefenseService;
 import com.cyberpeace.space.service.context.IdListReq;
 import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
@@ -43,6 +47,10 @@ public class SpaceTacticDefenseController {
 	@ApiOperation("更新防御战法")
 	@PatchMapping("")
 	public BaseRsp updateA(@RequestBody DefenseModifyReq req) {
+		SpaceTacticDefense old=defenseService.getById(req.getResourceId());
+		if(old.getBuiltin()==true){
+			throw new BusinessException(ErrorCode.BUILT_IN);
+		}
 		defenseService.updateDefense(req);
 		return new BaseRsp();
 	}
@@ -50,6 +58,12 @@ public class SpaceTacticDefenseController {
 	@ApiOperation("删除防御战法")
 	@DeleteMapping("")
 	public BaseRsp deleteA(@RequestBody IdListReq req) {
+		List<SpaceTacticDefense> defenses=defenseService.listByIds(req.getIds());
+		for(SpaceTacticAttack defense:defenses){
+			if(defense.getBuiltin()==true){
+				throw new BusinessException(ErrorCode.BUILT_IN);
+			}
+		}
 		defenseService.deleteBatch(req.getIds());
 		return new BaseRsp();
 	}

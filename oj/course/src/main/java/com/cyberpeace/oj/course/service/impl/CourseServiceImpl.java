@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.ListRsp;
@@ -641,7 +643,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		final boolean modify = StringUtils.isNotBlank(course.getName())
 				&& !course.getName().equals(courseExist.getName());
-
+		if(course.getBuiltin()==true){
+			throw new BusinessException(ErrorCode.BUILT_IN);
+		}
 		// 数据更新
 		course.setModifyUserId(userId);
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

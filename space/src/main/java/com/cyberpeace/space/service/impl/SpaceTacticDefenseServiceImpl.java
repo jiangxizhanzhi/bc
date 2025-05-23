@@ -146,6 +146,9 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	public void updateDefense(DefenseModifyReq req) {
 		// todo id name
 		SpaceTacticDefense defense = this.req2Entity(req);
+		if(defense.getBuiltin()==true){
+			throw new BusinessException(ErrorCode.BUILT_IN);
+		}
 		defense.setResourceId(req.getResourceId());
 		mapper.updateById(defense);
 	}

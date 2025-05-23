@@ -721,6 +721,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		PracticeTheory originPractice = practiceTheoryMapper.selectById(practiceTheory.getResourceId());
 		String originChangeBo = BeanUtils.copy(originPractice, TheoryChangeBo.class).toString();
 		String changeBo = BeanUtils.copy(practiceTheory, TheoryChangeBo.class).toString();
+		if(practiceTheory.getBuiltin()==true){
+			throw new BusinessException(ErrorCode.BUILT_IN);
+		}
 		// 数据更新
 		final int[] result = new int[1];
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

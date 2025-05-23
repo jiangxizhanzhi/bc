@@ -87,6 +87,7 @@ public class SpaceStrategyController {
 	@ApiOperation("修改策略")
 	@PatchMapping("")
 	public BaseRsp updateStrategy(@RequestBody SpaceStrategyModifyReq req) {
+
 		spaceStrategyService.updateStrategy(req);
 		return new BaseRsp();
 	}

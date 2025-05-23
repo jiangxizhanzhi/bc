@@ -14,4 +14,5 @@ public class SpaceTacticDefense extends SpaceTacticAttack {
 
 	@TableId(type = IdType.ASSIGN_ID)
 	private String resourceId;
+
 }

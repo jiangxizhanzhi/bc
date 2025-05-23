@@ -23,6 +23,7 @@ public class SpaceAptReport extends SpaceBaseTable {
 
 	private String reportPath;
 
+	private Boolean builtin;
 	@Override
 	public SpaceAptReportBo entity2Bo(Map<String, IdAndName> relatedMap) {
         SpaceAptReportBo bo = BeanUtils.copy(this, SpaceAptReportBo.class);

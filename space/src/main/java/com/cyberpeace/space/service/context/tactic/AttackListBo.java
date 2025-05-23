@@ -91,5 +91,6 @@ public class AttackListBo {
 	 */
 	@ApiModelProperty(value = "工具计数")
 	private Integer toolCount;
-
+	@ApiModelProperty(value = "是否内置")
+	private Boolean builtin;
 }

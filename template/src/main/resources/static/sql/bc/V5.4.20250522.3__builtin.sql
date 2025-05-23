@@ -1,0 +1,1 @@
+ALTER TABLE space_tactic_defense ADD COLUMN builtin INT;

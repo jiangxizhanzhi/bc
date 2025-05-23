@@ -66,7 +66,8 @@ public class SpaceAptFeatureBo extends SpaceBoBase {
 
 	@ApiModelProperty(value = "logo")
 	private String logo;
-
+	@ApiModelProperty(value = "内置")
+	private Boolean builtin;
 	public SpaceAptFeature bo2Entity() {
 		SpaceAptFeature entity = BeanUtils.copy(this, SpaceAptFeature.class);
 		entity.setHistoryReport(JsonUtil.arrayToString(this.historyReport));

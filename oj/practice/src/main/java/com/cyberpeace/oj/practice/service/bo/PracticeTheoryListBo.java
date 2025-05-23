@@ -134,5 +134,7 @@ public class PracticeTheoryListBo implements Serializable {
 	 */
 	@ApiModelProperty(value = "视频链接")
 	private String video;
+	@ApiModelProperty(value="是否内置")
+	private Boolean builtin;
 
 }

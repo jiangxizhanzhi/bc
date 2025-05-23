@@ -29,7 +29,8 @@ public class SpaceAptReportBo extends SpaceBoBase {
 
 	@ApiModelProperty(value = "报告pdf路径")
 	private String reportPath;
-
+	@ApiModelProperty(value = "是否内置")
+	private Boolean builtin;
 	@Override
 	public SpaceAptReport bo2Entity() {
         SpaceAptReport entity = BeanUtils.copy(this, SpaceAptReport.class);

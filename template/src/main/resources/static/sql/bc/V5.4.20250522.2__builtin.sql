@@ -1,0 +1,17 @@
+ALTER TABLE space_source_analyze_rule ADD COLUMN builtin INT;
+ALTER TABLE space_tactic_defense_plan ADD COLUMN builtin INT;
+ALTER TABLE space_tactic_defense_system ADD COLUMN builtin INT;
+ALTER TABLE space_threat_image_rule ADD COLUMN builtin INT;
+ALTER TABLE space_traffic_extraction_rule ADD COLUMN builtin INT;
+ALTER TABLE space_warning_dictionary ADD COLUMN builtin INT;
+ALTER TABLE space_action_frame_application ADD COLUMN builtin INT;
+ALTER TABLE space_action_frame_event_type ADD COLUMN builtin INT;
+ALTER TABLE space_action_frame_target_type ADD COLUMN builtin INT;
+ALTER TABLE space_algorithm_equipment ADD COLUMN builtin INT;
+ALTER TABLE space_algorithm_expertise ADD COLUMN builtin INT;
+ALTER TABLE space_algorithm_individual ADD COLUMN builtin INT;
+ALTER TABLE space_algorithm_role ADD COLUMN builtin INT;
+ALTER TABLE space_algorithm_team ADD COLUMN builtin INT;
+ALTER TABLE space_base_algorithm ADD COLUMN builtin INT;
+ALTER TABLE space_finger_print ADD COLUMN builtin INT;
+ALTER TABLE space_ioc_threat ADD COLUMN builtin INT;

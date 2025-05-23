@@ -72,7 +72,8 @@ public class PracticeTheory extends PracticeBase {
 
 	@ApiModelProperty(value = "图片链接")
 	private String picture;
-
+	@ApiModelProperty(value = "是否内置")
+	private Boolean builtin;
 
 	public enum TheoryType implements GenericEnum {
 

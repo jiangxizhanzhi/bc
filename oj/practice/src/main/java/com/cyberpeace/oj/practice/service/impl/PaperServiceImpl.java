@@ -31,6 +31,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -328,39 +329,63 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	 */
 	@Override
 	public List<LibPracticeListBo> selectRandomPractice(RandomPracticeQuery practiceQuery,
-			Double score, AuthContext authContext) {
+														Double score, AuthContext authContext) {
 
-		// 数据校验
+		List<String> practiceIds;
 
-		List<String> practiceIds = practiceTheoryMapper
-				.selectBySetIds(Lists.newArrayList(practiceQuery.getPracticeSetId()), true);
-		practiceIds.removeAll(practiceQuery.getSelectIds());
+		// 处理是否指定习题集的两种场景
+		if (practiceQuery.getPracticeSetId() != null) {
+			// 从指定习题集获取题目
+			practiceIds = practiceTheoryMapper.selectBySetIds(
+					Collections.singletonList(practiceQuery.getPracticeSetId()), true);
+			practiceIds.removeAll(practiceQuery.getSelectIds());
 
-		// 习题集下数据量判断
-		if (practiceIds.size() < practiceQuery.getCount()) {
-			log.error("practiceIds.size() < practiceQuery.getCount() ,PracticeSetId =[{}]",
-					practiceQuery.getPracticeSetId());
-			throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
+			// 习题集下数据量判断
+			if (practiceIds.size() < practiceQuery.getCount()) {
+				log.error("习题集题目数量不足, PracticeSetId =[{}]", practiceQuery.getPracticeSetId());
+				throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
+			}
+		} else {
+			// 从全量题库获取题目
+			practiceIds = practiceTheoryMapper.selectAllAvailableIds(); // 需要确保存在该方法
+
+			// 应用排除逻辑（如果有已选题目）
+			if (practiceQuery.getSelectIds() != null) {
+				practiceIds.removeAll(practiceQuery.getSelectIds());
+			}
+
+			// 全量题库数据量判断
+			if (practiceIds.size() < practiceQuery.getCount()) {
+				log.error("全量题库符合条件的题目数量不足, 需要: {}, 实际: {}",
+						practiceQuery.getCount(), practiceIds.size());
+				throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
+			}
 		}
 
 		// 执行数据查询
 		TheoryListQuery theoryListQuery = BeanUtils.copy(practiceQuery, TheoryListQuery.class);
 		theoryListQuery.setResourceIds(practiceIds);
-		theoryListQuery.setPracticeSetIds(Lists.newArrayList(practiceQuery.getPracticeSetId()));
-		List<PracticeTheory> theories = practiceTheoryMapper.randomChoice(theoryListQuery,
-				practiceQuery.getCount());
 
-		// 其他条件下数据量判断
+		// 只有指定习题集时才需要设置 practiceSetIds
+		if (practiceQuery.getPracticeSetId() != null) {
+			theoryListQuery.setPracticeSetIds(Collections.singletonList(practiceQuery.getPracticeSetId()));
+		}
+
+		// 执行随机抽取
+		List<PracticeTheory> theories = practiceTheoryMapper.randomChoice(
+				theoryListQuery, practiceQuery.getCount());
+
+		// 最终数据量判断
 		if (theories.size() < practiceQuery.getCount()) {
-			log.error("theories.size() < practiceQuery.getCount(),PracticeSetId =[{}]",
-					practiceQuery.getPracticeSetId());
+			log.error("实际抽取数量不足, 需要: {}, 实际: {}",
+					practiceQuery.getCount(), theories.size());
 			throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
 		}
 
+		// 设置分数并转换对象
 		theories.forEach(practiceTheory -> practiceTheory.setScore(score));
-		return StreamApiUtils.map(theories, practiceTheory -> theoryToListBo(practiceTheory));
+		return StreamApiUtils.map(theories, this::theoryToListBo);
 	}
-
 	/**
 	 * 理论习题数据转换
 	 *

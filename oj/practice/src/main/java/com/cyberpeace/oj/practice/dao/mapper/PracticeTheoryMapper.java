@@ -253,4 +253,6 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * @see List<String>
 	 */
 	List<String> selectOnlyBySetIds(@Param("setIds") List<String> setIds);
+
+	List<String> selectAllAvailableIds();
 }

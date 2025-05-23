@@ -23,4 +23,6 @@ public class TheoryListQuery extends OperationListQuery {
 	 */
 	private Integer questionType;
 
+	private Double score;
+
 }

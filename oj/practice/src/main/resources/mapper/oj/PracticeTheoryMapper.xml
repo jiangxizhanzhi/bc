@@ -289,4 +289,10 @@
             </if>
         </where>
     </select>
+    <select id="selectAllAvailableIds" resultType="java.lang.String">
+        <!-- 查询全量题库中所有公开的题目 -->
+        SELECT resource_id
+        FROM oj_practice_theory
+        WHERE `public` = true
+    </select>
 </mapper>

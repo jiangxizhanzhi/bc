@@ -29,4 +29,6 @@ public class SpaceTacticAttack extends BaseTable {
 	private String tool;
 
 	private String strategy;
+
+	private Boolean builtin;
 }

@@ -56,4 +56,5 @@ public class SpaceStrategyBo {
 
 	@ApiModelProperty("策略依据")
 	private String gauge;
+	private Boolean builtin;
 }

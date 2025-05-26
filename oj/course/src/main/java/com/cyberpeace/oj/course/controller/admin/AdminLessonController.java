@@ -240,7 +240,10 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@PatchMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<CourseLesson> patch(@Validated(Update.class) LessonUpdateReq lessonUpdateReq) {
-
+		Course old = courseMapper.selectById(lessonUpdateReq.getResourceId());
+		if(old.getBuiltin()==true){
+			throw new BusinessException(ErrorCode.BUILT_IN);
+		}
 		// 修改数据转换 进行视频和讲义地址是否修改判断
 		CourseLesson courseLesson = updateReqToEntity(lessonUpdateReq);
 
@@ -374,10 +377,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Boolean>
 			updateLessonPractice(@RequestBody @Validated AddLessonPracticeReq practiceReq) {
-		Course old = courseMapper.selectById(practiceReq.getResourceId());
-		if(old.getBuiltin()==true){
-			throw new BusinessException(ErrorCode.BUILT_IN);
-		}
+
 		Boolean result = courseLessonService.addLessonPractice(practiceReq.getResourceId(),
 				practiceReq.getPracticeList());
 		return new BaseRsp(result);

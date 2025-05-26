@@ -240,7 +240,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@PatchMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<CourseLesson> patch(@Validated(Update.class) LessonUpdateReq lessonUpdateReq) {
-		Course old = courseMapper.selectById(lessonUpdateReq.getResourceId());
+		CourseLesson old = courseLessonMapper.selectById(lessonUpdateReq.getResourceId());
 		if(old.getBuiltin()==true){
 			throw new BusinessException(ErrorCode.BUILT_IN);
 		}

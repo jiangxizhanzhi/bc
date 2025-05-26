@@ -26,6 +26,7 @@ import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
+import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
@@ -373,7 +374,10 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Boolean>
 			updateLessonPractice(@RequestBody @Validated AddLessonPracticeReq practiceReq) {
-
+		Course old = courseMapper.selectById(practiceReq.getResourceId());
+		if(old.getBuiltin()==true){
+			throw new BusinessException(ErrorCode.BUILT_IN);
+		}
 		Boolean result = courseLessonService.addLessonPractice(practiceReq.getResourceId(),
 				practiceReq.getPracticeList());
 		return new BaseRsp(result);

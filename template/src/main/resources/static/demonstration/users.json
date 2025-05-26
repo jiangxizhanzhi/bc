@@ -2,21 +2,21 @@
   "commander": [
     {
       "id": 7,
-      "name": "参训蓝方",
+      "name": "参训蓝方(研发测试数据)",
       "username": "blue"
     }
   ],
   "middle": [
     {
       "id": 5,
-      "name": "参训人员",
+      "name": "参训人员(研发测试数据)",
       "username": "student"
     }
   ],
   "worker": [
     {
       "id": 6,
-      "name": "参训红方",
+      "name": "参训红方(研发测试数据)",
       "username": "red"
     }
   ]

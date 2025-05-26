@@ -166,6 +166,9 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 
 	private Map<String, String> getStepMapByApplicationIds(List<String> applicationIds) {
 		Map<String, String> res = Maps.newHashMap();
+		if(applicationIds.isEmpty()){
+			return res;
+		}
 		List<SpaceActionFrameApplication> applicationList = applicationService
 				.listByIds(applicationIds);
 		for (SpaceActionFrameApplication application : applicationList) {

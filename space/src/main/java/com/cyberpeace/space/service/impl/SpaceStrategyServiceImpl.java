@@ -125,9 +125,6 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 	@Override
 	public void updateStrategy(SpaceStrategyModifyReq req) {
 		SpaceStrategy strategy = this.req2Entity(req);
-		if(strategy.getBuiltin()==true){
-			throw new BusinessException(ErrorCode.BUILT_IN);
-		}
 		strategy.setResourceId(req.getResourceId());
 		mapper.updateById(strategy);
 	}

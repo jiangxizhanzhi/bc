@@ -1,5 +1,7 @@
 package com.cyberpeace.space.controller;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
@@ -87,7 +89,10 @@ public class SpaceStrategyController {
 	@ApiOperation("修改策略")
 	@PatchMapping("")
 	public BaseRsp updateStrategy(@RequestBody SpaceStrategyModifyReq req) {
-
+		SpaceStrategy old = spaceStrategyService.getById(req.getResourceId());
+		if(old.getBuiltin()==true){
+			throw new BusinessException(ErrorCode.BUILT_IN);
+		}
 		spaceStrategyService.updateStrategy(req);
 		return new BaseRsp();
 	}

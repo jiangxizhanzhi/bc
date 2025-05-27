@@ -30,4 +30,5 @@ public interface SpaceTacticAttackService extends IService<SpaceTacticAttack> {
 
     KnowledgeChart getTacticAttackChart();
 
+    List<String> listByCategoryids(List<String> ids);
 }

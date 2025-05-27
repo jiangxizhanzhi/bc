@@ -53,6 +53,8 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 	@Autowired
 	private SpaceStrategyService strategyService;
 
+	@Autowired
+	private SpaceTacticAttackMapper spaceTacticAttackMapper;
 	@Override
 	public ListRsp<AttackListBo> pageAttack(SpaceTacticPageReq req) {
 		Page page = req.toPageParam();
@@ -179,7 +181,12 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 		return chart;
     }
 
-    private SpaceTacticAttackCategory req2Entity(TacticAttackCategoryAddReq req) {
+	@Override
+	public List<String> listByCategoryids(List<String> ids) {
+		return spaceTacticAttackMapper.idsByCategoryids(ids);
+	}
+
+	private SpaceTacticAttackCategory req2Entity(TacticAttackCategoryAddReq req) {
 		SpaceTacticAttackCategory category = new SpaceTacticAttackCategory();
 		category.setName(req.getName());
 		category.setResourceId(IDGeneratorUtil.getID());

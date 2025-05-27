@@ -53,4 +53,6 @@ public interface SpaceTacticDefenseService extends IService<SpaceTacticDefense> 
     SpaceFrameLevel getFrame();
 
     KnowledgeChart getTacticDefenseChart();
+
+    List<String> listByCategoryids(List<String> ids);
 }

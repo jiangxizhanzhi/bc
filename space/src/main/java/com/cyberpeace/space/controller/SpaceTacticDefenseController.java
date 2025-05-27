@@ -100,6 +100,10 @@ public class SpaceTacticDefenseController {
 	@ApiOperation("删除防御战法战术")
 	@DeleteMapping("/category")
 	public BaseRsp deleteC(@RequestBody IdListReq req) {
+		List <String> resourceIds =defenseService.listByCategoryids(req.getIds());
+		if (resourceIds!= null && !resourceIds.isEmpty()) {
+			throw new BusinessException(ErrorCode.BUILT_IN);
+		}
 		defenseService.deleteCategory(req.getIds());
 		return new BaseRsp();
 	}

@@ -80,6 +80,8 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 */
 	private UtilService utilService;
 
+	@Autowired
+	private SpaceTacticDefenseMapper spaceTacticDefenseMapper;
 	/**
 	 * 分页
 	 *
@@ -341,6 +343,11 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 			chart.getLinks().add(link);
 		}
 		return chart;
+    }
+
+    @Override
+    public List<String> listByCategoryids(List<String> ids) {
+		return spaceTacticDefenseMapper.idsByCategoryids(ids);
     }
 
     /**

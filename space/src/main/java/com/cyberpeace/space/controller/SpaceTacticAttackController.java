@@ -96,11 +96,9 @@ public class SpaceTacticAttackController {
 	@ApiOperation("删除攻击战法类别")
 	@DeleteMapping("/category")
 	public BaseRsp deleteC(@RequestBody IdListReq req) {
-		List<SpaceTacticAttack> spaceTacticAttacks = attackService.listByIds(req.getIds());
-		for (SpaceTacticAttack ak : spaceTacticAttacks) {
-			if(ak.getCategoryId()!=null){
-
-			}
+		List <String> resourceIds =attackService.listByCategoryids(req.getIds());
+		if (resourceIds!= null && !resourceIds.isEmpty()) {
+			throw new BusinessException(ErrorCode.BUILT_IN);
 		}
 		attackService.deleteCategory(req.getIds());
 		return new BaseRsp();

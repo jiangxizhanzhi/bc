@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.CallType;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
@@ -77,6 +78,9 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 
 	@Autowired
 	private SpaceStrategyService strategyService;
+
+	@Autowired
+	private SpaceCallCountService callCountService;
 
 
 	@Override
@@ -182,8 +186,46 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 	@Override
 	public void saveFrame(ActionFrameArrangeBo req) {
 		SpaceActionFrame frame = this.getOrException(req.getResourceId());
+		ActionFrameArrangeBo old;
+		if (StringUtils.isBlank(frame.getFrame())) {
+			old = new ActionFrameArrangeBo();
+		} else {
+			old = JsonUtil.toJsonObject(frame.getFrame(), ActionFrameArrangeBo.class);
+			old.checkTacticDuplication();
+		}
+		// 差分计算战法使用次数
+		Map<String, ActionFrameStep> oldMap = StreamApiUtils.toMap(old.getSteps(),
+				ActionFrameStep::getResourceId, s -> s);
+		Map<String, ActionFrameStep> newMap = StreamApiUtils.toMap(req.getSteps(),
+				ActionFrameStep::getResourceId, s -> s);
+		int usage = 0;
+		for (String id : newMap.keySet()) {
+			if (oldMap.containsKey(id)) {
+				List<String> oldTacticIds = StreamApiUtils.map(oldMap.get(id).getTactics(),
+						ActionFrameTactic::getResourceId);
+				List<String> newTacticIds = StreamApiUtils.map(newMap.get(id).getTactics(),
+						ActionFrameTactic::getResourceId);
+				usage += this.difference(oldTacticIds, newTacticIds);
+			} else {
+				usage += newMap.get(id).getTactics().size();
+			}
+		}
+		if (usage > 0) {
+			callCountService.addCount(CallType.TACTIC, usage);
+		}
+
 		frame.setFrame(JsonUtil.toJsonString(req));
 		this.updateById(frame);
+	}
+
+	private int difference(List<String> oldTacticIds, List<String> newTacticIds) {
+		int count = 0;
+		for (String id : newTacticIds) {
+			if (!oldTacticIds.contains(id)) {
+				count += 1;
+			}
+		}
+		return count;
 	}
 
 	@Override

@@ -647,6 +647,7 @@ public class ExternalYXController {
 	}
 	@ApiOperation("查看策略详情")
 	@GetMapping("/strategy/detail")
+	@CallCount(CallType.STRATEGY)
 	public BaseRsp<SpaceStrategyBo>
 	getDetail(@ApiParam(value = "策略id", name = "resource_id") String resource_id) {
 		SpaceStrategyBo res = spaceStrategyService.getDetail(resource_id);

@@ -24,4 +24,6 @@ public interface SpaceCallCountService extends IService<SpaceCallCount> {
      * @return {@code Integer }
      */
     Integer getCountByName(String name);
+
+    void addCount(String name, int num);
 }

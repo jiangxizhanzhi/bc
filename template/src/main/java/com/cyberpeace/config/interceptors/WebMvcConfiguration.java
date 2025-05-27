@@ -29,7 +29,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 		registry.addInterceptor(practiceGateWayInterceptor).addPathPatterns("/gateway/theory/**",
 				"/gateway/exercise/**");
 		registry.addInterceptor(requestInterceptor);
-		registry.addInterceptor(callCountInterceptor).addPathPatterns("/gateway/**");
+		registry.addInterceptor(callCountInterceptor).addPathPatterns("/gateway/**", "/space/**");
 	}
 
 	@Override

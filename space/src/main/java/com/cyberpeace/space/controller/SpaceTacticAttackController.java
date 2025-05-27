@@ -98,7 +98,7 @@ public class SpaceTacticAttackController {
 	public BaseRsp deleteC(@RequestBody IdListReq req) {
 		List <String> resourceIds =attackService.listByCategoryids(req.getIds());
 		if (resourceIds!= null && !resourceIds.isEmpty()) {
-			throw new BusinessException(ErrorCode.BUILT_IN);
+			throw new BusinessException(ErrorCode.RELATED_DATA_EXIST);
 		}
 		attackService.deleteCategory(req.getIds());
 		return new BaseRsp();

@@ -443,4 +443,10 @@ public interface ErrorCode {
      * @see String
      */
     String FILE_STREAM_ERROR = "104025";
+    /**
+     * 存在关联数据，无法删除
+     *
+     * @see String
+     */
+    String RELATED_DATA_EXIST = "104026";
 }

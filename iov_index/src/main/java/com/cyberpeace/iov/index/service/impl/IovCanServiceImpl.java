@@ -96,7 +96,7 @@ public class IovCanServiceImpl implements IovCanService {
 
 	@Override
 	public void startFuzzing(FuzzingReq req) {
-		req.setMsgChn(MSG_CHN);
+//		req.setMsgChn(MSG_CHN);
 		IovHttpClientUtil.postJson(START_FUZZING_URL, req);
 	}
 

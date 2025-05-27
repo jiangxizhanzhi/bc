@@ -412,7 +412,7 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return bo;
 	}
 
-	private SpaceStrategy getOrException(String resourceId) {
+	public SpaceStrategy getOrException(String resourceId) {
 		SpaceStrategy strategy = mapper.selectById(resourceId);
 		if (null == strategy) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);

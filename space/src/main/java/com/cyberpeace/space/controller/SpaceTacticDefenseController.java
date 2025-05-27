@@ -60,7 +60,7 @@ public class SpaceTacticDefenseController {
 	public BaseRsp deleteA(@RequestBody IdListReq req) {
 		List<SpaceTacticDefense> defenses=defenseService.listByIds(req.getIds());
 		for(SpaceTacticAttack defense:defenses){
-			if(defense.getBuiltin()==true){
+			if (Boolean.TRUE.equals(defense.getBuiltin())) {
 				throw new BusinessException(ErrorCode.BUILT_IN);
 			}
 		}

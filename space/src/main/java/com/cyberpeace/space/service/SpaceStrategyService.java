@@ -110,4 +110,6 @@ public interface SpaceStrategyService extends IService<SpaceStrategy> {
 
     KnowledgeChart getStrategyChart();
     String dumpStrategyPath(List<String> strategyIds);
+
+    SpaceStrategy getOrException(String resourceId);
 }

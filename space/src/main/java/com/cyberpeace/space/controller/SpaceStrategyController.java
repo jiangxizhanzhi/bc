@@ -89,8 +89,8 @@ public class SpaceStrategyController {
 	@ApiOperation("修改策略")
 	@PatchMapping("")
 	public BaseRsp updateStrategy(@RequestBody SpaceStrategyModifyReq req) {
-		SpaceStrategy old = spaceStrategyService.getById(req.getResourceId());
-		if(old.getBuiltin()==true){
+		SpaceStrategy old = spaceStrategyService.getOrException(req.getResourceId());
+		if(Boolean.TRUE.equals(old.getBuiltin())){
 			throw new BusinessException(ErrorCode.BUILT_IN);
 		}
 		spaceStrategyService.updateStrategy(req);
@@ -115,8 +115,7 @@ public class SpaceStrategyController {
 	@ApiOperation("查看策略路径")
 	@GetMapping("/route")
 	public BaseRsp<String> getRoute(
-			@ApiParam(value = "策略id", name = "strategy_id") String strategy_id,
-			@ApiParam(value = "框架id", name = "frame_id") String frame_id) {
+			@ApiParam(value = "策略id", name = "strategy_id") String strategy_id, @ApiParam(value = "框架id", name = "frame_id") String frame_id) {
 		if (StringUtils.isNotBlank(frame_id)) {
 			String res = spaceStrategyService.getFrameRouteById(frame_id);
 			return new BaseRsp<>(res);

@@ -37,7 +37,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -222,12 +221,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 				.filter(t -> Tool.Type.OTHER.getCode().equals(t.getType())).count());
 		Map<String, Integer> map = Maps.newHashMap();
 		for (Tool tool : toolList) {
-			List<String> platforms = Arrays.asList(StringUtils.split(tool.getPlatforms(), ","));
+			String[] platforms = StringUtils.split(tool.getPlatforms(), ",");
 			for (String platform : platforms) {
 				map.putIfAbsent(platform, 0);
 				map.put(platform, map.get(platform) + 1);
 			}
 		}
+		map.put("Linux", map.getOrDefault("linux", 0) + map.getOrDefault("Linux", 0));
 		indexTool.setPlatform(map);
 		return indexTool;
 	}

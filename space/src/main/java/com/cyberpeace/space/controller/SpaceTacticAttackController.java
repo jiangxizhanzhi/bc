@@ -53,9 +53,9 @@ public class SpaceTacticAttackController {
 	@ApiOperation("删除攻击战法")
 	@DeleteMapping("")
 	public BaseRsp deleteA(@RequestBody IdListReq req) {
-		List<SpaceTacticAttack> attacks=attackService.listByIds(req.getIds());
+		List<SpaceTacticAttack> attacks = attackService.listByIds(req.getIds());
 		for(SpaceTacticAttack attack:attacks){
-			if(attack.getBuiltin()==true){
+			if(Boolean.TRUE.equals(attack.getBuiltin())){
 				throw new BusinessException(ErrorCode.BUILT_IN);
 			}
 		}

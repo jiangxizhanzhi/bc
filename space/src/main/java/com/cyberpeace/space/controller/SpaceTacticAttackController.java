@@ -43,7 +43,7 @@ public class SpaceTacticAttackController {
 	@PatchMapping("")
 	public BaseRsp updateA(@RequestBody AttackModifyReq req) {
 		SpaceTacticAttack old=attackService.getById(req.getResourceId());
-		if(old.getBuiltin()==true){
+		if(Boolean.TRUE.equals(old.getBuiltin())){
 			throw new BusinessException(ErrorCode.BUILT_IN);
 		}
 		attackService.updateAttack(req);

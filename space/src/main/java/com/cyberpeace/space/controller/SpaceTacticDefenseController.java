@@ -48,7 +48,7 @@ public class SpaceTacticDefenseController {
 	@PatchMapping("")
 	public BaseRsp updateA(@RequestBody DefenseModifyReq req) {
 		SpaceTacticDefense old=defenseService.getById(req.getResourceId());
-		if(old.getBuiltin()==true){
+		if(Boolean.TRUE.equals(old.getBuiltin())){
 			throw new BusinessException(ErrorCode.BUILT_IN);
 		}
 		defenseService.updateDefense(req);

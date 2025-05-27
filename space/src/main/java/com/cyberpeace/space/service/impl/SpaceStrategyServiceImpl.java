@@ -117,6 +117,7 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 	@Override
 	public void addStrategy(SpaceStrategyAddReq req) {
 		SpaceStrategy strategy = this.req2Entity(req);
+
 		strategy.setView(0);
 		strategy.setUserId(UserInfoContext.getUserContext().getUserId());
 		mapper.insert(strategy);
@@ -389,6 +390,7 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 
 	private SpaceStrategy req2Entity(SpaceStrategyAddReq req) {
 		SpaceStrategy strategy = BeanUtils.copy(req, SpaceStrategy.class);
+		strategy.setBuiltin(false);
 		return strategy;
 	}
 

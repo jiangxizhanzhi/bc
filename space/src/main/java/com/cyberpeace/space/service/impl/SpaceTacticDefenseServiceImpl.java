@@ -379,6 +379,7 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 */
 	private SpaceTacticDefenseCategory req2Entity(TacticDefenseCategoryAddReq req) {
 		SpaceTacticDefenseCategory category = new SpaceTacticDefenseCategory();
+
 		category.setName(req.getName());
 		category.setResourceId(IDGeneratorUtil.getID());
 		category.setStage(req.getStage());
@@ -409,6 +410,7 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 		defense.setAction(JsonUtil.arrayToString(req.getAction()));
 		defense.setStrategy(JsonUtil.arrayToString(
 				StreamApiUtils.map(req.getStrategy(), SpaceActionStrategy::getResourceId)));
+		defense.setBuiltin(false);
 		return defense;
 	}
 

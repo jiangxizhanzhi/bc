@@ -196,6 +196,7 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 		attack.setTool(JsonUtil.arrayToString(req.getTool()));
 		attack.setStrategy(JsonUtil.arrayToString(
 				StreamApiUtils.map(req.getStrategy(), SpaceActionStrategy::getResourceId)));
+		attack.setBuiltin(false);
 		return attack;
 	}
 

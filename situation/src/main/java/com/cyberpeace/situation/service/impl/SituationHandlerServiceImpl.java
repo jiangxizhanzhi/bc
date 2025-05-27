@@ -322,7 +322,10 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			elementInfo.setConfig(elementConfig);
 
 			JSONArray leaks = elementExtendedInfo.getJSONArray("leaks");
-			List<LeakInfo> leakInfos = leaks.toJavaList(LeakInfo.class);
+			List<LeakInfo> leakInfos = new ArrayList<>();
+			if (leaks != null) {
+				leakInfos = leaks.toJavaList(LeakInfo.class);
+			}
 			elementInfo.setLeakCount(leaks.size());
 			elementInfo.setLeakInfos(leakInfos);
 

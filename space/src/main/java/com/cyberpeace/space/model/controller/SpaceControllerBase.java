@@ -111,6 +111,7 @@ public abstract class SpaceControllerBase<S extends IService<E>, E extends Space
 	@ApiOperation("删除")
 	@DeleteMapping("")
 	public BaseRsp deleteA(@RequestBody IdListReq req) {
+		checkBeforeDelete(req);
 		List<E> eList = baseService.listByIds(req.getIds());
 		for (E e : eList) {
 			if(null != e.getBuiltin() && e.getBuiltin()){
@@ -119,6 +120,11 @@ public abstract class SpaceControllerBase<S extends IService<E>, E extends Space
 		}
 		baseService.removeByIds(req.getIds());
 		return new BaseRsp();
+	}
+
+
+	protected void checkBeforeDelete(IdListReq req) {
+		return;
 	}
 
 	@ApiOperation("详情")

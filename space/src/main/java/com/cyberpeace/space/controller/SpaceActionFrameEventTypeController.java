@@ -30,7 +30,15 @@
 **/
 package com.cyberpeace.space.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.space.dao.entity.SpaceActionFrame;
+import com.cyberpeace.space.dao.mapper.SpaceActionFrameMapper;
+import com.cyberpeace.space.service.context.IdListReq;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.cyberpeace.space.model.controller.SpaceControllerBase;
@@ -56,5 +64,21 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/action_frame/event_type")
 @Slf4j
 public class SpaceActionFrameEventTypeController extends SpaceControllerBase<SpaceActionFrameEventTypeService, SpaceActionFrameEventType, SpaceActionFrameEventTypeBo, SpacePageReqBase> {
+
+    @Autowired
+    private SpaceActionFrameMapper spaceActionFrameMapper;
+
+    @Override
+    protected void checkBeforeDelete(IdListReq req) {
+        if (CollectionUtils.isEmpty(req.getIds())) {
+            throw new BusinessException(ErrorCode.DIRECT_MSG_EXCEPTION, "删除传入的id为空");
+        }
+        int relatedFrameDataCount = spaceActionFrameMapper.selectCount(new LambdaQueryWrapper<SpaceActionFrame>()
+                .in(SpaceActionFrame::getCategoryId, req.getIds()));
+        if (relatedFrameDataCount > 0) {
+            throw new BusinessException(ErrorCode.DIRECT_MSG_EXCEPTION, "存在关联的行动框架数据");
+        }
+
+    }
 }
     

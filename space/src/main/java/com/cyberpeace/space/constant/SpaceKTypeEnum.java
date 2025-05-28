@@ -10,6 +10,10 @@ import lombok.Getter;
  * @date 2025/05/28
  * @see Enum
  * @since 1.0.0
+ * 知识库类型
+ *
+ * @author zhangxuepei
+ * @since 1.0
  */
 public enum SpaceKTypeEnum {
 

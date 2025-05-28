@@ -46,29 +46,43 @@ import java.util.List;
 @Slf4j
 public class SpaceAptThreatDetectRuleController extends SpaceControllerBase<SpaceAptThreatDetectRuleService, SpaceAptThreatDetectRule, SpaceAptThreatDetectRuleBo, SpaceAptThreatDetectRulePageReq> {
 
+	/**
+	 * 导出数据为Excel表格格式
+	 *
+	 * @param response HTTP响应对象，用于输出Excel文件
+	 * @param req 请求参数对象，包含查询条件
+	 * @return 返回一个基础响应对象，表示导出操作是否成功
+	 */
 	@ApiOperation("导出成excel表格")
 	@GetMapping("/excel")
 	public BaseRsp<Boolean> exportExcel(HttpServletResponse response,
-			SpaceAptThreatDetectRulePageReq req) {
-		String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
-				+ CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
+	        SpaceAptThreatDetectRulePageReq req) {
+	    // 生成Excel文件的路径和名称
+	    String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
+	            + CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
 
-		LambdaQueryWrapper<SpaceAptThreatDetectRule> wrapper = new LambdaQueryWrapper<>();
-		if (StringUtils.isNotBlank(req.getApt_code())) {
-			wrapper.like(SpaceAptThreatDetectRule::getAptCode, req.getApt_code());
-		}
-		if (StringUtils.isNotBlank(req.getTool())) {
-			wrapper.like(SpaceAptThreatDetectRule::getTool, req.getTool());
-		}
-		List<SpaceAptThreatDetectRule> all = baseService.list(wrapper);
-		List<SpaceAptThreatDetectRuleExcelBo> exportBoList = BeanUtils.deepCopyList(all,
-				SpaceAptThreatDetectRuleExcelBo.class);
+	    // 创建查询条件包装器
+	    LambdaQueryWrapper<SpaceAptThreatDetectRule> wrapper = new LambdaQueryWrapper<>();
+	    // 根据请求参数设置查询条件
+	    if (StringUtils.isNotBlank(req.getApt_code())) {
+	        wrapper.like(SpaceAptThreatDetectRule::getAptCode, req.getApt_code());
+	    }
+	    if (StringUtils.isNotBlank(req.getTool())) {
+	        wrapper.like(SpaceAptThreatDetectRule::getTool, req.getTool());
+	    }
+	    // 查询符合条件的所有记录
+	    List<SpaceAptThreatDetectRule> all = baseService.list(wrapper);
+	    // 将查询结果深拷贝到一个新的列表中，用于导出
+	    List<SpaceAptThreatDetectRuleExcelBo> exportBoList = BeanUtils.deepCopyList(all,
+	            SpaceAptThreatDetectRuleExcelBo.class);
 
-		// 数据导出
-		ExcelDataHandler.exportExcel(exportBoList, filePath, ExcelHeader.APT_THREAT_DETECT_RULE);
-		FileUtil.setResponse(new File(filePath), true, response);
+	    // 数据导出
+	    ExcelDataHandler.exportExcel(exportBoList, filePath, ExcelHeader.APT_THREAT_DETECT_RULE);
+	    // 设置HTTP响应，将Excel文件作为附件提供
+	    FileUtil.setResponse(new File(filePath), true, response);
 
-		return new BaseRsp<>(Boolean.TRUE);
+	    // 返回成功响应
+	    return new BaseRsp<>(Boolean.TRUE);
 	}
 
 	@Override

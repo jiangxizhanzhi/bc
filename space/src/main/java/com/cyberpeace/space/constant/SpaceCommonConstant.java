@@ -7,6 +7,11 @@ package com.cyberpeace.space.constant;
  * @version 1.0.0
  * @date 2025/05/28
  * @since 1.0.0
+ * common constant
+ * @author zhangxiaofeng
+ * @version 1.0
+ * @date 2024/11/06
+ *
  */
 public class SpaceCommonConstant {
     

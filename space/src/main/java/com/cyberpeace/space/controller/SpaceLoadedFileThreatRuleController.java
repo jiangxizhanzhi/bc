@@ -55,36 +55,52 @@ public class SpaceLoadedFileThreatRuleController extends SpaceControllerBase<Spa
 		EXECUTE_TYPE_MAP.put(1, "手动");
 		EXECUTE_TYPE_MAP.put(2, "自动");
 	}
+	/**
+	 * 导出数据为Excel表格格式
+	 *
+	 * @param response HTTP响应对象，用于输出生成的Excel文件
+	 * @param req 请求参数对象，包含导出筛选条件
+	 * @return 返回一个基础响应对象，表示导出操作是否成功
+	 */
 	@ApiOperation("导出成excel表格")
 	@GetMapping("/excel")
 	public BaseRsp<Boolean> exportExcel(HttpServletResponse response,
-										SpaceLoadedFileThreatRulePageReq req) {
-		String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
-				+ CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
+	                                    SpaceLoadedFileThreatRulePageReq req) {
+	    // 生成Excel文件的路径和名称
+	    String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
+	            + CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
 
-		LambdaQueryWrapper<SpaceLoadedFileThreatRule> wrapper = new LambdaQueryWrapper<>();
-		if (StringUtils.isNotBlank(req.getPattern())) {
-			wrapper.like(SpaceLoadedFileThreatRule::getName, req.getPattern());
-		}
-		if (StringUtils.isNotBlank(req.getTool())) {
-			wrapper.like(SpaceLoadedFileThreatRule::getTool, req.getTool());
-		}
-		if (StringUtils.isNotBlank(req.getType())) {
-			wrapper.like(SpaceLoadedFileThreatRule::getType, req.getType());
-		}
-		List<SpaceLoadedFileThreatRule> all = baseService.list(wrapper);
+	    // 创建查询条件构造器
+	    LambdaQueryWrapper<SpaceLoadedFileThreatRule> wrapper = new LambdaQueryWrapper<>();
+	    // 根据名称模式筛选
+	    if (StringUtils.isNotBlank(req.getPattern())) {
+	        wrapper.like(SpaceLoadedFileThreatRule::getName, req.getPattern());
+	    }
+	    // 根据工具名称筛选
+	    if (StringUtils.isNotBlank(req.getTool())) {
+	        wrapper.like(SpaceLoadedFileThreatRule::getTool, req.getTool());
+	    }
+	    // 根据类型筛选
+	    if (StringUtils.isNotBlank(req.getType())) {
+	        wrapper.like(SpaceLoadedFileThreatRule::getType, req.getType());
+	    }
+	    // 执行查询，获取所有符合筛选条件的记录
+	    List<SpaceLoadedFileThreatRule> all = baseService.list(wrapper);
 
-		List<SpaceLoadedFileThreatRuleExcelBo> exportBoList = StreamApiUtils.map(all, e->{
-			SpaceLoadedFileThreatRuleExcelBo bo = BeanUtils.deepCopy(e, SpaceLoadedFileThreatRuleExcelBo.class);
-			bo.setExecuteType(EXECUTE_TYPE_MAP.get(e.getExecuteType()));
-			return bo;
-		});
+	    // 将查询结果转换为Excel表格所需的格式
+	    List<SpaceLoadedFileThreatRuleExcelBo> exportBoList = StreamApiUtils.map(all, e->{
+	        SpaceLoadedFileThreatRuleExcelBo bo = BeanUtils.deepCopy(e, SpaceLoadedFileThreatRuleExcelBo.class);
+	        bo.setExecuteType(EXECUTE_TYPE_MAP.get(e.getExecuteType()));
+	        return bo;
+	    });
 
-		// 数据导出
-		ExcelDataHandler.exportExcel(exportBoList, filePath, ExcelHeader.LOADED_FILE_THREAT_RULE);
-		FileUtil.setResponse(new File(filePath), true, response);
+	    // 数据导出
+	    ExcelDataHandler.exportExcel(exportBoList, filePath, ExcelHeader.LOADED_FILE_THREAT_RULE);
+	    // 设置HTTP响应，以附件形式返回Excel文件
+	    FileUtil.setResponse(new File(filePath), true, response);
 
-		return new BaseRsp<>(Boolean.TRUE);
+	    // 返回成功响应
+	    return new BaseRsp<>(Boolean.TRUE);
 	}
 
 	@Override

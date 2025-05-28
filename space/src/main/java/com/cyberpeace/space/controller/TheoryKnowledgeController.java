@@ -80,6 +80,16 @@ public class TheoryKnowledgeController {
 		return new BaseRsp(lessonDetail);
 	}
 
+	/**
+	 * 该方法用于新增理论知识课时，其主要功能如下：
+	 *
+	 * 1. 将请求参数 [LessonAddReq](file://D:\projects\work\ojj\ojj\oj\course\src\main\java\com\cyberpeace\oj\course\controller\req\LessonAddReq.java#L21-L183) 转换为实体类 [CourseLesson](file://D:\projects\work\ojj\ojj\oj\course\src\main\java\com\cyberpeace\oj\course\dao\entity\CourseLesson.java#L25-L276)；
+	 * 2. 将场景配置信息转换为 `JSONObject` 格式；
+	 * 3. 调用服务层方法将课时数据、场景配置及空练习列表保存到数据库；
+	 * 4. 返回封装了新增课时信息的 [BaseRsp](file://D:\projects\work\ojj\ojj\common\src\main\java\com\cyberpeace\common\model\BaseRsp.java#L12-L45) 响应对象。
+	 * @param lessonAddReq
+	 * @return
+	 */
 	@ApiOperation("新增理论知识")
 	@PostMapping("")
 	public BaseRsp<CourseLesson> addK(@RequestBody LessonAddReq lessonAddReq) {
@@ -96,6 +106,16 @@ public class TheoryKnowledgeController {
 		return new BaseRsp(lesson);
 	}
 
+	/**
+	 * 该方法用于编辑理论知识课时，主要功能如下：
+	 *
+	 * 1. 将请求参数 [LessonUpdateReq](file://D:\projects\work\ojj\ojj\oj\course\src\main\java\com\cyberpeace\oj\course\controller\req\LessonUpdateReq.java#L19-L60) 转换为实体类 [CourseLesson](file://D:\projects\work\ojj\ojj\oj\course\src\main\java\com\cyberpeace\oj\course\dao\entity\CourseLesson.java#L25-L276)；
+	 * 2. 解析请求中的场景配置 [ojSceneConfig](file://D:\projects\work\ojj\ojj\oj\course\src\main\java\com\cyberpeace\oj\course\controller\req\LessonAddReq.java#L126-L127) 和练习题列表 [practiceList](file://D:\projects\work\ojj\ojj\oj\course\src\main\java\com\cyberpeace\oj\course\controller\req\LessonAddReq.java#L150-L151)；
+	 * 3. 调用 `courseLessonService.updateLesson` 更新课时信息及关联数据；
+	 * 4. 返回更新后的课时数据封装在 [BaseRsp](file://D:\projects\work\ojj\ojj\common\src\main\java\com\cyberpeace\common\model\BaseRsp.java#L12-L45) 中。
+	 * @param lessonUpdateReq
+	 * @return
+	 */
 	@ApiOperation("编辑理论知识")
 	@PatchMapping("")
 	public BaseRsp<CourseLesson> modify(@RequestBody LessonUpdateReq lessonUpdateReq) {
@@ -117,6 +137,12 @@ public class TheoryKnowledgeController {
 
 	/**
 	 * 更新请求转换为实体类
+	 * 该方法将请求对象 [LessonUpdateReq](file://D:\projects\work\ojj\ojj\oj\course\src\main\java\com\cyberpeace\oj\course\controller\req\LessonUpdateReq.java#L19-L60) 转换为实体类 [CourseLesson](file://D:\projects\work\ojj\ojj\oj\course\src\main\java\com\cyberpeace\oj\course\dao\entity\CourseLesson.java#L25-L276)，并处理视频和讲义的上传或路径替换逻辑。具体功能如下：
+	 *
+	 * 1. 使用 [BeanUtils.copy](file://D:\projects\work\ojj\ojj\common\src\main\java\com\cyberpeace\common\util\BeanUtils.java#L25-L31) 拷贝基础字段；
+	 * 2. 设置默认课程ID；
+	 * 3. 根据是否有新视频文件或URL更新视频地址；
+	 * 4. 根据是否有新讲义文件或URL更新讲义地址。
 	 * @param lessonUpdateReq
 	 * @return
 	 */
@@ -155,21 +181,31 @@ public class TheoryKnowledgeController {
 
 	/**
 	 * 请求体转换为实体类
-	 * @param lessonAddReq
-	 * @return
+	 * 该方法用于将添加课程章节的请求体转换为课程章节实体类对象
+	 * @param lessonAddReq 课程章节添加请求对象，包含要添加的课程章节的相关信息
+	 * @return 转换后的课程章节实体类对象
 	 */
 	public CourseLesson addReqToEntity(LessonAddReq lessonAddReq) {
 
-		// 知识点转换
-		CourseLesson courseLesson = BeanUtils.copy(lessonAddReq, CourseLesson.class);
-		courseLesson.setKnowledge(lessonAddReq.getKnowledge());
-		courseLesson.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+	    // 使用工具类进行对象属性复制，将请求对象转换为课程章节实体类对象
+	    CourseLesson courseLesson = BeanUtils.copy(lessonAddReq, CourseLesson.class);
 
-		courseLesson.setCourseId(SpaceCommonConstant.DEFAULT_STRATEGY_FRAME);
+	    // 设置课程章节的知识点信息
+	    courseLesson.setKnowledge(lessonAddReq.getKnowledge());
 
-		courseLessonService.uploadVideo(courseLesson, lessonAddReq.getVideo());
-		courseLessonService.uploadHandout(courseLesson, lessonAddReq.getHandout());
+	    // 设置创建用户的ID，从用户信息上下文中获取当前用户的ID
+	    courseLesson.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
-		return courseLesson;
+	    // 设置课程ID为默认策略框架
+	    courseLesson.setCourseId(SpaceCommonConstant.DEFAULT_STRATEGY_FRAME);
+
+	    // 上传视频，调用课程章节服务的上传视频方法
+	    courseLessonService.uploadVideo(courseLesson, lessonAddReq.getVideo());
+
+	    // 上传讲义，调用课程章节服务的上传讲义方法
+	    courseLessonService.uploadHandout(courseLesson, lessonAddReq.getHandout());
+
+	    // 返回转换后的课程章节实体类对象
+	    return courseLesson;
 	}
 }

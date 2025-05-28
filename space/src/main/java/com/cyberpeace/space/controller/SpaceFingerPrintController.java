@@ -22,6 +22,8 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2025/05/28
  * @see SpaceControllerBase
  * @since 1.0.0
+ * @author zhangxuejun
+ * @date 2021/11/18
  */
 @Api(tags = "知识库-规则库-指纹库")
 @RestController

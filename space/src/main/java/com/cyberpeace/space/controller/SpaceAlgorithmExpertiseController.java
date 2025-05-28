@@ -48,25 +48,41 @@ public class SpaceAlgorithmExpertiseController extends SpaceControllerBase<Space
 	/**
 	 * 获取相关地图
 	 *
-	 * @param eList E 列表
-	 * @return {@code Map<String, IdAndName> }
+	 * 该方法用于根据专家领域列表生成一个映射，该映射将课程ID映射到其ID和名称的对
+	 * 主要目的是为了方便地获取与给定专家领域相关的课程信息
+	 *
+	 * @param eList 专家领域列表，包含课程信息的JSON字符串
+	 * @return {@code Map<String, IdAndName> } 返回一个映射，键是课程ID，值是包含课程ID和名称的对象
 	 */
 	@Override
 	protected Map<String, IdAndName> getRelatedMap(List<SpaceAlgorithmExpertise> eList) {
-		Map<String, IdAndName> res = Maps.newHashMap();
-		List<String> courseIds = Lists.newArrayList();
-		for (SpaceAlgorithmExpertise e : eList) {
-			courseIds.addAll(JsonUtil.toJsonObjectArray(e.getCourse(), String.class));
-		}
-		if (courseIds.isEmpty()) {
-			return res;
-		}
-		List<Course> courseList = courseService.listByIds(courseIds);
-		for (Course course : courseList) {
-			res.put(course.getResourceId(),
-					new IdAndName(course.getResourceId(), course.getName()));
-		}
-		return res;
+	    // 初始化结果映射
+	    Map<String, IdAndName> res = Maps.newHashMap();
+
+	    // 用于存储从专家领域列表中提取的所有课程ID
+	    List<String> courseIds = Lists.newArrayList();
+
+	    // 遍历专家领域列表，提取课程ID并添加到课程ID列表中
+	    for (SpaceAlgorithmExpertise e : eList) {
+	        courseIds.addAll(JsonUtil.toJsonObjectArray(e.getCourse(), String.class));
+	    }
+
+	    // 如果课程ID列表为空，则直接返回空映射
+	    if (courseIds.isEmpty()) {
+	        return res;
+	    }
+
+	    // 根据课程ID列表，查询课程信息
+	    List<Course> courseList = courseService.listByIds(courseIds);
+
+	    // 遍历课程列表，将课程的资源ID和名称添加到结果映射中
+	    for (Course course : courseList) {
+	        res.put(course.getResourceId(),
+	                new IdAndName(course.getResourceId(), course.getName()));
+	    }
+
+	    // 返回填充了课程信息的映射
+	    return res;
 	}
 
 	@Override

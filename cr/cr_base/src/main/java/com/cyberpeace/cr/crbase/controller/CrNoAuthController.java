@@ -1,3 +1,27 @@
+/**
+ * 这段代码定义了一个名为 `CrNoAuthController` 的 Spring MVC 控制器类，用于处理无需用户认证的接口。以下是代码的简要分析： 
+ * 1. **包与导入**： 
+ * - 该类位于 `com.cyberpeace.cr.crbase.controller` 包中。 
+ * - 导入了多个外部类和注解，包括 `BaseRsp`、`RemoteUserService`、`TransactionTemplate` 等。 
+ * 2. **类与注解**： 
+ * - 类使用了 `@RestController` 注解，表明这是一个 RESTful 风格的控制器。 
+ * - 使用了 `@Slf4j` 注解，方便日志记录。 
+ * - 使用了 `@RequestMapping("/cr/noAuth")` 注解，定义了该控制器的基本请求路径。 
+ * 3. **字段**： 
+ * - `transactionTemplate`：通过 `@Autowired` 注入，用于管理事务。 
+ * - `remoteUserService`：通过 `@Autowired` 注入，提供远程用户服务功能。 
+ * 4. **方法**： 
+ * - `auth` 方法： 
+ * - 使用了 `@GetMapping("/auth")` 注解，处理 GET 请求 `/cr/noAuth/auth`。 
+ * - 接收一个名为 `token` 的参数，使用 `@ApiParam` 描述其含义。 
+ * - 调用 `remoteUserService.doAuthentication(token)` 进行用户认证。 
+ * - 如果认证失败，捕获异常并记录错误日志，然后抛出 `AuthenticationException`。 
+ * - 返回一个空的 `BaseRsp` 对象。 
+ * 5. **功能描述**： 
+ * - 该控制器的主要功能是提供一个无需用户认证的接口，用于辅助鉴权操作。 
+ * - 通过调用远程用户服务进行身份验证，并在失败时记录详细日志。 
+ * 总结：该代码实现了一个简单的 RESTful 接口，用于辅助用户认证操作，具有日志记录和异常处理功能。 
+**/
 package com.cyberpeace.cr.crbase.controller;
 
 import com.cyberpeace.common.model.BaseRsp;

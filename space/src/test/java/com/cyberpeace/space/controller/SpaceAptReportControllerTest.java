@@ -1,3 +1,23 @@
+/**
+ * 这段代码是一个针对 `SpaceAptReportController` 的单元测试类，使用了 JUnit 5 和 Spring Boot 提供的测试工具。以下是对代码的简要分析： 
+ * 1. **测试类结构**： 
+ * - 类名为 `SpaceAptReportControllerTest`，继承自 `WebMvcTest(SpaceAptReportController.class)`，表明这是一个针对 `SpaceAptReportController` 的 Web 层测试。 
+ * - 使用了 `@MockBean` 注解模拟了 `SpaceAptReportService`，并用 `@SpyBean` 对 `SpaceAptReportController` 进行部分模拟。 
+ * 2. **依赖注入与初始化**： 
+ * - `MockMvc` 用于模拟 HTTP 请求和响应。 
+ * - 在 `setUp` 方法中，通过 `when` 和 `doReturn` 配置了 `mockService` 的行为，确保服务层返回预期结果。 
+ * - 初始化了分页对象 `Page` 并设置了记录为空列表。 
+ * - 调用了 `TableInfoHelper.initTableInfo` 方法来初始化表信息。 
+ * 3. **测试方法**： 
+ * - `testPage`：测试分页接口 `/space/theory/space_apt_report/list`，验证返回 JSON 数据是否符合预期。 
+ * - `testAddAttack`：测试新增接口 `/space/theory/space_apt_report`，验证 POST 请求的处理。 
+ * - `testUpdateA`：测试更新接口 `/space/theory/space_apt_report`，验证 PATCH 请求的处理。 
+ * - `testDeleteA`：测试删除接口 `/space/theory/space_apt_report`，验证 DELETE 请求的处理。 
+ * - `testGetADetail`：测试获取详情接口 `/space/theory/space_apt_report`，验证 GET 请求的处理。 
+ * 4. **断言与验证**： 
+ * - 使用 `andExpect` 方法对 HTTP 状态码、返回的 JSON 内容进行断言，确保接口行为符合预期。 
+ * 总结：该测试类全面覆盖了 `SpaceAptReportController` 的主要接口，通过模拟服务层和请求参数，验证了控制器的逻辑正确性和接口响应的准确性。 
+**/
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;

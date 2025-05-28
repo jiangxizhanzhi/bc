@@ -1,3 +1,18 @@
+/**
+ * 这段代码是一个针对 `SpaceAlgorithmExpertiseController` 的单元测试类。以下是对其的简要分析： 
+ * ### 主要功能： 
+ * 1. **测试类定义**：该类名为 `SpaceAlgorithmExpertiseControllerTest`，使用了 JUnit 5 的 `@WebMvcTest` 注解来加载指定的控制器类 `SpaceAlgorithmExpertiseController`。 
+ * 2. **依赖注入与模拟**：通过 `@Autowired` 和 `@MockBean` 注解注入了 `MockMvc` 对象和其他服务层的模拟对象（如 `SpaceAlgorithmExpertiseService` 和 `CourseService`），用于模拟控制器的行为。 
+ * 3. **初始化设置**：在 `setUp()` 方法中配置了多个服务方法的返回值，包括分页查询、新增、更新、删除等操作，并初始化了一些基础数据。 
+ * ### 测试方法： 
+ * - **testPage()**：测试分页接口 `/space/algorithm/algorithm_expertise/list`，验证返回的状态码为 200 并且 JSON 格式正确。 
+ * - **testAddAttack()**：测试新增接口 `/space/algorithm/algorithm_expertise`，验证 POST 请求后返回的状态码为 200 并且 JSON 格式正确。 
+ * - **testUpdateA()**：测试更新接口 `/space/algorithm/algorithm_expertise`，验证 PATCH 请求后返回的状态码为 200 并且 JSON 格式正确。 
+ * - **testDeleteA()**：测试删除接口 `/space/algorithm/algorithm_expertise`，验证 DELETE 请求后返回的状态码为 200 并且 JSON 格式正确。 
+ * - **testGetADetail()**：测试获取详情接口 `/space/algorithm/algorithm_expertise`，验证 GET 请求后返回的状态码为 200 并且 JSON 格式正确。 
+ * ### 总结： 
+ * 此代码主要用于确保 `SpaceAlgorithmExpertiseController` 中的各个 API 接口能够正常工作，涵盖了常见的 CRUD 操作以及分页查询的功能。通过模拟服务层的行为，保证了测试的独立性和准确性。 
+**/
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;

@@ -1,3 +1,23 @@
+/**
+ * 这段代码定义了一个用于分页查询空间APT（高级持续性威胁）报告的请求类 `SpaceAptReportPageReq`。以下是对代码的简要分析： 
+ * ### 主要功能 
+ * - **继承与扩展**：该类继承自 `SpacePageReqBase`，并添加了额外的查询字段如 `apt_org`（APT组织）、`report_type`（报告类型）。 
+ * - **注解说明**：使用了 `@ApiModel` 和 `@ApiModelProperty` 注解，便于文档生成工具（如 Swagger）生成接口文档。 
+ * - **核心方法**：重写了 `req2QueryWrapper()` 方法，将请求参数转换为 MyBatis-Plus 的 `LambdaQueryWrapper` 对象，用于构造数据库查询条件。 
+ * ### 关键点解析 
+ * 1. **查询条件构建** 
+ * - 根据 `apt_org` 和 `report_type` 字段动态添加查询条件。 
+ * - 使用 `StringUtils.isNotBlank()` 判断字符串是否非空，避免无效查询。 
+ * - 时间字段按降序排序，确保最新数据优先返回。 
+ * 2. **封装查询逻辑** 
+ * - `req2QueryWrapper()` 方法集中管理查询条件的生成逻辑，便于复用和维护。 
+ * - 支持灵活组合多种查询条件（如模糊匹配或精确匹配），提升查询灵活性。 
+ * 3. **代码结构** 
+ * - 类的设计遵循单一职责原则，专注于分页查询请求的定义和条件构建。 
+ * - 属性使用 `@Getter` 和 `@Setter` 注解，简化了属性访问和修改。 
+ * ### 总结 
+ * 此代码是一个典型的分页查询请求类，通过封装查询条件生成逻辑，提高了代码的可读性和可维护性。同时，结合 MyBatis-Plus 提供的强大查询能力，实现了高效的数据查询操作。 
+**/
 package com.cyberpeace.space.controller.req;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

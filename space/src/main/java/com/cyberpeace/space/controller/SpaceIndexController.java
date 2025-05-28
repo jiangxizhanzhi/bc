@@ -1,3 +1,23 @@
+/**
+ * 这段代码定义了一个名为 `SpaceIndexController` 的 Spring MVC 控制器类，用于处理与知识库相关的 HTTP 请求。以下是代码的主要功能和结构分析： 
+ * 1. **类注解**： 
+ * - `@RestController`：表明这是一个 RESTful 风格的控制器。 
+ * - `@RequestMapping("/space/index/")`：为所有方法指定基础路径 `/space/index/`。 
+ * - `@RequiresAuthentication`：确保只有经过身份验证的用户才能访问这些接口。 
+ * 2. **依赖注入**： 
+ * - 使用 `@Autowired` 注入了 `SpaceIndexService`，该服务负责处理具体的业务逻辑。 
+ * 3. **方法分析**： 
+ * - `getKRepository()`：提供知识库统计信息，返回 `BaseRsp<IndexKnowledge>`。 
+ * - `getKChart()`：返回知识图谱数据，返回 `BaseRsp<KnowledgeChart>`。 
+ * - `getTRepository()`：提供训练工具集的数据统计，返回 `BaseRsp<IndexTool>`。 
+ * - `getF()`：返回防御行动框架数据，返回 `BaseRsp<IndexFrame>`。 
+ * - `getAiUrl()`：获取人工智能相关网址，返回 `BaseRsp<String>`。 
+ * 4. **Swagger 文档支持**： 
+ * - 使用了 `io.swagger.annotations` 提供的注解来生成 API 文档，方便前端开发者理解接口用途。 
+ * 5. **安全性**： 
+ * - 所有方法都需要通过 Apache Shiro 的认证检查 (`@RequiresAuthentication`)。 
+ * 总结来说，这个控制器主要负责提供关于知识库、工具集、框架以及人工智能相关资源的各种统计数据和信息，且每个方法都对应一个特定的功能点，并通过 Swagger 注解增强了接口的可读性和文档化程度。 
+**/
 package com.cyberpeace.space.controller;
 
 import com.cyberpeace.common.model.BaseRsp;

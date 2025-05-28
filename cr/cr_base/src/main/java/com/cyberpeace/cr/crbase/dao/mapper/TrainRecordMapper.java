@@ -1,3 +1,26 @@
+/**
+ * 这段代码定义了一个名为 `TrainRecordMapper` 的接口，继承自 MyBatis-Plus 提供的 `BaseMapper` 接口，并扩展了一些自定义方法。以下是代码的简要分析： 
+ * ### 主要功能 
+ * 1. **基础功能**： 
+ * - 继承了 `BaseMapper<TrainRecord>`，这意味着该接口可以利用 MyBatis-Plus 提供的通用 CRUD 操作（如增删改查）。 
+ * 2. **自定义方法**： 
+ * - 提供了一系列与 `TrainRecord` 实体相关的自定义 SQL 方法，用于处理特定业务逻辑。 
+ * - 这些方法通过注解 `@Param` 来接收参数，支持复杂查询或更新操作。 
+ * 3. **注解说明**： 
+ * - `@Mapper`：标识这是一个 MyBatis 的 Mapper 接口。 
+ * - `@Repository`：表明这是一个数据访问层组件。 
+ * ### 方法概览 
+ * 以下是对每个方法的简要描述： 
+ * - `setExtra`：设置额外信息，根据业务模板 ID、用户 ID、业务类型以及额外字段进行操作。 
+ * - `setEndTime`：设置结束时间，与 `setExtra` 方法类似，但增加了结束时间的设置。 
+ * - `setEndTimeByRoomId`：通过房间 ID 设置结束时间。 
+ * - `countFinishedByUserIdAndType`：统计某个用户在某种类型的训练记录中已完成的数量。 
+ * - `batchEnd`：批量结束指定业务模板下的所有记录。 
+ * - `getByRoomId`：根据房间 ID 查询对应的训练记录。 
+ * - `updateEndTimeByRoomId`：通过房间 ID 更新结束时间。 
+ * ### 总结 
+ * 这段代码是一个典型的 MyBatis Mapper 接口，主要用于操作 `TrainRecord` 数据表中的数据。它结合了 MyBatis-Plus 的通用功能和一些自定义 SQL 方法，为具体的业务场景提供了灵活的支持。 
+**/
 package com.cyberpeace.cr.crbase.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;

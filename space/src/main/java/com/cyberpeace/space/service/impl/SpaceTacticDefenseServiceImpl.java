@@ -1,3 +1,46 @@
+/**
+ * ### 代码分析 
+ * #### 概述 
+ * 该代码实现了一个基于 `MyBatis-Plus` 的服务类 `SpaceTacticDefenseServiceImpl`，主要用于处理与防御策略相关的业务逻辑。服务类继承自 `ServiceImpl`，并实现了 `SpaceTacticDefenseService` 接口。 
+ * --- 
+ * #### 主要功能模块 
+ * 1. **分页查询** 
+ * - 方法 `page(SpaceTacticPageReq req)`：根据请求参数 `req` 分页查询防御策略列表，并填充相关联的类别和系统信息。 
+ * - 使用了 `LambdaQueryWrapper` 构建查询条件，并通过 `selectPage` 方法获取分页结果。 
+ * 2. **数据转换** 
+ * - 将数据库实体（如 `SpaceTacticDefense`）转换为业务对象（如 `DefenseListBo`、`DefenseDetail`），利用工具类 `BeanUtils` 和 `JsonUtil` 进行数据映射。 
+ * 3. **增删改查** 
+ * - **新增**：`add(DefenseAddReq req)` 和 `addDefenseCategory(TacticDefenseCategoryAddReq req)` 分别用于新增防御策略和防御类别。 
+ * - **更新**：`updateDefense(DefenseModifyReq req)` 和 `updateDefenseCategory(TacticDefenseCategoryModifyReq req)` 用于更新防御策略和类别。 
+ * - **删除**：`deleteBatch(List<String> ids)` 和 `deleteCategory(List<String> ids)` 批量删除防御策略和类别。 
+ * 4. **详细信息获取** 
+ * - `getDetail(String resourceId)` 和 `getCategoryDetail(String resourceId)` 分别用于获取防御策略和防御类别的详细信息。 
+ * - 若资源不存在，则抛出 `BusinessException` 异常。 
+ * 5. **分类管理** 
+ * - 提供分页查询分类（`pageCategory(PageReqBase reqBase)`）、按 ID 查询分类（`listCategory()`）、新增分类（`addDefenseCategory`）、更新分类（`updateDefenseCategory`）以及删除分类（`deleteCategory`）等功能。 
+ * 6. **框架与图表生成** 
+ * - `getFrame()`：生成防御策略的动作框架层级结构。 
+ * - `getTacticDefenseChart()`：生成防御策略的知识点图表，包含节点和链接信息。 
+ * 7. **其他辅助方法** 
+ * - `req2Entity`：将请求对象转换为数据库实体。 
+ * - `entity2Bo`：将数据库实体转换为业务对象。 
+ * - `getOrException` 和 `getCategoryOrException`：检查资源是否存在，若不存在则抛出异常。 
+ * --- 
+ * #### 技术亮点 
+ * 1. **MyBatis-Plus 支持** 
+ * - 使用了 `LambdaQueryWrapper` 和 `IPage` 提供了灵活且强大的查询能力。 
+ * 2. **依赖注入** 
+ * - 通过 `@Autowired` 注入多个 Mapper 和工具类（如 `UtilService`、`ToolService`），体现了良好的解耦设计。 
+ * 3. **数据转换** 
+ * - 利用 `BeanUtils` 和工具类（如 `JsonUtil` 和 `StreamApiUtils`）实现高效的实体与业务对象之间的转换。 
+ * 4. **异常处理** 
+ * - 在资源未找到时抛出自定义异常 `BusinessException`，便于统一处理错误逻辑。 
+ * 5. **框架与图表生成** 
+ * - 使用自定义的数据结构（如 `SpaceFrameLevel` 和 `KnowledgeChart`）生成复杂的框架和图表，支持可视化展示。 
+ * --- 
+ * #### 总结 
+ * 该代码是一个典型的业务服务层实现，涵盖了防御策略的全生命周期管理（CRUD + 分页 + 图表生成）。代码结构清晰，功能模块划分明确，采用了主流的开发框架和技术手段，适合作为参考示例。 
+**/
 package com.cyberpeace.space.service.impl;
 
 import com.alibaba.fastjson.JSONArray;

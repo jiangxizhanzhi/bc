@@ -1,3 +1,24 @@
+/**
+ * 该代码定义了一个名为 `SpaceTrafficDetectRulePageReq` 的类，继承自 `SpaceToolPageReq`，主要用于处理空间流量检测规则的分页请求。以下是代码的主要功能和结构分析： 
+ * 1. **类与注解**： 
+ * - 类使用了 `@ApiModel` 注解，表明这是一个 API 请求模型类。 
+ * - 类名明确表示其用途是处理空间流量检测规则的分页请求。 
+ * 2. **方法功能**： 
+ * - 方法 `req2QueryWrapper()` 将请求参数转换为 `LambdaQueryWrapper` 对象，用于数据库查询。 
+ * - 方法逻辑包括： 
+ * - 创建 `LambdaQueryWrapper` 对象。 
+ * - 根据更新时间字段按降序排序。 
+ * - 如果工具字段不为空，添加模糊匹配条件。 
+ * - 如果阶段字段不为空，添加精确匹配条件。 
+ * - 设置实体类类型为 `SpaceTrafficDetectRule`。 
+ * - 返回构建完成的 `LambdaQueryWrapper` 对象。 
+ * 3. **依赖与引用**： 
+ * - 使用了 `org.apache.commons.lang3.StringUtils` 进行字符串判空操作。 
+ * - 引用了 `com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper` 和相关实体类。 
+ * 4. **设计意图**： 
+ * - 该类的设计目的是将前端请求参数封装成适合数据库查询的对象，便于后续的数据检索和分页操作。 
+ * 总结：此代码通过封装请求参数，生成用于数据库查询的条件对象，实现了从请求到查询的转换，符合 RESTful API 设计规范。 
+**/
 package com.cyberpeace.space.controller.req;
 
 import org.apache.commons.lang3.StringUtils;

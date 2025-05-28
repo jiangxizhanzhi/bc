@@ -1,3 +1,66 @@
+/**
+ * ### 代码分析 
+ * #### 功能概述 
+ * 该代码实现了一个自定义的 `WebSocketHandler`，用于管理 WebSocket 连接和消息推送。主要功能包括： 
+ * 1. 管理 WebSocket 会话（Session）。 
+ * 2. 根据业务标识符（identifierId）和用户标识符（userId）存储和检索会话。 
+ * 3. 支持向单个用户或所有用户推送消息。 
+ * 4. 处理连接建立、关闭以及错误事件。 
+ * --- 
+ * #### 主要类与结构 
+ * 1. **`businessSocketSessionMap`** 
+ * - 类型：`Map<String, Map<String, Set<CpWebSession>>>` 
+ * - 功能：用于存储 WebSocket 会话。外层键为业务标识符（identifierId），内层键为用户标识符（userId），值为用户对应的会话集合（`Set<CpWebSession>`）。 
+ * 2. **`CpWebSession`** 
+ * - 表示单个 WebSocket 会话对象，包含会话的基本信息和方法。 
+ * 3. **`WebSocketMessageContext`** 
+ * - 表示 WebSocket 消息上下文，包含消息内容和相关标识符（如业务ID、用户ID等）。 
+ * 4. **`JsonUtil`** 
+ * - 用于将 Java 对象序列化为 JSON 字符串。 
+ * 5. **日志记录** 
+ * - 使用 `lombok.extern.slf4j.Slf4j` 提供的日志记录功能。 
+ * --- 
+ * #### 方法解析 
+ * 1. **`afterConnectionEstablished`** 
+ * - 当新的 WebSocket 连接建立时触发。 
+ * - 将新会话添加到 `businessSocketSessionMap` 中，按业务标识符和用户标识符组织。 
+ * 2. **`handleMessage`** 
+ * - 未处理前端发送的消息（注释中说明不处理）。 
+ * 3. **`handleTransportError` 和 `afterConnectionClosed`** 
+ * - 在连接发生错误或关闭时调用，移除失效的会话。 
+ * 4. **`pushMessage` 和 `pushMessageToUsers`** 
+ * - 分别支持向所有用户或指定用户推送消息。 
+ * - 遍历 `businessSocketSessionMap`，找到目标用户并发送消息。 
+ * 5. **`sendChatMessage`** 
+ * - 专门用于发送聊天消息。 
+ * - 根据业务标识符和用户标识符获取会话集合，并逐一发送消息。 
+ * 6. **`getUserSession`** 
+ * - 根据业务标识符和用户标识符查找对应的会话集合。 
+ * 7. **`removeSession`** 
+ * - 移除失效的会话。 
+ * - 更新 `businessSocketSessionMap`，确保数据一致性。 
+ * --- 
+ * #### 特点与优势 
+ * 1. **分层存储** 
+ * - 使用多级嵌套的 `Map` 结构，便于根据业务标识符和用户标识符快速定位会话。 
+ * 2. **线程安全** 
+ * - 使用了 `Maps.newConcurrentMap()` 和 `Sets.newHashSet()`，确保并发环境下的安全性。 
+ * 3. **灵活的消息推送机制** 
+ * - 支持向单个用户或所有用户推送消息，适应不同的业务需求。 
+ * 4. **日志记录** 
+ * - 提供详细的日志记录，便于排查问题。 
+ * --- 
+ * #### 缺点与改进建议 
+ * 1. **内存占用** 
+ * - `businessSocketSessionMap` 存储了大量会话数据，可能在高并发情况下占用较多内存。 
+ * 2. **异常处理** 
+ * - 某些地方仅记录警告或错误日志，但未采取进一步措施（如重试机制）。 
+ * 3. **代码复用性** 
+ * - 若多个地方需要类似的功能，可考虑提取通用逻辑。 
+ * --- 
+ * #### 总结 
+ * 该代码实现了完整的 WebSocket 会话管理和消息推送功能，设计合理且具有良好的扩展性。通过分层存储和线程安全措施，能够满足大多数业务场景的需求。但在高并发环境下需注意内存使用情况，并进一步优化异常处理逻辑。 
+**/
 package com.cyberpeace.common.component;
 
 import java.io.IOException;

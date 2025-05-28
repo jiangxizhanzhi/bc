@@ -1,3 +1,17 @@
+/**
+ * 这段代码是一个基于Spring框架的服务实现类，主要用于处理与“空间事件集成规则”相关的业务逻辑。以下是对代码的简要分析： 
+ * 1. **类定义与继承**： 
+ * - `SpaceEventIntegrationRuleServiceImpl` 类继承自 `ServiceImpl`，这是一个MyBatis-Plus提供的通用服务实现类。 
+ * - 它实现了 `SpaceEventIntegrationRuleService` 接口，并通过泛型指定数据访问对象为 `SpaceEventIntegrationRuleMapper` 和实体类为 `SpaceEventIntegrationRule`。 
+ * 2. **日志功能**： 
+ * - 使用了 Lombok 的 `@Slf4j` 注解，为类添加了一个日志记录器 `log`，方便在运行时输出调试信息。 
+ * 3. **方法实现**： 
+ * - `getRuleHostChart()` 方法用于生成一个知识点图表 (`KnowledgeChart`)。 
+ * - 创建了一个 `KnowledgeChart` 对象，并向其添加了一个 `KnowledgeChartItem`，该条目表示某种类型的规则主机（`SpaceKTypeEnum.RULE_HOST`），并设置了权重值为 3。 
+ * - 调用了 `count()` 方法来获取符合条件的记录总数，并将其设置为条目的值。 
+ * - 最终返回构建好的 `KnowledgeChart` 对象。 
+ * 此代码展示了如何使用Spring Boot框架结合MyBatis-Plus快速开发服务层的功能，同时利用Lombok简化了代码编写过程。 
+**/
 
 package com.cyberpeace.space.service.impl;
 

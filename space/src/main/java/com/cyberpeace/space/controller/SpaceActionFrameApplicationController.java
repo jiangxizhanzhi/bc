@@ -1,3 +1,42 @@
+/**
+ * ### 代码分析 
+ * #### 概述 
+ * 这段代码是一个Spring Boot控制器类，用于管理与“防御行动框架”相关的功能模块。控制器名为`SpaceActionFrameApplicationController`，继承自`SpaceControllerBase`，并实现了多个RESTful API接口。 
+ * #### 主要功能模块 
+ * 1. **框架搜索 (`/search`)** 
+ * - 使用`GET`请求，根据请求体中的参数搜索框架。 
+ * - 如果请求体为空，返回一个空列表；否则调用服务层方法`frameService.searchFrame()`进行搜索。 
+ * 2. **应用框架 (`/`)** 
+ * - 使用`POST`请求，接收`SpaceActionFrameApplicationReq`请求体，调用服务层的`create()`方法完成框架应用。 
+ * 3. **列出所有框架应用 (`/list_by_rvb`)** 
+ * - 使用`GET`请求，根据请求体中的参数筛选并列出红蓝双方的所有框架应用。 
+ * - 将实体列表转换为业务对象列表后返回。 
+ * 4. **更新框架应用 (`/`)** 
+ * - 使用`PATCH`请求，接收`SpaceActionFrameApplicationBo`请求体，更新指定资源的框架应用信息。 
+ * - 在事务中执行更新操作，同时删除与更新框架相关的已发布命令。 
+ * 5. **获取框架应用详情 (`/`)** 
+ * - 使用`GET`请求，通过资源ID获取特定框架应用的详细信息。 
+ * - 调用服务层方法`getApplicationBo()`返回具体业务对象。 
+ * 6. **删除框架应用 (`/`)** 
+ * - 使用`DELETE`请求，接收`IdListReq`请求体，批量删除指定ID的框架应用。 
+ * 7. **查询下发情况 (`/tactics`)** 
+ * - 使用`GET`请求，通过框架应用ID查询下发的策略信息。 
+ * 8. **中位线下发战法指令 (`/order`)** 
+ * - 使用`POST`请求，接收`SpaceActionFrameOrderReq`请求体，创建新的战法指令。 
+ * 9. **查询分配到的战法指令 (`/order`)** 
+ * - 使用`GET`请求，查询当前用户的战法指令。 
+ * 10. **确认完成战法指令 (`/order/complete`)** 
+ * - 使用`POST`请求，通过资源ID确认某条战法指令已完成。 
+ * 11. **获取红蓝用户列表 (`/users`)** 
+ * - 使用`GET`请求，根据红蓝对抗ID和用户组筛选并返回用户列表。 
+ * #### 技术亮点 
+ * - **事务管理**：使用`TransactionTemplate`确保更新操作的原子性。 
+ * - **工具类支持**：如`StreamApiUtils`、`JsonUtil`等工具类简化了数据转换和操作。 
+ * - **Swagger注解**：通过`@Api`和`@ApiOperation`提供了清晰的接口文档。 
+ * - **异常处理**：在关键逻辑中（如资源ID为空时）抛出`BusinessException`以提示错误。 
+ * #### 总结 
+ * 该代码实现了一个完整的防御行动框架管理系统，涵盖了框架的创建、更新、查询、删除等核心功能。代码结构清晰，功能模块划分明确，使用了现代Java开发的最佳实践，如依赖注入、事务管理以及工具类的支持。 
+**/
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

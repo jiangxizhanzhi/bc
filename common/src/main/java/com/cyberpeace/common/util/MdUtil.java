@@ -1,3 +1,40 @@
+/**
+ * ### 代码分析 
+ * #### 功能概述： 
+ * 该代码是一个用于处理 Markdown 文件的工具类 `MdUtil`，提供了多种功能，包括解析 Markdown 文件、生成 JSON 数据、将 Markdown 内容转换为 HTML、替换文件路径等。它广泛使用了正则表达式、文件操作以及字符串处理。 
+ * --- 
+ * #### 主要功能模块： 
+ * 1. **Markdown 解析与 JSON 生成**： 
+ * - 方法 `parseJsonMarkdown(File file)`：解析 Markdown 文件内容，并将其转换为 JSON 格式的键值对。 
+ * - 使用正则表达式匹配标题行（如 `# 标题`），并提取其后的文本内容作为值。 
+ * - 提供了辅助方法 `validateMarkdownContent` 来验证标题格式是否正确。 
+ * 2. **Markdown 内容写入文件**： 
+ * - 方法 `writeMdToFile(File file, String content)`：将 Markdown 内容写入文件，并处理图片路径的替换。 
+ * - 使用了 `dumpMarkdownImages` 方法来解析图片路径，将相对路径替换为绝对路径，并将图片复制到指定目录。 
+ * 3. **图片路径替换**： 
+ * - 方法 `dumpMarkdownImages`：从 Markdown 内容中提取图片路径，并根据配置替换为绝对路径。 
+ * - 使用正则表达式匹配图片路径（如 `![alt](path/to/image.png)` 和 `<img src="...">`）。 
+ * - 处理文件复制逻辑，确保图片被正确拷贝到目标目录。 
+ * 4. **Markdown 转 HTML**： 
+ * - 方法 `mdToHtmlForApiDoc` 和 `mdToHtml`：将 Markdown 内容转换为 HTML 格式。 
+ * - 支持多种扩展功能（如自动链接、表格、任务列表、目录等），并可以通过 `MutableDataSet` 配置这些扩展。 
+ * 5. **过滤代码块**： 
+ * - 方法 `filterCodeContent`：从 Markdown 内容中移除代码块（支持多行和单行代码块）。 
+ * - 使用正则表达式匹配代码块标记（如 ``` 和 `）。 
+ * 6. **文件读取与保存**： 
+ * - 方法 `getContentWithOutCode`：读取 Markdown 文件内容并过滤掉代码块。 
+ * - 方法 `saveAsFileWriter`：将字符串内容写入文件。 
+ * --- 
+ * #### 关键技术点： 
+ * - **正则表达式**：用于匹配标题、图片路径、代码块等。 
+ * - **文件操作**：通过 `FileUtil` 操作文件路径、读取文件内容、创建目录、复制文件等。 
+ * - **JSON 处理**：使用 `JSONObject` 将 Markdown 数据转换为 JSON 格式。 
+ * - **灵活扩展**：通过 `MutableDataSet` 配置 Markdown 转换的扩展功能。 
+ * - **异常处理**：在文件不存在或路径错误时抛出自定义异常 `BusinessException`。 
+ * --- 
+ * #### 总结： 
+ * 该工具类功能全面，涵盖了 Markdown 文件的解析、转换、路径处理等多个方面，适用于需要对 Markdown 文件进行复杂操作的场景。代码结构清晰，注释详细，易于维护和扩展。 
+**/
 package com.cyberpeace.common.util;
 
 import com.alibaba.fastjson.JSONObject;

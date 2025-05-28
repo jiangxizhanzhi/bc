@@ -1,3 +1,26 @@
+/**
+ * 这段代码是一个基于Spring Boot框架的单元测试类，主要用于测试`com.cyberpeace.space.controller.SpaceActionTargetController`类的功能。以下是代码的主要分析： 
+ * ### 主要功能 
+ * 1. **测试目标**：该类主要测试`SpaceActionTargetController`中的API接口，包括分页查询、列表获取、新增、更新、删除以及详情查看等功能。 
+ * 2. **依赖注入**： 
+ * - 使用`@MockBean`注解模拟了多个服务层对象（如`SpaceActionFrameService`, `SpaceActionTargetService`等），以便在测试中控制其行为。 
+ * - 使用`@SpyBean`来部分模拟`SpaceActionTargetController`的行为。 
+ * 3. **测试方法**： 
+ * - 每个测试方法都通过`mockMvc.perform()`发送HTTP请求，并使用`andExpect()`验证响应状态码和JSON内容是否符合预期。 
+ * - 测试覆盖了以下场景： 
+ * - 分页查询 (`testPage`) 
+ * - 空数据返回的情况 (`testPage_SpaceActionFrameServiceReturnsNoItems`) 
+ * - 获取所有记录 (`testListAll`) 
+ * - 新增操作 (`testAddAttack`) 
+ * - 更新操作 (`testUpdateA`) 
+ * - 删除操作 (`testDeleteA`) 
+ * - 获取单条记录详情 (`testGetADetail` 和 `testGetADetail_SpaceActionFrameServiceReturnsNoItems`) 
+ * ### 关键点总结 
+ * - **Mocking**：通过`Mockito`框架对服务层进行模拟，确保测试环境独立且可控。 
+ * - **JSON验证**：利用`MockMvcResultMatchers.content().json()`精确匹配返回的JSON格式。 
+ * - **边界条件处理**：包括空数据集、非法参数等边缘情况都被考虑到了，增强了测试的健壮性。 
+ * 此代码展示了如何有效地组织单元测试以验证控制器层逻辑，同时保持代码结构清晰易读。 
+**/
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;

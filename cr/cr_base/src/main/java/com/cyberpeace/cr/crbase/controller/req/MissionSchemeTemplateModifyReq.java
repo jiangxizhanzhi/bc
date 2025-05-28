@@ -1,3 +1,22 @@
+/**
+ * 这段代码定义了一个名为 `MissionSchemeTemplateModifyReq` 的 Java 类，用于表示任务方案模板修改请求体。以下是对代码的简要分析： 
+ * 1. **类继承与实现**： 
+ * - 该类继承自 `MissionSchemeTemplateReq`，并且实现了 `Serializable` 接口，表明它可以被序列化。 
+ * 2. **注解与字段**： 
+ * - 使用了 Lombok 的 `@Getter` 和 `@Setter` 注解来自动生成 getter 和 setter 方法。 
+ * - 定义了一个 `resourceId` 字段，并通过 Swagger 的 `@ApiModelProperty` 注解标记为必填字段。 
+ * 3. **方法**： 
+ * - 重写了 `validate()` 方法，用于验证请求体中的数据。 
+ * - 验证标题和描述的长度。 
+ * - 遍历 `combatConfig` 列表中的每个 `MissionSchemeStage` 对象并调用其 `validate()` 方法。 
+ * - 检查阶段名称是否重复。 
+ * 4. **依赖**： 
+ * - 使用了 `com.cyberpeace.cr.crbase` 包下的多个类和常量。 
+ * - 使用了 Guava 的 `Lists.newArrayList()` 方法来创建列表。 
+ * 5. **设计意图**： 
+ * - 该类的主要目的是作为任务方案模板修改请求的数据传输对象（DTO），并确保传入的数据符合业务规则。 
+ * 总体而言，这是一个典型的 DTO 类，用于封装请求参数并进行必要的校验。 
+**/
 package com.cyberpeace.cr.crbase.controller.req;
 
 import java.io.Serializable;

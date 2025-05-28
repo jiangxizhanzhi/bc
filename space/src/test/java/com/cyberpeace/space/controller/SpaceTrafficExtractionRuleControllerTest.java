@@ -1,3 +1,27 @@
+/**
+ * 这段代码是一个针对 `SpaceTrafficExtractionRuleController` 的单元测试类，使用了 JUnit 5 和 Spring Boot Test 框架。以下是对代码的简要分析： 
+ * ### 主要功能 
+ * 1. **测试目标**：该类主要用于测试 `SpaceTrafficExtractionRuleController` 控制器的功能。 
+ * 2. **测试方法**： 
+ * - 测试导出 Excel 功能 (`testExportExcel`)。 
+ * - 测试分页功能 (`testPage`)。 
+ * - 测试新增规则功能 (`testAddAttack`)。 
+ * - 测试更新规则功能 (`testUpdateA`)。 
+ * - 测试删除规则功能 (`testDeleteA`)。 
+ * - 测试获取单个规则详情功能 (`testGetADetail`)。 
+ * ### 关键点 
+ * 1. **依赖注入与模拟**： 
+ * - 使用 `@MockBean` 模拟 `SpaceTrafficExtractionRuleService` 服务层。 
+ * - 使用 `@SpyBean` 模拟 `SpaceTrafficExtractionRuleController` 控制器本身。 
+ * 2. **数据准备**： 
+ * - 在 `setUp` 方法中，预先设置服务层的返回值，确保测试环境的可控性。 
+ * 3. **测试框架**： 
+ * - 使用 `MockMvc` 模拟 HTTP 请求，验证控制器的响应状态码和 JSON 响应内容。 
+ * 4. **JSON 验证**： 
+ * - 使用 `content().json()` 方法验证返回的 JSON 数据是否符合预期。 
+ * ### 总结 
+ * 该代码通过模拟服务层和控制器行为，全面测试了 `SpaceTrafficExtractionRuleController` 的各种功能接口，确保其在不同场景下的正确性和稳定性。 
+**/
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;

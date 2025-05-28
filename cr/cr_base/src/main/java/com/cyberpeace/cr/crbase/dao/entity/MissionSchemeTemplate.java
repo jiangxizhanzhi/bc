@@ -1,3 +1,24 @@
+/**
+ * 这段代码定义了一个名为 `MissionSchemeTemplate` 的实体类，用于表示任务计划模板。以下是代码的简要分析： 
+ * 1. **包与导入**： 
+ * - 类位于 `com.cyberpeace.cr.crbase.dao.entity` 包中。 
+ * - 使用了 MyBatis-Plus 提供的注解（如 `@TableName` 和 `@TableId`）来映射数据库表和字段。 
+ * - 引入了 `BaseTable` 类作为父类，并使用 Lombok 提供的 `@Getter` 和 `@Setter` 注解自动生成 getter 和 setter 方法。 
+ * 2. **注解与元数据**： 
+ * - `@TableName("cr_mission_scheme_template")` 指定该类对应的数据库表名为 `cr_mission_scheme_template`。 
+ * - `@TableId(type = IdType.UUID, value = "resource_id")` 定义了主键字段 `resource_id`，其类型为 UUID。 
+ * 3. **字段说明**： 
+ * - `resourceId`：资源 ID，作为主键。 
+ * - `createUserId`：创建用户的 ID。 
+ * - `title`：任务计划模板的标题。 
+ * - `description`：任务计划模板的描述。 
+ * - `templateData` 和 `templateConfig`：分别存储模板的数据和配置信息，附带了注释链接以提供更多背景信息。 
+ * 4. **继承与设计**： 
+ * - 继承自 `BaseTable`，可能包含一些通用的字段或方法（如创建时间、更新时间等）。 
+ * 5. **功能**： 
+ * - 该类主要用于 ORM（对象关系映射），便于在数据库中操作任务计划模板相关的数据。 
+ * 总结：这是一个典型的 MyBatis-Plus 实体类，用于数据库表 `cr_mission_scheme_template` 的映射，提供了基本的 CRUD 功能支持。 
+**/
 package com.cyberpeace.cr.crbase.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;

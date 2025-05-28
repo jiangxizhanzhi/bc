@@ -1,3 +1,30 @@
+/**
+ * ### 代码分析 
+ * #### 概述 
+ * 该代码定义了一个枚举类 `UploadAttachmentPermission`，用于管理文件上传权限。它实现了接口 `GenericEnum`，并提供了文件上传相关的验证逻辑。 
+ * #### 主要功能 
+ * 1. **枚举常量**： 
+ * - 定义了多种文件上传权限，每个常量包含以下信息： 
+ * - `code`：权限的唯一标识。 
+ * - `desc`：权限的描述。 
+ * - `fileSuffix`：允许上传的文件后缀。 
+ * - `menuIds`：与该权限关联的菜单ID数组。 
+ * 2. **方法实现**： 
+ * - `validateFileSuffix(String fileName)`：校验文件名是否符合指定的文件后缀规则。 
+ * - `validatePermission(boolean all)`：根据菜单ID验证用户是否有对应的权限： 
+ * - 如果 `all` 为 `false`，检查用户是否至少有一个菜单ID具有权限。 
+ * - 如果 `all` 为 `true`，检查用户是否对所有菜单ID都有权限。 
+ * - 如果权限不足，抛出 `UnauthorizedException` 异常。 
+ * 3. **依赖外部工具和框架**： 
+ * - 使用了 `FileUtil` 验证文件后缀。 
+ * - 使用了 Apache Shiro 的 `SecurityUtils` 和 `Subject` 进行权限校验。 
+ * #### 关键点 
+ * - **设计模式**：使用了枚举模式，将权限相关的常量集中管理，便于扩展和维护。 
+ * - **权限校验**：通过 `SecurityUtils` 提供的权限接口，确保只有授权用户才能进行特定操作。 
+ * - **灵活性**：通过参数 `all` 控制权限校验的方式（部分权限或全部权限），提高了方法的适用性。 
+ * #### 总结 
+ * 该代码提供了一种结构化的权限管理方式，适合用于文件上传场景中对用户权限的控制。通过枚举和方法封装，代码清晰且易于扩展，但需要确保 `FileUtil` 和 Shiro 的配置正确以避免运行时异常。 
+**/
 package com.cyberpeace.cs.constant;
 
 import org.apache.shiro.SecurityUtils;

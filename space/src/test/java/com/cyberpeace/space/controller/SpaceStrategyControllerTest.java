@@ -1,3 +1,62 @@
+/**
+ * ### 分析 
+ * 这段代码是一个Spring Boot单元测试类，用于测试`SpaceStrategyController`的功能。以下是代码的主要内容和功能： 
+ * --- 
+ * #### **1. 测试类概述** 
+ * - 类名：`SpaceStrategyControllerTest` 
+ * - 包名：`com.cyberpeace.space.controller` 
+ * - 使用了`@WebMvcTest`注解，表明这是一个针对Spring MVC控制器的测试类。 
+ * - 注入了`MockMvc`对象用于模拟HTTP请求。 
+ * - 使用`@MockBean`注入了一个模拟的`SpaceStrategyService`服务层对象。 
+ * --- 
+ * #### **2. 测试方法概览** 
+ * 该类包含多个测试方法，每个方法对应一个API接口的测试场景。以下是主要的测试方法及其功能： 
+ * 1. **`testGetFrame`** 
+ * - 测试获取策略框架信息（`GET /space/strategy/frame`）。 
+ * - 验证返回的JSON格式是否符合预期，并且调用了`mockSpaceStrategyService.getFrame()`。 
+ * 2. **`testAddFrame`** 
+ * - 测试添加策略框架信息（`POST /space/strategy/frame`）。 
+ * - 验证返回的状态码为200，并且调用了`mockSpaceStrategyService.addFrame()`。 
+ * 3. **`testModifyFrame`** 
+ * - 测试修改策略框架信息（`PATCH /space/strategy/frame`）。 
+ * - 验证返回的状态码为200，并且调用了`mockSpaceStrategyService.modify()`。 
+ * 4. **`testDeleteFrame`** 
+ * - 测试删除策略框架信息（`DELETE /space/strategy/frame`）。 
+ * - 验证返回的状态码为200。 
+ * 5. **`testGetStrategies`** 
+ * - 测试获取策略列表（`GET /space/strategy/list`）。 
+ * - 验证返回的JSON数据是否符合预期，并且调用了`mockSpaceStrategyService.listStrategiesByFrame()`。 
+ * 6. **`testGetStrategies_SpaceStrategyServiceReturnsNoItems`** 
+ * - 测试当策略列表为空时的响应（`GET /space/strategy/list`）。 
+ * - 验证返回的JSON数据中`data`字段为空数组。 
+ * 7. **`testPageStrategies`** 
+ * - 测试分页获取策略列表（`GET /space/strategy/page`）。 
+ * - 验证返回的JSON数据是否符合预期，并且调用了`mockSpaceStrategyService.pageStrategiesByFrame()`。 
+ * 8. **`testAddStrategy`** 
+ * - 测试添加策略信息（`POST /space/strategy`）。 
+ * - 验证返回的状态码为200，并且调用了`mockSpaceStrategyService.addStrategy()`。 
+ * 9. **`testUpdateStrategy`** 
+ * - 测试更新策略信息（`PATCH /space/strategy`）。 
+ * - 验证返回的状态码为200，并且调用了`mockSpaceStrategyService.updateStrategy()`。 
+ * 10. **`testDeleteStrategy`** 
+ * - 测试删除策略信息（`DELETE /space/strategy`）。 
+ * - 验证返回的状态码为200。 
+ * 11. **`testGetDetail`** 
+ * - 测试获取策略详情（`GET /space/strategy`）。 
+ * - 验证返回的JSON数据是否符合预期，并且调用了`mockSpaceStrategyService.getDetail()`。 
+ * 12. **`testGetRoute`** 
+ * - 测试获取策略路由信息（`GET /space/strategy/route`）。 
+ * - 验证返回的JSON数据是否符合预期，并且调用了`mockSpaceStrategyService.getFrameRouteById()`和`mockSpaceStrategyService.getById()`。 
+ * --- 
+ * #### **3. 关键技术点** 
+ * - **MockMvc**：用于模拟HTTP请求和响应，验证控制器的行为。 
+ * - **JsonUtil**：用于将Java对象转换为JSON字符串。 
+ * - **Mockito**：用于模拟服务层行为，并验证方法调用。 
+ * - **Spring Boot Test**：提供了方便的注解（如`@WebMvcTest`、`@MockBean`）来简化测试开发。 
+ * --- 
+ * #### **4. 总结** 
+ * 该测试类覆盖了`SpaceStrategyController`的所有主要功能接口，包括框架管理（增删改查）、策略管理（增删改查）以及详细信息和路由查询。测试通过模拟服务层行为，验证了控制器的输入输出是否符合预期，并确保了服务层方法被正确调用。 
+**/
 package com.cyberpeace.space.controller;
 
 import com.cyberpeace.common.model.ListRsp;

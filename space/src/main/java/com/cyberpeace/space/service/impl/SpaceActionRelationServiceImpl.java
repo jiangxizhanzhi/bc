@@ -1,3 +1,30 @@
+/**
+ * ### 代码分析 
+ * #### 概述 
+ * 该代码是一个服务类 `SpaceActionRelationServiceImpl`，实现了 `SpaceActionRelationService` 接口。它主要用于处理与 `SpaceActionRelation` 实体相关的业务逻辑，包括创建、更新、删除以及查询操作。 
+ * #### 主要功能模块 
+ * 1. **创建关系** 
+ * - 方法 `createRelation`：根据给定的上层 ID 列表 (`upperIds`) 和资源 ID (`resourceId`) 创建多个关系。 
+ * - 使用了工具方法 `StreamApiUtils.distinct` 和 `StreamApiUtils.map` 来去重并生成实体对象列表，最后通过批量保存接口 `saveBatch` 完成数据插入。 
+ * 2. **更新关系** 
+ * - 方法 `updateRelation`：先删除与指定资源 ID 相关的所有旧关系，然后调用 `createRelation` 方法重新创建新的关系。 
+ * 3. **删除关系** 
+ * - 方法 `deleteRelationsByIds`：根据 ID 列表删除上下层级的关系。 
+ * - 方法 `deleteByUpperIds`：根据上层 ID 列表删除对应的关系。 
+ * 4. **查询关系** 
+ * - 方法 `getUpperIdsByLowerId`：根据下级 ID 查询其对应的上级 ID 列表。 
+ * - 方法 `getLowerIdsByUpperId`：根据上级 ID 查询其对应的下级 ID 列表。 
+ * - 方法 `getLowerIdsByUpperIds`：批量查询多个上级 ID 对应的下级 ID 列表。 
+ * - 方法 `listByUpperIds`：根据上级 ID 列表查询所有相关的关系记录。 
+ * 5. **创建实体** 
+ * - 方法 `createEntity`：用于生成 `SpaceActionRelation` 实体对象，同时进行必要的参数校验。 
+ * #### 技术特点 
+ * - **MyBatis-Plus**：利用了 MyBatis-Plus 的 `LambdaQueryWrapper` 进行条件构造，简化了数据库操作。 
+ * - **流式操作**：使用了 `StreamApiUtils` 工具类中的 `distinct` 和 `map` 方法来处理集合数据，提高了代码的可读性和简洁性。 
+ * - **异常处理**：在关键方法中加入了业务异常抛出逻辑，例如当输入的 ID 为空时会抛出 `BusinessException`。 
+ * #### 总结 
+ * 此服务类封装了关于 `SpaceActionRelation` 的核心业务逻辑，提供了从关系的增删改查到具体实体创建的一系列功能。通过合理运用 MyBatis-Plus 和 Java 8 的流式操作，使得代码结构清晰且易于维护。 
+**/
 package com.cyberpeace.space.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

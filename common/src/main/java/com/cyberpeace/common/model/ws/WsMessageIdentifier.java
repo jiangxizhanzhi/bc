@@ -1,3 +1,26 @@
+/**
+ * 该代码定义了一个名为 `WsMessageIdentifier` 的 Java 类，用于生成 WebSocket 消息标识符。以下是代码的简要分析： 
+ * 1. **类的功能**： 
+ * - 该类实现了 `Serializable` 接口，表明它可以被序列化。 
+ * - 它的主要功能是根据对象的属性生成一个唯一的业务标识符（`getIdentifierId` 方法）。 
+ * 2. **关键属性**： 
+ * - `userId`：表示需要发送消息的用户ID。 
+ * - `path`：表示路径信息。 
+ * 3. **核心方法**： 
+ * - `getIdentifierId()`： 
+ * - 将对象的所有字段转换为 `Map`。 
+ * - 移除 `userId` 字段，因为它不参与业务字段的排序。 
+ * - 使用 `LocalStringUtil.snakeCaseFormat` 将字段名转换为下划线格式，并按字典序排序。 
+ * - 构造一个字符串，将字段值用 `&` 连接起来，返回作为业务标识符。 
+ * 4. **工具类依赖**： 
+ * - 使用了 `ObjUtil.obj2map` 将对象转换为 `Map`。 
+ * - 使用了 `Maps.newTreeMap` 来确保字段按字典序排序。 
+ * - 使用了 `LocalStringUtil.snakeCaseFormat` 对字段名进行格式化。 
+ * 5. **设计特点**： 
+ * - 通过移除 `userId` 和统一字段名格式，确保生成的标识符与业务逻辑相关联。 
+ * - 使用 `StringBuilder` 提高字符串拼接效率。 
+ * 总结：该类主要用于生成基于 WebSocket 消息的唯一业务标识符，适用于需要对多个字段进行组合并排序的场景。 
+**/
 package com.cyberpeace.common.model.ws;
 
 import java.io.Serializable;

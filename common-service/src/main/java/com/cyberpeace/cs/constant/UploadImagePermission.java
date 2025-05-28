@@ -1,3 +1,27 @@
+/**
+ * ### 代码分析 
+ * #### 概述 
+ * 该代码定义了一个枚举类 `UploadImagePermission`，用于管理上传图片的权限。每个枚举值表示一种特定的图片上传权限，并包含了相关的描述、文件后缀、菜单ID等信息。 
+ * #### 主要功能 
+ * 1. **枚举值定义**： 
+ * - 每个枚举值代表一种上传图片的权限，例如 `CMS_COURSE_LOGO` 表示后台课程的图片上传权限。 
+ * - 每个枚举值包含以下属性： 
+ * - `code`：权限的唯一标识符（整数）。 
+ * - `desc`：权限的描述（字符串）。 
+ * - `fileSuffix`：允许上传的文件后缀（字符串）。 
+ * - `menuIds`：与该权限相关的菜单ID数组。 
+ * 2. **方法实现**： 
+ * - `validateFileSuffix(String fileName)`：验证上传文件的后缀是否符合要求。 
+ * - `validatePermission(boolean all)`：验证当前用户是否具有该权限。如果 `all` 参数为 `true`，则要求用户必须拥有所有相关的菜单权限；否则只需拥有任意一个菜单权限即可。 
+ * 3. **异常处理**： 
+ * - 如果用户没有足够的权限，会抛出 `UnauthorizedException` 异常。 
+ * #### 特点 
+ * - 使用了 Lombok 的 `@Getter` 注解来自动生成字段的 getter 方法。 
+ * - 利用了 Apache Shiro 的 `SecurityUtils` 和 `Subject` 对象来检查用户的权限。 
+ * - 提供了灵活的权限验证机制，支持逐项检查或全部检查两种模式。 
+ * #### 总结 
+ * 这是一个典型的权限控制枚举类，适用于需要对不同类型的图片上传进行精细化权限管理的场景。通过结合枚举类型和权限校验逻辑，可以有效提升代码的可读性和维护性。 
+**/
 package com.cyberpeace.cs.constant;
 
 import org.apache.shiro.SecurityUtils;

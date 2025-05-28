@@ -1,3 +1,22 @@
+/**
+ * 该代码定义了一个名为 `CrBadge` 的实体类，用于表示用户在系统中看到的红点提示。以下是代码的主要分析： 
+ * 1. **类与注解**： 
+ * - 使用了 Lombok 的 `@Getter` 和 `@Setter` 注解，自动生成属性的 getter 和 setter 方法。 
+ * - 属于 `com.cyberpeace.cr.crbase.dao.entity` 包。 
+ * 2. **字段说明**： 
+ * - `id`：主键，使用 `@TableId` 注解，类型为自增整数（`IdType.AUTO`）。 
+ * - `type`：提示的类型，整数类型。 
+ * - `businessId`：业务 ID，字符串类型。 
+ * - `userId`：用户 ID，字符串类型。 
+ * - `extra`：额外信息，字符串类型。 
+ * - `createTime` 和 `updateTime`：分别记录创建时间和更新时间，使用 `@TableField` 注解，自动填充插入或更新时间。 
+ * 3. **枚举类**： 
+ * - 内部定义了一个枚举类 `BadgeType`，实现了 `GenericEnum` 接口。 
+ * - 枚举值包括 `NOTICE`, `MISSION_RELEASE`, 和 `NEW_SUBMIT`，每个值都有对应的代码和描述。 
+ * 4. **用途**： 
+ * - 该类主要用于存储和管理用户界面中的红点提示信息，支持多种类型的提示，并且可以通过枚举类型进行统一管理。 
+ * 总结来说，这个类是一个典型的 MyBatis-Plus 实体类，结合了 Lombok 和枚举的设计模式，便于数据库操作和业务逻辑处理。 
+**/
 package com.cyberpeace.cr.crbase.dao.entity;
 
 import java.util.Date;

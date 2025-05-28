@@ -1,3 +1,24 @@
+/**
+ * 该代码定义了一个名为 `LocalSceneService` 的接口，它扩展了 `IService<LocalScene>` 接口。这个服务接口主要用于管理与“当地场景”相关的各种操作。以下是对这段代码的简要分析： 
+ * 1. **接口功能**： 
+ * - 提供了一系列方法来操作和查询与“当地场景”相关的数据。 
+ * - 包括获取场景信息、启动/停止场景、创建/删除节点、获取节点统计信息等。 
+ * 2. **主要方法分类**： 
+ * - **场景信息获取**：如 `getById`, `getByBusinessInstanceId`, `getNodeCount` 等。 
+ * - **场景控制**：如 `startScene`, `stopScene`, `pauseScene` 等。 
+ * - **节点操作**：如 `createNode`, `deleteNode`, `startNode` 等。 
+ * - **快照管理**：如 `nodeSnapshot`, `mergeSnapshot`, `deleteSnapshot` 等。 
+ * - **资产信息获取**：如 `getAssetListByInstanceId`, `getAssetListByTopoId` 等。 
+ * - **其他辅助功能**：如 `getMonitorSessions`, `getHostStateList` 等。 
+ * 3. **依赖的类和模型**： 
+ * - 使用了 `com.alibaba.fastjson` 来处理 JSON 数据。 
+ * - 引用了多个自定义类和模型，例如 `LocalScene`, `CreateSnapshotContext`, `SceneFlowContext` 等。 
+ * - 还涉及到了一些外部库或模型，比如 `MpHostState` 和 `MergeSnapshotContext`。 
+ * 4. **设计目的**： 
+ * - 该接口旨在提供一套完整的 API 给调用者使用，以便他们能够方便地管理和操作“当地场景”中的各种元素。 
+ * - 方法名直观易懂，参数明确，返回值类型多样，涵盖了基本的数据类型到复杂的 JSON 对象。 
+ * 总体来说，这段代码是一个典型的面向服务的设计模式实现，专注于封装与“当地场景”相关的业务逻辑，并提供了丰富的接口供外部系统调用。 
+**/
 package com.cyberpeace.cs.service;
 
 import java.util.List;

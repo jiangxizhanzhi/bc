@@ -1,3 +1,41 @@
+/**
+ * ### 代码分析 
+ * #### 1. **类的功能与结构** 
+ * - 类名为 `CrBaseController`，位于包 `com.cyberpeace.cr.crbase.controller` 下。 
+ * - 注解 `@RestController` 表明这是一个 RESTful 风格的控制器类。 
+ * - 注解 `@Slf4j` 提供日志功能。 
+ * - 注解 `@RequestMapping("/cr/common")` 定义了该控制器的基础路径为 `/cr/common`。 
+ * #### 2. **依赖注入** 
+ * - 使用 `@Autowired` 注入了 `CrConstantsService`，用于处理常量相关的业务逻辑。 
+ * #### 3. **主要方法** 
+ * ##### 方法 1: `getConstantsConfig` 
+ * - **功能**: 根据传入的类型 (`type`) 获取对应的常量配置。 
+ * - **参数**: 
+ * - `type`: 整型值，表示常量的类型。 
+ * - **逻辑**: 
+ * - 调用 `crConstantsService.getByType(type)` 获取指定类型的常量列表。 
+ * - 如果类型是特定的三种（如任务类别、工具类型等），则将结果转换为 `MissionCategoryRsp` 列表并返回。 
+ * - 否则，将结果转换为 `CodeNameRsp` 列表并返回。 
+ * - **返回值**: 包装在 `BaseRsp` 中的响应数据。 
+ * ##### 方法 2: `getCurrentTime` 
+ * - **功能**: 返回当前服务器的时间。 
+ * - **注解**: 
+ * - `@ApiOperation("获取当前服务器时间")`: 描述 API 的作用。 
+ * - `@GetMapping("/current_time")`: 映射到 `/cr/common/current_time`。 
+ * - `@RequiresPermissions`: 需要用户具备某些权限才能访问此接口。 
+ * - 权限包括：课程管理、在线课程、红蓝对抗等。 
+ * - **逻辑**: 
+ * - 创建 `CurrentTimeRsp` 对象，并设置当前时间。 
+ * - 将其包装在 `BaseRsp` 中返回。 
+ * - **返回值**: 包含当前时间的 `BaseRsp<CurrentTimeRsp>`。 
+ * #### 4. **安全性** 
+ * - 方法 `getCurrentTime` 使用了 `@RequiresPermissions` 注解，确保只有拥有指定权限的用户可以访问该接口。 
+ * #### 5. **工具类与常量** 
+ * - 使用了 `StreamApiUtils` 工具类进行集合的映射操作。 
+ * - 引用了多个常量类（如 `CodeNameRsp`, `MissionCategoryRsp`, `CrConstantsConfig` 等）和枚举（如 `CrConstantsConfig.ConstantsType`）。 
+ * #### 总结 
+ * 该类主要用于提供靶场的基础服务接口，包括常量配置查询和当前时间获取。代码结构清晰，注释详尽，使用了现代 Java 技术（如 Lombok 和 Spring Boot 注解）来简化开发。 
+**/
 package com.cyberpeace.cr.crbase.controller;
 
 import com.cyberpeace.common.constant.MenuConstant;

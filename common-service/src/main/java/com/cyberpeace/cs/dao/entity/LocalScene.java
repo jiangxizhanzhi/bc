@@ -1,3 +1,24 @@
+/**
+ * ### 代码分析 
+ * #### 类概述 
+ * `LocalScene` 是一个实体类，定义了与“本地场景”相关的数据结构和逻辑。它继承自 `BaseTable`，并使用了 MyBatis-Plus 的注解来映射数据库表和字段。 
+ * #### 主要功能 
+ * 1. **数据字段**： 
+ * - 包含多个字段描述场景的状态、属性、时间和事件信息。 
+ * - 如 `resourceId`（资源ID）、`sceneStatus`（场景状态）、`businessCode`（业务代号）等。 
+ * 2. **枚举类**： 
+ * - `SceneStatusEnum`：定义了场景的不同状态（如未启动、启动、删除、暂停），并提供了状态转换逻辑。 
+ * - `BusinessCode`：定义了业务代码的枚举值及其对应的中文和英文描述。 
+ * - `DestroyMode`：定义了销毁模式（手动或自动）。 
+ * 3. **数据库映射**： 
+ * - 使用了 `@TableName` 注解将类映射到数据库表 `local_scene`。 
+ * - 字段通过 `@TableId` 和 `@TableField` 注解与数据库字段一一对应。 
+ * 4. **扩展性**： 
+ * - 提供了 `record` 字段（虽然未存储在数据库中）用于记录录屏功能的状态。 
+ * - `meta` 字段以 JSON 格式存储额外信息。 
+ * #### 总结 
+ * `LocalScene` 是一个典型的 ORM 实体类，结合了 MyBatis-Plus 的注解和 Java 枚举类，用于管理本地场景的数据和状态。其设计清晰，便于扩展和维护。 
+**/
 package com.cyberpeace.cs.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;

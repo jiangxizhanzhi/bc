@@ -1,3 +1,43 @@
+/**
+ * 该代码是一个用于 JSON 序列化和反序列化的工具类 `JsonUtil`，以下是对其功能和结构的简要分析： 
+ * ### 功能概述： 
+ * 1. **JSON 序列化**： 
+ * - 提供将对象、集合、输入流等转换为 JSON 字符串的功能。 
+ * - 支持自定义命名策略（PropertyNamingStrategy）。 
+ * 2. **JSON 反序列化**： 
+ * - 将 JSON 字符串或输入流解析为对象、对象数组或 JSON 对象。 
+ * - 支持指定目标类类型和命名策略。 
+ * 3. **特殊处理**： 
+ * - 空值处理：如空对象返回 `{}`，空字符串返回 `[]`。 
+ * - 输入流读取并解析 JSON 数据。 
+ * - JSON 字段重命名功能。 
+ * 4. **比较与转换**： 
+ * - 比较两个 JSON 对象是否相等。 
+ * - 将 Java 对象转换为 JSON 对象或 JSON 字符串。 
+ * - 将 JSON 对象转换为有序的 `TreeMap`。 
+ * ### 主要方法分类： 
+ * #### 1. JSON 序列化 
+ * - `toJsonString(Object obj)`：将对象转换为 JSON 字符串。 
+ * - `arrayToString(List<T> objArr)`：将列表转换为 JSON 数组字符串。 
+ * - `toJsonString(Object obj, PropertyNamingStrategy namingStrategy)`：支持命名策略的 JSON 序列化。 
+ * #### 2. JSON 反序列化 
+ * - `toJsonObjectArray(String text, Class<T> clazz)`：将 JSON 字符串解析为对象数组。 
+ * - `toJsonObject(String text, Class<T> clazz)`：将 JSON 字符串解析为目标类的对象。 
+ * - `toJsonObject(InputStream inputStream, Class<T> clazz)`：从输入流中读取并解析 JSON 数据。 
+ * - `toJsonObject(String text, TypeReference<T> type, Feature... features)`：灵活的反序列化方法。 
+ * #### 3. 特殊功能 
+ * - `filedConvert(JSONObject jsonObject, String mapping)`：根据映射规则转换 JSON 的字段名称。 
+ * - `java2JsonObject(T source)`：将 Java 对象转换为 JSON 对象。 
+ * - `equalJson(JSONObject json1, JSONObject json2)`：比较两个 JSON 对象是否相等。 
+ * - `toTreeMap(JSONObject jsonObject)`：将 JSON 对象转换为有序的 `TreeMap`。 
+ * ### 技术细节： 
+ * - 使用了阿里巴巴的 FastJSON 库进行 JSON 操作。 
+ * - 引入了 Guava 和 Apache Commons Lang 工具类以增强功能。 
+ * - 使用 Lombok 的 `@Slf4j` 注解简化日志记录。 
+ * - 方法设计考虑了空值处理和异常处理（如输入流读取失败抛出业务异常）。 
+ * ### 总结： 
+ * 该工具类提供了全面的 JSON 操作功能，适用于多种场景，包括序列化、反序列化、字段重命名、比较和格式化输出。代码结构清晰，注释详尽，适合作为通用的 JSON 工具类使用。 
+**/
 package com.cyberpeace.common.util;
 
 import com.alibaba.fastjson.*;

@@ -1,3 +1,18 @@
+/**
+ * 这段代码定义了一个自定义注解 `MdHeadLine`，主要用于标记需要解析的 Markdown 标题字段。以下是代码的简要分析： 
+ * 1. **注解的基本信息**： 
+ * - 注解的目标是类的字段（`@Target(ElementType.FIELD)`）。 
+ * - 注解在运行时可用（`@Retention(RetentionPolicy.RUNTIME)`）。 
+ * - 支持继承（`@Inherited`）。 
+ * 2. **注解的属性**： 
+ * - `level()`：表示标题的等级，如 `#` 或 `##`，默认值为 `-1`。 
+ * - `name()`：指定要匹配的标题名称，默认为空字符串。 
+ * - `parser()`：指定用于解析内容的解析器类，默认为 `StringParser`。 
+ * - `convert()`：指定用于转换值的转换器类，默认为 `NoConvert`。 
+ * 3. **用途**： 
+ * - 这个注解可以用于标识类中的字段，以便在运行时根据注解的属性对 Markdown 内容进行解析和处理。 
+ * 总结：这是一个用于解析 Markdown 标题的自定义注解，提供了标题等级、名称、解析器和转换器等配置选项。 
+**/
 package com.cyberpeace.common.mdparser.annotations;
 
 import com.cyberpeace.common.mdparser.convert.MdConvertEnum;

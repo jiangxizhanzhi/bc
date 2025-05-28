@@ -1,3 +1,25 @@
+/**
+ * 这段代码是一个Spring Boot单元测试类，主要用于测试`SpaceScoreRankingRuleController`控制器的功能。以下是代码的主要功能和结构分析： 
+ * 1. **测试环境配置**： 
+ * - 使用了`@WebMvcTest`注解来加载`SpaceScoreRankingRuleController`相关的Web层组件。 
+ * - 使用`MockMvc`模拟HTTP请求，验证控制器的响应。 
+ * 2. **依赖注入与Mock**： 
+ * - `@Autowired`注入了`MockMvc`实例，用于发送HTTP请求。 
+ * - `@MockBean`模拟了`SpaceScoreRankingRuleService`服务层，提供预定义的行为。 
+ * - `@SpyBean`用于部分模拟`SpaceScoreRankingRuleController`自身的方法。 
+ * 3. **测试方法**： 
+ * - `testPage`：测试分页接口，验证返回的JSON数据是否符合预期。 
+ * - `testAddAttack`：测试新增规则接口，验证POST请求的响应。 
+ * - `testUpdateA`：测试更新规则接口，验证PATCH请求的响应。 
+ * - `testDeleteA`：测试删除规则接口，验证DELETE请求的响应。 
+ * - `testGetADetail`：测试获取单条规则详情接口，验证GET请求的响应。 
+ * 4. **数据准备**： 
+ * - 在`setUp`方法中，通过`when`和`doReturn`设置服务层方法的返回值，模拟数据库操作。 
+ * - 初始化了一些必要的实体对象和请求参数。 
+ * 5. **断言**： 
+ * - 使用`andExpect`方法验证HTTP状态码、响应内容和JSON格式是否符合预期。 
+ * 总结来说，这段代码通过模拟HTTP请求和响应，全面测试了`SpaceScoreRankingRuleController`的所有主要接口，确保其功能正常。 
+**/
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;

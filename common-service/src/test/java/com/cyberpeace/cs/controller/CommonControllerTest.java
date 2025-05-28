@@ -1,3 +1,25 @@
+/**
+ * 这段代码是一个单元测试类 `CommonControllerTest`，用于测试 `CommonController` 的两个功能：图片上传 (`testImageUpload`) 和附件上传 (`testAttachmentUpload`)。以下是代码的主要分析： 
+ * ### 1. **测试环境配置** 
+ * - 使用了 `@WebMvcTest(CommonController.class)` 注解来加载 `CommonController` 的 Spring MVC 上下文。 
+ * - 使用了 `@MockBean` 注解来模拟依赖的服务（`AttachmentService` 和 `UtilService`）。 
+ * - 在 `setUp()` 方法中，设置了当前用户信息（`UserInfo`），并将其放入线程上下文中。 
+ * ### 2. **测试方法** 
+ * #### (1) `testImageUpload` 
+ * - 模拟了 `AttachmentService.uploadFile()` 方法的行为，返回一个 `AttachmentBo` 对象。 
+ * - 配置了 `UtilService.handlerFileUrl()` 方法的返回值。 
+ * - 使用 `mockMvc.perform()` 发起多部分文件上传请求到 `/common/image_upload` 接口。 
+ * - 验证响应状态码为 `200 OK`，并且响应内容符合预期 JSON 格式。 
+ * #### (2) `testAttachmentUpload` 
+ * - 类似于 `testImageUpload`，但测试的是 `/common/attachment_upload` 接口。 
+ * - 模拟了 `AttachmentService.uploadDest()` 方法的行为，并配置了 `UtilService.handlerFileUrl()` 的返回值。 
+ * - 使用 `mockMvc.perform()` 发起多部分文件上传请求，并验证响应状态码和内容。 
+ * ### 3. **核心逻辑** 
+ * - 测试了文件上传接口的功能，包括文件路径、资源 ID、文件名等字段的正确性。 
+ * - 验证了服务层方法被正确调用，并且返回的结果与预期一致。 
+ * ### 总结 
+ * 该测试类通过模拟依赖服务和发起 HTTP 请求的方式，验证了 `CommonController` 中两个上传接口的功能正确性。代码结构清晰，测试覆盖全面，使用了 Spring Boot 提供的测试工具，确保了测试的可靠性和可维护性。 
+**/
 
 package com.cyberpeace.cs.controller;
 

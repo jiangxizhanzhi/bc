@@ -1,3 +1,25 @@
+/**
+ * 这段代码定义了一个名为 `IndexRule` 的 Java 类，位于 `com.cyberpeace.space.service.context.index` 包中。以下是代码的简要分析： 
+ * 1. **类的功能**： 
+ * - `IndexRule` 是一个用于管理编号规则的类。 
+ * - 它包含多个整型字段，分别表示不同的规则值（如基础、警告、威胁、比赛等），并提供了一个方法来计算这些值的总和。 
+ * 2. **字段说明**： 
+ * - `base`: 表示基础数据规则，默认值为 0。 
+ * - `warning`: 表示告警字典规则，默认值为 0。 
+ * - `threat`: 表示威胁防御规则，默认值为 0。 
+ * - `race`: 表示比赛及训练评估规则，默认值为 0。 
+ * - `sum`: 表示总数，默认值为 0。 
+ * - `use`: 表示使用次数，默认值为 0。 
+ * 3. **方法说明**： 
+ * - `calSum()`: 计算 `sum` 字段的值，将其设置为 `base`、`warning`、`race` 和 `threat` 字段的总和。 
+ * 4. **注解**： 
+ * - 使用了 Lombok 的 `@Getter` 和 `@Setter` 注解，自动生成 getter 和 setter 方法。 
+ * - 使用了 Swagger 的 `@ApiModelProperty` 注解，为字段提供了描述信息。 
+ * 5. **设计特点**： 
+ * - 类的设计简单直观，便于管理和计算不同规则的总和。 
+ * - 默认值的设置使得对象在初始化时具有合理的初始状态。 
+ * 总体而言，这个类是一个简单的数据结构类，主要用于存储和计算与编号规则相关的数据。 
+**/
 package com.cyberpeace.space.service.context.index;
 
 import io.swagger.annotations.ApiModelProperty;

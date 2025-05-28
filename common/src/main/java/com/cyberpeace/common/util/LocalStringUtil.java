@@ -1,3 +1,69 @@
+/**
+ * ### 代码分析 
+ * 该代码定义了一个名为 `LocalStringUtil` 的工具类，提供了一系列与字符串操作相关的实用方法。以下是对其功能的简要分析： 
+ * --- 
+ * #### **1. 私有构造函数** 
+ * - `private LocalStringUtil()`：防止实例化此工具类，确保其方法只能通过静态方式调用。 
+ * --- 
+ * #### **2. 方法概览** 
+ * ##### **字符串格式化相关** 
+ * - **`frontBackLine(String value)`** 
+ * 在字符串前后添加换行符。 
+ * - 如果输入为空或空白，则返回默认空字符串。 
+ * - **`snakeCaseFormat(String name)`** 
+ * 将字符串转换为蛇形命名法（snake_case）。 
+ * - 处理大小写、空格、下划线等字符，生成符合规范的蛇形命名字符串。 
+ * --- 
+ * ##### **字符串转换为列表** 
+ * - **`strToList(String data)`** 
+ * 将逗号分隔的字符串转换为整数列表。 
+ * - 如果输入为空或空白，则返回空列表。 
+ * - **`strToListStr(String data)`** 
+ * 将逗号分隔的字符串转换为字符串列表。 
+ * - 同样处理空输入情况。 
+ * --- 
+ * ##### **字符串操作** 
+ * - **`strRemoveSubStr(String ids, String data)`** 
+ * 从以 JSON 数组形式存储的字符串中移除指定的子串。 
+ * - 使用 `JsonUtil` 解析并修改数组内容。 
+ * - **`replaceAll(String content, List<String> old, List<String> newValue)`** 
+ * 批量替换字符串内容。 
+ * - 支持动态调整新值数量以匹配旧值。 
+ * - **`replaceToBlank(String content, List<String> matchStr)`** 
+ * 将匹配到的子串替换为空白。 
+ * - 避免空值或无效输入导致异常。 
+ * --- 
+ * ##### **基于正则表达式的字符串操作** 
+ * - **`getMatchStr(String content, String regex)`** 
+ * 根据正则表达式提取匹配的内容。 
+ * - 返回所有匹配结果的列表。 
+ * - **`getMatchUrlStr(String content, String regex)`** 
+ * 提取 URL 类型的匹配结果。 
+ * - 特殊处理匹配组编号为 `1` 的内容。 
+ * - **`getMatchStr(String content, String regex, Integer index)`** 
+ * 根据正则表达式和指定子组索引提取匹配内容。 
+ * - **`getMatchStrBool(String content, String regex)`** 
+ * 检查是否匹配正则表达式。 
+ * - 返回布尔值。 
+ * - **`getFirstMatchStr(String content, String regex)`** 
+ * 获取第一个匹配项。 
+ * - 若无匹配，返回空字符串。 
+ * - **`getAllMatchStr(String content, String regex, Integer index)`** 
+ * 获取所有匹配项。 
+ * - 返回完整的匹配列表。 
+ * --- 
+ * ##### **随机字符串生成** 
+ * - **`getRandomStr(int length)`** 
+ * 生成指定长度的随机字符串。 
+ * - 使用 `IDGeneratorUtil` 提供的随机 ID 进行拼接。 
+ * --- 
+ * ##### **字符串转义** 
+ * - **`transfer(String search)`** 
+ * 对字符串中的特殊字符进行转义（如 `_`, `%`, `'`），用于安全处理查询条件。 
+ * --- 
+ * #### **总结** 
+ * 该工具类提供了丰富的字符串操作功能，包括格式化、转换、替换、正则匹配及随机字符串生成等。代码结构清晰，逻辑严谨，依赖了多个外部工具类（如 `CommonConstant`, `JsonUtil`, `IDGeneratorUtil` 等），适合在需要复杂字符串处理的场景中使用。 
+**/
 package com.cyberpeace.common.util;
 
 import com.cyberpeace.common.constant.CommonConstant;

@@ -1,3 +1,25 @@
+/**
+ * 这段代码定义了一个名为 `SpaceAlgorithmRoleController` 的 Spring MVC 控制器类，用于处理与“空间算法岗位”相关的请求。以下是对代码的简要分析： 
+ * 1. **类的基本信息**： 
+ * - 类名：`SpaceAlgorithmRoleController` 
+ * - 继承自：`SpaceControllerBase`，这是一个泛型基类，具体类型包括服务层、实体类、业务对象和请求参数。 
+ * - 注解： 
+ * - `@RestController`：表明这是一个 RESTful 风格的控制器。 
+ * - `@RequestMapping`：定义了该控制器的默认请求路径为 `/space/algorithm/algorithm_role`。 
+ * - `@RequiresAuthentication`：表示此接口需要用户认证后才能访问。 
+ * - `@Slf4j`：引入日志功能。 
+ * 2. **依赖注入**： 
+ * - 使用 `@Autowired` 注入了 `CourseService`，用于操作课程相关的数据。 
+ * 3. **方法实现**： 
+ * - `getRelatedMap` 方法： 
+ * - 根据传入的 `SpaceAlgorithmRole` 列表，提取其中的课程 ID，并通过 `courseService` 获取对应的课程列表。 
+ * - 将课程的资源 ID 和名称封装成 `IdAndName` 对象并存入返回的映射中。 
+ * - `checkValue` 方法： 
+ * - 调用父类的方法 `checkPercentageValue`，验证 `coursePercent` 和 `trainingPercent` 的总和是否符合要求。 
+ * 4. **注释与文档**： 
+ * - 类上有详细的 Javadoc，描述了类的功能、作者、版本等信息，并指出了它继承自哪个基类。 
+ * 总体来说，这个控制器主要负责管理“空间算法岗位”的相关业务逻辑，特别是与课程关联的部分。它通过调用服务层来获取必要的数据，并提供了一些基础的校验功能。 
+**/
 package com.cyberpeace.space.controller;
 
 import com.cyberpeace.common.util.JsonUtil;

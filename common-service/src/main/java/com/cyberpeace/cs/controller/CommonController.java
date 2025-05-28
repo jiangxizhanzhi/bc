@@ -1,3 +1,70 @@
+/**
+ * ### 代码分析 
+ * #### 1. **类概述** 
+ * - 类名为 `CommonController`，位于包 `com.cyberpeace.cs.controller` 下。 
+ * - 注解 `@RestController` 表明这是一个 RESTful 接口控制器。 
+ * - 注解 `@RequestMapping("/common")` 指定该控制器的基础路径为 `/common`。 
+ * - 注解 `@RequiresAuthentication` 表示该接口需要用户认证。 
+ * #### 2. **主要功能** 
+ * 该类提供了多个用于文件上传、解析及版本信息查询的功能接口。以下是主要功能模块： 
+ * ##### a. **图片上传** 
+ * - 方法：`imageUpload` 
+ * - 功能：处理图片文件上传。 
+ * - 流程： 
+ * - 校验文件类型和后缀。 
+ * - 校验文件名长度（最大100字符）。 
+ * - 调用 `attachmentService.uploadFile` 进行文件上传。 
+ * - 返回包含文件路径的 `BaseRsp` 对象。 
+ * ##### b. **附件上传** 
+ * - 方法：`attachmentUpload` 
+ * - 功能：处理普通附件上传。 
+ * - 流程： 
+ * - 校验文件名长度。 
+ * - 调用 `attachmentService.uploadDest` 进行文件上传。 
+ * - 返回包含文件路径的 `BaseRsp` 对象。 
+ * ##### c. **Markdown 文件上传** 
+ * - 方法：`mdUpload` 
+ * - 功能：处理 Markdown 文件上传。 
+ * - 流程： 
+ * - 校验文件名长度。 
+ * - 调用 `attachmentService.uploadDest` 进行文件上传。 
+ * - 返回包含文件路径的 `BaseRsp` 对象。 
+ * ##### d. **Markdown 文件解析** 
+ * - 方法：`parseMDFile` 
+ * - 功能：解析上传的 Markdown 文件。 
+ * - 流程： 
+ * - 校验文件类型是否为 ZIP。 
+ * - 校验文件名长度。 
+ * - 将文件上传至服务器并解压。 
+ * - 查找解压后的 Markdown 文件。 
+ * - 校验 Markdown 文件大小。 
+ * - 使用工具解析 Markdown 文件内容并返回结果。 
+ * ##### e. **验证文件名长度** 
+ * - 方法：`validateFileNameLen` 
+ * - 功能：校验文件名长度是否超过 100 字符。 
+ * ##### f. **获取 Git 版本信息** 
+ * - 方法：`getGitVersion` 
+ * - 功能：读取 `git.properties` 文件中的版本信息。 
+ * - 流程： 
+ * - 从类加载器中加载 `git.properties` 文件。 
+ * - 将文件内容加载到 `Properties` 对象中。 
+ * - 返回包含版本信息的 `BaseRsp` 对象。 
+ * #### 3. **依赖服务** 
+ * - `AttachmentService`：用于文件上传操作。 
+ * - `UtilService`：提供文件路径处理等辅助功能。 
+ * - `EnumUtils`：用于枚举类型的转换。 
+ * - `FileUtil`、`ZipUtil`、`MdUtil`：分别用于文件、ZIP 文件和 Markdown 文件的操作。 
+ * #### 4. **注解与框架** 
+ * - 使用了 Spring Boot 的注解，如 `@RestController`、`@RequestMapping`、`@PostMapping`、`@GetMapping`。 
+ * - 使用了 Swagger 注解 `@Api` 和 `@ApiOperation` 来描述接口功能。 
+ * - 使用了 Lombok 的 `@Slf4j` 提供日志记录功能。 
+ * #### 5. **异常处理** 
+ * - 在多个地方抛出 `BusinessException` 或 `UnauthorizedException`，用于处理业务逻辑错误。 
+ * #### 6. **初始化** 
+ * - 使用 `@PostConstruct` 注解的 `init` 方法初始化常量 `MD_UPLOAD_NAME_LEN`。 
+ * #### 7. **总结** 
+ * 该类是一个典型的文件管理控制器，提供了多种文件上传、解析和版本信息查询的功能。代码结构清晰，功能模块化，使用了现代 Java 技术栈（Spring Boot、Lombok、Swagger）。 
+**/
 package com.cyberpeace.cs.controller;
 
 import com.cyberpeace.common.constant.ErrorCode;

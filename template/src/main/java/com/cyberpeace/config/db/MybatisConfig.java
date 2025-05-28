@@ -1,3 +1,35 @@
+/**
+ * 该代码是一个 Spring Boot 配置类，用于配置 MyBatis 和 MyBatis-Plus 的相关功能。以下是代码的主要功能和结构分析： 
+ * 1. **注解与配置**： 
+ * - 使用 `@Configuration` 注解表明这是一个 Spring 配置类。 
+ * - 使用 `@MapperScan` 注解指定 Mapper 接口所在的包路径。 
+ * 2. **数据源注入**： 
+ * - 通过 `@Autowired` 注解将 `DataSource` 对象注入到配置类中。 
+ * 3. **SQL 会话工厂**： 
+ * - 定义了 `sqlSessionFactory()` 方法，用于创建 `SqlSessionFactory` 实例。 
+ * - 使用 `MybatisSqlSessionFactoryBean` 设置数据源、自定义配置、全局配置以及 XML 映射文件的位置。 
+ * 4. **分页拦截器**： 
+ * - 定义了 `paginationInterceptor()` 方法，用于实现分页功能。 
+ * - 使用 `PaginationInnerInterceptor` 并指定数据库方言为 MySQL，设置单页最大分页条数为 10000。 
+ * 5. **全局配置**： 
+ * - 定义了 `globalConfig()` 方法，用于配置 MyBatis-Plus 的全局设置。 
+ * - 包括逻辑删除字段的配置（如删除值和非删除值）以及元对象处理器的设置。 
+ * 6. **SQL 会话模板**： 
+ * - 定义了 `sqlSessionTemplate()` 方法，用于创建 `SqlSessionTemplate` 实例，方便在项目中使用 MyBatis 的会话操作。 
+ * 7. **演示白色拦截器**： 
+ * - 定义了 `demonstrationWhiteInterceptor()` 方法，用于创建自定义的拦截器。 
+ * 8. **元对象处理器**： 
+ * - 定义了 `metaObjectHandler()` 方法，用于处理 MyBatis-Plus 的元对象填充逻辑。 
+ * 9. **事务管理**： 
+ * - 定义了 `transactionManager()` 方法，用于创建基于数据源的事务管理器。 
+ * - 定义了 `transactionTemplate()` 方法，用于创建事务模板。 
+ * ### 总结 
+ * 该配置类主要完成了以下几个方面的配置： 
+ * - 数据源的注入和管理。 
+ * - MyBatis 和 MyBatis-Plus 的核心配置（如会话工厂、分页拦截器、全局配置等）。 
+ * - 提供了事务管理和事务模板的支持。 
+ * - 集成了自定义拦截器和元对象处理器，增强了 MyBatis 的功能。 
+**/
 package com.cyberpeace.config.db;
 
 import javax.sql.DataSource;

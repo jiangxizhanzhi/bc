@@ -1,3 +1,81 @@
+/**
+ * 这段代码定义了一个名为 `TheoryKnowledgeController` 的 Spring MVC 控制器类，用于管理理论知识点相关的操作。以下是代码的主要功能和结构分析： 
+ * ### 主要功能 
+ * 1. **理论知识点管理**：提供了一系列接口来管理和操作理论知识点（如列表查询、详情查看、新增、编辑、删除等）。 
+ * 2. **数据转换与服务调用**：通过内部方法将请求参数转换为对应的实体类，并调用底层的服务层完成业务逻辑。 
+ * --- 
+ * ### 类的主要成员变量 
+ * - 注入了多个服务类，例如： 
+ * - `CourseService`：课程相关服务。 
+ * - `CourseLessonService`：课程课时相关服务。 
+ * - `TheoryKService`：理论知识点相关服务。 
+ * - `UtilService`：通用工具类服务。 
+ * --- 
+ * ### 主要方法分析 
+ * #### 1. **理论知识点列表查询** 
+ * ```java 
+ * @GetMapping("/page") 
+ * public BaseRsp<ListRsp<AdminLessonListBo>> getLessonList(ListKReq req) 
+ * ``` 
+ * - **功能**：根据分页请求参数 `ListKReq` 查询理论知识点列表。 
+ * - **实现**：调用 `theoryKService.pageK(req)` 方法获取分页结果并返回。 
+ * --- 
+ * #### 2. **删除理论知识点** 
+ * ```java 
+ * @DeleteMapping("/") 
+ * public BaseRsp delete(@RequestBody IdListReq req) 
+ * ``` 
+ * - **功能**：根据传入的 ID 列表批量删除理论知识点。 
+ * - **实现**：调用 `theoryKService.deleteBatch(req.getIds())` 完成删除操作。 
+ * --- 
+ * #### 3. **查看理论知识点详情** 
+ * ```java 
+ * @GetMapping("") 
+ * public BaseRsp<AdminLessonBo> getDetail(@ApiParam(value = "id", name = "resource_id") String resource_id) 
+ * ``` 
+ * - **功能**：根据知识点 ID 查询详细信息。 
+ * - **实现**：调用 `theoryKService.getDetail(resource_id)` 获取详情并返回。 
+ * --- 
+ * #### 4. **新增理论知识点** 
+ * ```java 
+ * @PostMapping("") 
+ * public BaseRsp<CourseLesson> addK(@RequestBody LessonAddReq lessonAddReq) 
+ * ``` 
+ * - **功能**：新增一条理论知识点记录。 
+ * - **实现**： 
+ * 1. 调用 `addReqToEntity()` 方法将请求参数转换为实体类。 
+ * 2. 将场景配置转换为 JSON 对象。 
+ * 3. 调用 `courseLessonService.addLesson()` 完成新增操作。 
+ * --- 
+ * #### 5. **编辑理论知识点** 
+ * ```java 
+ * @PatchMapping("") 
+ * public BaseRsp<CourseLesson> modify(@RequestBody LessonUpdateReq lessonUpdateReq) 
+ * ``` 
+ * - **功能**：编辑现有理论知识点记录。 
+ * - **实现**： 
+ * 1. 调用 `updateReqToEntity()` 方法将请求参数转换为实体类。 
+ * 2. 解析场景配置和练习题列表。 
+ * 3. 调用 `courseLessonService.updateLesson()` 完成更新操作。 
+ * --- 
+ * #### 6. **辅助方法** 
+ * ##### `addReqToEntity()` 
+ * - 功能：将 `LessonAddReq` 请求参数转换为 `CourseLesson` 实体类。 
+ * - 关键步骤： 
+ * 1. 使用工具类 `BeanUtils.copy` 复制属性。 
+ * 2. 设置知识点、用户 ID 和课程 ID。 
+ * 3. 调用服务方法上传视频和讲义。 
+ * ##### `updateReqToEntity()` 
+ * - 功能：将 `LessonUpdateReq` 请求参数转换为 `CourseLesson` 实体类。 
+ * - 关键步骤： 
+ * 1. 同样使用工具类 `BeanUtils.copy` 复制属性。 
+ * 2. 检查视频和讲义字段是否需要更新，并调用服务方法上传文件或替换 URL。 
+ * --- 
+ * ### 总结 
+ * - **模块化设计**：通过分离请求参数转换和业务逻辑，提高了代码的可读性和可维护性。 
+ * - **服务依赖**：充分利用了注入的服务类，减少了重复代码。 
+ * - **灵活性**：支持多种操作（增删改查），满足理论知识点管理的需求。 
+**/
 package com.cyberpeace.space.controller;
 
 import com.alibaba.fastjson.JSONObject;

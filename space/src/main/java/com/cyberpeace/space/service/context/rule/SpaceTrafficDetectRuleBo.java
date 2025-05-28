@@ -1,3 +1,28 @@
+/**
+ * ### 代码分析： 
+ * #### 类概述： 
+ * - **类名**：`SpaceTrafficDetectRuleBo` 
+ * - **功能**：这是一个用于表示空间流量检测规则的业务对象（BO），继承自 `SpaceBoBase`。 
+ * - **注解**：使用了 Lombok 的 `@Getter` 和 `@Setter` 注解，自动生成 getter 和 setter 方法。 
+ * #### 属性字段： 
+ * - **resourceId**：资源 ID，用于唯一标识资源。 
+ * - **name**：规则的名称。 
+ * - **ruleContent**：规则的具体内容。 
+ * - **ruleId**：规则的编号。 
+ * - **ruleInfo**：规则的详细信息。 
+ * - **threatLevel**：威胁等级。 
+ * - **tool**：使用的工具。 
+ * - **stage**：防御阶段，类型为整数。 
+ * - **attackType**：攻击类型，类型为整数。 
+ * #### 方法： 
+ * - **bo2Entity()**：将当前 BO 对象转换为实体对象 `SpaceTrafficDetectRule`。通过调用 `BeanUtils.copy()` 方法实现属性的拷贝。 
+ * #### 依赖： 
+ * - **BeanUtils**：用于对象之间的属性拷贝。 
+ * - **SpaceTrafficDetectRule**：对应的实体类。 
+ * - **SpaceBoBase**：父类，可能包含一些通用的属性或方法。 
+ * #### 总结： 
+ * 该类是一个典型的业务对象类，主要用于封装空间流量检测规则的相关信息，并提供方法将 BO 转换为实体对象。通过 Lombok 注解简化了代码量，提高了可读性和维护性。 
+**/
 
 package com.cyberpeace.space.service.context.rule;
 

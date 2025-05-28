@@ -1,3 +1,25 @@
+/**
+ * 这段代码定义了一个名为 `HttpclientModel` 的 Java 类，用于记录和管理 HTTP 客户端请求的相关信息。以下是代码的主要功能和结构分析： 
+ * ### 主要功能： 
+ * 1. **日志记录**：通过 `slf4j` 提供的日志记录功能，记录 HTTP 请求的详细信息，包括调用时间、方法、URL 和响应内容。 
+ * 2. **跟踪 ID 管理**：使用 `traceId` 来标识请求的唯一性，并通过工具类 `IDGeneratorUtil` 自动生成跟踪 ID。 
+ * 3. **异常处理**：在发生异常时记录详细的调用时间和错误信息。 
+ * 4. **响应日志**：根据日志级别（debug 或 info）记录不同的日志内容。 
+ * ### 关键点分析： 
+ * - **字段**： 
+ * - `traceId`：用于唯一标识每次请求。 
+ * - `startTime` 和 `callTime`：分别记录请求开始时间和总耗时。 
+ * - `responseLogMaxLength`：限制响应日志的最大长度，默认为 2000。 
+ * - `url` 和 `method`：分别记录请求的 URL 和 HTTP 方法。 
+ * - **构造函数**： 
+ * - 自动生成或接受外部传入的 `traceId`。 
+ * - 初始化 `startTime` 和 `url`。 
+ * - **方法**： 
+ * - `doRemoteException(Exception e)`：记录异常日志，包括调用时间和异常信息。 
+ * - `addLog(String httpResponse)`：根据日志级别记录请求的响应日志或成功信息。 
+ * ### 总结： 
+ * 该类是一个典型的日志记录模型，适用于需要详细监控 HTTP 请求的场景。它结合了日志记录、异常处理和性能监控的功能，适合在分布式系统中作为请求上下文管理的一部分。 
+**/
 package com.cyberpeace.common.model;
 
 import org.apache.commons.lang3.StringUtils;

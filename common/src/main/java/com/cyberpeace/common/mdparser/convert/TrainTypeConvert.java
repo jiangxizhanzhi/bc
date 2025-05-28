@@ -1,3 +1,25 @@
+/**
+ * ### 代码分析 
+ * #### 功能概述： 
+ * 该代码定义了一个枚举类 `TrainTypeConvert`，用于表示训练类型的转换。它实现了两个接口：`MdConvertEnum<Integer, String>` 和 `GenericEnum`，并提供了训练类型的代码（`Integer`）与描述（`String`）之间的相互转换。 
+ * #### 主要特性： 
+ * 1. **枚举值**： 
+ * - 定义了五个枚举常量：`TEST`, `MAINTENANCE`, `SIMULATION`, `SCENES`, `OTHER`。 
+ * - 每个枚举值包含两个属性：`trainType`（训练类型的整数值）和`desc`（描述字符串）。 
+ * 2. **构造函数**： 
+ * - 提供了一个私有的构造函数，用于初始化每个枚举值的`trainType`和`desc`。 
+ * 3. **接口实现**： 
+ * - 实现了`MdConvertEnum`接口的两个方法： 
+ * - `to()`：返回训练类型的整数值。 
+ * - `reTo()`：返回训练类型的描述字符串。 
+ * - 实现了`GenericEnum`接口的两个方法： 
+ * - `getCode()`：返回训练类型的整数值。 
+ * - `getDesc()`：返回训练类型的描述字符串。 
+ * 4. **用途**： 
+ * - 通过该枚举类可以方便地在训练类型的代码和描述之间进行转换，适用于需要统一管理训练类型的应用场景。 
+ * #### 总结： 
+ * `TrainTypeConvert` 是一个功能清晰的枚举类，主要用于训练类型的管理和转换。它通过实现接口提供了标准化的方法来获取训练类型的代码和描述，便于在不同模块间使用。 
+**/
 package com.cyberpeace.common.mdparser.convert;
 
 

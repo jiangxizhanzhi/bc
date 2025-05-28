@@ -1,3 +1,20 @@
+/**
+ * 这段代码定义了一个名为 `CrConstantsConfig` 的 Java 实体类，用于表示靶场常数配置。以下是代码的主要分析： 
+ * 1. **类与注解**： 
+ * - 类 `CrConstantsConfig` 使用了 Lombok 的 `@Data` 注解，自动生成 getter、setter、toString、equals 和 hashCode 方法。 
+ * - 使用了 MyBatis-Plus 的 `@TableName` 注解，将该类映射到数据库表 `cr_constants_config`。 
+ * 2. **字段**： 
+ * - `id`：使用了 MyBatis-Plus 的 `@TableId` 注解，表示主键字段。 
+ * - `resourceId`：资源 ID。 
+ * - `code`：代号。 
+ * - `type`：类型。 
+ * - `cnName` 和 `enName`：分别表示中文名称和英文名称。 
+ * 3. **接口实现**： 
+ * - 类实现了 `SelectI18nName` 接口，可能用于国际化名称的选择。 
+ * 4. **枚举类**： 
+ * - 内部定义了一个 `ConstantsType` 枚举类，用于描述常量项的类别。每个枚举值包含一个 `code` 和 `desc`，分别表示代码和描述。 
+ * 总结：这是一个典型的实体类，结合了 Lombok 和 MyBatis-Plus 的功能，用于数据库表的映射，并且通过枚举类提供了常量项的类别定义。 
+**/
 package com.cyberpeace.cr.crbase.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;

@@ -1,3 +1,21 @@
+/**
+ * 这段代码定义了一个名为 `MissionEvaluationRsp` 的 Java 类，用于表示任务评估的响应数据结构。以下是对其的简要分析： 
+ * ### 主要功能 
+ * 该类主要用于封装任务评估的相关信息，包括评估的基本信息、评估状态、评分细节以及相关的提交信息等。 
+ * ### 关键特性 
+ * 1. **注解使用**： 
+ * - 使用了 Lombok 的 `@Getter` 和 `@Setter` 注解来自动生成属性的 getter 和 setter 方法。 
+ * - 使用了 Swagger 的 `@ApiModelProperty` 注解为每个字段提供描述性信息，便于生成 API 文档。 
+ * 2. **嵌套类**： 
+ * - 内部类 `SubmitInfo` 用于封装提交信息，包括提交时间和用户答案。 
+ * 3. **字段说明**： 
+ * - 包含多个字段，如 `resourceId`, `evaluateTime`, `roomId`, `submitUserName` 等，分别对应不同的评估相关信息。 
+ * - 引用了外部类 `Mission` 和内部类 `SubmitInfo`。 
+ * 4. **设计目的**： 
+ * - 该类的设计目的是为了标准化任务评估的响应格式，方便在前后端交互中传递数据。 
+ * ### 总结 
+ * 这是一个典型的 DTO（Data Transfer Object）类，用于在服务端和客户端之间传输数据。通过使用 Lombok 和 Swagger 注解，提高了代码的可读性和开发效率。 
+**/
 package com.cyberpeace.cr.crbase.controller.rsp;
 
 import java.util.Date;

@@ -1,3 +1,22 @@
+/**
+ * 这段代码定义了一个名为 `SpaceAlgorithmIndividualBo` 的类，它是 `SpaceBoBase` 类的子类。以下是对代码的简要分析： 
+ * 1. **类的功能**： 
+ * - `SpaceAlgorithmIndividualBo` 是一个业务对象（BO），用于表示与空间算法相关的个人数据。 
+ * - 它继承自 `SpaceBoBase`，并添加了特定于个人的空间算法属性。 
+ * 2. **字段说明**： 
+ * - `resourceId`：表示资源的唯一标识符。 
+ * - `name`：个人的名称。 
+ * - `expertisePercent`：专业知识的百分比。 
+ * - `rolePercent`：岗位能力的百分比。 
+ * 3. **注解**： 
+ * - 使用了 `@Getter` 和 `@Setter` 注解，自动生成字段的getter和setter方法。 
+ * - `@ApiModelProperty` 注解用于Swagger文档生成，描述每个字段的含义。 
+ * 4. **方法**： 
+ * - `bo2Entity()`：将当前业务对象转换为实体对象 `SpaceAlgorithmIndividual`。使用了 `BeanUtils.copy` 方法来实现对象之间的属性复制。 
+ * 5. **继承关系**： 
+ * - 继承自 `SpaceBoBase`，可能包含一些通用的字段或方法。 
+ * 总结：该类主要用于封装与空间算法相关的个人数据，并提供从BO到实体对象的转换功能。 
+**/
 
 package com.cyberpeace.space.service.context.algorithm;
 

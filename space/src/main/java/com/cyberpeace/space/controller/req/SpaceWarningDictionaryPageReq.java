@@ -1,3 +1,22 @@
+/**
+ * 该代码定义了一个名为 `SpaceWarningDictionaryPageReq` 的类，它是 `SpaceToolPageReq` 的子类。此类的主要功能是提供一种将请求参数转换为数据库查询条件的方法。 
+ * ### 主要功能： 
+ * 1. **继承与注解**： 
+ * - 继承自 `SpaceToolPageReq`，表明它扩展了基本的分页请求功能。 
+ * - 使用了 `@ApiModel` 注解，表示这是一个模型类，通常用于描述 API 请求或响应的数据结构。 
+ * 2. **核心方法**： 
+ * - 方法 `req2QueryWrapper()` 是该类的核心逻辑所在。它接收用户输入的请求参数，并将其转化为适合查询数据库的条件。 
+ * 3. **具体实现**： 
+ * - 创建了一个 `LambdaQueryWrapper` 对象来构建查询条件。 
+ * - 默认按照 `update_time` 字段降序排列结果。 
+ * - 如果请求中包含有效的 `pattern` 参数，则在 `name` 字段上添加模糊匹配条件。 
+ * - 如果请求中包含有效的 `tool` 参数，则在 `tool_type` 字段上添加模糊匹配条件。 
+ * - 最后设置了实体类为 `SpaceWarningDictionary`，明确了查询的目标表。 
+ * 4. **设计目的**： 
+ * - 这个类的设计目的是为了简化从HTTP请求到数据库查询之间的转换过程，使得开发者能够更方便地处理复杂的查询需求，同时保持代码的可读性和维护性。 
+ * ### 总结： 
+ * 这段代码展示了如何通过Java类来封装业务逻辑，特别是关于如何将前端传来的参数转化为适合后端数据库操作的对象。这种方法不仅提高了开发效率，还增强了系统的灵活性和可扩展性。 
+**/
 package com.cyberpeace.space.controller.req;
 
 import org.apache.commons.lang3.StringUtils;

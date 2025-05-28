@@ -1,3 +1,32 @@
+/**
+ * 这段代码是一个基于Spring Boot的单元测试类 `SpaceTacticDefenseControllerTest`，用于测试 `SpaceTacticDefenseController` 控制器的功能。以下是对代码的简要分析： 
+ * ### 主要功能 
+ * 1. **测试目标**： 
+ * - 测试 `SpaceTacticDefenseController` 的多个接口，包括增删改查等操作。 
+ * - 模拟服务层（`SpaceTacticDefenseService`）的行为，验证控制器的响应是否符合预期。 
+ * 2. **测试方法**： 
+ * - 使用了 `MockMvc` 模拟 HTTP 请求，通过 `perform()` 方法发送请求并验证响应。 
+ * - 使用 `MockBean` 模拟服务层依赖，控制其行为以模拟不同的场景。 
+ * 3. **测试覆盖的功能点**： 
+ * - **攻击列表查询 (`testListAttack`)**：测试分页查询攻击列表。 
+ * - **添加攻击 (`testAddAttack`)**：测试新增攻击的功能。 
+ * - **更新攻击 (`testUpdateA`)**：测试修改攻击信息。 
+ * - **删除攻击 (`testDeleteA`)**：测试删除攻击的功能。 
+ * - **获取攻击详情 (`testGetADetail`)**：测试获取单个攻击的详细信息。 
+ * - **分类列表查询 (`testPageC`, `testListC`)**：测试分类相关的分页和列表查询。 
+ * - **添加分类 (`testAddC`)**：测试新增分类的功能。 
+ * - **更新分类 (`testUpdateC`)**：测试修改分类信息。 
+ * - **删除分类 (`testDeleteC`)**：测试删除分类的功能。 
+ * - **获取分类详情 (`testGetCDetail`)**：测试获取单个分类的详细信息。 
+ * - **按分类ID查询攻击列表 (`testListByCategory`)**：测试根据分类ID查询攻击列表。 
+ * - **获取防御框架 (`testGetDefenseFrame`)**：测试获取防御框架的功能。 
+ * 4. **工具与库**： 
+ * - 使用了 `JsonUtil` 库将对象转换为 JSON 字符串。 
+ * - 使用了 `Guava` 的 `Lists.newArrayList` 创建列表。 
+ * - 使用了 `JUnit 5` 和 `Spring Boot Test` 提供的注解和工具类进行测试。 
+ * ### 总结 
+ * 这段代码展示了如何使用 Spring Boot 的测试工具（如 `MockMvc` 和 `MockBean`）来全面测试一个 RESTful API 控制器的功能。每个测试方法都模拟了不同的业务场景，并验证了控制器的响应是否符合预期。 
+**/
 package com.cyberpeace.space.controller;
 
 import com.cyberpeace.common.model.ListRsp;

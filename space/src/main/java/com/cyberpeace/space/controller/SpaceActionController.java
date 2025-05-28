@@ -1,3 +1,49 @@
+/**
+ * ### 代码分析 
+ * #### 功能概述 
+ * 该代码是一个基于Spring Boot的RESTful接口实现，主要用于管理与“空间操作框架”相关的资源（如操作、方法、工具、策略等）。核心功能包括： 
+ * 1. **资源详情获取**：根据资源ID获取详细的资源信息，包括工具、策略、离线工具等关联信息。 
+ * 2. **资源依赖检查**：检查指定ID是否被其他框架引用，避免误删或误改导致的数据完整性问题。 
+ * --- 
+ * #### 关键点解析 
+ * 1. **类设计** 
+ * - `SpaceActionController`继承自`SpaceActionFrameBaseController`，扩展了基类的功能。 
+ * - 基类提供了通用的CRUD逻辑，子类实现了具体的业务逻辑。 
+ * 2. **主要方法** 
+ * - **`getADetail`** 
+ * - 功能：根据资源ID获取详细的资源信息。 
+ * - 流程： 
+ * 1. 根据`resource_id`从数据库获取`SpaceAction`对象。 
+ * 2. 将`SpaceAction`转换为`SpaceActionBo`（业务对象）。 
+ * 3. 获取关联的工具、策略、离线工具等信息并填充到`SpaceActionBo`中。 
+ * 4. 返回封装好的`BaseRsp`对象。 
+ * - 特点：使用了工具类（如`JsonUtil`、`BeanUtils`、`StreamApiUtils`）来简化数据转换和操作。 
+ * - **`getUpperRelated`** 
+ * - 功能：根据上级资源ID列表获取关联的`SpaceActionMethod`对象列表。 
+ * - 实现：调用`methodService`的`listByIds`方法。 
+ * - **`getUpperIds`** 
+ * - 功能：从请求体中提取所有方法的资源ID，并去重。 
+ * - 实现：利用`StreamApiUtils`的`map`和`distinct`方法。 
+ * - **`checkReference`** 
+ * - 功能：检查指定ID列表中的每个ID是否被`SpaceActionFrame`表引用。 
+ * - 实现： 
+ * 1. 遍历每个ID，构造查询条件。 
+ * 2. 查询`SpaceActionFrame`表，判断是否存在引用。 
+ * 3. 如果存在引用，抛出异常并提供详细信息（引用框架的名称）。 
+ * 3. **依赖注入** 
+ * - 使用了Spring的`@Autowired`注解，注入了多个服务（如`SpaceActionMethodService`、`ToolService`、`SpaceStrategyService`等），便于调用业务逻辑。 
+ * 4. **工具类** 
+ * - `JsonUtil`：用于JSON序列化和反序列化。 
+ * - `BeanUtils`：用于对象之间的属性复制。 
+ * - `StreamApiUtils`：提供流式API操作，如`map`、`distinct`等。 
+ * 5. **异常处理** 
+ * - 使用了自定义异常`BusinessException`，并在必要时抛出，例如资源未找到或存在引用时。 
+ * 6. **安全性** 
+ * - 使用了`@RequiresAuthentication`注解，确保只有经过身份验证的用户可以访问这些接口。 
+ * --- 
+ * #### 总结 
+ * 该代码实现了资源的详细信息获取、依赖检查等功能，结构清晰，模块化程度高。通过工具类和Spring的依赖注入机制，提升了代码的可读性和复用性。同时，异常处理和安全性设计也体现了良好的开发规范。 
+**/
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

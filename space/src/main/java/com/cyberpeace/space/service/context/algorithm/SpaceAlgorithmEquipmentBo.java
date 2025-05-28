@@ -1,3 +1,19 @@
+/**
+ * 这段代码定义了一个名为 `SpaceAlgorithmEquipmentBo` 的 Java 类，它继承自 `SpaceBoBase` 并用于表示空间算法设备的业务对象（BO）。以下是代码的简要分析： 
+ * 1. **类的功能**： 
+ * - `SpaceAlgorithmEquipmentBo` 是一个数据传输对象（DTO），用于封装与空间算法设备相关的业务逻辑和属性。 
+ * 2. **继承与注解**： 
+ * - 继承自 `SpaceBoBase`，可能是一个通用的基础类。 
+ * - 使用了 Lombok 的 `@Getter` 和 `@Setter` 注解，自动生成 getter 和 setter 方法，减少样板代码。 
+ * 3. **字段说明**： 
+ * - 包含多个字段，如 `resourceId`, `name`, `description` 等，每个字段都有对应的 Swagger 注解 `@ApiModelProperty`，用于生成 API 文档。 
+ * - 字段类型包括字符串 (`String`) 和整数 (`Integer`)，分别表示不同的设备属性。 
+ * 4. **方法**： 
+ * - `bo2Entity()` 方法将当前对象转换为 `SpaceAlgorithmEquipment` 实体对象。使用了 `BeanUtils.copy` 方法来实现对象之间的属性复制。 
+ * 5. **用途**： 
+ * - 该类主要用于在业务层和服务层之间传递数据，同时提供将业务对象转换为实体对象的能力。 
+ * 总结：这是一个典型的业务对象类，结合了 Lombok 和 Swagger 注解，提供了简洁的数据管理和转换功能。 
+**/
 
 package com.cyberpeace.space.service.context.algorithm;
 

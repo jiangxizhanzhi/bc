@@ -1,3 +1,18 @@
+/**
+ * 这段代码是一个工具类 `BeanUtils`，用于对象之间的属性拷贝。以下是代码的主要功能和特点： 
+ * 1. **浅拷贝**： 
+ * - 提供了 `copy` 方法，使用 `Spring` 的 `BeanUtils.copyProperties` 方法实现对象属性的浅拷贝。 
+ * - 支持泛型，可以拷贝任意类型的对象。 
+ * 2. **深拷贝**： 
+ * - 使用 `Orika` 库的 `MapperFacade` 实现对象的深拷贝。 
+ * - 提供了 `deepCopy` 方法用于单个对象的深拷贝。 
+ * - 提供了 `deepCopyList` 方法用于列表的深拷贝。 
+ * 3. **私有构造函数**： 
+ * - 类被设计为工具类，不允许实例化，因此构造函数被私有化。 
+ * 4. **依赖库**： 
+ * - 依赖于 `Spring` 的 `BeanUtils` 和 `Orika` 的 `MapperFacade`。 
+ * 总结：该工具类提供了对象属性的浅拷贝和深拷贝功能，支持泛型，适用于不同类型的对象拷贝需求。 
+**/
 package com.cyberpeace.common.util;
 
 import java.util.List;

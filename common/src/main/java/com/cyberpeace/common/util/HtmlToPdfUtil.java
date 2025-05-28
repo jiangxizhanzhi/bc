@@ -1,3 +1,39 @@
+/**
+ * 这段代码是一个用于将HTML转换为PDF以及生成HTML模板实例的工具类。以下是代码的主要功能和结构分析： 
+ * 1. **类与日志**： 
+ * - 类名为`HtmlToPdfUtil`，位于`com.cyberpeace.common.util`包下。 
+ * - 使用了`slf4j`库进行日志记录，日志对象`log`用于记录错误信息。 
+ * 2. **静态方法`convert`**： 
+ * - 功能：将指定的HTML文件路径转换为PDF文件路径。 
+ * - 参数： 
+ * - `htmlFilePath`: 输入的HTML文件路径。 
+ * - `pdfFilePath`: 输出的PDF文件路径。 
+ * - 流程： 
+ * - 检查并创建目标PDF文件所在的目录。 
+ * - 构造命令行指令，使用`wkhtmltopdf`工具进行转换。 
+ * - 执行命令，并设置最长执行时间为5分钟。 
+ * - 如果转换失败，记录错误日志并返回`false`。 
+ * 3. **静态方法`getHtmlTemplateInstance`**： 
+ * - 功能：根据模板生成HTML实例文件。 
+ * - 重载方法： 
+ * - 第一个方法接收对象`obj`和模板枚举类型`HtmlTemplateEnum`，内部调用第二个方法。 
+ * - 第二个方法接收`Map<String, Object>`类型的`data`、模板枚举类型`HtmlTemplateEnum`和目标HTML文件路径`templateInstancePath`。 
+ * - 流程： 
+ * - 使用`freemarker`库加载模板并处理数据。 
+ * - 将生成的HTML内容写入目标文件。 
+ * - 如果目标文件已存在，抛出异常。 
+ * - 处理异常并记录日志。 
+ * 4. **私有方法`ensureDir`**： 
+ * - 功能：确保目标文件的父目录存在。 
+ * - 参数：`file`为目标文件。 
+ * - 流程：检查父目录是否存在，如果不存在则创建。 
+ * 5. **工具依赖**： 
+ * - 使用了`wkhtmltopdf`工具进行HTML到PDF的转换。 
+ * - 使用`freemarker`库处理HTML模板。 
+ * 6. **异常处理**： 
+ * - 在`convert`和`getHtmlTemplateInstance`方法中捕获并记录异常，确保程序不会因异常崩溃。 
+ * 总结来说，该类提供了两个主要功能：HTML到PDF的转换和基于模板生成HTML实例。代码结构清晰，功能模块化，便于维护和扩展。 
+**/
 package com.cyberpeace.common.util;
 
 import java.io.File;

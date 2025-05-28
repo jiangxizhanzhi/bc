@@ -1,3 +1,18 @@
+/**
+ * 这段代码是一个 Spring Boot 控制器类 `SpaceRuleCommonController`，用于处理与“知识空间-规则库-通用”相关的 HTTP 请求。以下是代码的简要分析： 
+ * ### 主要功能 
+ * 1. **初始化表信息**： 
+ * - 在类加载时通过 `@PostConstruct` 注解调用 `init()` 方法，使用 `TableInfoHelper` 初始化 `SpaceBaseTable` 和 `SpaceFrameBaseTable` 的表信息。 
+ * 2. **提供规则统计接口**： 
+ * - 提供三个 RESTful API 接口，分别用于获取比赛规则、威胁规则和基础数据规则的统计信息。 
+ * - 每个接口都返回一个包装了具体统计数据的 `BaseRsp` 对象。 
+ * ### 关键点 
+ * - **依赖注入**：通过 `@Autowired` 注入了 `SpaceRuleCommonService`，用于业务逻辑处理。 
+ * - **Swagger 文档支持**：使用了 `io.swagger.annotations` 注解来生成 API 文档。 
+ * - **异常处理**：虽然代码中没有显式定义异常处理逻辑，但返回值类型 `BaseRsp` 可能包含了错误信息。 
+ * ### 总结 
+ * 该控制器主要负责管理与规则统计相关的内容，通过初始化表信息并提供三个 REST 接口来满足特定的业务需求。 
+**/
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;

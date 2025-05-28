@@ -1,3 +1,20 @@
+/**
+ * 这段代码定义了一个名为 `IndexTool` 的 Java 类，位于包 `com.cyberpeace.space.service.context.index` 下。以下是对其功能和结构的简要分析： 
+ * 1. **类的功能**： 
+ * - 该类主要用于存储与编号工具相关的各种统计数据。 
+ * - 包含多个字段，分别表示不同类型的工具数量（如探针、攻击、控制、防御、其他）以及总数和平台统计信息。 
+ * 2. **字段说明**： 
+ * - `probe`, `attack`, `control`, `defense`, `other`：分别表示探针、攻击、控制、防御和其他类型工具的数量，初始值为 0。 
+ * - `sum`：表示所有工具类型的总数量，初始值为 0。 
+ * - `platform`：一个 `Map<String, Integer>` 类型的字段，用于存储不同平台上的工具数量统计。 
+ * 3. **注解使用**： 
+ * - 使用了 Lombok 提供的 `@Getter` 和 `@Setter` 注解，自动生成字段的 getter 和 setter 方法。 
+ * - 使用了 Swagger 的 `@ApiModelProperty` 注解，为每个字段提供了描述性注释，便于 API 文档生成。 
+ * 4. **设计特点**： 
+ * - 该类是一个简单的数据传输对象（DTO），主要用于封装和传递相关数据。 
+ * - 字段命名清晰，注释详细，便于理解其用途。 
+ * 总结：`IndexTool` 是一个用于存储和管理编号工具相关统计数据的数据模型类，适合在需要统计不同类型工具数量的场景中使用。 
+**/
 package com.cyberpeace.space.service.context.index;
 
 import java.util.Map;

@@ -1,3 +1,52 @@
+/**
+ * 这段代码定义了一个抽象类 `SpaceActionFrameBaseController`，用于处理与空间行动框架相关的 CRUD 操作。以下是对代码的主要分析： 
+ * ### 类的功能概述 
+ * - **抽象类**：这是一个抽象类，提供了通用的方法来处理与空间行动框架相关的操作。 
+ * - **泛型参数**： 
+ * - `S`：表示服务接口，继承自 `IService<E>`。 
+ * - `E`：表示实体类，继承自 `SpaceFrameBaseTable`。 
+ * - `B`：表示业务对象类，继承自 `SpaceFrameBoBase`。 
+ * - `R`：表示请求类，继承自 `FrameBasePageReq`。 
+ * ### 主要方法 
+ * 1. **`page` 方法**： 
+ * - 提供分页查询功能。 
+ * - 根据请求对象 `req` 构建查询条件，并支持按父级 ID 获取子级数据。 
+ * - 返回包含分页信息的结果。 
+ * 2. **`listAll` 方法**： 
+ * - 查询所有记录并返回业务对象列表。 
+ * 3. **`addAttack` 方法**： 
+ * - 新增记录。 
+ * - 自动生成资源 ID。 
+ * - 验证名称唯一性。 
+ * - 使用事务模板执行插入操作。 
+ * 4. **`updateA` 方法**： 
+ * - 更新记录。 
+ * - 验证资源 ID 是否为空。 
+ * - 验证名称唯一性。 
+ * - 使用事务模板执行更新操作。 
+ * 5. **`deleteA` 方法**： 
+ * - 删除记录。 
+ * - 检查是否有引用。 
+ * - 使用事务模板执行删除操作。 
+ * 6. **`getADetail` 方法**： 
+ * - 获取单个记录的详细信息。 
+ * - 如果记录不存在，抛出异常。 
+ * 7. **`checkNameDuplication` 方法**： 
+ * - 验证名称是否重复。 
+ * 8. **`getRelatedMap` 方法**： 
+ * - 获取相关联的数据映射。 
+ * 9. **`getUpperRelated` 和 `getUpperIds` 方法**： 
+ * - 抽象方法，需要在具体实现中定义。 
+ * 10. **`checkReference` 方法**： 
+ * - 抽象方法，用于检查是否有引用。 
+ * ### 关键技术点 
+ * - **MyBatis Plus**：使用了 `LambdaQueryWrapper` 进行条件构造。 
+ * - **Guava**：使用了 `Maps` 和 `Lists` 工具类。 
+ * - **Spring Transaction**：通过 `TransactionTemplate` 管理事务。 
+ * - **Stream API**：利用流式操作处理集合数据。 
+ * ### 总结 
+ * 该类提供了一个通用的框架来处理与空间行动框架相关的 CRUD 操作，并且通过泛型和抽象方法的设计，使得具体的实现类可以根据需求进行定制化开发。 
+**/
 package com.cyberpeace.space.model.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

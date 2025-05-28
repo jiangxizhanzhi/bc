@@ -1,3 +1,33 @@
+/**
+ * 这段代码是一个Spring Boot控制器类`SpaceTrafficExtractionRuleController`，主要负责处理与“空间流量提取规则”相关的业务逻辑。以下是代码的简要分析： 
+ * ### 类的功能： 
+ * 1. **控制器功能**：该类继承自`SpaceControllerBase`，并实现了与`SpaceTrafficExtractionRule`实体相关的CRUD操作。 
+ * 2. **导出功能**：提供了一个API接口`/excel`，用于将符合条件的空间流量提取规则导出为Excel文件。 
+ * 3. **唯一性校验**：重写了`checkNameDuplication`方法，用于确保规则名称的唯一性。 
+ * ### 主要方法分析： 
+ * #### 1. `exportExcel` 
+ * - **功能**：根据请求参数导出符合条件的空间流量提取规则到Excel文件，并通过HTTP响应返回给客户端。 
+ * - **步骤**： 
+ * - 构建查询条件（如按名称或工具模糊查询）。 
+ * - 查询数据库获取符合条件的数据。 
+ * - 将查询结果转换为适合Excel导出的BO对象。 
+ * - 使用`ExcelDataHandler`将数据写入Excel文件。 
+ * - 设置HTTP响应头，使浏览器下载生成的Excel文件。 
+ * #### 2. `checkNameDuplication` 
+ * - **功能**：验证指定的规则名称是否重复。 
+ * - **逻辑**： 
+ * - 首先验证名称长度是否符合要求。 
+ * - 查询数据库中是否存在与当前规则名称和内容完全相同的记录。 
+ * - 如果发现重复记录且不是同一资源ID，则抛出业务异常。 
+ * - 若无重复记录或为更新操作且ID匹配，则返回`true`。 
+ * ### 技术亮点： 
+ * - **MyBatis-Plus**：使用了`LambdaQueryWrapper`进行动态SQL构建，提高了代码的可读性和安全性。 
+ * - **工具类**：利用了多个工具类（如`BeanUtils`、`FileUtil`、`IDGeneratorUtil`等），简化了业务逻辑实现。 
+ * - **Swagger注解**：通过`@Api`和`@ApiOperation`描述接口用途，便于文档生成和API管理。 
+ * - **日志记录**：使用`slf4j`记录日志，方便调试和监控。 
+ * ### 总结： 
+ * 此控制器类专注于处理空间流量提取规则的管理和导出功能，提供了清晰的业务逻辑分层和良好的扩展性。 
+**/
 
 package com.cyberpeace.space.controller;
 

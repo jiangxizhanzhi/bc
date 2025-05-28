@@ -1,3 +1,20 @@
+/**
+ * 这段代码定义了一个工具类 `SpringContextUtil`，用于在 Spring 应用中获取 `ApplicationContext` 及其管理的 Bean。以下是代码的简要分析： 
+ * 1. **功能概述**： 
+ * - 该类实现了 `ApplicationContextAware` 接口，目的是在 Spring 容器启动时自动注入 `ApplicationContext`。 
+ * - 提供了一系列静态方法，方便在非 Spring 管理的类或方法中获取 Spring 容器中的 Bean。 
+ * 2. **关键特性**： 
+ * - **`applicationContext` 静态变量**：存储 Spring 的 `ApplicationContext` 实例，供其他地方使用。 
+ * - **`setApplicationContext` 方法**：实现 `ApplicationContextAware` 接口的方法，用于初始化 `applicationContext`。 
+ * - **`getApplicationContext` 方法**：返回当前的 `ApplicationContext`。 
+ * - **`getBean` 方法**：根据 Bean 名称获取指定类型的 Bean。 
+ * - **`getBeanByClass` 方法**：根据 Bean 类型获取指定的 Bean。 
+ * - **`getBeansOfType` 方法**：获取所有符合指定类型的 Bean。 
+ * 3. **注意事项**： 
+ * - 此类适用于需要在非 Spring 管理的类中获取 Bean 的场景，但应谨慎使用，避免过度耦合。 
+ * - 在多线程环境中需确保 `applicationContext` 的线程安全性。 
+ * 总体而言，这段代码提供了一个便捷的方式来访问 Spring 容器中的 Bean，但在实际开发中应尽量减少直接依赖此类，以保持代码的可维护性和解耦性。 
+**/
 package com.cyberpeace.common.util;
 
 import java.util.Map;

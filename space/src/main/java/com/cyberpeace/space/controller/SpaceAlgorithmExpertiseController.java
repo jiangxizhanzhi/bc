@@ -1,3 +1,34 @@
+/**
+ * 这段代码是一个基于Spring框架的RESTful控制器类，用于处理与“空间算法专业知识”相关的业务逻辑。以下是代码的主要分析和总结： 
+ * ### 类的功能和结构 
+ * 1. **类名与继承**： 
+ * - 类名为`SpaceAlgorithmExpertiseController`，表示这是一个专门处理“空间算法专业知识”的控制器。 
+ * - 它继承自`SpaceControllerBase`，并且通过泛型参数指定了相关的服务、实体和业务对象。 
+ * 2. **注解**： 
+ * - `@RestController`：表明这是一个RESTful风格的控制器。 
+ * - `@RequestMapping`：定义了该控制器的请求路径前缀为`/space/algorithm/algorithm_expertise`。 
+ * - `@RequiresAuthentication`：确保只有经过身份验证的用户才能访问这些接口。 
+ * - `@Slf4j`：引入日志功能，方便调试和监控。 
+ * 3. **依赖注入**： 
+ * - 使用`@Autowired`注解注入了`CourseService`，用于操作课程相关的数据。 
+ * ### 方法分析 
+ * 1. **getRelatedMap** 
+ * - 功能：根据传入的专家领域列表（`eList`），生成一个映射，将课程ID映射到对应的课程名称。 
+ * - 流程： 
+ * - 遍历`eList`，提取每个专家领域的课程ID。 
+ * - 调用`courseService.listByIds()`批量查询课程信息。 
+ * - 将查询到的课程信息存入`res`映射中，键为课程ID，值为`IdAndName`对象。 
+ * - 特点： 
+ * - 使用了`JsonUtil`工具类来解析JSON字符串。 
+ * - 如果`eList`为空或无有效课程ID，则直接返回空映射。 
+ * 2. **checkValue** 
+ * - 功能：检查两个百分比字段（`coursePercent`和`trainingPercent`）之和是否符合要求。 
+ * - 调用了父类中的`checkPercentageValue`方法进行具体校验。 
+ * ### 总结 
+ * - **主要职责**：该类负责管理与“空间算法专业知识”相关的业务逻辑，包括根据专家领域生成课程映射以及验证百分比字段的有效性。 
+ * - **技术特点**：利用了Spring框架、Apache Shiro认证机制、Guava工具类等现代Java开发技术。 
+ * - **适用场景**：适用于需要对算法专业知识进行分类管理和展示的应用场景，比如在线教育平台中的课程推荐系统。 
+**/
 package com.cyberpeace.space.controller;
 
 import java.util.List;

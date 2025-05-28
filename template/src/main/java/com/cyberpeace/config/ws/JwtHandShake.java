@@ -1,3 +1,41 @@
+/**
+ * ### 代码分析 
+ * #### 功能描述 
+ * 该代码实现了一个基于 JWT 的 WebSocket 握手拦截器 `JwtHandShake`，用于在 WebSocket 连接建立之前对客户端请求进行验证和处理。核心功能包括： 
+ * 1. 解析 URL 参数。 
+ * 2. 验证 JWT Token。 
+ * 3. 自定义权限校验。 
+ * 4. 将用户信息和连接上下文存储到握手上下文中。 
+ * --- 
+ * #### 关键点解析 
+ * 1. **类与接口实现** 
+ * - 实现了 `HandshakeInterceptor` 接口，提供了两个方法： 
+ * - `beforeHandshake`：在握手前执行，完成所有校验和上下文构建。 
+ * - `afterHandshake`：在握手完成后执行，此处为空实现。 
+ * 2. **JWT 校验流程** 
+ * - **路径验证**：通过 `WsPath.validPath` 检查请求路径是否合法。 
+ * - **参数解析**：通过 `parseParameterMap` 方法将查询字符串解析为键值对。 
+ * - **Token 验证**：从参数中提取 `token`，调用远程服务 `RemoteUserService` 验证 JWT。 
+ * - **自定义校验**：通过 `SelfDefinedWsChecker` 接口实现多个自定义校验逻辑，并逐一检查。 
+ * 3. **上下文管理** 
+ * - 使用 `WebSocketConnectionContext` 存储连接上下文信息（如用户 ID 和原始参数）。 
+ * - 将上下文对象存入 `Map<String, Object>` 中，供后续 WebSocket 通信使用。 
+ * 4. **工具方法** 
+ * - `copyMap`：深拷贝参数映射，避免自定义校验器修改原始数据。 
+ * - `mapToString`：将参数映射转换为字符串，便于日志记录。 
+ * 5. **日志记录** 
+ * - 使用 `slf4j` 记录关键操作的日志，包括握手失败的原因（如路径非法、Token 缺失等）。 
+ * 6. **依赖注入** 
+ * - 使用 `SpringContextUtil` 获取 `RemoteUserService` 和 `SelfDefinedWsChecker` 等 Bean。 
+ * --- 
+ * #### 总结 
+ * 该代码实现了 WebSocket 握手过程中的安全性和可扩展性，具有以下优点： 
+ * - 分层设计，职责清晰（参数解析、Token 验证、自定义校验）。 
+ * - 支持灵活扩展，可通过实现 `SelfDefinedWsChecker` 接口添加更多校验逻辑。 
+ * - 日志记录完善，便于排查问题。 
+ * 潜在改进点： 
+ * - 可以考虑将部分通用逻辑（如参数解析、日志格式化）封装为工具类，提高代码复用性。 
+**/
 package com.cyberpeace.config.ws;
 
 import java.util.Map;

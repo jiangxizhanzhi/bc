@@ -1,3 +1,32 @@
+/**
+ * 该代码定义了一个名为 `SpaceActionBo` 的类，继承自 `SpaceFrameBoBase`。以下是代码的主要分析和总结： 
+ * ### 类的功能 
+ * - **类名**：`SpaceActionBo`，表示空间行动的业务对象。 
+ * - **继承**：继承自 `SpaceFrameBoBase`，可能是一个通用的基础类。 
+ * - **注解**：使用了 Lombok 的 `@Getter` 和 `@Setter` 注解，自动生成属性的 getter 和 setter 方法。 
+ * ### 属性说明 
+ * - `resourceId`：资源 ID。 
+ * - `name`：名称。 
+ * - `type`：类型，1 表示攻击，2 表示防御。 
+ * - `idNumber`：ID 编号。 
+ * - `parentNumber`：父活动编号。 
+ * - `platform`：支持的平台列表。 
+ * - `description`：描述信息。 
+ * - `method`：所属交战方法列表。 
+ * - `environment`：工作原理。 
+ * - `action`：具体动作。 
+ * - `analyze`：注意事项。 
+ * - `tool`：在线工具列表。 
+ * - `offlineTool`：离线工具列表。 
+ * - `strategy`：相关策略列表。 
+ * - `createTime`：创建时间（仅用于后端生成）。 
+ * ### 方法说明 
+ * - `bo2Entity()`：将 `SpaceActionBo` 对象转换为 `SpaceAction` 实体对象。 
+ * - 使用 `BeanUtils.copy` 进行属性复制。 
+ * - 将 `tool`、`strategy`、`platform` 和 `offlineTool` 转换为 JSON 字符串。 
+ * ### 总结 
+ * 该类主要用于封装与空间行动相关的业务数据，并提供从业务对象到实体对象的转换功能。通过 Lombok 和 Stream API 提高了代码的简洁性和可读性。 
+**/
 package com.cyberpeace.space.service.context.frame;
 
 import java.util.Date;

@@ -1,3 +1,38 @@
+/**
+ * ### 代码分析 
+ * #### 1. **类概述** 
+ * - 类名：`UtilServiceImpl` 
+ * - 功能：实现 `UtilService` 接口，提供一系列与文件路径、URL处理相关的工具方法。 
+ * - 注解：`@Service` 表明这是一个 Spring 的服务类。 
+ * #### 2. **字段** 
+ * - 定义了多个常量字段（如 `FDFS_PREFIX`, `LOCAL_PREFIX` 等），用于存储配置值。这些值通过 `ConfigUtil.getContextProperty()` 方法在初始化时从配置文件中加载。 
+ * - 自动注入了一个 `RemoteServerEnvService` 对象，用于获取远程服务器的环境信息。 
+ * #### 3. **方法** 
+ * ##### 3.1 初始化方法 (`init`) 
+ * - 使用 `@PostConstruct` 注解，在类实例化后自动调用。 
+ * - 从配置文件中加载多个常量值，避免硬编码。 
+ * ##### 3.2 `handlerFileUrl` 
+ * - 根据传入的文件 URL，判断其是否以特定前缀（如 `FDFS_PREFIX` 或 `LOCAL_PREFIX`）开头，并返回对应的完整 URL。 
+ * ##### 3.3 `officeUrl` 
+ * - 构造一个 Office 文件预览的 URL，包含文件信息和服务端信息。 
+ * ##### 3.4 `replaceFileUrl` 
+ * - 替换文件 URL 的前缀或路径。例如，将 `LOCAL_PREFIX` 替换为相对路径，或将 `FDFS_PREFIX` 替换为空字符串。 
+ * ##### 3.5 `getRealPath` 
+ * - 获取文件的实际路径。根据文件 URL 的前缀（如 `LOCAL_PREFIX` 或 `FDFS_PREFIX`），返回完整的文件路径。 
+ * ##### 3.6 `handlerMarkdownFile` 
+ * - 处理 Markdown 文件，包括： 
+ * - 过滤代码块。 
+ * - 匹配并替换图片路径。 
+ * - 将图片复制到目标路径，并生成 Nginx 可访问的 URL。 
+ * ##### 3.7 `replaceMarkdownFile` 
+ * - 替换 Markdown 文件中的图片路径，将其替换为 Nginx 可访问的 URL。 
+ * #### 4. **依赖** 
+ * - 使用了多个工具类（如 `MdUtil`, `LocalStringUtil`, `StreamApiUtils` 等）来处理字符串和文件操作。 
+ * - 配置管理通过 `ConfigUtil` 实现。 
+ * #### 5. **总结** 
+ * - 该类主要用于文件路径和 URL 的处理，提供了多种实用的方法，适用于文件上传、下载、预览等场景。 
+ * - 代码结构清晰，依赖注入和配置管理良好，便于扩展和维护。 
+**/
 package com.cyberpeace.cs.service.impl;
 
 import com.cyberpeace.common.constant.CommonConstant;

@@ -1,3 +1,24 @@
+/**
+ * 这段代码是一个单元测试类，用于测试 `SpaceRoundMechanismRuleController` 控制器的功能。以下是对代码的简要分析： 
+ * 1. **测试环境设置**： 
+ * - 使用了 `@WebMvcTest` 注解来加载与 `SpaceRoundMechanismRuleController` 相关的 Spring MVC 组件。 
+ * - `MockMvc` 用于模拟 HTTP 请求并验证响应。 
+ * - `@MockBean` 和 `@SpyBean` 分别用于模拟服务层和控制器实例。 
+ * 2. **测试方法**： 
+ * - `testPage()`：测试分页功能，验证返回的状态码和 JSON 响应是否符合预期。 
+ * - `testAddAttack()`：测试添加规则的功能，验证 POST 请求的响应。 
+ * - `testUpdateA()`：测试更新规则的功能，验证 PATCH 请求的响应。 
+ * - `testDeleteA()`：测试删除规则的功能，验证 DELETE 请求的响应。 
+ * - `testGetADetail()`：测试获取单个规则详情的功能，验证 GET 请求的响应。 
+ * 3. **数据准备**： 
+ * - 在 `setUp()` 方法中，通过 Mockito 模拟了服务层的方法行为，确保测试环境中的依赖行为可控。 
+ * 4. **JSON 验证**： 
+ * - 使用 `JsonUtil.toJsonString` 将对象转换为 JSON 字符串，并通过 `content().json()` 验证返回的 JSON 是否符合预期。 
+ * 5. **工具类和依赖**： 
+ * - 使用了 `Guava` 的 `Lists.newArrayList()` 创建列表。 
+ * - 使用了 `MybatisConfiguration` 和 `MapperBuilderAssistant` 初始化表信息。 
+ * 总体而言，这段代码通过单元测试全面覆盖了控制器的主要功能点，确保了每个接口的行为符合预期。 
+**/
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;

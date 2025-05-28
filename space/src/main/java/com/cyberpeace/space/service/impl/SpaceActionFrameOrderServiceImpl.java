@@ -1,3 +1,49 @@
+/**
+ * ### 代码分析与总结 
+ * #### 概述 
+ * 该代码是一个基于 `MyBatis-Plus` 的服务实现类 `SpaceActionFrameOrderServiceImpl`，实现了 `SpaceActionFrameOrderService` 接口。主要功能是处理与 `SpaceActionFrameOrder` 相关的操作，包括创建、完成、查询和删除订单。 
+ * #### 主要功能模块 
+ * 1. **创建订单** 
+ * - 方法：`create(SpaceActionFrameOrderReq req)` 
+ * - 功能：检查是否已存在相同的订单（通过调用 `checkRelease` 方法），生成新的订单实体并保存到数据库。 
+ * - 使用工具： 
+ * - `BeanUtils.copy`：将请求对象转换为实体对象。 
+ * - `IDGeneratorUtil.getID`：生成唯一的资源 ID。 
+ * - `SpaceCommonConstant.OrderStatus.UNFINISHED`：设置订单状态为未完成。 
+ * 2. **检查订单是否已发布** 
+ * - 方法：`private void checkRelease(String applicationId, String step, String tacticId)` 
+ * - 功能：通过 `LambdaQueryWrapper` 查询是否有重复的订单，并抛出异常 `BusinessException` 如果存在。 
+ * 3. **完成订单** 
+ * - 方法：`complete(String resourceId)` 
+ * - 功能：更新指定资源 ID 的订单状态为已完成。 
+ * - 使用工具： 
+ * - `mapper.selectById(resourceId)`：根据资源 ID 查询订单。 
+ * - `updateById(entity)`：更新订单状态。 
+ * 4. **查询我的订单** 
+ * - 方法：`listMyOrders(SpaceActionFrameOrderListReq req)` 
+ * - 功能：根据条件查询用户的所有订单，并返回带扩展信息的订单列表。 
+ * - 关键步骤： 
+ * - 构建查询条件（`req.req2QueryWrapper()`）。 
+ * - 处理策略名称映射（`tacticNameMap`）。 
+ * - 获取步骤名称映射（`stepMap`）。 
+ * - 将订单实体转换为业务对象（`SpaceActionFrameOrderBo`）。 
+ * 5. **删除已发布的订单** 
+ * - 方法：`deleteReleased(ActionFrameArrangeBo arrangeBo, String applicationId)` 
+ * - 功能：删除不符合当前步骤或策略的已发布订单。 
+ * - 使用工具： 
+ * - `StreamApiUtils.map`：将集合中的元素映射为其他形式。 
+ * - `LambdaQueryWrapper`：构建复杂的查询条件。 
+ * 6. **获取步骤名称映射** 
+ * - 方法：`private Map<String, String> getStepMapByApplicationIds(List<String> applicationIds)` 
+ * - 功能：根据应用 ID 列表获取步骤名称映射。 
+ * #### 技术亮点 
+ * - **MyBatis-Plus**：使用 `LambdaQueryWrapper` 构建动态 SQL 查询，提高了代码的可读性和安全性。 
+ * - **Guava 和 Apache Commons**：利用 `Maps.newHashMap` 和 `Lists.newArrayList` 提供高效的集合操作。 
+ * - **Lombok**：通过 `@Slf4j` 注解简化日志记录，减少冗余代码。 
+ * - **分层设计**：通过 `applicationService` 调用其他服务，体现了良好的模块化设计。 
+ * #### 总结 
+ * 该代码实现了订单管理的核心功能，包括创建、完成、查询和删除订单。通过合理的工具选择和分层设计，代码具有较高的可维护性和扩展性。 
+**/
 
 package com.cyberpeace.space.service.impl;
 

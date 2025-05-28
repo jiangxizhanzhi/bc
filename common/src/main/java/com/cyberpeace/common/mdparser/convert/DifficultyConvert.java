@@ -1,3 +1,24 @@
+/**
+ * 该代码定义了一个枚举类 `DifficultyConvert`，用于表示不同难度等级的转换。以下是代码的主要分析： 
+ * 1. **功能概述**： 
+ * - `DifficultyConvert` 是一个实现了 `MdConvertEnum<Integer, String>` 和 `GenericEnum` 接口的枚举类。 
+ * - 它主要用于将难度的数值（`Integer`）与对应的描述（`String`）进行相互转换。 
+ * 2. **枚举常量**： 
+ * - 枚举类定义了三个常量：`PRIMARY`、`INTERMEDIATE` 和 `ADVANCED`，分别代表初级、中级和高级难度。 
+ * - 每个常量都有两个属性：`difficulty`（难度值）和 `desc`（描述）。 
+ * 3. **构造方法**： 
+ * - 提供了一个私有的构造方法，用于初始化 `difficulty` 和 `desc` 属性。 
+ * 4. **接口实现**： 
+ * - 实现了 `MdConvertEnum<Integer, String>` 接口的方法： 
+ * - `to()`：返回难度值（`difficulty`）。 
+ * - `reTo()`：返回描述（`desc`）。 
+ * - 实现了 `GenericEnum` 接口的方法： 
+ * - `getCode()`：返回难度值（`difficulty`）。 
+ * - `getDesc()`：返回描述（`desc`）。 
+ * 5. **用途**： 
+ * - 该枚举类可以方便地在程序中使用，提供了一种类型安全的方式来处理难度等级及其对应的描述。 
+ * 总结来说，这段代码通过枚举类实现了难度等级的规范化管理，提供了数值与描述之间的双向转换功能。 
+**/
 package com.cyberpeace.common.mdparser.convert;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;

@@ -1,3 +1,28 @@
+/**
+ * 这段代码是一个单元测试类，用于测试 `SpaceViolationJudgeRuleController` 控制器的功能。以下是代码的主要分析： 
+ * 1. **测试框架**： 
+ * - 使用了 JUnit 5 (`@Test`, `@BeforeEach`) 和 Spring Boot 的测试注解 (`@WebMvcTest`, `@MockBean`, `@SpyBean`)。 
+ * 2. **依赖注入**： 
+ * - `mockMvc`：用于模拟 HTTP 请求。 
+ * - `mockService`：模拟 `SpaceViolationJudgeRuleService` 服务层。 
+ * - `spaceViolationJudgeRuleController`：被测试的控制器实例。 
+ * 3. **初始化设置**： 
+ * - 在 `setUp()` 方法中，通过 `when` 和 `doReturn` 配置了服务层的返回值，模拟了数据库操作的结果。 
+ * - 初始化了 `TableInfoHelper`，用于处理表信息。 
+ * 4. **测试方法**： 
+ * - `testPage()`：测试分页功能，验证返回的 JSON 数据是否符合预期。 
+ * - `testAddAttack()`：测试添加规则的功能。 
+ * - `testUpdateA()`：测试更新规则的功能。 
+ * - `testDeleteA()`：测试删除规则的功能。 
+ * - `testGetADetail()`：测试获取单个规则详情的功能。 
+ * 5. **断言**： 
+ * - 使用 `andExpect` 验证 HTTP 状态码、响应内容和 JSON 格式。 
+ * 6. **数据结构**： 
+ * - 使用了 `SpaceViolationJudgeRuleBo`、`IdListReq` 等数据传输对象（DTO）来传递请求参数。 
+ * 7. **工具类**： 
+ * - 使用了 `JsonUtil` 来将对象转换为 JSON 字符串。 
+ * 总结：该测试类全面覆盖了 `SpaceViolationJudgeRuleController` 的主要功能点，确保了控制器的行为与预期一致。 
+**/
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;

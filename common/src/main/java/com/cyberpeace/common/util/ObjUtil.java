@@ -1,3 +1,47 @@
+/**
+ * ### 代码分析 
+ * #### 功能概述 
+ * 该代码提供了一个工具类 `ObjUtil`，用于操作 Java 对象的字段和属性。它主要支持以下功能： 
+ * 1. 将对象的字段及其值转换为 `TreeMap` 或普通 `Map`。 
+ * 2. 设置对象指定字段的值。 
+ * 3. 获取对象指定字段的值。 
+ * 4. 获取对象的所有字段。 
+ * #### 主要方法解析 
+ * 1. **`obj2map(Object obj)`** 
+ * - 将对象的字段名和值转换为 `TreeMap`，不过滤值为 `null` 的字段。 
+ * - 使用反射获取对象的所有字段，并通过 `getFieldValueByName` 方法获取每个字段的值。 
+ * 2. **`obj2TreemapExcludeEmpty(Object obj)`** 
+ * - 将对象的字段名和值转换为 `TreeMap`，但会过滤掉值为 `null` 或空字符串的字段。 
+ * - 逻辑与 `obj2map` 类似，但在添加到结果时增加了非空检查。 
+ * 3. **`setCertainFieldValue(Object obj, String fieldName, Object value)`** 
+ * - 设置对象中指定字段的值。 
+ * - 使用反射找到目标字段并调用 `set` 方法修改其值。 
+ * - 如果字段不可访问，则抛出运行时异常。 
+ * 4. **`setFieldValue(Object obj, String fieldName, String value)`** 
+ * - 设置对象中指定字段的值，值被强制转换为字符串。 
+ * - 逻辑与 `setCertainFieldValue` 类似，但直接传入字符串值。 
+ * 5. **`getCertainFieldValue(Object obj, String fieldName)`** 
+ * - 获取对象中指定字段的值，并将其转换为字符串返回。 
+ * - 如果字段不存在或值为空，则返回 `null`。 
+ * - 抛出异常表示字段未找到。 
+ * 6. **`getFieldValueByName(String fieldName, Object obj)`** 
+ * - 根据字段名获取对象的值。 
+ * - 首先尝试通过 `getter` 方法获取值（如 `getXXX` 或 `isXXX`），如果找不到则记录错误日志并抛出异常。 
+ * 7. **`getFields(Object obj)` 和 `getFields(Class<?> target)`** 
+ * - 获取对象或类的所有字段，包括父类中的字段。 
+ * - 使用递归方式从当前类获取所有声明的字段，并将它们合并到一个数组中返回。 
+ * #### 特点 
+ * - 使用了反射机制来操作对象的字段。 
+ * - 支持过滤空值字段，提高数据的整洁性。 
+ * - 提供了多种获取和设置字段值的方式，适应不同的需求场景。 
+ * - 日志记录和异常处理较为完善，便于调试和维护。 
+ * #### 注意事项 
+ * - 依赖于 `guava` 和 `fastjson` 库，确保项目中已正确引入这些依赖。 
+ * - 反射操作可能会带来性能开销，不适合频繁调用。 
+ * - 对于复杂对象（包含嵌套对象或集合），此工具类可能无法完全处理，需扩展功能或使用更高级的序列化工具。 
+ * #### 总结 
+ * `ObjUtil` 是一个实用的工具类，适用于简单的对象字段操作。它提供了丰富的功能来满足基本的需求，但在处理复杂对象时可能需要额外的逻辑补充。 
+**/
 package com.cyberpeace.common.util;
 
 import java.lang.reflect.Field;

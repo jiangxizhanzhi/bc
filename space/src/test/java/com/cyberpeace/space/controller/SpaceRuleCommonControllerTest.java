@@ -1,3 +1,22 @@
+/**
+ * 这段代码是一个Spring Boot单元测试类，用于测试`SpaceRuleCommonController`控制器的功能。以下是代码的主要分析： 
+ * 1. **测试类结构**： 
+ * - 使用了`@WebMvcTest`注解，专注于测试Spring MVC层（如控制器），并且自动配置了MockMvc。 
+ * - 使用了`@MockBean`来模拟`SpaceRuleCommonService`服务层。 
+ * 2. **测试方法**： 
+ * - `testGetRaceRuleS`：测试获取种族统计数据的方法。通过设置模拟服务返回的`RaceStatistics`对象，并验证返回的JSON是否符合预期。 
+ * - `testGetThreatRuleS`：测试获取威胁检测统计数据的方法。设置模拟服务返回的`ThreatDetectStatistics`对象，并验证返回的JSON是否符合预期。 
+ * - `testGetBaseDataRuleS`：测试获取基础数据规则统计数据的方法。设置模拟服务返回的`BaseDataRuleStatistics`对象，并验证返回的JSON是否符合预期。 
+ * 3. **核心功能**： 
+ * - 每个测试方法都通过`MockMvc`发送GET请求到不同的API端点，并使用`andExpect`方法验证HTTP状态码和响应内容是否符合预期。 
+ * 4. **依赖注入与模拟**： 
+ * - 使用`@Autowired`注入`MockMvc`实例。 
+ * - 使用`@MockBean`创建`SpaceRuleCommonService`的模拟对象，并定义其行为。 
+ * 5. **断言**： 
+ * - 使用`content().json()`方法验证返回的JSON格式和内容是否正确。 
+ * - 使用`status().isOk()`验证HTTP响应状态码为200。 
+ * 总结来说，这段代码通过模拟服务层的行为，全面测试了`SpaceRuleCommonController`中不同统计数据接口的功能，确保其返回的数据格式和内容符合预期。 
+**/
 package com.cyberpeace.space.controller;
 
 import com.cyberpeace.space.service.SpaceRuleCommonService;

@@ -1,3 +1,89 @@
+/**
+ * ### 代码分析 
+ * #### 项目背景 
+ * 该代码是一个基于 MyBatis-Plus 的 Spring Boot 服务实现类，用于管理空间战法攻击相关的业务逻辑。它实现了 `SpaceTacticAttackService` 接口，并提供了一系列与战法攻击相关的增删改查功能。 
+ * --- 
+ * #### 主要功能模块 
+ * 1. **分页查询攻击记录** 
+ * - 方法：`pageAttack` 
+ * - 功能：根据请求参数（`SpaceTacticPageReq`）分页查询攻击记录，并将结果转换为前端所需的格式（`ListRsp<AttackListBo>`）。 
+ * - 实现细节： 
+ * - 使用 `LambdaQueryWrapper` 构建查询条件。 
+ * - 查询后，通过关联 `categoryId` 和 `systemId` 获取对应的分类名称和防御系统名称。 
+ * - 数据转换过程中，计算工具数量、操作数量等信息。 
+ * 2. **新增攻击记录** 
+ * - 方法：`addAttack` 
+ * - 功能：将请求参数（`AttackAddReq`）转换为实体对象（`SpaceTacticAttack`），并插入数据库。 
+ * - 实现细节： 
+ * - 使用 `req2Entity` 方法将请求参数转换为实体对象。 
+ * - 设置资源 ID 后插入数据库。 
+ * 3. **更新攻击记录** 
+ * - 方法：`updateAttack` 
+ * - 功能：根据请求参数（`AttackModifyReq`）更新数据库中的攻击记录。 
+ * - 实现细节： 
+ * - 使用 `req2Entity` 方法将请求参数转换为实体对象。 
+ * - 更新数据库中指定的记录。 
+ * 4. **删除攻击记录** 
+ * - 方法：`deleteBatch` 
+ * - 功能：批量删除指定 ID 列表的攻击记录。 
+ * - 实现细节： 
+ * - 调用 MyBatis-Plus 提供的 `deleteBatchIds` 方法执行批量删除。 
+ * 5. **获取攻击记录详情** 
+ * - 方法：`getDetail` 
+ * - 功能：根据资源 ID 获取攻击记录的详细信息。 
+ * - 实现细节： 
+ * - 使用 `getOrException` 方法确保资源存在。 
+ * - 将实体对象转换为前端所需的格式（`AttackDetail`）。 
+ * 6. **分页查询攻击类别** 
+ * - 方法：`pageCategory` 
+ * - 功能：分页查询攻击类别记录。 
+ * - 实现细节： 
+ * - 使用 `categoryMapper.page` 方法分页查询。 
+ * - 返回结果封装为 `ListRsp<TacticAttackCategoryBo>`。 
+ * 7. **新增攻击类别** 
+ * - 方法：`addAttackCategory` 
+ * - 功能：新增攻击类别记录。 
+ * - 实现细节： 
+ * - 使用 `req2Entity` 方法将请求参数转换为实体对象。 
+ * - 插入数据库。 
+ * 8. **更新攻击类别** 
+ * - 方法：`updateAttackCategory` 
+ * - 功能：更新攻击类别记录。 
+ * - 实现细节： 
+ * - 使用 `req2Entity` 方法将请求参数转换为实体对象。 
+ * - 更新数据库中指定的记录。 
+ * 9. **删除攻击类别** 
+ * - 方法：`deleteCategory` 
+ * - 功能：批量删除指定 ID 列表的攻击类别记录。 
+ * - 实现细节： 
+ * - 调用 `categoryMapper.deleteBatchIds` 方法执行批量删除。 
+ * 10. **获取战法攻击图表** 
+ * - 方法：`getTacticAttackChart` 
+ * - 功能：生成战法攻击的知识点图表。 
+ * - 实现细节： 
+ * - 创建 `KnowledgeChart` 对象，包含节点、分类和链接。 
+ * - 遍历攻击记录和类别记录，构建图表数据。 
+ * 11. **按类别 ID 列出攻击记录** 
+ * - 方法：`listByCategoryids` 
+ * - 功能：根据类别 ID 列表查询对应的攻击记录。 
+ * - 实现细节： 
+ * - 调用 `spaceTacticAttackMapper.idsByCategoryids` 方法查询。 
+ * --- 
+ * #### 关键技术点 
+ * 1. **MyBatis-Plus** 
+ * - 使用了 `IPage` 和 `selectPage` 方法进行分页查询。 
+ * - 使用了 `deleteBatchIds` 方法进行批量删除。 
+ * 2. **数据转换** 
+ * - 使用了 `BeanUtils.copy` 方法进行对象转换。 
+ * - 使用了 `JsonUtil` 工具类处理 JSON 数据。 
+ * 3. **异常处理** 
+ * - 在 `getOrException` 方法中，当资源不存在时抛出自定义异常 `BusinessException`。 
+ * 4. **依赖注入** 
+ * - 使用了 `@Autowired` 注解注入多个 Mapper 和 Service。 
+ * --- 
+ * #### 总结 
+ * 该代码实现了空间战法攻击的全生命周期管理，包括增删改查以及图表生成等功能。代码结构清晰，功能模块划分合理，使用了 MyBatis-Plus 和 Spring 的依赖注入机制，具有良好的可扩展性和维护性。 
+**/
 package com.cyberpeace.space.service.impl;
 
 import com.alibaba.fastjson.JSONArray;

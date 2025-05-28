@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +22,10 @@ import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.iov.dao.entity.VehicleTraffic;
+import com.cyberpeace.iov.dao.entity.VehicleType;
 import com.cyberpeace.iov.dao.mapper.VehicleTrafficMapper;
 import com.cyberpeace.iov.service.VehicleTrafficService;
+import com.cyberpeace.iov.service.VehicleTypeService;
 import com.cyberpeace.iov.service.bo.traffic.VehicleTrafficAddReq;
 import com.cyberpeace.iov.service.bo.traffic.VehicleTrafficDetailBo;
 import com.cyberpeace.iov.service.bo.traffic.VehicleTrafficListBo;
@@ -42,6 +45,9 @@ public class VehicleTrafficServiceImpl extends ServiceImpl<VehicleTrafficMapper,
 
 	@Autowired
 	private UtilService utilService;
+
+	@Autowired
+	private VehicleTypeService vehicleTypeService;
 
 	@Override
 	public ListRsp<VehicleTrafficListBo> pageTraffic(PageReqBase req) {
@@ -72,6 +78,8 @@ public class VehicleTrafficServiceImpl extends ServiceImpl<VehicleTrafficMapper,
 	public VehicleTrafficDetailBo getDetail(String resourceId) {
 		VehicleTraffic frame = this.getById(resourceId);
 		VehicleTrafficDetailBo bo = BeanUtils.copy(frame, VehicleTrafficDetailBo.class);
+		VehicleType type = vehicleTypeService.getById(frame.getModel());
+		bo.setModelName(type == null ? "" : type.getName());
 		AttachmentBo attachment = attachmentService.getOneById(bo.getBlfFile());
 		bo.setBlfFileName(attachment.getFileName());
 		bo.setBlfFilePath(attachment.getFilePath());
@@ -83,6 +91,13 @@ public class VehicleTrafficServiceImpl extends ServiceImpl<VehicleTrafficMapper,
 		List<VehicleTraffic> trafficList = this.list();
 		List<VehicleTrafficDetailBo> res = BeanUtils.deepCopyList(trafficList,
 				VehicleTrafficDetailBo.class);
+
+		List<String> modelIds = StreamApiUtils.map(trafficList, VehicleTraffic::getModel);
+		List<VehicleType> modelList = modelIds.isEmpty() ? Lists.newArrayList()
+				: vehicleTypeService.listByIds(modelIds);
+		Map<String, String> modelNameMap = StreamApiUtils.toMap(modelList,
+				VehicleType::getResourceId, VehicleType::getName);
+
 		List<String> attachmentIds = trafficList.stream().map(VehicleTraffic::getBlfFile)
 				.filter(Objects::nonNull).collect(Collectors.toList());
 		List<Attachment> attachmentList = attachmentService.batchGetByIds(attachmentIds);
@@ -94,6 +109,7 @@ public class VehicleTrafficServiceImpl extends ServiceImpl<VehicleTrafficMapper,
 				bo.setBlfFileName(attachment.getFileName());
 				bo.setBlfFilePath(utilService.handlerFileUrl(attachment.getFilePath()));
 			}
+			bo.setModelName(modelNameMap.get(bo.getModel()));
 		}
 		return res;
 	}

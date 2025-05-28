@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cyberpeace.iov.dao.mapper.VehicleTrafficMapper">
     <select id="page" resultType="com.cyberpeace.iov.service.bo.traffic.VehicleTrafficListBo">
-        select * from iov_traffic
+        select t.*, vt.name as model_name from iov_traffic t left join iov_vehicle_type vt on t.model = vt.resource_id
         <if test="pattern != null and pattern != ''">
             <bind name="search" value="'%'+ pattern + '%'"/>
             where `name` like #{search}

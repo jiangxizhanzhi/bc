@@ -1,3 +1,63 @@
+/**
+ * 这段代码是一个JUnit测试类 `EvalAlgorithmAdminControllerTest`，用于测试 `EvalAlgorithmAdminController` 控制器的功能。以下是对该代码的简要分析： 
+ * ### 类概述 
+ * - **类名**: `EvalAlgorithmAdminControllerTest` 
+ * - **包名**: `com.cyberpeace.cr.evaluation.controller` 
+ * ### 主要组件 
+ * 1. **依赖注入**: 
+ * - 使用 `@Autowired` 注入 `MockMvc` 对象。 
+ * - 使用 `@MockBean` 注入模拟对象（mock）：`EvalAlgorithmService`, `EvalAlgorithmMapper`, `TransactionTemplate`。 
+ * - 使用 `@SpyBean` 注入被测试类 `EvalAlgorithmAdminController`。 
+ * 2. **初始化方法**: 
+ * - `setup()` 方法在每个测试之前运行，配置模拟对象的行为。 
+ * ### 测试方法 
+ * 1. **添加算法 (`testAddAlgorithm`)**: 
+ * - 模拟 `EvalAlgorithmMapper.existByName` 返回 `false`。 
+ * - 发送 POST 请求到 `/cr/eval/algorithm`。 
+ * - 验证返回状态为 `200 OK`，并检查响应内容是否符合预期。 
+ * 2. **处理已存在的算法名称 (`testAddAlgorithm_EvalAlgorithmMapperReturnsTrue`)**: 
+ * - 模拟 `EvalAlgorithmMapper.existByName` 返回 `true`。 
+ * - 发送 POST 请求到 `/cr/eval/algorithm`。 
+ * - 验证返回状态为客户端错误（4xx）。 
+ * 3. **编辑算法 (`testEditAlgorithm`)**: 
+ * - 模拟 `EvalAlgorithmMapper.selectList` 和 `EvalAlgorithmService.getById` 返回特定的 `EvalAlgorithm` 实例。 
+ * - 发送 PUT 请求到 `/cr/eval/algorithm`。 
+ * - 验证返回状态为 `200 OK`，并检查响应内容是否符合预期。 
+ * 4. **处理不存在的算法 (`testEditAlgorithm_EvalAlgorithmServiceGetByIdReturnsNull`)**: 
+ * - 模拟 `EvalAlgorithmService.getById` 返回 `null`。 
+ * - 发送 PUT 请求到 `/cr/eval/algorithm`。 
+ * - 验证返回状态为客户端错误（4xx）。 
+ * 5. **处理已存在的算法名称 (`testEditAlgorithm_EvalAlgorithmMapperExistByNameReturnsTrue`)**: 
+ * - 模拟 `EvalAlgorithmMapper.existByName` 返回 `true`。 
+ * - 发送 PUT 请求到 `/cr/eval/algorithm`。 
+ * - 验证返回状态为 `200 OK`，并检查响应内容是否符合预期。 
+ * 6. **处理事务异常 (`testEditAlgorithm_TransactionTemplateThrowsTransactionException`)**: 
+ * - 模拟 `TransactionTemplate.execute` 抛出异常。 
+ * - 发送 PUT 请求到 `/cr/eval/algorithm`。 
+ * - 验证返回状态为客户端错误（4xx）。 
+ * 7. **批量删除 (`testBatchDelete`)**: 
+ * - 模拟 `EvalAlgorithmService.selectUsedAlgorithmIds` 返回特定的 ID 列表。 
+ * - 发送 DELETE 请求到 `/cr/eval/algorithm`。 
+ * - 验证返回状态为 `200 OK`，并检查响应内容是否符合预期。 
+ * 8. **获取单个算法 (`testGetEvalAlgorithmRsp`)**: 
+ * - 模拟 `EvalAlgorithmService.getById` 返回特定的 `EvalAlgorithm` 实例。 
+ * - 发送 GET 请求到 `/cr/eval/algorithm`。 
+ * - 验证返回状态为 `200 OK`，并检查响应内容是否符合预期。 
+ * 9. **获取算法列表 (`testAlgorithmList`)**: 
+ * - 模拟 `EvalAlgorithmService.selectByType` 返回特定的 `EvalAlgorithm` 列表。 
+ * - 发送 GET 请求到 `/cr/eval/algorithm/type`。 
+ * - 验证返回状态为 `200 OK`，并检查响应内容是否符合预期。 
+ * 10. **获取所有算法 (`testGetAll`)**: 
+ * - 模拟 `EvalAlgorithmMapper.getAll` 返回特定的 `EvalAlgorithm` 列表。 
+ * - 发送 GET 请求到 `/cr/eval/algorithm/getAll`。 
+ * - 验证返回状态为 `200 OK`，并检查响应内容是否符合预期。 
+ * 11. **分页查询 (`testList`)**: 
+ * - 模拟 `EvalAlgorithmService.page` 返回特定的分页结果。 
+ * - 发送 GET 请求到 `/cr/eval/algorithm/list`。 
+ * - 验证返回状态为 `200 OK`，并检查响应内容是否符合预期。 
+ * ### 总结 
+ * 该测试类通过模拟各种场景来验证 `EvalAlgorithmAdminController` 控制器的各个端点的功能。每个测试方法都设置了相应的模拟行为，并通过 `MockMvc` 发送请求来验证控制器的响应。这有助于确保控制器在不同条件下的正确性和健壮性。 
+**/
 package com.cyberpeace.cr.evaluation.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

@@ -1,3 +1,62 @@
+/**
+ * 这段代码是一个Java类`LessonPracticeServiceImpl`，实现了`LessonPracticeSceneService`接口。该类主要负责处理与课程实践相关的场景操作，包括启动、删除、重启节点、重新创建节点、更新场景状态以及获取拓扑场景等。以下是代码的主要组成部分和功能： 
+ * ### 主要成员变量 
+ * - `OjLocalSceneService`, `PracticeOperationRefMapper`, `CourseLessonMapper`, `RemoteTopoService`, `LocalSceneService`, `TransactionTemplate`, `OjLocalSceneMapper`, `LocalSceneMapper`, `RemoteSceneService`, `PushMessageHandler`: 这些是通过Spring注入的依赖，用于执行具体的业务逻辑。 
+ * ### 主要方法 
+ * 1. **startScene** 
+ * - 功能：启动一个场景。 
+ * - 参数：`lessonId`, `practiceId`, `authContext`。 
+ * - 返回值：场景数据的JSON对象。 
+ * - 流程： 
+ * - 验证课程和实践操作。 
+ * - 检查场景启动次数。 
+ * - 初始化并保存OjLocalScene和LocalScene。 
+ * - 启动场景并返回场景数据。 
+ * 2. **deleteScene** 
+ * - 功能：删除一个场景。 
+ * - 参数：`lessonId`, `practiceId`, `authContext`。 
+ * - 返回值：布尔值表示是否删除成功。 
+ * - 流程： 
+ * - 验证课程和实践操作。 
+ * - 删除本地和远程场景，并推送删除消息。 
+ * 3. **restartNode** 
+ * - 功能：重启节点。 
+ * - 参数：`lessonId`, `practiceId`, `nodeId`, `authContext`。 
+ * - 返回值：布尔值表示是否重启成功。 
+ * - 流程： 
+ * - 验证课程和实践操作。 
+ * - 检查场景节点并重启节点。 
+ * 4. **recreateNode** 
+ * - 功能：重新创建节点。 
+ * - 参数：`lessonId`, `practiceId`, `nodeId`, `authContext`。 
+ * - 返回值：布尔值表示是否重建成功。 
+ * - 流程： 
+ * - 验证课程和实践操作。 
+ * - 检查场景节点并重新创建节点。 
+ * 5. **updateSceneStatus** 
+ * - 功能：更新场景状态（暂停或恢复）。 
+ * - 参数：`lessonId`, `practiceId`, `status`, `authContext`。 
+ * - 返回值：布尔值表示是否更新成功。 
+ * - 流程： 
+ * - 验证课程和实践操作。 
+ * - 根据状态值调用相应的暂停或恢复场景方法。 
+ * 6. **getTopoScene** 
+ * - 功能：获取拓扑场景数据。 
+ * - 参数：`lessonId`, `practiceId`, `authContext`。 
+ * - 返回值：包含拓扑信息和场景数据的`TopoSceneDataBo`对象。 
+ * - 流程： 
+ * - 验证课程和实践操作。 
+ * - 获取并构建拓扑和场景数据。 
+ * ### 辅助方法 
+ * - `validateLesson`: 验证课程是否存在。 
+ * - `validateOperation`: 验证实践操作是否存在。 
+ * - `getBusinessId`: 获取业务ID。 
+ * - `initLessonPracticeOjLocalScene`: 初始化OjLocalScene。 
+ * - `initLocalScene`: 初始化LocalScene。 
+ * - `sceneNodeCheck`: 检查场景节点是否存在。 
+ * ### 总结 
+ * 这个类通过依赖注入的方式使用了多个服务和映射器来处理与课程实践相关的各种场景操作。每个主要方法都有详细的验证和数据初始化步骤，确保操作的安全性和一致性。 
+**/
 package com.cyberpeace.oj.course.service.impl;
 
 import com.cyberpeace.common.util.IDGeneratorUtil;

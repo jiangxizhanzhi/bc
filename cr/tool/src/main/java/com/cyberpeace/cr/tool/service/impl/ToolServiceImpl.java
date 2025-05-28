@@ -1,3 +1,62 @@
+/**
+ * 这段代码是一个名为 `ToolServiceImpl` 的服务实现类，用于处理与工具（`Tool`）相关的业务逻辑。以下是该类的主要功能和关键点的简要分析： 
+ * ### 类概述 
+ * - **包名**：`com.cyberpeace.cr.tool.service.impl` 
+ * - **继承关系**：该类继承自 `ServiceImpl<ToolMapper, Tool>`，这是 MyBatis-Plus 提供的一个基类，用于简化数据访问层的操作。 
+ * ### 主要属性 
+ * - **toolMapper**：用于执行与 `Tool` 相关的数据库操作。 
+ * - **toolCategoryService**：用于处理工具类别相关的业务逻辑。 
+ * - **toolFileMapper**：用于执行与 `ToolFile` 相关的数据库操作。 
+ * - **remoteTerminalService**：用于远程终端相关的业务逻辑。 
+ * ### 方法分析 
+ * 1. **saveBatch** 
+ * - 保存一批工具对象。 
+ * - 使用了事务管理，确保操作的原子性。 
+ * 2. **setAboutCategory** 
+ * - 设置工具的类别信息。 
+ * - 根据工具的类别ID查询类别名称，并设置到响应对象中。 
+ * 3. **setAboutDevice** 
+ * - 设置工具关联的设备信息。 
+ * - 通过设备ID查询设备信息并设置到响应对象中。 
+ * 4. **setAboutFile** 
+ * - 设置工具关联的文件信息。 
+ * - 根据文件ID查询文件信息并设置到响应对象中。 
+ * 5. **toBo** 
+ * - 将工具对象转换为响应对象（`ToolRsp`）。 
+ * - 包含类别、设备、文件等信息的设置。 
+ * 6. **selectPage** 
+ * - 分页查询工具列表。 
+ * - 返回分页结果，并将工具对象转换为响应对象。 
+ * 7. **selectById** 
+ * - 根据ID查询工具详细信息。 
+ * - 返回详细的工具响应对象。 
+ * 8. **getByName** 
+ * - 根据名称查询工具。 
+ * - 返回匹配的工具对象。 
+ * 9. **validateToolNameExist** 
+ * - 验证工具名称是否存在。 
+ * - 如果名称已存在，则抛出异常。 
+ * 10. **validateEditToolNameExist** 
+ * - 验证编辑工具名称是否存在（排除自身）。 
+ * - 如果名称已存在，则抛出异常。 
+ * 11. **statistics** 
+ * - 统计工具类型和数量。 
+ * - 返回按类型统计的结果，包括过去六个月的数据。 
+ * 12. **listByIdsInOrder** 
+ * - 根据ID列表查询工具并保持顺序。 
+ * - 返回按输入顺序排列的工具列表。 
+ * 13. **listTacticTool** 
+ * - 列出策略工具。 
+ * - 返回包含策略工具信息的列表。 
+ * 14. **getIdNameMap** 
+ * - 获取工具ID与名称的映射。 
+ * - 返回工具ID到名称的映射关系。 
+ * 15. **checkBuiltin** 
+ * - 检查工具是否为内置工具。 
+ * - 如果是内置工具，则抛出异常。 
+ * ### 总结 
+ * `ToolServiceImpl` 类主要负责处理工具的增删改查以及相关业务逻辑，如验证工具名称、统计工具信息等。它利用了 MyBatis-Plus 和 Spring 的事务管理来保证数据的一致性和完整性。 
+**/
 package com.cyberpeace.cr.tool.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;

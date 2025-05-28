@@ -1,3 +1,41 @@
+/**
+ * 这段代码定义了一个名为 `CourseAddReq` 的 Java 类，用于处理课程新增请求的数据。以下是该类的主要特性和功能： 
+ * ### 类定义与注解 
+ * - **包声明**：该类位于 `com.cyberpeace.oj.course.controller.req` 包下。 
+ * - **导入的类**： 
+ * - `Create` 接口（用于验证）。 
+ * - `CrCommonValidator` 类（用于通用验证）。 
+ * - `OjBusinessErrorCode` 枚举（业务错误码）。 
+ * - `ApiModel` 和 `ApiModelProperty` 注解（用于 Swagger 文档生成）。 
+ * - `Getter` 和 `Setter` 注解（Lombok 自动生成 getter 和 setter 方法）。 
+ * - `Serializable` 接口（表示该类可以序列化）。 
+ * - `StringUtils` 类（Apache Commons Lang 中的字符串工具类）。 
+ * ### 类的功能 
+ * - **属性**： 
+ * - `name`：课程名称，必须为非空字符串。 
+ * - `description`：课程描述。 
+ * - `categoryId`：课程类别ID，必须为非空字符串。 
+ * - `logo`：课程图标。 
+ * - `outline`：课程大纲。 
+ * - `difficulty`：课程难度，必须为非空整数。 
+ * - `rank`：课程等级。 
+ * - `attackTag`：攻击知识点列表。 
+ * - `defenseTag`：防御知识点列表。 
+ * - `isPublic`：是否公开，必须为非空布尔值。 
+ * - `courseType`：课程类型。 
+ * - `lecturer`：讲师。 
+ * - `score`：学分。 
+ * - `courseNum`：课程编号，必须为非空字符串。 
+ * - `role`：岗位。 
+ * - **方法**： 
+ * - `validate()`：验证方法，检查分数是否超过最大值，并验证讲师名称长度是否在合理范围内。 
+ * - `getName()`：获取课程名称，并去除首尾空白字符。 
+ * ### 验证 
+ * - 使用了 JSR 380 注解（如 `@NotBlank` 和 `@NotNull`）来确保某些字段在创建时是非空的。 
+ * - 自定义验证逻辑：通过调用 `CrCommonValidator` 来验证分数的最大值和讲师名称的长度。 
+ * ### 总结 
+ * 这个类主要用于接收和验证课程新增请求的数据。它定义了课程的基本信息，并提供了验证方法以确保数据的完整性和有效性。使用 Lombok 注解减少了样板代码，使得类更简洁。 
+**/
 package com.cyberpeace.oj.course.controller.req;
 
 import com.cyberpeace.common.baseinterface.Create;

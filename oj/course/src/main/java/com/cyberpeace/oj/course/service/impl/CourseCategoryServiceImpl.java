@@ -1,3 +1,33 @@
+/**
+ * 这段代码定义了一个名为 `CourseCategoryServiceImpl` 的服务类，实现了 `CourseCategoryService` 接口。该服务主要用于管理课程类别相关的业务逻辑。以下是代码的主要功能和结构分析： 
+ * ### 主要功能 
+ * 1. **获取子级ID列表 (`getChildrenIds`)**: 
+ * - 根据给定的方向ID和是否包含自身来获取子级类别ID列表。 
+ * 2. **查询所有类别 (`selectAll`)**: 
+ * - 查询所有类别，并根据参数决定是否递归获取子级类别。 
+ * 3. **分页查询并搜索 (`pageBySearch`)**: 
+ * - 根据分页参数、搜索模式和是否包含子级来查询课程类别，并进行数据转换。 
+ * 4. **保存或更新类别 (`saveOrUpdate`)**: 
+ * - 保存或更新一个课程类别。如果类别已存在且是内置的，则抛出异常。 
+ * 5. **批量删除类别 (`batchDeleteByIds`)**: 
+ * - 根据提供的资源ID列表批量删除课程类别，同时检查是否有内置类别。 
+ * 6. **查询单个类别 (`selectById`)**: 
+ * - 根据资源ID查询单个课程类别，并根据参数决定是否包含子级信息。 
+ * 7. **获取或创建类别 (`getOrCreate`)**: 
+ * - 根据类别名称获取或创建一个新的课程类别。 
+ * 8. **获取以父节点编号为键的映射 (`getParentMap`)**: 
+ * - 根据给定的代码获取课程类别的层级关系。 
+ * 9. **数据封装转换 (`packageCategoryList` 和 `packageCategoryBo`)**: 
+ * - 将查询结果进行数据转换，封装成便于前端展示的格式。 
+ * ### 技术点 
+ * - **MyBatis Plus**: 使用了 MyBatis Plus 进行数据库操作。 
+ * - **Lombok**: 通过 Lombok 注解简化了代码，如 `@Slf4j` 提供日志记录功能。 
+ * - **BeanUtils**: 提供了对象之间的复制和转换功能。 
+ * - **Stream API**: 利用 Java 8 的 Stream API 进行集合处理，使代码更加简洁。 
+ * - **Guava**: 使用 Guava 库中的 `Lists.newArrayList()` 创建不可变列表。 
+ * ### 总结 
+ * 该服务类提供了全面的课程类别管理功能，从数据的查询、插入、更新到删除等操作，都有对应的实现方法。通过合理利用框架和技术手段，使得代码结构清晰，易于维护。 
+**/
 package com.cyberpeace.oj.course.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;

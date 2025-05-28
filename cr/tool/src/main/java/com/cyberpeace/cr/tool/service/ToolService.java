@@ -1,3 +1,24 @@
+/**
+ * 这段代码定义了一个名为 `ToolService` 的接口，该接口继承了 `IService<Tool>` 接口。`ToolService` 提供了一系列用于管理和查询工具（`Tool`）的方法。以下是对其主要功能的简要分析： 
+ * 1. **接口继承**: 
+ * - `ToolService` 接口继承了 `IService<Tool>` 接口，这表明它可能使用了 MyBatis-Plus 框架来简化数据库操作。 
+ * 2. **方法定义**: 
+ * - `selectPage`: 根据分页数据、查询条件和是否为后台访问状态进行工具数据的分页查询。 
+ * - `selectById`: 根据工具ID查询工具数据并返回 `ToolRsp` 对象。 
+ * - `getByName`: 根据工具名称查询工具数据。 
+ * - `validateToolNameExist`: 验证工具名称是否存在。 
+ * - `validateEditToolNameExist`: 在编辑工具时验证工具名称是否重复。 
+ * - `statistics`: 统计工具的数量并返回 `List<ToolTypeCount>` 对象。 
+ * - `listByIdsInOrder`: 根据给定的ID列表按顺序列出工具数据。 
+ * - `listTacticTool`: 根据工具ID列表返回 `List<TacticTool>` 对象。 
+ * - `getIdNameMap`: 返回一个包含工具ID与名称映射的 `Map<String, String>`。 
+ * - `checkBuiltin`: 检查内置工具。 
+ * 3. **依赖类和接口**: 
+ * - `IPage<ToolRsp>` 和 `Page` 用于分页处理。 
+ * - `ToolListQuery` 用于封装查询条件。 
+ * - `Tool`, `ToolRsp`, `ToolTypeCount`, `TacticTool` 是工具相关的实体或响应对象。 
+ * 总结来说，`ToolService` 接口提供了全面的工具管理功能，包括分页查询、详细信息获取、名称验证以及统计和映射等操作。这些方法使得对工具数据的操作更加方便和高效。 
+**/
 package com.cyberpeace.cr.tool.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;

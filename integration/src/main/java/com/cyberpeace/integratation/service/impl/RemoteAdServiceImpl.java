@@ -1,3 +1,34 @@
+/**
+ * 这段代码定义了一个名为 `RemoteAdServiceImpl` 的 Spring 服务类，实现了 `RemoteAdService` 接口。该类主要用于处理与远程竞赛相关的操作。以下是详细的分析： 
+ * ### 类和成员变量 
+ * - **类名**: `RemoteAdServiceImpl` 
+ * - **注解**: 
+ * - `@Slf4j`: 使用 Lombok 自动生成日志记录器。 
+ * - `@Service`: 表明这是一个 Spring 服务类。 
+ * - **成员变量**: 
+ * - `adEnvService`: 自动注入的 `AdEnvService` 对象，用于获取广告环境的主机地址。 
+ * - `EXAM_USER_FINISH_COUNT_URL`: 考试用户完成计数的 URL。 
+ * - `COMPETITION_LIST_URL`: 比赛列表的 URL。 
+ * ### 方法 
+ * 1. **初始化方法 (`init`)**: 
+ * - 在构造函数执行后调用，用于初始化 `EXAM_USER_FINISH_COUNT_URL` 和 `COMPETITION_LIST_URL`。 
+ * 2. **比赛名单方法 (`competitionList`)**: 
+ * - 输入参数: 开始时间、结束时间和用户ID。 
+ * - 如果没有竞赛环境，则返回空列表。 
+ * - 构造并发送 GET 请求到 `COMPETITION_LIST_URL`，并将响应转换为 `CalendarCompetitionBo` 对象列表。 
+ * 3. **数据转换方法 (`jsonToBo`)**: 
+ * - 将 JSON 对象转换为 `CalendarCompetitionBo` 对象，并设置各个属性值。 
+ * 4. **最低得分比赛列表方法 (`competitionListWithMinScore`)**: 
+ * - 输入参数: 开始时间、结束时间、用户ID列表和最低分数。 
+ * - 如果没有竞赛环境，则返回空列表。 
+ * - 构造并发送 POST 请求到 `EXAM_USER_FINISH_COUNT_URL`，并将响应转换为 `JSONObject` 列表。 
+ * ### 总结 
+ * - **功能**: 处理与远程竞赛相关的操作，包括获取比赛列表和最低得分比赛列表。 
+ * - **依赖**: 使用了多个工具类（如 `ConfigUtil`, `HttpClientUtil`, `StreamApiUtils`, `TimeUtil`）来辅助完成任务。 
+ * - **设计**: 使用了依赖注入和自动初始化机制，使得类的实例化和初始化过程清晰简洁。 
+ * - **技术栈**: 使用了阿里巴巴的 FastJSON 进行 JSON 处理，以及 Apache Commons Lang3 进行日期和字符串操作。 
+ * 总体来说，这个类的设计合理，功能明确，且使用了多种辅助工具简化了业务逻辑的实现。 
+**/
 package com.cyberpeace.integratation.service.impl;
 
 import java.util.ArrayList;

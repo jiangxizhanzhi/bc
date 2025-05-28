@@ -1,3 +1,27 @@
+/**
+ * 这段代码是一个用于解析Markdown文件的工具类。以下是对其主要部分的简要分析： 
+ * ### 类定义与成员变量 
+ * - `ParseMarkdown` 类用于解析Markdown文件。 
+ * - `file`: 保存要解析的文件对象。 
+ * - `TITLE`: 定义标题的特殊字符串。 
+ * - `TITLE_PREFIX`: 标识标题的前缀（例如："## "）。 
+ * - `LABEL_PREFIX`: 标识标签的前缀（例如："### "）。 
+ * - `data`: 使用 `ArrayListMultimap` 存储解析后的数据。 
+ * ### 方法 
+ * - **构造函数**: 
+ * - `ParseMarkdown(File file)`: 初始化时设置要解析的文件对象。 
+ * - **核心方法**: 
+ * - `handler()`: 调用 `loadFile()` 和 `parse()` 来加载并解析文件内容。 
+ * - **辅助方法**: 
+ * - `loadFile()`: 读取文件内容，并将其按行存储在 `ArrayList<String>` 中。使用 `BufferedReader` 逐行读取文件，并处理可能的 `IOException`。 
+ * - `parse()`: 解析文件内容，根据行的前缀（如 `##` 或 `###`）来确定标题或标签，并将内容存储到 `data` 中。 
+ * - `setMap(String key, String value)`: 将解析的内容添加到 `data` 中。如果行以 `- ` 开头，则去掉 `- ` 后的内容。 
+ * ### 总结 
+ * - 这个类主要用于解析Markdown文件中的标题和正文内容。 
+ * - 使用 `ArrayListMultimap` 存储解析结果，其中键是标题或标签，值是对应的内容。 
+ * - 该类通过读取文件并逐行解析，根据行的前缀来确定内容类型并进行存储。 
+ * 这个工具类能够有效地从Markdown文件中提取出标题和正文内容，并将其组织成易于访问的数据结构。 
+**/
 package com.cyberpeace.cr.tool.utils;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;

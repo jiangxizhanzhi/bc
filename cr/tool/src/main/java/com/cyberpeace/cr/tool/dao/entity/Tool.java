@@ -1,3 +1,47 @@
+/**
+ * 这段代码定义了一个名为 `Tool` 的 Java 类，该类继承自 `BaseTable`，用于表示工具实体。以下是对其主要部分的分析： 
+ * ### 类定义与注解 
+ * - **包名**：`com.cyberpeace.cr.tool.dao.entity` 
+ * - **导入**：使用了 MyBatis Plus 和 Lombok 库，并且引入了一些自定义的工具类。 
+ * - **注解**： 
+ * - `@Getter` 和 `@Setter`：由 Lombok 提供，自动为所有字段生成 getter 和 setter 方法。 
+ * - `@TableName`：指定该类对应的数据库表名为 `cr_tool_tool`。 
+ * ### 常量定义 
+ * - 定义了两个静态常量 `ONLINE` 和 `OFFLINE`，分别表示工具的在线状态（1 表示在线，0 表示离线）。 
+ * ### 字段定义 
+ * - `resourceId`：工具的资源 ID，使用 UUID 作为主键。 
+ * - `name`：工具的名称。 
+ * - `cover`：工具的封面。 
+ * - `homepage`：工具的主页（已弃用）。 
+ * - `category`：工具的类别。 
+ * - `manual`：工具的手册（已弃用）。 
+ * - `imageResourceId`：图像资源 ID。 
+ * - `visible`：工具是否可见。 
+ * - `toolType`：工具类型（0 表示离线，1 表示在线）。 
+ * - `platforms`：工具支持的平台。 
+ * - `language`：工具支持的语言。 
+ * - `introduction`：工具的介绍。 
+ * - `toolPublic`：工具是否公开（已弃用）。 
+ * - `cracked`：工具是否被破解。 
+ * - `disabled`：工具是否被禁用。 
+ * - `tag`：工具的标签。 
+ * - `scene`：工具的应用场景。 
+ * - `version`：工具的版本。 
+ * - `files`：工具的文件。 
+ * - `coverUrl`：工具封面的 URL（虚拟字段，不会持久化到数据库）。 
+ * - `type`：工具的类型。 
+ * - `builtin`：工具是否内置。 
+ * ### 方法定义 
+ * - `getCoverUrl()`：获取封面 URL，如果封面路径不以配置的前缀开头，则添加前缀。 
+ * ### 枚举定义 
+ * - `Cracked`：枚举类型，表示工具的破解状态。 
+ * - `Type`：枚举类型，表示工具的类型。 
+ * ### 总结 
+ * - 这个类主要用于表示工具信息，包括工具的基本属性、状态和类型等。 
+ * - 使用了 Lombok 注解来简化代码，减少样板代码。 
+ * - 部分字段已弃用，表明可能存在历史遗留问题或未来的重构需求。 
+ * - 通过枚举类型定义了工具的状态和类型，增加了代码的可读性和可维护性。 
+**/
 package com.cyberpeace.cr.tool.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;

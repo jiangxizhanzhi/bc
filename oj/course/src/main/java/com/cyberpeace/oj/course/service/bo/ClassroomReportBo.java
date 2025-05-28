@@ -1,3 +1,28 @@
+/**
+ * 这段代码定义了一个名为 `ClassroomReportBo` 的 Java 类，该类实现了 `Serializable` 接口。这个类主要用于表示课堂举报的信息，并且使用了 Lombok 注解来简化代码。 
+ * ### 主要特性： 
+ * 1. **Lombok 注解**： 
+ * - `@Getter` 和 `@Setter`：自动生成所有字段的 getter 和 setter 方法。 
+ * 2. **Swagger 注解**： 
+ * - `@ApiModel`：用于描述整个类的模型信息。 
+ * - `@ApiModelProperty`：用于描述类中的各个字段，提供额外的文档说明。 
+ * 3. **字段**： 
+ * - `userId`, `userName`, `name`: 用户相关信息。 
+ * - `organizationId`, `organizationName`: 组织相关信息。 
+ * - `noteId`: 笔记编号。 
+ * - `content`: 实验报告内容。 
+ * - `score`: 实验报告得分。 
+ * - `evaluatorId`, `evaluatorUserName`, `evaluatorName`: 评分人的相关信息。 
+ * - `evaluateTime`: 评分时间。 
+ * - `submitTime`: 报告提交时间。 
+ * - `evaluateComment`: 评语。 
+ * - `passed`: 是否通过。 
+ * ### 总结： 
+ * - `ClassroomReportBo` 类是一个数据传输对象（DTO），用于在不同层之间传递课堂举报的相关信息。 
+ * - 使用 Lombok 减少了样板代码，提高了开发效率。 
+ * - Swagger 注解有助于生成 API 文档，便于接口的理解和维护。 
+ * 这段代码设计清晰，功能明确，适合用于课堂举报相关的业务场景。 
+**/
 package com.cyberpeace.oj.course.service.bo;
 
 import io.swagger.annotations.ApiModel;

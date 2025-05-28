@@ -1,3 +1,46 @@
+/**
+ * 这段代码是一个Spring服务类 `RemoteTopoServiceImpl`，实现了 `RemoteTopoService` 接口。这个类主要负责与远程拓扑相关的操作。以下是对代码的简要分析： 
+ * ### 类定义和依赖注入 
+ * - `RemoteTopoServiceImpl` 类使用 `@Service` 注解表明这是一个Spring服务组件。 
+ * - 类中通过 `@Autowired` 注入了两个服务 `MpEnvService` 和 `CyberSpaceMpEnvService`。 
+ * ### 成员变量 
+ * - 类中定义了一系列字符串常量，表示不同的API端点（如复制拓扑、拓扑消化、拓扑同步等）。 
+ * - 这些常量在 `init()` 方法中被初始化为具体的URL。 
+ * ### 初始化方法 
+ * - `@PostConstruct` 注解的方法 `init()` 在类实例化后自动调用，用于初始化URL常量。 
+ * ### 主要方法 
+ * 1. **创建拓扑** 
+ * - `create(SceneConfig sceneConfig)`：目前返回一个生成的ID，但注释提示此方法尚未实现。 
+ * 2. **获取拓扑信息** 
+ * - `getTopoById(String topoId)`：通过拓扑ID获取拓扑信息。 
+ * - `getTopoDigest(String topoId)`：获取某个拓扑的消化信息。 
+ * - `batchGetTopoDigest(List<String> topoIds)`：批量获取多个拓扑的消化信息。 
+ * 3. **保存拓扑** 
+ * - `save(JSONObject json)`：保存拓扑。 
+ * - `saveUnlimited(JSONObject json)`：无限制保存拓扑。 
+ * 4. **设置支持部分开始** 
+ * - `setSupportPartialStart(String topoId, Boolean enableRecording)`：设置拓扑是否支持部分开始。 
+ * 5. **获取节点信息** 
+ * - `getAllNodes(TopoNodeListReq req)`：获取所有节点信息。 
+ * - `getNodeStatistics(String topoId)`：获取某个拓扑的节点统计信息。 
+ * 6. **删除拓扑** 
+ * - `deleteById(String topoId)`：通过ID删除拓扑。 
+ * - `batchDeleteTopo(List<String> topoIds)`：批量删除拓扑。 
+ * 7. **导出拓扑** 
+ * - `exportTopo(String topoId)`：导出某个拓扑。 
+ * 8. **上传文件** 
+ * - `uploadSceneAttachment(MultipartFile file)`：上传场景附件。 
+ * - `uploadIcon(MultipartFile file)`：上传图标。 
+ * - `uploadSceneTemplateSnapshot(MultipartFile file)`：上传场景模板快照。 
+ * - `uploadPrivateKey(MultipartFile file)`：上传私钥。 
+ * - `uploadMib(MultipartFile file)`：上传MIB文件。 
+ * 9. **获取MIB节点信息** 
+ * - `getMibNodeInfo(MibInfoQueryRequest queryRequest)`：根据查询请求获取MIB节点信息。 
+ * ### 辅助方法 
+ * - `setUserContext(JSONObject json)`：设置用户上下文，将当前用户的ID添加到JSON对象中。 
+ * ### 总结 
+ * 该类提供了丰富的接口来处理与远程拓扑相关的各种操作，包括创建、获取、保存、删除、导出拓扑以及上传文件等。这些方法通过HTTP客户端工具 `HttpClientUtil` 与远程服务进行交互，并处理响应结果。 
+**/
 package com.cyberpeace.integratation.service.impl;
 
 import com.alibaba.fastjson.JSONArray;

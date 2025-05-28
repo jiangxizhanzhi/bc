@@ -1,3 +1,28 @@
+/**
+ * 这段代码定义了一个名为 `NoteAttachmentReq` 的 Java 类，用于处理与附件相关的请求体。以下是该类的主要特性和功能： 
+ * ### 类概述 
+ * - **包名**：`com.cyberpeace.oj.ojbase.controller.req` 
+ * - **类名**：`NoteAttachmentReq` 
+ * - **实现接口**：`Serializable` 
+ * ### 主要特性 
+ * 1. **注解** 
+ * - 使用了 `@Getter` 和 `@Setter` 注解，自动生成属性的 getter 和 setter 方法。 
+ * - 使用了 `@ApiModel` 注解，表示这是一个 Swagger API 模型。 
+ * - 使用了 `@ApiModelProperty` 注解，为模型中的字段提供描述。 
+ * 2. **属性** 
+ * - `noteType`: 一个 `Integer` 类型的变量，表示注释类型，可能的值为 1（笔记）或 2（实验报告）。 
+ * - `resourceType`: 一个 `Integer` 类型的变量，表示资源类型，可能的值为 1（课程）、2（课时）、3（练习）或 4（课后练习）。 
+ * - `file`: 一个 `MultipartFile` 类型的变量，用于上传文件。 
+ * 3. **方法** 
+ * - `setNote_type(Integer noteType)`: 设置 `noteType` 属性的方法。 
+ * - `setResource_type(Integer resourceType)`: 设置 `resourceType` 属性的方法。 
+ * ### 总结 
+ * - `NoteAttachmentReq` 类主要用于处理与附件相关的请求体，包括注释类型、资源类型和上传的文件。 
+ * - 通过使用 Lombok 的注解，简化了 getter 和 setter 方法的编写。 
+ * - 使用 Swagger 注解，便于生成 API 文档。 
+ * - 该类实现了 `Serializable` 接口，意味着它可以被序列化，可以在网络中传输或保存到磁盘。 
+ * 这个类的设计是为了方便在控制器层接收与附件相关的请求参数，并且可以与前端进行良好的交互。 
+**/
 package com.cyberpeace.oj.ojbase.controller.req;
 
 import io.swagger.annotations.ApiModel;

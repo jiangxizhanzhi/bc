@@ -1,3 +1,41 @@
+/**
+ * 这段代码定义了一个抽象控制器类 `AuthAndPublicController`，它继承自 `PublicController`。该类主要用于处理与资源认证和共享相关的请求。以下是详细的分析： 
+ * ### 类和方法概述 
+ * 1. **类定义** 
+ * - `AuthAndPublicController<T extends IService<E>, E>` 是一个泛型抽象类，继承自 `PublicController`。 
+ * - 使用了 Lombok 的 `@Slf4j` 注解来简化日志记录。 
+ * 2. **方法** 
+ * - `batchAuth(ResourceAuthReq requestData)`：批量认证资源。接收 `ResourceAuthReq` 对象作为请求体，并返回 `BaseRsp<Boolean>`。 
+ * - `getAuth(String resourceId)`：获取资源的认证信息。接收资源ID作为查询参数，并返回 `BaseRsp<ReadAuthInfo>`。 
+ * - `getOperation(String resourceId)`：获取资源的操作权限信息。接收资源ID作为查询参数，并返回 `BaseRsp<OperationAuthInfo>`。 
+ * - `batchShare(ResourceShareReq requestData)`：批量共享资源。接收 `ResourceShareReq` 对象作为请求体，并返回 `BaseRsp<Boolean>`。 
+ * ### 主要功能 
+ * - **批量认证 (`batchAuth` 方法)**： 
+ * - 更新多个资源的读取权限。 
+ * - 使用 `updateData` 方法批量更新资源的认证信息。 
+ * - 返回一个包含结果的 `BaseRsp<Boolean>` 对象。 
+ * - **获取认证信息 (`getAuth` 方法)**： 
+ * - 根据资源ID获取资源的读取权限信息。 
+ * - 返回一个包含认证信息的 `BaseRsp<ReadAuthInfo>` 对象。 
+ * - **获取操作权限信息 (`getOperation` 方法)**： 
+ * - 根据资源ID获取资源的操作权限信息。 
+ * - 如果操作权限ID列表不为空，则通过 `RemoteUserService` 获取用户信息并映射到 `OperationUserInfo` 列表。 
+ * - 返回一个包含操作权限信息的 `BaseRsp<OperationAuthInfo>` 对象。 
+ * - **批量共享 (`batchShare` 方法)**： 
+ * - 更新多个资源的操作权限。 
+ * - 验证操作类型是否有效。 
+ * - 使用 `updateData` 方法批量更新资源的操作权限信息。 
+ * - 返回一个包含结果的 `BaseRsp<Boolean>` 对象。 
+ * ### 技术细节 
+ * - **依赖注入**： 
+ * - 使用 `SpringContextUtil.getBeanByClass` 方法获取 `RemoteUserService` 实例。 
+ * - **数据转换**： 
+ * - 使用 `BeanUtils.copy` 和 `JsonUtil` 进行对象转换和 JSON 处理。 
+ * - **权限控制**： 
+ * - 使用 `@RequiresPermissions` 注解进行权限验证，确保只有具有特定权限的用户才能访问这些接口。 
+ * ### 总结 
+ * `AuthAndPublicController` 是一个处理资源认证和共享的抽象控制器类。它提供了四个主要的RESTful API 方法，用于批量认证、获取认证信息、获取操作权限信息和批量共享资源。这些方法使用泛型和依赖注入来处理不同类型的资源和服务调用，并通过 `BaseRsp` 对象返回统一的结果格式。 
+**/
 package com.cyberpeace.oj.ojbase.controller;
 
 import java.util.List;

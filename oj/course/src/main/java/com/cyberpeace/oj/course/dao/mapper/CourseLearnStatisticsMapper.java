@@ -1,3 +1,45 @@
+/**
+ * 这段代码定义了一个名为 `CourseLearnStatisticsMapper` 的 MyBatis Mapper 接口。该接口继承了 `BaseMapper<LessonRecord>`，并扩展了一些自定义的方法用于课程和课程章节的学习统计。以下是对其主要功能的简要分析： 
+ * ### 1. 接口定义 
+ * - **继承 `BaseMapper<LessonRecord>`**：继承自 MyBatis Plus 提供的 `BaseMapper`，提供了基本的 CRUD 操作。 
+ * - **使用 `@Mapper` 注解**：表明这是一个 MyBatis 的 Mapper 接口。 
+ * ### 2. 方法定义 
+ * - **`selectByHeat(List<String> courseIds)`**： 
+ * - 根据给定的课程 ID 列表查询课程，并按热度排序。 
+ * - 返回一个 `List<Course>`。 
+ * - **`sumHeatByDirection(List<String> courseIds)`**： 
+ * - 按方向对课程的热度进行求和。 
+ * - 返回一个 `List<Course>`。 
+ * - **`listCourseByPage(Page page, CourseContext courseContext, List<String> courseIds, Boolean isPublic)`**： 
+ * - 按分页条件查询课程统计数据。 
+ * - 返回一个 `IPage<AdminCourseStatisticsRes>`。 
+ * - **`listLessonByPage(Page page, String courseId, Boolean isPublic, Integer type, String search)`**： 
+ * - 按分页条件查询课程章节统计数据。 
+ * - 返回一个 `IPage<AdminLessonStatisticsRes>`。 
+ * - **`listLessonPractice(List<String> lessonIds)`**： 
+ * - 查询指定课程章节的练习数据。 
+ * - 返回一个 `List<AdminLessonStatisticsRes>`。 
+ * - **`listLessonLearnedRecord(Page page, List<String> userIds, String lessonId)`**： 
+ * - 按分页条件查询指定用户在指定课程章节中的学习记录。 
+ * - 返回一个 `IPage<AdminLessonStatisticsDetailRes>`。 
+ * - **`detailLessonByPage(String lessonId, List<String> userIds)`**： 
+ * - 查询指定课程章节的详细学习记录。 
+ * - 返回一个 `List<AdminLessonStatisticsDetailRes>`。 
+ * - **`detailExpLessonByPage(String lessonId, List<String> userIds)`**： 
+ * - 同上，查询指定课程章节的详细学习记录。 
+ * - 返回一个 `List<AdminLessonStatisticsDetailRes>`。 
+ * ### 3. 参数说明 
+ * - **`Page page`**：分页参数，用于控制分页查询。 
+ * - **`CourseContext courseContext`**：课程背景信息。 
+ * - **`List<String> courseIds`**：课程 ID 列表。 
+ * - **`Boolean isPublic`**：是否公开课程或章节。 
+ * - **`Integer type`**：类型（例如，课程类型或章节类型）。 
+ * - **`String search`**：搜索关键字。 
+ * - **`String lessonId`**：课程章节 ID。 
+ * - **`List<String> userIds`**：用户 ID 列表。 
+ * ### 总结 
+ * 这个 Mapper 接口主要用于课程和课程章节的学习统计，提供了一系列的方法来处理分页查询、统计和详细记录查询等操作。这些方法有助于实现课程管理系统的统计功能。 
+**/
 package com.cyberpeace.oj.course.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;

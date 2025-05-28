@@ -1,3 +1,29 @@
+/**
+ * 这段代码是一个 `ToolFileServiceImpl` 类的实现，它实现了 `ToolFileService` 接口。该类的主要功能是处理工具文件的上传、保存和管理。以下是对代码的简要分析： 
+ * ### 主要组件 
+ * 1. **日志记录**： 
+ * - 使用 `org.slf4j.Logger` 进行日志记录，记录器名为 `"resourceImport"`。 
+ * 2. **属性定义**： 
+ * - `savePath`：保存文件的基础路径。 
+ * - `uploadPath`：实际上传文件的路径，通过 `init()` 方法初始化。 
+ * 3. **初始化方法**： 
+ * - `@PostConstruct` 注解的 `init()` 方法，在 Bean 初始化时调用，设置 `uploadPath` 并确保目录存在。 
+ * 4. **文件保存方法**： 
+ * - `saveFile(String filePath, boolean transferName)`：根据文件路径保存文件，并返回 `ToolFile` 对象。 
+ * - `newToolFile(String OriginalFileName, String FileName)`：创建并保存 `ToolFile` 对象。 
+ * - `saveFile(MultipartFile multipartFile)`：从 `MultipartFile` 保存文件，并返回 `ToolFile` 对象。 
+ * 5. **辅助方法**： 
+ * - `ensureDir(String uploadPath)`：确保指定路径存在，如果不存在则创建。 
+ * ### 关键功能 
+ * - **文件上传与保存**：支持两种方式上传文件，一种是通过文件路径，另一种是通过 `MultipartFile` 对象。 
+ * - **文件重命名**：可以使用 UUID 生成新的文件名，或者保留原始文件名。 
+ * - **错误处理**：在文件操作过程中出现异常时，抛出 `BusinessException` 异常，并记录错误日志。 
+ * ### 总结 
+ * - **技术栈**：使用了 MyBatis Plus 进行数据访问，Guava 和 Apache Commons Lang 等常用工具库。 
+ * - **设计模式**：符合单一职责原则，每个方法专注于特定的任务。 
+ * - **安全性**：文件操作中考虑了异常处理，确保系统稳定性。 
+ * 这段代码展示了如何处理文件上传和保存的基本流程，同时保证了良好的错误处理机制和日志记录。 
+**/
 package com.cyberpeace.cr.tool.service.impl;
 
 import java.io.File;

@@ -1,3 +1,43 @@
+/**
+ * 这段代码定义了一个名为 `WebToolController` 的 Spring MVC 控制器类，用于处理与工具库相关的前端请求。以下是该代码的详细分析： 
+ * ### 类和注解 
+ * - **`@RestController`**: 表示这是一个 RESTful 风格的控制器。 
+ * - **`@RequestMapping("/cr/tools")`**: 定义了该控制器的基本路径为 `/cr/tools`。 
+ * - **`@RequiresAuthentication`**: 表示该控制器下的所有方法都需要用户认证。 
+ * ### 成员变量 
+ * - **`@Autowired private ToolService toolService;`**: 自动注入的 `ToolService`，用于调用工具服务层的方法。 
+ * ### 方法 
+ * #### 1. `getList` 
+ * - **路径**: `/cr/tools/list` 
+ * - **HTTP 方法**: `GET` 
+ * - **功能**: 获取工具列表 
+ * - **参数**: 
+ * - `@Validated WebToolListReq webToolListReq`: 请求体，包含查询条件。 
+ * - **返回值**: 
+ * - `BaseRsp<ListRsp<WebToolRsp>>`: 包含分页信息的响应对象。 
+ * - **逻辑**: 
+ * - 根据请求参数生成分页对象 `page` 和查询条件 `listQuery`。 
+ * - 根据查询条件过滤数据。 
+ * - 调用 `toolService.selectPage` 方法获取工具列表，并转换成 `WebToolRsp` 对象。 
+ * - 返回分页结果。 
+ * #### 2. `getDetail` 
+ * - **路径**: `/cr/tools` 
+ * - **HTTP 方法**: `GET` 
+ * - **功能**: 获取工具详情 
+ * - **参数**: 
+ * - `@RequestParam("resource_id") @NotBlank String resourceId`: 资源 ID，不能为空。 
+ * - **返回值**: 
+ * - `BaseRsp<ToolRsp>`: 包含工具详情的响应对象。 
+ * - **逻辑**: 
+ * - 调用 `toolService.selectById` 方法根据 ID 获取工具详情。 
+ * - 返回工具详情。 
+ * ### 其他注解 
+ * - **`@ApiOperation`**: 描述 API 操作。 
+ * - **`@ApiParam`**: 描述 API 参数。 
+ * - **`@RequiresPermissions`**: 表示该方法需要特定权限才能访问。 
+ * ### 总结 
+ * 该控制器主要处理工具库的列表查询和详情查询操作。它通过 `ToolService` 来获取数据，并使用分页和转换工具将数据封装成响应对象返回给客户端。整个过程涉及到分页、权限控制和数据转换等操作。 
+**/
 package com.cyberpeace.cr.tool.controller.web;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;

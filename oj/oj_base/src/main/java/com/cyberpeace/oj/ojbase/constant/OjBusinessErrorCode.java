@@ -1,3 +1,54 @@
+/**
+ * 这段代码定义了一个名为 `OjBusinessErrorCode` 的接口，用于存储和管理与靶场业务相关的自定义错误码。以下是对此代码的简要分析： 
+ * ### 主要功能 
+ * - **错误码定义**：该接口定义了一系列错误码（字符串），每个错误码都有具体的描述。 
+ * - **错误码范围**：错误码从 `102001` 开始，到 `102134` 结束。 
+ * ### 接口结构 
+ * - **接口声明**：`public interface OjBusinessErrorCode` 
+ * - **错误码常量**：定义了多个静态字符串常量，每个常量表示一个特定的错误码。 
+ * ### 错误码分类 
+ * - **习题集相关错误**： 
+ * - `PRACTICE_SET_TYPE_ERROR` 
+ * - `PRACTICE_COUNT_NOT_ENOUGH` 
+ * - `SET_UNDER_EXIST_PRACTICE` 
+ * - `PRACTICE_SET_NO_LOGO` 
+ * - `PRACTICE_SET_IS_EXIST` 
+ * - `PRACTICE_RANGE_ERROR` 
+ * - **资源相关错误**： 
+ * - `RESOURCE_PERMISSION` 
+ * - `RESOURCE_USED_NOT_DELETED` 
+ * - `RESOURCE_IS_EXIST` 
+ * - `RESOURCE_ID_MISSING` 
+ * - `RESOURCE_ID_NOT_EXIST` 
+ * - `RESOURCE_IN_IMPORT` 
+ * - `UNABLE_TO_EXPORT_BUILTIN_RESOURCE` 
+ * - `PRACTICE_SET_CONTAIN_BUILTIN_PRACTICE` 
+ * - **课程和课时相关错误**： 
+ * - `CLASS_SCENE_IS_RUNNING` 
+ * - `SCENE_START_FAIL` 
+ * - `CLASS_NOT_SIGN` 
+ * - `CLASS_IN_SCHEDULES` 
+ * - `IMPORT_CLASS_IN_SCHEDULES` 
+ * - `LESSON_WITHOUT_CHAPTER` 
+ * - `LESSON_CONTAIN_BUILTIN_PRACTICE` 
+ * - `COURSE_EXPORT_FAILED` 
+ * - **其他错误**： 
+ * - `NAME_IS_EXIST` 
+ * - `FIELD_TOO_LONG` 
+ * - `NOT_IMPLEMENTED_EXCEPTION` 
+ * - `RELOAD_PRACTICE` 
+ * - `USER_CLASS_GROUP_NOT_FOUND` 
+ * - `NO_REPORT_CAN_BE_EXPORTED` 
+ * - `WRITEUP_INVALID` 
+ * ### 优点 
+ * - **清晰的错误码定义**：每个错误码都有明确的描述，便于开发者理解和维护。 
+ * - **错误码范围明确**：错误码范围从 `102001` 到 `102134`，便于管理和扩展。 
+ * ### 缺点 
+ * - **冗余错误码**：某些错误码描述相似或重复，例如 `RESOURCE_ID_MISSING` 和 `RESOURCE_ID_NOT_EXIST`。 
+ * - **缺少注释**：部分错误码缺少必要的注释，可能会导致理解上的困难。 
+ * ### 总结 
+ * 该接口提供了一套详细的错误码系统，适用于靶场业务场景中的各种错误处理。虽然存在一些冗余和缺少注释的问题，但整体上是一个结构清晰且易于扩展的错误码管理方案。 
+**/
 package com.cyberpeace.oj.ojbase.constant;
 
 /**

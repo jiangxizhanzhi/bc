@@ -1,3 +1,56 @@
+/**
+ * 这段代码定义了一个名为 `AdminCourseImportController` 的 Spring Boot 控制器类，用于处理与课程导入相关的 API 请求。以下是该代码的简要分析： 
+ * ### 类和包结构 
+ * - **包名**: `com.cyberpeace.oj.course.controller.admin` 
+ * - **类名**: `AdminCourseImportController` 
+ * ### 主要功能 
+ * 该控制器提供了以下几个主要功能： 
+ * 1. **课程导入**：支持单个课程和组合课程的导入。 
+ * 2. **课程导出**：将课程数据导出为文件。 
+ * 3. **课程重复检查**：检查课程名称是否重复。 
+ * ### 关键属性 
+ * - **依赖注入**: 
+ * - `CourseImportService`: 用于处理课程导入逻辑。 
+ * - `RemoteUserService`: 用于获取用户信息。 
+ * - `CourseService`: 用于处理课程相关业务逻辑。 
+ * - `CourseDumpService`: 用于处理课程数据导出逻辑。 
+ * ### 方法 
+ * #### 1. `RMCourseImport` 
+ * - **路径**: `/oj/admin/course/rm/import` 
+ * - **方法类型**: `POST` 
+ * - **功能**: 导入单个课程数据。 
+ * - **参数**: `RMCourseImportReq` 请求体。 
+ * - **返回值**: `BaseRsp<Boolean>`。 
+ * #### 2. `export` 
+ * - **路径**: `/oj/admin/course/rm/course/export` 
+ * - **方法类型**: `GET` 
+ * - **功能**: 导出课程数据。 
+ * - **参数**: 
+ * - `resource_id`: 资源ID。 
+ * - `is_dump_topo`: 是否转储拓扑。 
+ * - `scene_number`: 场景数。 
+ * - `disable_image_export`: 是否禁用图像导出。 
+ * - **返回值**: `BaseRsp<String>`。 
+ * #### 3. `RMCombinedCourseImport` 
+ * - **路径**: `/oj/admin/course/rm/import-combine` 
+ * - **方法类型**: `POST` 
+ * - **功能**: 导入组合课程数据。 
+ * - **参数**: `RMCombinedCourseImportReq` 请求体。 
+ * - **返回值**: `BaseRsp<Boolean>`。 
+ * #### 4. `duplicateCourseInspect` 
+ * - **路径**: `/oj/admin/course/import/inspect_duplication` 
+ * - **方法类型**: `POST` 
+ * - **功能**: 检查课程名称是否重复。 
+ * - **参数**: `DuplicateCourseInspectReq` 请求体。 
+ * - **返回值**: `BaseRsp<List<String>>`。 
+ * ### 日志记录 
+ * 使用了 `lombok` 注解 `@Slf4j` 来简化日志记录，日志记录在每个方法中用于记录关键步骤和错误信息。 
+ * ### 异常处理 
+ * - 使用 `try-catch` 块来捕获异常，并记录错误信息。 
+ * - 在某些情况下，调用 `destroyFailedTopo` 方法清理失败的数据。 
+ * ### 总结 
+ * 该控制器类主要用于处理课程导入、导出和重复检查的功能。通过依赖注入的方式，它能够与其他服务进行交互，实现复杂的业务逻辑。每个方法都有详细的注释和日志记录，确保了代码的可读性和可维护性。 
+**/
 package com.cyberpeace.oj.course.controller.admin;
 
 import java.io.File;

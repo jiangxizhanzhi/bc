@@ -1,3 +1,48 @@
+/**
+ * 这段代码定义了一个名为 `LogContent` 的枚举类，该类实现了 `BaseI18n` 接口，并且使用了 Lombok 库来自动生成 getter 方法。以下是详细的分析和总结： 
+ * ### 类定义与继承 
+ * - **类名**：`LogContent` 
+ * - **实现接口**：`BaseI18n` 
+ * - **注解**： 
+ * - `@Getter`：由 Lombok 自动生成 `english` 和 `chinese` 属性的 getter 方法。 
+ * ### 枚举常量 
+ * 枚举类中定义了一系列常量，每个常量都有英文和中文两种语言的描述： 
+ * - `CR_FORMAT`：操作日志内容描述前缀。 
+ * - `SCENE_FORMAT`：场景格式。 
+ * - `COURSE_FORMAT`：课程形式。 
+ * - `PRACTICE_FORMAT`：练习形式。 
+ * - `THEORY_FORMAT`：理论格式。 
+ * - `EXERCISE`：锻炼。 
+ * - `THEORY`：理论。 
+ * - `PRACTICE_SET`：实践设置。 
+ * - `SINGLE_TRAIN_TEMPLATE`：单训练模板。 
+ * - `TEAM_TRAIN_TEMPLATE`：团队训练模板。 
+ * - `RB_ROOM_TEMPLATE`：RB 房间模板。 
+ * - `TEAM_TRAIN_ROOM`：团队训练房间。 
+ * - `RB_TRAIN_ROOM`：RB训练房间。 
+ * - `RANGE_TEST_ROOM`：测距试验室。 
+ * - `RTKS_FRAME`：RTKS框架。 
+ * - `LEVEL`：水平。 
+ * - `FRAME`：框架。 
+ * - `KNOWLEDGE_CATEGORY`：知识类别。 
+ * - `KNOWLEDGE`：知识。 
+ * - `ROLE`：岗位。 
+ * - `SKILL`：技能。 
+ * - `TASK`：任务。 
+ * - `CORRECT`：正确。 
+ * - `INCORRECT`：不正确。 
+ * - `BATCH_DELETE_FORMAT`：批量删除格式。 
+ * ### 构造函数 
+ * - `LogContent(String english, String chinese)`：构造函数用于初始化枚举常量的英文和中文描述。 
+ * ### 字段 
+ * - `private final String english;`：英文描述。 
+ * - `private final String chinese;`：中文描述。 
+ * ### 总结 
+ * - **用途**：这个枚举类用于存储和管理不同类型的日志内容及其对应的国际化描述（英文和中文）。 
+ * - **特点**：使用了 Lombok 注解来简化代码，减少样板代码。 
+ * - **结构**：枚举常量包含了各种日志内容的描述，方便在应用中进行多语言支持。 
+ * 通过这种方式，可以确保在应用程序的不同部分使用统一的日志内容描述，并且易于扩展和维护。 
+**/
 package com.cyberpeace.integratation.constant;
 
 import com.cyberpeace.constant.BaseI18n;

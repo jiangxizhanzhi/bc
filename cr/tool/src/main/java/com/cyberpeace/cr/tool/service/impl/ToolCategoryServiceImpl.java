@@ -1,3 +1,34 @@
+/**
+ * 这段代码是一个Java类，名为`ToolCategoryServiceImpl`，位于`com.cyberpeace.cr.tool.service.impl`包中。这个类实现了`ToolCategoryService`接口，并且继承了`ServiceImpl<ToolCategoryMapper, ToolCategory>`。以下是对其主要功能和结构的简要分析： 
+ * ### 主要功能 
+ * 1. **数据访问层（DAO）**：通过`ToolCategoryMapper`和`ToolMapper`与数据库进行交互。 
+ * 2. **缓存管理**：使用Spring的缓存注解（`@Cacheable`, `@CacheEvict`）来优化性能。 
+ * 3. **业务逻辑处理**： 
+ * - 分页查询工具类别信息。 
+ * - 查询所有工具类别信息。 
+ * - 根据类型获取工具类别信息。 
+ * - 保存、更新、删除工具类别。 
+ * - 验证工具类别名称是否重复。 
+ * ### 主要方法 
+ * 1. **selectPage**：分页查询工具类别信息。 
+ * 2. **selectAll**：查询所有工具类别信息。 
+ * 3. **webSelectAll**：前台查询所有工具类别信息。 
+ * 4. **getByName**：根据名称查询工具类别信息。 
+ * 5. **getByType**：根据类型查询工具类别信息。 
+ * 6. **saveCategory**：保存新的工具类别信息。 
+ * 7. **batchDelete**：批量删除工具类别信息。 
+ * 8. **validateToolCategoryNameExist**：验证工具类别名称是否存在。 
+ * 9. **saveToolCategory**：保存工具类别信息。 
+ * 10. **updateToolCategoryById**：更新工具类别信息。 
+ * 11. **getAllTypeCategory**：获取所有工具类型的类别信息。 
+ * ### 技术点 
+ * - **MyBatis Plus**：用于简化数据库操作，如分页查询等。 
+ * - **Lombok**：通过`@Slf4j`注解自动生成日志记录器。 
+ * - **Apache Commons Collections**：用于处理集合相关的操作。 
+ * - **Spring Cache**：通过注解管理缓存，提高应用性能。 
+ * ### 总结 
+ * 这个类的主要作用是提供一套完整的工具类别管理服务，包括CRUD操作以及缓存管理。通过MyBatis Plus和Spring Cache，提高了系统的性能和可维护性。 
+**/
 package com.cyberpeace.cr.tool.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;

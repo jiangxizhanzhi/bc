@@ -1,3 +1,42 @@
+/**
+ * 这段代码是一个Spring Boot控制器类 `ExternalTheoryController`，用于处理与外部理论相关的API请求。以下是该代码的简要分析： 
+ * ### 包含的依赖和注解 
+ * - **依赖**： 
+ * - `org.springframework.web.bind.annotation.*`：用于定义RESTful API。 
+ * - `com.baomidou.mybatisplus.*`：MyBatis Plus的元数据和分页插件。 
+ * - `io.swagger.annotations.*`：用于生成API文档。 
+ * - `lombok.extern.slf4j.Slf4j`：日志记录。 
+ * - **注解**： 
+ * - `@RestController`：表明这是一个REST控制器。 
+ * - `@RequestMapping("/gateway/theory")`：定义了该控制器的基本路径。 
+ * - `@Slf4j`：Lombok提供的日志记录功能。 
+ * ### 主要方法 
+ * 1. **获取实践设置列表 (`getPracticeSetList`)** 
+ * - **描述**：获取用户有权访问的理论习题集列表。 
+ * - **实现**：通过用户信息和权限上下文来过滤习题集，并将结果转换为 `ExternalPracticeSetBo` 对象列表。 
+ * 2. **获取类别列表 (`getCategoryList`)** 
+ * - **描述**：获取理论分类列表。 
+ * - **实现**：根据传入的实践设置ID过滤分类列表。 
+ * 3. **获取理论列表 (`getTheoryList`)** 
+ * - **描述**：分页查询理论习题。 
+ * - **实现**：通过分页参数、查询条件和用户权限来获取理论习题列表。 
+ * 4. **批量获取 (`batchGet`)** 
+ * - **描述**：根据资源ID批量获取理论习题。 
+ * - **实现**：直接从数据库中批量查询理论习题。 
+ * 5. **获取理论随机 (`getTheoryRandom`)** 
+ * - **描述**：随机获取一定数量的理论习题。 
+ * - **实现**：根据用户权限和查询参数随机选择理论习题。 
+ * 6. **搜索计数 (`searchCount`)** 
+ * - **描述**：查询各类别理论习题的数量。 
+ * - **实现**：根据查询参数和用户权限统计各类别理论习题的数量。 
+ * ### 主要特点 
+ * - **权限控制**：使用了自定义注解 `@AuthKeyUser` 和 `@AuthOjKey` 来控制不同方法的访问权限。 
+ * - **数据校验**：使用了Spring的验证注解 `@Validated` 和自定义请求体类来确保输入数据的有效性。 
+ * - **分页和排序**：通过 `Page` 对象实现分页和排序功能。 
+ * - **对象映射**：使用 `BeanUtils` 进行对象之间的映射。 
+ * ### 总结 
+ * 该控制器类主要用于处理与理论习题相关的API请求，包括获取习题集、分类、分页查询、随机获取和统计等操作。通过合理的权限控制和数据校验，确保了系统的安全性和可靠性。 
+**/
 package com.cyberpeace.gateway.controller;
 
 import java.util.List;

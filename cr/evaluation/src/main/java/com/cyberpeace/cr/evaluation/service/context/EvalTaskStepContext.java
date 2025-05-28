@@ -1,3 +1,31 @@
+/**
+ * 这段代码定义了一个名为 `EvalTaskStepContext` 的 Java 类，用于表示评估任务中的步骤上下文。以下是对该类的简要分析： 
+ * ### 类概述 
+ * - **包名**: `com.cyberpeace.cr.evaluation.service.context` 
+ * - **作者**: SN 
+ * - **日期**: 2024年11月8日 
+ * ### 类属性 
+ * - **stepId**: 步骤ID，类型为 `String`。 
+ * - **stage**: 步骤阶段，类型为 `Integer`。 
+ * - **title**: 步骤标题，类型为 `String`。 
+ * - **process**: 步骤过程，类型为 `String`。 
+ * - **startTime**: 步骤开始时间，类型为 `Date`。 
+ * - **endTime**: 步骤结束时间，类型为 `Date`。 
+ * - **status**: 步骤状态，类型为 `Integer`，默认值为 `Status.INIT.getCode()`。 
+ * - **preStepStatus**: 前序步骤状态，类型为 `Integer`，默认值为 `Status.INIT.getCode()`。 
+ * ### 类方法 
+ * - **setResourceId(String resourceId)**: 设置步骤ID，实际上是将传入的 `resourceId` 赋值给 `stepId`。 
+ * - **setStatus()**: 根据 `startTime` 和 `endTime` 的值来设置步骤状态。 
+ * - **mergeStatus()**: 如果步骤没有结束，则将其状态设为 `UNFINISHED`。 
+ * ### 内部枚举类 `Status` 
+ * - 定义了步骤的状态枚举，包括 `INIT`, `STARTED`, `FINISHED`, `UNFINISHED`。 
+ * - 每个状态都有一个对应的 `code`、中文描述 (`cnDesc`) 和英文描述 (`enDesc`)。 
+ * ### 总结 
+ * - `EvalTaskStepContext` 类主要用于存储和管理评估任务中的各个步骤的上下文信息。 
+ * - 通过 `setStatus` 方法自动根据时间戳更新步骤状态。 
+ * - 使用内部枚举类 `Status` 来管理步骤的各种状态，确保状态的一致性和可维护性。 
+ * 这段代码结构清晰，注释详尽，适合用于评估任务的步骤管理和状态跟踪。 
+**/
 package com.cyberpeace.cr.evaluation.service.context;
 
 import java.util.Date;

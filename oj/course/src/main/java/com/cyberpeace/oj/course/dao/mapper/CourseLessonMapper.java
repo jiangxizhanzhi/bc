@@ -1,3 +1,40 @@
+/**
+ * 这段代码定义了一个名为 `CourseLessonMapper` 的接口，继承自 `BaseMapper<CourseLesson>`。这个接口主要用于操作与课程（Course）相关的课时（Lesson）数据。以下是对该代码的简要分析： 
+ * ### 1. 包和导入 
+ * - **包声明**：`com.cyberpeace.oj.course.dao.mapper` 
+ * - **导入的类**： 
+ * - `java.util.List`: 用于处理列表。 
+ * - `com.baomidou.mybatisplus.core.metadata.IPage`: 分页接口。 
+ * - `com.baomidou.mybatisplus.extension.plugins.pagination.Page`: 分页实现。 
+ * - `com.cyberpeace.oj.course.dao.context.LessonContext`: 用于传递上下文信息。 
+ * - `org.apache.ibatis.annotations.Mapper`: MyBatis 注解，表示这是一个 MyBatis 的 Mapper 接口。 
+ * - `org.springframework.stereotype.Repository`: Spring 注解，表示这是一个 Repository，通常用于持久化层。 
+ * ### 2. 接口定义 
+ * - **注解**： 
+ * - `@Mapper`: 标记为 MyBatis 的 Mapper。 
+ * - `@Repository`: 标记为 Spring 的 Repository。 
+ * - **继承**： 
+ * - `extends BaseMapper<CourseLesson>`: 继承了 MyBatis Plus 提供的 `BaseMapper`，提供了基本的 CRUD 操作。 
+ * ### 3. 方法定义 
+ * #### 列表查询方法 
+ * - `listByCourses(List<String> courseIds, Boolean isPublic)`: 根据课程ID列表和是否公开标志查询课时。 
+ * - `selectByCourse(String courseId, Boolean isPublic)`: 根据课程ID和是否公开标志查询课时。 
+ * - `selectAllVideoLesson()`: 查询所有视频类型的课时。 
+ * #### 分页查询方法 
+ * - `pageByContext(Page page, LessonContext context, Boolean isPublic, Integer type)`: 根据分页参数、上下文、是否公开和类型进行分页查询。 
+ * #### 单条记录查询方法 
+ * - `selectByPublic(String resourceId, Boolean isPublic)`: 根据资源ID和是否公开标志查询课时。 
+ * - `selectIdsByCourse(List<String> courseIds)`: 根据课程ID列表查询课时ID列表。 
+ * - `selectByCourseAndName(String courseId, String name)`: 根据课程ID和名称查询课时ID。 
+ * - `selectCourseByCourseAndName(String courseId, String name)`: 根据课程ID和名称查询课时对象。 
+ * #### 删除方法 
+ * - `deleteByCourse(List<String> courseIds)`: 根据课程ID列表删除课时。 
+ * #### 统计方法 
+ * - `selectMinIndex(String courseId)`: 根据课程ID查询最小索引。 
+ * - `selectChapterCount(String courseId)`: 根据课程ID查询章节数量。 
+ * ### 总结 
+ * 这个接口主要提供了与课程课时相关的各种操作，包括查询、分页、删除和统计等。通过继承 `BaseMapper`，它已经具备了基本的 CRUD 功能，并且还添加了一些特定于课程课时的功能。这些方法涵盖了从简单的单条记录查询到复杂的分页查询以及批量删除等操作。 
+**/
 package com.cyberpeace.oj.course.dao.mapper;
 
 import java.util.List;

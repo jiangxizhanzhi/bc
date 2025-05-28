@@ -1,3 +1,21 @@
+/**
+ * 这段代码定义了一个名为 `LessonConfigMapper` 的接口，该接口继承自 `BaseMapper<LessonConfig>`，这是 MyBatis-Plus 提供的一个基础映射接口。通过这个接口，可以实现对 `LessonConfig` 实体类的操作。以下是对该接口方法的简要分析： 
+ * 1. **getCourseNode**: 根据课程ID (`courseId`) 获取课程节点。 
+ * 2. **listByParent**: 根据父节点ID (`parentId`) 列出所有的子目录配置信息。 
+ * 3. **selectByCourse**: 根据课程ID (`courseId`) 查询所有相关的课程目录配置。 
+ * 4. **selectLast**: 查找指定根目录ID (`rootId`) 下的最后一个课时配置。 
+ * 5. **deleteByLessonIds**: 根据课时ID列表 (`lessonIds`) 删除对应的课时目录配置，并返回受影响的行数。 
+ * 6. **selectByLessonIds**: 根据课程ID (`courseId`) 和课时ID列表 (`lessonIds`) 查询对应的课时目录配置。 
+ * 7. **deleteByCourse**: 根据课程ID (`courseId`) 删除该课程的所有目录配置，并返回受影响的行数。 
+ * 8. **batchDelete**: 根据课程ID列表 (`courseIds`) 批量删除课程目录。 
+ * 9. **updateByCourseAndLesson**: 更新课时目录配置信息。 
+ * 10. **selectByCourseAndLessonName**: 根据课程ID (`courseId`) 和课时名称 (`name`) 查询配置数据。 
+ * 总结： 
+ * - `LessonConfigMapper` 接口主要负责对 `LessonConfig` 实体类进行数据库操作，包括增删改查等基本功能。 
+ * - 该接口使用了 MyBatis-Plus 的 `BaseMapper` 来简化数据库操作。 
+ * - 方法名直观地反映了其功能，例如 `getCourseNode` 明确表示该方法用于获取课程节点信息。 
+ * - 多个方法都使用了 `@Param` 注解来明确参数名称，这有助于提高代码的可读性和维护性。 
+**/
 package com.cyberpeace.oj.course.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;

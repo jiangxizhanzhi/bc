@@ -1,3 +1,60 @@
+/**
+ * 这段代码实现了一个用于层次分析法（AHP）计算权重的工具类 `AHPComputeWeight`。以下是对该代码的简要分析： 
+ * ### 类和方法概述 
+ * - **类**: `AHPComputeWeight` 
+ * - 该类主要用于计算层次分析法中的权重。 
+ * - 使用了单例模式来确保只有一个实例。 
+ * - **主要方法**: 
+ * - `main`: 程序入口，用于测试。 
+ * - `getInstance`: 提供单例实例。 
+ * - `weight`: 计算权重的核心方法。 
+ * - `round`: 四舍五入的方法。 
+ * - `getCR`: 获取随机一致性比率。 
+ * ### 核心逻辑 
+ * 1. **初始化和单例模式** 
+ * - `ACW` 是 `AHPComputeWeight` 的单例实例。 
+ * - `getInstance` 方法返回这个单例实例。 
+ * 2. **权重计算 (`weight` 方法)** 
+ * - 输入参数: 
+ * - `a`: 判断矩阵。 
+ * - `weight`: 输出权重数组。 
+ * - `N`: 矩阵的大小。 
+ * - 初始化向量 `w0`, `w1`, `w2`。 
+ * - 迭代计算新的权重向量，直到满足误差条件。 
+ * - 计算最大特征值 `lamta`、一致性指标 `CI` 和一致性比率 `CR`。 
+ * - 结果四舍五入并存储到输出数组 `weight` 中。 
+ * 3. **四舍五入 (`round` 方法)** 
+ * - 将 `double` 类型的数值四舍五入到指定的小数位数。 
+ * 4. **随机一致性比率 (`getCR` 方法)** 
+ * - 返回计算得到的一致性比率 `CR`。 
+ * ### 示例用法 
+ * 在 `main` 方法中，通过创建实例并调用 `weight` 方法，计算给定判断矩阵的权重，并打印结果。 
+ * ```java 
+ * public static void main(String[] args) { 
+ * double[][] a = new double[][]{ 
+ * {1, 1.8, 2.2, 1}, 
+ * {0.6, 1, 3, 1.7}, 
+ * {0.4, 0.3, 1, 0.5}, 
+ * {1, 0.5, 2, 1} 
+ * }; 
+ * int n = a[0].length; 
+ * double[] weight = new double[n]; 
+ * AHPComputeWeight instance = AHPComputeWeight.getInstance(); 
+ * instance.weight(a, weight, n); 
+ * System.out.println(Arrays.toString(weight)); 
+ * } 
+ * ``` 
+ * ### 总结 
+ * - **优点**: 
+ * - 使用了单例模式，保证了全局唯一性。 
+ * - 实现了权重计算的核心算法，包括迭代和四舍五入等。 
+ * - 代码结构清晰，易于理解和维护。 
+ * - **改进点**: 
+ * - 可以考虑增加更多的错误检查和异常处理。 
+ * - 增加文档注释，详细说明每个方法的作用和输入输出参数。 
+ * - 可以优化一些常量的定义，使其更易读和管理。 
+ * 整体来看，这是一个功能完整的 AHP 权重计算工具类，适用于需要进行层次分析的应用场景。 
+**/
 package com.cyberpeace.cr.evaluation.utils;
 
 import java.math.BigDecimal;

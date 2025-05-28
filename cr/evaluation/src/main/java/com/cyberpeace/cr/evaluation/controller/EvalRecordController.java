@@ -1,3 +1,58 @@
+/**
+ * 这段代码定义了一个名为 `EvalRecordController` 的 Spring MVC 控制器类，用于处理与评估记录相关的HTTP请求。以下是对该代码的简要分析： 
+ * ### 类概述 
+ * - **包名**：`com.cyberpeace.cr.evaluation.controller` 
+ * - **注解**： 
+ * - `@RestController`：表明这是一个 RESTful 风格的控制器。 
+ * - `@RequestMapping("/cr/eval/record")`：定义了所有处理方法的基本路径。 
+ * - `@Slf4j`：引入了日志功能，方便调试和记录。 
+ * ### 成员变量 
+ * - `evalTaskService`：负责处理评估任务的服务。 
+ * - `evalRecordService`：负责处理评估记录的服务。 
+ * - `evalIndexRefService`：负责处理评估指数裁判的服务。 
+ * - `evalVariableRefService`：负责处理评估变量裁判的服务。 
+ * ### 方法概述 
+ * 1. **获取评估记录列表** 
+ * - `list(EvalRecordListReq queryParams)`：根据查询参数获取评估记录列表。 
+ * 2. **获取评估状态枚举** 
+ * - `statusEnum()`：获取评估状态的枚举值。 
+ * 3. **创建评估记录** 
+ * - `create(EvalRecordAddReq requestData)`：创建新的评估记录。 
+ * 4. **更新评估记录** 
+ * - `update(EvalRecordAddReq requestData)`：更新现有的评估记录。 
+ * 5. **获取单个评估记录** 
+ * - `get(String recordId)`：根据评估记录ID获取单个评估记录。 
+ * 6. **删除评估记录** 
+ * - `delete(BatchDeleteReq requestData)`：根据请求数据中的ID数组删除评估记录。 
+ * 7. **获取场景终端节点** 
+ * - `getNodes(String roomId)`：根据房间ID获取场景终端节点。 
+ * 8. **获取探针信息** 
+ * - `getProbes(String roomId, String nodeId)`：根据房间ID和节点ID获取探针信息。 
+ * - `getProbes(String roomId)`：根据房间ID批量获取探针信息。 
+ * 9. **开始评估任务** 
+ * - `start(EvalRecordStartReq requestData)`：开始一个评估任务。 
+ * 10. **获取评估任务结果** 
+ * - `result(String recordId)`：根据评估记录ID获取评估任务的结果。 
+ * 11. **获取某一级指标下的所有变量项** 
+ * - `variables(String indexId)`：根据指数ID获取所有变量项。 
+ * 12. **获取变量项的采集信息（折线图）** 
+ * - `variableGraph(String variableId)`：根据变量ID获取变量项的采集信息（折线图）。 
+ * 13. **获取变量项的采集信息（原始数据）** 
+ * - `variableData(EvalVariableProbeDataReq queryParams)`：根据查询参数获取变量项的采集信息（原始数据）。 
+ * 14. **获取评估任务结果（指标项信息）** 
+ * - `resultIndex(String indexId)`：根据指数ID获取评估任务的结果（指标项信息）。 
+ * 15. **获取评估任务结果（变量项信息）** 
+ * - `resultVariable(String variableId)`：根据变量ID获取评估任务的结果（变量项信息）。 
+ * 16. **转储评估记录为PDF** 
+ * - `dumpEvalRecord2PDF(HttpServletResponse httpServletResponse, String resourceId, String taskId)`：将评估记录导出为PDF文件。 
+ * 17. **获取记录结果列表** 
+ * - `getRecordResultList(String resourceId)`：根据资源ID获取评估任务结果的列表。 
+ * ### 总结 
+ * - 这个控制器处理了与评估记录相关的多种操作，包括创建、更新、删除、查询等。 
+ * - 使用了多个服务类来处理具体的业务逻辑。 
+ * - 方法命名清晰，符合RESTful风格，便于理解和维护。 
+ * - 注解的使用使得每个方法的功能和权限控制更加明确。 
+**/
 package com.cyberpeace.cr.evaluation.controller;
 
 import com.cyberpeace.common.constant.ErrorCode;

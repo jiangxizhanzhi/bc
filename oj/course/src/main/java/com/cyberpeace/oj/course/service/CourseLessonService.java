@@ -1,3 +1,63 @@
+/**
+ * 这段代码定义了一个名为 `CourseLessonService` 的接口，该接口扩展了 `IService<CourseLesson>` 接口。这个服务接口主要用于处理与课程课时相关的各种操作。以下是该接口方法的简要分析： 
+ * ### 方法概述 
+ * 1. **获取课时详细信息** 
+ * - `getLessonDetail`: 根据课程编号和课时编号查询课时基本信息。 
+ * 2. **查询后台课时详情数据** 
+ * - `selectByCourseAndLesson`: 查询后台课时详情数据。 
+ * 3. **课时数据新增** 
+ * - `addLesson`: 增加新的课时数据。 
+ * 4. **课时数据修改** 
+ * - `updateLesson`: 修改已有的课时数据。 
+ * 5. **后台课时列表查询** 
+ * - `pageByContext`: 分页查询后台课时列表。 
+ * 6. **课后练习公开与隐藏** 
+ * - `batchPublicPractice`: 批量设置课后练习的公开或隐藏状态。 
+ * 7. **课时导入** 
+ * - `importLessons`: 导入新的课时数据。 
+ * 8. **课后练习答案校验** 
+ * - `submitLessonPractice`: 校验课后练习的答案。 
+ * 9. **课后练习数据查询** 
+ * - `practiceByLesson`: 查询指定课时的课后练习数据。 
+ * 10. **后台课后练习查询** 
+ * - `adminLessonPractice`: 查询后台课后练习数据。 
+ * 11. **新增和修改练习数据** 
+ * - `addLessonPractice`: 新增或修改课后练习数据。 
+ * 12. **课后练习评分** 
+ * - `markLessonPractice`: 给课后练习打分。 
+ * 13. **课后练习下发** 
+ * - `releaseLessonPractice`: 下发课后练习。 
+ * 14. **上传课时讲义** 
+ * - `uploadHandout`: 上传课时讲义。 
+ * 15. **上传视频文件** 
+ * - `uploadVideo`: 上传视频文件。 
+ * 16. **课时批量删除** 
+ * - `batchDelete`: 批量删除课时数据。 
+ * 17. **导出课时数据** 
+ * - `handlerLessonDump`: 处理课时数据的导出。 
+ * 18. **加载课时数据** 
+ * - `loadLesson`: 加载课时数据。 
+ * 19. **创建远程操作日志** 
+ * - `createMpLog`: 创建远程操作日志。 
+ * 20. **根据课时列表查询启动的场景** 
+ * - `lessonSceneByLessons`: 根据课时列表查询启动的场景。 
+ * 21. **根据课时查询课后练习场景** 
+ * - `lessonPracticeSceneByLessons`: 根据课时查询课后练习场景。 
+ * 22. **查询课时场景** 
+ * - `selectLessonAllScene`: 查询课时场景。 
+ * 23. **获取课程下所有拓扑** 
+ * - `selectLessonAllTopo`: 获取课程下所有拓扑。 
+ * 24. **清除场景和拓扑数据** 
+ * - `clearSceneAndTopos`: 清除场景和拓扑数据。 
+ * 25. **第 2 课管理员BO** 
+ * - `lesson2AdminBo`: 将课程列表转换成管理员BO。 
+ * 26. **查询topo和场景数据信息** 
+ * - `getTopoScene`: 查询指定课时的topo和场景数据信息。 
+ * 27. **计算视频时长** 
+ * - `countVideo`: 计算视频时长。 
+ * ### 总结 
+ * 该接口提供了丰富的功能，包括课时的增删改查、课后练习管理、视频和讲义管理以及数据导出等功能。这些方法覆盖了从课时的基本信息管理到复杂的场景管理和数据处理，是一个全面的课程课时管理服务。 
+**/
 package com.cyberpeace.oj.course.service;
 
 import com.alibaba.fastjson.JSONObject;

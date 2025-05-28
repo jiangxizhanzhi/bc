@@ -1,3 +1,45 @@
+/**
+ * 这段代码是一个用于管理评估系统的控制器类 `EvalSystemIndexAdminController`。以下是对其主要功能和结构的简要分析： 
+ * ### 包含的主要依赖和服务 
+ * - **MyBatis-Plus**: 用于数据库操作。 
+ * - **Shiro**: 用于权限控制。 
+ * - **Swagger**: 用于API文档生成。 
+ * - **自定义服务和工具**: 如 `EvalIndexService`, `EvalSystemService`, `EvalSystemMapper`, `BeanUtils`, `JsonUtil`, `PageUtil`, `StreamApiUtils` 等。 
+ * ### 主要功能 
+ * 1. **添加评估指数** 
+ * - 使用事务管理确保数据一致性。 
+ * - 验证请求体，保存一级、二级、三级指标。 
+ * - 设置创建用户ID并保存评估系统信息。 
+ * 2. **编辑评估指数** 
+ * - 使用事务管理。 
+ * - 删除旧的三级指标，保存新的指标。 
+ * - 更新评估系统信息。 
+ * 3. **获取评估指数** 
+ * - 根据资源ID查询评估系统及其指标。 
+ * - 将实体转换为响应对象。 
+ * 4. **批量删除** 
+ * - 根据提供的ID列表批量删除评估系统及其相关指标。 
+ * 5. **列表查询** 
+ * - 分页查询评估系统列表，并返回包含分页信息的响应。 
+ * ### 关键方法 
+ * - **addEvalIndex**: 添加新的评估指数。 
+ * - **editEvalIndex**: 编辑现有的评估指数。 
+ * - **saveEvalIndex**: 保存评估指数（包括一级、二级、三级指标）。 
+ * - **changeConnlist**: 更新连接线信息。 
+ * - **validateReq**: 验证请求体。 
+ * - **changeChildrenIds**: 更新子级ID列表。 
+ * - **convertEvalSystemToEvalSystemRsp**: 将评估系统实体转换为响应对象。 
+ * - **convertIndexReqToIndex**: 将请求体中的索引信息转换为实体对象。 
+ * - **batchDelete**: 批量删除评估系统及其相关指标。 
+ * - **list**: 查询评估系统列表。 
+ * ### 注意点 
+ * - **事务管理**: 使用 `TransactionTemplate` 来确保数据操作的原子性。 
+ * - **权限控制**: 使用 `@RequiresPermissions` 注解来限制访问权限。 
+ * - **数据验证**: 在添加和编辑评估指数时进行必要的数据验证。 
+ * - **分页查询**: 使用 `IPage` 进行分页查询，并通过 `PageUtil` 处理分页结果。 
+ * ### 总结 
+ * 该控制器类主要用于管理和维护评估系统的各项指标，提供了添加、编辑、查询和删除等功能。通过事务管理、权限控制和数据验证确保了系统的稳定性和安全性。 
+**/
 package com.cyberpeace.cr.evaluation.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;

@@ -1,3 +1,35 @@
+/**
+ * 这段代码定义了一个名为 `ToolCategoryMapper` 的接口，继承自 `BaseMapper<ToolCategory>`。该接口用于与数据库交互，执行与工具类别（`ToolCategory`）相关的操作。以下是对代码的简要分析： 
+ * ### 主要内容 
+ * 1. **注解** 
+ * - `@Mapper`：表示这是一个 MyBatis 的 Mapper 接口。 
+ * - `@Repository`：表示这是一个 Spring 的数据访问组件。 
+ * 2. **泛型** 
+ * - `ToolCategoryMapper` 继承了 `BaseMapper<ToolCategory>`，其中 `ToolCategory` 是实体类。 
+ * 3. **方法** 
+ * - `list` 方法：分页查询工具类别列表，支持按模式（`pattern`）和类型（`type`）过滤。 
+ * - `selectByResourceIds` 方法：根据资源 ID 列表查询工具类别列表。 
+ * - `selectByIds` 方法：根据 ID 列表查询工具类别列表。 
+ * - `getByCnName` 方法：根据中文名称和资源 ID 查询工具类别。 
+ * - `getByCnNameType` 方法：根据中文名称、资源 ID 和类型查询工具类别。 
+ * - `getByType` 方法：根据类型查询工具类别列表。 
+ * - `getByEnName` 方法：根据英文名称和资源 ID 查询工具类别。 
+ * ### 方法参数和返回值 
+ * - **参数** 
+ * - `page`：分页对象。 
+ * - `pattern` 和 `type`：过滤条件。 
+ * - `ids`：ID 列表。 
+ * - `name` 和 `resourceId`：中文名称和资源 ID。 
+ * - `enName`：英文名称。 
+ * - **返回值** 
+ * - `IPage<ToolCategory>`：分页结果。 
+ * - `List<ToolCategory>`：工具类别列表。 
+ * - `ToolCategory`：单个工具类别对象。 
+ * ### 验证 
+ * - 使用 `@NotEmpty` 注解确保某些参数不为空。 
+ * ### 总结 
+ * 这个接口提供了多种查询工具类别的方法，包括分页查询、根据不同条件查询等。通过继承 `BaseMapper`，它利用了 MyBatis-Plus 提供的功能，简化了 CRUD 操作。 
+**/
 package com.cyberpeace.cr.tool.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;

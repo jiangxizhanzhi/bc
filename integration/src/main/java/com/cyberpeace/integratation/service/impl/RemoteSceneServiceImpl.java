@@ -1,3 +1,68 @@
+/**
+ * 这段代码是一个Spring服务类 `RemoteSceneServiceImpl` 的实现，用于处理与远程场景相关的各种操作。以下是对其主要功能和结构的简要分析： 
+ * ### 类概述 
+ * - **包名**: `com.cyberpeace.integratation.service.impl` 
+ * - **类名**: `RemoteSceneServiceImpl` 
+ * - **注解**: 
+ * - `@Slf4j`: 为类添加日志记录功能。 
+ * - `@Service`: 将类标识为Spring服务组件。 
+ * ### 成员变量 
+ * - 定义了多个URL常量，例如场景开始、暂停、停止等操作的URL。 
+ * - `MpEnvService mpEnvService`: 通过自动注入依赖，用于获取中台环境的主机信息。 
+ * ### 初始化方法 (`init`) 
+ * - 在类实例化后执行，初始化所有URL常量，将基础URL（从 `mpEnvService` 获取）与各个操作路径组合成完整的API URL。 
+ * ### 主要方法 
+ * 1. **场景操作** 
+ * - `startScene`: 开始场景。 
+ * - `testScene`: 测试场景。 
+ * - `stopScene`: 停止场景。 
+ * - `pauseScene`: 暂停场景。 
+ * - `unpauseScene`: 取消暂停场景。 
+ * - `updateScene`: 更新场景。 
+ * 2. **节点操作** 
+ * - `createNode`: 创建节点。 
+ * - `updateNode`: 更新节点。 
+ * - `deleteNode`: 删除节点。 
+ * - `startNode`: 启动节点。 
+ * - `stopNode`: 停止节点。 
+ * - `restartNode`: 重启节点。 
+ * - `recreateNode`: 重新创建节点。 
+ * - `nodeSnapshot`: 创建节点快照。 
+ * - `snapshotHistory`: 查看快照历史记录。 
+ * - `mergeSnapshot`: 合并快照。 
+ * - `deleteSnapshot`: 删除快照。 
+ * 3. **流操作** 
+ * - `startFlow`: 启动流。 
+ * - `stopFlow`: 停止流。 
+ * - `updateFlowParam`: 更新流参数。 
+ * - `batchStartFlow`: 批量启动流。 
+ * - `batchStopFlow`: 批量停止流。 
+ * - `getFlowLogs`: 获取流日志。 
+ * - `getFlowTrend`: 获取流趋势。 
+ * - `getFlowRecords`: 获取流记录。 
+ * 4. **其他操作** 
+ * - `getById`: 获取场景详情。 
+ * - `getAssetsStatisticsBySceneId`: 获取场景资产统计数据。 
+ * - `screenrecord`: 获取屏幕录制。 
+ * - `attackTypeCount`: 获取攻击类型计数。 
+ * - `sceneTrend`: 获取场景趋势。 
+ * - `getNodeSessions`: 获取节点会话。 
+ * - `getAssistanceMap`: 获取援助地图。 
+ * - `getMonitorSessions`: 获取监控会话。 
+ * - `getHostState`: 获取主机状态。 
+ * - `getEventAggr`: 获取事件聚合。 
+ * - `getRiskCount`: 获取风险计数。 
+ * - `getCollectionEvent`: 获取收集事件。 
+ * - `getConnectionStatus`: 获取连接状态。 
+ * - `replaceAccessIp`: 替换访问IP地址。 
+ * - `replaceAccessIpExe`: 替换访问IP地址的实现。 
+ * ### 技术细节 
+ * - 使用了 `HttpClientUtil` 和 `ConfigUtil` 等工具类进行HTTP请求和配置读取。 
+ * - 使用了 `fastjson` 进行JSON的序列化和反序列化。 
+ * - 使用了 `StreamApiUtils` 工具类进行集合操作，如过滤和去重。 
+ * ### 总结 
+ * 这个类提供了丰富的API来操作远程场景及其相关资源，如场景、节点、流等。它通过HTTP请求与外部系统进行交互，并处理响应数据。每个方法都有详细的日志记录，确保操作过程的可追踪性和可调试性。 
+**/
 package com.cyberpeace.integratation.service.impl;
 
 import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;

@@ -1,3 +1,46 @@
+/**
+ * 这段代码定义了一个名为 `CourseLearnStatisticsServiceImpl` 的服务类，实现了 `CourseLearnStatisticsService` 接口。这个服务类主要用于处理与课程学习统计相关的业务逻辑。下面是对代码的主要功能和结构的简要分析： 
+ * ### 类结构 
+ * - **类名**：`CourseLearnStatisticsServiceImpl` 
+ * - **注释**：详细说明了类的功能、作者、版本等信息。 
+ * - **依赖注入**：通过 Spring 的 `@Autowired` 注入了多个 Mapper 和 Service。 
+ * ### 主要方法 
+ * 1. **`courseHistogram(AuthContext authContext)`** 
+ * - 功能：生成课程的直方图数据。 
+ * - 输入：认证上下文。 
+ * - 输出：直方图结果对象 `HistogramRes`。 
+ * 2. **`directionHistogram(AuthContext authContext)`** 
+ * - 功能：生成方向（可能是指课程分类）的直方图数据。 
+ * - 输入：认证上下文。 
+ * - 输出：直方图结果对象 `HistogramRes`。 
+ * 3. **`courseStatisticsList(CourseContext context, Page page, AuthContext authContext)`** 
+ * - 功能：获取课程统计列表。 
+ * - 输入：上下文、分页参数、认证上下文。 
+ * - 输出：包含课程统计结果的分页响应对象 `ListRsp<AdminCourseStatisticsRes>`。 
+ * 4. **`curseStatisticToBo(AdminCourseStatisticsRes adminCourseStatisticsRes)`** 
+ * - 功能：将课程统计结果转换为业务对象。 
+ * - 输入：课程统计结果对象。 
+ * - 输出：转换后的业务对象。 
+ * 5. **`LessonStatisticsList(String courseId, Page page, LessonStatisticsListReq pageReq)`** 
+ * - 功能：获取课程中各个课时的统计列表。 
+ * - 输入：课程ID、分页参数、课时统计请求体。 
+ * - 输出：包含课时统计结果的分页响应对象 `ListRsp<AdminLessonStatisticsRes>`。 
+ * 6. **`LessonStatisticsDetail(String organizationId, String lessonId, String usernameLike, Page page, String sort)`** 
+ * - 功能：获取特定课程的课时详细统计信息。 
+ * - 输入：组织ID、课时ID、用户名模糊匹配、分页参数、排序字段。 
+ * - 输出：包含课时详细统计信息的分页响应对象 `ListRsp<AdminLessonStatisticsDetailRes>`。 
+ * 7. **`getUsers(String organizationId, String usernameLike)`** 
+ * - 功能：根据组织ID和用户名模糊匹配获取用户ID列表。 
+ * - 输入：组织ID、用户名模糊匹配。 
+ * - 输出：用户ID列表。 
+ * ### 辅助方法 
+ * - **`getCourseHistogramRes(List<Course> courses)`** 
+ * - 功能：生成课程直方图结果对象。 
+ * - 输入：课程列表。 
+ * - 输出：直方图结果对象 `HistogramRes`。 
+ * ### 总结 
+ * 该服务类主要负责处理课程及其课时的学习统计数据，包括生成直方图、获取统计列表和详细信息等功能。通过依赖注入的方式使用了多个 Mapper 和 Service 来访问数据库和远程服务，并利用 Java 8 的流式 API 进行数据处理。 
+**/
 package com.cyberpeace.oj.course.service.impl;
 
 import java.util.*;

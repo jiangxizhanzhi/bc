@@ -1,3 +1,69 @@
+/**
+ * 这段代码定义了一个名为 `ClassroomService` 的接口，该接口继承自 `IService<Classroom>`。这个接口包含多个方法，用于处理与“课堂”相关的各种操作。以下是对这些方法的简要分析： 
+ * ### 接口定义 
+ * - **接口名称**：`ClassroomService` 
+ * - **继承接口**：`IService<Classroom>` 
+ * - **包名**：`com.cyberpeace.oj.course.service` 
+ * ### 方法摘要 
+ * 1. **`selectList`** 
+ * - **描述**：根据提供的查询条件和认证上下文返回一个班级列表。 
+ * - **参数**：`ClassRoomListQuery roomListQuery`, `AuthContext authContext` 
+ * - **返回值**：`List<ClassroomBo>`，其中 `ClassroomBo` 是业务对象。 
+ * 2. **`selectSignList`** 
+ * - **描述**：获取指定班级的签到信息列表。 
+ * - **参数**：`Page page`, `String classroomId` 
+ * - **返回值**：`ListRsp<ClassroomMonitorBo>`，其中 `ClassroomMonitorBo` 包含监控信息。 
+ * 3. **`classroomStatistic`** 
+ * - **描述**：获取指定班级的学习统计信息。 
+ * - **参数**：`String classroomId`, `AuthContext authContext` 
+ * - **返回值**：`ClassroomStatisticBo`，统计信息。 
+ * 4. **`practiceStatistic`** 
+ * - **描述**：获取指定班级的练习统计信息。 
+ * - **参数**：`ClassroomPracticeContext classroomPracticeContext`, `Page page` 
+ * - **返回值**：`ClassroomPracticeBo`，练习统计信息。 
+ * 5. **`practiceDetail`** 
+ * - **描述**：获取指定班级、课程和用户的练习详情。 
+ * - **参数**：`String classroomId`, `String lessonId`, `String userId` 
+ * - **返回值**：`ClassroomPracticeDetailBo`，练习详情。 
+ * 6. **`deleteClassroom`** 
+ * - **描述**：删除指定班级的数据。 
+ * - **参数**：`String classroomId`, `AuthContext authContext` 
+ * - **返回值**：`Integer`，表示删除结果。 
+ * 7. **`getChatUsers`** 
+ * - **描述**：获取指定房间的聊天用户信息。 
+ * - **参数**：`String roomId`, `UserInfo userContext` 
+ * - **返回值**：`DashboardInfo`，包含用户信息和聊天信息。 
+ * 8. **`importTrainPlan`** 
+ * - **描述**：导入训练计划。 
+ * - **参数**：`String realPath`, `UserInfo userInfo`, `boolean cover` 
+ * - **返回值**：`List<Classroom>`，导入后的班级列表。 
+ * 9. **`exportTrainPlan`** 
+ * - **描述**：导出训练计划。 
+ * - **参数**：`UserInfo userInfo`, `String filePath` 
+ * - **返回值**：无 
+ * 10. **`getChatGroupUsers`** 
+ * - **描述**：获取指定房间和组的聊天用户信息。 
+ * - **参数**：`String roomId`, `String groupId` 
+ * - **返回值**：`List<DashboardUser>`，包含用户信息。 
+ * 11. **`removeClassrooms`** 
+ * - **描述**：删除与特定组织关联的班级记录。 
+ * - **参数**：`List<String> orgs` 
+ * - **返回值**：无 
+ * 12. **`selectPage`** 
+ * - **描述**：分页查询班级信息。 
+ * - **参数**：`ClassRoomPageQuery roomListQuery`, `AuthContext authContext` 
+ * - **返回值**：`IPage<ClassroomBo>`，分页结果。 
+ * 13. **`selectIdsByPlanIds`** 
+ * - **描述**：根据计划ID列表查询对应的班级ID列表。 
+ * - **参数**：`List<String> ids` 
+ * - **返回值**：`List<String>`，班级ID列表。 
+ * 14. **`selectTempTaskIdsByUser`** 
+ * - **描述**：根据用户上下文查询临时任务ID列表。 
+ * - **参数**：`UserInfo userContext` 
+ * - **返回值**：`List<String>`，临时任务ID列表。 
+ * ### 总结 
+ * `ClassroomService` 接口提供了丰富的功能来管理课堂相关的信息，包括查询、统计、导入、导出等操作。每个方法都有明确的功能描述和参数，确保了清晰的接口使用方式。 
+**/
 package com.cyberpeace.oj.course.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;

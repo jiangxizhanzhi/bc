@@ -1,3 +1,51 @@
+/**
+ * 这段代码是一个名为 `ClassroomServiceImpl` 的服务实现类，用于管理与课堂相关的业务逻辑。以下是对其主要功能和结构的简要分析： 
+ * ### 类概述 
+ * - **包**: `com.cyberpeace.oj.course.service.impl` 
+ * - **功能**: 实现了课堂相关的业务逻辑，包括查询、导入、导出、统计等功能。 
+ * - **继承**: `ServiceImpl<ClassroomMapper, Classroom>`，继承自 MyBatis-Plus 提供的基类，简化了数据库操作。 
+ * ### 主要属性 
+ * - **依赖注入**：通过 `@Autowired` 注入多个 DAO 和服务，如 `ClassroomMapper`, `RemoteOrganizationService`, `RemoteUserService` 等。 
+ * - **日志记录器**：通过 `@Slf4j` 注入的日志记录器 `log`，用于记录系统运行过程中的重要信息。 
+ * ### 主要方法 
+ * 1. **`selectList` 方法** 
+ * - 功能：根据查询条件从数据库中获取课堂列表，并进行一些额外的过滤和合并操作。 
+ * - 参数：`ClassRoomListQuery` 和 `AuthContext`，分别表示查询条件和认证上下文。 
+ * - 返回值：`List<ClassroomBo>`，包含符合条件的课堂列表。 
+ * 2. **`selectSignList` 方法** 
+ * - 功能：查询指定课堂的签到列表。 
+ * - 参数：`Page` 和 `String`（课堂ID）。 
+ * - 返回值：`ListRsp<ClassroomMonitorBo>`，包含分页后的签到信息。 
+ * 3. **`classroomStatistic` 方法** 
+ * - 功能：计算指定课堂的统计信息，包括签到情况、成绩分布等。 
+ * - 参数：`String`（课堂ID）和 `AuthContext`。 
+ * - 返回值：`ClassroomStatisticBo`，包含课堂统计信息。 
+ * 4. **`practiceDetail` 方法** 
+ * - 功能：获取指定课堂和课程的练习详情。 
+ * - 参数：`String`（课堂ID），`String`（课程ID）和 `String`（用户ID）。 
+ * - 返回值：`ClassroomPracticeDetailBo`，包含练习详情。 
+ * 5. **`practiceStatistic` 方法** 
+ * - 功能：统计课堂中学生的练习情况。 
+ * - 参数：`ClassroomPracticeContext` 和 `Page`。 
+ * - 返回值：`ClassroomPracticeBo`，包含练习统计信息。 
+ * 6. **`deleteClassroom` 方法** 
+ * - 功能：删除指定课堂及其相关数据。 
+ * - 参数：`String`（课堂ID）和 `AuthContext`。 
+ * - 返回值：`Integer`，表示删除的记录数。 
+ * 7. **`getChatUsers` 方法** 
+ * - 功能：获取指定课堂的聊天用户列表。 
+ * - 参数：`String`（房间ID）和 `UserInfo`（用户信息）。 
+ * - 返回值：`DashboardInfo`，包含聊天用户信息。 
+ * 8. **`importTrainPlan` 方法** 
+ * - 功能：从Excel文件导入训练计划数据。 
+ * - 参数：`String`（文件路径），`UserInfo`（用户信息）和 `boolean`（是否覆盖）。 
+ * - 返回值：`List<Classroom>`，表示导入的课堂列表。 
+ * 9. **`exportTrainPlan` 方法** 
+ * - 功能：导出训练计划数据到Excel文件。 
+ * - 参数：`UserInfo`（用户信息）和 `String`（文件路径）。 
+ * ### 总结 
+ * 该类提供了丰富的课堂管理功能，包括数据查询、统计、导入导出等。通过依赖注入和 MyBatis-Plus 的支持，实现了高效的数据访问和业务逻辑处理。 
+**/
 package com.cyberpeace.oj.course.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;

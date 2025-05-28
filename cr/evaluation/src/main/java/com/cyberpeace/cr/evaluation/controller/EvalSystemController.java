@@ -1,3 +1,43 @@
+/**
+ * 这段代码定义了一个名为 `EvalSystemController` 的控制器类，用于处理与评估系统相关的HTTP请求。以下是对其主要部分的简要分析： 
+ * ### 类和注解 
+ * - **类定义**：`EvalSystemController` 继承了 `RestController` 注解，表示这是一个RESTful风格的控制器。 
+ * - **权限控制**：使用了 `@RequiresAuthentication` 注解，表示需要用户认证才能访问这些接口。 
+ * - **API文档**：使用了 `@Api` 和 `@ApiOperation` 注解来生成Swagger API文档。 
+ * ### 成员变量 
+ * - **依赖注入**： 
+ * - `EvalIndexService`：用于操作评估指数。 
+ * - `EvalCollectionMapper`：用于操作评估收集数据。 
+ * - `EvalIndicatorService`：用于操作评估指示器。 
+ * - `EvalSystemService`：用于操作评估系统。 
+ * ### 主要方法 
+ * - **`getEvalIndexTree` 方法**： 
+ * - **功能**：根据资源ID查询评估系统的指标树。 
+ * - **参数**：`resource_id`（模板ID）。 
+ * - **流程**： 
+ * 1. 通过 `evalSystemService` 获取评估系统信息。 
+ * 2. 如果评估系统不存在，则抛出 `BusinessException` 异常。 
+ * 3. 调用 `convertEvalSystemToEvalSystemTreeRsp` 方法将评估系统转换为 `EvalSystemTreeRsp` 响应对象。 
+ * 4. 返回包含 `EvalSystemTreeRsp` 对象的 `BaseRsp` 响应。 
+ * - **`convertEvalSystemToEvalSystemTreeRsp` 方法**： 
+ * - **功能**：将评估系统信息转换为树形结构的响应对象。 
+ * - **流程**： 
+ * 1. 初始化 `EvalSystemTreeRsp` 对象。 
+ * 2. 获取并处理一级、二级和三级指标。 
+ * 3. 处理二级和三级指标的子节点。 
+ * 4. 返回最终的树形结构。 
+ * - **`getChildrens` 方法**： 
+ * - **功能**：根据给定的ID列表获取子节点。 
+ * - **流程**：遍历ID列表并将对应的 `EvalSystemTreeRsp` 对象添加到结果列表中。 
+ * - **`getMapByIndex` 方法**： 
+ * - **功能**：根据二级和三级指标创建一个映射。 
+ * - **流程**：初始化映射，并将每个二级和三级指标转换为 `EvalSystemTreeRsp` 对象后放入映射中。 
+ * - **`convertIndexToEvalSystemTreeRsp` 方法**： 
+ * - **功能**：将 `IndexContext` 对象转换为 `EvalSystemTreeRsp` 对象。 
+ * - **流程**：初始化 `EvalSystemTreeRsp` 对象并设置其属性。 
+ * ### 总结 
+ * 该控制器主要负责处理前端请求，将评估系统的指标信息以树形结构返回给客户端。通过依赖注入的方式，利用其他服务层的对象进行业务逻辑处理。整个流程清晰，职责明确，符合MVC架构的设计原则。 
+**/
 package com.cyberpeace.cr.evaluation.controller;
 
 import java.util.List;

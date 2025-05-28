@@ -1,3 +1,37 @@
+/**
+ * 这段代码定义了一个名为 `RemoteTerminalServiceImpl` 的 Spring 服务类，实现了 `RemoteTerminalService` 接口。以下是该代码的主要组成部分和功能分析： 
+ * ### 类定义和注释 
+ * - **类名**：`RemoteTerminalServiceImpl` 
+ * - **包名**：`com.cyberpeace.integratation.service.impl` 
+ * - **继承接口**：`RemoteTerminalService` 
+ * ### 成员变量 
+ * - 定义了一系列字符串变量（如 `DEVICE_INFO`, `IMAGE_LIST` 等），用于存储不同请求路径的前缀。 
+ * - 使用 `@Autowired` 注解注入了两个依赖服务：`MpEnvService` 和 `CyberSpaceMpEnvService`。 
+ * ### 初始化方法 
+ * - `@PostConstruct` 注解的方法 `init()` 在 Bean 初始化之后被调用，用于初始化上述字符串变量，将其设置为具体的 URL 地址。 
+ * ### 主要方法 
+ * 1. **获取设备信息** 
+ * - `getById(String deviceId)`：根据设备 ID 获取设备信息。 
+ * - `toLocalDeviceInfo(MpDeviceInfo mpDeviceInfo)`：将中台返回的设备信息转换成本地使用的 `DeviceInfo` 对象。 
+ * 2. **获取其他数据** 
+ * - `getAllCategorie()`：获取所有分类信息。 
+ * - `pageImages(ClusterImagePageReq req)`：分页获取镜像信息。 
+ * - `getDynamicImageInfo()`：获取 Dynamips 相关信息。 
+ * - `getAgentSupport()`：获取代理支持信息。 
+ * - `getCommonTargets()`：获取通用目标信息。 
+ * - `targetList(TargetListReq req)`：根据请求参数获取目标列表。 
+ * - `getL2categories(Integer firstTypeId)`：获取 L2 分类信息。 
+ * - `snapshotByName(String name)`：根据名称获取快照信息。 
+ * - `getLinkStatus(String id)`：获取链接状态信息。 
+ * 3. **特殊请求处理** 
+ * - `listSnapshot(String uuid)`：获取指定 UUID 的快照列表。 
+ * - `pageRealEquipment(RealEquipmentPageRequest request)`：分页获取真实设备信息。 
+ * - `pageUsb(VirtualUsbQueryParams queryParams)`：分页获取虚拟 USB 信息。 
+ * ### 总结 
+ * - 该服务类主要负责与远程终端进行交互，通过 HTTP GET 请求从远程服务器获取设备信息、分类信息、快照信息等，并将这些信息封装成相应的对象返回给调用者。 
+ * - 通过依赖注入的方式，该类可以方便地访问其他服务，如 `MpEnvService` 和 `CyberSpaceMpEnvService`，以获取必要的配置信息。 
+ * - 整个类的设计遵循了良好的面向对象原则，通过接口和依赖注入提高了代码的可维护性和扩展性。 
+**/
 package com.cyberpeace.integratation.service.impl;
 
 import com.alibaba.fastjson.JSONObject;

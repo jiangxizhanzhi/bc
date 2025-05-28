@@ -1,3 +1,52 @@
+/**
+ * 这段代码定义了一个名为 `CourseLesson` 的实体类，用于表示一个在线课程中的课时。以下是该代码的详细分析： 
+ * ### 包和导入 
+ * - **包声明**：`com.cyberpeace.oj.course.dao.entity` 
+ * - **导入的库**： 
+ * - `com.baomidou.mybatisplus.annotation`：用于MyBatis Plus框架的注解。 
+ * - `com.cyberpeace.common.baseinterface.GenericEnum`：自定义的枚举接口。 
+ * - `com.cyberpeace.common.model.BaseTable`：基类表，可能包含一些通用字段如创建时间、更新时间等。 
+ * - `com.google.common.collect.Lists`：Google Guava库中用于创建不可变列表的工具类。 
+ * - `io.swagger.annotations.ApiModelProperty`：用于Swagger文档生成的注解。 
+ * - `lombok`：简化Java代码的库，提供`@Getter`和`@Setter`注解。 
+ * ### 类定义 
+ * - **类名**：`CourseLesson` 
+ * - **继承**：`BaseTable` 
+ * - **注解**： 
+ * - `@TableName("oj_course_lesson")`：指定数据库表名。 
+ * - `@Getter` 和 `@Setter`：Lombok注解，自动生成getter和setter方法。 
+ * ### 属性 
+ * - **资源ID (`resource_id`)**：唯一标识符，使用UUID生成。 
+ * - **是否为内置 (`builtin`)**：布尔值，表示是否为内置课程。 
+ * - **课程ID (`courseId`)**：关联的课程编号。 
+ * - **名称 (`name`)**：课时的名称。 
+ * - **类型 (`type`)**：课时的类型（理论课或实验课）。 
+ * - **讲义类型 (`handoutType`)**：讲义的格式类型。 
+ * - **讲义URL (`handoutUrl`)**：讲义文件的URL或内容。 
+ * - **视频URL (`videoUrl`)**：视频文件的URL。 
+ * - **难度 (`difficulty`)**：课时的难度等级。 
+ * - **是否公开 (`isPublic`)**：布尔值，表示课时是否公开。 
+ * - **附件ID列表 (`attachmentIds`)**：与课时相关的附件ID列表。 
+ * - **必修 (`compulsory`)**：课时的必修状态。 
+ * - **销毁延迟 (`destroyDelay`)**：销毁延时时间。 
+ * - **课时时长 (`duration`)**：课时的时长。 
+ * - **拓扑ID (`topoId`)**：拓扑编号。 
+ * - **知识点 (`knowledge`)**：课时涉及的知识点。 
+ * - **场景共享模式 (`sceneShareMode`)**：场景模式。 
+ * - **原始Markdown文件 (`originMarkdownFile`)**：Markdown格式的原始讲义文件地址。 
+ * - **创建用户ID (`createUserId`)**：创建该课时的用户ID。 
+ * - **试卷编号 (`paperId`)**：与课时相关的试卷编号。 
+ * - **热度 (`heat`)**：课时的热度。 
+ * - **课后练习公开 (`paperPublic`)**：课后练习是否公开。 
+ * - **路径 (`path`)**：课时的路径（仅在Swagger文档中存在）。 
+ * - **视频时长 (`videoDuration`)**：视频的时长。 
+ * ### 枚举 
+ * - **讲义类型 (`HandoutType`)**：定义了讲义的不同类型，包括Markdown、PPT、PDF、Word文档和XLS文件。 
+ * - **课时类型 (`LessonType`)**：定义了课时的类型，包括理论课和实验课。 
+ * - **必修类型 (`CompulsoryType`)**：定义了课时的必修状态，包括未配置、选修和必修。 
+ * ### 总结 
+ * 这个类是一个典型的ORM（对象关系映射）实体类，用于表示在线课程中的课时信息。它包含了各种属性来描述课时的各个方面，并且通过枚举类型来限定某些属性的取值范围。此外，该类还使用了Lombok库来简化代码，减少了样板代码的编写。 
+**/
 package com.cyberpeace.oj.course.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;

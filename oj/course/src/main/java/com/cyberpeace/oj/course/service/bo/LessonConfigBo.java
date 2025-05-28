@@ -1,3 +1,46 @@
+/**
+ * 这段代码定义了一个名为 `LessonConfigBo` 的 Java 类，用于表示课程配置信息。以下是对该代码的简要分析： 
+ * ### 类定义 
+ * - **包名**：`com.cyberpeace.oj.course.service.bo` 
+ * - **导入的库**：包括一些常用的 Java 库（如 `java.io.Serializable` 和 `java.util`）以及一些第三方库（如 `io.swagger.annotations` 和 `lombok`）。 
+ * ### 类注释 
+ * - **作者**：SN 
+ * - **版本**：1.0.0 
+ * - **日期**：2024年11月8日 
+ * - **继承接口**：`Serializable` 
+ * ### 类属性 
+ * - **courseId**：课程ID 
+ * - **index**：位置编号 
+ * - **isLearn**：是否学习 
+ * - **compulsory**：是否必修 
+ * - **lessonId**：课ID 
+ * - **type**：课时类型（0-理论，1-实验） 
+ * - **name**：名称 
+ * - **nodeType**：节点类型 
+ * - **parentId**：父节点ID 
+ * - **resourceId**：资源ID 
+ * - **chapterName**：章名称 
+ * - **children**：子节点列表 
+ * - **typeIndex**：目录信息索引 
+ * ### 方法 
+ * - **sortListByChildren**：根据子节点排序列表 
+ * - 参数： 
+ * - `includeChapter`：是否包含章节 
+ * - `self`：是否包含自身 
+ * - 返回值：排序后的 `LessonConfigBo` 列表 
+ * - **sortListByChildren**（私有方法）：递归获取排序数据 
+ * - 参数： 
+ * - `lessonConfigBo`：当前 `LessonConfigBo` 对象 
+ * - `includeChapter`：是否包含章节 
+ * - 返回值：排序后的 `LessonConfigBo` 列表 
+ * ### 主要功能 
+ * - 该类主要用于表示课程配置信息，并提供了递归排序子节点的方法。 
+ * - 通过 `sortListByChildren` 方法可以获取按照特定规则排序的子节点列表。 
+ * ### 总结 
+ * - 该类是一个数据传输对象（DTO），用于在不同层之间传递课程配置信息。 
+ * - 提供了递归排序子节点的功能，便于前端展示或后端处理课程结构。 
+ * - 使用了 Lombok 注解简化了 getter 和 setter 的生成。 
+**/
 package com.cyberpeace.oj.course.service.bo;
 
 import java.io.Serializable;

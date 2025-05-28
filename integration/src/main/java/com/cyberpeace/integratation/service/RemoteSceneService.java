@@ -1,3 +1,62 @@
+/**
+ * 这段代码定义了一个名为 `RemoteSceneService` 的接口，该接口包含多个方法用于管理和操作与场景相关的各种功能。以下是对这些方法的简要分析： 
+ * ### 接口概述 
+ * - **包名**：`com.cyberpeace.integratation.service` 
+ * - **导入的类**：包括阿里巴巴的 FastJSON 库、自定义的模型类等。 
+ * ### 主要方法 
+ * 1. **启动和停止场景** 
+ * - `startScene(SceneStartContext)` 
+ * - `testScene(SceneStartContext)` 
+ * - `stopScene(SceneOpsContext)` 
+ * - `pauseScene(SceneOpsContext)` 
+ * - `unpauseScene(SceneOpsContext)` 
+ * 2. **场景数据管理** 
+ * - `getById(String, String)` 
+ * - `sceneDump(SceneDumpContext)` 
+ * - `getFlowById(String)` 
+ * - `updateFlowParam(FlowOpsContext)` 
+ * - `startFlow(FlowOpsContext)` 
+ * - `stopFlow(FlowOpsContext)` 
+ * - `batchStartFlow(FlowBatchOpsContext)` 
+ * - `batchStopFlow(FlowBatchOpsContext)` 
+ * - `getFlowRecords(FlowRecordContext)` 
+ * - `getNodeSessions(List<String>)` 
+ * - `getNodeSessions(List<String>, List<String>, List<String>, String)` 
+ * - `getAssistanceMap(List<String>, List<String>, List<String>)` 
+ * - `getMonitorSessions(String, String)` 
+ * - `getFlowLogs(FlowLogsPageContext)` 
+ * - `getHostState(ElementCommonContext)` 
+ * - `getFlowTrend(ElementCommonContext)` 
+ * - `getEventAggr(ElementCommonContext)` 
+ * - `getRiskCount(ElementCommonContext)` 
+ * - `getCollectionEvent(CollectionEventPageContext)` 
+ * - `nodeSnapshot(NodeSnapshotContext)` 
+ * - `snapshotHistory(String)` 
+ * - `mergeSnapshot(MergeSnapshotContext)` 
+ * - `deleteSnapshot(SnapshotDeleteContext)` 
+ * - `getConnectionStatus(String)` 
+ * - `replaceAccessIpExe(JSONObject)` 
+ * - `createNode(NodeOpsContext)` 
+ * - `updateNode(NodeUpdateContext)` 
+ * - `deleteNode(NodeOpsContext)` 
+ * - `updateScene(SceneUpdateContext)` 
+ * - `startNode(NodeOpsContext)` 
+ * - `stopNode(NodeOpsContext)` 
+ * - `getAssetList(SceneNodeListReq)` 
+ * - `getAssetsStatisticsBySceneId(String)` 
+ * - `screenrecord(String, String)` 
+ * - `attackTypeCount(String)` 
+ * - `sceneTrend(String)` 
+ * ### 方法功能描述 
+ * - **场景管理**：提供启动、停止、暂停、恢复、获取特定场景信息等功能。 
+ * - **流量管理**：管理流量的启动、停止、批量操作以及获取流量相关记录。 
+ * - **节点管理**：包括创建、更新、删除、启动、停止节点以及获取节点列表和状态。 
+ * - **数据获取**：如获取主机状态、流量趋势、事件类型、风险统计等。 
+ * - **快照管理**：包括创建、获取快照历史记录、合并和删除快照。 
+ * - **辅助功能**：如屏幕录制、攻击类型计数、场景趋势等。 
+ * ### 总结 
+ * 该接口主要涉及场景的生命周期管理、流量控制、节点操作、数据获取及辅助功能。每个方法都提供了特定的功能，以满足对复杂场景的管理和操作需求。通过这些方法，可以实现对场景中各个组件的全面控制和监控。 
+**/
 package com.cyberpeace.integratation.service;
 
 import java.util.List;

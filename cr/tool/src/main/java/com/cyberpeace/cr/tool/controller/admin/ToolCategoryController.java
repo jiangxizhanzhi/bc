@@ -1,3 +1,53 @@
+/**
+ * 这段代码定义了一个名为 `ToolCategoryController` 的 Spring MVC 控制器类，用于处理与工具类别相关的 RESTful API 请求。以下是代码的主要功能和结构分析： 
+ * ### 类和注解 
+ * - **类名**：`ToolCategoryController` 
+ * - **注解**： 
+ * - `@RestController`：声明这是一个 RESTful 风格的控制器。 
+ * - `@RequestMapping("cr/admin/tool/category")`：设置该控制器所有方法的默认路径前缀为 `/cr/admin/tool/category`。 
+ * - `@RequiresAuthentication`：表示需要用户认证才能访问这些接口。 
+ * ### 属性 
+ * - **属性**：`private ToolCategoryService toolCategoryService;` 
+ * - 通过 `@Autowired` 自动注入了 `ToolCategoryService` 服务类，用于处理业务逻辑。 
+ * ### 方法 
+ * 1. **获取工具分类列表** 
+ * - **方法签名**：`@GetMapping("/list")` 
+ * - **描述**：根据分页参数和工具类型获取工具分类列表。 
+ * - **参数**： 
+ * - `pageReqBase`：分页请求体。 
+ * - `type`：工具类型。 
+ * - **返回值**：包含工具分类列表的 `BaseRsp<ListRsp<ToolCategory>>` 对象。 
+ * 2. **获取工具分类详情** 
+ * - **方法签名**：`@GetMapping` 
+ * - **描述**：根据资源 ID 获取工具分类详情。 
+ * - **参数**： 
+ * - `resource_id`：资源 ID。 
+ * - **返回值**：包含工具分类详情的 `BaseRsp<ToolCategoryRsp>` 对象。 
+ * 3. **创建工具分类** 
+ * - **方法签名**：`@PostMapping` 
+ * - **描述**：创建新的工具分类。 
+ * - **参数**： 
+ * - `categoryAddReq`：包含新工具分类信息的请求体。 
+ * - **返回值**：成功创建后的响应对象 `BaseRsp<String>`。 
+ * 4. **更新工具分类** 
+ * - **方法签名**：`@PatchMapping` 
+ * - **描述**：更新已存在的工具分类。 
+ * - **参数**： 
+ * - `categoryUpdateReq`：包含更新信息的请求体。 
+ * - **返回值**：成功更新后的响应对象 `BaseRsp<String>`。 
+ * 5. **批量删除工具分类** 
+ * - **方法签名**：`@DeleteMapping` 
+ * - **描述**：根据 ID 列表批量删除工具分类。 
+ * - **参数**： 
+ * - `deleteReq`：包含要删除的 ID 列表的请求体。 
+ * - **返回值**：成功删除后的响应对象 `BaseRsp<String>`。 
+ * 6. **获取所有工具分类** 
+ * - **方法签名**：`@GetMapping("/all")` 
+ * - **描述**：获取所有工具分类。 
+ * - **返回值**：包含所有工具分类的 `BaseRsp<List<ToolTypeCategory>>` 对象。 
+ * ### 总结 
+ * 该控制器主要处理与工具分类相关的 CRUD 操作，并且每个方法都有相应的权限控制（通过 `@RequiresPermissions` 注解）。整体设计符合 RESTful API 规范，使用了 Swagger 注解来描述接口，便于文档生成和接口测试。 
+**/
 package com.cyberpeace.cr.tool.controller.admin;
 
 import com.cyberpeace.common.constant.MenuConstant;

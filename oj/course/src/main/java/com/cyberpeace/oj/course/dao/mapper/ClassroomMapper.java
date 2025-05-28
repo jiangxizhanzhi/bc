@@ -1,3 +1,38 @@
+/**
+ * 这段代码定义了一个名为 `ClassroomMapper` 的接口，继承自 `BaseMapper<Classroom>`，并使用了 MyBatis 的注解 `@Mapper`。这个接口提供了多个方法来操作 `Classroom` 实体类的数据。以下是代码的简要分析： 
+ * ### 主要功能 
+ * - **数据访问**：提供了一系列方法来查询、插入、更新和删除 `Classroom` 实体对象。 
+ * - **分页支持**：支持基于分页的查询。 
+ * ### 方法详解 
+ * 1. **selectByOrgAndLesson** 
+ * - 根据组织ID和课时ID查询课堂信息。 
+ * 2. **selectList** 
+ * - 根据 `ClassRoomListQuery` 对象查询课堂列表。 
+ * 3. **selectListByCourse** 
+ * - 在指定的时间范围内，根据课程ID和 `ClassRoomListQuery` 对象查询课堂列表。 
+ * 4. **selectByLesson** 
+ * - 根据课时ID列表查询课堂列表。 
+ * 5. **selectByOrgId** 
+ * - 根据组织ID查询课堂列表。 
+ * 6. **selectByPlan** 
+ * - 根据计划ID查询课堂列表。 
+ * 7. **deleteByOrgIds** 
+ * - 根据组织ID列表删除课堂记录。 
+ * 8. **page** 
+ * - 支持分页查询课堂列表，同时考虑了用户的权限和课程ID等条件。 
+ * 9. **selectIdsByPlanIds** 
+ * - 根据计划ID列表查询课堂ID列表。 
+ * 10. **selectByUserPlan** 
+ * - 根据用户ID和计划ID查询课堂列表。 
+ * 11. **selectTempTaskIdsByUser** 
+ * - 根据用户ID和是否为超级用户查询临时任务ID列表。 
+ * ### 特点 
+ * - **扩展性**：通过继承 `BaseMapper`，默认包含了基本的 CRUD 操作。 
+ * - **灵活性**：提供了多种查询方式，满足不同的业务需求。 
+ * - **分页支持**：通过 `IPage` 接口支持分页查询，便于处理大数据量的场景。 
+ * ### 总结 
+ * `ClassroomMapper` 接口是一个功能丰富的数据访问层接口，它不仅提供了基本的 CRUD 操作，还提供了复杂的查询功能，如分页查询、多条件组合查询等。这些方法可以满足不同场景下的课堂管理需求。 
+**/
 package com.cyberpeace.oj.course.dao.mapper;
 
 import java.util.List;

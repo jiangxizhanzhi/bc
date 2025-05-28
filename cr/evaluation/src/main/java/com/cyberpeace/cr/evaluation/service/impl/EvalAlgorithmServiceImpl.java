@@ -1,3 +1,49 @@
+/**
+ * 这段代码定义了一个名为 `EvalAlgorithmServiceImpl` 的类，它实现了 `EvalAlgorithmService` 接口，并且继承了 `ServiceImpl` 类。该类主要用于处理与评估算法相关的业务逻辑。以下是对代码的简要分析： 
+ * ### 类结构 
+ * - **类名**: `EvalAlgorithmServiceImpl` 
+ * - **包名**: `com.cyberpeace.cr.evaluation.service.impl` 
+ * - **继承关系**: 继承自 `ServiceImpl<EvalAlgorithmMapper, EvalAlgorithm>`，实现了 `EvalAlgorithmService` 接口。 
+ * ### 主要成员变量 
+ * - `evalAlgorithmMapper`: 用于操作 `EvalAlgorithm` 实体的数据库映射。 
+ * - `evalAggregationMapper`, `evalCollectionMapper`, `evalIndexMapper`, `evalIndicatorMapper`: 用于操作其他相关实体的数据库映射。 
+ * - `remotePythonService`: 远程调用 Python 服务的客户端。 
+ * ### 主要方法 
+ * 1. **`selectUsedNum(List<String> ids)`** 
+ * - 功能: 计算给定算法 ID 列表中被使用的次数。 
+ * - 参数: `ids` - 算法 ID 列表。 
+ * - 返回值: 使用次数的总数。 
+ * 2. **`delete(List<String> ids)`** 
+ * - 功能: 根据 ID 列表删除算法。 
+ * - 参数: `ids` - 算法 ID 列表。 
+ * - 返回值: 操作是否成功（返回 `true` 表示成功）。 
+ * 3. **`updateStateById(String resourceId)`** 
+ * - 功能: 根据资源 ID 更新状态。 
+ * - 参数: `resourceId` - 资源 ID。 
+ * - 返回值: 无。 
+ * 4. **`selectByType(String type)`** 
+ * - 功能: 根据类型查询算法。 
+ * - 参数: `type` - 算法类型。 
+ * - 返回值: 符合条件的算法列表。 
+ * 5. **`page(EvalListQuery listQuery)`** 
+ * - 功能: 分页查询算法。 
+ * - 参数: `listQuery` - 查询参数对象。 
+ * - 返回值: 分页后的算法列表。 
+ * 6. **`selectUsedAlgorithmIds(List<String> ids)`** 
+ * - 功能: 查询使用算法的 ID 列表。 
+ * - 参数: `ids` - 算法 ID 列表。 
+ * - 返回值: 使用算法的 ID 列表。 
+ * 7. **`updateStateByIds(List<String> algorithmIds)`** 
+ * - 功能: 根据算法 ID 列表更新状态。 
+ * - 参数: `algorithmIds` - 算法 ID 列表。 
+ * - 返回值: 无。 
+ * 8. **`runAlgorithm(String algorithmId, Object data, Object listData, Object otherArgs)`** 
+ * - 功能: 运行指定算法。 
+ * - 参数: `algorithmId` - 算法 ID，`data` - 输入数据，`listData` - 列表数据，`otherArgs` - 其他参数。 
+ * - 返回值: 运行结果。 
+ * ### 总结 
+ * 这个类主要负责处理评估算法相关的业务逻辑，包括增删改查操作以及运行算法。通过注入不同的 Mapper 和远程服务，可以灵活地操作数据库和执行外部算法。整体设计合理，职责清晰。 
+**/
 package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;

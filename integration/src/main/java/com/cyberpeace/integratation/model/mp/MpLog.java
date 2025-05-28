@@ -1,3 +1,31 @@
+/**
+ * 这段代码定义了一个名为 `MpLog` 的 Java 类，用于表示中台日志。以下是该类的简要分析： 
+ * ### 类名和包 
+ * - **包**: `com.cyberpeace.integratation.model.mp` 
+ * - **类名**: `MpLog` 
+ * ### 实现的接口 
+ * - `Serializable`: 表示该类的对象可以序列化，以便在网络上传输或持久化到磁盘。 
+ * ### 成员变量 
+ * - `content`: 日志的内容。 
+ * - `description`: 日志的描述。 
+ * - `from`: 日志的来源。 
+ * - `log_type`: 日志的类型，类型为整数。 
+ * - `op_ip`: 操作人的IP地址。 
+ * - `op_module`: 操作模块，类型为整数。 
+ * - `op_target`: 操作对象。 
+ * - `op_type`: 操作类型，类型为整数。 
+ * - `title`: 日志的操作主题。 
+ * - `user_id`: 用户ID。 
+ * - `user_name`: 用户名称。 
+ * - `user_type`: 用户类型（用户或客户端）。 
+ * ### 方法 
+ * - 所有成员变量都有对应的 getter 和 setter 方法，用于获取和设置它们的值。 
+ * ### 总结 
+ * - `MpLog` 类用于存储和操作日志信息。 
+ * - 它包含多种日志相关的属性，并提供了这些属性的访问器和修改器方法。 
+ * - 该类实现了 `Serializable` 接口，表明它可以被序列化，便于在分布式系统中使用。 
+ * 这个类可以用于记录各种操作日志，包括操作内容、描述、来源、类型等详细信息。 
+**/
 package com.cyberpeace.integratation.model.mp;
 
 import java.io.Serializable;

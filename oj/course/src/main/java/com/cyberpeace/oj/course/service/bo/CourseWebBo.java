@@ -1,3 +1,38 @@
+/**
+ * 这段代码定义了一个名为 `CourseWebBo` 的 Java 类，该类用于表示前端课程的基本信息。以下是对该代码的简要分析： 
+ * ### 类定义 
+ * - **包名**: `com.cyberpeace.oj.course.service.bo` 
+ * - **注解**: 
+ * - `@Getter` 和 `@Setter`: Lombok 注解，自动生成属性的 getter 和 setter 方法。 
+ * - `@ApiModel`: Swagger 注解，用于描述模型对象，此处描述为“前端课程基本信息”。 
+ * ### 属性 
+ * - `resourceId`: 资源编号 (String) 
+ * - `courseNum`: 课程编号 (String) 
+ * - `name`: 课程名称 (String) 
+ * - `categoryId`: 课程方向ID (String) 
+ * - `directionName`: 课程方向名称 (String) 
+ * - `logo`: 课程海报 (String) 
+ * - `difficulty`: 课程难度 (Integer) 
+ * - `rank`: 等级 (Integer) 
+ * - `createUserId`: 创建人ID (String) 
+ * - `createUserName`: 创建人名称 (String) 
+ * - `lecturer`: 讲师 (String) 
+ * - `score`: 学分 (Integer) 
+ * - `courseType`: 课程类型 (Integer) 
+ * - `ebook`: 电子书 (Integer) 
+ * - `lessonCount`: 课程课时数量 (Integer) 
+ * - `courseDuration`: 课程课时时长 (Integer) 
+ * - `isPublic`: 是否公开 (Boolean) 
+ * - `role`: 岗位 (Integer) 
+ * - `videoCount`: 视频课数量 (Integer) 
+ * - `videoDuration`: 视频长度 (Integer) 
+ * - `builtin`: 是否内置 (Boolean) 
+ * ### 总结 
+ * - **功能**: `CourseWebBo` 类主要用于封装前端展示的课程基本信息。 
+ * - **特性**: 使用了 Lombok 注解简化了 getter 和 setter 方法的编写，并通过 Swagger 注解提供了文档说明。 
+ * - **用途**: 通常在 Web 应用中作为传输对象（DTO）使用，用于前后端数据交互。 
+ * 这段代码设计清晰，结构合理，适用于典型的 Web 应用场景。 
+**/
 package com.cyberpeace.oj.course.service.bo;
 
 import io.swagger.annotations.ApiModel;

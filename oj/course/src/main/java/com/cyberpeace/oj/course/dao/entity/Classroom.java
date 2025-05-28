@@ -1,3 +1,29 @@
+/**
+ * 这段代码定义了一个名为 `Classroom` 的 Java 类，该类继承自 `BaseTable`。这个类表示一个课堂实体，并且使用了 MyBatis-Plus 和 Lombok 库来简化开发。以下是对代码的简要分析： 
+ * ### 主要内容 
+ * 1. **包声明和导入**： 
+ * - 这个类位于 `com.cyberpeace.oj.course.dao.entity` 包中。 
+ * - 导入了必要的库，如 `Date`、MyBatis-Plus 的注解（如 `@TableName` 和 `@TableId`），以及 Lombok 的注解（如 `@Getter` 和 `@Setter`）。 
+ * 2. **类声明**： 
+ * - 类名为 `Classroom`，并使用了 `@TableName` 注解指定了对应的数据库表名为 `oj_classroom`。 
+ * - 类使用了 `@Getter` 和 `@Setter` 注解，使得所有属性都有自动生成的 getter 和 setter 方法。 
+ * 3. **属性**： 
+ * - `resourceId`：资源ID，使用 `@TableId` 注解指定为主键类型为 UUID。 
+ * - `startTime` 和 `endTime`：课堂的开始时间和结束时间，类型为 `Date`。 
+ * - `courseId`：课程ID。 
+ * - `lessonId`：课时ID。 
+ * - `organizationId` 和 `organizationIds`：组织ID和组织ID列表。 
+ * - `createUserId`：创建者的用户ID。 
+ * - `trainPlanId`：训练计划ID。 
+ * 4. **文档注释**： 
+ * - 每个属性都有详细的 Javadoc 注释，描述了其用途和类型。 
+ * - 类也有 Javadoc 注释，说明了类的作用和作者信息。 
+ * ### 总结 
+ * - **功能**：`Classroom` 类表示一个课堂实体，并且包含了与课堂相关的各种属性。 
+ * - **技术栈**：使用了 MyBatis-Plus 来简化数据库操作，Lombok 来减少样板代码。 
+ * - **数据模型**：该类对应于数据库中的 `oj_classroom` 表，并且定义了表中各个字段的映射关系。 
+ * 这段代码是一个典型的用于数据持久化的 Java 实体类，适用于 Spring Boot 项目中。 
+**/
 package com.cyberpeace.oj.course.dao.entity;
 
 import java.util.Date;

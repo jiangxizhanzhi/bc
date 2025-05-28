@@ -1,3 +1,37 @@
+/**
+ * 这段代码定义了一个名为 `EvalIndexRefController` 的 Spring Boot 控制器类，用于处理与评估索引引用相关的 HTTP 请求。以下是代码的简要分析： 
+ * ### 包和导入 
+ * - 该类位于 `com.cyberpeace.cr.evaluation.controller` 包中。 
+ * - 导入了多个工具类和框架（如 Swagger、Apache Shiro、Spring 框架）以及自定义的实体类和服务。 
+ * ### 类注解 
+ * - `@RestController`：声明这是一个 RESTful 控制器。 
+ * - `@Slf4j`：使用 Lombok 自动生成日志记录器。 
+ * - `@RequestMapping("/cr/eval/index/ref")`：设置基础 URL 路径为 `/cr/eval/index/ref`。 
+ * - `@RequiresAuthentication` 和 `@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)`：确保请求需要认证和特定权限。 
+ * ### 成员变量 
+ * - `EvalIndexRefMapper` 和 `EvalVariableRefMapper`：用于数据库操作的 MyBatis 映射器。 
+ * - `EvalIndexRefService`：用于处理业务逻辑的服务类。 
+ * ### 方法 
+ * 1. **`update` 方法** 
+ * - **HTTP 方法**：`PATCH` 
+ * - **功能**：根据请求数据更新评估关联算法的评分方式。 
+ * - **参数**：`EvalIndexRefReq` 类型的请求体。 
+ * - **返回**：`BaseRsp<String>`，表示操作结果。 
+ * - **处理逻辑**： 
+ * - 根据请求中的 `level` 和 `type` 更新不同类型的实体（`EvalIndexRef` 或 `EvalVariableRef`）。 
+ * - 处理不同类型的操作并调用相应的数据库更新方法。 
+ * - 抛出 `BusinessException` 异常处理无效的 `level` 或 `type`。 
+ * 2. **`get` 方法** 
+ * - **HTTP 方法**：`GET` 
+ * - **功能**：根据资源 ID 获取评估关联算法及其评分方式。 
+ * - **参数**：`resource_id`，资源 ID。 
+ * - **返回**：`BaseRsp<EvalIndexRef>`，包含查询结果或错误信息。 
+ * - **处理逻辑**： 
+ * - 从数据库中查找对应的 `EvalIndexRef` 实体。 
+ * - 如果找不到资源，则记录错误日志并抛出 `BusinessException`。 
+ * ### 总结 
+ * 这个控制器主要用于处理与评估索引引用相关的 CRUD 操作，并且确保这些操作需要认证和特定权限。它通过调用服务层和映射器来完成具体的业务逻辑和数据访问。 
+**/
 package com.cyberpeace.cr.evaluation.controller;
 
 import com.cyberpeace.common.constant.ErrorCode;

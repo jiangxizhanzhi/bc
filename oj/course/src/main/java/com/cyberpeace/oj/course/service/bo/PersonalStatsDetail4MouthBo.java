@@ -1,3 +1,25 @@
+/**
+ * 这段代码定义了一个名为 `PersonalStatsDetail4MouthBo` 的 Java 类，该类实现了 `Serializable` 接口。这个类的主要目的是封装用户在近30天内的各种学习统计数据。以下是对代码的简要分析： 
+ * ### 类名和包 
+ * - **包名**: `com.cyberpeace.oj.course.service.bo` 
+ * - **类名**: `PersonalStatsDetail4MouthBo` 
+ * ### 类的注释 
+ * - 该类用于表示用户的个人数据详情。 
+ * - 作者是 SN，版本是 1.0.0。 
+ * ### 类的属性 
+ * - `thirtyDays`: 一个 `List<String>` 类型的属性，表示近30天的日期。每个日期可能是一个字符串形式。 
+ * - `lessonLearnRecord`: 一个 `List<Integer>` 类型的属性，表示用户学习的课程记录（实际数据为课时）。 
+ * - `reportFinishRecord`: 一个 `List<Integer>` 类型的属性，表示用户完成的报告数量。 
+ * - `averageScore`: 一个 `List<Integer>` 类型的属性，表示用户报告的平均分。 
+ * ### 注解 
+ * - 使用了 Lombok 的 `@Getter` 和 `@Setter` 注解来自动生成 getter 和 setter 方法。 
+ * - 使用了 Swagger 的 `@ApiModelProperty` 注解来描述每个属性的作用。 
+ * ### 总结 
+ * - 这个类主要用于存储和传输用户在近30天内的学习统计数据。 
+ * - 数据包括日期、学习记录、报告完成记录和平均分。 
+ * - 通过 Lombok 和 Swagger 注解，减少了样板代码，提高了代码的可读性和维护性。 
+ * 这个类可以作为一个数据传输对象（DTO），用于在不同层之间传递数据。 
+**/
 package com.cyberpeace.oj.course.service.bo;
 
 import io.swagger.annotations.ApiModelProperty;

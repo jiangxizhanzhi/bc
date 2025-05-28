@@ -1,3 +1,61 @@
+/**
+ * 这段代码定义了一个名为 `RemoteTopoService` 的接口，该接口提供了与远程拓扑相关的各种操作。以下是对代码的简要分析： 
+ * ### 接口概述 
+ * - **包名**：`com.cyberpeace.integratation.service` 
+ * - **接口名称**：`RemoteTopoService` 
+ * - **功能**：提供与远程拓扑相关的操作和服务 
+ * ### 主要方法 
+ * 1. **创建拓扑** 
+ * - `String create(SceneConfig sceneConfig);` 
+ * - 创建一个新的拓扑并返回其标识符。 
+ * 2. **获取拓扑** 
+ * - `JSONObject getTopoById(String topoId);` 
+ * - 根据拓扑ID获取拓扑数据。 
+ * - `TopoDigest getTopoDigest(String topoId);` 
+ * - 获取拓扑的摘要信息。 
+ * - `Map<String, TopoDigest> batchGetTopoDigest(List<String> topoIds);` 
+ * - 批量获取多个拓扑的摘要信息。 
+ * 3. **保存拓扑** 
+ * - `String save(JSONObject json);` 
+ * - 保存一个拓扑（新建或修改）。 
+ * - `String saveUnlimited(JSONObject json);` 
+ * - 无限制地保存一个拓扑。 
+ * 4. **同步拓扑** 
+ * - `JSONObject sync(JSONObject json);` 
+ * - 同步拓扑数据并返回结果。 
+ * 5. **删除拓扑** 
+ * - `Boolean deleteById(String topoId);` 
+ * - 根据拓扑ID删除拓扑。 
+ * - `Boolean batchDeleteTopo(List<String> topoIds);` 
+ * - 批量删除多个拓扑。 
+ * 6. **设置拓扑属性** 
+ * - `void setSupportPartialStart(String topoId, Boolean supportPartialStart);` 
+ * - 设置拓扑是否支持部分启动。 
+ * 7. **获取节点** 
+ * - `JSONArray getAllNodes(TopoNodeListReq req);` 
+ * - 获取拓扑中的所有节点。 
+ * - `JSONObject getNodeStatistics(String topoId);` 
+ * - 获取某个拓扑的节点统计数据。 
+ * 8. **获取拓扑模板** 
+ * - `JSONObject getTopoTemplatePage(TopoTemplatePageReq pageReq);` 
+ * - 获取拓扑模板列表。 
+ * 9. **上传文件** 
+ * - `JSONObject uploadSceneAttachment(MultipartFile file);` 
+ * - 上传场景附件。 
+ * - `JSONObject uploadIcon(MultipartFile file);` 
+ * - 上传图标。 
+ * - `JSONObject uploadSceneTemplateSnapshot(MultipartFile file);` 
+ * - 上传场景模板快照。 
+ * - `JSONObject uploadPrivateKey(MultipartFile file);` 
+ * - 上传私钥。 
+ * - `JSONObject uploadMib(MultipartFile file);` 
+ * - 上传MIB文件。 
+ * 10. **查询MIB节点信息** 
+ * - `Object getMibNodeInfo(MibInfoQueryRequest queryRequest);` 
+ * - 根据查询请求获取MIB节点信息。 
+ * ### 总结 
+ * `RemoteTopoService` 接口提供了一组丰富的功能来管理远程拓扑，包括创建、获取、保存、删除、设置属性、获取节点信息以及上传和查询相关文件等操作。这些方法使用了多种输入参数类型（如 `SceneConfig`, `TopoNodeListReq`, `TopoTemplatePageReq`, `MultipartFile`, `MibInfoQueryRequest` 等），并且返回类型也多样化（如 `String`, `JSONObject`, `JSONArray`, `Map<String, TopoDigest>` 等）。 
+**/
 package com.cyberpeace.integratation.service;
 
 import com.alibaba.fastjson.JSONArray;

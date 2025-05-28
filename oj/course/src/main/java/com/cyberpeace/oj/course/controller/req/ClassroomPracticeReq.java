@@ -1,3 +1,34 @@
+/**
+ * 这段代码定义了一个名为 `ClassroomPracticeReq` 的 Java 类，该类用于表示课堂实践请求体。以下是对其主要特性和功能的简要分析： 
+ * ### 类定义与继承 
+ * - **包声明**：`com.cyberpeace.oj.course.controller.req` - 这个类位于 `oj.course.controller.req` 包中。 
+ * - **继承**：`ClassroomPracticeReq` 类继承了 `PageReqBase` 类。 
+ * ### 注解使用 
+ * - **Lombok**： 
+ * - `@Getter` 和 `@Setter` 注解自动生成 getter 和 setter 方法。 
+ * - **Swagger**： 
+ * - `@ApiModel` 注解用于描述这个类是一个模型对象。 
+ * - `@ApiModelProperty` 注解用于描述类中的字段。 
+ * - **Java Validation API**： 
+ * - `@NotBlank` 注解确保某些字段不为空白（即字符串不为空且只包含空白字符）。 
+ * ### 字段说明 
+ * - **classroomId**：课堂ID，必须是非空字符串。 
+ * - **lessonId**：课时ID，必须是非空字符串，并且如果为空，则返回 `OjBusinessErrorCode.LESSON_INFORMATION_NOT_NULL` 错误码。 
+ * - **organizationId**：组织ID，必须是非空字符串，并且如果为空，则返回 `OjBusinessErrorCode.ORG_INFORMATION_NOT_NULL` 错误码。 
+ * - **isCommit**：布尔值，表示是否提交作业，默认为 `null`。 
+ * - **isMark**：布尔值，表示是否批改作业，默认为 `null`。 
+ * - **username**：用户名或姓名。 
+ * ### 方法 
+ * - **setters**：为每个字段提供了 setter 方法，用于设置属性值。 
+ * - `setClassroom_id` 
+ * - `setLesson_id` 
+ * - `setOrganization_id` 
+ * - `setName` 
+ * - `setIs_commit` 
+ * - `setIs_mark` 
+ * ### 总结 
+ * `ClassroomPracticeReq` 类主要用于处理课堂实践相关的请求数据。它通过继承 `PageReqBase` 类来获取分页相关功能，并通过 Lombok 和 Swagger 注解简化了代码编写和文档生成。验证注解确保了关键字段的有效性，从而提高了数据的健壮性。 
+**/
 package com.cyberpeace.oj.course.controller.req;
 
 import javax.validation.constraints.NotBlank;

@@ -1,3 +1,58 @@
+/**
+ * 这段代码定义了一个名为 `CourseImportService` 的接口，该接口包含了多个方法，用于处理课程导入相关的功能。以下是该接口的简要分析： 
+ * ### 接口概述 
+ * - **包名**：`com.cyberpeace.oj.course.service` 
+ * - **接口名**：`CourseImportService` 
+ * - **作者**：SN 
+ * - **版本**：1.0.0 
+ * - **日期**：2024年11月8日 
+ * ### 方法列表 
+ * 1. **parseRmCourse** 
+ * - **描述**：根据导入数据路径获取课程信息。 
+ * - **参数**： 
+ * - `path`：字符串类型，表示导入数据的路径。 
+ * - **返回值**：`Course` 对象。 
+ * 2. **parseRmLesson** 
+ * - **描述**：组装资源导入的课时信息。 
+ * - **参数**： 
+ * - `course`：`Course` 对象，表示课程信息。 
+ * - `path`：字符串类型，表示课程文件地址。 
+ * - `envReqs`：`Map<String, String>` 类型，表示环境需求。 
+ * - `nameMap`：`Map<String, String>` 类型，表示名称映射。 
+ * - **返回值**：`List<CourseLesson>` 对象列表。 
+ * 3. **parseRmLessonConfig** 
+ * - **描述**：组装课时路径信息。 
+ * - **参数**： 
+ * - `course`：`Course` 对象，表示课程信息。 
+ * - `path`：字符串类型，表示课程文件地址。 
+ * - `nameMap`：`Map<String, String>` 类型，表示名称映射。 
+ * - **返回值**：`List<LessonConfig>` 对象列表。 
+ * 4. **rMCourseImport** 
+ * - **描述**：课程数据导入。 
+ * - **参数**： 
+ * - `path`：字符串类型，表示课程资源所在地址。 
+ * - `envReqs`：`Map<String, String>` 类型，表示环境需求。 
+ * - `operationEnvReqs`：`Map<String, Map<String, String>>` 类型，表示操作环境需求。 
+ * - `authContext`：`AuthContext` 对象，表示认证上下文。 
+ * - **返回值**：布尔值 (`Boolean`)，表示导入是否成功。 
+ * 5. **rMCombinedCourseImport** 
+ * - **描述**：组合课程数据导入。 
+ * - **参数**： 
+ * - `courseInfos`：`List<CombinedCourseImportContext>` 对象列表，表示课时资源所在地址。 
+ * - `authContext`：`AuthContext` 对象，表示认证上下文。 
+ * - **返回值**：布尔值 (`Boolean`)，表示导入是否成功。 
+ * 6. **destroyFailedTopo** 
+ * - **描述**：用于课程导入失败后，将topo进行删除操作。 
+ * - **参数**： 
+ * - `envReqs`：`Map<String, String>` 类型，表示环境需求。 
+ * - `operationEnvReqs`：`Map<String, Map<String, String>>` 类型，表示操作环境需求。 
+ * - **返回值**：无（`void`）。 
+ * ### 总结 
+ * - 该接口主要处理课程数据的导入、解析以及在导入失败后的清理工作。 
+ * - 每个方法都有详细的注释，描述了其功能、参数和返回值。 
+ * - 方法涉及到了课程 (`Course`)、课时 (`CourseLesson`)、课时配置 (`LessonConfig`) 等对象，并且使用了 `Map` 和 `List` 等集合类来处理复杂的数据结构。 
+ * - 使用了认证上下文 (`AuthContext`) 来确保操作的安全性。 
+**/
 package com.cyberpeace.oj.course.service;
 
 import com.cyberpeace.common.model.AuthContext;

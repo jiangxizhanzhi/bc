@@ -1,3 +1,54 @@
+/**
+ * 这段代码是一个Spring Boot服务类 `EvalIndexRefServiceImpl` 的实现，主要负责处理评估指数相关的逻辑。以下是对代码的主要功能和结构的简要分析： 
+ * ### 类概述 
+ * - **包名**：`com.cyberpeace.cr.evaluation.service.impl` 
+ * - **类名**：`EvalIndexRefServiceImpl` 
+ * - **继承关系**：继承自 `ServiceImpl<EvalIndexRefMapper, EvalIndexRef>`，实现了 `EvalIndexRefService` 接口。 
+ * ### 主要成员变量 
+ * - **远程蟒服务 (`remotePythonService`)**：用于调用远程Python服务。 
+ * - **事务模板 (`transactionTemplate`)**：用于管理数据库事务。 
+ * - **评估变量裁判服务 (`evalVariableRefService`)** 和 **评估算法裁判服务 (`evalAlgorithmRefService`)**：分别用于处理评估变量和算法的相关逻辑。 
+ * - **评估算法映射器 (`evalAlgorithmMapper`)** 和 **评估变量映射器 (`evalVariableRefMapper`)**：用于与数据库交互。 
+ * - **中文数字映射 (`int2cn`)**：将整数转换为中文字符。 
+ * - **周期图映射 (`CYCLE_MAP`)**：用于特定类型的数值转换。 
+ * ### 主要方法 
+ * 1. **`startIndex` 方法** 
+ * - 功能：根据传入的评估指数、算法、索引引用图等参数，启动评估过程。 
+ * - 实现细节： 
+ * - 根据 `level` 判断是处理变量还是指数。 
+ * - 获取相关得分，并通过AHP方法或远程Python服务计算最终得分。 
+ * - 处理异常情况并记录日志。 
+ * 2. **`selectVariables` 方法** 
+ * - 功能：根据给定的指数ID查询相关变量。 
+ * - 实现细节： 
+ * - 根据输入ID判断是处理指数还是变量。 
+ * - 使用递归方法收集所有相关变量ID。 
+ * - 返回排序后的变量列表。 
+ * 3. **`thirdSpecialist` 方法** 
+ * - 功能：根据数据类型和属性值进行特定的转换。 
+ * - 实现细节： 
+ * - 处理百分比、周期和整数三种类型的数据。 
+ * - 根据不同属性（固定型和偏离型）计算最终值。 
+ * 4. **`systemEvalVariableIds` 方法** 
+ * - 功能：获取系统评估变量ID列表。 
+ * - 实现细节： 
+ * - 根据记录ID查询特定层级的指数。 
+ * - 收集并返回这些指数下的变量ID。 
+ * 5. **`resultIndex` 方法** 
+ * - 功能：获取评估指数结果。 
+ * - 实现细节： 
+ * - 根据指数ID获取相关数据。 
+ * - 根据层级构建子节点信息。 
+ * 6. **`collectionIndexes` 方法** 
+ * - 功能：递归地收集索引及其子节点。 
+ * - 实现细节： 
+ * - 根据深度和当前节点信息，递归收集子节点信息。 
+ * ### 总结 
+ * - **核心功能**：该类主要负责处理评估指数的启动、查询、转换和结果收集等逻辑。 
+ * - **技术栈**：使用了MyBatis Plus进行数据库操作，Spring框架进行依赖注入和事务管理。 
+ * - **设计模式**：递归方法和依赖注入是主要的设计模式。 
+ * 这段代码展示了复杂的业务逻辑处理，包括多种数据类型处理、递归查询和异常处理等。 
+**/
 package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.alibaba.fastjson.JSONArray;

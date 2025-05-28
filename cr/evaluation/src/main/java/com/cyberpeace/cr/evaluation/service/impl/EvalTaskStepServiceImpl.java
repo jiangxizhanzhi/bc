@@ -1,3 +1,46 @@
+/**
+ * 这段代码定义了一个名为 `EvalTaskStepServiceImpl` 的服务类，用于处理与评估任务步骤相关的业务逻辑。以下是代码的主要功能和结构分析： 
+ * ### 类定义和注解 
+ * - **包名**: `com.cyberpeace.cr.evaluation.service.impl` 
+ * - **类名**: `EvalTaskStepServiceImpl` 
+ * - **继承**: 继承自 `ServiceImpl<EvalTaskStepMapper, EvalTaskStep>`，这是一个基于 MyBatis-Plus 的基础实现类。 
+ * - **注解**: 
+ * - `@Slf4j`: 引入了 Lombok 的日志记录功能。 
+ * - `@Service`: 表明这是一个 Spring 服务组件。 
+ * ### 成员变量 
+ * - **依赖注入**: 
+ * - `EvalTaskStepMapper evalTaskStepMapper`: 用于访问评估任务步骤的数据表。 
+ * - `EvalTaskMapper evalTaskMapper`: 用于访问评估任务的数据表。 
+ * ### 方法 
+ * 1. **getTaskStep(String stepId)** 
+ * - 获取指定 ID 的评估任务步骤。 
+ * - 如果步骤不存在，则抛出 `BusinessException`。 
+ * 2. **startStep(EvalTaskStep evalTaskStep)** 
+ * - 启动评估任务步骤。 
+ * - 检查任务是否正在运行、步骤是否已经启动、以及前序步骤是否已完成。 
+ * - 更新步骤的启动时间并返回 `true`。 
+ * 3. **stopStep(EvalTaskStep evalTaskStep)** 
+ * - 停止评估任务步骤。 
+ * - 检查任务是否正在运行、步骤是否已经启动或结束。 
+ * - 更新步骤的结束时间并返回 `true`。 
+ * 4. **removeByTaskId(String taskId)** 
+ * - 根据任务 ID 删除所有相关步骤。 
+ * - 返回 `true`。 
+ * 5. **getTaskSteps(String taskId)** 
+ * - 获取指定任务的所有步骤。 
+ * - 返回一个包含 `EvalTaskStepContext` 对象的列表。 
+ * - 处理每个步骤的状态，并设置前序步骤的状态。 
+ * 6. **getTemplateSteps(String stepConfig)** 
+ * - 根据步骤配置获取模板步骤。 
+ * - 将 JSON 配置转换为 `EvalTaskStepConfig` 对象，并进一步转换为 `EvalTaskStepContext` 对象。 
+ * - 返回一个包含 `EvalTaskStepContext` 对象的列表。 
+ * 7. **getFinishedSteps(String taskId)** 
+ * - 获取指定任务中已完成的步骤。 
+ * - 返回一个包含 `EvalTimeLineContext` 对象的列表。 
+ * - 只包括有结束时间的步骤。 
+ * ### 总结 
+ * 这个服务类主要负责处理与评估任务步骤相关的 CRUD 操作，包括启动、停止、删除步骤，以及获取任务步骤和模板步骤的信息。它使用了 MyBatis-Plus 进行数据访问，并通过 Lombok 简化了日志记录和对象复制等操作。 
+**/
 package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

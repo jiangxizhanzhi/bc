@@ -1,3 +1,33 @@
+/**
+ * 这段代码定义了一个名为 `ExternalOperationController` 的 Spring Boot 控制器，用于处理与实践操作相关的外部 API。以下是该控制器的主要功能和结构的简要分析： 
+ * ### 主要功能 
+ * 1. **习题集查询 (`/practice-set/list`)** 
+ * - 获取用户有权限访问的习题集，并将其转换为 `ExternalPracticeSetBo` 对象返回。 
+ * 2. **实操习题分类查询 (`/category/list`)** 
+ * - 根据提供的实践设置 ID 查询相应的实操习题分类。 
+ * - 如果没有提供实践设置 ID，则返回所有分类。 
+ * 3. **实操习题批量查询 (`/batch-get`)** 
+ * - 根据提供的习题 ID 列表查询多个实操习题，并将其转换为 `ExternalOperationBo` 对象返回。 
+ * 4. **实操习题分页查询 (`/list`)** 
+ * - 根据请求参数进行分页查询，并返回查询结果。 
+ * 5. **实操习题随机获取 (`/random-choice`)** 
+ * - 随机获取指定数量的实操习题，并返回结果。 
+ * 6. **获取各类型习题数量 (`/type/count`)** 
+ * - 获取不同类型的实操习题的数量。 
+ * ### 技术要点 
+ * - **依赖注入** 
+ * - 使用 `@Autowired` 注入了多个 Mapper 和 Service 类，如 `PracticeOperationMapper`, `PracticeCategoryMapper`, `PracticeSetMapper`, `AttachmentMapper`, `UtilService`, `PracticeSetService`, `PracticeOperationService`。 
+ * - **数据转换** 
+ * - 使用 `BeanUtils` 工具类将实体对象转换为业务对象（例如 `PracticeOperation` 转换为 `ExternalOperationBo`）。 
+ * - **权限控制** 
+ * - 使用了自定义注解 `@AuthKeyUser` 和 `@AuthOjKey` 进行权限控制。 
+ * - **分页和排序** 
+ * - 使用 `Page` 和 `IPage` 对象进行分页查询，并通过 `PageUtil` 设置分页参数。 
+ * - **日志记录** 
+ * - 使用 `@Slf4j` 注解启用日志记录，方便调试和问题追踪。 
+ * ### 总结 
+ * `ExternalOperationController` 是一个处理实践操作相关外部 API 的控制器。它通过依赖注入获取必要的服务和映射器，并通过各种方法处理不同的查询请求，包括习题集查询、分类查询、批量查询、分页查询、随机查询以及统计查询。整体设计合理，功能清晰，使用了现代 Java 技术和框架特性。 
+**/
 package com.cyberpeace.gateway.controller;
 
 import java.util.ArrayList;

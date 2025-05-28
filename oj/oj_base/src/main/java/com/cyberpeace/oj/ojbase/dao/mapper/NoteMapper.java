@@ -1,3 +1,28 @@
+/**
+ * 这段代码定义了一个名为 `NoteMapper` 的接口，它继承自 `BaseMapper<Note>`，并且使用了 MyBatis 的 `@Mapper` 注解。这个接口用于与数据库进行交互，执行各种针对 `Note` 实体的操作。以下是对该接口方法的简要分析： 
+ * 1. **继承关系**: 
+ * - `NoteMapper` 继承自 `com.baomidou.mybatisplus.core.mapper.BaseMapper<Note>`，这表明它是一个 MyBatis Plus 的基本映射器，提供了常见的 CRUD 操作。 
+ * 2. **方法概述**: 
+ * - `selectByCondition`: 根据 `NoteUniqueContext` 上下文查询单个 `Note`。 
+ * - `pageByUserIdsAndContent`: 根据分页参数、查询条件、是否公开和是否提交来分页查询 `Note` 列表。 
+ * - `updateById`: 更新指定 ID 的 `Note` 记录。 
+ * - `updateNote`: 更新 `Note` 记录（具体更新哪些字段没有明确指出）。 
+ * - `selectByContext`: 根据 `NoteUniqueContext` 上下文查询 `Note` 列表。 
+ * - `selectByListQuery`: 根据 `NoteListQuery` 查询条件和是否公开查询 `Note` 列表。 
+ * - `deleteByBusiness`: 根据业务 ID、注释类型和资源类型删除记录。 
+ * - `selectByUnique`: 根据多个参数（如用户 ID、注释类型、业务类型和业务 ID）查询唯一的 `Note`。 
+ * - `updateReportByID`: 根据 `Note` 更新报告记录。 
+ * - `countByUserId`: 根据用户 ID、注释类型和资源 ID 列表计算记录数量。 
+ * 3. **注解使用**: 
+ * - 使用了 `@Param` 注解来指定方法参数的名称，以便在 MyBatis 的 XML 配置文件中引用这些参数。 
+ * - 使用了 `@Mapper` 注解来标识这是一个 MyBatis 的 Mapper 接口。 
+ * 4. **数据类型**: 
+ * - 方法返回值包括 `Note`, `IPage<Note>`, `List<String>`, `List<Note>`, `int`, `void` 等。 
+ * - 参数类型包括 `NoteUniqueContext`, `NoteListQuery`, `Boolean`, `String`, `Integer`, `List<String>` 等。 
+ * 5. **文档注释**: 
+ * - 每个方法都有详细的文档注释，描述了方法的功能、输入参数和返回值，这有助于其他开发者理解和使用这些方法。 
+ * 总体来说，`NoteMapper` 接口提供了一套丰富的功能来操作 `Note` 数据实体，涵盖了增删改查等各种常见需求，并且通过 MyBatis 和 MyBatis Plus 提供了灵活的数据库访问方式。 
+**/
 package com.cyberpeace.oj.ojbase.dao.mapper;
 
 import org.apache.ibatis.annotations.Mapper;

@@ -1,3 +1,56 @@
+/**
+ * 这段代码定义了一个名为 `EvalTemplateServiceImpl` 的类，该类实现了 `EvalTemplateService` 接口。这个类主要用于处理与评估模板相关的业务逻辑。以下是对其主要功能和结构的简要分析： 
+ * ### 类定义 
+ * - **包名**: `com.cyberpeace.cr.evaluation.service.impl` 
+ * - **类名**: `EvalTemplateServiceImpl` 
+ * - **继承**: 继承了 `ServiceImpl<EvalTemplateMapper, EvalTemplate>`，这表明它使用了 MyBatis-Plus 框架来操作数据库。 
+ * - **注解**: 
+ * - `@Service`: 表明这是一个 Spring 管理的服务层组件。 
+ * - `@Slf4j`: 使用 Lombok 自动生成日志对象。 
+ * ### 成员变量 
+ * - **依赖注入**: 
+ * - `attachmentService`: 处理附件相关操作。 
+ * - `utilService`: 提供一些工具方法。 
+ * - `crConstantsService`: 提供常量服务。 
+ * - `evalTemplateMapper`: 处理评估模板的数据库操作。 
+ * - `evalTaskService`: 处理评估任务的相关操作。 
+ * - `evalTaskMapper`: 处理评估任务的数据库操作。 
+ * - `remoteTopoService`: 远程拓扑服务。 
+ * ### 方法 
+ * #### 1. `getTemplate(String templateId)` 
+ * - **功能**: 根据模板ID获取评估模板，并校验模板是否存在及当前用户是否有权限访问该模板。 
+ * - **返回值**: `EvalTemplate` 对象或抛出异常。 
+ * #### 2. `list(EvalTemplateListQuery evalTemplateListQuery)` 
+ * - **功能**: 根据查询条件获取评估模板列表。 
+ * - **参数**: `EvalTemplateListQuery` 查询条件对象。 
+ * - **返回值**: 分页后的 `IPage<EvalTemplate>` 对象。 
+ * #### 3. `listTask(EvalTemplate evalTemplate, Boolean isFinished)` 
+ * - **功能**: 获取指定模板下的任务列表，可按完成状态过滤。 
+ * - **参数**: `EvalTemplate` 对象和一个布尔值 `isFinished` 表示是否只返回已完成的任务。 
+ * - **返回值**: `List<EvalTaskSlimContext>` 对象。 
+ * #### 4. `getLogoPath(String attachmentId)` 
+ * - **功能**: 获取附件（通常是模板的logo）的路径。 
+ * - **参数**: 附件ID。 
+ * - **返回值**: 附件的URL路径。 
+ * #### 5. `batchDelete(List<String> templateIds)` 
+ * - **功能**: 批量删除评估模板及其关联的任务和拓扑。 
+ * - **参数**: 模板ID列表。 
+ * - **返回值**: 是否删除成功。 
+ * #### 6. `validateExistTask(String templateId, EvalTask.Status taskStatus)` 
+ * - **功能**: 检查指定模板下是否存在指定状态的任务。 
+ * - **参数**: 模板ID和任务状态。 
+ * - **返回值**: 布尔值表示是否存在指定状态的任务。 
+ * #### 7. `validateBaseInfo(EvalTemplateBaseInfoContext evalTemplateBaseInfoContext)` 
+ * - **功能**: 验证模板的基本信息，包括名称、描述、Logo等。 
+ * - **参数**: `EvalTemplateBaseInfoContext` 包含模板的基本信息。 
+ * - **返回值**: 布尔值表示验证是否通过。 
+ * #### 8. `validateStepConfig(List<EvalTaskStepConfig> evalTaskStepConfigList)` 
+ * - **功能**: 验证评估任务的步骤配置。 
+ * - **参数**: `EvalTaskStepConfig` 列表。 
+ * - **返回值**: 布尔值表示验证是否通过。 
+ * ### 总结 
+ * 该类主要负责处理评估模板的CRUD操作以及相关的业务逻辑验证。通过依赖注入的方式引入了多个服务和映射器，从而能够方便地进行数据库操作和调用其他服务。整体设计遵循了良好的分层架构原则，确保了代码的可维护性和可扩展性。 
+**/
 package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;

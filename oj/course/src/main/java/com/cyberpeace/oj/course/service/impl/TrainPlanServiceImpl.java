@@ -1,3 +1,34 @@
+/**
+ * 这段代码是一个Java类，实现了名为`TrainPlanServiceImpl`的服务层接口。这个类的主要功能是处理与训练计划相关的业务逻辑。以下是代码的简要分析： 
+ * ### 类定义和依赖注入 
+ * - `TrainPlanServiceImpl` 继承了 `ServiceImpl<TrainPlanMapper, TrainPlan>`，并实现了 `TrainPlanService` 接口。 
+ * - 使用了 Lombok 的 `@Slf4j` 注解来自动创建一个日志记录器。 
+ * - 通过 `@Autowired` 注入了以下依赖： 
+ * - `TrainPlanMapper`：用于操作数据库中的训练计划表。 
+ * - `RemoteUserService`：远程用户服务，用于获取用户信息。 
+ * - `CourseMapper`：课程映射器，用于获取课程相关信息。 
+ * ### 方法实现 
+ * 1. **`trainPlanList` 方法** 
+ * - 根据用户是否为超级用户，返回所有训练计划或仅返回当前用户的训练计划。 
+ * - 使用 `StreamApiUtils.map` 方法将实体对象列表转换为 `TrainPlanBo` 对象列表。 
+ * 2. **`page` 方法** 
+ * - 实现分页查询训练计划，并根据用户权限和组织ID进行过滤。 
+ * - 获取用户信息，并填充到查询结果中。 
+ * - 遍历查询结果，调用 `remoteUserService` 获取创建者的用户名，并将其设置到 `TrainPlanRsp` 对象中。 
+ * 3. **`checkNameRepeat` 方法** 
+ * - 检查训练计划名称是否重复。 
+ * - 如果名称已存在且 ID 不匹配，则抛出 `BusinessException` 异常。 
+ * 4. **`entityToBo` 方法** 
+ * - 将 `TrainPlan` 实体对象转换为 `TrainPlanBo` 对象。 
+ * - 获取创建者的名字并设置到 `TrainPlanBo` 对象中。 
+ * ### 总结 
+ * - `TrainPlanServiceImpl` 类主要负责处理与训练计划相关的业务逻辑。 
+ * - 该类使用 MyBatis-Plus 进行数据访问，并通过远程服务获取用户信息。 
+ * - 通过 `trainPlanList` 和 `page` 方法提供了训练计划的列表和分页查询功能。 
+ * - `checkNameRepeat` 方法确保训练计划名称的唯一性。 
+ * - `entityToBo` 方法负责数据转换，将实体对象转换为业务对象。 
+ * 这段代码展示了如何在 Spring Boot 项目中实现服务层逻辑，并结合 MyBatis-Plus 进行数据库操作。 
+**/
 package com.cyberpeace.oj.course.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

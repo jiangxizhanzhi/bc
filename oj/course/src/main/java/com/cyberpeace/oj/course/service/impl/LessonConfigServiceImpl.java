@@ -1,3 +1,32 @@
+/**
+ * 这段代码是一个Java类 `LessonConfigServiceImpl`，它实现了 `LessonConfigService` 接口，并继承了 `ServiceImpl`。这个类主要负责处理与课程配置相关的业务逻辑。以下是代码的主要功能和结构分析： 
+ * ### 主要功能 
+ * 1. **获取课程配置** (`getLessonConfig` 方法)： 
+ * - 从数据库中查询课程信息。 
+ * - 获取课程的根节点配置。 
+ * - 将查询到的数据转换为 `LessonConfigBo` 对象并返回。 
+ * 2. **更新课程配置** (`updateLessonConfig` 方法)： 
+ * - 重新排列配置数据。 
+ * - 删除原有配置并保存新的配置。 
+ * 3. **打包课程配置** (`packageLessonConfig` 方法)： 
+ * - 复制配置上下文信息并生成新的课程配置对象。 
+ * 4. **导出课程配置** (`dumpLessonConfig` 方法)： 
+ * - 调用 `getLessonConfig` 方法获取课程配置，并将其转换为 `LessonConfigDumpBo` 对象。 
+ * 5. **加载课程配置** (`loadLessonConfig` 方法)： 
+ * - 将 `LessonConfigDumpBo` 对象转换为 `LessonConfig` 对象列表。 
+ * 6. **数据转换方法**： 
+ * - `resetLessonConfigBo`：重新编排目录数据。 
+ * - `configToDumpBo`：将 `LessonConfigBo` 转换为 `LessonConfigDumpBo`。 
+ * - `getConfigBo`：获取课程配置并转换为 `LessonConfigBo` 列表。 
+ * - `configToBo`：将 `LessonConfig` 对象转换为 `LessonConfigBo`。 
+ * - `setConfigTypeIndex`：根据最上级节点组装课程目录。 
+ * ### 主要组件 
+ * - **依赖注入**：通过 `@Autowired` 注入了多个 DAO 层的 Mapper 和其他服务组件（如 `TransactionTemplate`）。 
+ * - **日志记录**：使用 `lombok.extern.slf4j.Slf4j` 进行日志记录。 
+ * - **辅助工具**：使用了 `StreamApiUtils`、`BeanUtils` 等工具类来简化数据处理。 
+ * ### 总结 
+ * 该类主要用于管理和操作课程配置数据，包括获取、更新、打包、导出和加载等操作。代码结构清晰，利用了Spring框架的依赖注入和事务管理功能，并通过多种工具类简化了数据处理过程。 
+**/
 package com.cyberpeace.oj.course.service.impl;
 
 import java.util.List;

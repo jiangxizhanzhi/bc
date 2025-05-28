@@ -1,3 +1,60 @@
+/**
+ * 这段代码是一个Spring Boot服务类，实现了评估记录管理功能。以下是该代码的主要组成部分和功能分析： 
+ * ### 类定义和依赖注入 
+ * - **类名**：`EvalRecordServiceImpl` 
+ * - **继承**：`ServiceImpl<EvalRecordMapper, EvalRecord>`，继承了MyBatis-Plus的基本实现。 
+ * - **注解**： 
+ * - `@Service`：标记这是一个Spring服务组件。 
+ * - `@Slf4j`：引入日志功能。 
+ * - **依赖注入**：通过`@Autowired`注入了多个业务逻辑和服务层组件，如`EvalIndexRefService`, `EvalVariableRefService`, `EvalIndexService`等。 
+ * ### 主要方法 
+ * 1. **`isExist`** 
+ * - 检查给定的评估记录是否已存在。 
+ * - 使用`LambdaQueryWrapper`构建查询条件，并检查记录数量。 
+ * 2. **`getTask`** 
+ * - 根据任务ID获取评估任务，并验证任务的存在性和用户的权限。 
+ * 3. **`getEntity`** 
+ * - 根据资源ID获取评估记录实体，并进行合法性检查。 
+ * 4. **`pageList`** 
+ * - 分页查询评估记录列表。 
+ * 5. **`get`** 
+ * - 根据记录ID获取详细的评估记录信息，并组装成响应对象。 
+ * 6. **`create`** 
+ * - 创建或更新评估记录，并处理相关的关联数据。 
+ * - 涉及到多级指标和变量的处理，包括创建和更新相关数据。 
+ * 7. **`update`** 
+ * - 更新评估记录，并处理相关的关联数据。 
+ * 8. **`delete`** 
+ * - 删除评估记录及其相关关联数据。 
+ * 9. **`recordRun`** 
+ * - 异步执行评估记录的运行逻辑，包括同步数据、计算变量和指标。 
+ * 10. **`addResToEvalResult`** 
+ * - 将评估结果添加到结果表中。 
+ * 11. **`startVariables`** 
+ * - 开始计算变量项。 
+ * 12. **`startIndexes`** 
+ * - 开始计算指标项。 
+ * 13. **`syncProbeData`** 
+ * - 同步探测数据。 
+ * 14. **`exeCollectionEvent`** 
+ * - 执行数据采集事件。 
+ * 15. **`nodeIpMap`** 
+ * - 获取场景下的节点IP映射。 
+ * 16. **`getNodes`** 
+ * - 获取房间中的节点列表。 
+ * 17. **`getProbes`** 
+ * - 获取指定节点的探针列表。 
+ * 18. **`dumpEvalRecordPath`** 
+ * - 导出评估记录为PDF文件。 
+ * 19. **`getAllCycleResult`** 
+ * - 获取所有周期的结果。 
+ * 20. **`parseGraph`** 
+ * - 解析评估记录的图形数据。 
+ * ### 其他辅助方法 
+ * - 多个辅助方法用于处理数据转换、生成算法引用、设置父ID等操作。 
+ * ### 总结 
+ * 该类主要负责评估记录的CRUD操作，以及与之相关的复杂业务逻辑处理，如多级指标和变量的管理、数据同步、结果计算等。整体设计较为复杂，涉及多层嵌套的数据处理和业务逻辑。 
+**/
 package com.cyberpeace.cr.evaluation.service.impl;
 
 

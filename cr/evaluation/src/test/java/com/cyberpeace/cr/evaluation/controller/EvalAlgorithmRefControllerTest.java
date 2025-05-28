@@ -1,3 +1,33 @@
+/**
+ * 这段代码是一个单元测试类 `EvalAlgorithmRefControllerTest`，用于测试 `EvalAlgorithmRefController` 控制器。以下是对该代码的简要分析： 
+ * ### 类概述 
+ * - **包名**: `com.cyberpeace.cr.evaluation.controller` 
+ * - **类名**: `EvalAlgorithmRefControllerTest` 
+ * - **注解**: 
+ * - `@WebMvcTest(EvalAlgorithmRefController.class)`: 用于测试 Spring MVC 控制器，并且仅加载指定的控制器。 
+ * - `@MockBean`: 用于创建模拟对象（mock objects）。 
+ * ### 测试方法 
+ * #### 1. `testEditAlgorithm` 
+ * - **功能**: 测试 `PUT /cr/eval/algorithm/ref` 请求的处理。 
+ * - **步骤**: 
+ * - 配置模拟对象 (`mockEvalAlgorithmRefMapper`, `mockEvalIndexRefMapper`, 等) 返回预期的实体对象。 
+ * - 执行 PUT 请求并验证响应状态码为 4xx 客户端错误。 
+ * #### 2. `testGetEvalAlgorithmRef` 
+ * - **功能**: 测试 `GET /cr/eval/algorithm/ref` 请求的处理。 
+ * - **步骤**: 
+ * - 配置模拟对象 (`mockEvalIndexRefMapper`, `mockEvalAlgorithmRefMapper`, `mockEvalVariableRefMapper`) 返回预期的实体对象。 
+ * - 执行 GET 请求并验证响应状态码为 200 OK，并且响应内容符合预期的 JSON 格式。 
+ * ### 模拟对象 
+ * - `mockEvalAlgorithmRefMapper` 
+ * - `mockEvalIndexRefMapper` 
+ * - `mockEvalVariableRefMapper` 
+ * - `mockRemotePythonService` 
+ * - `mockEvalAlgorithmRefService` 
+ * - `mockTransactionTemplate` 
+ * 这些模拟对象用于在测试中替代实际的对象，以便可以控制它们的行为并验证控制器的逻辑。 
+ * ### 总结 
+ * 这段代码主要目的是通过配置模拟对象来验证 `EvalAlgorithmRefController` 控制器的两个主要功能：编辑算法和获取算法引用。测试通过发送 HTTP 请求并验证响应的状态码和内容来确保控制器的行为符合预期。 
+**/
 package com.cyberpeace.cr.evaluation.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

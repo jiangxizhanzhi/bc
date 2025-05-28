@@ -1,3 +1,53 @@
+/**
+ * 这段代码定义了一个名为 `EvalIndexRef` 的 Java 类，该类扩展了 `BaseTable` 类，并使用 Lombok 注解来简化 getter 和 setter 方法的生成。以下是对该代码的简要分析： 
+ * ### 包与导入 
+ * - **包声明**：`com.cyberpeace.cr.evaluation.dao.entity` 
+ * - **导入的类和接口**： 
+ * - `com.baomidou.mybatisplus.annotation.IdType` 和 `com.baomidou.mybatisplus.annotation.TableId` 用于数据库字段注解。 
+ * - `com.baomidou.mybatisplus.annotation.TableName` 用于指定数据库表名。 
+ * - `com.cyberpeace.common.baseinterface.GenericEnum` 用于自定义枚举接口。 
+ * - `com.cyberpeace.common.model.BaseTable` 是基类。 
+ * - `lombok.Getter` 和 `lombok.Setter` 用于自动生成 getter 和 setter 方法。 
+ * - `java.util.Date` 用于日期处理。 
+ * ### 类定义 
+ * - **类名**：`EvalIndexRef` 
+ * - **继承**：`BaseTable` 
+ * - **注解**： 
+ * - `@TableName("cr_eval_index_ref")`：指定数据库表名为 `cr_eval_index_ref`。 
+ * - `@Getter` 和 `@Setter`：自动生成所有字段的 getter 和 setter 方法。 
+ * ### 字段定义 
+ * - `resourceId`：唯一标识符，类型为 UUID。 
+ * - `name`：名称。 
+ * - `type`：指标项类型，用于设置默认分值。 
+ * - `score`：指标项得分。 
+ * - `level`：指标等级。 
+ * - `recordId`：评估任务 ID。 
+ * - `algorithmId`：使用的聚合算法 ID。 
+ * - `algorithmParams`：算法实际额外参数。 
+ * - `specialistValue`：专家评分设置值。 
+ * - `specialistType`：专家评分设置类型。 
+ * - `specialistAttr`：专家评分设置属性。 
+ * - `specialistAttrValue`：专家评分设置中心值。 
+ * - `nextIds`：当前指标项下一级 ID，为 JSON 字符串。 
+ * - `startTime`：计算开始时间。 
+ * - `endTime`：计算结束时间。 
+ * - `progress`：评估进度。 
+ * - `matrixData`：矩阵内容。 
+ * ### 枚举定义 
+ * - `Type`：枚举类型，表示指标项类型，实现 `GenericEnum` 接口。 
+ * - `Level`：枚举类型，表示指标等级，实现 `GenericEnum` 接口。 
+ * - `DataAttr`：枚举类型，表示数据属性，实现 `GenericEnum` 接口。 
+ * - `DataType`：枚举类型，表示数据类型，实现 `GenericEnum` 接口。 
+ * - `Progress`：枚举类型，表示评估进度，实现 `GenericEnum` 接口。 
+ * ### 枚举结构 
+ * 每个枚举类型都包含一个构造函数，初始化 `code` 和 `desc` 字段，并且这些字段通过 Lombok 的 `@Getter` 注解自动提供 getter 方法。 
+ * ### 总结 
+ * - **主要功能**：`EvalIndexRef` 类用于表示评估指标项的相关信息。 
+ * - **数据存储**：该类定义了一系列字段，用于存储评估指标项的各种属性。 
+ * - **枚举类型**：定义了多个枚举类型，用于表示不同类型的数据属性和状态。 
+ * - **框架支持**：使用了 MyBatis Plus 框架的注解来简化数据库操作，并利用 Lombok 来减少样板代码。 
+ * 这段代码是一个典型的 Java 实体类，适用于数据持久化和业务逻辑处理。 
+**/
 package com.cyberpeace.cr.evaluation.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;

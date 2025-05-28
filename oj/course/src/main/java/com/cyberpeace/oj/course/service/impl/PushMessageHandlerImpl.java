@@ -1,3 +1,81 @@
+/**
+ * 这段代码定义了一个名为 `PushMessageHandlerImpl` 的 Spring 服务类，实现了 `PushMessageHandler` 接口。该类的主要功能是通过 WebSocket 向不同的场景（如课程、操作、课堂等）推送消息。以下是对代码的简要分析： 
+ * ### 类和接口定义 
+ * - **类**：`PushMessageHandlerImpl` 
+ * - 实现了 `PushMessageHandler` 接口。 
+ * - 使用 Lombok 的 `@Slf4j` 注解添加日志记录功能。 
+ * - 使用 `@Service` 注解表明这是一个 Spring 服务组件。 
+ * ### 成员变量 
+ * - **MyWebSocketHandler**：用于处理 WebSocket 消息的组件。 
+ * - **ClassroomGroupInfoMapper**：用于与数据库交互的 Mapper，用于获取课堂群组信息。 
+ * ### 方法 
+ * #### 公共方法 
+ * 1. **pushLessonPracticeMessage** 
+ * - 功能：推送课程练习消息。 
+ * - 参数：`JSONObject data`, `OjLocalScene ojLocalScene`。 
+ * - 流程： 
+ * - 组装消息标识符。 
+ * - 创建消息上下文并推送消息。 
+ * 2. **pushLessonMessage** 
+ * - 功能：推送课程消息。 
+ * - 参数：`JSONObject data`, `OjLocalScene ojLocalScene`。 
+ * - 流程： 
+ * - 组装消息标识符。 
+ * - 创建消息上下文并推送消息。 
+ * 3. **pushOperationMessage** 
+ * - 功能：推送操作消息。 
+ * - 参数：`JSONObject data`, `OjLocalScene ojLocalScene`。 
+ * - 流程： 
+ * - 组装消息标识符。 
+ * - 创建消息上下文并推送消息。 
+ * 4. **pushClassroomMessage** 
+ * - 功能：推送课堂消息。 
+ * - 参数：`JSONObject data`, `OjLocalScene ojLocalScene`。 
+ * - 流程： 
+ * - 更新数据对象。 
+ * - 调用 `pushMessageToClassroom` 和 `pushMessageToUser` 方法。 
+ * 5. **pushMessageToNoSceneClassroom** 
+ * - 功能：向没有场景的课堂推送消息。 
+ * - 参数：`JSONObject data`, `String groupId`。 
+ * - 流程： 
+ * - 获取群组信息。 
+ * - 组装消息标识符。 
+ * - 创建消息上下文并推送消息。 
+ * 6. **pushMessageToUser** 
+ * - 功能：向用户推送消息。 
+ * - 参数：`JSONObject data`, `OjLocalScene ojLocalScene`。 
+ * - 流程： 
+ * - 组装消息标识符。 
+ * - 创建消息上下文并推送消息。 
+ * 7. **pushMessageToClassroom** 
+ * - 功能：向课堂推送消息。 
+ * - 参数：`JSONObject data`, `OjLocalScene ojLocalScene`。 
+ * - 流程： 
+ * - 获取群组信息。 
+ * - 组装消息标识符。 
+ * - 创建消息上下文并推送消息。 
+ * 8. **getDeleteMessage** 
+ * - 功能：获取删除消息。 
+ * - 返回值：`JSONObject`。 
+ * - 流程： 
+ * - 创建 JSON 对象并设置删除事件码。 
+ * 9. **pushHelpMessage** 
+ * - 功能：推送帮助消息。 
+ * - 参数：`JSONObject data`, `String classroomId`, `String userId`。 
+ * - 流程： 
+ * - 组装消息标识符。 
+ * - 创建消息上下文并推送消息。 
+ * 10. **pushRoomTipsMessage** 
+ * - 功能：推送房间提示消息。 
+ * - 参数：`JSONObject data`, `String userId`。 
+ * - 流程： 
+ * - 组装消息标识符。 
+ * - 创建消息上下文并推送消息。 
+ * ### 总结 
+ * - `PushMessageHandlerImpl` 类通过 WebSocket 向不同场景（如课程、操作、课堂等）推送消息。 
+ * - 每个公共方法都负责组装消息标识符和数据，并通过 `MyWebSocketHandler` 推送消息。 
+ * - 私有方法主要用于内部逻辑处理，如获取群组信息或向特定用户或课堂推送消息。 
+**/
 package com.cyberpeace.oj.course.service.impl;
 
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;

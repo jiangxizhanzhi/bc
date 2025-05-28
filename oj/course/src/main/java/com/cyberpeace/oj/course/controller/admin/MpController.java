@@ -1,3 +1,39 @@
+/**
+ * 这段代码定义了一个名为 `MpController` 的 Spring MVC 控制器类，主要用于处理与中台（MP）相关的 HTTP 请求。以下是对该代码的简要分析： 
+ * ### 类定义和注解 
+ * - **包声明**：`com.cyberpeace.oj.course.controller.admin` 
+ * - **类名**：`MpController` 
+ * - **注解**： 
+ * - `@RestController`：标识这是一个 RESTful 风格的控制器。 
+ * - `@RequestMapping("/oj/mp")`：定义了所有方法的公共路径前缀 `/oj/mp`。 
+ * - `@RequiresAuthentication`：表示需要用户认证才能访问这些 API。 
+ * ### 成员变量 
+ * - `remoteTerminalService` 和 `remoteTopoService`：这两个服务通过 `@Autowired` 注入，分别提供远程终端和远程拓扑的相关功能。 
+ * ### 方法 
+ * 每个方法都对应一个特定的 HTTP 请求，并且返回 `BaseRsp` 对象。以下是一些主要方法的简要描述： 
+ * 1. **获取镜像列表** 
+ * - `@GetMapping("/devops/cluster/images/page")` 
+ * - 处理 `/oj/mp/devops/cluster/images/page` GET 请求。 
+ * - 参数：`ClusterImagePageReq req` 
+ * 2. **获取镜像分类** 
+ * - `@GetMapping("/devops/cluster/types/image-mg-categories")` 
+ * - 处理 `/oj/mp/devops/cluster/types/image-mg-categories` GET 请求。 
+ * 3. **删除场景模板** 
+ * - `@DeleteMapping("/cscene/cscenes")` 
+ * - 处理 `/oj/mp/cscene/cscenes` DELETE 请求。 
+ * - 参数：`String id` 
+ * 4. **上传场景中的附件** 
+ * - `@PostMapping("/cscene/file/attachment_upload")` 
+ * - 处理 `/oj/mp/cscene/file/attachment_upload` POST 请求。 
+ * - 参数：`MultipartFile file` 
+ * 5. **新增场景模板** 
+ * - `@PostMapping("/cscene/cscenes/sync")` 
+ * - 处理 `/oj/mp/cscene/cscenes/sync` POST 请求。 
+ * - 参数：`JSONObject csceneBO` 
+ * 6. **其他方法**：包括获取镜像分类、查询靶标信息、上传文件等，每种方法都有相应的注解来定义其行为和路径。 
+ * ### 总结 
+ * `MpController` 是一个处理与中台相关的 HTTP 请求的控制器类。它提供了多种操作，如获取镜像列表、删除场景模板、上传文件等。每个方法都通过注解定义了其对应的 HTTP 请求类型和路径，并返回 `BaseRsp` 对象。这些方法通过依赖注入的服务对象来实现具体的功能。 
+**/
 package com.cyberpeace.oj.course.controller.admin;
 
 import org.apache.commons.lang3.StringUtils;

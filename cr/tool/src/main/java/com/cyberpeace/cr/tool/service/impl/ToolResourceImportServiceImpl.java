@@ -1,3 +1,30 @@
+/**
+ * 这段代码是一个Spring服务类 `ToolResourceImportServiceImpl`，用于处理工具资源的导入。以下是对其主要功能和结构的简要分析： 
+ * ### 主要功能 
+ * 1. **导入单个或多个工具**： 
+ * - `importResource(String path, String type)` 方法用于从指定路径（可以是目录或ZIP文件）导入工具。 
+ * - 如果路径是ZIP文件，则先解压到临时目录。 
+ * - 对每个子目录中的工具进行处理。 
+ * 2. **通过Excel导入工具**： 
+ * - `importResource2(String excelPath, String toolsPath, String publicPhotoPath)` 方法通过读取Excel文件来导入工具。 
+ * - Excel文件包含工具的相关信息，如名称、版本、类型等。 
+ * - 对每个工具进行导入操作。 
+ * ### 关键方法 
+ * - **`importTool(File toolDir, String type)`**：处理单个工具目录，解析其中的Markdown文件，并将其内容转换为工具对象。 
+ * - **`importTool2(ToolMessage toolMessage, String toolsPath, String publicPhotoPath)`**：根据工具消息对象和路径导入工具。 
+ * - **`parseMdFile(File mdFile)`**：解析Markdown文件并提取其内容。 
+ * - **`convertTool(ArrayListMultimap<String, String> data, File mdFile, String type)` 和 `convertTool2(ToolMessage toolMessage, ArrayListMultimap<String, String> data, File mdFile, String publicPhotoPath)`**：将Markdown文件的内容转换为工具对象。 
+ * - **`setCategory(Tool tool, List<String> category, String type)` 和 `setCategory2(Tool tool, String type, String subType, List<String> category)`**：设置工具的类别。 
+ * - **`setImageResourceIdAndToolType(Tool tool, List<String> imageResourceId)`**：设置工具的图像资源ID和类型。 
+ * - **`uploadFile(String string, File mdFile, boolean transferName)`**：上传文件并返回文件对象。 
+ * ### 辅助方法 
+ * - **`data2ToolMessage(List<String> data)`**：将Excel文件中的数据转换为工具消息对象。 
+ * - **`removePlatform(List<String> platforms)`**：过滤平台列表，只保留特定的平台。 
+ * - **`toStr(List<String> stringList)` 和 `toStr2(List<String> stringList)`**：将字符串列表转换为字符串。 
+ * - **`getMdFile(File file)`**：递归查找目录中的Markdown文件。 
+ * ### 总结 
+ * 该类主要负责处理工具资源的导入逻辑，包括从目录或ZIP文件中读取工具信息，并将其转换为数据库对象。同时，它还支持通过Excel文件批量导入工具。该类使用了多种辅助方法来处理文件解析、数据转换和类别设置等任务。 
+**/
 package com.cyberpeace.cr.tool.service.impl;
 
 import com.cyberpeace.common.component.ExcelDataHandler;

@@ -1,3 +1,46 @@
+/**
+ * 这段代码定义了一个名为 `EvalIndexRefService` 的接口，该接口继承自 `IService<EvalIndexRef>`。这个接口主要用于评估指数裁判相关的业务逻辑操作。以下是对其主要方法的简要分析： 
+ * 1. **startIndex** 
+ * - **描述**: 这个方法用于开始计算某个指标项。 
+ * - **参数**: 
+ * - `evalIndexRef`: 当前计算的指标项对象。 
+ * - `evalAlgorithmRef`: 与当前指标项关联的算法对象。 
+ * - `evalIndexRefMap`: 所有指标项的映射表。 
+ * - `evalVariableRefMap`: 所有变量项的映射表。 
+ * - `evalRecord`: 评估记录对象。 
+ * - **返回值**: 无 
+ * 2. **selectVariables** 
+ * - **描述**: 获取某个一级指标项下的所有变量项的 ID 和名称。 
+ * - **参数**: 
+ * - `indexId`: 指标项或变量项的 ID。 
+ * - **返回值**: 
+ * - `List<EvalRoomPairRsp>`: 包含变量项 ID 和名称的列表。 
+ * 3. **thirdSpecialist** 
+ * - **描述**: 根据专家评分设置生成三级指标的专家评分分值。 
+ * - **参数**: 
+ * - `datatype`: 专家评分设置类型。 
+ * - `attribute`: 专家评分设置属性。 
+ * - `attributeValue`: 中心值。 
+ * - `value`: 专家评分设置值。 
+ * - **返回值**: 
+ * - `Integer`: 生成的专家评分分值。 
+ * 4. **systemEvalVariableIds** 
+ * - **描述**: 获取某个评估记录中所有被系统使用的变量项 ID。 
+ * - **参数**: 
+ * - `recordId`: 评估记录 ID。 
+ * - **返回值**: 
+ * - `Set<String>`: 不重复的变量项 ID 集合。 
+ * 5. **resultIndex** 
+ * - **描述**: 获取某个指标项及其子级的最新等级关联关系。 
+ * - **参数**: 
+ * - `indexId`: 指标项 ID。 
+ * - **返回值**: 
+ * - `EvalRecordResultIndexRsp`: 包含指标项及其子级的最新等级关联信息。 
+ * ### 总结 
+ * - **功能**: 该接口提供了评估指数裁判所需的各种核心业务操作，包括指标项计算、获取变量项信息、生成专家评分分值、获取系统使用的变量项 ID 以及获取指标项的等级关联关系等。 
+ * - **使用场景**: 主要应用于评估系统的后台逻辑处理，支持评估过程中的各项计算和数据检索操作。 
+ * - **依赖**: 接口依赖于多个实体类（如 `EvalIndexRef`, `EvalAlgorithmRef`, `EvalRecord` 等）和响应类（如 `EvalRoomPairRsp`, `EvalRecordResultIndexRsp`）。 
+**/
 package com.cyberpeace.cr.evaluation.service;
 
 

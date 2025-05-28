@@ -1,3 +1,78 @@
+/**
+ * 这段代码定义了一个名为 `EvalRecordService` 的接口，该接口继承了 `IService<EvalRecord>` 接口。这个接口主要用于处理与评估记录相关的各种操作和服务。以下是对其主要功能的简要分析： 
+ * ### 接口概述 
+ * - **包名**: `com.cyberpeace.cr.evaluation.service` 
+ * - **接口名**: `EvalRecordService` 
+ * - **实现**: 继承自 `IService<EvalRecord>` 
+ * ### 主要方法 
+ * 1. **`isExist(EvalRecordAddReq requestData)`** 
+ * - **描述**: 检查某个评估记录是否存在。 
+ * - **参数**: `requestData` (请求数据) 
+ * 2. **`EvalRecord getEntity(String resourceId)`** 
+ * - **描述**: 根据资源 ID 获取评估记录实体。 
+ * - **参数**: `resourceId` (评估资源 ID) 
+ * - **返回值**: `EvalRecord` 对象 
+ * 3. **`ListRsp<EvalRecordListRsp> pageList(Page page, String taskId, Integer status, String pattern)`** 
+ * - **描述**: 分页获取评估记录列表，可以按任务 ID、状态和名称进行过滤。 
+ * - **参数**: `page` (分页对象), `taskId` (任务 ID), `status` (状态过滤), `pattern` (名称模糊查询) 
+ * - **返回值**: `ListRsp<EvalRecordListRsp>` 分页结构数据 
+ * 4. **`EvalRecordRsp create(EvalRecordAddReq requestData)`** 
+ * - **描述**: 创建一个新的评估记录。 
+ * - **参数**: `requestData` (请求数据) 
+ * - **返回值**: `EvalRecordRsp` 创建后的评估记录响应对象 
+ * 5. **`EvalRecordRsp update(EvalRecordAddReq requestData)`** 
+ * - **描述**: 更新一个评估记录。 
+ * - **参数**: `requestData` (请求数据) 
+ * - **返回值**: `EvalRecordRsp` 更新后的评估记录响应对象 
+ * 6. **`EvalRecordRsp get(String recordId)`** 
+ * - **描述**: 根据评估记录 ID 获取单个评估记录信息。 
+ * - **参数**: `recordId` (评估记录 ID) 
+ * - **返回值**: `EvalRecordRsp` 评估记录响应对象 
+ * 7. **`Boolean delete(List<String> recordIds)`** 
+ * - **描述**: 删除多个评估记录。 
+ * - **参数**: `recordIds` (评估记录 ID 列表) 
+ * - **返回值**: `Boolean` 是否删除成功 
+ * 8. **`Boolean deleteRecord(List<String> taskIds)`** 
+ * - **描述**: 删除评估任务及其关联的评估记录。 
+ * - **参数**: `taskIds` (任务 ID 列表) 
+ * - **返回值**: `Boolean` 是否删除成功 
+ * 9. **`void recordRun(EvalRecord evalRecord, EvalTask evalTask, Boolean isRestart, String language)`** 
+ * - **描述**: 运行评估任务。 
+ * - **参数**: `evalRecord` (评估记录), `evalTask` (评估任务), `isRestart` (是否重新启动), `language` (语言) 
+ * 10. **`List<EvalRoomPairRsp> getNodes(String roomId)`** 
+ * - **描述**: 获取评估实例中的所有节点 ID 和名称。 
+ * - **参数**: `roomId` (评估实例 ID) 
+ * - **返回值**: `List<EvalRoomPairRsp>` 节点 ID 和名称列表 
+ * 11. **`List<EvalRoomPairRsp> getProbes(String roomId, String nodeId)`** 
+ * - **描述**: 获取指定节点的所有探针 ID 和名称。 
+ * - **参数**: `roomId` (评估实例 ID), `nodeId` (节点 ID) 
+ * - **返回值**: `List<EvalRoomPairRsp>` 探针 ID 和名称列表 
+ * 12. **`Map<String, List<EvalRoomPairRsp>> getProbes(String roomId)`** 
+ * - **描述**: 获取评估实例中所有节点及其探针的信息。 
+ * - **参数**: `roomId` (评估实例 ID) 
+ * - **返回值**: `Map<String, List<EvalRoomPairRsp>>` 节点 ID 及其探针信息 
+ * 13. **`List<EvalRecordNodeProbeReq> getNodeProbe(String roomId)`** 
+ * - **描述**: 获取评估实例中所有节点及其探针的信息。 
+ * - **参数**: `roomId` (评估实例 ID) 
+ * - **返回值**: `List<EvalRecordNodeProbeReq>` 节点及其探针信息 
+ * 14. **`EvalRecordResultRsp result(String recordId)`** 
+ * - **描述**: 获取评估结果。 
+ * - **参数**: `recordId` (评估记录 ID) 
+ * - **返回值**: `EvalRecordResultRsp` 评估结果对象 
+ * 15. **`List<EvalRoomIntPairRsp> recordStatusEnum()`** 
+ * - **描述**: 获取评估状态枚举信息。 
+ * - **返回值**: `List<EvalRoomIntPairRsp>` 评估状态枚举信息 
+ * 16. **`String dumpEvalRecordPath(String resourceId, String taskId)`** 
+ * - **描述**: 导出评估报告 PDF。 
+ * - **参数**: `resourceId` (评估 ID), `taskId` (任务 ID) 
+ * - **返回值**: `String` 测评报告链接 
+ * 17. **`List<EvalSystemResultRsp> getAllCycleResult(String resourceId)`** 
+ * - **描述**: 获取所有周期结果。 
+ * - **参数**: `resourceId` (评估 ID) 
+ * - **返回值**: `List<EvalSystemResultRsp>` 所有周期结果 
+ * ### 总结 
+ * `EvalRecordService` 接口提供了全面的评估记录管理功能，包括创建、更新、删除、查询以及导出评估报告等。这些方法覆盖了评估记录生命周期的各个方面，并且通过丰富的参数支持了灵活的查询和操作需求。 
+**/
 package com.cyberpeace.cr.evaluation.service;
 
 

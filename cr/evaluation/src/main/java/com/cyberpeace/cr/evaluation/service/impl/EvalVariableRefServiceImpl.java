@@ -1,3 +1,41 @@
+/**
+ * 这段代码定义了一个名为 `EvalVariableRefServiceImpl` 的服务类，该类实现了 `EvalVariableRefService` 接口。这个服务类主要用于处理与评估变量相关的逻辑，包括格式化、匹配和评分等步骤。下面是对代码的主要功能和结构的简要分析： 
+ * ### 主要功能 
+ * 1. **格式化（Formatting）**： 
+ * - 从数据库中获取指定时间段内的探针数据。 
+ * - 使用远程Python服务执行格式化算法，并将结果存储到数据库中。 
+ * - 如果格式化过程中出现错误，则抛出相应的业务异常。 
+ * 2. **匹配（Matching）**： 
+ * - 获取已格式化的数据，并使用远程Python服务执行匹配算法。 
+ * - 将匹配结果更新到数据库中。 
+ * - 如果匹配过程中出现错误，则抛出相应的业务异常。 
+ * 3. **评分（Scoring）**： 
+ * - 获取已格式化和匹配的数据，并使用远程Python服务执行评分算法。 
+ * - 更新评分结果到数据库中。 
+ * - 如果评分过程中出现错误，则抛出相应的业务异常。 
+ * 4. **图形展示（Graph）**： 
+ * - 根据变量ID查询探针数据，并生成时间、值和匹配状态的列表，用于图形展示。 
+ * 5. **源数据分页查询（Origin Data Pagination）**： 
+ * - 根据分页参数和变量ID查询探针数据。 
+ * 6. **结果变量查询（Result Variable Query）**： 
+ * - 根据变量ID查询评估结果，并返回格式化的结果对象。 
+ * ### 关键组件 
+ * - **依赖注入**：通过 `@Autowired` 注入了多个服务类，如 `EvalProbeDataService`、`EvalVariableRefProbeDataService`、`RemotePythonService` 等。 
+ * - **日志记录**：使用 `EvalLog` 类进行日志记录，记录各个阶段的操作信息。 
+ * - **数据模型**：定义了多个数据模型类，如 `EvalVariableRef`、`EvalProbeData`、`EvalVariableRefProbeData` 等，用于表示不同类型的实体对象。 
+ * - **异常处理**：通过 `BusinessException` 和 `RemoteServiceException` 处理业务逻辑中的异常情况。 
+ * ### 方法概述 
+ * - `startVariableAlgorithm`：启动格式化过程。 
+ * - `startFormat`：执行格式化算法。 
+ * - `executeFormat`：具体执行格式化操作。 
+ * - `startMatch`：启动匹配过程。 
+ * - `startMark`：启动评分过程。 
+ * - `graph`：生成图形展示数据。 
+ * - `originData`：分页查询源数据。 
+ * - `resultVariable`：查询并返回评估结果。 
+ * ### 总结 
+ * 该服务类主要负责处理与评估变量相关的复杂业务逻辑，通过调用远程服务和数据库操作来完成格式化、匹配和评分等步骤，并提供了图形展示和数据查询的功能。代码结构清晰，注释详细，易于理解和维护。 
+**/
 package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;

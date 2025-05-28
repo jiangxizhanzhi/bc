@@ -1,3 +1,22 @@
+/**
+ * 这段代码定义了一个名为 `CourseInfoBo` 的 Java 类，用于表示课程的基本信息。以下是对该类的简要分析： 
+ * ### 类定义 
+ * - **包名**：`com.cyberpeace.oj.course.service.bo` 
+ * - **继承**：实现 `Serializable` 接口，支持序列化。 
+ * - **注解**： 
+ * - `@Getter` 和 `@Setter`：由 Lombok 提供，自动生成 getter 和 setter 方法。 
+ * - `@ApiModel`：用于 Swagger 文档生成，描述该对象为“课程基本信息”。 
+ * ### 类成员变量 
+ * - **静态常量**：`DEFAULT_WEIGHT`（默认权重） 
+ * - **属性**：包括课程编号、名称、是否公开、描述、类别ID、图标、大纲、难度、创建者ID、修改者ID、课程类型、热度、讲师、学分、课程编号、方向名称、课时数量、课时时长、理论课时数量、实验课时数量、建议学习时长、是否收藏、权重、是否有访问权限、岗位等。 
+ * ### 属性说明 
+ * - 每个属性都有对应的注释和 Swagger 注解 (`@ApiModelProperty`)，用于描述属性的作用和在文档中的展示名称。 
+ * ### 总结 
+ * - `CourseInfoBo` 是一个数据传输对象 (DTO)，用于封装课程的相关信息。 
+ * - 该类主要用于存储课程的基本信息，并且支持序列化以便在网络传输中使用。 
+ * - 使用 Lombok 减少了样板代码，使得代码更加简洁。 
+ * - Swagger 注解使该类在 API 文档中更易被理解和使用。 
+**/
 package com.cyberpeace.oj.course.service.bo;
 
 import io.swagger.annotations.ApiModel;

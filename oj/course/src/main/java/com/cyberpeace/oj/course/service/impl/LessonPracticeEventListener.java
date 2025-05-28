@@ -1,3 +1,45 @@
+/**
+ * 这段代码定义了一个名为 `LessonPracticeEventListener` 的类，该类实现了 `MessageListener` 接口。这个类的主要功能是监听特定的消息类型，并根据不同的消息类型执行相应的操作。以下是对代码的简要分析： 
+ * ### 类概述 
+ * - **包名**: `com.cyberpeace.oj.course.service.impl` 
+ * - **类名**: `LessonPracticeEventListener` 
+ * - **继承关系**: 继承自 `MessageListener` 
+ * - **注解**: 
+ * - `@Slf4j`: 使用 Lombok 自动生成日志对象。 
+ * - `@Service`: 标识这是一个 Spring 管理的服务类。 
+ * ### 成员变量 
+ * - **`ojLocalSceneService`**: 类型为 `OjLocalSceneService`，用于操作 `OjLocalScene` 实体。 
+ * - **`pushMessageHandler`**: 类型为 `PushMessageHandler`，用于处理消息推送。 
+ * ### 方法 
+ * #### `declareMessageType` 
+ * - **返回值**: `Integer` 
+ * - **功能**: 返回一个表示消息类型的整数。在这个实现中，返回的是 `LocalScene.BusinessCode.LESSON_PRACTICE.getCode()`。 
+ * #### `onSceneDelete` 
+ * - **参数**: 
+ * - `data`: 字符串，表示数据。 
+ * - `businessId`: 字符串，表示业务ID。 
+ * - `context`: `MqContext`，表示上下文信息。 
+ * - **返回值**: `Boolean` 
+ * - **功能**: 处理场景删除操作。首先从数据库中删除对应的 `OjLocalScene` 记录，然后推送删除消息。 
+ * #### `onSceneStartProcess` 
+ * - **参数**: 
+ * - `data`: 字符串，表示数据。 
+ * - `businessId`: 字符串，表示业务ID。 
+ * - `context`: `MqContext`，表示上下文信息。 
+ * - **返回值**: `Boolean` 
+ * - **功能**: 处理场景启动过程。首先从数据库中获取 `OjLocalScene` 记录，如果记录不存在，则抛出异常。然后更新 JSON 对象并推送消息，最后推送启动完成的消息。 
+ * #### `onSceneElement` 
+ * - **参数**: 
+ * - `data`: 字符串，表示数据。 
+ * - `businessId`: 字符串，表示业务ID。 
+ * - `context`: `MqContext`，表示上下文信息。 
+ * - **返回值**: `Boolean` 
+ * - **功能**: 处理场景元素操作。首先从数据库中获取 `OjLocalScene` 记录，如果记录不存在，则抛出异常。然后更新 JSON 对象并推送消息。 
+ * ### 总结 
+ * - `LessonPracticeEventListener` 类主要用于监听与课程练习相关的消息，并根据消息类型执行相应的操作（如删除、启动、更新等）。 
+ * - 该类依赖于 `OjLocalSceneService` 和 `PushMessageHandler` 两个服务来完成具体的操作。 
+ * - 通过这些方法，可以确保在接收到特定消息时，能够正确地处理和响应。 
+**/
 package com.cyberpeace.oj.course.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;

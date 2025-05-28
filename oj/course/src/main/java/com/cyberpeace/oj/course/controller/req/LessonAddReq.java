@@ -1,3 +1,46 @@
+/**
+ * 这段代码定义了一个名为 `LessonAddReq` 的类，用于表示创建新课程时的请求体。以下是对该代码的简要分析： 
+ * ### 类概述 
+ * - **包名**：`com.cyberpeace.oj.course.controller.req` 
+ * - **类名**：`LessonAddReq` 
+ * - **实现接口**：`Serializable` 
+ * - **注解**： 
+ * - `@Getter` 和 `@Setter`：由 Lombok 提供，自动生成 getter 和 setter 方法。 
+ * - `@ApiModel`：用于 Swagger 文档生成，描述整个模型。 
+ * - `@ApiModelProperty`：用于 Swagger 文档生成，描述每个字段。 
+ * ### 字段 
+ * - `name`：课时名称（必填） 
+ * - `type`：课时类型（必填），取值为 0 或 1 
+ * - `knowledge`：知识点（非必填） 
+ * - `attachmentIds`：附件 ID 列表（非必填） 
+ * - `difficulty`：难度（必填），取值为 0、1 或 2 
+ * - `duration`：课时时长（必填） 
+ * - `compulsory`：是否必修（必填），取值为 0、1 或 2 
+ * - `isPublic`：是否公开（必填），取值为 true 或 false 
+ * - `courseId`：课程 ID（必填） 
+ * - `handout`：讲义文件（非必填） 
+ * - `video`：视频文件（非必填） 
+ * - `ojSceneConfig`：OJ 场景配置（非必填） 
+ * - `destroyDelay`：销毁延迟（非必填），单位为小时 
+ * - `sceneShareMode`：场景共享模式（非必填），取值为 1 或 2 
+ * - `practiceList`：执业名单（习题列表）（非必填） 
+ * - `videoDuration`：视频时长（非必填） 
+ * ### 方法 
+ * - 自动生成的 getter 和 setter 方法 
+ * - 手动定义的 setter 方法： 
+ * - `setAttachment_ids` 
+ * - `setIs_public` 
+ * - `setCourse_id` 
+ * - `setOj_scene_config` 
+ * - `setDestroy_delay` 
+ * - `setScene_share_mode` 
+ * - `setPractice_list` 
+ * ### 总结 
+ * - 该类主要用于创建新课程时的数据传输对象（DTO）。 
+ * - 字段大多为必填项，确保在创建课程时所有必要信息都被提供。 
+ * - 使用了 Lombok 注解简化代码，减少样板代码。 
+ * - 通过 Swagger 注解支持 API 文档生成，便于开发者理解和使用。 
+**/
 package com.cyberpeace.oj.course.controller.req;
 
 import com.cyberpeace.common.baseinterface.Create;

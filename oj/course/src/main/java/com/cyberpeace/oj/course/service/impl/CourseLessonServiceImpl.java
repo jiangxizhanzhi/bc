@@ -1,3 +1,125 @@
+/**
+ * 这段代码是一个Spring Boot服务实现类 `CourseLessonServiceImpl`，主要负责管理课程和课时相关的业务逻辑。以下是对代码的主要功能和结构的简要分析： 
+ * ### 类概述 
+ * - **包名**: `com.cyberpeace.oj.course.service.impl` 
+ * - **类名**: `CourseLessonServiceImpl` 
+ * - **继承关系**: 继承自 `ServiceImpl<CourseLessonMapper, CourseLesson>`，这是MyBatis-Plus提供的基类，用于简化数据访问层的操作。 
+ * - **注解**: 
+ * - `@Service`: 表示这是一个Spring管理的服务组件。 
+ * - `@Slf4j`: 通过Lombok自动生成日志对象。 
+ * ### 成员变量 
+ * - **依赖注入**: 
+ * - 各种Mapper和Service的实例，如 `LessonRecordMapper`, `CourseLessonMapper`, `AttachmentService` 等。 
+ * - 一些工具类，如 `TransactionTemplate` 用于事务管理。 
+ * ### 方法 
+ * 1. **`getLessonDetail`**: 
+ * - 获取课程详情，包括课时信息、附件、练习数据等。 
+ * - 使用 `courseValidateHandler` 校验权限。 
+ * - 更新课时热度，并返回 `LessonInfoBo` 对象。 
+ * 2. **`selectByCourseAndLesson`**: 
+ * - 根据课程ID和课时ID查询课程和课时信息。 
+ * - 返回 `AdminLessonBo` 对象。 
+ * 3. **`addLesson`**: 
+ * - 添加新的课时。 
+ * - 包括课时基本信息、附件、练习数据等。 
+ * - 使用事务管理器 `TransactionTemplate` 来保证数据一致性。 
+ * 4. **`updateLesson`**: 
+ * - 更新现有课时。 
+ * - 包括课时基本信息、附件、练习数据等。 
+ * - 使用事务管理器 `TransactionTemplate` 来保证数据一致性。 
+ * 5. **`packagePaperContext`** 和 **`packageLessonConfig`**: 
+ * - 辅助方法，用于组装试卷和课程目录的数据。 
+ * 6. **`pageByContext`**: 
+ * - 分页查询课程列表。 
+ * - 返回 `IPage<AdminLessonListBo>` 对象。 
+ * 7. **`getPracticeCount`**: 
+ * - 获取练习数量。 
+ * - 返回 `long` 类型的练习数量。 
+ * 8. **`batchPublicPractice`**: 
+ * - 批量公开或私有化练习。 
+ * - 返回 `Boolean` 表示操作是否成功。 
+ * 9. **`importLessons`**: 
+ * - 导入课程和课时。 
+ * - 返回 `Boolean` 表示导入是否成功。 
+ * 10. **`initLessonConfig`** 和 **`reinitLesson`**: 
+ * - 辅助方法，用于初始化和重新初始化课程目录和课时。 
+ * 11. **`submitLessonPractice`**: 
+ * - 提交课后练习。 
+ * - 返回 `EvaluateResult` 对象表示评估结果。 
+ * 12. **`practiceByLesson`**: 
+ * - 逐节课练习。 
+ * - 返回 `LessonPracticeBo` 对象表示练习结果。 
+ * 13. **`adminLessonPractice`**: 
+ * - 管理员查看课程练习。 
+ * - 返回 `List<AdminLessonPracticeBo>` 对象表示练习数据。 
+ * 14. **`addLessonPractice`**: 
+ * - 添加课后练习。 
+ * - 返回 `Boolean` 表示操作是否成功。 
+ * 15. **`markLessonPractice`**: 
+ * - 标记课后练习。 
+ * - 返回 `Boolean` 表示操作是否成功。 
+ * 16. **`releaseLessonPractice`**: 
+ * - 发布课后练习。 
+ * - 返回 `Boolean` 表示操作是否成功。 
+ * 17. **`uploadHandout`** 和 **`uploadVideo`**: 
+ * - 上传讲义和视频。 
+ * - 更新课程信息。 
+ * 18. **`batchDelete`**: 
+ * - 批量删除课程和课时。 
+ * - 返回删除的数量。 
+ * 19. **`deleteAttachment`**: 
+ * - 删除附件。 
+ * - 辅助方法，用于删除指定URL的文件。 
+ * 20. **`batchDeleteClassroom`**: 
+ * - 批量删除教室。 
+ * - 辅助方法，用于删除指定教室ID的教室信息。 
+ * 21. **`selectCourseScene`**: 
+ * - 查询课程场景。 
+ * - 返回 `CourseSceneContext` 对象。 
+ * 22. **`selectLessonAllTopo`**: 
+ * - 查询课时拓扑。 
+ * - 返回 `List<String>` 对象。 
+ * 23. **`clearSceneAndTopos`**: 
+ * - 清除场景和拓扑。 
+ * - 辅助方法，用于删除场景和拓扑数据。 
+ * 24. **`lesson2AdminBo`**: 
+ * - 将课程列表转换为管理员视图的BO对象。 
+ * - 返回 `List<AdminLessonListBo>` 对象。 
+ * 25. **`selectLessonAllScene`**: 
+ * - 查询课时场景。 
+ * - 返回 `List<OjLocalScene>` 对象。 
+ * 26. **`lessonSceneByLessons`** 和 **`lessonPracticeSceneByLessons`**: 
+ * - 查询课时场景。 
+ * - 返回 `List<OjLocalScene>` 对象。 
+ * 27. **`handlerLessonDump`** 和 **`loadLesson`**: 
+ * - 处理课程的导入和导出。 
+ * - 返回 `LessonDumpLoadBo` 对象。 
+ * 28. **`loadLessonCopyFile`** 和 **`copyFile`**: 
+ * - 辅助方法，用于文件的复制和重命名。 
+ * 29. **`handlerPractice`**: 
+ * - 处理练习数据。 
+ * - 返回 `Map<String, LessonPracticeListBo>` 对象。 
+ * 30. **`validatePaper`**: 
+ * - 验证试卷数据。 
+ * - 返回 `Paper` 对象。 
+ * 31. **`uploadHandout`**: 
+ * - 上传讲义文件。 
+ * - 返回 `String` 表示文件路径。 
+ * 32. **`createMpLog`**: 
+ * - 创建中台日志。 
+ * - 辅助方法，用于记录日志。 
+ * 33. **`getTopoScene`**: 
+ * - 获取拓扑场景。 
+ * - 返回 `TopoSceneDataBo` 对象。 
+ * 34. **`countVideo`**: 
+ * - 统计视频时长。 
+ * - 更新课程视频时长。 
+ * ### 总结 
+ * - 该类实现了多个与课程和课时相关的业务逻辑，包括添加、更新、删除、查询等操作。 
+ * - 使用了多种辅助方法和工具类来简化复杂逻辑。 
+ * - 通过事务管理器确保数据的一致性和完整性。 
+ * - 代码结构清晰，注释详细，易于理解和维护。 
+**/
 package com.cyberpeace.oj.course.service.impl;
 
 import com.alibaba.fastjson.JSONArray;

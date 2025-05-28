@@ -1,3 +1,57 @@
+/**
+ * 这段代码定义了一个名为 `EvalIndicatorAdminController` 的控制器类，用于处理与评估指标相关的HTTP请求。以下是对其主要功能和结构的简要分析： 
+ * ### 类及注解 
+ * - **类名**：`EvalIndicatorAdminController` 
+ * - **注解**： 
+ * - `@RestController`：声明这是一个RESTful风格的控制器。 
+ * - `@Slf4j`：引入日志记录功能。 
+ * - `@RequestMapping("/cr/eval/indicator")`：定义了该控制器的基路径。 
+ * ### 成员变量 
+ * - 实例化了多个服务对象（如 `EvalIndicatorService`, `EvalIndicatorMapper` 等），以及远程服务对象 `RemotePythonService` 和事务模板 `TransactionTemplate`。 
+ * ### 主要方法 
+ * #### 1. `addEvalIndicator` 
+ * - **功能**：添加新的评估指标。 
+ * - **参数**：`EvalIndicatorReq` 请求体。 
+ * - **操作**：在事务中执行指标的保存、聚合项和采集项的保存。 
+ * - **返回值**：`BaseRsp<String>`，表示操作结果。 
+ * #### 2. `checkMatrixDataConsistency` 
+ * - **功能**：检查矩阵数据的一致性。 
+ * - **参数**：`EvalAhpAlgorithmReq` 请求体。 
+ * - **操作**：通过远程服务调用进行一致性校验。 
+ * - **返回值**：`BaseRsp<String>`，包含校验结果。 
+ * #### 3. `validateReq` 
+ * - **功能**：验证请求体的有效性。 
+ * - **参数**：`EvalIndicatorReq` 请求体。 
+ * - **操作**：校验名称长度、名称重复性和描述长度。 
+ * - **内部逻辑**：暂时未实现的层次分析法矩阵数据校验逻辑。 
+ * #### 4. `editEvalIndicator` 
+ * - **功能**：编辑现有的评估指标。 
+ * - **参数**：`EvalIndicatorReq` 请求体。 
+ * - **操作**：在事务中更新指标及其相关联的聚合项和采集项。 
+ * - **返回值**：`BaseRsp<String>`，表示操作结果。 
+ * #### 5. `getEvalIndex` 
+ * - **功能**：获取单个评估指标。 
+ * - **参数**：资源ID。 
+ * - **操作**：从数据库中获取指定ID的评估指标并转换为响应对象。 
+ * - **返回值**：`BaseRsp<EvalIndicatorRsp>`，包含评估指标信息。 
+ * #### 6. `convertEvalIndicatorToEvalSystemRsp` 
+ * - **功能**：将评估指标对象转换为响应对象。 
+ * - **参数**：`EvalIndicator` 对象。 
+ * - **操作**：复制属性并将相关集合转换为字符串数组。 
+ * - **返回值**：`EvalIndicatorRsp` 响应对象。 
+ * #### 7. `list` 
+ * - **功能**：查询评估指标列表。 
+ * - **参数**：`EvalNameListReq` 请求体。 
+ * - **操作**：根据条件分页查询评估指标，并将结果转换为响应对象。 
+ * - **返回值**：`BaseRsp<ListRsp<EvalIndicatorRsp>>`，包含分页后的评估指标列表。 
+ * #### 8. `batchDelete` 
+ * - **功能**：批量删除评估指标。 
+ * - **参数**：`BatchDeleteReq` 删除请求体。 
+ * - **操作**：检查指标是否被使用，如果未被使用则执行删除操作。 
+ * - **返回值**：`BaseRsp<Boolean>`，表示删除操作的结果。 
+ * ### 总结 
+ * 该控制器提供了完整的评估指标管理功能，包括添加、编辑、查询和删除等操作。每个操作都涉及复杂的业务逻辑处理，如事务管理和远程服务调用。整体设计遵循了RESTful架构风格，并通过Spring框架的依赖注入机制实现了各组件之间的松耦合。 
+**/
 package com.cyberpeace.cr.evaluation.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;

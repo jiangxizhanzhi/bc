@@ -1,3 +1,46 @@
+/**
+ * 这段代码定义了一个名为 `AdminLessonListBo` 的 Java 类，该类用于表示管理员课程列表的数据传输对象（BO, Business Object）。以下是对该类的简要分析： 
+ * ### 类定义 
+ * - **包名**: `com.cyberpeace.oj.course.service.bo` 
+ * - **导入**: 导入了 `io.swagger.annotations` 包中的注解用于文档生成，以及 `lombok` 包中的注解用于简化代码。 
+ * - **继承**: 实现了 `Serializable` 接口，表示该类的对象可以被序列化。 
+ * ### 注解 
+ * - **Lombok 注解**: 
+ * - `@Getter`: 为所有字段生成 getter 方法。 
+ * - `@Setter`: 为所有字段生成 setter 方法。 
+ * - **Swagger 注解**: 
+ * - `@ApiModel`: 用于描述该 BO 的用途。 
+ * - `@ApiModelProperty`: 为每个字段提供描述信息，便于 Swagger 文档生成。 
+ * ### 字段 
+ * - **基本信息**: 
+ * - `resourceId`: 资源编号。 
+ * - `courseId`: 课程编号。 
+ * - `courseName`: 课程名称。 
+ * - `type`: 课时类型（理论课或实验课）。 
+ * - `name`: 课时名称。 
+ * - **详细信息**: 
+ * - `handoutType`: 讲义类型。 
+ * - `handoutUrl`: 讲义 URL。 
+ * - `videoUrl`: 视频 URL。 
+ * - `videoDuration`: 视频时长。 
+ * - `difficulty`: 难度等级。 
+ * - `isPublic`: 是否公开。 
+ * - `compulsory`: 是否必修。 
+ * - `duration`: 课时时长。 
+ * - `topoId`: 拓扑编号。 
+ * - `createUserId`: 创建用户 ID。 
+ * - `createUserName`: 创建用户名称。 
+ * - `practiceCount`: 练习题数量。 
+ * - `paperPublic`: 练习公开与隐藏。 
+ * - `hasReport`: 是否有实验报告。 
+ * - `lessonFile`: 课时附件数据。 
+ * - `sceneShareMode`: 场景共享类型。 
+ * - `builtin`: 是否为内置课时。 
+ * ### 总结 
+ * - **功能**: `AdminLessonListBo` 类主要用于存储和传递管理员课程列表的相关信息。 
+ * - **特性**: 使用 Lombok 注解减少了样板代码，提高了可读性和维护性。同时，通过 Swagger 注解增强了 API 文档的自动生成能力。 
+ * - **适用场景**: 适用于需要管理和展示课程信息的后台系统中，尤其是需要对课程进行分类、排序和过滤的场景。 
+**/
 package com.cyberpeace.oj.course.service.bo;
 
 import com.cyberpeace.cs.service.context.AttachmentBo;

@@ -1,3 +1,45 @@
+/**
+ * 这段代码定义了一个名为 `CourseImportServiceImpl` 的服务类，用于处理课程的导入和管理。以下是对其主要功能和结构的简要分析： 
+ * ### 主要功能 
+ * 1. **课程导入**： 
+ * - `parseRmCourse`：解析课程信息。 
+ * - `parseRmLesson`：解析课程中的课时信息。 
+ * - `rMCourseImport`：综合处理课程及其课时的导入逻辑。 
+ * 2. **课时配置**： 
+ * - `parseRmLessonConfig`：解析课时配置信息。 
+ * - `generateLessonConfig`：生成课时配置。 
+ * 3. **组合课程导入**： 
+ * - `rMCombinedCourseImport`：处理多个课程及其课时的组合导入。 
+ * 4. **其他辅助方法**： 
+ * - `deleteLessonPracticeTopo`：删除课后练习相关的拓扑数据。 
+ * - `destroyFailedTopo`：销毁失败的拓扑数据。 
+ * ### 主要类和接口 
+ * - **依赖注入**：通过 `@Autowired` 注入了多个服务、映射器和工具类。 
+ * - **日志记录**：使用 `log` 记录操作日志。 
+ * - **数据模型**：使用了 `Course`, `CourseLesson`, `LessonConfig` 等数据模型。 
+ * - **枚举和常量**：使用了多个枚举类和常量来表示不同的状态和配置。 
+ * ### 关键方法 
+ * 1. **课程解析**： 
+ * - `parseRmCourse`：从 Markdown 文件中解析课程信息，并进行数据转换和校验。 
+ * - `jsonParseCourse`：将 JSON 数据转换为 `Course` 对象。 
+ * 2. **课时解析**： 
+ * - `parseRmLesson`：解析课程中的每个课时信息。 
+ * - `doParseLesson`：具体处理每个课时的数据。 
+ * - `parseLesson`：解析单个课时的具体内容。 
+ * 3. **课时配置解析**： 
+ * - `parseRmLessonConfig`：解析课程的课时配置信息。 
+ * - `generateLessonConfig`：生成课程的课时配置。 
+ * 4. **组合课程导入**： 
+ * - `rMCombinedCourseImport`：处理多个课程及其课时的组合导入。 
+ * 5. **辅助方法**： 
+ * - `saveLessonPractice`：保存课后练习数据。 
+ * - `selectDeleteTopoIds`：选择需要删除的拓扑数据。 
+ * - `selectLessonTopoIds`：获取课程的拓扑数据。 
+ * - `deleteLessonPracticeTopo`：删除课后练习相关的拓扑数据。 
+ * - `destroyFailedTopo`：销毁失败的拓扑数据。 
+ * ### 总结 
+ * 这个类的主要职责是处理课程的导入和管理，包括解析课程信息、课时信息以及课时配置等。它通过依赖注入和一系列辅助方法实现了复杂的业务逻辑，并确保数据的一致性和完整性。 
+**/
 package com.cyberpeace.oj.course.service.impl;
 
 import com.alibaba.fastjson.JSONObject;

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.iov.dao.entity.VehicleType;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.iov.dao.entity.VehicleFrame;
 import com.cyberpeace.iov.dao.mapper.VehicleFrameMapper;
 import com.cyberpeace.iov.service.VehicleFrameService;
+import com.cyberpeace.iov.service.VehicleTypeService;
 import com.cyberpeace.iov.service.bo.dut.AreaAndCount;
 import com.cyberpeace.iov.service.bo.frame.*;
 import com.google.common.collect.Maps;
@@ -42,6 +44,9 @@ public class VehicleFrameServiceImpl extends ServiceImpl<VehicleFrameMapper, Veh
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	@Autowired
+	private VehicleTypeService vehicleTypeService;
+
 	@Override
 	public ListRsp<VehicleFrameListBo> pageFrame(PageReqBase req) {
 		Page page = req.toPageParam();
@@ -49,8 +54,14 @@ public class VehicleFrameServiceImpl extends ServiceImpl<VehicleFrameMapper, Veh
 		List<String> userIds = iPage.getRecords().stream().map(VehicleFrameListBo::getCreator)
 				.collect(Collectors.toList());
 		Map<String, String> userNameMap = remoteUserService.getIdNameMap(userIds);
+		List<VehicleTypeBo> types = vehicleTypeService.listBos();
+		Map<String, String> typeMap = StreamApiUtils.toMap(types, VehicleTypeBo::getResourceId,
+				VehicleTypeBo::getName);
 		iPage.getRecords()
-				.forEach(r -> r.setCreatorName(userNameMap.getOrDefault(r.getCreator(), "")));
+				.forEach(r -> {
+					r.setCreatorName(userNameMap.getOrDefault(r.getCreator(), ""));
+					r.setModelName(typeMap.getOrDefault(r.getModel(), ""));
+				});
 		return PageUtil.getListResult(iPage);
 
 	}
@@ -78,6 +89,8 @@ public class VehicleFrameServiceImpl extends ServiceImpl<VehicleFrameMapper, Veh
 		VehicleFrame frame = this.getById(resourceId);
 		VehicleFrameDetailBo bo = BeanUtils.copy(frame, VehicleFrameDetailBo.class);
 		bo.setCreatorName(remoteUserService.getById(bo.getCreator()).getName());
+		VehicleType type = vehicleTypeService.getById(frame.getModel());
+		bo.setModelName(type == null ? "" : type.getName());
 		return bo;
 	}
 

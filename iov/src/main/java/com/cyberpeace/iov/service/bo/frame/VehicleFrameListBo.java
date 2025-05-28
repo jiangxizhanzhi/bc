@@ -10,7 +10,10 @@ public class VehicleFrameListBo {
 	private String resourceId;
 
 	@ApiModelProperty(value = "车型")
-	private Integer model;
+	private String model;
+
+	@ApiModelProperty(value = "车型名称")
+	private String modelName;
 
 	@ApiModelProperty(value = "名称")
 	private String name;

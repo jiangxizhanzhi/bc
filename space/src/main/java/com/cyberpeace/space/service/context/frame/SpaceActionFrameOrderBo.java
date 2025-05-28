@@ -8,6 +8,14 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * 空间行动框架次序Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Data
 public class SpaceActionFrameOrderBo {
 

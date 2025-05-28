@@ -6,6 +6,15 @@ import org.springframework.stereotype.Repository;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.space.dao.entity.SpaceActionFrameOrder;
 
+/**
+ * 空间行动框架次序Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 @Mapper
 @Repository
 public interface SpaceActionFrameOrderMapper extends BaseMapper<SpaceActionFrameOrder> {

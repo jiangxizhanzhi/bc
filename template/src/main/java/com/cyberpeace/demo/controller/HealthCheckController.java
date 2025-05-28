@@ -11,6 +11,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 健康检查Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Slf4j
 @Api(tags = "健康检查接口")
 @RestController

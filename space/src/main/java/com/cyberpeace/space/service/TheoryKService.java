@@ -7,6 +7,14 @@ import com.cyberpeace.space.service.context.ListKReq;
 
 import java.util.List;
 
+/**
+ * 理论KSERVICE 服务
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 public interface TheoryKService {
     ListRsp<AdminLessonListBo> pageK(ListKReq req);
 

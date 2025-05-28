@@ -7,6 +7,15 @@ import org.springframework.stereotype.Repository;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.space.dao.entity.SpaceIocThreat;
 
+/**
+ * 空间国际 奥委会威胁Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 @Mapper
 @Repository
 public interface SpaceIocThreatMapper extends BaseMapper<SpaceIocThreat>

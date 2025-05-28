@@ -11,6 +11,15 @@ import org.springframework.web.socket.WebSocketHandler;
 
 import java.util.Map;
 
+/**
+ * 无身份验证握手
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see JwtHandShake
+ * @since 1.0.0
+ */
 @Slf4j
 @Component
 public class NoAuthHandShake extends JwtHandShake {

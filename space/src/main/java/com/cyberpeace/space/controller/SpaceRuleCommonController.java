@@ -19,6 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * 空间统治常用Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Api(tags = "知识空间-规则库-通用")
 @RestController
 @RequestMapping("/space/rule/common")

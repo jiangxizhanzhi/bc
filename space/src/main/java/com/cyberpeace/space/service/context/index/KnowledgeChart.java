@@ -6,6 +6,14 @@ import org.apache.commons.compress.utils.Lists;
 
 import java.util.List;
 
+/**
+ * 知识点图表
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public class KnowledgeChart {

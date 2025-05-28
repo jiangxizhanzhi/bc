@@ -4,6 +4,15 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 空间行动框架下发Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceActionFrameReleaseReq
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public class SpaceActionFrameReleaseBo extends SpaceActionFrameReleaseReq {

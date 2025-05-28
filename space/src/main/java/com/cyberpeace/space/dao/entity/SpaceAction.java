@@ -14,6 +14,15 @@ import lombok.Setter;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 空间作
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceFrameBaseTable
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @TableName("space_action")

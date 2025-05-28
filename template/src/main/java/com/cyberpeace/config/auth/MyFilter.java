@@ -14,6 +14,15 @@ import com.cyberpeace.common.model.CommonContext;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 我的过滤器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see Filter
+ * @since 1.0.0
+ */
 @Slf4j
 public class MyFilter implements Filter {
 

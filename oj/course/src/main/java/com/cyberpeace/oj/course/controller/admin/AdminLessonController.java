@@ -241,7 +241,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<CourseLesson> patch(@Validated(Update.class) LessonUpdateReq lessonUpdateReq) {
 		CourseLesson old = courseLessonMapper.selectById(lessonUpdateReq.getResourceId());
-		if(old.getBuiltin()==true){
+		if(Boolean.TRUE.equals(old.getBuiltin())){
 			throw new BusinessException(ErrorCode.BUILT_IN);
 		}
 		// 修改数据转换 进行视频和讲义地址是否修改判断
@@ -577,10 +577,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@GetMapping("/monitor_refresh_interval")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Integer> getMonitorRefreshInterval() {
-
 		String refreshInterval = ConfigUtil.getContextProperty("oj.monitor.refresh.interval");
 		return new BaseRsp<>(Integer.parseInt(refreshInterval));
-
 	}
 
 	/**

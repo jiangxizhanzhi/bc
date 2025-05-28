@@ -4,6 +4,14 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 编号框架计数
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public class IndexFrameCount {

@@ -10,6 +10,15 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 空间违反法官统治Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public class SpaceViolationJudgeRuleBo extends SpaceBoBase {

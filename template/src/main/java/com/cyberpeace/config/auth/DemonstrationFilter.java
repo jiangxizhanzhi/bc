@@ -19,6 +19,15 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 示范过滤器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see Filter
+ * @since 1.0.0
+ */
 public class DemonstrationFilter implements Filter {
 
 

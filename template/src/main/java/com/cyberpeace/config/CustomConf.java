@@ -11,7 +11,11 @@ import com.cyberpeace.common.util.SpringContextUtil;
 
 /**
  * 自定义配置项
+ *
  * @author yinqingrong
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
  */
 @Configuration
 public class CustomConf {

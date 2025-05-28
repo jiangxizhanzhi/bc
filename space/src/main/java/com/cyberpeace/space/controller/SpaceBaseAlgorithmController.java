@@ -14,6 +14,15 @@ import com.cyberpeace.space.service.SpaceBaseAlgorithmService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 空间基础算法Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 @Api(tags = "知识库-算法库-基础算法库")
 @RestController
 @RequestMapping("/space/algorithm/base_algorithm")

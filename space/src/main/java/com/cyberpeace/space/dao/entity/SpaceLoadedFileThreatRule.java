@@ -11,6 +11,15 @@ import lombok.Setter;
 
 import java.util.Map;
 
+/**
+ * 空间加载文件威胁规则
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBaseTable
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @TableName("space_loaded_file_threat_rule")

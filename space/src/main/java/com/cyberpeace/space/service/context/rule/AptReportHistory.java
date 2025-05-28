@@ -6,6 +6,14 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
+/**
+ * APT 报告历史
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public class AptReportHistory {

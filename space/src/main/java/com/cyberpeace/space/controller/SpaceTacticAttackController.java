@@ -17,6 +17,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * 空间战法攻击Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Api(tags = "战法库-攻击战法")
 @RestController
 @RequestMapping("/space/tactic/attack")

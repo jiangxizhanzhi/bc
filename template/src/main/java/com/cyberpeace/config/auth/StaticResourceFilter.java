@@ -14,8 +14,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * @Author xuxz
- * @Date 11/7/2022 上午10:29
+ * 静态资源过滤器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see Filter
+ * @since 1.0.0
  */
 @Slf4j
 public class StaticResourceFilter implements Filter {

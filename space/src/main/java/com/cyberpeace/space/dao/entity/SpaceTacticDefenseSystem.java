@@ -9,6 +9,15 @@ import lombok.Data;
 
 import java.util.Map;
 
+/**
+ * 空间战法防御系统
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBaseTable
+ * @since 1.0.0
+ */
 @Data
 @TableName("space_tactic_defense_system")
 public class SpaceTacticDefenseSystem extends SpaceBaseTable {

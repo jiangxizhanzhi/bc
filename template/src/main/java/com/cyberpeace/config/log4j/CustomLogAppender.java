@@ -14,6 +14,15 @@ import org.apache.log4j.Layout;
 import org.apache.log4j.helpers.OptionConverter;
 import org.apache.log4j.spi.LoggingEvent;
 
+/**
+ * 自定义日志附加程序
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see FileAppender
+ * @since 1.0.0
+ */
 @Slf4j
 public class CustomLogAppender extends FileAppender {
 

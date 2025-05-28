@@ -11,6 +11,15 @@ import lombok.Setter;
 
 import java.util.Map;
 
+/**
+ * 空间算法专业知识
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBaseTable
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @TableName("space_algorithm_expertise")

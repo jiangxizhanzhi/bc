@@ -30,6 +30,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.List;
 
+/**
+ * 空间容易威胁检测统治Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 @Api(tags = "规则库-特定APT威胁检测规则")
 @RestController
 @RequestMapping("/space/rule/space_apt_threat_detect_rule")

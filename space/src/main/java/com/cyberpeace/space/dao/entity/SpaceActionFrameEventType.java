@@ -10,6 +10,15 @@ import lombok.Data;
 import java.util.Map;
 
 
+/**
+ * 空间行动框架事件类型
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBaseTable
+ * @since 1.0.0
+ */
 @Data
 @TableName("space_action_frame_event_type")
 public class SpaceActionFrameEventType extends SpaceBaseTable {

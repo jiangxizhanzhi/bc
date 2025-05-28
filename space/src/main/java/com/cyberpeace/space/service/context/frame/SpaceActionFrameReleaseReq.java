@@ -6,6 +6,14 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 
+/**
+ * 空间行动框架下发请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public class SpaceActionFrameReleaseReq {

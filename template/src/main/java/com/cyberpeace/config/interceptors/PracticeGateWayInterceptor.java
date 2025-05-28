@@ -25,6 +25,15 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 练习门道路拦截 器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see HandlerInterceptor
+ * @since 1.0.0
+ */
 @Slf4j
 @Component
 public class PracticeGateWayInterceptor implements HandlerInterceptor {

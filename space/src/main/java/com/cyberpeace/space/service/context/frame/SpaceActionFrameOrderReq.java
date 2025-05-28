@@ -7,6 +7,14 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+/**
+ * 空间行动框架次序请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public class SpaceActionFrameOrderReq {

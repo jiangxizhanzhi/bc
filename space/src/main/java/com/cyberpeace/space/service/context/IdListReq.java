@@ -9,6 +9,14 @@ import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
 
+/**
+ * id列表请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public class IdListReq {

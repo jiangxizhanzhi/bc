@@ -21,6 +21,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 空间算法岗位Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 @Api(tags = "知识库-算法库-岗位能力评估算法")
 @RestController
 @RequestMapping("/space/algorithm/algorithm_role")

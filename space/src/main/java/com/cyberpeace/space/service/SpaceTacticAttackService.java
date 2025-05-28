@@ -9,6 +9,15 @@ import com.cyberpeace.space.service.context.tactic.*;
 
 import java.util.List;
 
+/**
+ * 空间战法攻击Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see IService
+ * @since 1.0.0
+ */
 public interface SpaceTacticAttackService extends IService<SpaceTacticAttack> {
     ListRsp<AttackListBo> pageAttack(SpaceTacticPageReq req);
 

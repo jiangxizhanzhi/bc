@@ -14,6 +14,15 @@ import lombok.Setter;
 
 import java.util.Map;
 
+/**
+ * Space APT 功能
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBaseTable
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @TableName("space_apt_feature")

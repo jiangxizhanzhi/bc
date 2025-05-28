@@ -14,6 +14,15 @@ import com.cyberpeace.space.service.SpaceSourceAnalyzeRuleService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 空间源分析统治Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 @Api(tags = "知识库-规则库-攻击源分析规则")
 @RestController
 @RequestMapping("/space/rule/space_source_analyze_rule")

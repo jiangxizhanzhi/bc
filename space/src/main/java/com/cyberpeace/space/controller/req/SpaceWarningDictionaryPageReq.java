@@ -8,6 +8,15 @@ import com.cyberpeace.space.model.req.SpaceToolPageReq;
 
 import io.swagger.annotations.ApiModel;
 
+/**
+ * 空间警告字典分页请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceToolPageReq
+ * @since 1.0.0
+ */
 @ApiModel
 public class SpaceWarningDictionaryPageReq extends SpaceToolPageReq {
 

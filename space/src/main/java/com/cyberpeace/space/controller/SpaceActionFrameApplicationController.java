@@ -77,6 +77,11 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 列出当前红蓝的所有框架应用
+	 * @param req
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("列出当前红蓝的所有框架应用")
 	@GetMapping("/list_by_rvb")
 	public BaseRsp<List<SpaceActionFrameApplicationBo>>
@@ -87,6 +92,11 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 更新
+	 * @param req
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("更新")
 	@PatchMapping("")
     @Override
@@ -108,6 +118,11 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 详情
+	 * @param resource_id
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("详情")
 	@GetMapping("")
 	@Override
@@ -116,6 +131,11 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 		return new BaseRsp<>(bo);
 	}
 
+	/**
+	 * 删除框架应用
+	 * @param req
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("删除框架应用")
 	@DeleteMapping("")
 	@Override

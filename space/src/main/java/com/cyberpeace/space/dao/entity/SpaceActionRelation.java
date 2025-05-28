@@ -6,6 +6,14 @@ import lombok.Setter;
 
 import java.util.Date;
 
+/**
+ * 空间作关系
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @TableName("space_action_relation")

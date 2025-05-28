@@ -26,7 +26,10 @@ import java.util.List;
  * 空间动作帧控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/05
+ * @see SpaceActionFrameBaseController
+ * @since 1.0.0
  */
 @Api(tags = "防御行动框架-行动框架管理")
 @RestController

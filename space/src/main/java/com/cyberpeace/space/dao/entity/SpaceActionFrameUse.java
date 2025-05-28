@@ -9,6 +9,14 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 空间行动框架使用
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Setter
 @Getter
 @TableName("space_action_frame_use")

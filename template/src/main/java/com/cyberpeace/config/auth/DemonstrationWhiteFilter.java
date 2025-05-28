@@ -23,6 +23,15 @@ import com.cyberpeace.common.util.SystemPropUtil;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
+/**
+ * 示范白过滤器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see Filter
+ * @since 1.0.0
+ */
 @Slf4j
 public class DemonstrationWhiteFilter implements Filter {
 

@@ -6,6 +6,15 @@ import com.cyberpeace.space.dao.entity.SpaceAptFeature;
 import com.cyberpeace.space.model.req.SpacePageReqBase;
 import io.swagger.annotations.ApiModel;
 
+/**
+ * 空间容易特征分页请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpacePageReqBase
+ * @since 1.0.0
+ */
 @ApiModel
 public class SpaceAptFeaturePageReq extends SpacePageReqBase {
     @Override

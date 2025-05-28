@@ -12,6 +12,15 @@ import com.cyberpeace.common.util.JsonUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 请求拦截器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see HandlerInterceptor
+ * @since 1.0.0
+ */
 @Slf4j
 @Component
 public class RequestInterceptor implements HandlerInterceptor {

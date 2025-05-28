@@ -21,7 +21,9 @@ import lombok.extern.slf4j.Slf4j;
  * 空间算法公共Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "知识库-算法库-通用")
 @RestController

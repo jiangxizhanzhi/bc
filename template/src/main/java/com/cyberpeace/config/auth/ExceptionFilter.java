@@ -34,6 +34,15 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 例外过滤器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see Filter
+ * @since 1.0.0
+ */
 @Slf4j
 public class ExceptionFilter implements Filter {
 

@@ -124,6 +124,10 @@ public class SpaceActionController extends SpaceActionFrameBaseController<SpaceA
 		return StreamApiUtils.distinct(StreamApiUtils.map(req.getMethod(), IdAndName::getResourceId));
 	}
 
+	/**
+	 * 检查操作是否被框架引用
+	 * @param ids id列表
+	 */
 	@Override
 	protected void checkReference(List<String> ids) {
 		for (String methodId : ids) {

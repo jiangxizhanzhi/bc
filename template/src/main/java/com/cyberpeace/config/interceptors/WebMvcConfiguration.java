@@ -11,6 +11,12 @@ import java.util.List;
 
 /**
  * 拦截器的配置
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see WebMvcConfigurer
+ * @since 1.0.0
  */
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer {

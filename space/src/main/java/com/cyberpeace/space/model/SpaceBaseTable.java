@@ -15,6 +15,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Space 基桌
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public abstract class SpaceBaseTable {

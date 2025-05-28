@@ -5,6 +5,14 @@ import com.cyberpeace.space.constant.SpaceKTypeEnum;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 知识点图表类别
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public class KnowledgeChartCategory {

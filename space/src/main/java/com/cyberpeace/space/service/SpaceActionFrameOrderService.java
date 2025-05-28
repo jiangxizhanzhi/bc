@@ -10,6 +10,15 @@ import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderReq;
 
 import java.util.List;
 
+/**
+ * 空间行动框架次序Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see IService
+ * @since 1.0.0
+ */
 public interface SpaceActionFrameOrderService extends IService<SpaceActionFrameOrder>{
     void create(SpaceActionFrameOrderReq req);
 

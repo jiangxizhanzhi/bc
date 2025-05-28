@@ -8,6 +8,15 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 空间算法团队Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public class SpaceAlgorithmTeamBo extends SpaceBoBase {

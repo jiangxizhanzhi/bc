@@ -10,6 +10,15 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * 空间行动方法分页请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see FrameBasePageReq
+ * @since 1.0.0
+ */
 @ApiModel
 public class SpaceActionMethodPageReq extends FrameBasePageReq {
 

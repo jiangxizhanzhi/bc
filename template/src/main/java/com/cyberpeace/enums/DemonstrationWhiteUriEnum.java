@@ -1,7 +1,15 @@
 package com.cyberpeace.enums;
 
 
-
+/**
+ * 演示白色 URI 枚举
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see Enum
+ * @since 1.0.0
+ */
 public enum DemonstrationWhiteUriEnum {
     WHITE("/cpms/demonstration/demonstrationWhite.json","classpath:static/demonstration/demonstrationWhite.json");
 

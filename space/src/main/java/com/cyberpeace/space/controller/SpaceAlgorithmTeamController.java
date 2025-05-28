@@ -13,6 +13,15 @@ import com.cyberpeace.space.service.context.algorithm.SpaceAlgorithmTeamBo;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 空间算法团队Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 @Api(tags = "知识库-算法库-团队能力评估算法")
 @RestController
 @RequestMapping("/space/algorithm/algorithm_team")

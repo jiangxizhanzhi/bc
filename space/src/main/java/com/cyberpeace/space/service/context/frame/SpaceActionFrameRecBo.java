@@ -8,6 +8,15 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * 空间行动框架娱乐Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceActionFrameBo
+ * @since 1.0.0
+ */
 @Setter
 @Getter
 public class SpaceActionFrameRecBo extends SpaceActionFrameBo {

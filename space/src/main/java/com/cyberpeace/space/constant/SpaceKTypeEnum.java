@@ -2,6 +2,15 @@ package com.cyberpeace.space.constant;
 
 import lombok.Getter;
 
+/**
+ * space ktype 枚举
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see Enum
+ * @since 1.0.0
+ */
 public enum SpaceKTypeEnum {
 
 

@@ -19,6 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * 空间行动方法Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceActionFrameBaseController
+ * @since 1.0.0
+ */
 @Api(tags = "知识库-防御行动框架-作战方法管理")
 @RestController
 @RequestMapping("/space/action_frame/action_method")

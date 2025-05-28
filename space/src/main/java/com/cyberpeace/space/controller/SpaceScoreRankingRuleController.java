@@ -14,6 +14,15 @@ import com.cyberpeace.space.service.SpaceScoreRankingRuleService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 空间得分排名统治Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 @Api(tags = "知识库-规则库-记分排行规则")
 @RestController
 @RequestMapping("/space/rule/space_score_ranking_rule")

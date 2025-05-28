@@ -14,6 +14,15 @@ import com.cyberpeace.space.service.context.rule.SpaceFingerPrintBo;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 空间手指打印Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 @Api(tags = "知识库-规则库-指纹库")
 @RestController
 @RequestMapping("/space/rule/space_finger_print")

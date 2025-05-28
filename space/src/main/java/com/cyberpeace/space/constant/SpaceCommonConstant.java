@@ -1,5 +1,13 @@
 package com.cyberpeace.space.constant;
 
+/**
+ * 空间常用不断
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 public class SpaceCommonConstant {
     
 	/**

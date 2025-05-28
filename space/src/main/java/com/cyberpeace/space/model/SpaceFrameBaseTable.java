@@ -15,6 +15,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 空间框架基础桌子
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public abstract class SpaceFrameBaseTable {

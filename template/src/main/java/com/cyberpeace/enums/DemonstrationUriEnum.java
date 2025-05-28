@@ -6,6 +6,15 @@ import com.cyberpeace.common.util.DateUtil;
 
 import java.util.*;
 
+/**
+ * 演示 URI 枚举
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see Enum
+ * @since 1.0.0
+ */
 public enum DemonstrationUriEnum {
     SITUATION_RANKING("/ojj/rtks/situation/ranking/","/cpms/demonstration/situationRanking.json","classpath:static/demonstration/situationRanking.json",null),
     SITUATION_SITUATION("/ojj/rtks/situation/situation/","/cpms/demonstration/situationSituation.json","classpath:static/demonstration/situationSituation.json",null),

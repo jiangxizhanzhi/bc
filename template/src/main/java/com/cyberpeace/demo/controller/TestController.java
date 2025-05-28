@@ -17,6 +17,14 @@ import com.cyberpeace.integratation.service.RemoteTopoService;
 
 import io.swagger.annotations.Api;
 
+/**
+ * 测试Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Api(tags = "测试接口")
 @RestController
 @RequestMapping("/test")

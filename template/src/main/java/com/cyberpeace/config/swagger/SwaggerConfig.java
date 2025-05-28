@@ -18,6 +18,14 @@ import springfox.documentation.spring.web.plugins.Docket;
 
 import java.util.Arrays;
 
+/**
+ * Swagger 配置
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Configuration
 @EnableOpenApi
 public class SwaggerConfig {

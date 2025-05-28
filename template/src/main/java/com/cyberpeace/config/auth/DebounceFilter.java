@@ -24,7 +24,12 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 防抖
+ *
  * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see Filter
+ * @since 1.0.0
  */
 @Slf4j
 public class DebounceFilter implements Filter {
@@ -92,6 +97,15 @@ public class DebounceFilter implements Filter {
 	}
 }
 
+/**
+ * 内容缓存请求包装器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see HttpServletRequestWrapper
+ * @since 1.0.0
+ */
 class ContentCacheRequestWrapper extends HttpServletRequestWrapper {
 
 	private byte[] body;

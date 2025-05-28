@@ -25,6 +25,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.List;
 
+/**
+ * 空间策略Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Api(tags = "知识空间-知识库-策略库")
 @RestController
 @RequestMapping("/space/strategy")

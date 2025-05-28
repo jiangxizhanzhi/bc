@@ -11,6 +11,14 @@ import com.cyberpeace.common.util.SystemPropUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * log4 jlevel 配置
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Slf4j
 @Component
 public class Log4JLevelConfig {

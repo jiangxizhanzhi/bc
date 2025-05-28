@@ -27,7 +27,10 @@ import lombok.extern.slf4j.Slf4j;
  * 空间算法专业知识控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see SpaceControllerBase
+ * @since 1.0.0
  */
 @Api(tags = "知识库-算法库-专业能力评估算法")
 @RestController

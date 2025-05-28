@@ -14,6 +14,15 @@ import com.cyberpeace.space.service.SpaceRoundMechanismRuleService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 空间圆机制统治Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 @Api(tags = "知识库-规则库-轮次机制规则")
 @RestController
 @RequestMapping("/space/rule/space_round_mechanism_rule")

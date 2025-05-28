@@ -31,6 +31,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.List;
 
+/**
+ * 空间警告字典Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 @Api(tags = "知识库-规则库-攻击告警字典规则")
 @RestController
 @RequestMapping("/space/rule/space_warning_dictionary")

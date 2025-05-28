@@ -22,7 +22,13 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * JWT 握手
+ *
  * @author yinqingrong
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see HandshakeInterceptor
+ * @since 1.0.0
  */
 @Slf4j
 @Component

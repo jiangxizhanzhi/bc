@@ -1,5 +1,13 @@
 package com.cyberpeace.space.constant;
 
+/**
+ * 空间错误
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 public class SpaceError {
     /**
      * 无法删除内置框架

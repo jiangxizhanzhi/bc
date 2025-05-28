@@ -12,6 +12,15 @@ import com.cyberpeace.common.constant.WebConstant;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * JWT过滤器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see BasicHttpAuthenticationFilter
+ * @since 1.0.0
+ */
 @Slf4j
 public class JwtFilter extends BasicHttpAuthenticationFilter {
 

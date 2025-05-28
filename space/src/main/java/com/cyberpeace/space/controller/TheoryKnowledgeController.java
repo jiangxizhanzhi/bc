@@ -30,6 +30,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * 理论知识点Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Api(tags = "知识空间-理论知识库")
 @RestController
 @RequestMapping("/space/theory")

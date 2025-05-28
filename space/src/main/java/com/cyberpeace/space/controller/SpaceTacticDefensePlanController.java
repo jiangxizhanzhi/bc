@@ -21,6 +21,15 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 空间战法防御计划Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 @Api(tags = "战法库-防御战法方案")
 @RestController
 @RequestMapping("/space/tactic/defense_plan")

@@ -19,6 +19,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
+/**
+ * 基本验证领域
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see AuthorizingRealm
+ * @since 1.0.0
+ */
 @Slf4j
 @Service
 public class BasicValidationRealm extends AuthorizingRealm {

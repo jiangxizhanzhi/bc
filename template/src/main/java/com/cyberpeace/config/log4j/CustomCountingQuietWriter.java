@@ -8,8 +8,18 @@ import java.io.Writer;
 
 /**
  * 重写CustomCountingQuietWriter
+ * <p>
+ * <p>
  * 计算长度时,设置字符级
+ * <p>
+ * <p>
  * Created by xxx on 2018/7/24.
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see QuietWriter
+ * @since 1.0.0
  */
 public class CustomCountingQuietWriter extends QuietWriter {
     protected long count;

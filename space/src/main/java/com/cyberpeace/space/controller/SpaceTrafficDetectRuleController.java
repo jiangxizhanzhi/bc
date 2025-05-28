@@ -30,6 +30,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.List;
 
+/**
+ * 空间流量检测统治Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 @Api(tags = "规则库-网络攻击防御规则")
 @RestController
 @RequestMapping("/space/rule/space_traffic_detect_rule")

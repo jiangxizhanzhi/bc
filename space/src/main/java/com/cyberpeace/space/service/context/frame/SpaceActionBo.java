@@ -14,6 +14,15 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 空间行动Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceFrameBoBase
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public class SpaceActionBo extends SpaceFrameBoBase {

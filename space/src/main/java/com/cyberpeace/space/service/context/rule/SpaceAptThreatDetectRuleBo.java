@@ -8,6 +8,15 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 空间容易威胁检测统治Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public class SpaceAptThreatDetectRuleBo extends SpaceBoBase {

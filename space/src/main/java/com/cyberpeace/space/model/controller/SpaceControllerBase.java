@@ -28,6 +28,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 空间Controller基础
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 public abstract class SpaceControllerBase<S extends IService<E>, E extends SpaceBaseTable, B extends SpaceBoBase, R extends SpacePageReqBase> {
 
 	@Autowired

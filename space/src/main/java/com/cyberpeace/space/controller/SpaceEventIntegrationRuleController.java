@@ -30,6 +30,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.List;
 
+/**
+ * 空间事件集成统治Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 @Api(tags = "规则库-主机攻击防御规则")
 @RestController
 @RequestMapping("/space/rule/space_event_integration_rule")

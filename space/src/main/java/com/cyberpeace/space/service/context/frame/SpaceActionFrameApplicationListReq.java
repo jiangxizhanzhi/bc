@@ -10,6 +10,15 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * 空间行动框架行为依赖列表请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpacePageReqBase
+ * @since 1.0.0
+ */
 @ApiModel
 public class SpaceActionFrameApplicationListReq extends SpacePageReqBase {
 

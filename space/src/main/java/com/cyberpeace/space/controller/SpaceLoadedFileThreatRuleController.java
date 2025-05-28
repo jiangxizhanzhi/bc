@@ -33,6 +33,15 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 空间加载文件威胁统治Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 @Api(tags = "规则库-病毒威胁防御规则")
 @RestController
 @RequestMapping("/space/rule/space_loaded_file_threat_rule")

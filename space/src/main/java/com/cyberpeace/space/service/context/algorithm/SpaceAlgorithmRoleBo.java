@@ -11,6 +11,15 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * 空间算法岗位Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public class SpaceAlgorithmRoleBo extends SpaceBoBase {

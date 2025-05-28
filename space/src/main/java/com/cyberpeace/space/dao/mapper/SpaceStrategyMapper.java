@@ -10,6 +10,15 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.space.dao.entity.SpaceStrategy;
 import com.cyberpeace.space.service.context.strategy.SpaceStrategySimple;
 
+/**
+ * 空间策略Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 @Mapper
 @Repository
 public interface SpaceStrategyMapper extends BaseMapper<SpaceStrategy> {

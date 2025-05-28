@@ -7,6 +7,15 @@ import org.springframework.stereotype.Component;
 
 import com.cyberpeace.common.component.SelfDefinedWsChecker;
 
+/**
+ * BB 自定义 WS 检查器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SelfDefinedWsChecker
+ * @since 1.0.0
+ */
 @Component
 public class BbSelfDefinedWsChecker extends SelfDefinedWsChecker {
 

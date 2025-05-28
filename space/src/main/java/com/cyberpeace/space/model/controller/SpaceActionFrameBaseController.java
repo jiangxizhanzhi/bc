@@ -36,6 +36,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * 空间行动框架基础Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 public abstract class SpaceActionFrameBaseController<S extends IService<E>, E extends SpaceFrameBaseTable, B extends SpaceFrameBoBase, R extends FrameBasePageReq> {
 
 	@Autowired

@@ -8,6 +8,14 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * 空间Bo基础
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public abstract class SpaceBoBase {

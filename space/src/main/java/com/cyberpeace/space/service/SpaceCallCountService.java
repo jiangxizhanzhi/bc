@@ -7,7 +7,10 @@ import com.cyberpeace.space.dao.entity.SpaceCallCount;
  * 调用计数Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/13
+ * @see IService
+ * @since 1.0.0
  */
 public interface SpaceCallCountService extends IService<SpaceCallCount> {
     /**

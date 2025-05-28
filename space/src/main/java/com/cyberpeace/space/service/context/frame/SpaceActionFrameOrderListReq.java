@@ -10,6 +10,15 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 空间行动框架次序列表请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpacePageReqBase
+ * @since 1.0.0
+ */
 @ApiModel
 public class SpaceActionFrameOrderListReq extends SpacePageReqBase {
 

@@ -8,6 +8,15 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * 空间事件集成统治分页请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceToolPageReq
+ * @since 1.0.0
+ */
 @ApiModel
 public class SpaceEventIntegrationRulePageReq extends SpaceToolPageReq {
 

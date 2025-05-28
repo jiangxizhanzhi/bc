@@ -11,8 +11,15 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 服务启动，依赖的参数校验。
- *
+ * <p>
+ * <p>
+ * <p>
  * 目的在于快速发现可能的配置项错误！
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
  */
 @Slf4j
 @Component

@@ -13,6 +13,15 @@ import org.apache.ibatis.plugin.*;
 
 import java.util.Properties;
 
+/**
+ * 演示白色拦截器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see Interceptor
+ * @since 1.0.0
+ */
 @Intercepts({ @Signature(type = Executor.class, method = "update",
 		args = { MappedStatement.class, Object.class }) })
 public class DemonstrationWhiteInterceptor implements Interceptor {

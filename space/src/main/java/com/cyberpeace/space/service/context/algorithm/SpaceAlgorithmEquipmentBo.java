@@ -13,7 +13,10 @@ import lombok.Setter;
  * 空间算法设备 BO
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/05
+ * @see SpaceBoBase
+ * @since 1.0.0
  */
 @Getter
 @Setter

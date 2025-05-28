@@ -8,7 +8,9 @@ import lombok.Setter;
  * Space 算法统计
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Getter
 @Setter

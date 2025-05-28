@@ -11,6 +11,15 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 空间算法个人Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 @Api(tags = "知识库-算法库-个人能力评估算法")
 @RestController
 @RequestMapping("/space/algorithm/algorithm_individual")

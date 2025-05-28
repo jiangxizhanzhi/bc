@@ -6,8 +6,16 @@ import lombok.Data;
 
 /**
  * ws消息标识的demo。
- *
+ * <p>
+ * <p>
+ * <p>
  * 声明的字段和请求ws连接时的字段一致！
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see WsMessageIdentifier
+ * @since 1.0.0
  */
 @Builder
 @Data

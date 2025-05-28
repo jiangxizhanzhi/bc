@@ -5,6 +5,15 @@ import com.cyberpeace.space.dao.entity.SpaceActionRelation;
 
 import java.util.List;
 
+/**
+ * 空间行动关系Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see IService
+ * @since 1.0.0
+ */
 public interface SpaceActionRelationService extends IService<SpaceActionRelation> {
     void createRelation(List<String> upperIds, String resourceId);
 

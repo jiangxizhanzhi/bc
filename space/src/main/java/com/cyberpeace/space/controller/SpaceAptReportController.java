@@ -27,6 +27,15 @@ import javax.validation.constraints.NotEmpty;
 import java.io.File;
 import java.util.List;
 
+/**
+ * 空间容易报告Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 @Api(tags = "知识库-理论知识库-APT报告")
 @RestController
 @RequestMapping("/space/theory/space_apt_report")

@@ -9,6 +9,15 @@ import lombok.Data;
 
 import java.util.Map;
 
+/**
+ * Space apt 报告
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBaseTable
+ * @since 1.0.0
+ */
 @Data
 @TableName("space_apt_report")
 public class SpaceAptReport extends SpaceBaseTable {

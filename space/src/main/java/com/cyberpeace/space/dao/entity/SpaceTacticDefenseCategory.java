@@ -8,6 +8,15 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 空间战法防御类别
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see BaseTable
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @TableName("space_tactic_defense_category")

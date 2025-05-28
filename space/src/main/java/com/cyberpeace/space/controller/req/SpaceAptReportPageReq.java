@@ -9,6 +9,15 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 空间容易报告分页请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpacePageReqBase
+ * @since 1.0.0
+ */
 @ApiModel
 public class SpaceAptReportPageReq extends SpacePageReqBase {
 

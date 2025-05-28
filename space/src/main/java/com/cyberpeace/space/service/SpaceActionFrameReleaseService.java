@@ -9,6 +9,15 @@ import com.cyberpeace.space.service.context.frame.SpaceActionFrameReleaseReq;
 
 import java.util.List;
 
+/**
+ * 空间行动框架下发Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see IService
+ * @since 1.0.0
+ */
 public interface SpaceActionFrameReleaseService extends IService<SpaceActionFrameRelease> {
     void create(SpaceActionFrameReleaseReq req);
 

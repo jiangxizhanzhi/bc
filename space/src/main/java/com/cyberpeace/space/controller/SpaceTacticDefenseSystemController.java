@@ -23,6 +23,15 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * 空间战法防御系统Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 @Api(tags = "战法库-防御技战法体系")
 @RestController
 @RequestMapping("/space/tactic/system")

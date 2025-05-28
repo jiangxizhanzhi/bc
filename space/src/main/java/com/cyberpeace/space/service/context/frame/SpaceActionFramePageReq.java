@@ -9,6 +9,15 @@ import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 空间行动框架分页请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see FrameBasePageReq
+ * @since 1.0.0
+ */
 @ApiModel
 public class SpaceActionFramePageReq extends FrameBasePageReq {
 

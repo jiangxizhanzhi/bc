@@ -12,6 +12,15 @@ import lombok.Setter;
 
 import java.util.Map;
 
+/**
+ * 空间流量萃取统治
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBaseTable
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @TableName("space_traffic_extraction_rule")

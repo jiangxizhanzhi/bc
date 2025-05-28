@@ -13,8 +13,13 @@ import com.cyberpeace.cs.service.impl.ChatWebSocketHandler;
 
 /**
  * websocket配置项
- * 
+ *
  * @author yinqingrong
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see WebMvcConfigurerAdapter
+ * @see WebSocketConfigurer
+ * @since 1.0.0
  */
 @EnableWebSocket
 @Configuration

@@ -29,7 +29,7 @@ public class Dut extends BaseTable {
 	/**
 	 * 车型
 	 */
-	private Integer model;
+	private String model;
 
 	/**
 	 * 图标

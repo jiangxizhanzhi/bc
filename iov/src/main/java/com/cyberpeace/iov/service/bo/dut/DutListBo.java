@@ -2,6 +2,7 @@ package com.cyberpeace.iov.service.bo.dut;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.bytedeco.opencv.presets.opencv_core;
 
 @Data
 public class DutListBo {
@@ -16,7 +17,10 @@ public class DutListBo {
 	private Integer ecu;
 
 	@ApiModelProperty(value = "车型")
-	private Integer model;
+	private String model;
+
+	@ApiModelProperty(value = "车型名称")
+	private String modelName;
 
 	@ApiModelProperty(value = "logo")
 	private String logo;

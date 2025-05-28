@@ -32,7 +32,7 @@ public class DutController {
 	@ApiOperation("被测件分页列表")
 	@GetMapping("/page")
 	public BaseRsp<ListRsp<DutListBo>> pageDuts(@ApiParam PageReqBase req,
-			@ApiParam(value = "车型", name = "model") Integer model,
+			@ApiParam(value = "车型", name = "model") String model,
 			@ApiParam(value = "域类型", name = "area") Integer area,
 			@ApiParam(value = "状态", name = "status") Integer status) {
 		ListRsp<DutListBo> res = dutService.pageDuts(req, model, area, status);
@@ -41,7 +41,7 @@ public class DutController {
 
 	@ApiOperation("被测件列表")
 	@GetMapping("list")
-	public BaseRsp<List<DutListBo>> listDuts(@ApiParam(value = "车型", name = "model") Integer model,
+	public BaseRsp<List<DutListBo>> listDuts(@ApiParam(value = "车型", name = "model") String model,
 			@ApiParam(value = "域类型", name = "area") Integer area) {
 		List<DutListBo> res = dutService.listDuts(model, area);
 		return new BaseRsp<>(res);

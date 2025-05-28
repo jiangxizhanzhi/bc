@@ -13,7 +13,7 @@ public class DutAddReq {
 	private Integer ecu;
 
 	@ApiModelProperty(value = "车型")
-	private Integer model;
+	private String model;
 
 	@ApiModelProperty(value = "logo")
 	private String logo;

@@ -16,7 +16,9 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.iov.constant.DutStatus;
 import com.cyberpeace.iov.dao.entity.Dut;
+import com.cyberpeace.iov.dao.entity.VehicleType;
 import com.cyberpeace.iov.dao.mapper.DutMapper;
+import com.cyberpeace.iov.dao.mapper.VehicleTypeMapper;
 import com.cyberpeace.iov.service.DutService;
 import com.cyberpeace.iov.service.bo.dut.DutAddReq;
 import com.cyberpeace.iov.service.bo.dut.DutListBo;
@@ -32,8 +34,11 @@ public class DutServiceImpl extends ServiceImpl<DutMapper, Dut> implements DutSe
 	@Autowired
 	private DutMapper dutMapper;
 
+	@Autowired
+	private VehicleTypeMapper vehicleTypeMapper;
+
 	@Override
-	public ListRsp<DutListBo> pageDuts(PageReqBase req, Integer model, Integer area,
+	public ListRsp<DutListBo> pageDuts(PageReqBase req, String model, Integer area,
 			Integer status) {
 		Page page = req.toPageParam();
 		IPage<DutListBo> iPage = dutMapper.page(page, model, area, status);
@@ -52,7 +57,7 @@ public class DutServiceImpl extends ServiceImpl<DutMapper, Dut> implements DutSe
 	}
 
 	@Override
-	public List<DutListBo> listDuts(Integer model, Integer area) {
+	public List<DutListBo> listDuts(String model, Integer area) {
 		List<DutListBo> res = this.getBaseMapper().listByModelAndArea(model, area);
 		return res;
 	}
@@ -74,6 +79,10 @@ public class DutServiceImpl extends ServiceImpl<DutMapper, Dut> implements DutSe
 	public DutListBo getDetail(String resourceId) {
 		Dut dut = this.getOrException(resourceId);
 		DutListBo bo = BeanUtils.copy(dut, DutListBo.class);
+		VehicleType type = vehicleTypeMapper.selectById(dut.getModel());
+		if (type != null) {
+			bo.setModelName(type.getName());
+		}
 		return bo;
 	}
 

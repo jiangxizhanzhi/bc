@@ -32,20 +32,41 @@ public class SpaceAptThreatDetectRulePageReq extends SpacePageReqBase {
 	@ApiModelProperty(value = "工具名称")
 	private String tool;
 
+	/**
+	 * 将请求转换为查询包装器
+	 *
+	 * 此方法用于将用户请求参数转换为MyBatis-Plus的LambdaQueryWrapper对象，
+	 * 以便于后续的数据库查询操作它根据用户输入的条件（如模式、APT代码、工具等）
+	 * 来构建查询条件，并默认按照更新时间降序排序
+	 *
+	 * @return LambdaQueryWrapper<SpaceAptThreatDetectRule> 返回一个配置好查询条件的LambdaQueryWrapper对象
+	 */
 	@Override
 	public LambdaQueryWrapper<SpaceAptThreatDetectRule> req2QueryWrapper() {
-		LambdaQueryWrapper<SpaceAptThreatDetectRule> wrapper = new LambdaQueryWrapper<>();
-		wrapper.orderByDesc(SpaceAptThreatDetectRule::getUpdateTime);
-		if (StringUtils.isNotBlank(this.getPattern())) {
-			wrapper.like(SpaceAptThreatDetectRule::getName, this.getPattern());
-		}
-		if (StringUtils.isNotBlank(this.getApt_code())) {
-			wrapper.like(SpaceAptThreatDetectRule::getAptCode, this.getApt_code());
-		}
-		if (StringUtils.isNotBlank(this.getTool())) {
-			wrapper.like(SpaceAptThreatDetectRule::getTool, this.getTool());
-		}
-		wrapper.setEntityClass(SpaceAptThreatDetectRule.class);
-		return wrapper;
+	    // 创建一个LambdaQueryWrapper对象
+	    LambdaQueryWrapper<SpaceAptThreatDetectRule> wrapper = new LambdaQueryWrapper<>();
+	    // 默认按照更新时间降序排序
+	    wrapper.orderByDesc(SpaceAptThreatDetectRule::getUpdateTime);
+
+	    // 如果模式（名称）条件不为空，则添加模糊查询条件
+	    if (StringUtils.isNotBlank(this.getPattern())) {
+	        wrapper.like(SpaceAptThreatDetectRule::getName, this.getPattern());
+	    }
+
+	    // 如果APT代码条件不为空，则添加模糊查询条件
+	    if (StringUtils.isNotBlank(this.getApt_code())) {
+	        wrapper.like(SpaceAptThreatDetectRule::getAptCode, this.getApt_code());
+	    }
+
+	    // 如果工具条件不为空，则添加模糊查询条件
+	    if (StringUtils.isNotBlank(this.getTool())) {
+	        wrapper.like(SpaceAptThreatDetectRule::getTool, this.getTool());
+	    }
+
+	    // 设置实体类类型
+	    wrapper.setEntityClass(SpaceAptThreatDetectRule.class);
+
+	    // 返回配置好的查询包装器
+	    return wrapper;
 	}
 }

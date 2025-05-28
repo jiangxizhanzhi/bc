@@ -7,6 +7,10 @@ package com.cyberpeace.space.constant;
  * @version 1.0.0
  * @date 2025/05/28
  * @since 1.0.0
+ * 错误码
+ *
+ * @author zhangyong
+ * @date 2021/12/07
  */
 public class SpaceError {
     /**

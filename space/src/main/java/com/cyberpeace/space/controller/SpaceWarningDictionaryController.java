@@ -48,38 +48,42 @@ import java.util.List;
 public class SpaceWarningDictionaryController extends SpaceControllerBase<SpaceWarningDictionaryService, SpaceWarningDictionary, SpaceWarningDictionaryBo, SpaceWarningDictionaryPageReq> {
 
 	/**
-	 * 导出胜过
+	 * 导出数据为Excel表格格式
 	 *
-	 * @param response 响应
-	 * @param req      请求体
-	 * @return base rsp< 布尔值>
-	 * @throws
-	 * @see HttpServletResponse
-	 * @see SpaceEventIntegrationRulePageReq
-	 * @see BaseRsp<Boolean>
+	 * @param response HTTP响应对象，用于输出导出的Excel文件
+	 * @param req 请求参数对象，包含导出筛选条件
+	 * @return 返回一个BaseRsp对象，表示导出操作是否成功
 	 */
 	@ApiOperation("导出成excel表格")
 	@GetMapping("/excel")
 	public BaseRsp<Boolean> exportExcel(HttpServletResponse response,
-			SpaceEventIntegrationRulePageReq req) {
-		String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
-				+ CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
+	        SpaceEventIntegrationRulePageReq req) {
+	    // 生成Excel文件的路径和名称
+	    String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
+	            + CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
 
-		LambdaQueryWrapper<SpaceWarningDictionary> wrapper = new LambdaQueryWrapper<>();
-        if (StringUtils.isNotBlank(req.getPattern())) {
-            wrapper.like(SpaceWarningDictionary::getName, req.getPattern());
-        }
-        if (StringUtils.isNotBlank(req.getTool())) {
-            wrapper.like(SpaceWarningDictionary::getToolType, req.getTool());
-        }
-		List<SpaceWarningDictionary> all = baseService.list(wrapper);
-		List<SpaceWarningDictionaryExcelBo> exportBoList = BeanUtils.deepCopyList(all,
-				SpaceWarningDictionaryExcelBo.class);
+	    // 创建查询条件包装器
+	    LambdaQueryWrapper<SpaceWarningDictionary> wrapper = new LambdaQueryWrapper<>();
+	    // 根据名称模糊筛选
+	    if (StringUtils.isNotBlank(req.getPattern())) {
+	        wrapper.like(SpaceWarningDictionary::getName, req.getPattern());
+	    }
+	    // 根据工具类型模糊筛选
+	    if (StringUtils.isNotBlank(req.getTool())) {
+	        wrapper.like(SpaceWarningDictionary::getToolType, req.getTool());
+	    }
+	    // 执行查询，获取所有符合条件的记录
+	    List<SpaceWarningDictionary> all = baseService.list(wrapper);
+	    // 将查询结果深拷贝到一个新的列表中，准备导出
+	    List<SpaceWarningDictionaryExcelBo> exportBoList = BeanUtils.deepCopyList(all,
+	            SpaceWarningDictionaryExcelBo.class);
 
-		// 数据导出
-		ExcelDataHandler.exportExcel(exportBoList, filePath, ExcelHeader.WARNING_DICTIONARY);
-		FileUtil.setResponse(new File(filePath), true, response);
+	    // 数据导出
+	    ExcelDataHandler.exportExcel(exportBoList, filePath, ExcelHeader.WARNING_DICTIONARY);
+	    // 设置HTTP响应，将Excel文件作为附件提供下载
+	    FileUtil.setResponse(new File(filePath), true, response);
 
-		return new BaseRsp<>(Boolean.TRUE);
+	    // 返回导出成功的结果
+	    return new BaseRsp<>(Boolean.TRUE);
 	}
 }

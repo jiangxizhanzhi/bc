@@ -47,50 +47,46 @@ import java.util.List;
 public class SpaceEventIntegrationRuleController extends SpaceControllerBase<SpaceEventIntegrationRuleService, SpaceEventIntegrationRule, SpaceEventIntegrationRuleBo, SpaceEventIntegrationRulePageReq> {
 
     /**
-     * 导出胜过
+     * 导出数据为Excel表格格式
+     * 该接口处理导出操作，根据请求参数生成Excel文件，并提供给客户端下载
      *
-     * @param response 响应
-     * @param req      请求体
-     * @return base rsp< 布尔值>
-     * @throws
-     * @see HttpServletResponse
-     * @see SpaceEventIntegrationRulePageReq
-     * @see BaseRsp<Boolean>
+     * @param response HttpServletResponse对象，用于设置响应头，以便客户端可以下载Excel文件
+     * @param req 导出请求参数，包含需要查询的工具名称和类型信息
+     * @return 返回一个BaseRsp对象，表示导出操作是否成功
      */
     @ApiOperation("导出成excel表格")
     @GetMapping("/excel")
     public BaseRsp<Boolean> exportExcel(HttpServletResponse response,
                                         SpaceEventIntegrationRulePageReq req) {
+        // 生成Excel文件的路径和名称
         String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
                 + CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
 
+        // 创建查询条件
         LambdaQueryWrapper<SpaceEventIntegrationRule> wrapper = new LambdaQueryWrapper<>();
+        // 根据请求参数中的工具名称进行模糊查询
         if (StringUtils.isNotBlank(req.getTool())) {
             wrapper.like(SpaceEventIntegrationRule::getTool, req.getTool());
         }
+        // 根据请求参数中的类型进行模糊查询
         if (StringUtils.isNotBlank(req.getType())) {
             wrapper.like(SpaceEventIntegrationRule::getType, req.getType());
         }
+        // 执行查询，获取所有符合条件的记录
         List<SpaceEventIntegrationRule> all = baseService.list(wrapper);
+        // 将查询结果深拷贝到一个新的列表中，用于导出
         List<SpaceEventIntegrationRuleExcelBo> exportBoList = BeanUtils.deepCopyList(all,
                 SpaceEventIntegrationRuleExcelBo.class);
 
         // 数据导出
         ExcelDataHandler.exportExcel(exportBoList, filePath, ExcelHeader.EVENT_INTEGRATION_RULE);
+        // 设置响应头，使客户端可以下载生成的Excel文件
         FileUtil.setResponse(new File(filePath), true, response);
 
+        // 返回导出成功的信息
         return new BaseRsp<>(Boolean.TRUE);
     }
 
-    /**
-     * 检查名称重复
-     *
-     * @param entity 实体
-     * @return boolean
-     * @throws
-     * @see SpaceEventIntegrationRule
-     * @see boolean
-     */
     @Override
     public boolean checkNameDuplication(SpaceEventIntegrationRule entity) {
         return true;

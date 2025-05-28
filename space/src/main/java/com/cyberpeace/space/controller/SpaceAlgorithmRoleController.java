@@ -37,23 +37,9 @@ import java.util.Map;
 @Slf4j
 public class SpaceAlgorithmRoleController extends SpaceControllerBase<SpaceAlgorithmRoleService, SpaceAlgorithmRole, SpaceAlgorithmRoleBo, SpacePageReqBase> {
 
-    /**
-     * 课程Service
-     *
-     * @see CourseService
-     */
     @Autowired
     private CourseService courseService;
 
-    /**
-     * 获取相关映射
-     *
-     * @param eList E 列表
-     * @return 地图<字符串id和名称>
-     * @throws
-     * @see List<SpaceAlgorithmRole>
-     * @see Map<String, IdAndName>
-     */
     @Override
     protected Map<String, IdAndName> getRelatedMap(List<SpaceAlgorithmRole> eList) {
         Map<String, IdAndName> res = Maps.newHashMap();
@@ -72,13 +58,6 @@ public class SpaceAlgorithmRoleController extends SpaceControllerBase<SpaceAlgor
         return res;
     }
 
-    /**
-     * 检查值
-     *
-     * @param entity 实体
-     * @throws
-     * @see SpaceAlgorithmRole
-     */
     @Override
     public void checkValue(SpaceAlgorithmRole entity){
         this.checkPercentageValue(entity.getCoursePercent() + entity.getTrainingPercent());

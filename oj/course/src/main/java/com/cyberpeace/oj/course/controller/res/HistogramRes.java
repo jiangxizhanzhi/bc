@@ -30,14 +30,14 @@
  * * x 个名称 
  * * 
  * * @see List<String> 
- * */ 
+ * *
  * @ApiModelProperty("x轴，统计项") 
  * private List<String> xNames; 
  * /** 
  * * y 值 
  * * 
  * * @see List<Integer> 
- * */ 
+ * *
  * @ApiModelProperty("y轴，柱形值") 
  * private List<Integer> yValues; 
  * ``` 

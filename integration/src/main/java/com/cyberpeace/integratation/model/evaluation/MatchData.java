@@ -12,7 +12,7 @@
  * - `private Long baseTime;`: 一个长整型变量，表示基准时间。 
  * - `private List<MatchItemData> data;`: 一个泛型列表，包含 `MatchItemData` 对象，表示数据。 
  * 4. **文档注释** 
- * - `/** ... */`: 类级别的 Javadoc 注释，提供了类的基本描述和作者信息。 
+ * - `/** ... `: 类级别的 Javadoc 注释，提供了类的基本描述和作者信息。
  * ### 总结 
  * - **功能**: `MatchData` 类用于存储匹配数据，包括基准时间和一系列的匹配项数据。 
  * - **实现**: 使用 Lombok 的注解来简化代码，避免手动编写 getter 和 setter 方法。 

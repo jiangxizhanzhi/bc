@@ -28,17 +28,17 @@
  * ```java 
  * /** 
  * * 名称 
- * */ 
+ * *
  * @ApiModelProperty("名称") 
  * private String name; 
  * /** 
  * * 计数 
- * */ 
+ * *
  * @ApiModelProperty("数量") 
  * private Integer count; 
  * /** 
  * * 计数列表 
- * */ 
+ * *
  * @ApiModelProperty("变化数量") 
  * private List<MonthCount> countList; 
  * ``` 
@@ -52,7 +52,7 @@
  * * 
  * * @author SN 
  * * @date 2024/11/08 
- * */ 
+ * *
  * ``` 
  * 提供了类的简短描述以及作者和日期信息。 
  * ### 总结 

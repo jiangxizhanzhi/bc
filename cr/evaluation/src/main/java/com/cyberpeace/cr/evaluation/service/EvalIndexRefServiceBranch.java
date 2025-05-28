@@ -20,7 +20,7 @@
  * * This method seems to be a placeholder or an example with no real functionality. 
  * * @param input Input string 
  * * @return Always returns true 
- * */ 
+ * *
  * public boolean getBranch(String input) { 
  * return true; 
  * } 

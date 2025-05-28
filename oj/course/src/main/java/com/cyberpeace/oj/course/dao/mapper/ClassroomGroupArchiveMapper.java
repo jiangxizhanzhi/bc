@@ -34,7 +34,7 @@
  * * @see String 
  * * @see String 
  * * @see ClassroomGroupArchive 
- * */ 
+ *
  * ClassroomGroupArchive selectByRoomAndName(@Param("roomId") String classroomId, @Param("name") String name); 
  * /** 
  * * 查询分组模板数据 
@@ -44,7 +44,7 @@
  * * @throws 
  * * @see String 
  * * @see List<ClassroomGroupArchive> 
- * */ 
+ * *
  * List<ClassroomGroupArchive> selectByRoom(@Param("roomId") String classroomId); 
  * ``` 
  * - `selectByRoomAndName` 方法根据 `classroomId` 和 `name` 查询一条 `ClassroomGroupArchive` 记录。 

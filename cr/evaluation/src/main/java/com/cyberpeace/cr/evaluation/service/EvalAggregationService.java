@@ -21,7 +21,7 @@
  * * 
  * * @author SN 
  * * @date 2024/11/08 
- * */ 
+ * *
  * public interface EvalAggregationService extends IService<EvalAggregation> { 
  * ``` 
  * - **注释**：接口的文档说明，描述了该接口的作用是“评估集合体Service”。 
@@ -32,7 +32,7 @@
  * * 批量保存评估聚合项 
  * * 
  * * @param evalAggregations 评估聚合项列表 
- * */ 
+ * *
  * void saveBatchContext(List<EvalAggregationContext> evalAggregations); 
  * ``` 
  * - **方法**：`saveBatchContext` 
@@ -44,7 +44,7 @@
  * * 
  * * @param resourceId 指标项id 
  * * @return 
- * */ 
+ * *
  * List<EvalAggregationContext> getContextByEvalIndicatorId(String resourceId); 
  * ``` 
  * - **方法**：`getContextByEvalIndicatorId` 

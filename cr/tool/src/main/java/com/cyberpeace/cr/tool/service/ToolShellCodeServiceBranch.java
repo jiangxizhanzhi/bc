@@ -39,7 +39,7 @@
  * * 
  * * @param input the input string 
  * * @return true if input matches any predefined string, otherwise false 
- * */ 
+ * *
  * public boolean getBranch(String input) { 
  * return BRANCH_CASES.contains(input); 
  * } 

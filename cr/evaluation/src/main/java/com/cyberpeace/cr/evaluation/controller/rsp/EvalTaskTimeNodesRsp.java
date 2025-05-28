@@ -24,12 +24,12 @@
  * ```java 
  * /** 
  * * 任务id 
- * */ 
+ * *
  * @ApiModelProperty("测评任务Id") 
  * private String taskId; 
  * /** 
  * * 数据 
- * */ 
+ * *
  * @ApiModelProperty("测评步骤记录") 
  * private List<EvalTimeLineContext> data; 
  * ``` 

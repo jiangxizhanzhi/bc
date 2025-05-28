@@ -30,12 +30,12 @@
  * ```java 
  * /** 
  * * 资源id 
- * */ 
+ * *
  * @ApiModelProperty("分类编号") 
  * private String resourceId; 
  * /** 
  * * 名称 
- * */ 
+ * *
  * @ApiModelProperty("分类名称") 
  * private String name; 
  * ``` 

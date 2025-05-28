@@ -36,19 +36,19 @@
  * * 课id 
  * * 
  * * @see String 
- * */ 
+ * *
  * private String lessonId; 
  * /** 
  * * 共享 
  * * 
  * * @see Boolean 
- * */ 
+ * *
  * private Boolean shared; 
  * /** 
  * * 从 Web 
  * * 
  * * @see Boolean 
- * */ 
+ * *
  * private Boolean fromWeb; 
  * ``` 
  * 这个类包含三个私有字段： 

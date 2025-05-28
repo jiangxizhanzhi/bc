@@ -30,8 +30,8 @@
  * ```java 
  * /** 
  * * 资源id 
- * */ 
- * @ApiModelProperty(value = "评估体系Id", required = true) 
+ * *
+ * @ApiModelProperty(value = "评估体系Id", required = true)
  * @NotEmpty 
  * private String resourceId; 
  * ``` 
@@ -39,7 +39,7 @@
  * ```java 
  * /** 
  * * 水平 
- * */ 
+ * *
  * @ApiModelProperty("等级") 
  * private Integer level; 
  * ``` 
@@ -47,7 +47,7 @@
  * ```java 
  * /** 
  * * 专家 
- * */ 
+ * *
  * @ApiModelProperty("指标项专家评分配置") 
  * private EvalRecordSpecialistContext specialist; 
  * ``` 
@@ -55,7 +55,7 @@
  * ```java 
  * /** 
  * * 类型 
- * */ 
+ * *
  * @ApiModelProperty("评分方式 1系统 2 专家") 
  * private Integer type; 
  * ``` 
@@ -63,7 +63,7 @@
  * ```java 
  * /** 
  * * 装置id 
- * */ 
+ * *
  * @ApiModelProperty("系统评分时 需要节点id") 
  * private String deviceId; 
  * ``` 
@@ -71,7 +71,7 @@
  * ```java 
  * /** 
  * * 探针id 
- * */ 
+ * *
  * @ApiModelProperty("系统评分时 需要探针id") 
  * private String probeId; 
  * ``` 

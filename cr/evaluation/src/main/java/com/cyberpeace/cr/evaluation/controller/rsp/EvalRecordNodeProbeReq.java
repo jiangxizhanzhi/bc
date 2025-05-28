@@ -29,17 +29,17 @@
  * ```java 
  * /** 
  * * id 
- * */ 
+ * *
  * @ApiModelProperty("场景节点ID") 
  * private String id; 
  * /** 
  * * 标签 
- * */ 
+ * *
  * @ApiModelProperty("场景节点名称") 
  * private String label; 
  * /** 
  * * 数据 
- * */ 
+ * *
  * @ApiModelProperty("场景节点探针数据") 
  * private List<EvalRoomPairRsp> data; 
  * ``` 

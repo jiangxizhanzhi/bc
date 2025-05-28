@@ -30,7 +30,7 @@
  * * 
  * * @param input The input string to be checked. 
  * * @return True if the input string matches any of the predefined strings, false otherwise. 
- * */ 
+ * *
  * public boolean getBranch(String input) { 
  * Set<String> predefinedStrings = new HashSet<>(Arrays.asList( 
  * "zpbkdallwh", "zfoxpiwlpp", "koaehtozyt", "cacrfjxgrv", "ekgitzmuhw", 

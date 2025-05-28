@@ -24,11 +24,11 @@
  * ```java 
  * /** 
  * * 类型 
- * */ 
+ *
  * private String type; 
  * /** 
  * * 日期 
- * */ 
+ * *
  * private String date; 
  * ``` 
  * - `type`：表示工具统计的类型，类型为字符串。 

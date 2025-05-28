@@ -31,7 +31,7 @@
  * * @param status  状态 
  * * @param pattern 模式 
  * * @return {@code Page<EvalRecordListRsp> } 
- * */ 
+ * *
  * Page<EvalRecordListRsp> pageList(@Param("page") Page page, 
  * @Param("task_id") String task_id, 
  * @Param("status") Integer status, 

@@ -27,7 +27,7 @@
  * * 资源id列表 
  * * 
  * * @see List<String> 
- * */ 
+ * *
  * @ApiModelProperty("资源ID") 
  * @NotEmpty 
  * private List<String> resourceIds; 
@@ -35,14 +35,14 @@
  * * 读认证id列表 
  * * 
  * * @see List<String> 
- * */ 
+ * *
  * @ApiModelProperty("授权资源") 
  * private List<String> readAuthIds; 
  * /** 
  * * 读取身份验证类型 
  * * 
  * * @see Integer 
- * */ 
+ * *
  * @ApiModelProperty("授权模式, 1-所有, 2-自定义") 
  * @NotNull 
  * private Integer readAuthType; 

@@ -40,7 +40,7 @@
  * * @param author 作者 
  * * @param title  标题 
  * * @return {@code IPage<ToolGhdb> } 
- * */ 
+ * *
  * IPage<ToolGhdb> list(Page page, @Param("author") String author, @Param("title") String title); 
  * ``` 
  * - `@param page`: 参数 `page` 是一个 `Page` 对象，用于分页查询。 

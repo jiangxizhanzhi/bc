@@ -27,6 +27,8 @@ public class CallCountInterceptor implements HandlerInterceptor {
 
 	/**
 	 * 调用计数Service
+	 *
+	 * @see SpaceCallCountService
 	 */
 	@Autowired
 	private SpaceCallCountService service;
@@ -38,7 +40,11 @@ public class CallCountInterceptor implements HandlerInterceptor {
 	 * @param response 响应
 	 * @param handler  处理器
 	 * @return boolean
-	 * @throws Exception 例外
+	 * @throws @throws Exception 例外
+	 * @see HttpServletRequest
+	 * @see HttpServletResponse
+	 * @see Object
+	 * @see boolean
 	 */
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response,

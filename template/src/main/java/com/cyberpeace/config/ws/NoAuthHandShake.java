@@ -24,8 +24,28 @@ import java.util.Map;
 @Component
 public class NoAuthHandShake extends JwtHandShake {
 
+    /**
+     * 路径
+     *
+     * @see String
+     */
     private final String PATH = "path";
 
+    /**
+     * 握手前
+     *
+     * @param serverHttpRequest  服务器 HTTP 请求
+     * @param serverHttpResponse 服务器 HTTP 响应
+     * @param webSocketHandler   WebSocket处理器
+     * @param map                映射
+     * @return boolean
+     * @throws
+     * @see ServerHttpRequest
+     * @see ServerHttpResponse
+     * @see WebSocketHandler
+     * @see Map<String, Object>
+     * @see boolean
+     */
     @Override
     public boolean beforeHandshake(ServerHttpRequest serverHttpRequest,
                                    ServerHttpResponse serverHttpResponse, WebSocketHandler webSocketHandler,

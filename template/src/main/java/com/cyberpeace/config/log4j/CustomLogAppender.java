@@ -26,32 +26,75 @@ import org.apache.log4j.spi.LoggingEvent;
 @Slf4j
 public class CustomLogAppender extends FileAppender {
 
+    /**
+     * 日期模式
+     *
+     * @see String
+     */
     private String datePattern = "yyyy-MM-dd";
 
+    /**
+     * 最大备份编号
+     */
     private int maxBackupIndex = 5;
 
+    /**
+     * 最大日编号
+     */
     private int maxDaysIndex = 15;
 
+    /**
+     * 最大文件size
+     */
     private long maxFileSize = 20971520L;
 
+    /**
+     * @see String
+     */
     private String scheduledFilename;
 
+    /**
+     * 下次检查
+     */
     private long nextCheck = System.currentTimeMillis() - 1;
 
+    /**
+     * 类型
+     */
     private int type = -1;
 
+    /**
+     * 现在
+     *
+     * @see Date
+     */
     Date now = new Date();
 
+    /**
+     * 自卫队
+     *
+     * @see SimpleDateFormat
+     */
     SimpleDateFormat sdf;
 
     /**
      * The default constructor does nothing.
+     *
+     * @throws
      */
     public CustomLogAppender() {
     }
 
     /**
      * 改造过的构造器
+     *
+     * @param layout
+     * @param filename       文件名
+     * @param maxBackupIndex 最大备份编号
+     * @throws @throws IOException io异常
+     * @see Layout
+     * @see String
+     * @see int
      */
     public CustomLogAppender(Layout layout, String filename, int maxBackupIndex) throws IOException {
         super(layout, filename, true);
@@ -59,36 +102,87 @@ public class CustomLogAppender extends FileAppender {
         activateOptions();
     }
 
+    /**
+     * 设置qw用于文件
+     *
+     * @param writer 作家
+     * @throws
+     * @see Writer
+     */
     protected void setQWForFiles(Writer writer) {
         qw = new CustomCountingQuietWriter(writer, errorHandler, this.encoding);
     }
 
+    /**
+     * 设置最大文件size
+     *
+     * @param maxFileSize 最大文件大小
+     * @throws
+     * @see String
+     */
     public void setMaxFileSize(String maxFileSize) {
         this.maxFileSize = OptionConverter.toFileSize(maxFileSize, 20971520L);
     }
 
+    /**
+     * 设置日期pattern
+     *
+     * @param datePattern 日期模式
+     * @throws
+     * @see String
+     */
     public void setDatePattern(String datePattern) {
         this.datePattern = datePattern;
     }
 
+    /**
+     * 设置最大日编号
+     *
+     * @param maxDaysIndex 最大日编号
+     * @throws
+     * @see int
+     */
     public void setMaxDaysIndex(int maxDaysIndex) {
         this.maxDaysIndex = maxDaysIndex;
     }
 
+    /**
+     * 获取最大备份编号
+     *
+     * @return int
+     * @throws
+     * @see int
+     */
     public int getMaxBackupIndex() {
         return maxBackupIndex;
     }
 
+    /**
+     * 设置最大备份编号
+     *
+     * @param maxBackupIndex 最大备份编号
+     * @throws
+     * @see int
+     */
     public void setMaxBackupIndex(int maxBackupIndex) {
         this.maxBackupIndex = maxBackupIndex;
     }
 
+    /**
+     * 获取日期模式
+     *
+     * @return 字符串
+     * @throws
+     * @see String
+     */
     public String getDatePattern() {
         return datePattern;
     }
 
     /**
      * 初始化本Appender对象的时候调用一次
+     *
+     * @throws
      */
     @Override
     public void activateOptions() {
@@ -117,6 +211,8 @@ public class CustomLogAppender extends FileAppender {
 
     /**
      * 按时间切片
+     *
+     * @throws @throws IOException io异常
      */
     void rollOverByTime() throws IOException {
         String datedFilename = fileName.substring(0, fileName.lastIndexOf(".")) + "_" + sdf.format(now) + "." + FileUtil.getFileSuffix(fileName);
@@ -177,6 +273,15 @@ public class CustomLogAppender extends FileAppender {
         }
     }
 
+    /**
+     * 获取文件名称
+     *
+     * @param filePath
+     * @return 字符串
+     * @throws
+     * @see String
+     * @see String
+     */
     public static String getFileName(String filePath) {
         File file = new File(filePath);
         return file.getName().substring(0, file.getName().lastIndexOf("."));
@@ -184,6 +289,8 @@ public class CustomLogAppender extends FileAppender {
 
     /**
      * 按文件大小切片
+     *
+     * @throws
      */
     void rollOverBySize() {
 
@@ -240,7 +347,13 @@ public class CustomLogAppender extends FileAppender {
 
     /**
      * Actual writing occurs here.
+     * <p>
+     * <p>
      * 这个方法是写操作真正的执行过程.
+     *
+     * @param event 事件
+     * @throws
+     * @see LoggingEvent
      */
     @Override
     protected void subAppend(LoggingEvent event) {
@@ -275,6 +388,10 @@ public class CustomLogAppender extends FileAppender {
 
     /**
      * 获取前maxDaysIndex天的日期
+     *
+     * @return list<字符串>
+     * @throws
+     * @see List<String>
      */
     List<String> getMaxDaysIndexDates() {
 
@@ -292,6 +409,10 @@ public class CustomLogAppender extends FileAppender {
 
     /**
      * 根据datePattern来设定type
+     *
+     * @return int
+     * @throws
+     * @see int
      */
     int computeCheckPeriod() {
         Calendar calendar = Calendar.getInstance();
@@ -314,6 +435,16 @@ public class CustomLogAppender extends FileAppender {
 
     /**
      * 根据type来获取下i的时间
+     *
+     * @param calendar 日历
+     * @param now      现在
+     * @param i
+     * @return 日历
+     * @throws
+     * @see Calendar
+     * @see Date
+     * @see int
+     * @see Calendar
      */
     public Calendar getNextCheckDate(Calendar calendar, Date now, int i) {
         calendar.setTime(now);
@@ -372,6 +503,12 @@ public class CustomLogAppender extends FileAppender {
 
     /**
      * 获取文件名中的日期
+     *
+     * @param file 文件
+     * @return 字符串
+     * @throws
+     * @see File
+     * @see String
      */
     String getFileNameTime(File file) {
         String fileName = file.getName().substring(0, file.getName().indexOf("."));

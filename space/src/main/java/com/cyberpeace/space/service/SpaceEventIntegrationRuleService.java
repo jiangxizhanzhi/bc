@@ -17,5 +17,12 @@ import com.cyberpeace.space.service.context.index.KnowledgeChart;
 public interface SpaceEventIntegrationRuleService extends IService<SpaceEventIntegrationRule>
 
 {
+    /**
+     * 获取统治主机图表
+     *
+     * @return 知识点图表
+     * @throws
+     * @see KnowledgeChart
+     */
     KnowledgeChart getRuleHostChart();
 }

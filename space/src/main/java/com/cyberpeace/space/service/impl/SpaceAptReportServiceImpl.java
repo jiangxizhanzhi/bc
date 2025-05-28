@@ -24,12 +24,31 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.util.List;
 
+/**
+ * 空间容易报告Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see ServiceImpl
+ * @see SpaceAptReportService
+ * @since 1.0.0
+ */
 @Service
 public class SpaceAptReportServiceImpl extends ServiceImpl<SpaceAptReportMapper, SpaceAptReport> implements SpaceAptReportService {
 
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 导出
+	 *
+	 * @param ids id列表
+	 * @return 字符串
+	 * @throws
+	 * @see List<String>
+	 * @see String
+	 */
 	@Override
 	public String dump(List<String> ids) {
 		if (CollectionUtils.isEmpty(ids)) {
@@ -60,6 +79,15 @@ public class SpaceAptReportServiceImpl extends ServiceImpl<SpaceAptReportMapper,
 
 	}
 
+	/**
+	 * 加载报告
+	 *
+	 * @param realPath 真实路径
+	 * @return 布尔
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 */
 	@Override
 	public Boolean loadReport(String realPath) {
 		// 文件解压
@@ -91,6 +119,15 @@ public class SpaceAptReportServiceImpl extends ServiceImpl<SpaceAptReportMapper,
 		return true;
 	}
 
+	/**
+	 * @param storeDbPath  存储数据库路径
+	 * @param destFilePath 目标文件路径
+	 * @param resourceId   资源id
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 */
 	private void copyFile(String storeDbPath, String destFilePath, String resourceId) {
 		String realPath = utilService.getRealPath(storeDbPath);
 		String fileSuffix = FileUtil.getFileSuffix(realPath);

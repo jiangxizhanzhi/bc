@@ -25,9 +25,21 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/health-check")
 public class HealthCheckController {
 
+	/**
+	 * 演示异步处理程序
+	 *
+	 * @see DemoAsyncHandler
+	 */
 	@Autowired
 	private DemoAsyncHandler demoAsyncHandler;
 
+	/**
+	 * 运行状况检查
+	 *
+	 * @return 基础响应
+	 * @throws
+	 * @see BaseRsp
+	 */
 	@ApiOperation("健康检查")
 	@GetMapping
 	public BaseRsp healthCheck() {

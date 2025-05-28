@@ -108,26 +108,69 @@ public class DebounceFilter implements Filter {
  */
 class ContentCacheRequestWrapper extends HttpServletRequestWrapper {
 
+	/**
+	 * 身体
+	 *
+	 * @see byte[]
+	 */
 	private byte[] body;
 
+	/**
+	 * 读者
+	 *
+	 * @see BufferedReader
+	 */
 	private BufferedReader reader;
 
+	/**
+	 * 输入流
+	 *
+	 * @see ServletInputStream
+	 */
 	private ServletInputStream inputStream;
 
+	/**
+	 * 内容缓存请求包装器
+	 *
+	 * @param request 请求
+	 * @throws @throws IOException io异常
+	 * @see HttpServletRequest
+	 */
 	public ContentCacheRequestWrapper(HttpServletRequest request) throws IOException {
 		super(request);
 		loadBody(request);
 	}
 
+	/**
+	 * 加载身体
+	 *
+	 * @param request 请求
+	 * @throws @throws IOException io异常
+	 * @see HttpServletRequest
+	 */
 	private void loadBody(HttpServletRequest request) throws IOException {
 		body = IOUtils.toByteArray(request.getInputStream());
 		inputStream = new RequestCachingInputStream(body);
 	}
 
+	/**
+	 * 获取身体
+	 *
+	 * @return 字节
+	 * @throws
+	 * @see byte[]
+	 */
 	public byte[] getBody() {
 		return body;
 	}
 
+	/**
+	 * 获取输入流
+	 *
+	 * @return Servlet 输入流
+	 * @throws @throws IOException io异常
+	 * @see ServletInputStream
+	 */
 	@Override
 	public ServletInputStream getInputStream() throws IOException {
 		if (inputStream != null) {
@@ -136,6 +179,13 @@ class ContentCacheRequestWrapper extends HttpServletRequestWrapper {
 		return super.getInputStream();
 	}
 
+	/**
+	 * 获取读者
+	 *
+	 * @return 缓冲读取器
+	 * @throws @throws IOException io异常
+	 * @see BufferedReader
+	 */
 	@Override
 	public BufferedReader getReader() throws IOException {
 		if (reader == null) {
@@ -144,14 +194,42 @@ class ContentCacheRequestWrapper extends HttpServletRequestWrapper {
 		return reader;
 	}
 
+	/**
+	 * 请求缓存输入流
+	 *
+	 * @author SN
+	 * @version 1.0.0
+	 * @date 2025/05/28
+	 * @see ServletInputStream
+	 * @since 1.0.0
+	 */
 	private static class RequestCachingInputStream extends ServletInputStream {
 
+		/**
+		 * 输入流
+		 *
+		 * @see ByteArrayInputStream
+		 */
 		private final ByteArrayInputStream inputStream;
 
+		/**
+		 * 请求缓存输入流
+		 *
+		 * @param bytes 字节
+		 * @throws
+		 * @see byte[]
+		 */
 		public RequestCachingInputStream(byte[] bytes) {
 			inputStream = new ByteArrayInputStream(bytes);
 		}
 
+		/**
+		 * 读
+		 *
+		 * @return int
+		 * @throws @throws IOException io异常
+		 * @see int
+		 */
 		@Override
 		public int read() throws IOException {
 			return inputStream.read();

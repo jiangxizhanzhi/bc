@@ -30,6 +30,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SpaceThreatImageRuleController extends SpaceControllerBase<SpaceThreatImageRuleService, SpaceThreatImageRule, SpaceThreatImageRuleBo, SpacePageReqBase> {
 
+	/**
+	 * 检查名称重复
+	 *
+	 * @param entity 实体
+	 * @return boolean
+	 * @throws
+	 * @see SpaceThreatImageRule
+	 * @see boolean
+	 */
 	@Override
 	public boolean checkNameDuplication(SpaceThreatImageRule entity) {
 		return true;

@@ -27,6 +27,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class SpaceAlgorithmIndividualController extends SpaceControllerBase<SpaceAlgorithmIndividualService, SpaceAlgorithmIndividual, SpaceAlgorithmIndividualBo, SpacePageReqBase> {
 
+    /**
+     * 检查值
+     *
+     * @param entity 实体
+     * @throws
+     * @see SpaceAlgorithmIndividual
+     */
     @Override
     public void checkValue(SpaceAlgorithmIndividual entity){
         this.checkPercentageValue(entity.getRolePercent() + entity.getExpertisePercent());

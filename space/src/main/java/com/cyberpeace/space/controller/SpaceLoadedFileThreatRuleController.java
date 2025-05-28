@@ -49,12 +49,29 @@ import java.util.Map;
 @Slf4j
 public class SpaceLoadedFileThreatRuleController extends SpaceControllerBase<SpaceLoadedFileThreatRuleService, SpaceLoadedFileThreatRule, SpaceLoadedFileThreatRuleBo, SpaceLoadedFileThreatRulePageReq> {
 
+	/**
+	 * 执行类型映射
+	 *
+	 * @see Map<Integer, String>
+	 */
 	private static final Map<Integer, String> EXECUTE_TYPE_MAP = Maps.newHashMap();
 
 	static {
 		EXECUTE_TYPE_MAP.put(1, "手动");
 		EXECUTE_TYPE_MAP.put(2, "自动");
 	}
+
+	/**
+	 * 导出胜过
+	 *
+	 * @param response 响应
+	 * @param req      请求体
+	 * @return base rsp< 布尔值>
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see SpaceLoadedFileThreatRulePageReq
+	 * @see BaseRsp<Boolean>
+	 */
 	@ApiOperation("导出成excel表格")
 	@GetMapping("/excel")
 	public BaseRsp<Boolean> exportExcel(HttpServletResponse response,
@@ -87,6 +104,15 @@ public class SpaceLoadedFileThreatRuleController extends SpaceControllerBase<Spa
 		return new BaseRsp<>(Boolean.TRUE);
 	}
 
+	/**
+	 * 检查名称重复
+	 *
+	 * @param entity 实体
+	 * @return boolean
+	 * @throws
+	 * @see SpaceLoadedFileThreatRule
+	 * @see boolean
+	 */
 	@Override
 	public boolean checkNameDuplication(SpaceLoadedFileThreatRule entity) {
 		return true;

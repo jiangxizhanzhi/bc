@@ -15,6 +15,17 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
  */
 public class MyTaskScheduler extends ThreadPoolTaskScheduler {
 
+	/**
+	 * schedule在fixed比率
+	 *
+	 * @param task   任务
+	 * @param period 时期
+	 * @return
+	 * @throws
+	 * @see Runnable
+	 * @see long
+	 * @see ScheduledFuture<?>
+	 */
 	@Override
 	public ScheduledFuture<?> scheduleAtFixedRate(Runnable task, long period) {
 		return super.scheduleAtFixedRate(task, period);

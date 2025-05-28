@@ -24,59 +24,157 @@ import java.util.List;
 @Setter
 public class SpaceAptFeatureBo extends SpaceBoBase {
 
+	/**
+	 * 资源id
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "资源id")
 	private String resourceId;
 
+	/**
+	 * 名称
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "名称")
 	private String name;
-    
 
+
+	/**
+	 * 别名
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "别名")
 	private String alias;
 
+	/**
+	 * 攻击者类型
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "攻击者类型")
 	private Integer attackerType;
 
+	/**
+	 * 技能
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "技术能力")
 	private Integer skill;
 
+	/**
+	 * 源
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "疑似来源")
 	private String source;
 
+	/**
+	 * 第一次
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "最早活动时间")
 	private String firstTime;
 
+	/**
+	 * 最新时间
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "最近活动时间")
 	private String latestTime;
 
+	/**
+	 * 影响
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "影响国家和地区")
 	private String effected;
 
+	/**
+	 * 工业
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "影响行业")
 	private String industry;
 
+	/**
+	 * 方法
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "攻击方式")
 	private String method;
 
+	/**
+	 * 频率
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "攻击频率")
 	private Integer frequency;
 
+	/**
+	 * 语言
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "常用语言")
 	private String language;
 
+	/**
+	 * 组织
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "组织概述")
 	private String organization;
 
+	/**
+	 * 战法
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "技战法")
 	private String tactic;
 
+	/**
+	 * 历史报告
+	 *
+	 * @see List<AptReportHistory>
+	 */
 	@ApiModelProperty(value = "历史报告")
 	private List<AptReportHistory> historyReport;
 
+	/**
+	 * 图标
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "logo")
 	private String logo;
+	/**
+	 * 内置
+	 *
+	 * @see Boolean
+	 */
 	@ApiModelProperty(value = "内置")
 	private Boolean builtin;
+
+	/**
+	 * BO2 实体
+	 *
+	 * @return SpaceAPT功能
+	 * @throws
+	 * @see SpaceAptFeature
+	 */
 	public SpaceAptFeature bo2Entity() {
 		SpaceAptFeature entity = BeanUtils.copy(this, SpaceAptFeature.class);
 		entity.setHistoryReport(JsonUtil.arrayToString(this.historyReport));

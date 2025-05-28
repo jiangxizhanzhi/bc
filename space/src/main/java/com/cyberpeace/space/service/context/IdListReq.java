@@ -21,9 +21,21 @@ import java.util.List;
 @Setter
 public class IdListReq {
 
+	/**
+	 * id列表
+	 *
+	 * @see List<String>
+	 */
 	@ApiModelProperty("ID列表")
 	private List<String> ids;
 
+	/**
+	 * 获取id列表
+	 *
+	 * @return list<字符串>
+	 * @throws
+	 * @see List<String>
+	 */
 	public List<String> getIds() {
 		if (CollectionUtils.isEmpty(ids)) {
 			throw new BusinessException(ErrorCode.BLANK_ID);

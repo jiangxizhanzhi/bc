@@ -35,6 +35,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * 空间行动框架Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see ServiceImpl
+ * @see SpaceActionFrameService
+ * @since 1.0.0
+ */
 @Service
 @Slf4j
 public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMapper, SpaceActionFrame> implements SpaceActionFrameService {
@@ -83,6 +93,15 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 	private SpaceCallCountService callCountService;
 
 
+	/**
+	 * 计数由类型
+	 *
+	 * @param code 代号
+	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
+	 * @see Integer
+	 */
 	@Override
 	public Integer countByType(Integer code) {
 		LambdaQueryWrapper<SpaceActionFrame> wrapper = new LambdaQueryWrapper<>();
@@ -90,6 +109,15 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 		return this.count(wrapper);
 	}
 
+	/**
+	 * 获取框架水平
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code SpaceFrameLevel }
+	 * @throws
+	 * @see String
+	 * @see SpaceFrameLevel
+	 */
 	@Override
 	public SpaceFrameLevel getFrameLevels(String resourceId) {
 		SpaceActionFrame frame = this.getOrException(resourceId);
@@ -174,6 +202,10 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 	 * 保存框架
 	 *
 	 * @param req 请求体
+	 * @return boolean
+	 * @throws
+	 * @see SpaceFrameLevel
+	 * @see boolean
 	 */
 	@Override
 	public boolean saveFrame(SpaceFrameLevel req) {
@@ -218,6 +250,17 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 		this.updateById(frame);
 	}
 
+	/**
+	 * 差异
+	 *
+	 * @param oldTacticIds 老战法id列表
+	 * @param newTacticIds 新增功能战法id列表
+	 * @return int
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
+	 * @see int
+	 */
 	private int difference(List<String> oldTacticIds, List<String> newTacticIds) {
 		int count = 0;
 		for (String id : newTacticIds) {
@@ -228,6 +271,13 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 		return count;
 	}
 
+	/**
+	 * 记录使用情况
+	 *
+	 * @param type 类型
+	 * @throws
+	 * @see String
+	 */
 	@Override
 	public void recordUsage(String type) {
 		if (!SpaceActionFrame.Type.TARGET.getName().equals(type)
@@ -251,7 +301,16 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 		}
 	}
 
-    @Override
+	/**
+	 * 获取框架
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code ActionFrameArrangeBo }
+	 * @throws
+	 * @see String
+	 * @see ActionFrameArrangeBo
+	 */
+	@Override
     public ActionFrameArrangeBo getFrame(String resourceId) {
 		SpaceActionFrame frame = this.getOrException(resourceId);
 		ActionFrameArrangeBo bo = JsonUtil.toJsonObject(frame.getFrame(), ActionFrameArrangeBo.class);
@@ -299,6 +358,15 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 		return bo;
 	}
 
+	/**
+	 * 搜索框架
+	 *
+	 * @param req 请求体
+	 * @return {@code List<SpaceActionFrameBo> }
+	 * @throws
+	 * @see String
+	 * @see List<SpaceActionFrameBo>
+	 */
 	@Override
 	public List<SpaceActionFrameBo> searchFrame(String req) {
 		List<SpaceActionFrame> frameList = this.list();

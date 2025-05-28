@@ -13,6 +13,14 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+/**
+ * 流Apiutils
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 public class StreamApiUtils {
 
 	/**

@@ -24,16 +24,38 @@ import java.util.List;
 @Setter
 public class SpaceSourceAnalyzeRuleBo extends SpaceBoBase {
 
+	/**
+	 * 资源id
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "资源id")
 	private String resourceId;
 
+	/**
+	 * 名称
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "名称")
 	private String name;
-    
 
+
+	/**
+	 * 统治
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "规则列表")
 	private String rule;
 
+	/**
+	 * BO2 实体
+	 *
+	 * @return 空间源分析规则
+	 * @throws
+	 * @see SpaceSourceAnalyzeRule
+	 */
 	public SpaceSourceAnalyzeRule bo2Entity() {
 		SpaceSourceAnalyzeRule entity = BeanUtils.copy(this, SpaceSourceAnalyzeRule.class);
 		return entity;

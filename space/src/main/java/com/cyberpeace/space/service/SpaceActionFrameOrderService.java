@@ -20,10 +20,33 @@ import java.util.List;
  * @since 1.0.0
  */
 public interface SpaceActionFrameOrderService extends IService<SpaceActionFrameOrder>{
+    /**
+     * 创建
+     *
+     * @param req 请求体
+     * @throws
+     * @see SpaceActionFrameOrderReq
+     */
     void create(SpaceActionFrameOrderReq req);
 
+    /**
+     * 完成
+     *
+     * @param resourceId 资源id
+     * @throws
+     * @see String
+     */
     void complete(String resourceId);
 
+    /**
+     * 列表我的订单
+     *
+     * @param req 请求体
+     * @return 列表<空间行动框架次序博>
+     * @throws
+     * @see SpaceActionFrameOrderListReq
+     * @see List<SpaceActionFrameOrderBo>
+     */
     List<SpaceActionFrameOrderBo> listMyOrders(SpaceActionFrameOrderListReq req);
 
     /**

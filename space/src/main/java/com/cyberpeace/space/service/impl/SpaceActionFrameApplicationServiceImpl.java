@@ -41,6 +41,16 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 空间行动框架行为依赖Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see ServiceImpl
+ * @see SpaceActionFrameApplicationService
+ * @since 1.0.0
+ */
 @Service
 @Slf4j
 public class SpaceActionFrameApplicationServiceImpl extends ServiceImpl<SpaceActionFrameApplicationMapper, SpaceActionFrameApplication> implements SpaceActionFrameApplicationService {

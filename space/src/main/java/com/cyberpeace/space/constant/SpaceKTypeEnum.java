@@ -168,18 +168,51 @@ public enum SpaceKTypeEnum {
     ;
 
 
-	@Getter
+    /**
+     * 名称
+     *
+     * @see String
+     */
+    @Getter
 	private String name;
 
-	@Getter
+    /**
+     * id
+     *
+     * @see String
+     */
+    @Getter
 	private String id;
 
-	@Getter
+    /**
+     * 类型
+     *
+     * @see Integer
+     */
+    @Getter
 	private Integer type;
 
+    /**
+     * 菜单id
+     *
+     * @see String
+     */
     @Getter
     private String menuId;
 
+    /**
+     * space ktype 枚举
+     *
+     * @param name   名称
+     * @param id     id
+     * @param type   类型
+     * @param menuId 菜单id
+     * @throws
+     * @see String
+     * @see String
+     * @see Integer
+     * @see String
+     */
     SpaceKTypeEnum(String name, String id, Integer type, String menuId){
         this.name = name;
         this.id = id;

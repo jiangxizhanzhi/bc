@@ -16,10 +16,29 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * 空间行动关系Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see ServiceImpl
+ * @see SpaceActionRelationService
+ * @since 1.0.0
+ */
 @Service
 @Slf4j
 public class SpaceActionRelationServiceImpl extends ServiceImpl<SpaceActionRelationMapper, SpaceActionRelation> implements SpaceActionRelationService {
 
+    /**
+     * 创建关系
+     *
+     * @param upperIds   上id列表
+     * @param resourceId 资源id
+     * @throws
+     * @see List<String>
+     * @see String
+     */
     @Override
     public void createRelation(List<String> upperIds, String resourceId) {
         if (upperIds.isEmpty()) {
@@ -30,6 +49,15 @@ public class SpaceActionRelationServiceImpl extends ServiceImpl<SpaceActionRelat
         this.saveBatch(relations);
     }
 
+    /**
+     * 更新关系
+     *
+     * @param upperIds   上id列表
+     * @param resourceId 资源id
+     * @throws
+     * @see List<String>
+     * @see String
+     */
     @Override
     public void updateRelation(List<String> upperIds, String resourceId) {
         LambdaQueryWrapper<SpaceActionRelation> wrapper = new LambdaQueryWrapper<>();
@@ -38,6 +66,13 @@ public class SpaceActionRelationServiceImpl extends ServiceImpl<SpaceActionRelat
         this.createRelation(upperIds, resourceId);
     }
 
+    /**
+     * 删除关系由id列表
+     *
+     * @param ids id列表
+     * @throws
+     * @see List<String>
+     */
     @Override
     public void deleteRelationsByIds(List<String> ids) {
         if(ids.isEmpty()){
@@ -51,6 +86,15 @@ public class SpaceActionRelationServiceImpl extends ServiceImpl<SpaceActionRelat
         this.remove(wrapper2);
     }
 
+    /**
+     * 获取上id列表由降低id
+     *
+     * @param resourceId 资源id
+     * @return {@code List<String> }
+     * @throws
+     * @see String
+     * @see List<String>
+     */
     @Override
     public List<String> getUpperIdsByLowerId(String resourceId) {
         LambdaQueryWrapper<SpaceActionRelation> wrapper = new LambdaQueryWrapper<>();
@@ -59,6 +103,15 @@ public class SpaceActionRelationServiceImpl extends ServiceImpl<SpaceActionRelat
         return StreamApiUtils.map(relations, SpaceActionRelation::getUpperId);
     }
 
+    /**
+     * 获取降低id列表由上id
+     *
+     * @param upperId 上id
+     * @return {@code List<String> }
+     * @throws
+     * @see String
+     * @see List<String>
+     */
     @Override
     public List<String> getLowerIdsByUpperId(String upperId) {
         LambdaQueryWrapper<SpaceActionRelation> wrapper = new LambdaQueryWrapper<>();
@@ -67,7 +120,16 @@ public class SpaceActionRelationServiceImpl extends ServiceImpl<SpaceActionRelat
         return StreamApiUtils.map(relations, SpaceActionRelation::getLowerId);
     }
 
-	@Override
+    /**
+     * 获取降低id列表由上id列表
+     *
+     * @param upperIds 上id列表
+     * @return {@code List<String> }
+     * @throws
+     * @see List<String>
+     * @see List<String>
+     */
+    @Override
 	public List<String> getLowerIdsByUpperIds(List<String> upperIds) {
 		if (CollectionUtils.isEmpty(upperIds)) {
 			return Lists.newArrayList();
@@ -78,6 +140,15 @@ public class SpaceActionRelationServiceImpl extends ServiceImpl<SpaceActionRelat
 		return StreamApiUtils.map(relations, SpaceActionRelation::getLowerId);
 	}
 
+    /**
+     * 列表由上id列表
+     *
+     * @param upperIds 上id列表
+     * @return {@code List<SpaceActionRelation> }
+     * @throws
+     * @see List<String>
+     * @see List<SpaceActionRelation>
+     */
     @Override
     public List<SpaceActionRelation> listByUpperIds(List<String> upperIds) {
         if(upperIds.isEmpty()){
@@ -92,6 +163,8 @@ public class SpaceActionRelationServiceImpl extends ServiceImpl<SpaceActionRelat
      * 删除由上id列表
      *
      * @param upperIds 上id列表
+     * @throws
+     * @see List<String>
      */
     @Override
     public void deleteByUpperIds(List<String> upperIds) {
@@ -104,6 +177,17 @@ public class SpaceActionRelationServiceImpl extends ServiceImpl<SpaceActionRelat
     }
 
 
+    /**
+     * 创建实体
+     *
+     * @param upperId 上id
+     * @param lowerId 降低id
+     * @return {@code SpaceActionRelation }
+     * @throws
+     * @see String
+     * @see String
+     * @see SpaceActionRelation
+     */
     @Override
     public SpaceActionRelation createEntity(String upperId, String lowerId){
 		if (StringUtils.isBlank(upperId) || StringUtils.isBlank(lowerId)) {

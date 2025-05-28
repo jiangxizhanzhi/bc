@@ -15,5 +15,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SpaceStrategyModifyReq extends SpaceStrategyAddReq{
+    /**
+     * 资源id
+     *
+     * @see String
+     */
     private String resourceId;
 }

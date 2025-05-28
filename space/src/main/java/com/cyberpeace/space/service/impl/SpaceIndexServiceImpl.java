@@ -41,6 +41,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 空间编号Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceIndexService
+ * @since 1.0.0
+ */
 @Service
 @Slf4j
 public class SpaceIndexServiceImpl implements SpaceIndexService {
@@ -117,6 +126,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	@Autowired
 	private SpaceViolationJudgeRuleService spaceViolationJudgeRuleService;
 
+	/**
+	 * 获取知识点存储 库统计学
+	 *
+	 * @return 编号知识点
+	 * @throws
+	 * @see IndexKnowledge
+	 */
 	@Override
 	public IndexKnowledge getKnowledgeRepositoryStatistics() {
 		IndexKnowledge res = new IndexKnowledge();
@@ -152,6 +168,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return res;
 	}
 
+	/**
+	 * 获取编号统治
+	 *
+	 * @return 编号统治
+	 * @throws
+	 * @see IndexRule
+	 */
 	private IndexRule getIndexRule() {
 		IndexRule rule = new IndexRule();
 		BaseDataRuleStatistics baseDataRuleStatistics = spaceRuleCommonService
@@ -178,6 +201,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return rule;
 	}
 
+	/**
+	 * 获取编号理论
+	 *
+	 * @return 编号理论
+	 * @throws
+	 * @see IndexTheory
+	 */
 	private IndexTheory getIndexTheory() {
 		IndexTheory theory = new IndexTheory();
 		LambdaQueryWrapper<CourseLesson> wrapperTheory = new LambdaQueryWrapper<>();
@@ -205,6 +235,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return theory;
 	}
 
+	/**
+	 * 获取工具统计学
+	 *
+	 * @return 编号工具
+	 * @throws
+	 * @see IndexTool
+	 */
 	@Override
 	public IndexTool getToolStatistics() {
 		IndexTool indexTool = new IndexTool();
@@ -232,6 +269,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return indexTool;
 	}
 
+	/**
+	 * 获取框架编号
+	 *
+	 * @return 编号框架
+	 * @throws
+	 * @see IndexFrame
+	 */
 	@Override
 	public IndexFrame getFrameIndex() {
 		IndexFrame frame = new IndexFrame();
@@ -247,6 +291,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 
 	}
 
+	/**
+	 * 获取人工智能网址
+	 *
+	 * @return 字符串
+	 * @throws
+	 * @see String
+	 */
 	@Override
 	public String getAiUrl() {
 		String ip = SystemPropUtil.getProp("AI_HOST");
@@ -256,6 +307,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return ip;
 	}
 
+	/**
+	 * 获取kchart
+	 *
+	 * @return 知识点图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
 	@Override
 	public KnowledgeChart getKChart() {
 		KnowledgeChart chart = new KnowledgeChart();
@@ -305,12 +363,26 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return chart;
 	}
 
+	/**
+	 * 获取场景图表
+	 *
+	 * @return 知识点图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
 	private KnowledgeChart getSceneChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 
 		return chart;
 	}
 
+	/**
+	 * 获取算法图表
+	 *
+	 * @return 知识点图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
 	private KnowledgeChart getAlgorithmChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.ALGORITHM,
@@ -326,6 +398,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return chart;
 	}
 
+	/**
+	 * 获取算法测评图表
+	 *
+	 * @return 知识点图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
 	private KnowledgeChart getAlgorithmEvalChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.ALGORITHM_EVAL,
@@ -348,6 +427,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return chart;
 	}
 
+	/**
+	 * 获取流量图表
+	 *
+	 * @return 知识点图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
 	private KnowledgeChart getTrafficChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 
@@ -355,6 +441,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return chart;
 	}
 
+	/**
+	 * 获取统治图表
+	 *
+	 * @return 知识点图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
 	private KnowledgeChart getRuleChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE,
@@ -381,6 +474,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return chart;
 	}
 
+	/**
+	 * 获取统治比赛图表
+	 *
+	 * @return 知识点图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
 	private KnowledgeChart getRuleRaceChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE_RACE,
@@ -401,6 +501,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return chart;
 	}
 
+	/**
+	 * 获取统治威胁图表
+	 *
+	 * @return 知识点图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
 	private KnowledgeChart getRuleThreatChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE_THREAT_DEFENSE,
@@ -421,6 +528,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return chart;
 	}
 
+	/**
+	 * 获取统治基础图表
+	 *
+	 * @return 知识点图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
 	private KnowledgeChart getRuleBaseChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE_BASE,
@@ -437,6 +551,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return chart;
 	}
 
+	/**
+	 * 获取统治漏洞图表
+	 *
+	 * @return 知识点图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
 	private KnowledgeChart getRuleVulnChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.RULE_VULN,
@@ -447,6 +568,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return chart;
 	}
 
+	/**
+	 * 获取战法图表
+	 *
+	 * @return 知识点图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
 	private KnowledgeChart getTacticChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.TACTIC,
@@ -467,6 +595,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return chart;
 	}
 
+	/**
+	 * 获取理论图表
+	 *
+	 * @return 知识点图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
 	private KnowledgeChart getTheoryChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.THEORY,
@@ -494,6 +629,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return chart;
 	}
 
+	/**
+	 * 获取练习实操图表
+	 *
+	 * @return 知识点图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
 	private KnowledgeChart getPracticeOperationChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.PRACTICE_OPERATION,
@@ -504,6 +646,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return chart;
 	}
 
+	/**
+	 * 获取练习理论图表
+	 *
+	 * @return 知识点图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
 	private KnowledgeChart getPracticeTheoryChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.PRACTICE_THEORY,
@@ -517,6 +666,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return chart;
 	}
 
+	/**
+	 * 获取课程图表
+	 *
+	 * @return 知识点图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
 	private KnowledgeChart getCourseChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.COURSE,
@@ -542,6 +698,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		return chart;
 	}
 
+	/**
+	 * 获取行动框架使用图表
+	 *
+	 * @return 编号行动框架图表
+	 * @throws
+	 * @see IndexActionFrameChart
+	 */
 	private IndexActionFrameChart getActionFrameUseChart() {
 		IndexActionFrameChart chart = new IndexActionFrameChart();
 		Date date = TimeUtil.addDates(new Date(), -6);

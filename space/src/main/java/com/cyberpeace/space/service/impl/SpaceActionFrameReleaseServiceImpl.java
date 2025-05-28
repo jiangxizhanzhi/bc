@@ -25,6 +25,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * 空间行动框架下发Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see ServiceImpl
+ * @see ServiceImpl
+ * @since 1.0.0
+ */
 @Service
 @Slf4j
 public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionFrameReleaseMapper, SpaceActionFrameRelease> implements SpaceActionFrameReleaseService {
@@ -47,6 +57,13 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 	@Autowired
 	private SpaceActionFrameService frameService;
 
+	/**
+	 * 创建
+	 *
+	 * @param req 请求体
+	 * @throws
+	 * @see SpaceActionFrameReleaseReq
+	 */
 	@Override
 	public void create(SpaceActionFrameReleaseReq req) {
 		this.checkRelease(req.getApplicationId(), req.getStep());
@@ -65,6 +82,15 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 		this.save(entity);
 	}
 
+	/**
+	 * 获取策略
+	 *
+	 * @param applicationId 行为依赖id
+	 * @return {@code List<SpaceActionFrameOrderBo> }
+	 * @throws
+	 * @see String
+	 * @see List<SpaceActionFrameOrderBo>
+	 */
 	@Override
 	public List<SpaceActionFrameOrderBo> getTactics(String applicationId) {
 		List<SpaceActionFrameOrderBo> res = Lists.newArrayList();
@@ -111,6 +137,15 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 		return res;
 	}
 
+	/**
+	 * 获取行为依赖Bo
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code SpaceActionFrameApplicationBo }
+	 * @throws
+	 * @see String
+	 * @see SpaceActionFrameApplicationBo
+	 */
 	@Override
 	public SpaceActionFrameApplicationBo getApplicationBo(String resourceId) {
 		SpaceActionFrameApplication application = applicationService.getById(resourceId);
@@ -167,6 +202,15 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 
 	}
 
+	/**
+	 * 检查下发
+	 *
+	 * @param applicationId 行为依赖id
+	 * @param stage         阶段
+	 * @throws
+	 * @see String
+	 * @see String
+	 */
 	public void checkRelease(String applicationId, String stage) {
 		LambdaQueryWrapper<SpaceActionFrameRelease> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(SpaceActionFrameRelease::getApplicationId, applicationId);

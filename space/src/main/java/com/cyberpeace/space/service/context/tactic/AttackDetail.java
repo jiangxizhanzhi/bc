@@ -8,20 +8,53 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * 攻击详情
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public class AttackDetail {
 
+	/**
+	 * 资源id
+	 *
+	 * @see String
+	 */
 	private String resourceId;
 
+	/**
+	 * 名称
+	 *
+	 * @see String
+	 */
 	private String name;
 
+	/**
+	 * 战法id
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "ID")
 	private String tacticId;
 
+	/**
+	 * 类别id
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "类别")
 	private String categoryId;
 
+	/**
+	 * 类别名称
+	 *
+	 * @see String
+	 */
 	private String categoryName;
 
 	@ApiModelProperty(value = "岗位，常量type=45")

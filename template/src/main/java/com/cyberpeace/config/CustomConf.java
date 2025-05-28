@@ -20,11 +20,25 @@ import com.cyberpeace.common.util.SpringContextUtil;
 @Configuration
 public class CustomConf {
 
+	/**
+	 * 获取春天上下文util
+	 *
+	 * @return Spring上下文实用程序
+	 * @throws
+	 * @see SpringContextUtil
+	 */
 	@Bean
 	public static SpringContextUtil getSpringContextUtil() {
 		return new SpringContextUtil();
 	}
 
+	/**
+	 * 获取配置util
+	 *
+	 * @return 配置占 位 符配置器
+	 * @throws
+	 * @see PropertyPlaceholderConfigurer
+	 */
 	@Bean
 	public static PropertyPlaceholderConfigurer getConfigUtil() {
 		PropertyPlaceholderConfigurer configurer = new ConfigUtil();

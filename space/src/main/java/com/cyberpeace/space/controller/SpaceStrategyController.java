@@ -39,9 +39,21 @@ import java.util.List;
 @Slf4j
 public class SpaceStrategyController {
 
+	/**
+	 * 空间策略Service
+	 *
+	 * @see SpaceStrategyService
+	 */
 	@Autowired
 	private SpaceStrategyService spaceStrategyService;
 
+	/**
+	 * 获取框架
+	 *
+	 * @return 基础RSP<列表 < 空间策略框架博>>
+	 * @throws
+	 * @see BaseRsp<List<SpaceStrategyFrameBo>>
+	 */
 	@ApiOperation("获取框架")
 	@GetMapping("/frame")
 	public BaseRsp<List<SpaceStrategyFrameBo>> getFrame() {
@@ -49,6 +61,15 @@ public class SpaceStrategyController {
 		return new BaseRsp<>(bo.getChildren());
 	}
 
+	/**
+	 * 新增框架
+	 *
+	 * @param req 请求体
+	 * @return 基础响应
+	 * @throws
+	 * @see SpaceStrategyFrameAddReq
+	 * @see BaseRsp
+	 */
 	@ApiOperation("增加下一级")
 	@PostMapping("/frame")
 	public BaseRsp addFrame(@RequestBody SpaceStrategyFrameAddReq req) {
@@ -56,6 +77,15 @@ public class SpaceStrategyController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 修改框架
+	 *
+	 * @param req 请求体
+	 * @return 基础响应
+	 * @throws
+	 * @see SpaceStrategyFrameModifyReq
+	 * @see BaseRsp
+	 */
 	@ApiOperation("编辑框架")
 	@PatchMapping("/frame")
 	public BaseRsp modifyFrame(@RequestBody SpaceStrategyFrameModifyReq req) {
@@ -63,6 +93,15 @@ public class SpaceStrategyController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 删除框架
+	 *
+	 * @param idReq id请求体
+	 * @return 基础响应
+	 * @throws
+	 * @see IdReq
+	 * @see BaseRsp
+	 */
 	@ApiOperation("删除框架")
 	@DeleteMapping("/frame")
 	public BaseRsp deleteFrame(@RequestBody IdReq idReq) {
@@ -70,6 +109,17 @@ public class SpaceStrategyController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 获取策略
+	 *
+	 * @param frame_id 框架id
+	 * @param name     名称
+	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<List<SpaceStrategySimple>>
+	 */
 	@ApiOperation("获取策略列表")
 	@GetMapping("/list")
 	public BaseRsp<List<SpaceStrategySimple>> getStrategies(
@@ -79,6 +129,19 @@ public class SpaceStrategyController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 分页策略
+	 *
+	 * @param req      请求体
+	 * @param frame_id 框架id
+	 * @param name     名称
+	 * @return base rsp< list rsp< Space Strategy bo>>
+	 * @throws
+	 * @see PageReqBase
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<ListRsp<SpaceStrategyBo>>
+	 */
 	@ApiOperation("策略列表分页")
 	@GetMapping("/page")
 	public BaseRsp<ListRsp<SpaceStrategyBo>> pageStrategies(
@@ -89,6 +152,15 @@ public class SpaceStrategyController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 新增策略
+	 *
+	 * @param req 请求体
+	 * @return 基础响应
+	 * @throws
+	 * @see SpaceStrategyAddReq
+	 * @see BaseRsp
+	 */
 	@ApiOperation("新建策略")
 	@PostMapping("")
 	public BaseRsp addStrategy(@RequestBody SpaceStrategyAddReq req) {
@@ -96,6 +168,15 @@ public class SpaceStrategyController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 更新策略
+	 *
+	 * @param req 请求体
+	 * @return 基础响应
+	 * @throws
+	 * @see SpaceStrategyModifyReq
+	 * @see BaseRsp
+	 */
 	@ApiOperation("修改策略")
 	@PatchMapping("")
 	public BaseRsp updateStrategy(@RequestBody SpaceStrategyModifyReq req) {
@@ -107,6 +188,15 @@ public class SpaceStrategyController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 删除策略
+	 *
+	 * @param req 请求体
+	 * @return 基础响应
+	 * @throws
+	 * @see IdListReq
+	 * @see BaseRsp
+	 */
 	@ApiOperation("删除策略")
 	@DeleteMapping("")
 	public BaseRsp deleteStrategy(@RequestBody IdListReq req) {
@@ -114,6 +204,15 @@ public class SpaceStrategyController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 获取详情
+	 *
+	 * @param resource_id 资源id
+	 * @return Base RSP< Space Strategy BO>
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<SpaceStrategyBo>
+	 */
 	@ApiOperation("查看策略详情")
 	@GetMapping("")
 	@CallCount(CallType.STRATEGY)
@@ -123,6 +222,17 @@ public class SpaceStrategyController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取路线
+	 *
+	 * @param strategy_id 策略id
+	 * @param frame_id    框架id
+	 * @return base rsp< 字符串>
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<String>
+	 */
 	@ApiOperation("查看策略路径")
 	@GetMapping("/route")
 	public BaseRsp<String> getRoute(
@@ -134,6 +244,16 @@ public class SpaceStrategyController {
 		SpaceStrategy strategy = spaceStrategyService.getById(strategy_id);
 		return new BaseRsp<>(spaceStrategyService.getFrameRouteById(strategy.getFrameId()));
 	}
+
+	/**
+	 * 导出策略2PDF格式
+	 *
+	 * @param httpServletResponse HTTP Servlet 响应
+	 * @param strategy_ids        策略id列表
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see List<String>
+	 */
 	@ApiOperation("导出策略")
 	@GetMapping("/export")
 	public void exportStrategy2PDF(

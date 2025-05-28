@@ -52,20 +52,56 @@ public class SpaceCommonConstant {
 		public static final Integer DEFENSE = 2;
 	}
 
+	/**
+	 * 次序状态
+	 *
+	 * @author SN
+	 * @version 1.0.0
+	 * @date 2025/05/28
+	 * @since 1.0.0
+	 */
 	public static class OrderStatus {
 		public static final Integer UNRELEASED = 0;
 		public static final Integer FINISHED = 1;
 		public static final Integer UNFINISHED = 2;
 	}
 
+	/**
+	 * RVB用户组
+	 *
+	 * @author SN
+	 * @version 1.0.0
+	 * @date 2025/05/28
+	 * @since 1.0.0
+	 */
 	public static class RvbUserGroup {
 
+		/**
+		 * 指挥官
+		 *
+		 * @see Integer
+		 */
 		public static final Integer COMMANDER = 1;
 
+		/**
+		 * 中间
+		 *
+		 * @see Integer
+		 */
 		public static final Integer MIDDLE = 2;
 
+		/**
+		 * 工人
+		 *
+		 * @see Integer
+		 */
 		public static final Integer WORKER = 3;
 
+		/**
+		 * 员工
+		 *
+		 * @see Integer
+		 */
 		public static final Integer STAFF = 4;
 	}
 

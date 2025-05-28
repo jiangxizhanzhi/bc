@@ -30,6 +30,13 @@ import java.util.Arrays;
 @EnableOpenApi
 public class SwaggerConfig {
 
+	/**
+	 * Api模板
+	 *
+	 * @return 案卷
+	 * @throws
+	 * @see Docket
+	 */
 	@Bean
 	public Docket apiTemplate() {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.demo"))
@@ -37,6 +44,13 @@ public class SwaggerConfig {
 				.groupName("demo");
 	}
 
+	/**
+	 * Api靶场
+	 *
+	 * @return 案卷
+	 * @throws
+	 * @see Docket
+	 */
 	@Bean
 	public Docket apiCr() {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.cr"))
@@ -44,6 +58,13 @@ public class SwaggerConfig {
 				.groupName("cr");
 	}
 
+	/**
+	 * ApiCS
+	 *
+	 * @return 案卷
+	 * @throws
+	 * @see Docket
+	 */
 	@Bean
 	public Docket apiCs() {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.cs"))
@@ -51,6 +72,13 @@ public class SwaggerConfig {
 				.groupName("cs");
 	}
 
+	/**
+	 * ApiOJ
+	 *
+	 * @return 案卷
+	 * @throws
+	 * @see Docket
+	 */
 	@Bean
 	public Docket apiOj() {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.oj"))
@@ -58,6 +86,13 @@ public class SwaggerConfig {
 				.groupName("oj");
 	}
 
+	/**
+	 * Api空间
+	 *
+	 * @return 案卷
+	 * @throws
+	 * @see Docket
+	 */
 	@Bean
 	public Docket apiSpace() {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.space"))
@@ -65,6 +100,13 @@ public class SwaggerConfig {
 				.groupName("space");
 	}
 
+	/**
+	 * Api地震魔
+	 *
+	 * @return 案卷
+	 * @throws
+	 * @see Docket
+	 */
 	@Bean
 	public Docket apiEs() {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.evaluate"))
@@ -72,6 +114,13 @@ public class SwaggerConfig {
 				.groupName("es");
 	}
 
+	/**
+	 * Api网关
+	 *
+	 * @return 案卷
+	 * @throws
+	 * @see Docket
+	 */
 	@Bean
 	public Docket apiGateway() {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.gateway"))
@@ -79,6 +128,13 @@ public class SwaggerConfig {
 				.groupName("outer");
 	}
 
+	/**
+	 * Api框架
+	 *
+	 * @return 案卷
+	 * @throws
+	 * @see Docket
+	 */
 	@Bean
 	public Docket apiFrame() {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.frame"))
@@ -86,6 +142,13 @@ public class SwaggerConfig {
 						  .groupName("frame");
 	}
 
+	/**
+	 * 获取案卷
+	 *
+	 * @return Api选择器建筑工人
+	 * @throws
+	 * @see ApiSelectorBuilder
+	 */
 	private ApiSelectorBuilder getDocket() {
 		String apiDoc = ConfigUtil.getContextProperty("ojj.apiDoc");
 
@@ -103,6 +166,13 @@ public class SwaggerConfig {
 				.select();
 	}
 
+	/**
+	 * Api信息
+	 *
+	 * @return Api信息
+	 * @throws
+	 * @see ApiInfo
+	 */
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder().title("网络靶场项目文档").description("有问题请联系朱天尧").version("v1.0")
 				.build();

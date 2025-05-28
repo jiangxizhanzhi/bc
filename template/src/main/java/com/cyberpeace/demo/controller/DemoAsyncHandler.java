@@ -17,6 +17,11 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class DemoAsyncHandler {
 
+	/**
+	 * 测试异步
+	 *
+	 * @throws
+	 */
 	@Async
 	public void testAsync() {
 		log.info(Thread.currentThread().getName() + " from testAsync!");

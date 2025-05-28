@@ -47,6 +47,17 @@ import java.util.List;
 @Slf4j
 public class SpaceWarningDictionaryController extends SpaceControllerBase<SpaceWarningDictionaryService, SpaceWarningDictionary, SpaceWarningDictionaryBo, SpaceWarningDictionaryPageReq> {
 
+	/**
+	 * 导出胜过
+	 *
+	 * @param response 响应
+	 * @param req      请求体
+	 * @return base rsp< 布尔值>
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see SpaceEventIntegrationRulePageReq
+	 * @see BaseRsp<Boolean>
+	 */
 	@ApiOperation("导出成excel表格")
 	@GetMapping("/excel")
 	public BaseRsp<Boolean> exportExcel(HttpServletResponse response,

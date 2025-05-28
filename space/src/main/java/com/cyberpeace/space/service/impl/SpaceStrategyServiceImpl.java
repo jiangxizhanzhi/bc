@@ -42,6 +42,16 @@ import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 空间策略Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see ServiceImpl
+ * @see SpaceStrategyService
+ * @since 1.0.0
+ */
 @Service
 @Slf4j
 public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, SpaceStrategy> implements SpaceStrategyService {
@@ -57,6 +67,13 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 
 	private final Map<String, SpaceStrategyFrameBo> frameCache = Maps.newConcurrentMap();
 
+	/**
+	 * 获取框架
+	 *
+	 * @return 空间策略框架Bo
+	 * @throws
+	 * @see SpaceStrategyFrameBo
+	 */
 	@Override
 	public SpaceStrategyFrameBo getFrame() {
 		Map<String, SpaceStrategyFrameBo> map = this.getFrameMap();
@@ -64,6 +81,13 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return map.get(SpaceCommonConstant.DEFAULT_STRATEGY_FRAME);
 	}
 
+	/**
+	 * 新增框架
+	 *
+	 * @param req 请求体
+	 * @throws
+	 * @see SpaceStrategyFrameAddReq
+	 */
 	@Override
 	public void addFrame(SpaceStrategyFrameAddReq req) {
 		SpaceStrategyFrame frame = this.req2Entity(req);
@@ -72,6 +96,13 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		this.refreshFrameCache();
 	}
 
+	/**
+	 * 修改
+	 *
+	 * @param req 请求体
+	 * @throws
+	 * @see SpaceStrategyFrameModifyReq
+	 */
 	@Override
 	public void modify(SpaceStrategyFrameModifyReq req) {
 		SpaceStrategyFrame frame = frameMapper.selectById(req.getResourceId());
@@ -83,6 +114,13 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		this.refreshFrameCache();
 	}
 
+	/**
+	 * 删除框架
+	 *
+	 * @param resourceId 资源id
+	 * @throws
+	 * @see String
+	 */
 	@Override
 	public void deleteFrame(String resourceId) {
 		Map<String, SpaceStrategyFrameBo> frameMap = this.getFrameMap();
@@ -104,6 +142,17 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		this.refreshFrameCache();
 	}
 
+	/**
+	 * 列表策略由框架
+	 *
+	 * @param frameId 框架id
+	 * @param name    名称
+	 * @return 列表<空间策略简单>
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<SpaceStrategySimple>
+	 */
 	@Override
 	public List<SpaceStrategySimple> listStrategiesByFrame(String frameId, String name) {
 		List<SpaceStrategySimple> simpleList = mapper.selectIdAndNameByFrame(frameId, name);
@@ -114,6 +163,13 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return simpleList;
 	}
 
+	/**
+	 * 新增策略
+	 *
+	 * @param req 请求体
+	 * @throws
+	 * @see SpaceStrategyAddReq
+	 */
 	@Override
 	public void addStrategy(SpaceStrategyAddReq req) {
 		SpaceStrategy strategy = this.req2Entity(req);
@@ -123,6 +179,13 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		mapper.insert(strategy);
 	}
 
+	/**
+	 * 更新策略
+	 *
+	 * @param req 请求体
+	 * @throws
+	 * @see SpaceStrategyModifyReq
+	 */
 	@Override
 	public void updateStrategy(SpaceStrategyModifyReq req) {
 		SpaceStrategy strategy = this.req2Entity(req);
@@ -130,6 +193,13 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		mapper.updateById(strategy);
 	}
 
+	/**
+	 * 删除策略
+	 *
+	 * @param ids id列表
+	 * @throws
+	 * @see List<String>
+	 */
 	@Override
 	public void deleteStrategy(List<String> ids) {
 		if (null == ids || ids.isEmpty()) {
@@ -139,6 +209,15 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		refreshFrameCache();
 	}
 
+	/**
+	 * 获取详情
+	 *
+	 * @param resourceId 资源id
+	 * @return 空间策略Bo
+	 * @throws
+	 * @see String
+	 * @see SpaceStrategyBo
+	 */
 	@Override
 	public SpaceStrategyBo getDetail(String resourceId) {
 		SpaceStrategy strategy = this.getOrException(resourceId);
@@ -152,6 +231,15 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return bo;
 	}
 
+	/**
+	 * 获取框架路线由id
+	 *
+	 * @param frameId 框架id
+	 * @return 字符串
+	 * @throws
+	 * @see String
+	 * @see String
+	 */
 	@Override
 	public String getFrameRouteById(String frameId) {
 		List<String> names = Lists.newArrayList();
@@ -168,6 +256,13 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return String.join("/", names);
 	}
 
+	/**
+	 * 获取统计学
+	 *
+	 * @return 编号策略
+	 * @throws
+	 * @see IndexStrategy
+	 */
 	@Override
 	public IndexStrategy getStatistics() {
 		SpaceStrategyFrameBo frameBo = this.getUndecoratedFrame();
@@ -207,6 +302,19 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return strategy;
 	}
 
+	/**
+	 * 分页策略由框架
+	 *
+	 * @param req     请求体
+	 * @param frameId 框架id
+	 * @param name    名称
+	 * @return 列出 rsp< Space Strategy BO>
+	 * @throws
+	 * @see PageReqBase
+	 * @see String
+	 * @see String
+	 * @see ListRsp<SpaceStrategyBo>
+	 */
 	@Override
 	public ListRsp<SpaceStrategyBo> pageStrategiesByFrame(PageReqBase req, String frameId,
 			String name) {
@@ -239,6 +347,9 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 	 *
 	 * @param ids id列表
 	 * @return {@code List<SpaceActionStrategy> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<SpaceActionStrategy>
 	 */
 	@Override
 	public List<SpaceActionStrategy> convert2ActionStrategy(List<String> ids) {
@@ -267,6 +378,13 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return res;
 	}
 
+	/**
+	 * 获取策略图表
+	 *
+	 * @return 知识点图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
 	@Override
 	public KnowledgeChart getStrategyChart() {
 		KnowledgeChart chart = new KnowledgeChart();
@@ -280,6 +398,16 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		}
 		return chart;
 	}
+
+	/**
+	 * 导出策略路径
+	 *
+	 * @param strategyIds 策略id列表
+	 * @return 字符串
+	 * @throws
+	 * @see List<String>
+	 * @see String
+	 */
 	public String dumpStrategyPath(List<String> strategyIds) {
 		String destPdfPath;
 		JSONObject data = getStrategyJsonObject(strategyIds);
@@ -303,6 +431,15 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return destPdfPath;
 	}
 
+	/**
+	 * 获取策略JSON 格式对象
+	 *
+	 * @param strategyIds 策略id列表
+	 * @return json对象
+	 * @throws
+	 * @see List<String>
+	 * @see JSONObject
+	 */
 	private JSONObject getStrategyJsonObject(List<String> strategyIds) {
 		JSONObject data = new JSONObject();
 		List<SpaceStrategy> strategies = this.listByIds(strategyIds);
@@ -329,11 +466,31 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return data;
 	}
 
+	/**
+	 * 获取未装饰框架
+	 *
+	 * @return 空间策略框架Bo
+	 * @throws
+	 * @see SpaceStrategyFrameBo
+	 */
 	private SpaceStrategyFrameBo getUndecoratedFrame() {
 		Map<String, SpaceStrategyFrameBo> map = this.getFrameMap();
 		return map.get(SpaceCommonConstant.DEFAULT_STRATEGY_FRAME);
 	}
 
+	/**
+	 * 填充图表
+	 *
+	 * @param chart    图表
+	 * @param bo       Bo
+	 * @param parentId 父母id
+	 * @param level    层级
+	 * @throws
+	 * @see KnowledgeChart
+	 * @see SpaceStrategyFrameBo
+	 * @see String
+	 * @see int
+	 */
 	private void fillChart(KnowledgeChart chart, SpaceStrategyFrameBo bo, String parentId,
 			int level) {
 		KnowledgeChartItem item = new KnowledgeChartItem(level);
@@ -353,6 +510,15 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		}
 	}
 
+	/**
+	 * 收集框架id
+	 *
+	 * @param frameIds 框架id列表
+	 * @param bo       Bo
+	 * @throws
+	 * @see List<String>
+	 * @see SpaceStrategyFrameBo
+	 */
 	private void collectFrameId(List<String> frameIds, SpaceStrategyFrameBo bo) {
 		if (null == bo) {
 			return;
@@ -363,6 +529,17 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		}
 	}
 
+	/**
+	 * 收集框架路线
+	 *
+	 * @param routeMap   路线映射
+	 * @param frameNames 框架名字
+	 * @param bo         Bo
+	 * @throws
+	 * @see Map<String, String>
+	 * @see List<String>
+	 * @see SpaceStrategyFrameBo
+	 */
 	private void collectFrameRoute(Map<String, String> routeMap, List<String> frameNames,
 			SpaceStrategyFrameBo bo) {
 		if (null == bo) {
@@ -377,6 +554,17 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		frameNames.remove(frameNames.size() - 1);
 	}
 
+	/**
+	 * 计数由框架id列表
+	 *
+	 * @param frameIds   框架id列表
+	 * @param strategies 策略
+	 * @return 整数
+	 * @throws
+	 * @see List<String>
+	 * @see List<SpaceStrategy>
+	 * @see Integer
+	 */
 	private Integer countByFrameIds(List<String> frameIds, List<SpaceStrategy> strategies) {
 		int cnt = 0;
 		Set<String> set = new HashSet<>(frameIds);
@@ -388,12 +576,30 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return cnt;
 	}
 
+	/**
+	 * req2 实体
+	 *
+	 * @param req 请求体
+	 * @return 空间策略
+	 * @throws
+	 * @see SpaceStrategyAddReq
+	 * @see SpaceStrategy
+	 */
 	private SpaceStrategy req2Entity(SpaceStrategyAddReq req) {
 		SpaceStrategy strategy = BeanUtils.copy(req, SpaceStrategy.class);
 		strategy.setBuiltin(false);
 		return strategy;
 	}
 
+	/**
+	 * req2 实体
+	 *
+	 * @param req 请求体
+	 * @return 空间策略框架
+	 * @throws
+	 * @see SpaceStrategyFrameAddReq
+	 * @see SpaceStrategyFrame
+	 */
 	private SpaceStrategyFrame req2Entity(SpaceStrategyFrameAddReq req) {
 		SpaceStrategyFrame frame = new SpaceStrategyFrame();
 		frame.setParent(req.getParent());
@@ -402,6 +608,15 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return frame;
 	}
 
+	/**
+	 * 实体 2Bo
+	 *
+	 * @param spaceStrategyFrame 空间策略框架
+	 * @return 空间策略框架Bo
+	 * @throws
+	 * @see SpaceStrategyFrame
+	 * @see SpaceStrategyFrameBo
+	 */
 	private SpaceStrategyFrameBo entity2Bo(SpaceStrategyFrame spaceStrategyFrame) {
 		SpaceStrategyFrameBo bo = new SpaceStrategyFrameBo();
 		bo.setName(spaceStrategyFrame.getName());
@@ -412,6 +627,15 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return bo;
 	}
 
+	/**
+	 * 获取或例外
+	 *
+	 * @param resourceId 资源id
+	 * @return 空间策略
+	 * @throws
+	 * @see String
+	 * @see SpaceStrategy
+	 */
 	public SpaceStrategy getOrException(String resourceId) {
 		SpaceStrategy strategy = mapper.selectById(resourceId);
 		if (null == strategy) {
@@ -428,6 +652,13 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return frame;
 	}
 
+	/**
+	 * 装饰框架映射
+	 *
+	 * @param map 映射
+	 * @throws
+	 * @see Map<String, SpaceStrategyFrameBo>
+	 */
 	private void decorateFrameMap(Map<String, SpaceStrategyFrameBo> map) {
 		List<SpaceStrategy> strategyList = mapper.selectList(null);
 		List<String> frameIds = StreamApiUtils.map(strategyList, SpaceStrategy::getFrameId);
@@ -447,6 +678,13 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		}
 	}
 
+	/**
+	 * 获取框架映射
+	 *
+	 * @return 地图<字符串空间策略框架博>
+	 * @throws
+	 * @see Map<String, SpaceStrategyFrameBo>
+	 */
 	private Map<String, SpaceStrategyFrameBo> getFrameMap() {
 		if (frameCache.isEmpty()) {
 			initFrameCache();
@@ -454,6 +692,11 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return frameCache;
 	}
 
+	/**
+	 * 初始化框架缓存
+	 *
+	 * @throws
+	 */
 	private synchronized void initFrameCache() {
 		if (frameCache.isEmpty()) {
 			List<SpaceStrategyFrame> strategyFrameList = frameMapper.getAll();
@@ -475,6 +718,11 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		}
 	}
 
+	/**
+	 * 刷新框架缓存
+	 *
+	 * @throws
+	 */
 	private synchronized void refreshFrameCache() {
 		frameCache.clear();
 		initFrameCache();

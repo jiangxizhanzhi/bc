@@ -76,9 +76,19 @@ public class DefenseAddReq {
 	@ApiModelProperty(value = "工具")
 	private List<String> tool;
 
+	/**
+	 * 源
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "来源")
 	private String source;
 
+	/**
+	 * 系统id
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "防御技战术体系id")
 	private String systemId;
 
@@ -88,6 +98,11 @@ public class DefenseAddReq {
 	@ApiModelProperty(value = "行动")
 	private List<TacticAction> action;
 
+	/**
+	 * 策略
+	 *
+	 * @see List<SpaceActionStrategy>
+	 */
 	@ApiModelProperty(value = "相关策略")
 	private List<SpaceActionStrategy> strategy;
 }

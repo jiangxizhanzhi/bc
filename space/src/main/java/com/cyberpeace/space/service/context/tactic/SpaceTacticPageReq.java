@@ -11,19 +11,45 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 空间战法分页请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpacePageReqBase
+ * @since 1.0.0
+ */
 @ApiModel
 public class SpaceTacticPageReq extends SpacePageReqBase {
 
+	/**
+	 * 类别id
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "战法分类")
 	@Getter
 	@Setter
 	private String category_id;
 
+	/**
+	 * 系统id
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "体系id")
 	@Getter
 	@Setter
 	private String system_id;
 
+	/**
+	 * req2 查询包装器
+	 *
+	 * @return Lambda 查询包装器
+	 * @throws
+	 * @see LambdaQueryWrapper
+	 */
 	@Override
 	public LambdaQueryWrapper req2QueryWrapper() {
 		LambdaQueryWrapper<SpaceTacticAttack> wrapper = new LambdaQueryWrapper<>();

@@ -15,13 +15,30 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * 空间容易特征Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see ServiceImpl
+ * @see SpaceAptFeatureService
+ * @since 1.0.0
+ */
 @Service
 @Slf4j
 public class SpaceAptFeatureServiceImpl extends ServiceImpl<SpaceAptFeatureMapper, SpaceAptFeature> implements SpaceAptFeatureService
 
 {
 
-	@Override
+    /**
+     * 获取统治容易组织图表
+     *
+     * @return 知识点图表
+     * @throws
+     * @see KnowledgeChart
+     */
+    @Override
 	public KnowledgeChart getRuleAptOrgChart() {
 
 		KnowledgeChart chart = new KnowledgeChart();

@@ -19,11 +19,26 @@ import java.util.List;
 @Setter
 public class IndexActionFrameChart {
 
+	/**
+	 * x 日期
+	 *
+	 * @see List<String>
+	 */
 	private List<String> xDates = Lists.newArrayList();
 
+	/**
+	 * 过程
+	 *
+	 * @see List<Integer>
+	 */
 	@ApiModelProperty(value = "面向攻击流程")
 	private List<Integer> process = Lists.newArrayList();
 
+	/**
+	 * 目标
+	 *
+	 * @see List<Integer>
+	 */
 	@ApiModelProperty(value = "面向攻击目标")
 	private List<Integer> target = Lists.newArrayList();
 

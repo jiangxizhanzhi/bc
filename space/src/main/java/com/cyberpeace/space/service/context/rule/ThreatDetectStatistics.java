@@ -16,24 +16,59 @@ import lombok.Setter;
 @Setter
 public class ThreatDetectStatistics {
 
+	/**
+	 * 流量萃取
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "网络流量提取规则")
 	private Integer trafficExtraction = 0;
 
+	/**
+	 * 流量检测
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "流量攻击检测规则")
 	private Integer trafficDetect = 0;
 
+	/**
+	 * 加载文件威胁
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "负载文件威胁规则")
 	private Integer loadedFileThreat = 0;
 
+	/**
+	 * APT 威胁
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = " 特定APT威胁检测规则")
 	private Integer aptThreat = 0;
 
+	/**
+	 * 事件集成
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "事件综合规则")
 	private Integer eventIntegration = 0;
 
+	/**
+	 * 威胁图像
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "威胁画像规则")
 	private Integer threatImage = 0;
 
+	/**
+	 * 来源分析
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "攻击源分析规则")
 	private Integer sourceAnalyze = 0;
 

@@ -21,19 +21,46 @@ import lombok.Setter;
 @Setter
 public class SpaceFingerPrintBo extends SpaceBoBase {
 
+	/**
+	 * 资源id
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "资源id")
 	private String resourceId;
 
+	/**
+	 * 名称
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "名称")
 	private String name;
-    
 
+
+	/**
+	 * 类型
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "类型")
 	private Integer type;
 
+	/**
+	 * 内容
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "指纹列表")
 	private String content;
 
+	/**
+	 * BO2 实体
+	 *
+	 * @return 隔间指纹
+	 * @throws
+	 * @see SpaceFingerPrint
+	 */
 	public SpaceFingerPrint bo2Entity() {
 		SpaceFingerPrint entity = BeanUtils.copy(this, SpaceFingerPrint.class);
 		return entity;

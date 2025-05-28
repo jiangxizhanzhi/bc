@@ -34,6 +34,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 空间战法攻击Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see ServiceImpl
+ * @see SpaceTacticAttackService
+ * @since 1.0.0
+ */
 @Service
 @Slf4j
 public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackMapper, SpaceTacticAttack> implements SpaceTacticAttackService {
@@ -55,6 +65,16 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 
 	@Autowired
 	private SpaceTacticAttackMapper spaceTacticAttackMapper;
+
+	/**
+	 * 分页攻击
+	 *
+	 * @param req 请求体
+	 * @return
+	 * @throws
+	 * @see SpaceTacticPageReq
+	 * @see ListRsp<AttackListBo>
+	 */
 	@Override
 	public ListRsp<AttackListBo> pageAttack(SpaceTacticPageReq req) {
 		Page page = req.toPageParam();
@@ -93,6 +113,13 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 		return PageUtil.getListResult(res);
 	}
 
+	/**
+	 * 新增攻击
+	 *
+	 * @param req 请求体
+	 * @throws
+	 * @see AttackAddReq
+	 */
 	@Override
 	public void addAttack(AttackAddReq req) {
 		SpaceTacticAttack attack = this.req2Entity(req);
@@ -100,6 +127,13 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 		mapper.insert(attack);
 	}
 
+	/**
+	 * 更新攻击
+	 *
+	 * @param req 请求体
+	 * @throws
+	 * @see AttackModifyReq
+	 */
 	@Override
 	public void updateAttack(AttackModifyReq req) {
 		// todo id name
@@ -109,11 +143,27 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 
 	}
 
+	/**
+	 * 删除批量
+	 *
+	 * @param ids id列表
+	 * @throws
+	 * @see List<String>
+	 */
 	@Override
 	public void deleteBatch(List<String> ids) {
 		mapper.deleteBatchIds(ids);
 	}
 
+	/**
+	 * 获取详情
+	 *
+	 * @param resourceId 资源id
+	 * @return 攻击详情
+	 * @throws
+	 * @see String
+	 * @see AttackDetail
+	 */
 	@Override
 	public AttackDetail getDetail(String resourceId) {
 		SpaceTacticAttack attack = this.getOrException(resourceId);
@@ -121,6 +171,15 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 		return detail;
 	}
 
+	/**
+	 * 分页类别
+	 *
+	 * @param reqBase 请求体基础
+	 * @return 列表RSP<战法攻击类别博>
+	 * @throws
+	 * @see PageReqBase
+	 * @see ListRsp<TacticAttackCategoryBo>
+	 */
 	@Override
 	public ListRsp<TacticAttackCategoryBo> pageCategory(PageReqBase reqBase) {
 		Page page = reqBase.toPageParam();
@@ -128,6 +187,13 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 		return PageUtil.getListResult(iPage);
 	}
 
+	/**
+	 * 新增攻击类别
+	 *
+	 * @param req 请求体
+	 * @throws
+	 * @see TacticAttackCategoryAddReq
+	 */
 	@Override
 	public void addAttackCategory(TacticAttackCategoryAddReq req) {
 		SpaceTacticAttackCategory category = this.req2Entity(req);
@@ -135,6 +201,13 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 		categoryMapper.insert(category);
 	}
 
+	/**
+	 * 更新攻击类别
+	 *
+	 * @param req 请求体
+	 * @throws
+	 * @see TacticAttackCategoryModifyReq
+	 */
 	@Override
 	public void updateAttackCategory(TacticAttackCategoryModifyReq req) {
 		SpaceTacticAttackCategory category = this.req2Entity(req);
@@ -142,11 +215,25 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 		categoryMapper.updateById(category);
 	}
 
+	/**
+	 * 删除类别
+	 *
+	 * @param ids id列表
+	 * @throws
+	 * @see List<String>
+	 */
 	@Override
 	public void deleteCategory(List<String> ids) {
 		categoryMapper.deleteBatchIds(ids);
 	}
 
+	/**
+	 * 获取战法攻击图表
+	 *
+	 * @return 知识点图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
 	@Override
 	public KnowledgeChart getTacticAttackChart() {
 		KnowledgeChart chart = new KnowledgeChart();
@@ -181,11 +268,29 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 		return chart;
     }
 
+	/**
+	 * 按 categoryID 列出
+	 *
+	 * @param ids id列表
+	 * @return list<字符串>
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
+	 */
 	@Override
 	public List<String> listByCategoryids(List<String> ids) {
 		return spaceTacticAttackMapper.idsByCategoryids(ids);
 	}
 
+	/**
+	 * req2 实体
+	 *
+	 * @param req 请求体
+	 * @return 空间战法攻击类别
+	 * @throws
+	 * @see TacticAttackCategoryAddReq
+	 * @see SpaceTacticAttackCategory
+	 */
 	private SpaceTacticAttackCategory req2Entity(TacticAttackCategoryAddReq req) {
 		SpaceTacticAttackCategory category = new SpaceTacticAttackCategory();
 		category.setName(req.getName());
@@ -193,6 +298,15 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 		return category;
 	}
 
+	/**
+	 * req2 实体
+	 *
+	 * @param req 请求体
+	 * @return 空间战法攻击
+	 * @throws
+	 * @see AttackAddReq
+	 * @see SpaceTacticAttack
+	 */
 	private SpaceTacticAttack req2Entity(AttackAddReq req) {
 		SpaceTacticAttack attack = new SpaceTacticAttack();
 		attack.setName(req.getName());
@@ -207,6 +321,15 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 		return attack;
 	}
 
+	/**
+	 * 实体 2Bo
+	 *
+	 * @param attack 攻击
+	 * @return 攻击详情
+	 * @throws
+	 * @see SpaceTacticAttack
+	 * @see AttackDetail
+	 */
 	private AttackDetail entity2Bo(SpaceTacticAttack attack) {
 		AttackDetail detail = BeanUtils.copy(attack, AttackDetail.class);
 		detail.setAction(JsonUtil.toJsonObjectArray(attack.getAction(), TacticAction.class));
@@ -228,6 +351,15 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 		return detail;
 	}
 
+	/**
+	 * 获取或例外
+	 *
+	 * @param resourceId 资源id
+	 * @return 空间战法攻击
+	 * @throws
+	 * @see String
+	 * @see SpaceTacticAttack
+	 */
 	private SpaceTacticAttack getOrException(String resourceId) {
 		SpaceTacticAttack attack = mapper.selectById(resourceId);
 		if (null == attack) {

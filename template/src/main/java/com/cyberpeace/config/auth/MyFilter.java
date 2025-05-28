@@ -26,9 +26,28 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MyFilter implements Filter {
 
+	/**
+	 * 初始化
+	 *
+	 * @param filterConfig 过滤器配置
+	 * @throws @throws ServletException Servlet 异常
+	 * @see FilterConfig
+	 */
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {}
 
+	/**
+	 * 做过滤器
+	 *
+	 * @param request  请求
+	 * @param response 响应
+	 * @param chain    链
+	 * @throws @throws          IOException io异常
+	 * @throws ServletException Servlet 异常
+	 * @see ServletRequest
+	 * @see ServletResponse
+	 * @see FilterChain
+	 */
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
@@ -41,11 +60,23 @@ public class MyFilter implements Filter {
 		log.debug("{}|{}", url, (System.currentTimeMillis() - startTime));
 	}
 
+	/**
+	 * 摧毁
+	 *
+	 * @throws
+	 */
 	@Override
 	public void destroy() {
 		// 什么都不需要做
 	}
 
+	/**
+	 * 设置跟踪id
+	 *
+	 * @param request 请求
+	 * @throws
+	 * @see ServletRequest
+	 */
 	private void setTraceId(ServletRequest request) {
 		String traceId = ((HttpServletRequest) request).getHeader(WebConstant.TRACE_HEADER);
 

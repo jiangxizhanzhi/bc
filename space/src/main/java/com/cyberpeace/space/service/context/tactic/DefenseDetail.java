@@ -94,12 +94,27 @@ public class DefenseDetail {
 	@ApiModelProperty(value = "行动")
 	private List<TacticAction> action;
 
+	/**
+	 * 源
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "来源")
 	private String source;
 
+	/**
+	 * 系统id
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "体系id")
 	private String systemId;
 
+	/**
+	 * 策略
+	 *
+	 * @see List<SpaceActionStrategy>
+	 */
 	@ApiModelProperty(value = "策略")
 	private List<SpaceActionStrategy> strategy;
 }

@@ -16,15 +16,35 @@ import lombok.Setter;
 @Setter
 public class BaseDataRuleStatistics {
 
+	/**
+	 * 漏洞
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "漏洞库数量")
 	private Integer vuln = 0;
 
+	/**
+	 * 指纹
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "指纹库")
 	private Integer fingerPrint = 0;
 
+	/**
+	 * 容易
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "apt特征")
 	private Integer apt = 0;
 
+	/**
+	 * 国际 奥委会
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "ioc威胁情报")
 	private Integer ioc = 0;
 }

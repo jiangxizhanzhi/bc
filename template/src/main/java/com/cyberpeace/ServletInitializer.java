@@ -14,6 +14,15 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  */
 public class ServletInitializer extends SpringBootServletInitializer {
 
+	/**
+	 * 配置
+	 *
+	 * @param application 行为依赖
+	 * @return 春天行为依赖建筑工人
+	 * @throws
+	 * @see SpringApplicationBuilder
+	 * @see SpringApplicationBuilder
+	 */
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(OJApplication.class);

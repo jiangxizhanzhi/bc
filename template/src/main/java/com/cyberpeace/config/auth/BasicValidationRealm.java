@@ -32,6 +32,15 @@ import java.util.Set;
 @Service
 public class BasicValidationRealm extends AuthorizingRealm {
 
+    /**
+     * 做获取授权信息
+     *
+     * @param principalCollection 主体集合
+     * @return 授权信息
+     * @throws
+     * @see PrincipalCollection
+     * @see AuthorizationInfo
+     */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
@@ -47,6 +56,15 @@ public class BasicValidationRealm extends AuthorizingRealm {
         return simpleAuthorizationInfo;
     }
 
+    /**
+     * 做获取认证信息
+     *
+     * @param authenticationToken 鉴权令牌
+     * @return 身份验证信息
+     * @throws @throws AuthenticationException 鉴权异常
+     * @see AuthenticationToken
+     * @see AuthenticationInfo
+     */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken)
             throws AuthenticationException {

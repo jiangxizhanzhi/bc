@@ -36,17 +36,49 @@ import com.google.common.cache.CacheBuilder;
 public class DemonstrationWhiteFilter implements Filter {
 
 
+    /**
+     * 演示
+     *
+     * @see String
+     */
     private String demo = SystemPropUtil.getProp("WHITE_DEMO");
+    /**
+     * 缓存
+     *
+     * @see String
+     */
     private String cache = SystemPropUtil.getProp("CACHE_OPEN");
 
+    /**
+     * 演示开启
+     *
+     * @see Boolean
+     */
     private Boolean demoOpen=false;
+    /**
+     * 内容缓存
+     *
+     * @see Cache<String, String>
+     */
     private Cache<String,String> contentCache= CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.DAYS).build();
+    /**
+     * 现在
+     */
     private long now= 0L;
 
 
-
-
-
+    /**
+     * 做过滤器
+     *
+     * @param servletRequest  Servlet 请求
+     * @param servletResponse Servlet 响应
+     * @param filterChain     过滤器链
+     * @throws @throws          IOException io异常
+     * @throws ServletException Servlet 异常
+     * @see ServletRequest
+     * @see ServletResponse
+     * @see FilterChain
+     */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
@@ -60,6 +92,14 @@ public class DemonstrationWhiteFilter implements Filter {
         filterChain.doFilter(servletRequest, servletResponse);
         ThreadLocalContext.whiteUpdateThreadLocal.set(false);
     }
+
+    /**
+     * 交易演示开启
+     *
+     * @param request 请求
+     * @throws @throws IOException io异常
+     * @see HttpServletRequest
+     */
     private void dealDemoOpen(HttpServletRequest request) throws IOException{
         // 获取请求的路径或其他条件，判断是否为名单内请求
         String uri = request.getRequestURI();
@@ -85,10 +125,23 @@ public class DemonstrationWhiteFilter implements Filter {
         }
     }
 
+    /**
+     * 初始化
+     *
+     * @param filterConfig 过滤器配置
+     * @throws @throws ServletException Servlet 异常
+     * @see FilterConfig
+     */
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         //
     }
+
+    /**
+     * 摧毁
+     *
+     * @throws
+     */
     @Override
     public void destroy() {
         // 销毁过滤器

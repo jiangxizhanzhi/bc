@@ -16,5 +16,12 @@ import com.cyberpeace.space.service.context.index.KnowledgeChart;
  */
 public interface SpaceLoadedFileThreatRuleService extends IService<SpaceLoadedFileThreatRule> {
 
+    /**
+     * GE Rule 病毒图表
+     *
+     * @return 知识点图表
+     * @throws
+     * @see KnowledgeChart
+     */
     KnowledgeChart geRuleVirusChart();
 }

@@ -25,6 +25,8 @@ public interface SpaceStrategyService extends IService<SpaceStrategy> {
      * 获取框架
      *
      * @return {@code SpaceStrategyFrameBo }
+     * @throws
+     * @see SpaceStrategyFrameBo
      */
     SpaceStrategyFrameBo getFrame();
 
@@ -111,8 +113,34 @@ public interface SpaceStrategyService extends IService<SpaceStrategy> {
      */
     List<SpaceActionStrategy> convert2ActionStrategy(List<String> ids);
 
+    /**
+     * 获取策略图表
+     *
+     * @return 知识点图表
+     * @throws
+     * @see KnowledgeChart
+     */
     KnowledgeChart getStrategyChart();
+
+    /**
+     * 导出策略路径
+     *
+     * @param strategyIds 策略id列表
+     * @return 字符串
+     * @throws
+     * @see List<String>
+     * @see String
+     */
     String dumpStrategyPath(List<String> strategyIds);
 
+    /**
+     * 获取或例外
+     *
+     * @param resourceId 资源id
+     * @return 空间策略
+     * @throws
+     * @see String
+     * @see SpaceStrategy
+     */
     SpaceStrategy getOrException(String resourceId);
 }

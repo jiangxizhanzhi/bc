@@ -28,9 +28,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiresAuthentication
 public class SpaceIndexController {
 
+	/**
+	 * 编号Service
+	 *
+	 * @see SpaceIndexService
+	 */
 	@Autowired
 	private SpaceIndexService indexService;
 
+	/**
+	 * 获取krepository 仓库
+	 *
+	 * @return 基础rsp<编号知识>
+	 * @throws
+	 * @see BaseRsp<IndexKnowledge>
+	 */
 	@ApiOperation("防御知识库统计")
 	@GetMapping("/knowledge")
 	public BaseRsp<IndexKnowledge> getKRepository() {
@@ -39,6 +51,13 @@ public class SpaceIndexController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取kchart
+	 *
+	 * @return 基础RSP<知识点图表>
+	 * @throws
+	 * @see BaseRsp<KnowledgeChart>
+	 */
 	@ApiOperation("知识图谱")
 	@GetMapping("/knowledge_chart")
 	public BaseRsp<KnowledgeChart> getKChart() {
@@ -46,6 +65,13 @@ public class SpaceIndexController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取trepository 仓库
+	 *
+	 * @return 基础RSP<编号工具>
+	 * @throws
+	 * @see BaseRsp<IndexTool>
+	 */
 	@ApiOperation("训练工具集数据统计")
 	@GetMapping("/tool")
 	public BaseRsp<IndexTool> getTRepository() {
@@ -53,6 +79,13 @@ public class SpaceIndexController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * getf
+	 *
+	 * @return 基础RSP<编号框架>
+	 * @throws
+	 * @see BaseRsp<IndexFrame>
+	 */
 	@ApiOperation("防御行动框架")
 	@GetMapping("/frame")
 	public BaseRsp<IndexFrame> getF() {
@@ -60,6 +93,13 @@ public class SpaceIndexController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取人工智能网址
+	 *
+	 * @return base rsp< 字符串>
+	 * @throws
+	 * @see BaseRsp<String>
+	 */
 	@ApiOperation("获取大模型地址")
 	@GetMapping("/ai")
 	public BaseRsp<String> getAiUrl() {

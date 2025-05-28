@@ -17,5 +17,12 @@ import com.cyberpeace.space.service.context.index.KnowledgeChart;
 public interface SpaceViolationJudgeRuleService extends IService<SpaceViolationJudgeRule>
 
 {
+    /**
+     * 获取统治违反法官图表
+     *
+     * @return 知识点图表
+     * @throws
+     * @see KnowledgeChart
+     */
     KnowledgeChart getRuleViolationJudgeChart();
 }

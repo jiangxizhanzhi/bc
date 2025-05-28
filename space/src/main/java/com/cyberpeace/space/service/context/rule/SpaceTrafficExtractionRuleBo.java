@@ -22,13 +22,28 @@ import lombok.Setter;
 @Setter
 public class SpaceTrafficExtractionRuleBo extends SpaceBoBase {
 
+	/**
+	 * 资源id
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "资源id")
 	private String resourceId;
 
+	/**
+	 * 名称
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "名称")
 	private String name;
-    
 
+
+	/**
+	 * 次序
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "顺序")
 	private String order;
 
@@ -38,13 +53,30 @@ public class SpaceTrafficExtractionRuleBo extends SpaceBoBase {
 	// @ApiModelProperty(value = "路径")
 	// private String route;
 
+	/**
+	 * 内容
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "内容")
 	private String content;
 
+	/**
+	 * 工具
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "工具")
 	private String tool;
 
 
+	/**
+	 * BO2 实体
+	 *
+	 * @return 空间流量萃取统治
+	 * @throws
+	 * @see SpaceTrafficExtractionRule
+	 */
 	public SpaceTrafficExtractionRule bo2Entity() {
 		SpaceTrafficExtractionRule entity = BeanUtils.copy(this, SpaceTrafficExtractionRule.class);
 		return entity;

@@ -30,9 +30,23 @@ import java.util.List;
 @RequestMapping("/space/tactic/attack")
 public class SpaceTacticAttackController {
 
+	/**
+	 * 攻击Service
+	 *
+	 * @see SpaceTacticAttackService
+	 */
 	@Autowired
 	private SpaceTacticAttackService attackService;
 
+	/**
+	 * 列表攻击
+	 *
+	 * @param req 请求体
+	 * @return base rsp< list rsp<攻击列表 bo>>
+	 * @throws
+	 * @see SpaceTacticPageReq
+	 * @see BaseRsp<ListRsp<AttackListBo>>
+	 */
 	@ApiOperation("攻击战法列表")
 	@GetMapping("/page")
 	public BaseRsp<ListRsp<AttackListBo>> listAttack(SpaceTacticPageReq req) {
@@ -40,6 +54,15 @@ public class SpaceTacticAttackController {
 		return new BaseRsp(res);
 	}
 
+	/**
+	 * 新增攻击
+	 *
+	 * @param req 请求体
+	 * @return 基础响应
+	 * @throws
+	 * @see AttackAddReq
+	 * @see BaseRsp
+	 */
 	@ApiOperation("新增攻击战法")
 	@PostMapping("")
 	public BaseRsp addAttack(@RequestBody AttackAddReq req) {
@@ -47,6 +70,15 @@ public class SpaceTacticAttackController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 更新一个
+	 *
+	 * @param req 请求体
+	 * @return 基础响应
+	 * @throws
+	 * @see AttackModifyReq
+	 * @see BaseRsp
+	 */
 	@ApiOperation("更新攻击战法")
 	@PatchMapping("")
 	public BaseRsp updateA(@RequestBody AttackModifyReq req) {
@@ -58,6 +90,15 @@ public class SpaceTacticAttackController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 删除
+	 *
+	 * @param req 请求体
+	 * @return 基础响应
+	 * @throws
+	 * @see IdListReq
+	 * @see BaseRsp
+	 */
 	@ApiOperation("删除攻击战法")
 	@DeleteMapping("")
 	public BaseRsp deleteA(@RequestBody IdListReq req) {
@@ -72,6 +113,15 @@ public class SpaceTacticAttackController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 获取adetail
+	 *
+	 * @param resource_id 资源id
+	 * @return Base RSP< 攻击详情>
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<AttackDetail>
+	 */
 	@ApiOperation("攻击战法详情")
 	@GetMapping("")
 	public BaseRsp<AttackDetail>
@@ -80,6 +130,15 @@ public class SpaceTacticAttackController {
 		return new BaseRsp<>(detail);
 	}
 
+	/**
+	 * Pagec
+	 *
+	 * @param reqBase 请求体基础
+	 * @return 基础RSP<列表RSP < 战法攻击类别博>>
+	 * @throws
+	 * @see PageReqBase
+	 * @see BaseRsp<ListRsp<TacticAttackCategoryBo>>
+	 */
 	@ApiOperation("攻击战法类别列表")
 	@GetMapping("/category/page")
 	public BaseRsp<ListRsp<TacticAttackCategoryBo>> pageC(PageReqBase reqBase) {
@@ -87,6 +146,15 @@ public class SpaceTacticAttackController {
 		return new BaseRsp<>(rsp);
 	}
 
+	/**
+	 * 添加
+	 *
+	 * @param req 请求体
+	 * @return 基础响应
+	 * @throws
+	 * @see TacticAttackCategoryAddReq
+	 * @see BaseRsp
+	 */
 	@ApiOperation("新增攻击战法类别")
 	@PostMapping("/category")
 	public BaseRsp addC(@RequestBody TacticAttackCategoryAddReq req) {
@@ -94,6 +162,15 @@ public class SpaceTacticAttackController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 更新c
+	 *
+	 * @param req 请求体
+	 * @return 基础响应
+	 * @throws
+	 * @see TacticAttackCategoryModifyReq
+	 * @see BaseRsp
+	 */
 	@ApiOperation("修改攻击战法类别")
 	@PatchMapping("/category")
 	public BaseRsp updateC(@RequestBody TacticAttackCategoryModifyReq req) {
@@ -101,6 +178,15 @@ public class SpaceTacticAttackController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 删除
+	 *
+	 * @param req 请求体
+	 * @return 基础响应
+	 * @throws
+	 * @see IdListReq
+	 * @see BaseRsp
+	 */
 	@ApiOperation("删除攻击战法类别")
 	@DeleteMapping("/category")
 	public BaseRsp deleteC(@RequestBody IdListReq req) {

@@ -16,9 +16,19 @@ import lombok.Setter;
 @Setter
 public class IndexFrame {
 
+	/**
+	 * 框架计数
+	 *
+	 * @see IndexFrameCount
+	 */
 	@ApiModelProperty(value = "计数")
 	private IndexFrameCount frameCount;
 
+	/**
+	 * 趋势
+	 *
+	 * @see IndexActionFrameChart
+	 */
 	@ApiModelProperty(value = "趋势图")
 	private IndexActionFrameChart trending;
 }

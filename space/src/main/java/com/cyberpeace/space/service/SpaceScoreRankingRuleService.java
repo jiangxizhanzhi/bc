@@ -17,5 +17,12 @@ import com.cyberpeace.space.service.context.index.KnowledgeChart;
 public interface SpaceScoreRankingRuleService extends IService<SpaceScoreRankingRule>
 
 {
+    /**
+     * 获取统治得分排名图表
+     *
+     * @return 知识点图表
+     * @throws
+     * @see KnowledgeChart
+     */
     KnowledgeChart getRuleScoreRankingChart();
 }

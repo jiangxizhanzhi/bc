@@ -31,6 +31,15 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.io.File;
 import java.util.List;
 
+/**
+ * 理论KSERVICE 服务实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see TheoryKService
+ * @since 1.0.0
+ */
 @Service
 @Slf4j
 public class TheoryKServiceImpl implements TheoryKService {
@@ -53,6 +62,15 @@ public class TheoryKServiceImpl implements TheoryKService {
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * pagek
+	 *
+	 * @param req 请求体
+	 * @return 列表RSP<管理课时列表博>
+	 * @throws
+	 * @see ListKReq
+	 * @see ListRsp<AdminLessonListBo>
+	 */
 	@Override
 	public ListRsp<AdminLessonListBo> pageK(ListKReq req) {
 		Page page = req.toPageParam();
@@ -72,11 +90,27 @@ public class TheoryKServiceImpl implements TheoryKService {
 		return rsp;
 	}
 
+	/**
+	 * 删除批量
+	 *
+	 * @param ids id列表
+	 * @throws
+	 * @see List<String>
+	 */
 	@Override
 	public void deleteBatch(List<String> ids) {
 		courseLessonService.batchDelete(ids);
 	}
 
+	/**
+	 * 获取详情
+	 *
+	 * @param lessonId 课时id
+	 * @return 管理员课程bo
+	 * @throws
+	 * @see String
+	 * @see AdminLessonBo
+	 */
 	@Override
 	public AdminLessonBo getDetail(String lessonId) {
 

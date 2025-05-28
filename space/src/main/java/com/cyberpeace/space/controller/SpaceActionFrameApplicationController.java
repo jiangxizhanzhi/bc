@@ -36,15 +36,35 @@ import java.util.List;
 @Slf4j
 public class SpaceActionFrameApplicationController extends SpaceControllerBase<SpaceActionFrameApplicationService, SpaceActionFrameApplication, SpaceActionFrameApplicationBo, SpaceActionFrameApplicationListReq> {
 
+	/**
+	 * 下发Service
+	 *
+	 * @see SpaceActionFrameReleaseService
+	 */
 	@Autowired
 	private SpaceActionFrameReleaseService releaseService;
 
+	/**
+	 * 框架Service
+	 *
+	 * @see SpaceActionFrameService
+	 */
 	@Autowired
 	private SpaceActionFrameService frameService;
 
+	/**
+	 * 次序Service
+	 *
+	 * @see SpaceActionFrameOrderService
+	 */
 	@Autowired
 	private SpaceActionFrameOrderService orderService;
 
+	/**
+	 * 事务模板
+	 *
+	 * @see TransactionTemplate
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 

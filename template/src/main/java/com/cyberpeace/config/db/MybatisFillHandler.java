@@ -17,12 +17,26 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
  */
 public class MybatisFillHandler implements MetaObjectHandler {
 
+	/**
+	 * 插入填充
+	 *
+	 * @param metaObject Meta 对象
+	 * @throws
+	 * @see MetaObject
+	 */
 	@Override
 	public void insertFill(MetaObject metaObject) {
 		this.setFieldValByName("createTime", new Date(), metaObject);
 		this.setFieldValByName("updateTime", new Date(), metaObject);
 	}
 
+	/**
+	 * 更新填充
+	 *
+	 * @param metaObject Meta 对象
+	 * @throws
+	 * @see MetaObject
+	 */
 	@Override
 	public void updateFill(MetaObject metaObject) {
 		this.setFieldValByName("updateTime", new Date(), metaObject);

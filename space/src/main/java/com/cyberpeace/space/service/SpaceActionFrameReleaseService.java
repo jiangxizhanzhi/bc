@@ -19,9 +19,34 @@ import java.util.List;
  * @since 1.0.0
  */
 public interface SpaceActionFrameReleaseService extends IService<SpaceActionFrameRelease> {
+    /**
+     * 创建
+     *
+     * @param req 请求体
+     * @throws
+     * @see SpaceActionFrameReleaseReq
+     */
     void create(SpaceActionFrameReleaseReq req);
 
+    /**
+     * 获取行为依赖Bo
+     *
+     * @param resourceId 资源id
+     * @return 空间行动框架行为依赖Bo
+     * @throws
+     * @see String
+     * @see SpaceActionFrameApplicationBo
+     */
     SpaceActionFrameApplicationBo getApplicationBo(String resourceId);
 
+    /**
+     * 获取策略
+     *
+     * @param applicationId 行为依赖id
+     * @return 列表<空间行动框架次序博>
+     * @throws
+     * @see String
+     * @see List<SpaceActionFrameOrderBo>
+     */
     List<SpaceActionFrameOrderBo> getTactics(String applicationId);
 }

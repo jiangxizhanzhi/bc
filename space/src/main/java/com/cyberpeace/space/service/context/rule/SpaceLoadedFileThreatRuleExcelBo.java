@@ -16,18 +16,43 @@ import lombok.Setter;
 @Setter
 public class SpaceLoadedFileThreatRuleExcelBo {
 
+	/**
+	 * 类型
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "检测类型")
 	private String type;
 
+	/**
+	 * 描述
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "内容简介")
 	private String description;
 
+	/**
+	 * 内容
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "内容详情")
 	private String content;
 
+	/**
+	 * 工具
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "应用工具")
 	private String tool;
 
+	/**
+	 * 执行类型
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "执行方式，自动2，手动1")
 	private String executeType;
 }

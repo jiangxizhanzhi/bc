@@ -15,8 +15,18 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SpaceStrategyFrameModifyReq{
+    /**
+     * 资源id
+     *
+     * @see String
+     */
     private String resourceId;
 
+    /**
+     * 名称
+     *
+     * @see String
+     */
     @ApiModelProperty(value = "")
     private String name;
 }

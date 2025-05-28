@@ -29,6 +29,11 @@ public class AttackAddReq {
 	@ApiModelProperty(value = "类别")
 	private String categoryId;
 
+	/**
+	 * 源
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "来源")
 	private String source;
 
@@ -47,6 +52,11 @@ public class AttackAddReq {
 	@ApiModelProperty(value = "工具")
 	private List<String> tool;
 
+	/**
+	 * 策略
+	 *
+	 * @see List<SpaceActionStrategy>
+	 */
 	@ApiModelProperty(value = "相关策略")
 	private List<SpaceActionStrategy> strategy;
 }

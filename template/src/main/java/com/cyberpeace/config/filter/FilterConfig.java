@@ -16,6 +16,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FilterConfig {
 
+	/**
+	 * 例外过滤器
+	 *
+	 * @return 过滤器注册豆
+	 * @throws
+	 * @see FilterRegistrationBean
+	 */
 	@Bean
 	public FilterRegistrationBean exceptionFilter() {
 		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
@@ -26,6 +33,13 @@ public class FilterConfig {
 		return filterRegistrationBean;
 	}
 
+	/**
+	 * 我的过滤器
+	 *
+	 * @return 过滤器注册豆
+	 * @throws
+	 * @see FilterRegistrationBean
+	 */
 	@Bean
 	public FilterRegistrationBean myFilter() {
 		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
@@ -36,6 +50,13 @@ public class FilterConfig {
 		return filterRegistrationBean;
 	}
 
+	/**
+	 * 防抖过滤器
+	 *
+	 * @return 过滤器注册豆
+	 * @throws
+	 * @see FilterRegistrationBean
+	 */
 	@Bean
 	public FilterRegistrationBean debounceFilter() {
 
@@ -46,6 +67,14 @@ public class FilterConfig {
 		filterRegistrationBean.addUrlPatterns("/*");
 		return filterRegistrationBean;
 	}
+
+	/**
+	 * 静态资源过滤器
+	 *
+	 * @return 过滤器注册豆
+	 * @throws
+	 * @see FilterRegistrationBean
+	 */
 	@Bean
 	public FilterRegistrationBean staticResourceFilter() {
 
@@ -57,6 +86,13 @@ public class FilterConfig {
 		return filterRegistrationBean;
 	}
 
+	/**
+	 * 示范过滤器
+	 *
+	 * @return 过滤器注册豆
+	 * @throws
+	 * @see FilterRegistrationBean
+	 */
 	@Bean
 	public FilterRegistrationBean demonstrationFilter() {
 
@@ -67,6 +103,14 @@ public class FilterConfig {
 		filterRegistrationBean.addUrlPatterns("/*");
 		return filterRegistrationBean;
 	}
+
+	/**
+	 * 示范白过滤器
+	 *
+	 * @return 过滤器注册豆
+	 * @throws
+	 * @see FilterRegistrationBean
+	 */
 	@Bean
 	public FilterRegistrationBean demonstrationWhiteFilter() {
 

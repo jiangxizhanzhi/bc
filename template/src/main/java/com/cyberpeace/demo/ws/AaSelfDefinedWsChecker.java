@@ -19,6 +19,19 @@ import com.cyberpeace.common.component.SelfDefinedWsChecker;
 @Component
 public class AaSelfDefinedWsChecker extends SelfDefinedWsChecker {
 
+	/**
+	 * 执行自定义检查
+	 *
+	 * @param requestParams 请求参数
+	 * @param wsPath        WS 路径
+	 * @param userId        用户id
+	 * @return boolean
+	 * @throws
+	 * @see Map<String, String>
+	 * @see String
+	 * @see String
+	 * @see boolean
+	 */
 	@Override
 	public boolean doSelfDefinedCheck(Map<String, String> requestParams, String wsPath,
 			String userId) {

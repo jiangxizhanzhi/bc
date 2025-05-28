@@ -23,8 +23,18 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class Log4JLevelConfig {
 
+	/**
+	 * 日志层级
+	 *
+	 * @see String
+	 */
 	String LOG_LEVEL = SystemPropUtil.getProp("LOG_LEVEL");
 
+	/**
+	 * 初始化
+	 *
+	 * @throws
+	 */
 	@PostConstruct
 	private void init() {
 		if (StringUtils.isBlank(LOG_LEVEL)) {

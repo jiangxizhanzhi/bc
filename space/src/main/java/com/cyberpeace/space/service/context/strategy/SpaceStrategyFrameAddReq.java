@@ -16,8 +16,18 @@ import lombok.Setter;
 @Setter
 public class SpaceStrategyFrameAddReq {
 
+	/**
+	 * 名称
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "")
 	private String name;
 
+	/**
+	 * 父母
+	 *
+	 * @see String
+	 */
 	private String parent;
 }

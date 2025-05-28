@@ -21,7 +21,17 @@ import lombok.Data;
 @Data
 public class DemoWsMessageIdentifier extends WsMessageIdentifier {
 
+	/**
+	 * 课时id
+	 *
+	 * @see String
+	 */
 	String lessonId;
 
+	/**
+	 * 课程id
+	 *
+	 * @see String
+	 */
 	String courseId;
 }

@@ -24,6 +24,13 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @EnableAsync
 public class AsyncConfig implements AsyncConfigurer {
 
+	/**
+	 * 获取异步执行者
+	 *
+	 * @return 执行者
+	 * @throws
+	 * @see Executor
+	 */
 	@Override
 	@Bean(name = "taskExecutor")
 	public Executor getAsyncExecutor() {
@@ -39,6 +46,13 @@ public class AsyncConfig implements AsyncConfigurer {
 		return executor;
 	}
 
+	/**
+	 * 获取异步未捕获例外处理器
+	 *
+	 * @return async 未捕获异常处理程序
+	 * @throws
+	 * @see AsyncUncaughtExceptionHandler
+	 */
 	@Override
 	public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
 		return new SimpleAsyncUncaughtExceptionHandler();

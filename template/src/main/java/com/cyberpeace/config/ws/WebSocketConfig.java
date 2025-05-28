@@ -25,16 +25,38 @@ import com.cyberpeace.cs.service.impl.ChatWebSocketHandler;
 @Configuration
 public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocketConfigurer {
 
+	/**
+	 * 处理器
+	 *
+	 * @see MyWebSocketHandler
+	 */
 	@Autowired
 	private MyWebSocketHandler handler;
 
+	/**
+	 * JWT 握手
+	 *
+	 * @see JwtHandShake
+	 */
 	@Autowired
 	private JwtHandShake jwtHandShake;
 
+	/**
+	 * 聊天WebSocket处理器
+	 *
+	 * @see ChatWebSocketHandler
+	 */
 	@Qualifier("chatWebSocketHandler")
 	@Autowired
 	private ChatWebSocketHandler chatWebSocketHandler;
 
+	/**
+	 * 注册WebSocket处理器
+	 *
+	 * @param webSocketHandlerRegistry WebSocket处理器注册表
+	 * @throws
+	 * @see WebSocketHandlerRegistry
+	 */
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
 		webSocketHandlerRegistry.addHandler(chatWebSocketHandler, "/ws/**/chat")

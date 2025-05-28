@@ -19,18 +19,48 @@ import java.util.List;
 @Setter
 public class SpaceStrategyFrameBo {
 
+	/**
+	 * 资源id
+	 *
+	 * @see String
+	 */
 	private String resourceId;
 
+	/**
+	 * 名称
+	 *
+	 * @see String
+	 */
 	private String name;
 
-    private String parent;
+	/**
+	 * 父母
+	 *
+	 * @see String
+	 */
+	private String parent;
 
+	/**
+	 * 内置
+	 *
+	 * @see Boolean
+	 */
 	@ApiModelProperty(value = "是否内置")
     private Boolean builtin;
 
+	/**
+	 * 移动
+	 *
+	 * @see Boolean
+	 */
 	@ApiModelProperty(value = "是否可删除")
 	private Boolean removable;
 
+	/**
+	 * 子级
+	 *
+	 * @see List<SpaceStrategyFrameBo>
+	 */
 	private List<SpaceStrategyFrameBo> children = Lists.newArrayList();
 
 }

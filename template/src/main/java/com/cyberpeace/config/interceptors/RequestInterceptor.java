@@ -25,12 +25,40 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class RequestInterceptor implements HandlerInterceptor {
 
+	/**
+	 * 记录
+	 *
+	 * @see Logger
+	 */
 	private static final Logger logger = LoggerFactory.getLogger("audit");
 
+	/**
+	 * 请求日志formatter
+	 *
+	 * @see String
+	 */
 	private static final String REQUEST_LOG_FORMATTER = "bc_request_info|{}|{}|{}|{}";
 
+	/**
+	 * 请求参数日志formatter
+	 *
+	 * @see String
+	 */
 	private static final String REQUEST_PARAM_LOG_FORMATTER = "bc_request_param|{}";
 
+	/**
+	 * 前置handle
+	 *
+	 * @param request  请求
+	 * @param response 响应
+	 * @param handler  处理器
+	 * @return boolean
+	 * @throws @throws Exception 例外
+	 * @see HttpServletRequest
+	 * @see HttpServletResponse
+	 * @see Object
+	 * @see boolean
+	 */
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
 			Object handler) throws Exception {
@@ -38,6 +66,19 @@ public class RequestInterceptor implements HandlerInterceptor {
 		return true;
 	}
 
+	/**
+	 * 完成后
+	 *
+	 * @param request  请求
+	 * @param response 响应
+	 * @param handler  处理器
+	 * @param ex       前任
+	 * @throws @throws Exception 例外
+	 * @see HttpServletRequest
+	 * @see HttpServletResponse
+	 * @see Object
+	 * @see Exception
+	 */
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
 			Object handler, Exception ex) throws Exception {

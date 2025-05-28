@@ -16,12 +16,27 @@ import lombok.Setter;
 @Setter
 public class RaceStatistics {
 
+	/**
+	 * 分数排名
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "计分排行规则")
 	private Integer scoreRanking = 0;
 
+	/**
+	 * 圆形机构
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "轮次机制规则")
 	private Integer roundMechanism = 0;
 
+	/**
+	 * 违规法官
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "违规判定规则")
 	private Integer violationJudge = 0;
 

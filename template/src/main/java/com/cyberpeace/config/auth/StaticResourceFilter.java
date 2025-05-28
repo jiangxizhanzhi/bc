@@ -25,18 +25,53 @@ import java.io.IOException;
 @Slf4j
 public class StaticResourceFilter implements Filter {
 
+    /**
+     * 获取
+     *
+     * @see String
+     */
     private final String get = "GET";
 
+    /**
+     * 源 URI
+     *
+     * @see String
+     */
     private final String sourceUri = "/ojj/cpms/";
 
+    /**
+     * JWT 密钥
+     *
+     * @see String
+     */
     private final String JWT_KEY = "cr_jwttoken";
 
+    /**
+     * @see String
+     */
     private final String redirectUri = "/redirect/resource/";
 
+    /**
+     * 中台主机
+     *
+     * @see String
+     */
     private String MP_HOST;
 
+    /**
+     * 重定向状态
+     *
+     * @see Boolean
+     */
     private Boolean redirectStatus;
 
+    /**
+     * 初始化
+     *
+     * @param filterConfig 过滤器配置
+     * @throws @throws ServletException Servlet 异常
+     * @see FilterConfig
+     */
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         MP_HOST = "http://" + SystemPropUtil.getProp("MP_HOST");
@@ -44,6 +79,18 @@ public class StaticResourceFilter implements Filter {
         log.info("静态资源权限过滤开启状态：{}", false);
     }
 
+    /**
+     * 做过滤器
+     *
+     * @param request  请求
+     * @param response 响应
+     * @param chain    链
+     * @throws @throws          IOException io异常
+     * @throws ServletException Servlet 异常
+     * @see ServletRequest
+     * @see ServletResponse
+     * @see FilterChain
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
@@ -78,6 +125,11 @@ public class StaticResourceFilter implements Filter {
         chain.doFilter(request, response);
     }
 
+    /**
+     * 摧毁
+     *
+     * @throws
+     */
     @Override
     public void destroy() {
 

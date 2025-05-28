@@ -32,6 +32,11 @@ import java.util.List;
 @RequiresAuthentication
 public class SpaceActionTargetController extends SpaceActionFrameBaseController<SpaceActionTargetService, SpaceActionTarget, SpaceActionTargetBo, SpaceActionTargetPageReq> {
 
+    /**
+     * 框架Service
+     *
+     * @see SpaceActionFrameService
+     */
     @Autowired
     private SpaceActionFrameService frameService;
 

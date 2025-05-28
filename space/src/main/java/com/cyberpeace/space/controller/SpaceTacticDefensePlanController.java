@@ -57,6 +57,13 @@ public class SpaceTacticDefensePlanController extends SpaceControllerBase<SpaceT
 		return new BaseRsp<>(bo);
 	}
 
+	/**
+	 * @param req 请求体
+	 * @return 基础RSP<空间框架级别>
+	 * @throws
+	 * @see DefensePlanLevelUpdateReq
+	 * @see BaseRsp<SpaceFrameLevel>
+	 */
 	@ApiOperation("生成新框架")
 	@PostMapping("/renew")
 	public BaseRsp<SpaceFrameLevel> updatePlan(@RequestBody DefensePlanLevelUpdateReq req) {

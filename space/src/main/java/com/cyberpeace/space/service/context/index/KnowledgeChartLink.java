@@ -15,10 +15,29 @@ import lombok.Setter;
 @Setter
 public class KnowledgeChartLink {
 
+	/**
+	 * 源
+	 *
+	 * @see String
+	 */
 	private String source;
 
+	/**
+	 * 目标
+	 *
+	 * @see String
+	 */
 	private String target;
 
+	/**
+	 * 知识点图表链接
+	 *
+	 * @param source 源
+	 * @param target 目标
+	 * @throws
+	 * @see String
+	 * @see String
+	 */
 	public KnowledgeChartLink(String source, String target) {
 		this.source = source;
 		this.target = target;

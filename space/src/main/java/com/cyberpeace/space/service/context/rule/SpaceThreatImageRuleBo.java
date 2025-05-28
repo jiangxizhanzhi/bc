@@ -20,9 +20,19 @@ import lombok.Setter;
 @Setter
 public class SpaceThreatImageRuleBo extends SpaceBoBase {
 
+	/**
+	 * 资源id
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "资源id")
 	private String resourceId;
 
+	/**
+	 * 名称
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "名称")
 	private String name;
 
@@ -45,12 +55,27 @@ public class SpaceThreatImageRuleBo extends SpaceBoBase {
 	@ApiModelProperty(value = "受害资产类型, 1:终端设备,2:网络设备,3:服务器设备")
 	private Integer assetType;
 
+	/**
+	 * 信息
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "威胁情报")
 	private String information;
 
+	/**
+	 * 结果
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "结果，1:尝试,2:成功,3:失败")
 	private Integer result;
 
+	/**
+	 * 标记
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "标签")
 	private String tag;
 

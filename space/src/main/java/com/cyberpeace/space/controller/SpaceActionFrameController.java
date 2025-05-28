@@ -39,13 +39,25 @@ public class SpaceActionFrameController extends SpaceActionFrameBaseController<S
 
     /**
      * Service
+     *
+     * @see SpaceActionFrameService
      */
     @Autowired
     private SpaceActionFrameService service;
 
+    /**
+     * 事件类型Service
+     *
+     * @see SpaceActionFrameEventTypeService
+     */
     @Autowired
     private SpaceActionFrameEventTypeService eventTypeService;
 
+    /**
+     * 目标类型Service
+     *
+     * @see SpaceActionFrameTargetTypeService
+     */
     @Autowired
     private SpaceActionFrameTargetTypeService targetTypeService;
 

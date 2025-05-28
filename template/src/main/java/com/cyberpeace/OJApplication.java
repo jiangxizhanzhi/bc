@@ -19,6 +19,13 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 		scanBasePackages = { "com.cyberpeace" })
 public class OJApplication {
 
+	/**
+	 * 主要
+	 *
+	 * @param args 参数
+	 * @throws
+	 * @see String[]
+	 */
 	public static void main(String[] args) {
 		SpringApplication.run(OJApplication.class, args);
 	}

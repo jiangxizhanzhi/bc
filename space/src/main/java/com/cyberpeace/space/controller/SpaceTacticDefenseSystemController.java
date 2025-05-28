@@ -40,7 +40,13 @@ import java.io.IOException;
 public class SpaceTacticDefenseSystemController extends SpaceControllerBase<SpaceTacticDefenseSystemService, SpaceTacticDefenseSystem, SpaceTacticDefenseSystemBo, SpacePageReqBase> {
 
 
-
+    /**
+     * 获取攻击框架
+     *
+     * @return 响应实体<string>
+     * @throws @throws IOException io异常
+     * @see ResponseEntity<String>
+     */
     @ApiOperation("ATT&CK框架")
     @GetMapping("/attack_frame")
     public ResponseEntity<String> getAttackFrame() throws IOException {
@@ -49,6 +55,13 @@ public class SpaceTacticDefenseSystemController extends SpaceControllerBase<Spac
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(content);
     }
 
+    /**
+     * 获取Engage框架
+     *
+     * @return 响应实体<string>
+     * @throws @throws IOException io异常
+     * @see ResponseEntity<String>
+     */
     @ApiOperation("Engage框架")
     @GetMapping("/engage_frame")
     public ResponseEntity<String> getEngageFrame() throws IOException {
@@ -57,6 +70,13 @@ public class SpaceTacticDefenseSystemController extends SpaceControllerBase<Spac
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(content);
     }
 
+    /**
+     * 获取保卫框架
+     *
+     * @return 响应实体<string>
+     * @throws @throws IOException io异常
+     * @see ResponseEntity<String>
+     */
     @ApiOperation("D3FEND框架")
     @GetMapping("/defend_frame")
     public ResponseEntity<String> getDefendFrame() throws IOException {

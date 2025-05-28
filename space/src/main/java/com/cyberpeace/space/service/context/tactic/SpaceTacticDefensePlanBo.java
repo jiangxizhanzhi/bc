@@ -13,6 +13,15 @@ import org.apache.commons.compress.utils.Lists;
 
 import java.util.List;
 
+/**
+ * 空间战法防御计划Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public class SpaceTacticDefensePlanBo extends SpaceBoBase {
@@ -35,9 +44,21 @@ public class SpaceTacticDefensePlanBo extends SpaceBoBase {
 	@ApiModelProperty(value = "简述")
 	private String description;
 
+	/**
+	 * 层级
+	 *
+	 * @see SpaceFrameLevel
+	 */
 	@ApiModelProperty(value = "层级框架")
 	private SpaceFrameLevel level;
 
+	/**
+	 * BO2 实体
+	 *
+	 * @return 空间战法防御计划
+	 * @throws
+	 * @see SpaceTacticDefensePlan
+	 */
 	public SpaceTacticDefensePlan bo2Entity() {
 		SpaceTacticDefensePlan entity = BeanUtils.copy(this, SpaceTacticDefensePlan.class);
 		this.level.checkLevel(true);

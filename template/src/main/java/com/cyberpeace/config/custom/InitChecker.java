@@ -25,6 +25,9 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class InitChecker {
 
+	/**
+	 * @throws
+	 */
 	@PostConstruct
 	public void checkList() {
 		checkMp();
@@ -38,21 +41,29 @@ public class InitChecker {
 
 	/**
 	 * 靶场启动项检查
+	 *
+	 * @throws
 	 */
 	private void checkCr() {}
 
 	/**
 	 * 实训启动项检查
+	 *
+	 * @throws
 	 */
 	private void checkOj() {}
 
 	/**
 	 * rtks启动项检查
+	 *
+	 * @throws
 	 */
 	private void checkRtks() {}
 
 	/**
 	 * 检查中台配置
+	 *
+	 * @throws
 	 */
 	private void checkMp() {
 		blankCheck("MP_HOST");
@@ -71,6 +82,13 @@ public class InitChecker {
 		}
 	}
 
+	/**
+	 * 空白支票
+	 *
+	 * @param field 田
+	 * @throws
+	 * @see String
+	 */
 	private void blankCheck(String field) {
 		String value = SystemPropUtil.getProp(field);
 

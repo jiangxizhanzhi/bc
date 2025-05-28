@@ -17,5 +17,12 @@ import com.cyberpeace.space.service.context.index.KnowledgeChart;
 public interface SpaceAptFeatureService extends IService<SpaceAptFeature>
 
 {
+    /**
+     * 获取统治容易组织图表
+     *
+     * @return 知识点图表
+     * @throws
+     * @see KnowledgeChart
+     */
     KnowledgeChart getRuleAptOrgChart();
 }

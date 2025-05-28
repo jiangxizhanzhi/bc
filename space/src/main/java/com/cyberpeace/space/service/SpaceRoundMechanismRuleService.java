@@ -17,5 +17,12 @@ import com.cyberpeace.space.service.context.index.KnowledgeChart;
 public interface SpaceRoundMechanismRuleService extends IService<SpaceRoundMechanismRule>
 
 {
+    /**
+     * 获取统治圆机制图表
+     *
+     * @return 知识点图表
+     * @throws
+     * @see KnowledgeChart
+     */
     KnowledgeChart getRuleRoundMechanismChart();
 }

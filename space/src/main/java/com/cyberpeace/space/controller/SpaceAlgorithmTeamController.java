@@ -28,6 +28,13 @@ import lombok.extern.slf4j.Slf4j;
 @RequiresAuthentication
 @Slf4j
 public class SpaceAlgorithmTeamController extends SpaceControllerBase<SpaceAlgorithmTeamService, SpaceAlgorithmTeam, SpaceAlgorithmTeamBo, SpacePageReqBase> {
+    /**
+     * 检查值
+     *
+     * @param entity 实体
+     * @throws
+     * @see SpaceAlgorithmTeam
+     */
     @Override
     public void checkValue(SpaceAlgorithmTeam entity){
         this.checkPercentageValue(entity.getRolePercent() + entity.getExpertisePercent());

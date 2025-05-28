@@ -30,6 +30,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 空间行动框架次序Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see ServiceImpl
+ * @see SpaceActionFrameOrderService
+ * @since 1.0.0
+ */
 @Service
 @Slf4j
 public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFrameOrderMapper, SpaceActionFrameOrder> implements SpaceActionFrameOrderService {
@@ -46,6 +56,13 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 	@Autowired
 	private SpaceActionFrameApplicationService applicationService;
 
+	/**
+	 * 创建
+	 *
+	 * @param req 请求体
+	 * @throws
+	 * @see SpaceActionFrameOrderReq
+	 */
 	@Override
 	public void create(SpaceActionFrameOrderReq req) {
 		this.checkRelease(req.getApplicationId(), req.getStepId(), req.getTacticId());
@@ -57,6 +74,17 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 		this.save(entity);
 	}
 
+	/**
+	 * 检查下发
+	 *
+	 * @param applicationId 行为依赖id
+	 * @param step          步骤
+	 * @param tacticId      战法id
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 */
 	private void checkRelease(String applicationId, String step, String tacticId) {
 		LambdaQueryWrapper<SpaceActionFrameOrder> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(SpaceActionFrameOrder::getApplicationId, applicationId);
@@ -67,6 +95,13 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 		}
 	}
 
+	/**
+	 * 完成
+	 *
+	 * @param resourceId 资源id
+	 * @throws
+	 * @see String
+	 */
 	@Override
 	public void complete(String resourceId) {
 		if (StringUtils.isBlank(resourceId)) {
@@ -77,6 +112,15 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 		this.updateById(entity);
 	}
 
+	/**
+	 * 列表我的订单
+	 *
+	 * @param req 请求体
+	 * @return {@code List<SpaceActionFrameOrderBo> }
+	 * @throws
+	 * @see SpaceActionFrameOrderListReq
+	 * @see List<SpaceActionFrameOrderBo>
+	 */
 	@Override
 	public List<SpaceActionFrameOrderBo> listMyOrders(SpaceActionFrameOrderListReq req) {
 		LambdaQueryWrapper<SpaceActionFrameOrder> wrapper = req.req2QueryWrapper();
@@ -137,6 +181,15 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 		return res;
 	}
 
+	/**
+	 * 删除已下发
+	 *
+	 * @param arrangeBo     安排Bo
+	 * @param applicationId 行为依赖id
+	 * @throws
+	 * @see ActionFrameArrangeBo
+	 * @see String
+	 */
 	@Override
 	public void deleteReleased(ActionFrameArrangeBo arrangeBo, String applicationId) {
 		List<String> stepIds = StreamApiUtils.map(arrangeBo.getSteps(),
@@ -164,6 +217,15 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 		this.remove(queryWrapper);
 	}
 
+	/**
+	 * 获取步骤映射由行为依赖id列表
+	 *
+	 * @param applicationIds 行为依赖id列表
+	 * @return {@code Map<String, String> }
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, String>
+	 */
 	private Map<String, String> getStepMapByApplicationIds(List<String> applicationIds) {
 		Map<String, String> res = Maps.newHashMap();
 		if(applicationIds.isEmpty()){

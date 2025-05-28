@@ -17,5 +17,12 @@ import com.cyberpeace.space.service.context.index.KnowledgeChart;
 public interface SpaceAptThreatDetectRuleService extends IService<SpaceAptThreatDetectRule>
 
 {
+    /**
+     * 获取统治容易威胁图表
+     *
+     * @return 知识点图表
+     * @throws
+     * @see KnowledgeChart
+     */
     KnowledgeChart getRuleAptThreatChart();
 }

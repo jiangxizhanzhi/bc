@@ -43,12 +43,33 @@ import java.util.List;
 @Slf4j
 public class SpaceAptReportController extends SpaceControllerBase<SpaceAptReportService, SpaceAptReport, SpaceAptReportBo, SpaceAptReportPageReq> {
 
+    /**
+     * 附件Service
+     *
+     * @see AttachmentService
+     */
     @Autowired
     private AttachmentService attachmentService;
 
+    /**
+     * utilService
+     *
+     * @see UtilService
+     */
     @Autowired
     private UtilService utilService;
 
+    /**
+     * 导出报告
+     *
+     * @param ids      id列表
+     * @param response 响应
+     * @return base rsp< 布尔值>
+     * @throws
+     * @see List<String>
+     * @see HttpServletResponse
+     * @see BaseRsp<Boolean>
+     */
     @ApiOperation("数据导出")
     @GetMapping("/batch_dump")
     public BaseRsp<Boolean> exportReport(

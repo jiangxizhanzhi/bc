@@ -18,12 +18,34 @@ import java.util.List;
 @Setter
 public class KnowledgeChart {
 
+	/**
+	 * 数据
+	 *
+	 * @see List<KnowledgeChartItem>
+	 */
 	private List<KnowledgeChartItem> data = Lists.newArrayList();
 
+	/**
+	 * 链接
+	 *
+	 * @see List<KnowledgeChartLink>
+	 */
 	private List<KnowledgeChartLink> links = Lists.newArrayList();
 
+	/**
+	 * 类别
+	 *
+	 * @see List<KnowledgeChartCategory>
+	 */
 	private List<KnowledgeChartCategory> categories = Lists.newArrayList();
 
+	/**
+	 * 新增图表
+	 *
+	 * @param chart 图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
 	public void addChart(KnowledgeChart chart) {
 		this.data.addAll(chart.getData());
 		this.categories.addAll(chart.getCategories());

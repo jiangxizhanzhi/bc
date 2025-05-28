@@ -31,7 +31,12 @@ import javax.annotation.PostConstruct;
 @RestController
 @RequestMapping("/space/rule/common")
 public class SpaceRuleCommonController {
-	
+
+	/**
+	 * 初始化
+	 *
+	 * @throws
+	 */
 	@PostConstruct
 	public void init() {
 		TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""),
@@ -40,9 +45,21 @@ public class SpaceRuleCommonController {
 				SpaceFrameBaseTable.class);
 	}
 
+	/**
+	 * Service
+	 *
+	 * @see SpaceRuleCommonService
+	 */
 	@Autowired
 	private SpaceRuleCommonService service;
 
+	/**
+	 * 获取比赛规则
+	 *
+	 * @return
+	 * @throws
+	 * @see BaseRsp<RaceStatistics>
+	 */
 	@ApiOperation("比赛及训练评估规则统计")
 	@GetMapping("/race/statistics")
 	public BaseRsp<RaceStatistics> getRaceRuleS() {
@@ -50,6 +67,13 @@ public class SpaceRuleCommonController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取威胁规则
+	 *
+	 * @return 基本 RSP< 威胁检测统计信息>
+	 * @throws
+	 * @see BaseRsp<ThreatDetectStatistics>
+	 */
 	@ApiOperation("威胁检测规则统计")
 	@GetMapping("/threat/statistics")
 	public BaseRsp<ThreatDetectStatistics> getThreatRuleS() {
@@ -57,6 +81,13 @@ public class SpaceRuleCommonController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取基础数据规则
+	 *
+	 * @return Base RSp< Base Data 规则统计信息>
+	 * @throws
+	 * @see BaseRsp<BaseDataRuleStatistics>
+	 */
 	@ApiOperation("基础数据规则统计")
 	@GetMapping("/base_data/statistics")
 	public BaseRsp<BaseDataRuleStatistics> getBaseDataRuleS() {

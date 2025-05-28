@@ -18,12 +18,27 @@ import java.time.LocalDate;
 @Setter
 public class AptReportHistory {
 
+	/**
+	 * 时间
+	 *
+	 * @see LocalDate
+	 */
 	@ApiModelProperty(value = "发现时间")
 	private LocalDate time;
 
+	/**
+	 * 名称
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "报告名称")
 	private String name;
 
+	/**
+	 * 公司
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "发布厂商")
 	private String firm;
 }

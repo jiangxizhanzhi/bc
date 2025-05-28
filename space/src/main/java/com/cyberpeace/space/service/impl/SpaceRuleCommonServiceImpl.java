@@ -11,6 +11,15 @@ import com.cyberpeace.space.service.context.rule.ThreatDetectStatistics;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 空间统治常用Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceRuleCommonService
+ * @since 1.0.0
+ */
 @Service
 @Slf4j
 public class SpaceRuleCommonServiceImpl implements SpaceRuleCommonService {
@@ -54,6 +63,13 @@ public class SpaceRuleCommonServiceImpl implements SpaceRuleCommonService {
 	@Autowired
 	private SpaceIocThreatMapper spaceIocThreatMapper;
 
+	/**
+	 * 获取比赛统计学
+	 *
+	 * @return 比赛统计数据
+	 * @throws
+	 * @see RaceStatistics
+	 */
 	@Override
 	public RaceStatistics getRaceStatistics() {
 		Integer scoreRanking = spaceScoreRankingRuleMapper.selectCount(null);
@@ -66,6 +82,13 @@ public class SpaceRuleCommonServiceImpl implements SpaceRuleCommonService {
 		return res;
 	}
 
+	/**
+	 * 获取威胁检测统计学
+	 *
+	 * @return 威胁检测统计信息
+	 * @throws
+	 * @see ThreatDetectStatistics
+	 */
 	@Override
 	public ThreatDetectStatistics getThreatDetectStatistics() {
 		ThreatDetectStatistics statistics = new ThreatDetectStatistics();
@@ -79,6 +102,13 @@ public class SpaceRuleCommonServiceImpl implements SpaceRuleCommonService {
 		return statistics;
 	}
 
+	/**
+	 * 获取基础数据统计学
+	 *
+	 * @return 基本数据规则统计信息
+	 * @throws
+	 * @see BaseDataRuleStatistics
+	 */
 	@Override
 	public BaseDataRuleStatistics getBaseDataStatistics() {
 		BaseDataRuleStatistics statistics = new BaseDataRuleStatistics();

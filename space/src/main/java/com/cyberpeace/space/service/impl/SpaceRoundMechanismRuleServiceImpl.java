@@ -13,10 +13,27 @@ import com.cyberpeace.space.service.context.index.KnowledgeChartItem;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 空间圆机制统治Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see ServiceImpl
+ * @see SpaceRoundMechanismRuleService
+ * @since 1.0.0
+ */
 @Service
 @Slf4j
 public class SpaceRoundMechanismRuleServiceImpl extends ServiceImpl<SpaceRoundMechanismRuleMapper, SpaceRoundMechanismRule> implements SpaceRoundMechanismRuleService {
 
+	/**
+	 * 获取统治圆机制图表
+	 *
+	 * @return 知识点图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
 	@Override
 	public KnowledgeChart getRuleRoundMechanismChart() {
 		KnowledgeChart chart = new KnowledgeChart();

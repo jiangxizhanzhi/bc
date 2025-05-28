@@ -31,17 +31,44 @@ import io.swagger.annotations.Api;
 @RequiresAuthentication
 public class TestController {
 
+	/**
+	 * 远程拓扑Service
+	 *
+	 * @see RemoteTopoService
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * 远程场景Service
+	 *
+	 * @see RemoteSceneService
+	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	/**
+	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 测试拓扑id
+	 *
+	 * @see String
+	 */
 	String testTopoId = "1dd035784f5b44869c4e96aa07c31fd5";
 
+	/**
+	 * 创建拓扑
+	 *
+	 * @return 基础响应
+	 * @throws
+	 * @see BaseRsp
+	 */
 	@PostMapping("/copytopo")
 	public BaseRsp createTopo() {
 		String result = remoteTopoService.copyTopo(testTopoId);
@@ -49,6 +76,13 @@ public class TestController {
 		return new BaseRsp(result);
 	}
 
+	/**
+	 * 拓扑统计
+	 *
+	 * @return 基础响应
+	 * @throws
+	 * @see BaseRsp
+	 */
 	@GetMapping("topoStatistic")
 	public BaseRsp topoStatistic() {
 		TopoDigest digest = remoteTopoService.getTopoDigest(testTopoId);
@@ -56,6 +90,15 @@ public class TestController {
 		return new BaseRsp(digest);
 	}
 
+	/**
+	 * 转换 HTML
+	 *
+	 * @param demoReq 演示请求体
+	 * @return base rsp< 布尔值>
+	 * @throws
+	 * @see DemoReq1
+	 * @see BaseRsp<Boolean>
+	 */
 	@PostMapping
 	public BaseRsp<Boolean> convertHtml(@RequestBody DemoReq1 demoReq) {
 		boolean result = HtmlToPdfUtil.convert(demoReq.getHtmlFilePath(), demoReq.getPdfFilePath());
@@ -77,6 +120,13 @@ public class TestController {
 	// return new BaseRsp<>(result);
 	// }
 
+	/**
+	 * 新增中台日志
+	 *
+	 * @return 基础响应
+	 * @throws
+	 * @see BaseRsp
+	 */
 	@PostMapping("/add_mp_log")
 	public BaseRsp addMpLog() {
 

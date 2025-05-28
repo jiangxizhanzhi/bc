@@ -44,18 +44,47 @@ import java.util.List;
 @Slf4j
 public class TheoryKnowledgeController {
 
+	/**
+	 * 课程Service
+	 *
+	 * @see CourseService
+	 */
 	@Autowired
 	private CourseService courseService;
 
+	/**
+	 * 课程课时Service
+	 *
+	 * @see CourseLessonService
+	 */
 	@Autowired
 	private CourseLessonService courseLessonService;
 
+	/**
+	 * 理论KSERVICE 服务
+	 *
+	 * @see TheoryKService
+	 */
 	@Autowired
 	private TheoryKService theoryKService;
 
+	/**
+	 * utilService
+	 *
+	 * @see UtilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 获取课时列表
+	 *
+	 * @param req 请求体
+	 * @return 基础RSP<列表RSP < 管理课时列表博>>
+	 * @throws
+	 * @see ListKReq
+	 * @see BaseRsp<ListRsp<AdminLessonListBo>>
+	 */
 	@ApiOperation("理论知识库列表")
 	@GetMapping("/page")
 	public BaseRsp<ListRsp<AdminLessonListBo>> getLessonList(ListKReq req) {
@@ -72,6 +101,15 @@ public class TheoryKnowledgeController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 获取详情
+	 *
+	 * @param resource_id 资源id
+	 * @return 基础RSP<管理课时博>
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<AdminLessonBo>
+	 */
 	@ApiOperation("查看理论知识")
 	@GetMapping("")
 	public BaseRsp<AdminLessonBo>
@@ -80,6 +118,15 @@ public class TheoryKnowledgeController {
 		return new BaseRsp(lessonDetail);
 	}
 
+	/**
+	 * 添加
+	 *
+	 * @param lessonAddReq 课时新增请求体
+	 * @return 基础RSP<课程教训>
+	 * @throws
+	 * @see LessonAddReq
+	 * @see BaseRsp<CourseLesson>
+	 */
 	@ApiOperation("新增理论知识")
 	@PostMapping("")
 	public BaseRsp<CourseLesson> addK(@RequestBody LessonAddReq lessonAddReq) {
@@ -96,6 +143,15 @@ public class TheoryKnowledgeController {
 		return new BaseRsp(lesson);
 	}
 
+	/**
+	 * 修改
+	 *
+	 * @param lessonUpdateReq 课时更新请求体
+	 * @return 基础RSP<课程教训>
+	 * @throws
+	 * @see LessonUpdateReq
+	 * @see BaseRsp<CourseLesson>
+	 */
 	@ApiOperation("编辑理论知识")
 	@PatchMapping("")
 	public BaseRsp<CourseLesson> modify(@RequestBody LessonUpdateReq lessonUpdateReq) {

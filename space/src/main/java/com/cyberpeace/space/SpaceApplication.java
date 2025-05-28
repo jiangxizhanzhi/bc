@@ -18,6 +18,13 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 		scanBasePackages = { "com.cyberpeace" })
 public class SpaceApplication {
 
+	/**
+	 * 主要
+	 *
+	 * @param args
+	 * @throws
+	 * @see String[]
+	 */
 	public static void main(String[] args) {
 		SpringApplication.run(SpaceApplication.class, args);
 	}

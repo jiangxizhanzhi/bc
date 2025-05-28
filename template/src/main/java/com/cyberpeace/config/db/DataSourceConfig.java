@@ -23,6 +23,13 @@ import lombok.extern.slf4j.Slf4j;
 @PropertySource("classpath:db/datasource.properties")
 public class DataSourceConfig {
 
+	/**
+	 * 数据源
+	 *
+	 * @return 数据源
+	 * @throws
+	 * @see DataSource
+	 */
 	@Bean
 	@ConfigurationProperties(prefix = "spring.datasource")
 	public DataSource dataSource() {

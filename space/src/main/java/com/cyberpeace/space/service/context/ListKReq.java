@@ -20,9 +20,19 @@ import lombok.Setter;
 @ApiModel("课时列表查询")
 public class ListKReq extends PageReqBase {
 
+    /**
+     * 工作
+     *
+     * @see Integer
+     */
     @ApiModelProperty(value = "岗位")
     private Integer job;
 
+    /**
+     * 障碍
+     *
+     * @see Integer
+     */
     @ApiModelProperty(value = "难度")
     private Integer handicap;
 

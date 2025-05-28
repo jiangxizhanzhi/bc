@@ -21,9 +21,19 @@ import lombok.Setter;
 @Setter
 public class SpaceAptThreatDetectRuleBo extends SpaceBoBase {
 
+	/**
+	 * 资源id
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "资源id")
 	private String resourceId;
 
+	/**
+	 * 名称
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "名称")
 	private String name;
 
@@ -35,18 +45,45 @@ public class SpaceAptThreatDetectRuleBo extends SpaceBoBase {
 	@ApiModelProperty(value = "情报类型")
 	private String type;
 
+	/**
+	 * 容易代号
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "APT代号")
 	private String aptCode;
 
+	/**
+	 * 内容
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "内容详情")
 	private String content;
 
+	/**
+	 * 描述
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "内容简介")
 	private String description;
 
+	/**
+	 * 工具
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "工具")
 	private String tool;
 
+	/**
+	 * BO2 实体
+	 *
+	 * @return SpaceAPT威胁检测规则
+	 * @throws
+	 * @see SpaceAptThreatDetectRule
+	 */
 	public SpaceAptThreatDetectRule bo2Entity() {
 		SpaceAptThreatDetectRule entity = BeanUtils.copy(this, SpaceAptThreatDetectRule.class);
 		return entity;

@@ -19,9 +19,24 @@ import lombok.Data;
 @Builder
 public class DemoWsMessage implements Serializable {
 
+	/**
+	 * 时间戳
+	 *
+	 * @see Date
+	 */
 	private Date timestamp;
 
+	/**
+	 * 代号
+	 *
+	 * @see Integer
+	 */
 	private Integer code;
 
+	/**
+	 * 消息
+	 *
+	 * @see String
+	 */
 	private String message;
 }

@@ -44,7 +44,11 @@ import java.util.Map;
  * 空间策略防御Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see SpaceTacticDefenseService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -82,11 +86,15 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 
 	@Autowired
 	private SpaceTacticDefenseMapper spaceTacticDefenseMapper;
+
 	/**
 	 * 分页
 	 *
 	 * @param req 请求体
 	 * @return {@code ListRsp<DefenseListBo> }
+	 * @throws
+	 * @see SpaceTacticPageReq
+	 * @see ListRsp<DefenseListBo>
 	 */
 	@Override
 	public ListRsp<DefenseListBo> page(SpaceTacticPageReq req) {
@@ -131,6 +139,8 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 * 新增
 	 *
 	 * @param req 请求体
+	 * @throws
+	 * @see DefenseAddReq
 	 */
 	@Override
 	public void add(DefenseAddReq req) {
@@ -143,6 +153,8 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 * 更新防御
 	 *
 	 * @param req 请求体
+	 * @throws
+	 * @see DefenseModifyReq
 	 */
 	@Override
 	public void updateDefense(DefenseModifyReq req) {
@@ -156,6 +168,8 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 * 删除批量
 	 *
 	 * @param ids id列表
+	 * @throws
+	 * @see List<String>
 	 */
 	@Override
 	public void deleteBatch(List<String> ids) {
@@ -167,6 +181,9 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code DefenseDetail }
+	 * @throws
+	 * @see String
+	 * @see DefenseDetail
 	 */
 	@Override
 	public DefenseDetail getDetail(String resourceId) {
@@ -180,6 +197,9 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 *
 	 * @param reqBase 请求体基础
 	 * @return {@code ListRsp<TacticDefenseCategoryBo> }
+	 * @throws
+	 * @see PageReqBase
+	 * @see ListRsp<TacticDefenseCategoryBo>
 	 */
 	@Override
 	public ListRsp<TacticDefenseCategoryBo> pageCategory(PageReqBase reqBase) {
@@ -195,6 +215,8 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 * 新增防御类别
 	 *
 	 * @param req 请求体
+	 * @throws
+	 * @see TacticDefenseCategoryAddReq
 	 */
 	@Override
 	public void addDefenseCategory(TacticDefenseCategoryAddReq req) {
@@ -207,6 +229,8 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 * 更新防御类别
 	 *
 	 * @param req 请求体
+	 * @throws
+	 * @see TacticDefenseCategoryModifyReq
 	 */
 	@Override
 	public void updateDefenseCategory(TacticDefenseCategoryModifyReq req) {
@@ -219,6 +243,8 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 * 删除类别
 	 *
 	 * @param ids id列表
+	 * @throws
+	 * @see List<String>
 	 */
 	@Override
 	public void deleteCategory(List<String> ids) {
@@ -230,6 +256,9 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code DefenseCategoryBo }
+	 * @throws
+	 * @see String
+	 * @see DefenseCategoryBo
 	 */
 	@Override
 	public DefenseCategoryBo getCategoryDetail(String resourceId) {
@@ -242,6 +271,8 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 * 列表类别
 	 *
 	 * @return {@code List<TacticDefenseCategoryBo> }
+	 * @throws
+	 * @see List<TacticDefenseCategoryBo>
 	 */
 	@Override
     public List<TacticDefenseCategoryBo> listCategory() {
@@ -255,6 +286,9 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 *
 	 * @param defenseIds 防御id列表
 	 * @return {@code List<SpaceTacticDefense> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<SpaceTacticDefense>
 	 */
 	@Override
 	public List<SpaceTacticDefense> listByIds(List<String> defenseIds) {
@@ -269,6 +303,9 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code SpaceTacticDefense }
+	 * @throws
+	 * @see String
+	 * @see SpaceTacticDefense
 	 */
 	@Override
 	public SpaceTacticDefense getById(String resourceId) {
@@ -284,6 +321,9 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 *
 	 * @param categoryId 类别id
 	 * @return 列表<防御细节>
+	 * @throws
+	 * @see String
+	 * @see List<DefenseDetail>
 	 */
 	@Override
 	public List<DefenseDetail> listByCategoryId(String categoryId) {
@@ -302,6 +342,8 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 * 获取框架
 	 *
 	 * @return 动作框架层级
+	 * @throws
+	 * @see SpaceFrameLevel
 	 */
 	@Override
 	public SpaceFrameLevel getFrame() {
@@ -323,7 +365,14 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 		return level;
 	}
 
-    @Override
+	/**
+	 * 获取战法防御图表
+	 *
+	 * @return 知识点图表
+	 * @throws
+	 * @see KnowledgeChart
+	 */
+	@Override
     public KnowledgeChart getTacticDefenseChart() {
 		KnowledgeChart chart = new KnowledgeChart();
 		KnowledgeChartItem baseItem = new KnowledgeChartItem(SpaceKTypeEnum.TACTIC_DEFENSE,
@@ -345,12 +394,21 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 		return chart;
     }
 
-    @Override
+	/**
+	 * 按 categoryID 列出
+	 *
+	 * @param ids id列表
+	 * @return list<字符串>
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
+	 */
+	@Override
     public List<String> listByCategoryids(List<String> ids) {
 		return spaceTacticDefenseMapper.idsByCategoryids(ids);
     }
 
-    /**
+	/**
 	 * 获取阶段框架
 	 *
 	 * @param stage       阶段
@@ -358,6 +416,12 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 * @param defenseMap  防御地图
 	 * @param categoryBos 类别 BOS
 	 * @return {@code SpaceFrameLevel }
+	 * @throws
+	 * @see Integer
+	 * @see String
+	 * @see Map<String, List<SpaceTacticDefense>>
+	 * @see List<TacticDefenseCategoryBo>
+	 * @see SpaceFrameLevel
 	 */
 	private SpaceFrameLevel getStageFrame(Integer stage, String stageName,
 			Map<String, List<SpaceTacticDefense>> defenseMap,
@@ -383,6 +447,9 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 *
 	 * @param req 请求体
 	 * @return {@code SpaceTacticDefenseCategory }
+	 * @throws
+	 * @see TacticDefenseCategoryAddReq
+	 * @see SpaceTacticDefenseCategory
 	 */
 	private SpaceTacticDefenseCategory req2Entity(TacticDefenseCategoryAddReq req) {
 		SpaceTacticDefenseCategory category = new SpaceTacticDefenseCategory();
@@ -399,6 +466,9 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 *
 	 * @param req 请求体
 	 * @return {@code SpaceTacticDefense }
+	 * @throws
+	 * @see DefenseAddReq
+	 * @see SpaceTacticDefense
 	 */
 	private SpaceTacticDefense req2Entity(DefenseAddReq req) {
 		SpaceTacticDefense defense = new SpaceTacticDefense();
@@ -426,6 +496,9 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 *
 	 * @param defense 防御
 	 * @return {@code DefenseDetail }
+	 * @throws
+	 * @see SpaceTacticDefense
+	 * @see DefenseDetail
 	 */
 	private DefenseDetail entity2Bo(SpaceTacticDefense defense) {
 		DefenseDetail detail = BeanUtils.copy(defense, DefenseDetail.class);
@@ -451,6 +524,9 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code SpaceTacticDefense }
+	 * @throws
+	 * @see String
+	 * @see SpaceTacticDefense
 	 */
 	private SpaceTacticDefense getOrException(String resourceId) {
 		SpaceTacticDefense defense = mapper.selectById(resourceId);
@@ -466,6 +542,9 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code SpaceTacticDefenseCategory }
+	 * @throws
+	 * @see String
+	 * @see SpaceTacticDefenseCategory
 	 */
 	private SpaceTacticDefenseCategory getCategoryOrException(String resourceId) {
 		SpaceTacticDefenseCategory category = categoryMapper.selectById(resourceId);

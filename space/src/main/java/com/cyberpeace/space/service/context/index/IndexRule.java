@@ -16,24 +16,59 @@ import lombok.Setter;
 @Setter
 public class IndexRule {
 
+	/**
+	 * 基础
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "基础数据规则")
 	private Integer base = 0;
 
+	/**
+	 * 警告
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "告警字典规则")
 	private Integer warning = 0;
 
+	/**
+	 * 威胁
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "威胁防御规则")
 	private Integer threat = 0;
 
+	/**
+	 * 比赛
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "比赛及训练评估规则")
 	private Integer race = 0;
 
+	/**
+	 * 和
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "总数")
 	private Integer sum = 0;
 
+	/**
+	 * 使用
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty(value = "使用次数")
 	private Integer use = 0;
 
+	/**
+	 * Cal Sum
+	 *
+	 * @throws
+	 */
 	public void calSum() {
 		this.sum = this.base + this.warning + this.race + this.threat;
 	}

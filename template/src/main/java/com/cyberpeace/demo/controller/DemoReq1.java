@@ -16,7 +16,17 @@ import lombok.Data;
 @Data
 public class DemoReq1 implements Serializable {
 
+	/**
+	 * HTML 文件路径
+	 *
+	 * @see String
+	 */
 	private String htmlFilePath;
 
+	/**
+	 * PDF 文件路径
+	 *
+	 * @see String
+	 */
 	private String pdfFilePath;
 }

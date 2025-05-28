@@ -16,7 +16,25 @@ import java.util.List;
  */
 public interface SpaceAptReportService extends IService<SpaceAptReport> {
 
+	/**
+	 * 导出
+	 *
+	 * @param ids id列表
+	 * @return 字符串
+	 * @throws
+	 * @see List<String>
+	 * @see String
+	 */
 	String dump(List<String> ids);
 
+	/**
+	 * 加载报告
+	 *
+	 * @param realPath 真实路径
+	 * @return 布尔
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 */
 	Boolean loadReport(String realPath);
 }

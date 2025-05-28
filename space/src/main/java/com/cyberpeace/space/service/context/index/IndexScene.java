@@ -16,14 +16,39 @@ import lombok.Setter;
 @Setter
 public class IndexScene {
 
+    /**
+     * 人工智能
+     *
+     * @see Integer
+     */
     @ApiModelProperty(value = "人机对抗场景")
     private Integer ai = 0;
+    /**
+     * 怪胎
+     *
+     * @see Integer
+     */
     @ApiModelProperty(value = "极客闯关场景")
     private Integer geek = 0;
+    /**
+     * RVB
+     *
+     * @see Integer
+     */
     @ApiModelProperty(value = "红蓝对抗场景")
     private Integer rvb = 0;
+    /**
+     * 模拟
+     *
+     * @see Integer
+     */
     @ApiModelProperty(value = "模拟推演场景")
     private Integer simulation = 0;
+    /**
+     * 和
+     *
+     * @see Integer
+     */
     @ApiModelProperty(value = "")
     private Integer sum = 0;
 

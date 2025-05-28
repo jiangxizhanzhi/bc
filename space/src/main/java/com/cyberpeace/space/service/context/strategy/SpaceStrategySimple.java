@@ -36,7 +36,17 @@ public class SpaceStrategySimple {
      */
     private String content;
 
+    /**
+     * 路线
+     *
+     * @see String
+     */
     private String route;
 
+    /**
+     * 内置
+     *
+     * @see Boolean
+     */
     private Boolean builtin;
 }

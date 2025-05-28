@@ -46,6 +46,17 @@ import java.util.List;
 @Slf4j
 public class SpaceTrafficDetectRuleController extends SpaceControllerBase<SpaceTrafficDetectRuleService, SpaceTrafficDetectRule, SpaceTrafficDetectRuleBo, SpaceTrafficDetectRulePageReq> {
 
+    /**
+     * 导出胜过
+     *
+     * @param response 响应
+     * @param req      请求体
+     * @return base rsp< 布尔值>
+     * @throws
+     * @see HttpServletResponse
+     * @see SpaceTrafficDetectRulePageReq
+     * @see BaseRsp<Boolean>
+     */
     @ApiOperation("导出成excel表格")
     @GetMapping("/excel")
     public BaseRsp<Boolean> exportExcel(HttpServletResponse response,
@@ -68,6 +79,15 @@ public class SpaceTrafficDetectRuleController extends SpaceControllerBase<SpaceT
         return new BaseRsp<>(Boolean.TRUE);
     }
 
+    /**
+     * 检查名称重复
+     *
+     * @param entity 实体
+     * @return boolean
+     * @throws
+     * @see SpaceTrafficDetectRule
+     * @see boolean
+     */
     @Override
 	public boolean checkNameDuplication(SpaceTrafficDetectRule entity) {
         return true;

@@ -22,6 +22,10 @@ public class ValidationConfig {
 
 	/**
 	 * 效验@RequestBody时，采用快速失败模式
+	 *
+	 * @return 验证人
+	 * @throws
+	 * @see Validator
 	 */
 	@Bean
 	public Validator validator() {
@@ -34,6 +38,12 @@ public class ValidationConfig {
 
 	/**
 	 * 效验@RequestParam时，采用快速失败模式
+	 *
+	 * @param validator 验证人
+	 * @return 方法验证后处理器
+	 * @throws
+	 * @see Validator
+	 * @see MethodValidationPostProcessor
 	 */
 	@Bean
 	public MethodValidationPostProcessor methodValidationPostProcessor(Validator validator) {

@@ -19,6 +19,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 空间战法防御计划Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see ServiceImpl
+ * @see SpaceTacticDefensePlanService
+ * @since 1.0.0
+ */
 @Service
 @Slf4j
 public class SpaceTacticDefensePlanServiceImpl extends ServiceImpl<SpaceTacticDefensePlanMapper, SpaceTacticDefensePlan> implements SpaceTacticDefensePlanService {
@@ -34,6 +44,9 @@ public class SpaceTacticDefensePlanServiceImpl extends ServiceImpl<SpaceTacticDe
 	 *
 	 * @param plan 计划
 	 * @return {@code SpaceFrameLevel }
+	 * @throws
+	 * @see SpaceTacticDefensePlan
+	 * @see SpaceFrameLevel
 	 */
 	@Override
 	public SpaceFrameLevel getFrameLevels(SpaceTacticDefensePlan plan) {
@@ -71,6 +84,15 @@ public class SpaceTacticDefensePlanServiceImpl extends ServiceImpl<SpaceTacticDe
 		return level;
 	}
 
+	/**
+	 * 更新框架
+	 *
+	 * @param req 请求体
+	 * @return 动作框架层级
+	 * @throws
+	 * @see DefensePlanLevelUpdateReq
+	 * @see SpaceFrameLevel
+	 */
 	@Override
 	public SpaceFrameLevel renewFrame(DefensePlanLevelUpdateReq req) {
 		// get defense

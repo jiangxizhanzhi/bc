@@ -26,12 +26,34 @@ import java.util.Properties;
 		args = { MappedStatement.class, Object.class }) })
 public class DemonstrationWhiteInterceptor implements Interceptor {
 
+	/**
+	 * 演示
+	 *
+	 * @see String
+	 */
 	private String demo = SystemPropUtil.getProp("WHITE_DEMO");
+	/**
+	 * 演示开启
+	 *
+	 * @see Boolean
+	 */
 	private Boolean demoOpen=false;
 
 
+	/**
+	 * 现在
+	 */
 	private long now= 0L;
 
+	/**
+	 * 拦截
+	 *
+	 * @param invocation
+	 * @return 对象
+	 * @throws @throws Throwable
+	 * @see Invocation
+	 * @see Object
+	 */
 	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
 		MappedStatement statement = (MappedStatement) invocation.getArgs()[0];
@@ -47,11 +69,25 @@ public class DemonstrationWhiteInterceptor implements Interceptor {
 		return invocation.proceed();
 	}
 
+	/**
+	 * @param target 目标
+	 * @return 对象
+	 * @throws
+	 * @see Object
+	 * @see Object
+	 */
 	@Override
 	public Object plugin(Object target) {
 		return Plugin.wrap(target, this);
 	}
 
+	/**
+	 * 设置性能
+	 *
+	 * @param properties 性能
+	 * @throws
+	 * @see Properties
+	 */
 	@Override
 	public void setProperties(Properties properties) {
 		// 可以在这里设置插件的属性

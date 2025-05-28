@@ -139,7 +139,7 @@ public class TheoryKnowledgeController {
 	 * 更新请求转换为实体类
 	 * 该方法将请求对象 [LessonUpdateReq](file://D:\projects\work\ojj\ojj\oj\course\src\main\java\com\cyberpeace\oj\course\controller\req\LessonUpdateReq.java#L19-L60) 转换为实体类 [CourseLesson](file://D:\projects\work\ojj\ojj\oj\course\src\main\java\com\cyberpeace\oj\course\dao\entity\CourseLesson.java#L25-L276)，并处理视频和讲义的上传或路径替换逻辑。具体功能如下：
 	 *
-	 * 1. 使用 [BeanUtils.copy](file://D:\projects\work\ojj\ojj\common\src\main\java\com\cyberpeace\common\util\BeanUtils.java#L25-L31) 拷贝基础字段；
+	 * 1. 使用 [BeanUtils.copy]
 	 * 2. 设置默认课程ID；
 	 * 3. 根据是否有新视频文件或URL更新视频地址；
 	 * 4. 根据是否有新讲义文件或URL更新讲义地址。

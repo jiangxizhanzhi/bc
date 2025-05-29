@@ -60,6 +60,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -216,7 +217,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 				}
 				List<Course> courses = courseMapper.selectList(courseQuery);
 				if (CollectionUtils.isEmpty(courses)) {
-					return new BaseRsp<>();
+					return new BaseRsp<>(new ListRsp<>(Collections.emptyList(), 0L, 0L, 0L));
 				} else {
 					Set<String> courseIds = courses.stream().map(Course::getResourceId).collect(Collectors.toSet());
 					courseIds.remove(lessonReq.getExceptCourse());

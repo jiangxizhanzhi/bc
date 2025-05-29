@@ -114,7 +114,7 @@ public class SpaceLoadedFileThreatRuleController extends SpaceControllerBase<Spa
 	public BaseRsp<Boolean> exportExcel(HttpServletResponse response,
 	                                    SpaceLoadedFileThreatRulePageReq req) {
 	    // 生成Excel文件的路径和名称
-	    String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
+	    String filePath = "病毒防御威胁规则"
 	            + CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
 
 	    // 创建查询条件构造器

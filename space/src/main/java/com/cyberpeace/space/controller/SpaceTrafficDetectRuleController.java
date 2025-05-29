@@ -81,7 +81,7 @@ public class SpaceTrafficDetectRuleController extends SpaceControllerBase<SpaceT
     public BaseRsp<Boolean> exportExcel(HttpServletResponse response,
                                         SpaceTrafficDetectRulePageReq req) {
         // 生成文件路径和名称
-        String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
+        String filePath = "网络攻击防御规则"
                 + CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
 
         // 创建查询条件包装器

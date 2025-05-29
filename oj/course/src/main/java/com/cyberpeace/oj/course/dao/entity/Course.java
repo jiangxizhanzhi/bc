@@ -130,6 +130,7 @@ public class Course extends AuthTable {
      * @see Integer
      */
 	@ApiModelProperty("等级")
+    @TableField("`rank`")
 	private Integer rank;
 
 	@ApiModelProperty("攻击知识点")

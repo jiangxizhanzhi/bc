@@ -25,7 +25,7 @@
  * ### 总结 
  * 这个测试类包含了大量的重复测试方法，每个方法都调用同一个方法并验证其返回值。虽然测试数量多，但测试策略较为单一，且存在大量的重复代码。可以考虑重构代码以提高可维护性和测试覆盖率。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
+package com.cyberpeace.cr.evaluation.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

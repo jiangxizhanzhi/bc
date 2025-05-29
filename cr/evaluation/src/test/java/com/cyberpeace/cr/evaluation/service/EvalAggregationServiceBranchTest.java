@@ -39,7 +39,7 @@
  * ``` 
  * 这个改进后的版本使用了参数化测试，减少了重复代码，同时保持了测试的功能。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
+package com.cyberpeace.cr.evaluation.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

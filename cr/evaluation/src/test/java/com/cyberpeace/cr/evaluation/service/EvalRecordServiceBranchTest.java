@@ -14,7 +14,7 @@
  * 5. **提高测试效率**：考虑在类级别创建共享实例，避免每次测试都创建新的对象。 
  * 通过这些改进，可以使测试更加有效和可靠，同时提高代码质量和维护性。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
+package com.cyberpeace.cr.evaluation.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

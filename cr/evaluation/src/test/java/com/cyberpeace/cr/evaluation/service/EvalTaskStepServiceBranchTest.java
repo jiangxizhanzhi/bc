@@ -18,7 +18,7 @@
  * ### 总结 
  * 这段代码的主要目的是通过一系列测试来验证 `EvalTaskStepServiceBranch` 类中的 `getBranch` 方法在不同输入下的表现。然而，当前的设计存在一些问题，如测试方法的重复性和缺乏详细说明。建议改进测试方法的设计，以提高测试的有效性和可维护性。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
+package com.cyberpeace.cr.evaluation.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

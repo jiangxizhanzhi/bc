@@ -21,7 +21,7 @@
  * ### 总结 
  * 这段代码的主要问题是大量的重复测试方法，且每个方法的测试数据和断言都非常简单。为了提高测试的质量和可维护性，建议重构代码，使其更简洁、更具代表性。 
 **/
-package com.cyberpeace.cr.tool.service;;
+package com.cyberpeace.cr.tool.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -20,7 +20,7 @@
  * 4. **改进方法命名**：使用更具描述性的命名，例如 `testGetBranchWithValidInput` 或 `testGetBranchWithInvalidInput`。 
  * 通过这些改进，可以使代码更加简洁、易读和高效。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
+package com.cyberpeace.cr.evaluation.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

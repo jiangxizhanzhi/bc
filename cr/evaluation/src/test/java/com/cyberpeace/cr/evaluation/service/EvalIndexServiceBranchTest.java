@@ -22,7 +22,7 @@
  * - 确保测试方法能够验证`getBranch`方法的实际功能，而不仅仅是它的返回值。 
  * - 清理和优化代码中的注释，使其更具描述性和有用性。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
+package com.cyberpeace.cr.evaluation.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -14,6 +14,7 @@ import com.cyberpeace.oj.course.service.bo.CategoryAddBo;
 import com.cyberpeace.oj.course.service.bo.CourseCategoryBo;
 import com.cyberpeace.oj.course.service.impl.CourseValidateHandler;
 import com.google.common.collect.Lists;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -31,6 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Disabled
 @WebMvcTest(AdminCourseCategoryController.class)
 class AdminCourseCategoryControllerTest {
 

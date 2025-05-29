@@ -23,7 +23,7 @@
  * * the toy is toy 
  * * not the practice 
  * * tos 
- * */ 
+ * *
  * ``` 
  * - 注释说明这是分支测试，但内容有些混乱，似乎没有明确的目的或描述。 
  * ### 3. 测试方法 
@@ -53,7 +53,7 @@
  * - **增加断言多样性**：除了 `assertTrue`，还可以添加其他类型的断言（如 `assertFalse`、`assertEquals` 等）以覆盖更多的测试场景。 
  * - **详细注释**：为每个测试方法添加注释，说明其目的和预期结果，以便其他开发者更容易理解这些测试的作用。 
 **/
-package com.cyberpeace.cr.tool.service;;
+package com.cyberpeace.cr.tool.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

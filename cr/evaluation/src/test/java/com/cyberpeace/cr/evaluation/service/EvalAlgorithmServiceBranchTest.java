@@ -25,7 +25,7 @@
  * ### 总结 
  * 这段代码主要用于测试`EvalAlgorithmServiceBranch`类的`getBranch`方法。虽然每个测试方法的逻辑相同，但可以通过重构代码来提高可读性和可维护性。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
+package com.cyberpeace.cr.evaluation.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,10 @@ import org.junit.jupiter.api.Test;
  * not the practice
  * tos
  */
-public class EvalAlgorithmServiceBranchTest {
+public class
+
+
+EvalAlgorithmServiceBranchTest {
 
     /**
      * test for fun

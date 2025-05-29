@@ -46,7 +46,7 @@
  * ```java 
  * static Stream<String> testData() { 
  * return Stream.of( 
- * "vtphanqfjm", "rougrqtcch", "lzrrhvggjt", /* ... 更多数据 */ 
+ * "vtphanqfjm", "rougrqtcch", "lzrrhvggjt", /* ... 更多数据 *
  * ); 
  * } 
  * ``` 
@@ -56,7 +56,7 @@
  * - 清理并重新组织注释，确保它们有意义且易于理解。 
  * 通过这些改进，可以使测试代码更加简洁、易读和易于维护。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
+package com.cyberpeace.cr.evaluation.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

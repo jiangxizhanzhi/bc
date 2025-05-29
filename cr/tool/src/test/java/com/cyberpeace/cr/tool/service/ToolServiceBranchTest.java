@@ -13,8 +13,7 @@
  * * the toy is toy 
  * * not the practice 
  * * tos 
- * */ 
- * ``` 
+ * * * ```
  * ### 3. 测试方法 
  * - 类中定义了多个测试方法，每个方法的名称都是 `testGetBranchX()`，其中 X 是一个从 0 到 89 的数字。 
  * - 每个测试方法都执行以下操作： 
@@ -38,7 +37,7 @@
  * ### 总结 
  * 这段代码虽然实现了基本的单元测试功能，但存在一些不足之处。建议增加测试数据的多样性和针对性，以及提供更详细的测试描述和失败处理机制。 
 **/
-package com.cyberpeace.cr.tool.service;;
+package com.cyberpeace.cr.tool.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

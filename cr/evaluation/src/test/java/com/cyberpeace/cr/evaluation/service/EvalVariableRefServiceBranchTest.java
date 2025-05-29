@@ -36,7 +36,7 @@
  * import static org.junit.jupiter.api.Assertions.assertTrue; 
  * public class EvalVariableRefServiceBranchTest { 
  * @ParameterizedTest 
- * @ValueSource(strings = {"dqsgqrmbze", "hsmmytxoqi", "waplmkuboz", /* ... 其他字符串 */}) 
+ * @ValueSource(strings = {"dqsgqrmbze", "hsmmytxoqi", "waplmkuboz", /* ... 其他字符串 *})
  * public void testGetBranch(String input) { 
  * EvalVariableRefServiceBranch singleTrainBranch = new EvalVariableRefServiceBranch(); 
  * assertTrue(singleTrainBranch.getBranch(input)); 
@@ -45,7 +45,7 @@
  * ``` 
  * 这样，代码变得更加简洁，并且易于维护。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
+package com.cyberpeace.cr.evaluation.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -24,7 +24,7 @@
  * - 考虑引入更具代表性的测试数据，包括边界条件和异常情况。 
  * - 如果可能，重构测试方法以减少重复代码。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
+package com.cyberpeace.cr.evaluation.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

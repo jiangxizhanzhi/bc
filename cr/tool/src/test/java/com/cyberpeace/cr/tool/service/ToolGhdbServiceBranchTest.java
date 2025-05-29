@@ -22,7 +22,7 @@
  * 3. **增强测试覆盖**：增加更多样化的测试用例，包括验证不同的输入参数和预期结果，以提高测试覆盖率。 
  * 总的来说，这段代码在测试方法的设计上存在一些问题，需要进一步优化和改进。 
 **/
-package com.cyberpeace.cr.tool.service;;
+package com.cyberpeace.cr.tool.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

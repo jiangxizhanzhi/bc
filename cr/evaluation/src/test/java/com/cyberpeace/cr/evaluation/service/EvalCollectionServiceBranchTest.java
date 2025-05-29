@@ -26,7 +26,7 @@
  * public class EvalCollectionServiceBranchTest { 
  * static Stream<String> testData() { 
  * return Stream.of( 
- * "knfzkuvvak", "vqssndqvmp", /* ... 其他测试数据 ... */ 
+ * "knfzkuvvak", "vqssndqvmp", /* ... 其他测试数据 ... *
  * "wepxndovse", "bbyosmryha" 
  * ); 
  * } 
@@ -40,7 +40,7 @@
  * ``` 
  * 通过这种方式，你可以显著减少代码重复，同时提高测试的可读性和可维护性。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
+package com.cyberpeace.cr.evaluation.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -30,7 +30,7 @@
  * 3. 提供更清晰的注释，说明每个测试的目的。 
  * 通过这些改进，可以使测试代码更加高效、易读和健壮。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
+package com.cyberpeace.cr.evaluation.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -29,7 +29,7 @@
  * - 提供更详细的注释，解释`getBranch`方法的功能以及每个测试用例的目的。 
  * - 如果可能，可以修改测试方法以验证`getBranch`方法在不同输入下的具体行为。 
 **/
-package com.cyberpeace.cr.tool.service;;
+package com.cyberpeace.cr.tool.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

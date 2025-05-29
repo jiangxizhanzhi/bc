@@ -23,7 +23,7 @@
  * ### 总结 
  * 这段代码的主要目的是测试 `ToolResourceImportServiceBranch` 类的 `getBranch` 方法。然而，由于每个测试方法都几乎是相同的，且没有提供详细的测试用例描述，这使得测试的可读性和维护性较差。建议通过增加注释、减少重复代码、并为测试用例提供更明确的目的来改进这些测试方法。 
 **/
-package com.cyberpeace.cr.tool.service;;
+package com.cyberpeace.cr.tool.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

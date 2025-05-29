@@ -40,7 +40,7 @@
  * ``` 
  * 这样可以减少代码重复，提高可读性和维护性。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
+package com.cyberpeace.cr.evaluation.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

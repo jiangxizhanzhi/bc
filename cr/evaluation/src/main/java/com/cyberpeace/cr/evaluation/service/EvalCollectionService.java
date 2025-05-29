@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalCollection;
+import com.cyberpeace.cr.evaluation.service.context.EvalCollectionContext;
+
+/**
+ * 评估收集Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalCollectionService` 的接口，该接口扩展了 `IService<EvalCollection>` 接口。这个服务接口主要用于处理与 `EvalCollection` 实体相关的业务逻辑。下面是对代码的简要分析： 
  * ### 包和导入 
@@ -14,20 +28,6 @@
  * ### 总结 
  * 这段代码定义了一个服务接口 `EvalCollectionService`，它提供了两个主要功能：批量保存采集项和通过指标项ID获取采集项列表。这些方法使得处理 `EvalCollection` 实体的业务逻辑更加模块化和易于维护。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import java.util.List;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalCollection;
-import com.cyberpeace.cr.evaluation.service.context.EvalCollectionContext;
-
-/**
- * 评估收集Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface EvalCollectionService extends IService<EvalCollection> {
 
 	/**
@@ -45,3 +45,4 @@ public interface EvalCollectionService extends IService<EvalCollection> {
 	 */
 	List<EvalCollectionContext> getContextByEvalIndicatorId(String evalIndicatorId);
 }
+

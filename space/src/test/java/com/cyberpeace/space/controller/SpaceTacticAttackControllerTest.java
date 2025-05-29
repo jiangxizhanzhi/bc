@@ -1,3 +1,27 @@
+package com.cyberpeace.space.controller;
+
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.space.service.SpaceTacticAttackService;
+import com.cyberpeace.space.service.context.IdListReq;
+import com.cyberpeace.space.service.context.tactic.*;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Arrays;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 /**
  * 这段代码是一个基于Spring Boot的单元测试类 `SpaceTacticAttackControllerTest`，用于测试 `SpaceTacticAttackController` 控制器的功能。以下是代码的主要内容和功能分析： 
  * ### 1. **测试目标** 
@@ -68,30 +92,6 @@
  * - 如果JSON数据格式复杂，可以考虑提取公共方法来减少重复代码。 
  * 总结来说，这段代码是一个结构清晰、功能完整的单元测试类，能够有效验证 `SpaceTacticAttackController` 的各项功能是否正常运行。 
 **/
-package com.cyberpeace.space.controller;
-
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.space.service.SpaceTacticAttackService;
-import com.cyberpeace.space.service.context.IdListReq;
-import com.cyberpeace.space.service.context.tactic.*;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Arrays;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @WebMvcTest(SpaceTacticAttackController.class)
 class SpaceTacticAttackControllerTest {
 
@@ -251,3 +251,4 @@ class SpaceTacticAttackControllerTest {
         verify(mockAttackService).deleteCategory(Arrays.asList("value"));
     }
 }
+

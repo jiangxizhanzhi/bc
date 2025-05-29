@@ -1,3 +1,18 @@
+package com.cyberpeace.cs.service.context.scene;
+
+import java.io.Serializable;
+import java.util.Map;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * CP 流
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `CpFlow` 的类，用于表示某种上下文场景中的“CP流”。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -16,21 +31,6 @@
  * - 需要外部定义 `ElementFlowList` 类来配合使用。 
  * 总结：这是一个简单的数据容器类，主要用于存储与“CP流”相关的元素集合，并通过 Lombok 减少了样板代码的编写。 
 **/
-package com.cyberpeace.cs.service.context.scene;
-
-import java.io.Serializable;
-import java.util.Map;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * CP 流
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class CpFlow implements Serializable {
@@ -41,3 +41,4 @@ public class CpFlow implements Serializable {
 	private Map<String, ElementFlowList> elements;
 
 }
+

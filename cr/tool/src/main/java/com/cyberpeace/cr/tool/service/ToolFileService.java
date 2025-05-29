@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.tool.service;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.tool.dao.entity.ToolFile;
+
+/**
+ * 工具文件Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolFileService` 的接口，该接口继承自 `IService<ToolFile>`。`IService` 是 MyBatis-Plus 框架中提供的一个通用 Service 接口，用于简化 CRUD 操作。 
  * ### 主要功能 
@@ -12,19 +25,6 @@
  * - 通过继承 `IService<ToolFile>`，该接口还自动获得了 MyBatis-Plus 提供的基本 CRUD 操作的支持。 
  * 这个接口的设计目的是为了提供一种方便的方式来处理工具相关的文件保存操作，并且可以灵活地处理不同的文件来源（文件路径或上传的文件）。 
 **/
-package com.cyberpeace.cr.tool.service;
-
-import org.springframework.web.multipart.MultipartFile;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.tool.dao.entity.ToolFile;
-
-/**
- * 工具文件Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface ToolFileService extends IService<ToolFile> {
 
 	/**
@@ -44,3 +44,4 @@ public interface ToolFileService extends IService<ToolFile> {
 	 */
 	ToolFile saveFile(MultipartFile multipartFile);
 }
+

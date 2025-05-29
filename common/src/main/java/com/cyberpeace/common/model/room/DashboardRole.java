@@ -1,3 +1,15 @@
+package com.cyberpeace.common.model.room;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 挡泥板岗位
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `DashboardRole` 的 Java 类，用于表示“挡泥板岗位”的相关数据模型。以下是代码的简要分析： 
  * 1. **包声明**：代码位于 `com.cyberpeace.common.model.room` 包中。 
@@ -14,18 +26,6 @@
  * - 每个字段也有对应的 Javadoc 注释，描述其含义。 
  * 总结：这是一个简单的数据传输对象（DTO），用于存储和传递“挡泥板岗位”的相关信息。通过 Lombok 注解减少了样板代码，提高了开发效率。 
 **/
-package com.cyberpeace.common.model.room;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 挡泥板岗位
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class DashboardRole {
@@ -42,3 +42,4 @@ public class DashboardRole {
      */
     private Integer roleCode;
 }
+

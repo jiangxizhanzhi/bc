@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.course.dao.entity.CourseStudyHistory;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * 课程研究历史Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseStudyHistoryMapper` 的接口，该接口继承了 MyBatis-Plus 提供的 `BaseMapper` 接口。这个接口用于操作 `CourseStudyHistory` 实体类的数据。以下是详细的分析： 
  * ### 包声明 
@@ -44,24 +62,6 @@
  * ### 总结 
  * 该接口提供了两个查询方法，分别用于根据用户 ID 查询课程学习历史记录和根据课程 ID 和用户 ID 查询特定的课程学习历史记录。这些方法简化了数据库操作，并利用了 MyBatis-Plus 的特性来减少样板代码。 
 **/
-package com.cyberpeace.oj.course.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.course.dao.entity.CourseStudyHistory;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
-
-/**
- * 课程研究历史Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 public interface CourseStudyHistoryMapper extends BaseMapper<CourseStudyHistory> {
 
@@ -90,3 +90,4 @@ public interface CourseStudyHistoryMapper extends BaseMapper<CourseStudyHistory>
 	CourseStudyHistory selectByCourseIdAndUserId(@Param("courseId") String courseId,@Param("userId") String userId);
 
 }
+

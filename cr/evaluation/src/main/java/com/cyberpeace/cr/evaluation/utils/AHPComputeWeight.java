@@ -1,3 +1,14 @@
+package com.cyberpeace.cr.evaluation.utils;
+
+import java.math.BigDecimal;
+import java.util.*;
+
+/**
+ * AHPP计算权重
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码实现了一个用于层次分析法（AHP）计算权重的工具类 `AHPComputeWeight`。以下是对该代码的简要分析： 
  * ### 类和方法概述 
@@ -55,17 +66,6 @@
  * - 可以优化一些常量的定义，使其更易读和管理。 
  * 整体来看，这是一个功能完整的 AHP 权重计算工具类，适用于需要进行层次分析的应用场景。 
 **/
-package com.cyberpeace.cr.evaluation.utils;
-
-import java.math.BigDecimal;
-import java.util.*;
-
-/**
- * AHPP计算权重
- *
- * @author SN
- * @date 2024/11/08
- */
 public class AHPComputeWeight {
 
     /**

@@ -1,31 +1,3 @@
-/**
- * 这段代码实现了一个自定义的 `ExceptionFilter`，用于捕获并处理各种类型的异常，并将错误信息以 JSON 格式返回给客户端。以下是代码的主要功能和结构分析： 
- * ### 主要功能： 
- * 1. **异常捕获与分类处理**：通过 `doFilter` 方法捕获在过滤链中抛出的异常，并根据异常类型调用不同的处理方法。 
- * 2. **错误信息格式化**：将异常信息转换为标准的 JSON 格式返回给客户端，便于前端解析。 
- * 3. **上下文清理**：在过滤器执行完毕后，清理线程本地存储中的上下文信息。 
- * ### 关键点分析： 
- * - **异常分类**： 
- * - 不同类型的异常（如 `BindException`, `RemoteServiceException`, `DuplicateKeyException` 等）被分别处理。 
- * - 对于某些特定异常，如 `BindException` 和 `DuplicateKeyException`，会提取具体的错误信息并格式化。 
- * - **上下文管理**： 
- * - 在过滤器结束时，调用 `UserInfoContext.removeUserContext()`、`TraceIdContext.removeTraceId()` 等方法清除线程本地存储中的上下文数据，确保线程安全。 
- * - **错误编码与国际化**： 
- * - 使用 `getErrorCode` 方法生成统一的错误编码，支持多语言（中文和英文）的消息。 
- * - 通过 `ConfigUtil.getContextProperty` 获取特定语言的错误描述。 
- * - **JSON 响应**： 
- * - 使用 `JsonUtil.toJsonString` 将错误信息序列化为 JSON 格式。 
- * - 设置响应头 `Content-Type` 为 `application/json`，状态码为 `200`，即使实际是错误响应。 
- * ### 优点： 
- * - **模块化设计**：每个异常处理逻辑独立，便于扩展和维护。 
- * - **国际化支持**：通过配置文件动态调整错误消息的语言。 
- * - **上下文清理**：避免了线程污染问题，提高了系统的稳定性。 
- * ### 可能的改进： 
- * - **性能优化**：频繁访问 `cache` 可能会导致性能瓶颈，可以考虑使用更高效的缓存机制。 
- * - **日志级别调整**：对于一些常见的异常（如 `HttpMessageNotReadableException`），可以降低日志级别，减少不必要的日志输出。 
- * - **安全性增强**：确保敏感信息不会泄露到错误响应中。 
- * 总体而言，该代码实现了较为完善的异常处理机制，能够满足大多数 Web 应用的需求。 
-**/
 package com.cyberpeace.config.auth;
 
 import com.cyberpeace.common.constant.ErrorCode;
@@ -71,6 +43,34 @@ import java.util.regex.Pattern;
  * @see Filter
  * @since 1.0.0
  */
+/**
+ * 这段代码实现了一个自定义的 `ExceptionFilter`，用于捕获并处理各种类型的异常，并将错误信息以 JSON 格式返回给客户端。以下是代码的主要功能和结构分析： 
+ * ### 主要功能： 
+ * 1. **异常捕获与分类处理**：通过 `doFilter` 方法捕获在过滤链中抛出的异常，并根据异常类型调用不同的处理方法。 
+ * 2. **错误信息格式化**：将异常信息转换为标准的 JSON 格式返回给客户端，便于前端解析。 
+ * 3. **上下文清理**：在过滤器执行完毕后，清理线程本地存储中的上下文信息。 
+ * ### 关键点分析： 
+ * - **异常分类**： 
+ * - 不同类型的异常（如 `BindException`, `RemoteServiceException`, `DuplicateKeyException` 等）被分别处理。 
+ * - 对于某些特定异常，如 `BindException` 和 `DuplicateKeyException`，会提取具体的错误信息并格式化。 
+ * - **上下文管理**： 
+ * - 在过滤器结束时，调用 `UserInfoContext.removeUserContext()`、`TraceIdContext.removeTraceId()` 等方法清除线程本地存储中的上下文数据，确保线程安全。 
+ * - **错误编码与国际化**： 
+ * - 使用 `getErrorCode` 方法生成统一的错误编码，支持多语言（中文和英文）的消息。 
+ * - 通过 `ConfigUtil.getContextProperty` 获取特定语言的错误描述。 
+ * - **JSON 响应**： 
+ * - 使用 `JsonUtil.toJsonString` 将错误信息序列化为 JSON 格式。 
+ * - 设置响应头 `Content-Type` 为 `application/json`，状态码为 `200`，即使实际是错误响应。 
+ * ### 优点： 
+ * - **模块化设计**：每个异常处理逻辑独立，便于扩展和维护。 
+ * - **国际化支持**：通过配置文件动态调整错误消息的语言。 
+ * - **上下文清理**：避免了线程污染问题，提高了系统的稳定性。 
+ * ### 可能的改进： 
+ * - **性能优化**：频繁访问 `cache` 可能会导致性能瓶颈，可以考虑使用更高效的缓存机制。 
+ * - **日志级别调整**：对于一些常见的异常（如 `HttpMessageNotReadableException`），可以降低日志级别，减少不必要的日志输出。 
+ * - **安全性增强**：确保敏感信息不会泄露到错误响应中。 
+ * 总体而言，该代码实现了较为完善的异常处理机制，能够满足大多数 Web 应用的需求。 
+**/
 @Slf4j
 public class ExceptionFilter implements Filter {
 
@@ -446,3 +446,4 @@ public class ExceptionFilter implements Filter {
 	}
 
 }
+

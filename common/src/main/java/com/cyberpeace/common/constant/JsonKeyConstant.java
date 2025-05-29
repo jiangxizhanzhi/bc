@@ -1,3 +1,13 @@
+package com.cyberpeace.common.constant;
+
+/**
+ * Json key定义，复用切易查找
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `JsonKeyConstant` 的接口，主要用于存储 JSON 数据中的键值常量。以下是对其的简要分析： 
  * 1. **功能**： 
@@ -20,16 +30,6 @@
  * - 易于查找和修改键值。 
  * 总结：这是一个典型的常量接口，专门用于管理 JSON 键值，适合在需要频繁使用 JSON 数据的项目中应用。 
 **/
-package com.cyberpeace.common.constant;
-
-/**
- * Json key定义，复用切易查找
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface JsonKeyConstant {
 
 	/**
@@ -305,3 +305,4 @@ public interface JsonKeyConstant {
 	 */
 	String MESSAGE = "message";
 }
+

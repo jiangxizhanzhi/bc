@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.crbase.service.context;
+
+import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 任务阶段编排
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MissionStageScheme` 的 Java 类，位于包 `com.cyberpeace.cr.crbase.service.context` 中。以下是对其的简要分析： 
  * 1. **类的功能**： 
@@ -12,19 +25,6 @@
  * - 通过该类可以灵活地配置和管理不同阶段的任务及其相关动态信息，适用于需要阶段化任务处理的场景。 
  * 总结：这是一个简单的数据模型类，主要用于任务阶段的结构化表示和管理。 
 **/
-package com.cyberpeace.cr.crbase.service.context;
-
-import java.util.List;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 任务阶段编排
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MissionStageScheme {
@@ -44,3 +44,4 @@ public class MissionStageScheme {
 	 */
 	private List<String> dynamic;
 }
+

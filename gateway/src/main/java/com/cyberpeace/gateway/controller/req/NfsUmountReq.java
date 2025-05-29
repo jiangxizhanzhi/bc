@@ -1,3 +1,19 @@
+package com.cyberpeace.gateway.controller.req;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+
+/**
+ * NFSumount请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `NfsUmountReq` 的 Java 类，用于表示 NFS 卸载操作的请求体。以下是对该代码的简要分析： 
  * ### 包声明 
@@ -43,22 +59,6 @@
  * - 实现了 `Serializable` 接口，支持对象的序列化。 
  * 这个类主要用于接收和验证 NFS 卸载操作的路径参数，并且可以通过 Swagger 文档生成工具自动生成相关的 API 文档。 
 **/
-package com.cyberpeace.gateway.controller.req;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-
-/**
- * NFSumount请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class NfsUmountReq implements Serializable {
@@ -71,3 +71,4 @@ public class NfsUmountReq implements Serializable {
 	private String path;
 
 }
+

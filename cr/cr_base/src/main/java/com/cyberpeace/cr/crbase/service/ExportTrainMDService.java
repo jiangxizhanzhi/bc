@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.crbase.service;
+
+
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+
+import java.io.IOException;
+import java.util.List;
+
+/**
+ * 导出训练md服务
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个接口 `ExportTrainMDService`，用于处理训练资产管理的导出功能。以下是代码的简要分析： 
  * 1. **接口名称与功能**： 
@@ -13,20 +27,6 @@
  * - 提供了两种导出方式，一种是通过模板ID列表间接调用，另一种是直接传入模板列表。 
  * 总结：该接口设计清晰地划分了导出训练资产管理的功能模块，支持多种参数配置，适合扩展不同的实现策略。 
 **/
-package com.cyberpeace.cr.crbase.service;
-
-
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-
-import java.io.IOException;
-import java.util.List;
-
-/**
- * 导出训练md服务
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface ExportTrainMDService {
 
 	/**
@@ -51,3 +51,4 @@ public interface ExportTrainMDService {
 	 */
 	void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path, String sceneNumber, Boolean disableImageExport);
 }
+

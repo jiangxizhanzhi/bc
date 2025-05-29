@@ -1,25 +1,3 @@
-/**
- * 这段代码是一个测试类 `SpaceActionControllerTest`，用于测试 `SpaceActionController` 的功能。以下是代码的主要内容和功能分析： 
- * 1. **测试框架**： 
- * - 使用了 JUnit 5 (`org.junit.jupiter`) 作为测试框架。 
- * - 使用了 Spring Boot 提供的 `@WebMvcTest` 注解来加载 `SpaceActionController` 并进行 Web 层的测试。 
- * 2. **依赖注入**： 
- * - 使用了 `@Autowired` 和 `@MockBean` 注解来模拟服务层的依赖，例如 `SpaceActionService`、`SpaceActionMethodService` 等。 
- * 3. **测试方法**： 
- * - **`testGetADetail`**：测试获取某个操作的详细信息，包括工具、策略、方法等关联数据。 
- * - **`testAddAttack`**：测试添加一个新的操作，验证插入数据库后的返回结果。 
- * - **`testDeleteA`**：测试删除多个操作的功能。 
- * - **`testListAll`**：测试列出所有操作的功能。 
- * - **`testPage`**：测试分页查询操作列表的功能。 
- * - **`testUpdateA`**：测试更新操作的功能。 
- * 4. **Mock 数据**： 
- * - 在每个测试方法中，通过 `when` 方法设置模拟服务的行为，例如返回特定的数据或执行某些操作。 
- * 5. **断言**： 
- * - 使用 `mockMvc.perform` 发送 HTTP 请求，并使用 `andExpect` 验证响应状态码、内容等是否符合预期。 
- * 6. **工具类**： 
- * - 使用了一些工具类如 `JsonUtil` 来处理 JSON 数据，以及 `Lists.newArrayList` 来创建列表。 
- * 总体来说，这段代码通过模拟服务层的行为，全面地测试了 `SpaceActionController` 的各个功能点，确保其在不同场景下的正确性。 
-**/
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
@@ -65,6 +43,28 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * 这段代码是一个测试类 `SpaceActionControllerTest`，用于测试 `SpaceActionController` 的功能。以下是代码的主要内容和功能分析： 
+ * 1. **测试框架**： 
+ * - 使用了 JUnit 5 (`org.junit.jupiter`) 作为测试框架。 
+ * - 使用了 Spring Boot 提供的 `@WebMvcTest` 注解来加载 `SpaceActionController` 并进行 Web 层的测试。 
+ * 2. **依赖注入**： 
+ * - 使用了 `@Autowired` 和 `@MockBean` 注解来模拟服务层的依赖，例如 `SpaceActionService`、`SpaceActionMethodService` 等。 
+ * 3. **测试方法**： 
+ * - **`testGetADetail`**：测试获取某个操作的详细信息，包括工具、策略、方法等关联数据。 
+ * - **`testAddAttack`**：测试添加一个新的操作，验证插入数据库后的返回结果。 
+ * - **`testDeleteA`**：测试删除多个操作的功能。 
+ * - **`testListAll`**：测试列出所有操作的功能。 
+ * - **`testPage`**：测试分页查询操作列表的功能。 
+ * - **`testUpdateA`**：测试更新操作的功能。 
+ * 4. **Mock 数据**： 
+ * - 在每个测试方法中，通过 `when` 方法设置模拟服务的行为，例如返回特定的数据或执行某些操作。 
+ * 5. **断言**： 
+ * - 使用 `mockMvc.perform` 发送 HTTP 请求，并使用 `andExpect` 验证响应状态码、内容等是否符合预期。 
+ * 6. **工具类**： 
+ * - 使用了一些工具类如 `JsonUtil` 来处理 JSON 数据，以及 `Lists.newArrayList` 来创建列表。 
+ * 总体来说，这段代码通过模拟服务层的行为，全面地测试了 `SpaceActionController` 的各个功能点，确保其在不同场景下的正确性。 
+**/
 @WebMvcTest(SpaceActionController.class)
 class SpaceActionControllerTest {
 
@@ -247,3 +247,4 @@ class SpaceActionControllerTest {
                 .andExpect(content().json("{\"data\":null,\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 }
+

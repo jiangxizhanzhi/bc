@@ -1,3 +1,13 @@
+package com.cyberpeace.common.lock;
+
+/**
+ * 业务类型
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个Java接口 `BusinessType`，主要用于声明与业务类型相关的常量。以下是简要分析： 
  * 1. **接口作用**： 
@@ -13,16 +23,6 @@
  * - 此接口可能被其他类或模块引用，用于控制特定业务逻辑（如红蓝场景切换功能）。 
  * 总结：这是一个简单的常量接口，用于集中管理与业务类型相关的配置项，便于团队协作和代码维护。 
 **/
-package com.cyberpeace.common.lock;
-
-/**
- * 业务类型
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface BusinessType {
 
     /**
@@ -32,3 +32,4 @@ public interface BusinessType {
      */ /* 红蓝场景切换*/
     String RB_SCENE_SWITCH = "RB_SCENE_SWITCH";
 }
+

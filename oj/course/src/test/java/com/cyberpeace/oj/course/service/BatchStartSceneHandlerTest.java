@@ -1,3 +1,13 @@
+package com.cyberpeace.oj.course.service;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 这段代码是一个Junit测试类 `BatchStartSceneHandlerTest`，它包含一个主要的测试方法 `test00` 和一个辅助方法 `filex1`。下面是详细的分析： 
  * ### 类与注解 
@@ -30,16 +40,6 @@
  * ### 总结 
  * 这段代码的主要目的是生成一系列模拟的测试方法，但它存在一些可改进的地方。通过重构代码、使用配置文件管理和引入日志框架，可以使代码更加健壮和易于维护。 
 **/
-package com.cyberpeace.oj.course.service;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 @ExtendWith(SpringExtension.class)
 class BatchStartSceneHandlerTest {
 
@@ -99,3 +99,4 @@ class BatchStartSceneHandlerTest {
 		}
 	}
 }
+

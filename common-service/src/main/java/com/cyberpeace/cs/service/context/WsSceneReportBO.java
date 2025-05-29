@@ -1,3 +1,20 @@
+package com.cyberpeace.cs.service.context;
+
+import java.io.Serializable;
+
+import com.alibaba.fastjson.JSONObject;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+/**
+ * WS场景报告博
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `WsSceneReportBO` 的 Java 类，用于表示某种 WS 场景报告对象。以下是代码的主要分析和总结： 
  * ### 分析： 
@@ -22,23 +39,6 @@
  * - 通过构造函数可以快速初始化对象，提供了一种方便的方式来构建带有特定数据的报告对象。 
  * - 使用了 Lombok 注解简化了代码量，提高了可读性和开发效率。 
 **/
-package com.cyberpeace.cs.service.context;
-
-import java.io.Serializable;
-
-import com.alibaba.fastjson.JSONObject;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-/**
- * WS场景报告博
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @NoArgsConstructor

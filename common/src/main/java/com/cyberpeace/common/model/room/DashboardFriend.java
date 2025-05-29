@@ -1,3 +1,20 @@
+package com.cyberpeace.common.model.room;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.constant.BaseI18n;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 仪表板好友
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `DashboardFriend` 的 Java 类，用于表示仪表板中的好友信息。以下是代码的主要分析和总结： 
  * 1. **类与接口**： 
@@ -17,23 +34,6 @@
  * - 该类主要用于表示仪表板中的好友信息，包括分组名称、唯一标识符和好友列表。 
  * 总结：这是一个简单的数据传输对象（DTO），结合了 Lombok、Swagger 注解和国际化功能，适用于前后端交互场景。 
 **/
-package com.cyberpeace.common.model.room;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.constant.BaseI18n;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 仪表板好友
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class DashboardFriend implements Serializable {
@@ -99,3 +99,4 @@ public class DashboardFriend implements Serializable {
 		}
 	}
 }
+

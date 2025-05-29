@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.evaluation.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableDataPageRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRefProbeData;
+import com.cyberpeace.cr.evaluation.service.context.EvalVariableRefProbeDataContext;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * 评估变量裁判探针数据Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalVariableRefProbeDataMapper` 的接口，该接口继承了 `BaseMapper<EvalVariableRefProbeData>`。这个接口使用了 MyBatis-Plus 框架来简化数据库操作。以下是对代码的简要分析： 
  * ### 接口定义 
@@ -28,23 +45,6 @@
  * - 它提供了两个主要的方法，一个用于查询所有相关数据，另一个用于分页查询数据。 
  * - 使用了 MyBatis-Plus 提供的 `BaseMapper` 来简化基本的 CRUD 操作，并通过自定义方法扩展了功能。 
 **/
-package com.cyberpeace.cr.evaluation.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableDataPageRsp;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRefProbeData;
-import com.cyberpeace.cr.evaluation.service.context.EvalVariableRefProbeDataContext;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
-
-/**
- * 评估变量裁判探针数据Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface EvalVariableRefProbeDataMapper extends BaseMapper<EvalVariableRefProbeData> {
     /**
      * 查询变量探针数据结果
@@ -63,3 +63,4 @@ public interface EvalVariableRefProbeDataMapper extends BaseMapper<EvalVariableR
      */
     Page<EvalVariableDataPageRsp> selectVariableProbeData(@Param("page") Page page, @Param("variable_id") String variableId);
 }
+

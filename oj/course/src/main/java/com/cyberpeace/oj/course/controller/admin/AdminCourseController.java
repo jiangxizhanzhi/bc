@@ -1,46 +1,3 @@
-/**
- * 这段代码定义了一个名为 `AdminCourseController` 的 Spring MVC 控制器，用于管理课程相关的操作。以下是该代码的主要功能和结构分析： 
- * ### 主要功能 
- * 1. **获取课程列表**： 
- * - `/all/list`：获取所有课程的列表。 
- * - `/list`：获取管理员可以管理的课程列表。 
- * 2. **添加课程**： 
- * - `/`：通过 POST 请求添加新的课程。 
- * 3. **更新课程**： 
- * - `/`：通过 PATCH 请求更新现有课程的信息。 
- * 4. **获取单个课程信息**： 
- * - `/`：通过 GET 请求获取特定课程的详细信息。 
- * 5. **删除课程**： 
- * - `/batch`：通过 DELETE 请求批量删除课程。 
- * 6. **上传附件**： 
- * - `/outline/upload_attachment`：上传课程的大纲文件。 
- * 7. **查询所有课程**： 
- * - `/all/course`：获取所有课程的简要信息。 
- * 8. **导出课程数据**： 
- * - `/batch_dumps`：将指定课程的数据导出为 ZIP 文件。 
- * 9. **导入课程数据**： 
- * - `/batch_loads`：从 ZIP 文件中导入课程数据。 
- * ### 技术要点 
- * - **依赖注入**：使用 `@Autowired` 注入多个服务（如 `CourseService`, `CourseCategoryService`, `AttachmentService` 等）。 
- * - **验证注解**：使用 `@Valid`, `@Validated`, `@NotBlank` 等注解进行输入参数验证。 
- * - **分页查询**：使用 MyBatis Plus 的 `Page` 类进行分页查询。 
- * - **日志记录**：使用 `RemoteLogService` 记录操作日志。 
- * - **文件操作**：处理文件上传、下载及 ZIP 文件生成等操作。 
- * - **权限控制**：使用 Shiro 的 `@RequiresPermissions` 注解进行权限检查。 
- * ### 控制器方法摘要 
- * 1. **`getList`**：获取课程列表，支持分页和过滤条件。 
- * 2. **`getAdminCourse`**：获取管理员可管理的课程列表。 
- * 3. **`add`**：添加新课程。 
- * 4. **`patch`**：更新课程信息。 
- * 5. **`get`**：获取单个课程的详细信息。 
- * 6. **`batchDelete`**：批量删除课程。 
- * 7. **`upload_attachment`**：上传课程大纲文件。 
- * 8. **`allCourse`**：获取所有课程的简要信息。 
- * 9. **`exportCourse`**：导出课程数据。 
- * 10. **`importCourse`**：导入课程数据。 
- * ### 总结 
- * 这个控制器是面向管理员的课程管理接口，提供了完整的课程生命周期管理功能，包括添加、更新、删除以及导出和导入课程数据。代码结构清晰，采用了多种技术手段来确保数据的安全性和完整性。 
-**/
 package com.cyberpeace.oj.course.controller.admin;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
@@ -105,6 +62,49 @@ import java.util.List;
  * @see AuthAndPublicController
  * @since 1.0.0
  */
+/**
+ * 这段代码定义了一个名为 `AdminCourseController` 的 Spring MVC 控制器，用于管理课程相关的操作。以下是该代码的主要功能和结构分析： 
+ * ### 主要功能 
+ * 1. **获取课程列表**： 
+ * - `/all/list`：获取所有课程的列表。 
+ * - `/list`：获取管理员可以管理的课程列表。 
+ * 2. **添加课程**： 
+ * - `/`：通过 POST 请求添加新的课程。 
+ * 3. **更新课程**： 
+ * - `/`：通过 PATCH 请求更新现有课程的信息。 
+ * 4. **获取单个课程信息**： 
+ * - `/`：通过 GET 请求获取特定课程的详细信息。 
+ * 5. **删除课程**： 
+ * - `/batch`：通过 DELETE 请求批量删除课程。 
+ * 6. **上传附件**： 
+ * - `/outline/upload_attachment`：上传课程的大纲文件。 
+ * 7. **查询所有课程**： 
+ * - `/all/course`：获取所有课程的简要信息。 
+ * 8. **导出课程数据**： 
+ * - `/batch_dumps`：将指定课程的数据导出为 ZIP 文件。 
+ * 9. **导入课程数据**： 
+ * - `/batch_loads`：从 ZIP 文件中导入课程数据。 
+ * ### 技术要点 
+ * - **依赖注入**：使用 `@Autowired` 注入多个服务（如 `CourseService`, `CourseCategoryService`, `AttachmentService` 等）。 
+ * - **验证注解**：使用 `@Valid`, `@Validated`, `@NotBlank` 等注解进行输入参数验证。 
+ * - **分页查询**：使用 MyBatis Plus 的 `Page` 类进行分页查询。 
+ * - **日志记录**：使用 `RemoteLogService` 记录操作日志。 
+ * - **文件操作**：处理文件上传、下载及 ZIP 文件生成等操作。 
+ * - **权限控制**：使用 Shiro 的 `@RequiresPermissions` 注解进行权限检查。 
+ * ### 控制器方法摘要 
+ * 1. **`getList`**：获取课程列表，支持分页和过滤条件。 
+ * 2. **`getAdminCourse`**：获取管理员可管理的课程列表。 
+ * 3. **`add`**：添加新课程。 
+ * 4. **`patch`**：更新课程信息。 
+ * 5. **`get`**：获取单个课程的详细信息。 
+ * 6. **`batchDelete`**：批量删除课程。 
+ * 7. **`upload_attachment`**：上传课程大纲文件。 
+ * 8. **`allCourse`**：获取所有课程的简要信息。 
+ * 9. **`exportCourse`**：导出课程数据。 
+ * 10. **`importCourse`**：导入课程数据。 
+ * ### 总结 
+ * 这个控制器是面向管理员的课程管理接口，提供了完整的课程生命周期管理功能，包括添加、更新、删除以及导出和导入课程数据。代码结构清晰，采用了多种技术手段来确保数据的安全性和完整性。 
+**/
 @Slf4j
 @Api(tags = "oj-后台课程相关api")
 @RestController
@@ -496,3 +496,4 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	}
 
 }
+

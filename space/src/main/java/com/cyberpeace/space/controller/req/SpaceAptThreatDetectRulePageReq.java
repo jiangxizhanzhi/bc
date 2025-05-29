@@ -1,3 +1,24 @@
+package com.cyberpeace.space.controller.req;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.cyberpeace.space.dao.entity.SpaceAptThreatDetectRule;
+import com.cyberpeace.space.model.req.SpacePageReqBase;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间容易威胁检测统治分页请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpacePageReqBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个用于分页查询空间威胁检测规则的请求类 `SpaceAptThreatDetectRulePageReq`。以下是代码的主要功能和结构分析： 
  * 1. **类的功能**： 
@@ -20,27 +41,6 @@
  * - 利用 MyBatis-Plus 提供的 `LambdaQueryWrapper` 实现动态 SQL 构建，提升代码可读性和灵活性。 
  * 总结：这是一个典型的分页查询请求类，通过动态条件过滤实现灵活的数据查询，同时结合 MyBatis-Plus 提供的强大功能简化了数据库操作逻辑。 
 **/
-package com.cyberpeace.space.controller.req;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.cyberpeace.space.dao.entity.SpaceAptThreatDetectRule;
-import com.cyberpeace.space.model.req.SpacePageReqBase;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间容易威胁检测统治分页请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpacePageReqBase
- * @since 1.0.0
- */
 @ApiModel
 public class SpaceAptThreatDetectRulePageReq extends SpacePageReqBase {
 
@@ -92,3 +92,4 @@ public class SpaceAptThreatDetectRulePageReq extends SpacePageReqBase {
 	    return wrapper;
 	}
 }
+

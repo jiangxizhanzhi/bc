@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 个人统计详情4计数博
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `PersonalStatsDetail4CountBo` 的 Java 类，该类实现了 `Serializable` 接口。这个类主要用于表示用户的个人统计数据，特别是关于用户在某个在线课程平台上的各种课程和活动的完成情况。 
  * ### 主要特点 
@@ -22,23 +39,6 @@
  * - 通过这些统计数据，可以帮助用户了解自己的学习进度，并提供个性化的学习建议。 
  * 总的来说，这是一个非常实用且易于扩展的类，适用于需要跟踪和展示用户学习进度的在线教育平台。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 个人统计详情4计数博
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class PersonalStatsDetail4CountBo implements Serializable {
@@ -107,3 +107,4 @@ public class PersonalStatsDetail4CountBo implements Serializable {
     private Integer afterClassPractice = 0;
 
 }
+

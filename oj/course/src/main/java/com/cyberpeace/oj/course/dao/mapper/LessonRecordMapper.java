@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.course.dao.entity.LessonRecord;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Date;
+import java.util.List;
+
+/**
+ * 课记录Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonRecordMapper` 的接口，继承自 `BaseMapper<LessonRecord>`。该接口使用了 MyBatis-Plus 框架，并提供了几个用于操作 `LessonRecord` 实体对象的方法。以下是详细的分析： 
  * ### 主要组成部分 
@@ -20,25 +39,6 @@
  * ### 总结 
  * 这个 `LessonRecordMapper` 接口提供了一组丰富的方法来操作 `LessonRecord` 实体对象。这些方法包括按用户、课程和时间查询记录以及更新学习时间。通过继承 `BaseMapper<LessonRecord>`，该接口还具备了默认的 CRUD 操作能力，从而简化了数据库操作。 
 **/
-package com.cyberpeace.oj.course.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.course.dao.entity.LessonRecord;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.Date;
-import java.util.List;
-
-/**
- * 课记录Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 public interface LessonRecordMapper extends BaseMapper<LessonRecord> {
 
@@ -117,3 +117,4 @@ public interface LessonRecordMapper extends BaseMapper<LessonRecord> {
 	int updateLearnedTime(@Param("lessonId") String lessonId, @Param("courseId") String courseId,@Param("userId") String userId,
 						  @Param("learnedType") Integer learnedType, @Param("roomId") String roomId);
 }
+

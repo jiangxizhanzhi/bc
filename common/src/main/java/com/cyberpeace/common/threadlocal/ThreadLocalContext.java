@@ -1,3 +1,11 @@
+package com.cyberpeace.common.threadlocal;
+
+/**
+ * 线程本地上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ThreadLocalContext` 的类，用于管理线程本地存储（ThreadLocal）。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -11,14 +19,6 @@
  * - 这个类可以用于需要在线程之间隔离某些状态或数据的场景，例如事务管理、用户身份验证等。 
  * 总结：这个类提供了一个线程本地的布尔值存储功能，适用于需要线程隔离的场景。 
 **/
-package com.cyberpeace.common.threadlocal;
-
-/**
- * 线程本地上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 public class ThreadLocalContext {
 
 	/**
@@ -29,3 +29,4 @@ public class ThreadLocalContext {
 
 	private ThreadLocalContext() {}
 }
+

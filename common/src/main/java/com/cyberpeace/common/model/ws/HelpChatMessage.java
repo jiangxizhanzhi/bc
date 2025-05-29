@@ -1,3 +1,15 @@
+package com.cyberpeace.common.model.ws;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 帮助聊天消息
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `HelpChatMessage` 的 Java 类，它是 `ChatMessage` 类的子类。以下是简要分析： 
  * 1. **类的功能**： 
@@ -12,18 +24,6 @@
  * - 代码由 SN 创建，创建日期为 2024 年 11 月 8 日。 
  * 总结：该类主要用于存储帮助相关聊天消息的额外信息（如岗位），并通过继承和注解增强了代码的简洁性和可维护性。 
 **/
-package com.cyberpeace.common.model.ws;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 帮助聊天消息
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class HelpChatMessage extends ChatMessage {
@@ -34,3 +34,4 @@ public class HelpChatMessage extends ChatMessage {
 	private String role;
 
 }
+

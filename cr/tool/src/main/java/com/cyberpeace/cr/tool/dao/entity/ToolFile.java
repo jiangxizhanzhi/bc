@@ -1,3 +1,21 @@
+package com.cyberpeace.cr.tool.dao.entity;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serializable;
+
+/**
+ * 工具文件
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolFile` 的 Java 类，该类用于表示工具文件的相关信息。以下是详细的分析： 
  * ### 包和导入 
@@ -31,24 +49,6 @@
  * - 文件的 URL 是根据 `savePath` 动态生成的。 
  * - 这个类主要用于数据传输对象（DTO）或者数据访问对象（DAO）层。 
 **/
-package com.cyberpeace.cr.tool.dao.entity;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serializable;
-
-/**
- * 工具文件
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @TableName("cr_tool_toolfile")
@@ -86,3 +86,4 @@ public class ToolFile implements Serializable {
 		return "/cpms/" + savePath;
 	}
 }
+

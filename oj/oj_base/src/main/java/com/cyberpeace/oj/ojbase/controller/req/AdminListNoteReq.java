@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import com.cyberpeace.common.model.PageReqBase;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotNull;
+
+/**
+ * 管理列表注意请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `AdminListNoteReq` 的 Java 类，用于处理管理列表中关于笔记的请求。该类继承自 `PageReqBase` 类，并使用了 Lombok 库来简化 getter 和 setter 方法的生成。以下是代码的详细分析： 
  * ### 类定义 
@@ -36,25 +55,6 @@
  * - **注解**：使用了 Lombok 和 Swagger 注解，方便自动化生成文档和简化代码。 
  * - **设计**：通过注解和继承的设计，使得类简洁且易于维护。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import com.cyberpeace.common.model.PageReqBase;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotNull;
-
-/**
- * 管理列表注意请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PageReqBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -109,3 +109,4 @@ public class AdminListNoteReq extends PageReqBase {
 		this.businessId = businessId;
 	}
 }
+

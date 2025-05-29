@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 课程场景上下文
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseSceneContext` 的 Java 类，该类用于表示课程场景的上下文。以下是详细的分析和总结： 
  * ### 包声明和导入 
@@ -19,25 +38,6 @@
  * - 这个类实现了 `Serializable` 接口，方便在需要时进行序列化操作。 
  * 总体来说，这是一个简单且功能明确的类，用于处理课程场景相关的数据。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 课程场景上下文
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -63,3 +63,4 @@ public class CourseSceneContext implements Serializable {
 	private List<String> topos;
 
 }
+

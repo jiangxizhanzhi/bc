@@ -1,3 +1,27 @@
+package com.cyberpeace.cr.tool.controller.web;
+
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.cr.tool.controller.res.WebToolCategoryRsp;
+import com.cyberpeace.cr.tool.service.ToolCategoryService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+/**
+ * Web工具类别Controller
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个Spring MVC控制器类 `WebToolCategoryController`，用于处理与Web工具类别相关的HTTP请求。以下是详细的分析： 
  * ### 包和导入 
@@ -36,30 +60,6 @@
  * - **文档生成**：使用了Swagger注解来生成API文档。 
  * - **依赖注入**：使用Spring的`@Autowired`注解实现依赖注入。 
 **/
-package com.cyberpeace.cr.tool.controller.web;
-
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.cr.tool.controller.res.WebToolCategoryRsp;
-import com.cyberpeace.cr.tool.service.ToolCategoryService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-
-/**
- * Web工具类别Controller
- *
- * @author SN
- * @date 2024/11/08
- */
 @Api(tags = "前台-资源管理-工具库-分类管理")
 @RestController
 @RequestMapping("cr/tool/category")
@@ -89,3 +89,4 @@ public class WebToolCategoryController {
     }
 
 }
+

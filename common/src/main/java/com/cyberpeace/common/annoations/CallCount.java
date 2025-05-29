@@ -1,3 +1,16 @@
+package com.cyberpeace.common.annoations;
+
+import java.lang.annotation.*;
+
+/**
+ * 调用计数
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/12
+ * @see Annotation
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个自定义注解 `@CallCount`，用于标记方法或类并记录调用次数。以下是详细分析： 
  * ### 主要内容： 
@@ -14,19 +27,6 @@
  * ### 总结： 
  * 该注解的主要用途是为方法或类添加调用计数的功能，并通过 `value` 属性传递额外信息。由于其运行时可用，可以在运行时通过反射机制实现相关的逻辑处理。 
 **/
-package com.cyberpeace.common.annoations;
-
-import java.lang.annotation.*;
-
-/**
- * 调用计数
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/12
- * @see Annotation
- * @since 1.0.0
- */
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
@@ -39,3 +39,4 @@ public @interface CallCount {
      */
     String value() default "none";
 }
+

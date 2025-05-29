@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.space.dao.entity.SpaceSourceAnalyzeRule;
+
+/**
+ * 空间源分析统治Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个接口 `SpaceSourceAnalyzeRuleService`，它是基于 `IService<T>` 接口的扩展。以下是对代码的简要分析： 
  * 1. **包名与引入**： 
@@ -15,20 +29,6 @@
  * 总结：此代码定义了一个服务于 `SpaceSourceAnalyzeRule` 实体的通用接口，提供了标准的增删改查功能，并且遵循了良好的文档化和模块化开发原则。 
 **/
 
-package com.cyberpeace.space.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.space.dao.entity.SpaceSourceAnalyzeRule;
-
-/**
- * 空间源分析统治Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see IService
- * @since 1.0.0
- */
 public interface SpaceSourceAnalyzeRuleService extends IService<SpaceSourceAnalyzeRule>
 
 {}

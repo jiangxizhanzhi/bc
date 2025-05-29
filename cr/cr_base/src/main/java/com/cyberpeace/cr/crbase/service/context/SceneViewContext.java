@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.crbase.service.context;
+
+import java.io.Serializable;
+
+import com.alibaba.fastjson.JSONObject;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 场景展示模型
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SceneViewContext` 的 Java 类，用于表示一个场景展示的上下文信息。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -19,22 +35,6 @@
  * - 使用了 Lombok 和 Swagger 注解库来简化代码和增强可读性。 
  * 总结：`SceneViewContext` 是一个简单的数据传输类，用于封装场景展示所需的各类信息，支持序列化，并通过注解增强了代码的可维护性和文档生成能力。 
 **/
-package com.cyberpeace.cr.crbase.service.context;
-
-import java.io.Serializable;
-
-import com.alibaba.fastjson.JSONObject;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 场景展示模型
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class SceneViewContext implements Serializable {
@@ -75,3 +75,4 @@ public class SceneViewContext implements Serializable {
 	@ApiModelProperty("场景数据")
 	private JSONObject sceneData;
 }
+

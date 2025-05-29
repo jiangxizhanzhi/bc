@@ -1,3 +1,17 @@
+package com.cyberpeace.gateway.service.bo;
+
+import io.swagger.annotations.ApiModel;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * Office 文件信息 bo
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `OfficeFileInfoBo` 的 Java 类，该类用于表示与 Office 文件相关的业务对象（BO）。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -20,20 +34,6 @@
  * - 使用 Swagger 注解帮助文档生成工具理解这个类的用途。 
  * 这个类的设计简单明了，适合在业务层中作为数据传输对象（DTO）使用。 
 **/
-package com.cyberpeace.gateway.service.bo;
-
-import io.swagger.annotations.ApiModel;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * Office 文件信息 bo
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @ApiModel("office文件信息")
@@ -65,3 +65,4 @@ public class OfficeFileInfoBo implements Serializable {
 	private String Version;
 
 }
+

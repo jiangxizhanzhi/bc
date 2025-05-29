@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+
+/**
+ * 课实践场景节点请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see LessonPracticeSceneReq
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonPracticeSceneNodeReq` 的 Java 类，该类是 `LessonPracticeSceneReq` 类的子类。以下是对其简要分析： 
  * ### 类定义 
@@ -18,24 +36,6 @@
  * - **依赖库**：使用了 Lombok 和 Swagger 注解库来简化代码和生成文档。 
  * 这个类主要用于处理与课程实践场景节点相关的请求数据，确保 `nodeId` 字段不为空或空白字符串。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-
-/**
- * 课实践场景节点请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see LessonPracticeSceneReq
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -51,3 +51,4 @@ public class LessonPracticeSceneNodeReq extends LessonPracticeSceneReq {
 	private String nodeId;
 
 }
+

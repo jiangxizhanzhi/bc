@@ -1,3 +1,24 @@
+package com.cyberpeace.space.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.model.IdAndName;
+import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.context.frame.SpaceActionFrameTargetTypeBo;
+import lombok.Data;
+
+import java.util.Map;
+
+
+/**
+ * 空间行动框架目标类型
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBaseTable
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 1. **类的基本信息** 
@@ -28,27 +49,6 @@
  * - 它的主要功能是封装与数据库表 `space_action_frame_target_type` 相关的数据字段，并提供对象转换的方法。 
  * - 方法 `entity2Bo` 是核心功能之一，用于将实体对象转换为业务逻辑层所需的目标对象。 
 **/
-package com.cyberpeace.space.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.model.IdAndName;
-import com.cyberpeace.space.model.SpaceBaseTable;
-import com.cyberpeace.space.service.context.frame.SpaceActionFrameTargetTypeBo;
-import lombok.Data;
-
-import java.util.Map;
-
-
-/**
- * 空间行动框架目标类型
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBaseTable
- * @since 1.0.0
- */
 @Data
 @TableName("space_action_frame_target_type")
 public class SpaceActionFrameTargetType extends SpaceBaseTable {

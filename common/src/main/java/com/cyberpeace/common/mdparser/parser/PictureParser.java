@@ -1,3 +1,18 @@
+package com.cyberpeace.common.mdparser.parser;
+
+import com.cyberpeace.common.util.LocalStringUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+/**
+ * 图片解析器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see MdContentParser
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `PictureParser` 的类，它实现了 `MdContentParser<String, String>` 接口，并被标注为 Spring 容器中的一个服务组件。以下是代码的主要功能和结构分析： 
  * 1. **类的功能**： 
@@ -16,21 +31,6 @@
  * - 类被标注为 `@Service`，意味着它是一个 Spring 管理的服务类，可以在 Spring 应用中通过依赖注入使用。 
  * 总结来说，这个类的核心功能是将输入内容包装为 Markdown 图片语法，但其 `parse` 方法目前未实现具体逻辑。 
 **/
-package com.cyberpeace.common.mdparser.parser;
-
-import com.cyberpeace.common.util.LocalStringUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
-/**
- * 图片解析器
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see MdContentParser
- * @since 1.0.0
- */
 @Service
 public class PictureParser implements MdContentParser<String, String> {
 
@@ -59,3 +59,4 @@ public class PictureParser implements MdContentParser<String, String> {
 		return LocalStringUtil.frontBackLine("![](" + content + ")");
 	}
 }
+

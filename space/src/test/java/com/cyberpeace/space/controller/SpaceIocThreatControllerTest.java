@@ -1,26 +1,3 @@
-/**
- * ### 代码分析 
- * #### 项目背景 
- * 该代码是一个单元测试类 `SpaceIocThreatControllerTest`，用于测试 `SpaceIocThreatController` 控制器的功能。它使用了 Spring Boot 提供的 `@WebMvcTest` 注解来加载与 Web 层相关的配置，并通过 `MockMvc` 模拟 HTTP 请求。 
- * #### 主要功能模块 
- * 1. **依赖注入**： 
- * - 使用 `@Autowired` 注入 `MockMvc` 对象。 
- * - 使用 `@MockBean` 和 `@SpyBean` 模拟服务层（`SpaceIocThreatService`）和控制器本身。 
- * 2. **测试方法**： 
- * - 测试了多个 HTTP 方法（GET、POST、PATCH、DELETE），模拟了对 `SpaceIocThreat` 的分页查询、新增、更新、删除以及详情获取等操作。 
- * - 每个测试方法都通过 `MockMvc` 发起请求，并验证返回的状态码、JSON 响应内容是否符合预期。 
- * 3. **辅助设置**： 
- * - 在 `setUp()` 方法中，预设了服务层方法的返回值，确保测试用例能够独立运行。 
- * - 初始化了一些工具类（如 `TableInfoHelper`），可能与数据库表结构相关。 
- * 4. **测试数据**： 
- * - 使用了 `SpaceWarningDictionaryBo` 和 `IdListReq` 等对象作为请求体或参数，模拟实际业务场景中的数据。 
- * #### 代码结构 
- * - **注解驱动**：通过 `@WebMvcTest` 和其他 Spring 注解实现测试环境的快速搭建。 
- * - **MockMvc**：核心工具，用于模拟 HTTP 请求并验证响应。 
- * - **断言**：通过 `andExpect` 方法验证 HTTP 状态码、响应内容等是否符合预期。 
- * #### 总结 
- * 该代码实现了对 `SpaceIocThreatController` 控制器的全面功能测试，覆盖了常见的 CRUD 操作。通过 Mock 技术隔离了依赖，确保测试的独立性和稳定性。代码逻辑清晰，注释较少但结构明确，适合扩展和维护。 
-**/
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
@@ -53,6 +30,29 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * ### 代码分析 
+ * #### 项目背景 
+ * 该代码是一个单元测试类 `SpaceIocThreatControllerTest`，用于测试 `SpaceIocThreatController` 控制器的功能。它使用了 Spring Boot 提供的 `@WebMvcTest` 注解来加载与 Web 层相关的配置，并通过 `MockMvc` 模拟 HTTP 请求。 
+ * #### 主要功能模块 
+ * 1. **依赖注入**： 
+ * - 使用 `@Autowired` 注入 `MockMvc` 对象。 
+ * - 使用 `@MockBean` 和 `@SpyBean` 模拟服务层（`SpaceIocThreatService`）和控制器本身。 
+ * 2. **测试方法**： 
+ * - 测试了多个 HTTP 方法（GET、POST、PATCH、DELETE），模拟了对 `SpaceIocThreat` 的分页查询、新增、更新、删除以及详情获取等操作。 
+ * - 每个测试方法都通过 `MockMvc` 发起请求，并验证返回的状态码、JSON 响应内容是否符合预期。 
+ * 3. **辅助设置**： 
+ * - 在 `setUp()` 方法中，预设了服务层方法的返回值，确保测试用例能够独立运行。 
+ * - 初始化了一些工具类（如 `TableInfoHelper`），可能与数据库表结构相关。 
+ * 4. **测试数据**： 
+ * - 使用了 `SpaceWarningDictionaryBo` 和 `IdListReq` 等对象作为请求体或参数，模拟实际业务场景中的数据。 
+ * #### 代码结构 
+ * - **注解驱动**：通过 `@WebMvcTest` 和其他 Spring 注解实现测试环境的快速搭建。 
+ * - **MockMvc**：核心工具，用于模拟 HTTP 请求并验证响应。 
+ * - **断言**：通过 `andExpect` 方法验证 HTTP 状态码、响应内容等是否符合预期。 
+ * #### 总结 
+ * 该代码实现了对 `SpaceIocThreatController` 控制器的全面功能测试，覆盖了常见的 CRUD 操作。通过 Mock 技术隔离了依赖，确保测试的独立性和稳定性。代码逻辑清晰，注释较少但结构明确，适合扩展和维护。 
+**/
 @WebMvcTest(SpaceIocThreatController.class)
 class SpaceIocThreatControllerTest {
 
@@ -143,3 +143,4 @@ class SpaceIocThreatControllerTest {
                 .andExpect(content().json("{\"data\":{\"resourceId\":null,\"name\":null,\"type\":null,\"ioc\":null},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 }
+

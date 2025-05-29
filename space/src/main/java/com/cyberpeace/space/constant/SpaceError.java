@@ -1,3 +1,17 @@
+package com.cyberpeace.space.constant;
+
+/**
+ * 空间错误
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ * 错误码
+ *
+ * @author zhangyong
+ * @date 2021/12/07
+ */
 /**
  * 这段代码定义了一个名为 `SpaceError` 的常量类，用于存储与空间相关的错误码。以下是对其的简要分析： 
  * 1. **类的功能**： 
@@ -19,20 +33,6 @@
  * - 这些错误码可以在业务逻辑中作为返回值或提示信息，帮助前端或调用方快速定位问题并采取相应措施。 
  * 总结来说，此代码提供了一组结构化的错误码定义，有助于提高代码的可读性和维护性。 
 **/
-package com.cyberpeace.space.constant;
-
-/**
- * 空间错误
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- * 错误码
- *
- * @author zhangyong
- * @date 2021/12/07
- */
 public class SpaceError {
     /**
      * 无法删除内置框架
@@ -90,3 +90,4 @@ public class SpaceError {
      */
     public static final String TACTIC_DUPLICATED = "105009";
 }
+

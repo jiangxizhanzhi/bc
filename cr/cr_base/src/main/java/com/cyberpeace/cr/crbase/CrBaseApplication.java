@@ -1,3 +1,11 @@
+package com.cyberpeace.cr.crbase;
+
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.web.servlet.ServletComponentScan;
+
 /**
  * 该代码是一个Spring Boot应用程序的入口类，主要功能如下： 
  * 1. **注解说明**： 
@@ -11,14 +19,6 @@
  * - `main`方法通过`SpringApplication.run`启动Spring Boot应用。 
  * 总结：这是一个无数据库依赖的Spring Boot应用启动类，用于加载并运行基于`com.cyberpeace`包结构的Spring组件。 
 **/
-package com.cyberpeace.cr.crbase;
-
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.web.servlet.ServletComponentScan;
-
 @ServletComponentScan
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class },
         scanBasePackages = { "com.cyberpeace" })
@@ -29,3 +29,4 @@ public class CrBaseApplication {
     }
 
 }
+

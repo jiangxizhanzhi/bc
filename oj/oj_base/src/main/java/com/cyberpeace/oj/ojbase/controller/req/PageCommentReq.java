@@ -1,3 +1,19 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import com.cyberpeace.common.model.PageReqBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 分页评论请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `PageCommentReq` 的 Java 类，它是 `PageReqBase` 类的一个子类。这个类主要用于处理分页查询评论请求的参数。以下是对代码的简要分析： 
  * ### 类和继承关系 
@@ -21,22 +37,6 @@
  * - 它包含了两个主要属性：业务 ID 和业务类型，并提供了相应的 setter 方法。 
  * - 通过继承 `PageReqBase` 类，可以利用其提供的通用分页功能。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import com.cyberpeace.common.model.PageReqBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 分页评论请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PageReqBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class PageCommentReq extends PageReqBase {
@@ -65,3 +65,4 @@ public class PageCommentReq extends PageReqBase {
         this.businessType = businessType;
     }
 }
+

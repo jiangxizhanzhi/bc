@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+
+/**
+ * 合并课程导入上下文
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CombinedCourseImportContext` 的 Java 类，用于表示合并课程导入的上下文。以下是该类的主要特点和功能的简要分析： 
  * ### 包和引入 
@@ -29,25 +48,6 @@
  * - 使用了 Swagger 注解来帮助生成 API 文档，并且通过 Lombok 减少了样板代码的编写。 
  * - 支持序列化，可以在需要时将对象转换为字节流进行存储或传输。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-
-/**
- * 合并课程导入上下文
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -131,3 +131,4 @@ public class CombinedCourseImportContext implements Serializable {
     private String topoId;
 
 }
+

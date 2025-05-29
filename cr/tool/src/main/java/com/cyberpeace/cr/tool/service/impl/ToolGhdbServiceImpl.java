@@ -1,3 +1,24 @@
+package com.cyberpeace.cr.tool.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.tool.dao.entity.ToolGhdb;
+import com.cyberpeace.cr.tool.dao.mapper.ToolGhdbMapper;
+import com.cyberpeace.cr.tool.service.ToolGhdbService;
+import com.cyberpeace.cr.tool.controller.res.ToolGhdbRsp;
+
+/**
+ * 工具GHDB 数据库Service实现
+ *
+ * @author yinqingrong@date 2024/11/08
+ */
 /**
  * 这段代码是一个 Spring Boot 服务类的实现，用于处理工具数据库中 GHDB（可能是 "Good Hunting DataBase"）的数据操作。以下是对代码的简要分析： 
  * ### 包和导入 
@@ -20,27 +41,6 @@
  * - 使用了 MyBatis-Plus 进行数据库操作，并通过分页插件实现了分页功能。 
  * - 方法中通过注入的 `ToolGhdbMapper` 执行具体的数据库查询，并返回带分页信息的结果。 
 **/
-package com.cyberpeace.cr.tool.service.impl;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.tool.dao.entity.ToolGhdb;
-import com.cyberpeace.cr.tool.dao.mapper.ToolGhdbMapper;
-import com.cyberpeace.cr.tool.service.ToolGhdbService;
-import com.cyberpeace.cr.tool.controller.res.ToolGhdbRsp;
-
-/**
- * 工具GHDB 数据库Service实现
- *
- * @author yinqingrong@date 2024/11/08
- */
 @Service
 public class ToolGhdbServiceImpl extends ServiceImpl<ToolGhdbMapper, ToolGhdb> implements ToolGhdbService {
 
@@ -67,3 +67,4 @@ public class ToolGhdbServiceImpl extends ServiceImpl<ToolGhdbMapper, ToolGhdb> i
 		return PageUtil.getListResult(result);
 	}
 }
+

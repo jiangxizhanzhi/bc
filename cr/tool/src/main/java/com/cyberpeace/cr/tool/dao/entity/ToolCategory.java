@@ -1,3 +1,21 @@
+package com.cyberpeace.cr.tool.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.constant.SelectI18nName;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 工具类别
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolCategory` 的 Java 类，用于表示工具类别。该类使用了 MyBatis-Plus 和 Lombok 库，并且实现了 `Serializable` 和 `SelectI18nName` 接口。以下是详细的分析： 
  * ### 包和导入 
@@ -30,24 +48,6 @@
  * ### 总结 
  * 这个类主要用于数据库表 `cr_tool_toolcategory` 的映射，包含工具类别的基本信息（如资源 ID、中英文名称等）。通过 Lombok 库简化了代码，减少了样板代码。此外，该类还实现了序列化接口和国际化名称选择接口，以支持序列化和多语言处理。 
 **/
-package com.cyberpeace.cr.tool.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.constant.SelectI18nName;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 工具类别
- *
- * @author SN
- * @date 2024/11/08
- */
 @TableName("cr_tool_toolcategory")
 @Getter
 @Setter

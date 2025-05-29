@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.evaluation.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.BaseTable;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Getter;
+
+import java.util.Date;
+
 /**
  * 这段代码定义了一个名为 `EvalRecord` 的实体类，用于表示评估记录。以下是该类的主要特性和功能： 
  * ### 类结构 
@@ -31,19 +44,6 @@
  * ### 总结 
  * `EvalRecord` 类是一个典型的实体类，用于映射数据库表 `cr_eval_record`。它包含了一些基本信息以及一些状态信息和时间戳，用于记录评估任务的详细情况。通过使用 MyBatis-Plus 提供的注解，可以方便地进行数据库操作。同时，类中定义了两个枚举类型 `Status` 和 `InvokeType`，分别用于表示评估任务的状态和调用类型。 
 **/
-package com.cyberpeace.cr.evaluation.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.BaseTable;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Getter;
-
-import java.util.Date;
-
 @Getter
 @Setter
 @TableName("cr_eval_record")
@@ -131,3 +131,4 @@ public class EvalRecord extends BaseTable {
         }
     }
 }
+

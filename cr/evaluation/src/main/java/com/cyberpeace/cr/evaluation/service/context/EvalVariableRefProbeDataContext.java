@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.service.context;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * EVAL 变量 Ref 探针数据上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalVariableRefProbeDataContext` 的 Java 类，该类实现了 `Serializable` 接口。这个类主要用于存储某种探针数据的上下文信息。以下是对代码的详细分析： 
  * ### 类定义 
@@ -35,20 +49,6 @@
  * ``` 
  * 这段代码是典型的 Java 类设计，适用于需要存储特定上下文数据的场景。 
 **/
-package com.cyberpeace.cr.evaluation.service.context;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Date;
-
-/**
- * EVAL 变量 Ref 探针数据上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalVariableRefProbeDataContext implements Serializable {
@@ -67,3 +67,4 @@ public class EvalVariableRefProbeDataContext implements Serializable {
      */
     private Date time;
 }
+

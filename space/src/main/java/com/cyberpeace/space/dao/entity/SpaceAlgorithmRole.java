@@ -1,3 +1,25 @@
+package com.cyberpeace.space.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.model.IdAndName;
+import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.context.algorithm.SpaceAlgorithmRoleBo;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Map;
+
+
+/**
+ * 空间算法岗位
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceAlgorithmRole` 的 Java 类，用于表示“空间算法岗位”的实体类。以下是代码的主要分析： 
  * ### 1. **类的基本信息** 
@@ -22,28 +44,6 @@
  * ### 总结 
  * 该类主要用于数据库表 `space_algorithm_role` 的实体映射，并提供了将实体对象转换为业务对象的方法。代码结构清晰，使用了 Lombok 注解简化了代码量，同时依赖外部工具类和接口来完成具体逻辑。 
 **/
-package com.cyberpeace.space.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.model.IdAndName;
-import com.cyberpeace.space.model.SpaceBaseTable;
-import com.cyberpeace.space.service.context.algorithm.SpaceAlgorithmRoleBo;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Map;
-
-
-/**
- * 空间算法岗位
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("space_algorithm_role")

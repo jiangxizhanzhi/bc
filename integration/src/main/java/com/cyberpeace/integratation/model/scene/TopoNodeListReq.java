@@ -1,3 +1,24 @@
+package com.cyberpeace.integratation.model.scene;
+
+import java.io.Serializable;
+import java.util.List;
+
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 拓扑节点列表请求体
+ *
+ * @author SN
+ * @date 2023/05/30
+ */
 /**
  * 这段代码定义了一个名为 `TopoNodeListReq` 的 Java 类，用于表示拓扑节点列表请求体。以下是对该类的简要分析： 
  * ### 主要功能 
@@ -32,27 +53,6 @@
  * ### 总结 
  * 这个类主要用于封装拓扑节点的信息，并能够根据这些信息生成一个 URL 字符串。它通过 Lombok 简化了代码，并使用了日志记录和异常处理来确保系统的健壮性。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import java.io.Serializable;
-import java.util.List;
-
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 拓扑节点列表请求体
- *
- * @author SN
- * @date 2023/05/30
- */
 @Getter
 @Setter
 @Slf4j
@@ -108,3 +108,4 @@ public class TopoNodeListReq implements Serializable {
 		}
 	}
 }
+

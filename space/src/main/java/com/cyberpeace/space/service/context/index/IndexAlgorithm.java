@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.index;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 编号算法
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个名为 `IndexAlgorithm` 的类，位于 `com.cyberpeace.space.service.context.index` 包中。以下是对其功能和结构的简要分析： 
  * ### 功能描述 
@@ -15,20 +29,6 @@
  * ### 总结 
  * 该类是一个简单的数据模型类，结合了 Lombok 和 Swagger 注解，用于管理与评分相关的多个维度，并提供一个计算总和的方法。适合在需要对多维度评分进行处理的场景中使用。 
 **/
-package com.cyberpeace.space.service.context.index;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 编号算法
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class IndexAlgorithm {
@@ -90,3 +90,4 @@ public class IndexAlgorithm {
         this.sum = this.base + this.ability + this.efficiency + this.equipment;
     }
 }
+

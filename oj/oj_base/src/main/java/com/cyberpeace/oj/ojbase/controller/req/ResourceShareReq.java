@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import java.util.List;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+/**
+ * 资源共享请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ResourceShareReq` 的 Java 类，用于处理资源共享请求。以下是对其简要分析： 
  * ### 类定义 
@@ -31,26 +51,6 @@
  * - 使用了 Swagger 注解来生成文档，并提供清晰的字段说明。 
  * 这个类的设计简洁明了，能够满足资源共享请求的基本需求。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import java.util.List;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
-/**
- * 资源共享请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel("资源授权操作")
@@ -83,3 +83,4 @@ public class ResourceShareReq {
 	private Integer operationAuthType;
 
 }
+

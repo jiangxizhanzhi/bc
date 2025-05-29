@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.evaluation.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * eval 聚合
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalAggregation` 的 Java 类，用于表示一个评估聚合的数据实体。以下是对该类的简要分析： 
  * ### 包声明和导入 
@@ -27,22 +43,6 @@
  * - **特性**：使用了 Lombok 来减少样板代码，使得类更加简洁。 
  * 这个类可以用于持久化到数据库中，也可以作为数据传输对象（DTO）在系统内部传递数据。 
 **/
-package com.cyberpeace.cr.evaluation.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * eval 聚合
- *
- * @author SN
- * @date 2024/11/08
- */
 @TableName(value = "cr_eval_aggregation")
 @Getter
 @Setter

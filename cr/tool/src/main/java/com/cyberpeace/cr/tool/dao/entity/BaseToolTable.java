@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.tool.dao.entity;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * 基础刀具表
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `BaseToolTable` 的 Java 类，该类实现了 `Serializable` 接口。这个类代表一个基础刀具表（根据类注释）。以下是该类的主要组成部分和特点： 
  * 1. **包声明**：该类位于 `com.cyberpeace.cr.tool.dao.entity` 包中。 
@@ -24,21 +39,6 @@
  * - `@TableField(fill = FieldFill.INSERT)`：表示 `createTime` 字段在插入记录时会自动填充当前时间。 
  * 总体来说，这是一个简单的实体类，用于表示基础刀具表的数据结构，并且通过 Lombok 减少了手动编写 getter 和 setter 方法的工作量。同时，使用 MyBatis-Plus 提供的注解来处理字段的自动填充功能。 
 **/
-package com.cyberpeace.cr.tool.dao.entity;
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Date;
-
-/**
- * 基础刀具表
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class BaseToolTable implements Serializable {
@@ -95,3 +95,4 @@ public class BaseToolTable implements Serializable {
 	private String content;
 
 }
+

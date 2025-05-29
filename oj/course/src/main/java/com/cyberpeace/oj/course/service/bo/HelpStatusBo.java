@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 帮助状态博
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `HelpStatusBo` 的 Java 类，用于表示某种帮助状态。以下是详细的分析： 
  * ### 类定义 
@@ -23,23 +40,6 @@
  * ### 总结 
  * `HelpStatusBo` 类是一个简单的数据传输对象（DTO），用于在系统内部或与外部系统通信时传递帮助状态的信息。它包含四个属性，分别对应用户、课程、节点和状态。这个类主要用于记录和管理用户在学习过程中请求和接受帮助的状态。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 帮助状态博
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class HelpStatusBo implements Serializable {
@@ -77,3 +77,4 @@ public class HelpStatusBo implements Serializable {
 	private Integer status;
 
 }
+

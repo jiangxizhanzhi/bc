@@ -1,3 +1,13 @@
+package com.cyberpeace.gateway.controller;
+
+import com.cyberpeace.common.model.BaseRsp;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 /**
  * 这段代码定义了一个名为 `ExternalCourseController` 的 Spring MVC 控制器类，用于处理与课程相关的 HTTP GET 请求。以下是代码的详细分析： 
  * 1. **包声明**： 
@@ -73,16 +83,6 @@
  * - 使用 Swagger 注解来生成 API 文档。 
  * - 日志记录功能通过 Lombok 的 `@Slf4j` 注解实现。 
 **/
-package com.cyberpeace.gateway.controller;
-
-import com.cyberpeace.common.model.BaseRsp;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 @Api(tags = "外部接口-课程课时api")
 @Slf4j
 @RestController
@@ -110,3 +110,4 @@ public class ExternalCourseController {
         return new BaseRsp();
     }
 }
+

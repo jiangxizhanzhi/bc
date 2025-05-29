@@ -1,3 +1,26 @@
+package com.cyberpeace.config.ws;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+
+import com.cyberpeace.common.component.MyWebSocketHandler;
+import com.cyberpeace.cs.service.impl.ChatWebSocketHandler;
+
+/**
+ * websocket配置项
+ *
+ * @author yinqingrong
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see WebMvcConfigurerAdapter
+ * @see WebSocketConfigurer
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 功能描述 
@@ -29,29 +52,6 @@
  * #### 总结 
  * 该代码实现了 WebSocket 的基础配置，包括处理器注册、路径映射以及 JWT 认证拦截功能。适合用于需要支持多种 WebSocket 请求场景的项目，例如聊天室或实时通信服务。 
 **/
-package com.cyberpeace.config.ws;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.socket.config.annotation.EnableWebSocket;
-import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
-
-import com.cyberpeace.common.component.MyWebSocketHandler;
-import com.cyberpeace.cs.service.impl.ChatWebSocketHandler;
-
-/**
- * websocket配置项
- *
- * @author yinqingrong
- * @version 1.0.0
- * @date 2025/05/28
- * @see WebMvcConfigurerAdapter
- * @see WebSocketConfigurer
- * @since 1.0.0
- */
 @EnableWebSocket
 @Configuration
 public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocketConfigurer {
@@ -98,3 +98,4 @@ public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocke
 				.setAllowedOrigins("*");
 	}
 }
+

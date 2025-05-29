@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.crbase.controller.rsp;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 在获取任务列表接口使用
+ *
+ * @author@date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SchemeListMissionRsp` 的 Java 类，用于表示从获取任务列表接口返回的任务数据。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -16,20 +30,6 @@
  * 这个类是专门为获取任务列表接口设计的响应模型，用于将任务信息以结构化的方式传递给客户端。 
  * 总结：这是一个简洁且功能明确的数据传输对象（DTO），适用于任务管理系统的 API 响应场景。 
 **/
-package com.cyberpeace.cr.crbase.controller.rsp;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 在获取任务列表接口使用
- *
- * @author@date 2024/11/08
- */
 @Getter
 @Setter
 public class SchemeListMissionRsp implements Serializable {
@@ -71,3 +71,4 @@ public class SchemeListMissionRsp implements Serializable {
 	private Integer state;
 
 }
+

@@ -1,3 +1,17 @@
+package com.cyberpeace.common.model.room;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * Dashboard 用户
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `DashboardUser` 的 Java 类，用于表示一个用户的模型对象。以下是代码的主要特点和功能分析： 
  * 1. **类的功能**： 
@@ -24,20 +38,6 @@
  * - 代码由作者 SN 编写，并标注了编写日期为 2024 年 11 月 8 日。 
  * 总结：这是一个简洁且功能明确的用户模型类，适用于需要快速构建用户信息对象的场景，同时支持序列化和文档生成。 
 **/
-package com.cyberpeace.common.model.room;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * Dashboard 用户
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class DashboardUser implements Serializable {
@@ -136,3 +136,4 @@ public class DashboardUser implements Serializable {
 		return this;
 	}
 }
+

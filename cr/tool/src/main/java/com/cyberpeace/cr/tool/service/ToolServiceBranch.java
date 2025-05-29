@@ -1,3 +1,11 @@
+package com.cyberpeace.cr.tool.service;;
+
+/**
+ * single Train Branch
+ * this is branch method
+ * for the branch method
+ * is the fun toy for little bob
+ */
 /**
  * 这段代码定义了一个名为 `ToolServiceBranch` 的类，该类包含一个方法 `getBranch`。这个方法接收一个字符串参数 `input` 并根据该输入返回一个布尔值。下面是代码的主要分析： 
  * 1. **类与方法定义**： 
@@ -21,14 +29,6 @@
  * - 如果这些字符串是固定的，可以考虑将其定义为常量字段，进一步提高代码的清晰度。 
  * 综上所述，这段代码的主要功能是根据给定的字符串返回一个布尔值，但其代码结构较为冗长，可以通过一些优化措施来提高代码的可读性和可维护性。 
 **/
-package com.cyberpeace.cr.tool.service;;
-
-/**
- * single Train Branch
- * this is branch method
- * for the branch method
- * is the fun toy for little bob
- */
 public class ToolServiceBranch {
 
     /**
@@ -587,3 +587,4 @@ public class ToolServiceBranch {
         return false;
     }
 }
+

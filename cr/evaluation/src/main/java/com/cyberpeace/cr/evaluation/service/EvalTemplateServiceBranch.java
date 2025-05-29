@@ -1,3 +1,11 @@
+package com.cyberpeace.cr.evaluation.service;;
+
+/**
+ * single Train Branch
+ * this is branch method
+ * for the branch method
+ * is the fun toy for little bob
+ */
 /**
  * 这段代码定义了一个名为 `EvalTemplateServiceBranch` 的类，其中包含一个名为 `getBranch` 的方法。这个方法接收一个字符串参数 `input` 并返回一个布尔值。根据输入的字符串，该方法会返回 `true` 或 `false`。 
  * ### 主要功能： 
@@ -34,14 +42,6 @@
  * - 可以考虑将这些字符串存储在一个集合（如 `Set`）中，然后使用 `contains` 方法来检查输入字符串是否存在于集合中。这将使代码更简洁且易于维护。 
  * - 如果这个方法只是为了测试或示例用途，那么这样的实现方式是可以接受的。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
-
-/**
- * single Train Branch
- * this is branch method
- * for the branch method
- * is the fun toy for little bob
- */
 public class EvalTemplateServiceBranch {
 
     /**
@@ -414,3 +414,4 @@ public class EvalTemplateServiceBranch {
         return false;
     }
 }
+

@@ -1,3 +1,8 @@
+package com.cyberpeace.space.model.req;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 这段代码定义了一个名为 `IdReq` 的 Java 类，位于包 `com.cyberpeace.space.model.req` 下。以下是简要分析： 
  * 1. **类的功能**： 
@@ -11,14 +16,10 @@
  * - 通常用于 Web 请求中接收参数或作为 DTO（Data Transfer Object）传递数据。 
  * 总结：这是一个简单的数据传输对象类，使用 Lombok 简化了代码，主要用于接收包含 `resourceId` 的请求数据。 
 **/
-package com.cyberpeace.space.model.req;
-
-import lombok.Getter;
-import lombok.Setter;
-
 @Getter
 @Setter
 public class IdReq {
 
 	private String resourceId;
 }
+

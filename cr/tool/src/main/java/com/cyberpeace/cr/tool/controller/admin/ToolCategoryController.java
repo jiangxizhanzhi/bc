@@ -1,3 +1,35 @@
+package com.cyberpeace.cr.tool.controller.admin;
+
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.cr.tool.controller.req.CategoryAddReq;
+import com.cyberpeace.cr.tool.controller.req.CategoryUpdateReq;
+import com.cyberpeace.cr.tool.controller.req.DeleteReq;
+import com.cyberpeace.cr.tool.controller.res.ToolCategoryRsp;
+import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
+import com.cyberpeace.cr.tool.service.ToolCategoryService;
+import com.cyberpeace.cr.tool.service.context.ToolTypeCategory;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.NotBlank;
+import java.util.List;
+
+/**
+ * 工具类别Controller
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolCategoryController` 的 Spring MVC 控制器类，用于处理与工具类别相关的 RESTful API 请求。以下是代码的主要功能和结构分析： 
  * ### 类和注解 
@@ -48,38 +80,6 @@
  * ### 总结 
  * 该控制器主要处理与工具分类相关的 CRUD 操作，并且每个方法都有相应的权限控制（通过 `@RequiresPermissions` 注解）。整体设计符合 RESTful API 规范，使用了 Swagger 注解来描述接口，便于文档生成和接口测试。 
 **/
-package com.cyberpeace.cr.tool.controller.admin;
-
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.cr.tool.controller.req.CategoryAddReq;
-import com.cyberpeace.cr.tool.controller.req.CategoryUpdateReq;
-import com.cyberpeace.cr.tool.controller.req.DeleteReq;
-import com.cyberpeace.cr.tool.controller.res.ToolCategoryRsp;
-import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
-import com.cyberpeace.cr.tool.service.ToolCategoryService;
-import com.cyberpeace.cr.tool.service.context.ToolTypeCategory;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.constraints.NotBlank;
-import java.util.List;
-
-/**
- * 工具类别Controller
- *
- * @author SN
- * @date 2024/11/08
- */
 @Api(tags = "后台-资源管理-工具库-分类管理")
 @RestController
 @RequestMapping("cr/admin/tool/category")
@@ -182,3 +182,4 @@ public class ToolCategoryController {
 		return new BaseRsp<>(res);
 	}
 }
+

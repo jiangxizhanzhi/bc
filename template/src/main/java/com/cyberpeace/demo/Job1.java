@@ -1,3 +1,17 @@
+package com.cyberpeace.demo;
+
+import org.springframework.stereotype.Component;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 约伯1
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码是一个简单的 Spring 定时任务类，主要功能是定时记录任务触发的日志信息。以下是对代码的分析和总结： 
  * ### 1. **类的基本信息** 
@@ -17,20 +31,6 @@
  * ### 总结 
  * 这是一段简单的定时任务示例代码，主要用于演示如何在 Spring 中通过注解实现定时任务并记录日志。如果需要实际功能，可以在 `invoke` 方法中添加具体的业务逻辑。 
 **/
-package com.cyberpeace.demo;
-
-import org.springframework.stereotype.Component;
-
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 约伯1
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Slf4j
 @Component
 public class Job1 {
@@ -45,3 +45,4 @@ public class Job1 {
 				System.currentTimeMillis());
 	}
 }
+

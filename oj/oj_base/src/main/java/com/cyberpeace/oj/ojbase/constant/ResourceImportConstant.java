@@ -1,3 +1,16 @@
+package com.cyberpeace.oj.ojbase.constant;
+
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * 资源导入文件名称配置
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ResourceImportConstant` 的接口，用于存储与资源导入相关的常量。以下是对其主要特性的简要分析： 
  * ### 接口概述 
@@ -43,19 +56,6 @@
  * ### 总结 
  * 这个接口提供了一组常量来标准化资源导入过程中的各种文件名、路径和映射关系，有助于保持代码的一致性和可维护性。通过将这些常量集中在一个地方，可以方便地管理和修改这些配置信息。 
 **/
-package com.cyberpeace.oj.ojbase.constant;
-
-import java.util.Arrays;
-import java.util.List;
-
-/**
- * 资源导入文件名称配置
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface ResourceImportConstant {
 
 	/**
@@ -254,3 +254,4 @@ public interface ResourceImportConstant {
 	 */
 	List<String> PRACTICE_SET_LOGO = Arrays.asList("/cpms/built_in/SetLogo1.png", "/cpms/built_in/SetLogo2.png", "/cpms/built_in/SetLogo3.png", "/cpms/built_in/SetLogo4.png", "/cpms/built_in/SetLogo5.png");
 }
+

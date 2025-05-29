@@ -1,3 +1,13 @@
+package com.cyberpeace.common.util;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
+import org.springframework.util.Assert;
+
+import java.util.*;
+
 /**
  * 这段代码的主要目的是测试 `BeanUtils` 工具类的两个方法：`copy` 和 `deepCopy`。以下是代码的简要分析： 
  * 1. **测试类和工具方法**： 
@@ -17,16 +27,6 @@
  * - 使用了 Apache Commons Lang 的 `StringUtils` 和 Spring 的 `Assert` 类来进行断言和字符串操作。 
  * 总结来说，这段代码通过单元测试验证了 `BeanUtils` 工具类在普通复制和深拷贝方面的功能，确保了对象及其嵌套结构能够被正确复制。 
 **/
-package com.cyberpeace.common.util;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Test;
-import org.springframework.util.Assert;
-
-import java.util.*;
-
 public class BeanUtilTest {
 
 	private static final Random RANDOM = new Random();
@@ -83,3 +83,4 @@ public class BeanUtilTest {
 		return modelA;
 	}
 }
+

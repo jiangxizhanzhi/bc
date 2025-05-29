@@ -1,3 +1,15 @@
+package com.cyberpeace.space.service.context.tactic;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 攻击列表 bo
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 /**
  * 这段代码定义了一个名为 `AttackListBo` 的 Java Bean 类，用于表示攻击列表的业务对象（BO, Business Object）。以下是对其的简要分析： 
  * ### 功能概述 
@@ -18,18 +30,6 @@
  * ### 总结 
  * 此代码是一个典型的 Java Bean 类，适合在后端服务中作为数据传输对象（DTO, Data Transfer Object）或业务对象（BO）使用。它通过注解增强了代码的功能性和可维护性，同时提供了清晰的文档说明。 
 **/
-package com.cyberpeace.space.service.context.tactic;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 攻击列表 bo
- *
- * @author SN
- * @date 2024/11/07
- */
 @Getter
 @Setter
 public class AttackListBo {
@@ -119,3 +119,4 @@ public class AttackListBo {
 	@ApiModelProperty(value = "是否内置")
 	private Boolean builtin;
 }
+

@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.dao.context;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * 教室列表查询
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassRoomListQuery` 的 Java 类，用于表示教室列表查询条件。以下是对该类的简要分析： 
  * ### 类概述 
@@ -17,24 +35,6 @@
  * ### 总结 
  * `ClassRoomListQuery` 类是一个数据传输对象（DTO），用于在查询教室列表时传递各种查询条件。通过该类，可以方便地管理和传递多个查询参数。 
 **/
-package com.cyberpeace.oj.course.dao.context;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-/**
- * 教室列表查询
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class ClassRoomListQuery implements Serializable {
@@ -82,3 +82,4 @@ public class ClassRoomListQuery implements Serializable {
 	private String trainPlanId;
 
 }
+

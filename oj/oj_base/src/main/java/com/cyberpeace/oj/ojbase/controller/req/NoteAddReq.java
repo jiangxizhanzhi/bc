@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+
+/**
+ * 注意新增请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `NoteAddReq` 的 Java 类，用于处理添加笔记的请求。以下是该类的详细分析： 
  * ### 类名和包声明 
@@ -25,26 +45,6 @@
  * - 字段使用了约束注释来确保数据的有效性。 
  * - 提供了默认值处理逻辑，如果内容为 `null` 则返回空字符串。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-
-/**
- * 注意新增请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -89,3 +89,4 @@ public class NoteAddReq implements Serializable {
 		return null == content ? "" : content;
 	}
 }
+

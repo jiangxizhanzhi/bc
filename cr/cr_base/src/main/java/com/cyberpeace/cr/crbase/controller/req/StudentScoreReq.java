@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.crbase.controller.req;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 学员得分请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `StudentScoreReq` 的 Java 类，位于包 `com.cyberpeace.cr.crbase.controller.req` 中。以下是代码的主要分析和总结： 
  * ### 功能描述： 
@@ -23,19 +36,6 @@
  * - 使用了 Lombok 和 Swagger 注解来减少冗余代码并增强可读性。 
  * - 各字段通过注释清晰地描述了其用途，适合用于 API 接口开发。 
 **/
-package com.cyberpeace.cr.crbase.controller.req;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 学员得分请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class StudentScoreReq {
@@ -82,3 +82,4 @@ public class StudentScoreReq {
 	@ApiModelProperty(value = "用户id")
 	private String user;
 }
+

@@ -1,3 +1,29 @@
+package com.cyberpeace.cr.crbase.service.context;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.constant.BaseI18n;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleSimple;
+import com.google.common.collect.Lists;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Getter;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * 任务矩阵
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * ### 代码分析 
  * #### 功能概述 
@@ -27,32 +53,6 @@
  * #### 总结 
  * 该类的设计目的是为了管理和展示任务矩阵的信息，提供了丰富的统计和排序功能，适合用于任务管理系统中。代码结构清晰，逻辑明确，利用了现代 Java 特性提高了开发效率。 
 **/
-package com.cyberpeace.cr.crbase.service.context;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.constant.BaseI18n;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleSimple;
-import com.google.common.collect.Lists;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Getter;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-/**
- * 任务矩阵
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class TaskMatrix {
@@ -192,3 +192,4 @@ public class TaskMatrix {
 
     }
 }
+

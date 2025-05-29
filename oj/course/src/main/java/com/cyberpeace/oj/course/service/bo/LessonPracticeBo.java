@@ -1,3 +1,24 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import java.io.Serializable;
+import java.util.Map;
+
+import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课程练习 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonPracticeBo` 的 Java 类，该类实现了 `Serializable` 接口。这个类的主要目的是封装课程练习的相关信息。以下是详细的分析： 
  * ### 类名与包 
@@ -26,27 +47,6 @@
  * - **设计**: 通过实现 `Serializable` 接口，这个类可以被序列化，方便在网络传输或持久化存储中使用。 
  * 这个类的设计是为了方便管理和传递课程练习的相关信息，适用于教育或在线学习平台的应用场景。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import java.io.Serializable;
-import java.util.Map;
-
-import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课程练习 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -85,3 +85,4 @@ public class LessonPracticeBo implements Serializable {
 	private PracticeBriefBo practiceInfo;
 
 }
+

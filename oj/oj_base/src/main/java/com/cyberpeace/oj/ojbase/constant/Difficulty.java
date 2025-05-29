@@ -1,3 +1,19 @@
+package com.cyberpeace.oj.ojbase.constant;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+
+import lombok.Getter;
+
+/**
+ * 难度
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Enum
+ * @see GenericEnum
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `Difficulty` 的枚举类，用于表示题目难度。以下是详细的分析： 
  * ### 类定义 
@@ -22,22 +38,6 @@
  * ### 总结 
  * 这段代码定义了一个枚举类 `Difficulty`，用于表示题目的难度等级，并提供了一种通过代码值获取对应难度描述的方法。这个枚举类实现了一个通用接口 `GenericEnum`，并且使用 Lombok 简化了 getter 方法的编写。 
 **/
-package com.cyberpeace.oj.ojbase.constant;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-
-import lombok.Getter;
-
-/**
- * 难度
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Enum
- * @see GenericEnum
- * @since 1.0.0
- */
 public enum Difficulty implements GenericEnum {
 
 	/**
@@ -93,3 +93,4 @@ public enum Difficulty implements GenericEnum {
 		return "";
 	}
 }
+

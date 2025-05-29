@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.tool.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.util.ConfigUtil;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
+/**
+ * 工具壳代号
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolShellCode` 的 Java 类，该类继承自 `BaseToolTable`。这个类表示一个工具壳代号，并且包含了工具壳的相关信息。以下是对这段代码的简要分析： 
  * ### 包和导入 
@@ -23,21 +38,6 @@
  * ### 总结 
  * `ToolShellCode` 类是一个数据传输对象（DTO），用于表示工具壳的信息。它包含了工具壳的基本属性以及一个计算属性 `downloadUrl`，通过该属性可以动态生成下载链接。此外，这个类使用了 Lombok 库来简化代码，使得开发者不需要手动编写 getter 和 setter 方法。 
 **/
-package com.cyberpeace.cr.tool.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.util.ConfigUtil;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
-
-/**
- * 工具壳代号
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @TableName("cr_tool_shellcode")

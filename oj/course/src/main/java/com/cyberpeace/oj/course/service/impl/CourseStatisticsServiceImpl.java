@@ -1,3 +1,36 @@
+package com.cyberpeace.oj.course.service.impl;
+
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.AuthContextUtils;
+import com.cyberpeace.common.util.MathUtils;
+import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.entity.LessonRecord;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper;
+import com.cyberpeace.oj.course.service.CourseStatisticsService;
+import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+/**
+ * 课程统计学Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see CourseStatisticsService
+ * @since 1.0.0
+ */
 /**
  * 这段代码是一个用于统计用户在课程中的学习进度的服务实现类。以下是详细的分析： 
  * ### 类和方法概述 
@@ -39,39 +72,6 @@
  * ### 总结 
  * 该方法通过多步骤的数据查询和处理，最终生成了每个课程的学习进度信息。主要涉及数据库查询、数据过滤、分组统计和计算等操作。代码结构清晰，逻辑严谨，适合用于课程学习进度的统计场景。 
 **/
-package com.cyberpeace.oj.course.service.impl;
-
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.common.util.MathUtils;
-import com.cyberpeace.oj.course.dao.entity.Course;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.dao.entity.LessonRecord;
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper;
-import com.cyberpeace.oj.course.service.CourseStatisticsService;
-import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
-import com.google.common.collect.Lists;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-/**
- * 课程统计学Service实现
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see CourseStatisticsService
- * @since 1.0.0
- */
 @Service
 public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 
@@ -217,3 +217,4 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 		return studyProcessBos;
 	}
 }
+

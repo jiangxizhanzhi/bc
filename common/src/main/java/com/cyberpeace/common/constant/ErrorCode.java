@@ -1,3 +1,13 @@
+package com.cyberpeace.common.constant;
+
+/**
+ * 统一错误吗
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * ### 分析与总结 
  * #### 1. **代码概述** 
@@ -17,16 +27,6 @@
  * #### 5. **总结** 
  * 该代码是一个典型的错误码管理工具，具有良好的结构和实用性。通过进一步优化命名和扩展性，可以使其更加完善和易于维护。 
 **/
-package com.cyberpeace.common.constant;
-
-/**
- * 统一错误吗
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface ErrorCode {
 
     /**
@@ -469,3 +469,4 @@ public interface ErrorCode {
      */
     String RELATED_DATA_EXIST = "104026";
 }
+

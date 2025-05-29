@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+/**
+ * this is branch test for the test
+ * the test is for toy
+ * the toy is toy
+ * not the practice
+ * tos
+ */
 /**
  * 这段代码是一个JUnit测试类 `EvalAggregationServiceBranchTest`，用于测试 `EvalAggregationServiceBranch` 类中的 `getBranch` 方法。以下是对这段代码的简要分析： 
  * ### 1. 类和方法概述 
@@ -39,18 +51,6 @@
  * ``` 
  * 这个改进后的版本使用了参数化测试，减少了重复代码，同时保持了测试的功能。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-/**
- * this is branch test for the test
- * the test is for toy
- * the toy is toy
- * not the practice
- * tos
- */
 public class EvalAggregationServiceBranchTest {
 
     /**
@@ -654,3 +654,4 @@ public class EvalAggregationServiceBranchTest {
     }
 
 }
+

@@ -1,3 +1,18 @@
+package com.cyberpeace.integratation.model.scene;
+
+import java.io.Serializable;
+
+import com.alibaba.fastjson.JSONObject;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 场景动态更新
+ *
+ * @author SN
+ * @date 2023/05/11
+ */
 /**
  * 这段代码定义了一个名为 `SceneUpdateContext` 的类，该类用于表示场景的动态更新信息。以下是对这段代码的简要分析： 
  * ### 类定义 
@@ -29,21 +44,6 @@
  * - 如果 `update_scene` 是一个固定的结构，考虑使用自定义的 Java 类来代替 `JSONObject`，这样可以提高代码的可读性和类型安全性。 
  * - 考虑添加一些验证逻辑（例如非空检查）来确保 `update_scene` 中的数据有效。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import java.io.Serializable;
-
-import com.alibaba.fastjson.JSONObject;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 场景动态更新
- *
- * @author SN
- * @date 2023/05/11
- */
 @Getter
 @Setter
 public class SceneUpdateContext extends SceneOpsContext implements Serializable {
@@ -53,3 +53,4 @@ public class SceneUpdateContext extends SceneOpsContext implements Serializable 
 	 */
 	private JSONObject update_scene;
 }
+

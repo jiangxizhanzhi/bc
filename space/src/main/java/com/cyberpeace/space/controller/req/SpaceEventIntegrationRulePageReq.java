@@ -1,3 +1,22 @@
+package com.cyberpeace.space.controller.req;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.space.dao.entity.SpaceEventIntegrationRule;
+import com.cyberpeace.space.model.req.SpaceToolPageReq;
+import io.swagger.annotations.ApiModel;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
+/**
+ * 空间事件集成统治分页请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceToolPageReq
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个用于分页查询空间事件集成规则的请求体类 `SpaceEventIntegrationRulePageReq`，继承自 `SpaceToolPageReq`。以下是代码的主要功能和结构分析： 
  * ### 主要功能： 
@@ -25,25 +44,6 @@
  * ### 总结： 
  * 该类的设计目的是为了提供一个灵活且可扩展的分页查询请求体，能够根据不同的查询条件动态生成数据库查询条件，并支持多种查询方式（模糊匹配、精确匹配）。代码结构清晰，使用了现代 Java 编程的最佳实践（如 Lombok 和 Lambda 表达式）。 
 **/
-package com.cyberpeace.space.controller.req;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.cyberpeace.space.dao.entity.SpaceEventIntegrationRule;
-import com.cyberpeace.space.model.req.SpaceToolPageReq;
-import io.swagger.annotations.ApiModel;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
-
-/**
- * 空间事件集成统治分页请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceToolPageReq
- * @since 1.0.0
- */
 @ApiModel
 public class SpaceEventIntegrationRulePageReq extends SpaceToolPageReq {
 
@@ -84,3 +84,4 @@ public class SpaceEventIntegrationRulePageReq extends SpaceToolPageReq {
         return wrapper;
     }
 }
+

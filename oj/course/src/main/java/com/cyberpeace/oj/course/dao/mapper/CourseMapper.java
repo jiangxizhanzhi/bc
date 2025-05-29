@@ -1,3 +1,27 @@
+package com.cyberpeace.oj.course.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.oj.course.dao.context.CourseContext;
+import com.cyberpeace.oj.course.dao.context.SpecialCourseContext;
+import com.cyberpeace.oj.course.dao.entity.Course;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+/**
+ * 课程Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseMapper` 的接口，该接口继承自 `BaseMapper<Course>`。这个接口主要用于数据库操作，特别是与课程相关的数据访问。以下是对代码的简要分析： 
  * ### 接口定义 
@@ -51,30 +75,6 @@
  * ### 总结 
  * `CourseMapper` 接口提供了丰富的数据库操作方法，涵盖了课程管理中的多种场景，包括分页查询、条件查询、单个实体查询、按用户或组织查询以及更新操作。这些方法为课程管理模块提供了必要的数据访问支持。 
 **/
-package com.cyberpeace.oj.course.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.oj.course.dao.context.CourseContext;
-import com.cyberpeace.oj.course.dao.context.SpecialCourseContext;
-import com.cyberpeace.oj.course.dao.entity.Course;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
-
-/**
- * 课程Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 @Repository
 public interface CourseMapper extends BaseMapper<Course> {
@@ -224,3 +224,4 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 */
 	List<String> selectTime();
 }
+

@@ -1,3 +1,16 @@
+package com.cyberpeace.cs.service.context.scene;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 拓扑元素
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `TopoElement` 的 Java 类，用于表示拓扑元素。以下是对其的简要分析： 
  * 1. **类的功能**： 
@@ -16,19 +29,6 @@
  * - 这个类可以作为拓扑图中节点或边的基本数据结构，适用于需要动态加载和操作拓扑元素的应用场景。 
  * 总体而言，这个类是一个简单的数据载体类，设计简洁，适合在复杂的业务逻辑中作为基础组件使用。 
 **/
-package com.cyberpeace.cs.service.context.scene;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 拓扑元素
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class TopoElement implements Serializable {
@@ -54,3 +54,4 @@ public class TopoElement implements Serializable {
 
 	private String nodeCommand;
 }
+

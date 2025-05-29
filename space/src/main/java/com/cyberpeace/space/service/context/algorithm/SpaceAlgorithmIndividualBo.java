@@ -1,3 +1,21 @@
+package com.cyberpeace.space.service.context.algorithm;
+
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.dao.entity.SpaceAlgorithmIndividual;
+import com.cyberpeace.space.model.SpaceBoBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间算法个人Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceAlgorithmIndividualBo` 的类，它是 `SpaceBoBase` 类的子类。以下是对代码的简要分析： 
  * 1. **类的功能**： 
@@ -18,24 +36,6 @@
  * 总结：该类主要用于封装与空间算法相关的个人数据，并提供从BO到实体对象的转换功能。 
 **/
 
-package com.cyberpeace.space.service.context.algorithm;
-
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.dao.entity.SpaceAlgorithmIndividual;
-import com.cyberpeace.space.model.SpaceBoBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间算法个人Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBoBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceAlgorithmIndividualBo extends SpaceBoBase {

@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.service.context;
+
+import java.util.Date;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Eval 时间线上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTimeLineContext` 的 Java 类，该类用于表示某个评估（evaluation）的时间线上下文。以下是对其主要特性的简要分析： 
  * ### 包声明和导入 
@@ -21,20 +35,6 @@
  * ### 总结 
  * `EvalTimeLineContext` 类是一个简单的数据传输对象（DTO），用于封装评估步骤的相关信息。它通过构造函数提供了一定程度的初始化灵活性，并且通过自定义的方法 `setResourceId` 提供了额外的功能。Lombok 和 Swagger 注解的使用简化了代码并增强了可读性。 
 **/
-package com.cyberpeace.cr.evaluation.service.context;
-
-import java.util.Date;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * Eval 时间线上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalTimeLineContext {
@@ -69,3 +69,4 @@ public class EvalTimeLineContext {
 	public EvalTimeLineContext() {}
 
 }
+

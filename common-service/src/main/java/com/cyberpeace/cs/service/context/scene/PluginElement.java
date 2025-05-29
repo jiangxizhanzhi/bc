@@ -1,3 +1,8 @@
+package com.cyberpeace.cs.service.context.scene;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 这段代码定义了一个名为 `PluginElement` 的 Java 类，位于包 `com.cyberpeace.cs.service.context.scene` 中。以下是简要分析： 
  * 1. **类的基本信息**： 
@@ -12,11 +17,6 @@
  * - 该类可能是用来描述某种插件元素的信息，特别是与图片相关的元数据（如图片路径和唯一标识）。 
  * 总结：这是一个简单的 Java Bean 类，主要用于存储与图片相关的两个属性，并通过 Lombok 减少了样板代码。 
 **/
-package com.cyberpeace.cs.service.context.scene;
-
-import lombok.Getter;
-import lombok.Setter;
-
 @Setter
 @Getter
 public class PluginElement {
@@ -25,3 +25,4 @@ public class PluginElement {
 
 	private String imageUuid;
 }
+

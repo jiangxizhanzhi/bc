@@ -1,3 +1,11 @@
+package com.cyberpeace.common.util;
+
+/**
+ * 数据传输实用程序
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个工具类 `DataTransferUtils`，用于处理数据传输中的一些常见问题，比如判断对象是否为 `null` 并赋默认值。以下是代码的简要分析： 
  * ### 主要功能： 
@@ -22,14 +30,6 @@
  * ### 总结： 
  * 该工具类提供了简单的空值处理逻辑，适合在数据传输场景中快速处理常见的 `null` 值问题。通过改进方法签名和返回值的处理方式，可以进一步提升代码的可读性和安全性。 
 **/
-package com.cyberpeace.common.util;
-
-/**
- * 数据传输实用程序
- *
- * @author SN
- * @date 2024/11/08
- */
 public class DataTransferUtils {
 
 	/**
@@ -59,3 +59,4 @@ public class DataTransferUtils {
 	}
 
 }
+

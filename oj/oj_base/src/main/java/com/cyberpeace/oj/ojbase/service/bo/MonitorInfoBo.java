@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.ojbase.service.bo;
+
+import com.alibaba.fastjson.JSONObject;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 监控信息 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `MonitorInfoBo` 的 Java 类，用于表示监控信息。以下是详细的分析： 
  * ### 类定义 
@@ -31,24 +49,6 @@
  * - 实现 `Serializable` 接口，表明该类的对象可以被序列化。 
  * 这个类主要在需要传递监控信息时使用，特别是在微服务架构中，可能通过 REST API 返回这种监控信息。 
 **/
-package com.cyberpeace.oj.ojbase.service.bo;
-
-import com.alibaba.fastjson.JSONObject;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 监控信息 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class MonitorInfoBo implements Serializable {
@@ -78,3 +78,4 @@ public class MonitorInfoBo implements Serializable {
 	private JSONObject monitorSessions;
 
 }
+

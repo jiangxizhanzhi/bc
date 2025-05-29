@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.ojbase.controller.res;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * 评论结果
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CommentRes` 的 Java 类，该类实现了 `Serializable` 接口。这个类主要用于表示课程评论的信息，并且使用了 Lombok 库来简化 getter 和 setter 方法的生成。此外，还使用了 Swagger 注解来描述 API 模型。 
  * ### 主要特点和功能： 
@@ -22,25 +41,6 @@
  * ### 总结： 
  * `CommentRes` 类是一个数据传输对象（DTO），它包含了课程评论的所有必要信息，并通过 Swagger 注解方便了 API 文档的生成。通过 Lombok 的注解，减少了样板代码，提高了代码的可读性和维护性。 
 **/
-package com.cyberpeace.oj.ojbase.controller.res;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Date;
-
-/**
- * 评论结果
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel("课程评论信息")
@@ -134,3 +134,4 @@ public class CommentRes implements Serializable {
     private Integer likesCount;
 
 }
+

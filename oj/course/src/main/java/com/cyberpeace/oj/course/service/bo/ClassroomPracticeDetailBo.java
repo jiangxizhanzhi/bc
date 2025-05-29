@@ -1,3 +1,25 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import java.io.Serializable;
+import java.util.Map;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+/**
+ * 课堂实践详情博
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomPracticeDetailBo` 的 Java 类，用于表示课堂实践详情。以下是对此代码的简要分析： 
  * ### 包和导入 
@@ -31,28 +53,6 @@
  * - **用途**：在系统中传递课堂实践相关数据，可能用于展示或处理课堂实践结果。 
  * 这段代码简洁且功能明确，适合在需要传递课堂实践详情的场景中使用。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import java.io.Serializable;
-import java.util.Map;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-
-/**
- * 课堂实践详情博
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -109,3 +109,4 @@ public class ClassroomPracticeDetailBo implements Serializable {
 	@ApiModelProperty("课后练习题信息")
 	private Map<String, LessonPracticeListBo> practiceList;
 }
+

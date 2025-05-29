@@ -1,3 +1,24 @@
+package com.cyberpeace.space.service.context.algorithm;
+
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.dao.entity.SpaceAlgorithmRole;
+import com.cyberpeace.space.model.IdAndName;
+import com.cyberpeace.space.model.SpaceBoBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 空间算法岗位Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 /**
  * ### 分析与总结 
  * #### 代码概述： 
@@ -36,27 +57,6 @@
  * 该类设计清晰，功能明确，符合面向对象的设计原则。通过 Lombok 和 Swagger 的使用，简化了代码编写和维护工作。同时，提供了一种便捷的 BO 到实体对象的转换方式，适用于业务场景中的数据流转需求。 
 **/
 
-package com.cyberpeace.space.service.context.algorithm;
-
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.dao.entity.SpaceAlgorithmRole;
-import com.cyberpeace.space.model.IdAndName;
-import com.cyberpeace.space.model.SpaceBoBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 空间算法岗位Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBoBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceAlgorithmRoleBo extends SpaceBoBase {

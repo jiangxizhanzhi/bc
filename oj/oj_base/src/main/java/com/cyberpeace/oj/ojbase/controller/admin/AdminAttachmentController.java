@@ -1,3 +1,36 @@
+package com.cyberpeace.oj.ojbase.controller.admin;
+
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.oj.ojbase.controller.res.LogoUploadRes;
+import com.cyberpeace.cs.dao.entity.Attachment;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
+/**
+ * 管理附件Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `AdminAttachmentController` 的 Spring MVC 控制器类，用于处理与管理附件相关的 API 请求。以下是代码的主要组成部分和功能的简要分析： 
  * ### 类和注解 
@@ -38,39 +71,6 @@
  * ### 总结 
  * 这个控制器主要用于管理附件的上传和状态更新，提供了两个主要的功能：上传单个附件和批量更新附件的公开状态。整个代码结构清晰，使用了现代 Java 技术和框架特性来实现功能。 
 **/
-package com.cyberpeace.oj.ojbase.controller.admin;
-
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.oj.ojbase.controller.res.LogoUploadRes;
-import com.cyberpeace.cs.dao.entity.Attachment;
-import com.cyberpeace.cs.service.AttachmentService;
-import com.cyberpeace.cs.service.context.AttachmentBo;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
-
-/**
- * 管理附件Controller
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 @Slf4j
 @Api(tags = "oj-后台附件相关api")
 @RestController
@@ -135,3 +135,4 @@ public class AdminAttachmentController {
 	}
 
 }
+

@@ -1,3 +1,11 @@
+package com.cyberpeace.cr.crbase.service;;
+
+/**
+ * single Train Branch
+ * this is branch method
+ * for the branch method
+ * is the fun toy for little bob
+ */
 /**
  * 这段代码定义了一个名为 `CrConstantsServiceBranch` 的类，其主要功能是根据输入字符串返回布尔值。以下是对其的简要分析： 
  * 1. **类名与作用**： 
@@ -19,14 +27,6 @@
  * - 如果需要扩展或修改这些预定义值，将非常繁琐。 
  * 总结：该代码实现了一个简单的字符串匹配功能，但其设计存在冗余和可维护性差的问题。建议通过数据结构（如集合或映射）优化实现方式，以提高代码的简洁性和可扩展性。 
 **/
-package com.cyberpeace.cr.crbase.service;;
-
-/**
- * single Train Branch
- * this is branch method
- * for the branch method
- * is the fun toy for little bob
- */
 public class CrConstantsServiceBranch {
 
     /**
@@ -399,3 +399,4 @@ public class CrConstantsServiceBranch {
         return false;
     }
 }
+

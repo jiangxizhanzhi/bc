@@ -1,3 +1,20 @@
+package com.cyberpeace.cs.service.context;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * 附件 bo
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `AttachmentBo` 的 Java 类，用于表示附件的相关信息。以下是代码的主要特点和功能分析： 
  * ### 主要特性： 
@@ -19,23 +36,6 @@
  * - 通过 Lombok 注解减少了样板代码，提高了开发效率。 
  * - 使用 Swagger 注解增强了代码的可读性和文档生成能力。 
 **/
-package com.cyberpeace.cs.service.context;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-/**
- * 附件 bo
- *
- * @author SN
- * @date 2024/11/08
- */
 @Data
 @ApiModel
 @Builder
@@ -68,3 +68,4 @@ public class AttachmentBo implements Serializable {
 	private Boolean isPublic;
 
 }
+

@@ -1,3 +1,17 @@
+package com.cyberpeace.cs.service.context;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 创建快照上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `CreateSnapshotContext` 的 Java 类，用于创建快照时的上下文信息。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -14,20 +28,6 @@
  * - 使用 Lombok 减少了样板代码的编写。 
  * 总结来说，这个类是一个简单的数据传输对象（DTO），用于在系统中传递创建快照所需的信息。 
 **/
-package com.cyberpeace.cs.service.context;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 创建快照上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class CreateSnapshotContext implements Serializable {
@@ -48,3 +48,4 @@ public class CreateSnapshotContext implements Serializable {
     private String description;
 
 }
+

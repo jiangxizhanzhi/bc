@@ -1,3 +1,23 @@
+package com.cyberpeace.cr.crbase.dao.mapper;
+
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.cr.crbase.service.context.statistics.RoomRoleContext;
+
+/**
+ * 靶场岗位Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * ### 分析与总结 
  * #### 1. **代码概述** 
@@ -51,26 +71,6 @@
  * #### 7. **总结** 
  * 该代码是一个典型的 MyBatis Mapper 接口，提供了丰富的查询和操作方法，适合用于靶场系统的岗位管理场景。整体设计清晰、结构合理，具有较高的实用性和扩展性。 
 **/
-package com.cyberpeace.cr.crbase.dao.mapper;
-
-import java.util.Collection;
-import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
-import com.cyberpeace.cr.crbase.service.context.statistics.RoomRoleContext;
-
-/**
- * 靶场岗位Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 @Repository
 public interface CrRoleMapper extends BaseMapper<CrRole> {
@@ -189,3 +189,4 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 	 */
 	List<CrRole> selectBatchByRoomIds(@Param("roomIdList") List<String> roomIdList);
 }
+

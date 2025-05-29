@@ -1,30 +1,3 @@
-/**
- * 这段代码是一个Spring服务类`SpaceIndexServiceImpl`的实现，主要负责生成与空间编号相关的统计数据和图表。以下是对代码的主要功能和结构的简要分析： 
- * ### 主要功能 
- * 1. **获取知识点统计**： 
- * - `getKnowledgeRepositoryStatistics()`：整合理论知识库、策略库、战法、规则和算法等知识点的统计信息。 
- * 2. **获取理论知识统计**： 
- * - `getIndexTheory()`：统计理论课程、实验课程、理论考试、实验考试以及视频数量和时长。 
- * 3. **获取工具统计**： 
- * - `getToolStatistics()`：按类型（攻击、探测、防御、控制、其他）和平台统计工具数量。 
- * 4. **获取框架统计**： 
- * - `getFrameIndex()`：统计框架使用情况，包括进程和目标的数量。 
- * 5. **获取AI URL**： 
- * - `getAiUrl()`：返回配置中的AI主机地址，若未配置则默认为`10.4.2.3`。 
- * 6. **生成知识点图表**： 
- * - `getKChart()`：根据用户权限动态生成知识点相关的图表，包括理论、策略、战法、规则、算法和场景等。 
- * 7. **具体图表生成方法**： 
- * - 包括`getAlgorithmChart()`、`getRuleChart()`、`getRuleBaseChart()`、`getRuleThreatChart()`、`getRuleRaceChart()`、`getTacticChart()`、`getTheoryChart()`等，分别针对不同知识点类别生成详细的图表。 
- * 8. **辅助方法**： 
- * - 提供一些辅助方法如`getActionFrameUseChart()`、`defaultChart()`、`getAddedToday()`、`getUpdatedToday()`等，用于处理日期范围内的新增和更新统计以及生成默认或自定义图表数据。 
- * ### 技术特点 
- * - 使用了MyBatis Plus的`LambdaQueryWrapper`进行数据库查询操作。 
- * - 利用了Guava和Apache Commons等库处理集合和字符串操作。 
- * - 日志记录通过`slf4j`实现。 
- * - 高度依赖于注入的服务和Mapper对象，体现了良好的解耦设计。 
- * ### 总结 
- * 该类实现了复杂的知识点统计与可视化功能，通过多种维度的数据聚合和展示，为用户提供全面的空间编号相关信息。代码结构清晰，职责分明，适合大规模系统中需要多维度数据分析的场景。 
-**/
 package com.cyberpeace.space.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -77,6 +50,33 @@ import java.util.Map;
  * @see SpaceIndexService
  * @since 1.0.0
  */
+/**
+ * 这段代码是一个Spring服务类`SpaceIndexServiceImpl`的实现，主要负责生成与空间编号相关的统计数据和图表。以下是对代码的主要功能和结构的简要分析： 
+ * ### 主要功能 
+ * 1. **获取知识点统计**： 
+ * - `getKnowledgeRepositoryStatistics()`：整合理论知识库、策略库、战法、规则和算法等知识点的统计信息。 
+ * 2. **获取理论知识统计**： 
+ * - `getIndexTheory()`：统计理论课程、实验课程、理论考试、实验考试以及视频数量和时长。 
+ * 3. **获取工具统计**： 
+ * - `getToolStatistics()`：按类型（攻击、探测、防御、控制、其他）和平台统计工具数量。 
+ * 4. **获取框架统计**： 
+ * - `getFrameIndex()`：统计框架使用情况，包括进程和目标的数量。 
+ * 5. **获取AI URL**： 
+ * - `getAiUrl()`：返回配置中的AI主机地址，若未配置则默认为`10.4.2.3`。 
+ * 6. **生成知识点图表**： 
+ * - `getKChart()`：根据用户权限动态生成知识点相关的图表，包括理论、策略、战法、规则、算法和场景等。 
+ * 7. **具体图表生成方法**： 
+ * - 包括`getAlgorithmChart()`、`getRuleChart()`、`getRuleBaseChart()`、`getRuleThreatChart()`、`getRuleRaceChart()`、`getTacticChart()`、`getTheoryChart()`等，分别针对不同知识点类别生成详细的图表。 
+ * 8. **辅助方法**： 
+ * - 提供一些辅助方法如`getActionFrameUseChart()`、`defaultChart()`、`getAddedToday()`、`getUpdatedToday()`等，用于处理日期范围内的新增和更新统计以及生成默认或自定义图表数据。 
+ * ### 技术特点 
+ * - 使用了MyBatis Plus的`LambdaQueryWrapper`进行数据库查询操作。 
+ * - 利用了Guava和Apache Commons等库处理集合和字符串操作。 
+ * - 日志记录通过`slf4j`实现。 
+ * - 高度依赖于注入的服务和Mapper对象，体现了良好的解耦设计。 
+ * ### 总结 
+ * 该类实现了复杂的知识点统计与可视化功能，通过多种维度的数据聚合和展示，为用户提供全面的空间编号相关信息。代码结构清晰，职责分明，适合大规模系统中需要多维度数据分析的场景。 
+**/
 @Service
 @Slf4j
 public class SpaceIndexServiceImpl implements SpaceIndexService {
@@ -873,3 +873,4 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 				+ spaceTacticDefenseMapper.selectCount(defenseWrapper));
 	}
 }
+

@@ -1,3 +1,16 @@
+package com.cyberpeace.integratation.model.scene;
+
+import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Node Ops 上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `NodeOpsContext` 的 Java 类，该类继承自 `SceneOpsContext` 并实现了 `Serializable` 接口。以下是详细的分析： 
  * ### 类定义 
@@ -21,19 +34,6 @@
  * - 确保 `SceneOpsContext` 类中没有与 `node_id` 重复的属性或方法。 
  * 通过这些分析，可以更好地理解类的设计意图和潜在的改进点。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import java.io.Serializable;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * Node Ops 上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class NodeOpsContext extends SceneOpsContext implements Serializable {

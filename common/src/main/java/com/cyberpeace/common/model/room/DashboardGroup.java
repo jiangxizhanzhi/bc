@@ -1,3 +1,19 @@
+package com.cyberpeace.common.model.room;
+
+import java.io.Serializable;
+import java.util.List;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Dashboard 组
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `DashboardGroup` 的 Java 类，用于表示一个仪表盘分组模型。以下是代码的主要分析和总结： 
  * ### **功能概述** 
@@ -35,22 +51,6 @@
  * ### **适用场景** 
  * 该类适用于需要表示和管理分组信息的场景，例如后台管理系统中的用户分组、角色分配等功能模块。 
 **/
-package com.cyberpeace.common.model.room;
-
-import java.io.Serializable;
-import java.util.List;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * Dashboard 组
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class DashboardGroup implements Serializable {
@@ -124,3 +124,4 @@ public class DashboardGroup implements Serializable {
 		this.roleCode = roleCode;
 	}
 }
+

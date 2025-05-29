@@ -1,39 +1,3 @@
-/**
- * 这段代码定义了一个名为 `CourseValidateHandler` 的服务类，用于处理与课程相关的各种验证逻辑。以下是对代码的主要功能和结构的简要分析： 
- * ### 主要功能 
- * 1. **课程和课时验证**： 
- * - 验证课程和课时的存在性。 
- * - 验证课程和课时的名称是否重复。 
- * - 验证课程和课时的权限。 
- * - 验证课程和课时的类型。 
- * 2. **资源管理**： 
- * - 验证分类数据的存在性和可删除性。 
- * - 验证课程和课时是否为内置资源。 
- * ### 主要方法 
- * - **课程验证**： 
- * - `validateCourseExist(String courseId)`：验证课程是否存在。 
- * - `validateCourseNameExist(String courseName)`：验证课程名称是否存在。 
- * - `validateCourseNumExist(String courseNum)`：验证课程编号是否存在。 
- * - `validateCourseName2NumExist(Course course, String path)`：验证课程名称和编号是否存在。 
- * - `validateCoursePermission(String courseId, AuthContext authContext)`：验证课程权限。 
- * - `validateBuiltin(Course course)`：验证课程是否为内置资源。 
- * - **课时验证**： 
- * - `validateLessonExist(String lessonId, Boolean isPublic)`：验证课时是否存在。 
- * - `validateLessonPermission(String lessonId, AuthContext authContext)`：验证课时权限。 
- * - `validateLessonUpdateNameExist(CourseLesson existLesson, String newName)`：验证课时名称更新时是否重复。 
- * - `validateLessonUpdateSceneExist(CourseLesson courseLesson, JSONObject ojSceneConfig)`：验证课时是否有绑定场景。 
- * - `validateLessonNameExist(String courseId, String name)`：验证课时名称是否存在。 
- * - `validateLessonType(Integer lessonType, Integer accessType)`：验证课时类型。 
- * - **分类验证**： 
- * - `validateCategoryExist(String categoryId)`：验证分类是否存在。 
- * - `validateEnableDeleteCategory(String categoryId)`：验证分类是否可以被删除。 
- * - **其他验证**： 
- * - `categoryNameLengthValidate(String name)`：验证分类名称长度。 
- * ### 注入依赖 
- * 该类通过 `@Autowired` 注入了多个数据访问对象（如 `CourseMapper`, `CourseLessonMapper` 等）和其他服务（如 `PracticeTheoryRefService`, `PracticeOperationRefService` 等），这些依赖用于执行具体的数据库操作和业务逻辑。 
- * ### 总结 
- * `CourseValidateHandler` 类主要负责处理课程和课时的各种验证逻辑，确保在进行相关操作之前数据的完整性和正确性。这些验证逻辑包括存在性检查、名称唯一性检查、权限检查等，以确保系统的稳定性和数据的一致性。 
-**/
 package com.cyberpeace.oj.course.service.impl;
 
 import java.util.Arrays;
@@ -76,6 +40,42 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2024/12/04
  * @since 1.0.0
  */
+/**
+ * 这段代码定义了一个名为 `CourseValidateHandler` 的服务类，用于处理与课程相关的各种验证逻辑。以下是对代码的主要功能和结构的简要分析： 
+ * ### 主要功能 
+ * 1. **课程和课时验证**： 
+ * - 验证课程和课时的存在性。 
+ * - 验证课程和课时的名称是否重复。 
+ * - 验证课程和课时的权限。 
+ * - 验证课程和课时的类型。 
+ * 2. **资源管理**： 
+ * - 验证分类数据的存在性和可删除性。 
+ * - 验证课程和课时是否为内置资源。 
+ * ### 主要方法 
+ * - **课程验证**： 
+ * - `validateCourseExist(String courseId)`：验证课程是否存在。 
+ * - `validateCourseNameExist(String courseName)`：验证课程名称是否存在。 
+ * - `validateCourseNumExist(String courseNum)`：验证课程编号是否存在。 
+ * - `validateCourseName2NumExist(Course course, String path)`：验证课程名称和编号是否存在。 
+ * - `validateCoursePermission(String courseId, AuthContext authContext)`：验证课程权限。 
+ * - `validateBuiltin(Course course)`：验证课程是否为内置资源。 
+ * - **课时验证**： 
+ * - `validateLessonExist(String lessonId, Boolean isPublic)`：验证课时是否存在。 
+ * - `validateLessonPermission(String lessonId, AuthContext authContext)`：验证课时权限。 
+ * - `validateLessonUpdateNameExist(CourseLesson existLesson, String newName)`：验证课时名称更新时是否重复。 
+ * - `validateLessonUpdateSceneExist(CourseLesson courseLesson, JSONObject ojSceneConfig)`：验证课时是否有绑定场景。 
+ * - `validateLessonNameExist(String courseId, String name)`：验证课时名称是否存在。 
+ * - `validateLessonType(Integer lessonType, Integer accessType)`：验证课时类型。 
+ * - **分类验证**： 
+ * - `validateCategoryExist(String categoryId)`：验证分类是否存在。 
+ * - `validateEnableDeleteCategory(String categoryId)`：验证分类是否可以被删除。 
+ * - **其他验证**： 
+ * - `categoryNameLengthValidate(String name)`：验证分类名称长度。 
+ * ### 注入依赖 
+ * 该类通过 `@Autowired` 注入了多个数据访问对象（如 `CourseMapper`, `CourseLessonMapper` 等）和其他服务（如 `PracticeTheoryRefService`, `PracticeOperationRefService` 等），这些依赖用于执行具体的数据库操作和业务逻辑。 
+ * ### 总结 
+ * `CourseValidateHandler` 类主要负责处理课程和课时的各种验证逻辑，确保在进行相关操作之前数据的完整性和正确性。这些验证逻辑包括存在性检查、名称唯一性检查、权限检查等，以确保系统的稳定性和数据的一致性。 
+**/
 @Slf4j
 @Service
 public class CourseValidateHandler {
@@ -491,3 +491,4 @@ public class CourseValidateHandler {
 		});
 	}
 }
+

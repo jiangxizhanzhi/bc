@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.crbase.service.context.scene.ElementFlowListContext;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskFlowListQuery;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+
+/**
+ * 测试靶场-场景管理
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalSceneService` 的接口，该接口用于处理与测试靶场中的场景管理相关的操作。以下是详细的分析和总结： 
  * ### 接口名称 
@@ -31,20 +45,6 @@
  * ### 总结 
  * 这个接口主要用于处理与测试靶场中的场景管理相关的一系列操作，包括查看场景、关闭场景以及构造场景流量列表查询参数。通过这些方法，可以实现对场景的控制和管理。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
-import com.cyberpeace.cr.crbase.service.context.scene.ElementFlowListContext;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskFlowListQuery;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-
-/**
- * 测试靶场-场景管理
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface EvalSceneService {
 
 	/**
@@ -75,3 +75,4 @@ public interface EvalSceneService {
 			EvalTask evalTask);
 
 }
+

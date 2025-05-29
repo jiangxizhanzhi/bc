@@ -1,3 +1,20 @@
+package com.cyberpeace.enums;
+
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.util.DateUtil;
+
+import java.util.*;
+
+/**
+ * 演示 URI 枚举
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see Enum
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个名为 `DemonstrationUriEnum` 的枚举类，用于管理与“演示”相关的 URI 和服务逻辑。以下是代码的主要功能和结构分析： 
  * --- 
@@ -43,23 +60,6 @@
  * ### **总结** 
  * 该代码实现了基于枚举的 URI 管理和业务逻辑封装，具有良好的模块化和扩展性。通过引入服务接口和工具类，代码结构清晰且易于维护。但在实际应用中需要注意潜在的空指针风险、异常处理以及国际化支持等问题。 
 **/
-package com.cyberpeace.enums;
-
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.util.DateUtil;
-
-import java.util.*;
-
-/**
- * 演示 URI 枚举
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see Enum
- * @since 1.0.0
- */
 public enum DemonstrationUriEnum {
     /**
      * 态势排名
@@ -268,3 +268,4 @@ public enum DemonstrationUriEnum {
         }
     }
 }
+

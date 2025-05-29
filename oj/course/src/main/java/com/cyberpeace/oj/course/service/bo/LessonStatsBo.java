@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 课程统计 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonStatsBo` 的 Java 类，用于表示课程统计信息。以下是该类的简要分析： 
  * ### 类定义 
@@ -20,23 +37,6 @@
  * ### 总结 
  * `LessonStatsBo` 类是一个数据传输对象（DTO），用于封装课程相关的统计信息。通过使用 Lombok 和 Swagger 注解，简化了代码的编写并提高了可读性和文档生成的便利性。这个类主要用于在系统内部或与外部系统通信时传递课程统计信息。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 课程统计 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class LessonStatsBo implements Serializable {
@@ -105,3 +105,4 @@ public class LessonStatsBo implements Serializable {
     private Integer finishPracticeCount;
 
 }
+

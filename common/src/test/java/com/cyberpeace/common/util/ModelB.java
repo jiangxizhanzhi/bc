@@ -1,3 +1,10 @@
+package com.cyberpeace.common.util;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import lombok.Data;
+
 /**
  * 这段代码定义了一个名为 `ModelB` 的 Java 类，位于包 `com.cyberpeace.common.util` 中。以下是对其功能和特性的简要分析： 
  * 1. **类的定义**： 
@@ -15,13 +22,6 @@
  * - 该类可能是一个数据模型类，用于存储和传输包含上述字段的数据。 
  * 总结：这是一个简单的 Java 数据模型类，通过 Lombok 简化了代码编写，支持序列化操作。 
 **/
-package com.cyberpeace.common.util;
-
-import java.io.Serializable;
-import java.util.Date;
-
-import lombok.Data;
-
 @Data
 public class ModelB implements Serializable {
 
@@ -34,3 +34,4 @@ public class ModelB implements Serializable {
     private String b;
 
 }
+

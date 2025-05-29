@@ -1,3 +1,24 @@
+package com.cyberpeace.space.service.context.rule;
+
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.space.dao.entity.SpaceAptFeature;
+import com.cyberpeace.space.model.SpaceBoBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 空间容易特征Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 类的功能 
@@ -34,27 +55,6 @@
  * - 如果需要支持深拷贝或更复杂的对象映射，可以引入更高级的工具（如 MapStruct 或 ModelMapper）。 
 **/
 
-package com.cyberpeace.space.service.context.rule;
-
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.space.dao.entity.SpaceAptFeature;
-import com.cyberpeace.space.model.SpaceBoBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 空间容易特征Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBoBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceAptFeatureBo extends SpaceBoBase {

@@ -1,3 +1,24 @@
+package com.cyberpeace.cr.tool.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.cr.tool.dao.context.ToolStatistics;
+import com.cyberpeace.cr.tool.dao.entity.Tool;
+import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
+
+/**
+ * 工具Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolMapper` 的接口，它继承自 `BaseMapper<Tool>`。这个接口使用了 MyBatis-Plus 框架来简化数据库操作，并且通过注解表明这是一个 MyBatis 的 Mapper 和 Spring 的 Repository。以下是代码的详细分析： 
  * ### 接口定义 
@@ -55,27 +76,6 @@
  * ### 总结 
  * 该接口主要实现了对工具数据的各种查询操作，包括分页查询、按名称查询、按类别查询、按名称和资源ID查询、统计信息以及列出类型和平台。这些方法覆盖了常见的数据查询需求，使得数据操作更加方便和高效。 
 **/
-package com.cyberpeace.cr.tool.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.cr.tool.dao.context.ToolStatistics;
-import com.cyberpeace.cr.tool.dao.entity.Tool;
-import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-import javax.validation.constraints.NotEmpty;
-import java.util.List;
-
-/**
- * 工具Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 @Repository
 public interface ToolMapper extends BaseMapper<Tool> {
@@ -130,3 +130,4 @@ public interface ToolMapper extends BaseMapper<Tool> {
     List<Tool> listTypeAndPlatform();
 
 }
+

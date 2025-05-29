@@ -1,3 +1,14 @@
+package com.cyberpeace.oj.course.service;
+
+
+/**
+ * 课程转 储Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseDumpService` 的接口，该接口用于处理课程数据的导出操作。以下是详细的分析： 
  * ### 类名和包名 
@@ -25,17 +36,6 @@
  * - 该接口的设计目的是为了提供灵活的数据导出功能，适用于需要根据不同需求导出课程数据的场景。 
  * 这段代码是一个典型的业务逻辑接口，主要用于处理课程数据的导出任务。 
 **/
-package com.cyberpeace.oj.course.service;
-
-
-/**
- * 课程转 储Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface CourseDumpService {
 
 	/**
@@ -56,3 +56,4 @@ public interface CourseDumpService {
 	String rMCourseDump(String resource_id, Boolean is_dump_topo, String sceneNumber, Boolean disableImageExport);
 
 }
+

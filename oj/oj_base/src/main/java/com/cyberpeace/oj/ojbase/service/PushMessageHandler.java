@@ -1,3 +1,16 @@
+package com.cyberpeace.oj.ojbase.service;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+
+/**
+ * 推送消息处理程序
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `PushMessageHandler` 的接口，该接口包含了多个用于推送不同类型消息的方法。以下是对其的简要分析： 
  * ### 主要功能 
@@ -34,19 +47,6 @@
  * ### 总结 
  * 该接口主要用于定义一套标准化的消息推送方法，适用于不同类型的教育场景。每个方法都接收数据对象和某些特定的上下文信息（如场景对象或用户ID），并执行相应的推送操作。通过这些方法，可以灵活地向不同的目标推送不同类型的消息。 
 **/
-package com.cyberpeace.oj.ojbase.service;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
-
-/**
- * 推送消息处理程序
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface PushMessageHandler {
 
     /**
@@ -138,3 +138,4 @@ public interface PushMessageHandler {
     void pushRoomTipsMessage(JSONObject data, String userId);
 
 }
+

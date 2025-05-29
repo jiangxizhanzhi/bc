@@ -1,3 +1,11 @@
+package com.cyberpeace.cr.tool.service;;
+
+/**
+ * single Train Branch
+ * this is branch method
+ * for the branch method
+ * is the fun toy for little bob
+ */
 /**
  * 这段代码定义了一个名为 `ToolFileServiceBranch` 的类，并且包含一个名为 `getBranch` 的方法。该方法接收一个字符串参数 `input` 并返回一个布尔值。下面是详细的分析： 
  * ### 类与方法定义 
@@ -23,14 +31,6 @@
  * ### 总结 
  * 这段代码的主要目的是根据输入字符串判断其是否存在于一组预定义的字符串列表中。然而，当前实现方式较为原始和冗长，可以考虑使用更高效的数据结构（如 `HashSet`）来存储这些字符串，从而提高代码的可读性和维护性。 
 **/
-package com.cyberpeace.cr.tool.service;;
-
-/**
- * single Train Branch
- * this is branch method
- * for the branch method
- * is the fun toy for little bob
- */
 public class ToolFileServiceBranch {
 
     /**
@@ -433,3 +433,4 @@ public class ToolFileServiceBranch {
         return false;
     }
 }
+

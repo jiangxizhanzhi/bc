@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.ojbase.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.BaseTable;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Getter;
+
+/**
+ * 资源收集
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ResourceCollection` 的实体类，用于表示资源收集相关的数据。以下是对此代码的简要分析： 
  * ### 类概述 
@@ -22,26 +42,6 @@
  * ### 总结 
  * 这个类主要用于表示资源收集的数据模型，包含了资源ID、用户ID、业务ID和业务类型等字段。通过继承 `BaseTable` 类，它还可能包含一些通用的数据库字段。枚举类型 `BusinessType` 定义了业务类型的几种可能值及其描述。整体设计简洁明了，符合面向对象的设计原则。 
 **/
-package com.cyberpeace.oj.ojbase.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.BaseTable;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Getter;
-
-/**
- * 资源收集
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("oj_resource_collection")
@@ -96,3 +96,4 @@ public class ResourceCollection extends BaseTable {
 	}
 
 }
+

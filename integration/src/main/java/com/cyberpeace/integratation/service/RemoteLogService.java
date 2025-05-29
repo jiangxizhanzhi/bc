@@ -1,3 +1,15 @@
+package com.cyberpeace.integratation.service;
+
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+
+/**
+ * 远程日志Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `RemoteLogService` 的接口，该接口用于远程记录日志。以下是对其主要特性的简要分析： 
  * ### 接口名称 
@@ -27,18 +39,6 @@
  * - 这些方法需要传递用户信息、操作模块、操作类型以及操作目标，其中 `addOjLog` 方法还额外需要日志内容。 
  * - 通过这种方式，系统可以记录和跟踪用户在不同模块中的操作行为，有助于后续的日志分析和审计工作。 
 **/
-package com.cyberpeace.integratation.service;
-
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.integratation.constant.OperationModule;
-import com.cyberpeace.integratation.constant.OperationType;
-
-/**
- * 远程日志Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface RemoteLogService {
 
 	/**
@@ -66,3 +66,4 @@ public interface RemoteLogService {
 			String operationTarget, String content);
 
 }
+

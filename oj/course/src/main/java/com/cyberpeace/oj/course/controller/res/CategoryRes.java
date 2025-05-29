@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.controller.res;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 类别结果
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CategoryRes` 的 Java 类，用于表示课程类别结果。以下是对其简要分析： 
  * ### 类定义 
@@ -20,24 +38,6 @@
  * ### 总结 
  * `CategoryRes` 类主要用于表示课程分类的结果数据，包含资源编号、分类名称和课程类型等属性。通过 Lombok 注解简化了 getter 和 setter 方法的编写，并且使用 Swagger 注解来增强其在 API 文档中的可读性和可用性。 
 **/
-package com.cyberpeace.oj.course.controller.res;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 类别结果
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -68,3 +68,4 @@ public class CategoryRes implements Serializable {
     private Integer courseType;
 
 }
+

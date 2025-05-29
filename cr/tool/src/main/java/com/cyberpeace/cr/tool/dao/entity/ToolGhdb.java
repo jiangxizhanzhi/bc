@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.tool.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 工具 GHDB
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolGhdb` 的 Java 类，用于表示一个工具或数据库中的记录。以下是详细的分析： 
  * ### 包声明和导入 
@@ -28,21 +43,6 @@
  * - 字段包括基本的信息字段（如标题、内容等）以及一些状态和时间信息。 
  * 这个类可以用于在数据库中持久化和检索工具或数据库的相关信息。 
 **/
-package com.cyberpeace.cr.tool.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 工具 GHDB
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @TableName("cr_tool_ghdb")
@@ -99,3 +99,4 @@ public class ToolGhdb implements Serializable {
 	 */
 	private String createTime;
 }
+

@@ -1,3 +1,27 @@
+package com.cyberpeace.config.db;
+
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.threadlocal.ThreadLocalContext;
+import com.cyberpeace.common.util.SpringContextUtil;
+import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.plugin.*;
+
+import java.util.Properties;
+
+/**
+ * 演示白色拦截器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see Interceptor
+ * @since 1.0.0
+ */
 /**
  * 该代码实现了一个基于 MyBatis 的拦截器（`DemonstrationWhiteInterceptor`），用于控制某些更新操作是否允许执行。以下是代码的主要功能和逻辑分析： 
  * --- 
@@ -53,30 +77,6 @@
  * ### **总结** 
  * 该代码实现了一个功能完善的 MyBatis 拦截器，用于控制演示模式下的更新操作权限。通过灵活的配置和线程上下文管理，确保了系统的安全性与可扩展性。但在实际应用中，需注意性能优化和线程安全问题。 
 **/
-package com.cyberpeace.config.db;
-
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.threadlocal.ThreadLocalContext;
-import com.cyberpeace.common.util.SpringContextUtil;
-import com.cyberpeace.common.util.SystemPropUtil;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import org.apache.ibatis.executor.Executor;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.plugin.*;
-
-import java.util.Properties;
-
-/**
- * 演示白色拦截器
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see Interceptor
- * @since 1.0.0
- */
 @Intercepts({ @Signature(type = Executor.class, method = "update",
 		args = { MappedStatement.class, Object.class }) })
 public class DemonstrationWhiteInterceptor implements Interceptor {
@@ -149,3 +149,4 @@ public class DemonstrationWhiteInterceptor implements Interceptor {
 	}
 
 }
+

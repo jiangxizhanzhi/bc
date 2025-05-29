@@ -1,3 +1,24 @@
+package com.cyberpeace.oj.ojbase.dao.context;
+
+import java.util.List;
+
+import com.cyberpeace.common.model.PatternBase;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+/**
+ * 注释列表查询
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PatternBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `NoteListQuery` 的类，该类继承自 `PatternBase` 类。这个类主要用于查询注释列表，并包含了一些用于过滤查询结果的属性。以下是对这段代码的简要分析： 
  * ### 包声明和导入 
@@ -26,27 +47,6 @@
  * - 使用 Lombok 注解简化了代码，减少了样板代码的编写。 
  * - 属性包括用户ID列表、注释类型、业务类型和业务ID，这些属性可以用来过滤和筛选注释列表。 
 **/
-package com.cyberpeace.oj.ojbase.dao.context;
-
-import java.util.List;
-
-import com.cyberpeace.common.model.PatternBase;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-
-/**
- * 注释列表查询
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PatternBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 @Builder
@@ -83,3 +83,4 @@ public class NoteListQuery extends PatternBase {
 	private String businessId;
 
 }
+

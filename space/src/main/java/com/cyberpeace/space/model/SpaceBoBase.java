@@ -1,3 +1,21 @@
+package com.cyberpeace.space.model;
+
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.google.common.collect.Lists;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 空间Bo基础
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceBoBase` 的抽象类，它是空间业务对象（BO）的基础类。以下是对其功能的简要分析： 
  * 1. **类的基本信息**： 
@@ -17,24 +35,6 @@
  * - 最后通过 `JsonUtil.arrayToString()` 将字符串数组转换为JSON格式的字符串。 
  * 总体来说，这个类提供了一个通用的框架来处理与空间相关的业务逻辑，并且包含了一些实用的方法来辅助数据操作。 
 **/
-package com.cyberpeace.space.model;
-
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.google.common.collect.Lists;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 空间Bo基础
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public abstract class SpaceBoBase {
@@ -53,3 +53,4 @@ public abstract class SpaceBoBase {
 		return JsonUtil.arrayToString(ids);
 	}
 }
+

@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.crbase.service.context;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 授权的教员
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ShareTeacher` 的 Java 类，用于表示授权的教员信息。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -16,18 +28,6 @@
  * - 这个类可能是某个系统中用于处理教员信息的核心数据结构，便于在不同模块之间传递和使用教员信息。 
  * 总结：这是一个简单的 POJO（Plain Old Java Object）类，主要用于存储和传输教员相关信息，支持自动化的 getter 和 setter 方法，并通过注解增强了其可读性和文档化能力。 
 **/
-package com.cyberpeace.cr.crbase.service.context;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 授权的教员
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class ShareTeacher {
@@ -63,3 +63,4 @@ public class ShareTeacher {
 	private String username;
 
 }
+

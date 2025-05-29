@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.evaluation.service.context;
+
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * eval 聚合上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalAggregationContext` 的 Java 类，该类位于包 `com.cyberpeace.cr.evaluation.service.context` 中。这个类主要用于表示评估聚合上下文的信息。以下是对其主要特性和功能的简要分析： 
  * ### 包声明与导入 
@@ -20,22 +36,6 @@
  * - **注解使用**：通过使用 Lombok 提供的 `@Getter` 和 `@Setter` 注解，简化了代码量，同时使用 `@NotNull` 和 `@ApiModelProperty` 注解确保了字段的非空验证和文档生成。 
  * - **设计目的**：该类的设计目的是为了在系统内部或外部接口中传递和处理评估聚合相关的数据，特别是用于支持评估和分析过程中的聚合操作。 
 **/
-package com.cyberpeace.cr.evaluation.service.context;
-
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * eval 聚合上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalAggregationContext {
@@ -89,3 +89,4 @@ public class EvalAggregationContext {
 	private String matrixData;
 
 }
+

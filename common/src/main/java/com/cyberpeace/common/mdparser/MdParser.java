@@ -1,3 +1,33 @@
+package com.cyberpeace.common.mdparser;
+
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
+import com.cyberpeace.common.mdparser.convert.MdConvert;
+import com.cyberpeace.common.mdparser.convert.MdConvertEnum;
+import com.cyberpeace.common.mdparser.convert.NoConvert;
+import com.cyberpeace.common.mdparser.parser.MdContentParser;
+import com.cyberpeace.common.util.*;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+
+import java.io.*;
+import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * md 解析器
+ *
+ * @author chenzhuo
+ * 仅支持标题和列表 列表仅支持二级@date 2024/11/08
+ */
 /**
  * ### 代码分析 
  * #### 功能概述 
@@ -36,36 +66,6 @@
  * 2. 异常处理虽完善，但在某些场景下可能需要更细粒度的控制。 
  * 3. 文件操作部分可以进一步优化以提高性能和可维护性。 
 **/
-package com.cyberpeace.common.mdparser;
-
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
-import com.cyberpeace.common.mdparser.convert.MdConvert;
-import com.cyberpeace.common.mdparser.convert.MdConvertEnum;
-import com.cyberpeace.common.mdparser.convert.NoConvert;
-import com.cyberpeace.common.mdparser.parser.MdContentParser;
-import com.cyberpeace.common.util.*;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-
-import java.io.*;
-import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-/**
- * md 解析器
- *
- * @author chenzhuo
- * 仅支持标题和列表 列表仅支持二级@date 2024/11/08
- */
 @Slf4j
 public class MdParser {
 
@@ -331,3 +331,4 @@ public class MdParser {
 
 
 }
+

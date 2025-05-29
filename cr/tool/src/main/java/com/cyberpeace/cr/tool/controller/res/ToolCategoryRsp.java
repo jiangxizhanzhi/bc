@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.tool.controller.res;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 工具类别响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolCategoryRsp` 的 Java 类，该类用于表示工具类别的响应数据。以下是详细的分析和总结： 
  * ### 类名与包名 
@@ -33,19 +46,6 @@
  * ``` 
  * 这段代码简洁明了，功能明确，符合常见的 API 响应对象的设计规范。 
 **/
-package com.cyberpeace.cr.tool.controller.res;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 工具类别响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class ToolCategoryRsp implements Serializable {
@@ -75,3 +75,4 @@ public class ToolCategoryRsp implements Serializable {
 	private String type;
 
 }
+

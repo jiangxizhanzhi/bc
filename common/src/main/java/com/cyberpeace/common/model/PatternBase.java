@@ -1,3 +1,19 @@
+package com.cyberpeace.common.model;
+
+import com.cyberpeace.common.util.LocalStringUtil;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serializable;
+
+/**
+ * 图案基底
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `PatternBase` 的 Java 类，用于表示图案基底。以下是代码的主要分析和总结： 
  * ### 主要功能： 
@@ -17,22 +33,6 @@
  * - 该类的核心功能是管理图案的模式字段，并提供一个自定义的 setter 方法来确保字段在设置时经过必要的验证和处理。 
  * - 使用了 Lombok 和 Swagger 注解，提高了代码的简洁性和可读性。 
 **/
-package com.cyberpeace.common.model;
-
-import com.cyberpeace.common.util.LocalStringUtil;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serializable;
-
-/**
- * 图案基底
- *
- * @author SN
- * @date 2024/11/08
- */
 @ApiModel
 @Data
 public class PatternBase implements Serializable {
@@ -55,3 +55,4 @@ public class PatternBase implements Serializable {
 		this.pattern = newPattern;
 	}
 }
+

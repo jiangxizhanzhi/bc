@@ -1,3 +1,24 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import javax.validation.constraints.NotBlank;
+
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课堂实践请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomPracticeReq` 的 Java 类，该类用于表示课堂实践请求体。以下是对其主要特性和功能的简要分析： 
  * ### 类定义与继承 
@@ -29,27 +50,6 @@
  * ### 总结 
  * `ClassroomPracticeReq` 类主要用于处理课堂实践相关的请求数据。它通过继承 `PageReqBase` 类来获取分页相关功能，并通过 Lombok 和 Swagger 注解简化了代码编写和文档生成。验证注解确保了关键字段的有效性，从而提高了数据的健壮性。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import javax.validation.constraints.NotBlank;
-
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课堂实践请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PageReqBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -115,3 +115,4 @@ public class ClassroomPracticeReq extends PageReqBase {
 	public void setIs_commit(Boolean isCommit) {this.isCommit = isCommit;}
 	public void setIs_mark(Boolean isMark) {this.isMark = isMark;}
 }
+

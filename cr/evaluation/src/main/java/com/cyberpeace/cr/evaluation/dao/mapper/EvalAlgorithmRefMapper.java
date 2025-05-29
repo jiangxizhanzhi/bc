@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.evaluation.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithmRef;
+import org.mapstruct.Mapper;
+import org.springframework.stereotype.Repository;
+
+/**
+ * 评估算法裁判Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalAlgorithmRefMapper` 的接口，该接口继承自 `BaseMapper<EvalAlgorithmRef>`。以下是对其详细分析： 
  * 1. **包声明**： 
@@ -30,20 +43,8 @@
  * - `@Mapper` 和 `@Repository` 注解确保了这个接口可以被 Spring 容器管理，并且能够与 MyBatis 集成。 
  * 这段代码简洁地实现了对 `EvalAlgorithmRef` 实体类的基本数据库操作功能。 
 **/
-package com.cyberpeace.cr.evaluation.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithmRef;
-import org.mapstruct.Mapper;
-import org.springframework.stereotype.Repository;
-
-/**
- * 评估算法裁判Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 @Repository
 public interface EvalAlgorithmRefMapper extends BaseMapper<EvalAlgorithmRef> {
 }
+

@@ -1,3 +1,24 @@
+package com.cyberpeace.oj.course.service;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
+import com.cyberpeace.oj.course.controller.res.TrainPlanRsp;
+import com.cyberpeace.oj.course.dao.entity.TrainPlan;
+import com.cyberpeace.oj.course.service.bo.TrainPlanBo;
+
+import java.util.List;
+
+/**
+ * 训练计划Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `TrainPlanService` 的接口，它继承自 `IService<TrainPlan>`。这个接口主要用于处理与训练计划相关的业务逻辑。以下是对其主要部分的分析： 
  * ### 接口定义 
@@ -34,27 +55,6 @@
  * - 使用泛型 `IPage<TrainPlanRsp>` 可以方便地进行分页查询，并且可以灵活地调整返回的数据格式。 
  * - 接口中的方法注释清晰，有助于开发者理解每个方法的功能和使用场景。 
 **/
-package com.cyberpeace.oj.course.service;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
-import com.cyberpeace.oj.course.controller.res.TrainPlanRsp;
-import com.cyberpeace.oj.course.dao.entity.TrainPlan;
-import com.cyberpeace.oj.course.service.bo.TrainPlanBo;
-
-import java.util.List;
-
-/**
- * 训练计划Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see IService
- * @since 1.0.0
- */
 public interface TrainPlanService extends IService<TrainPlan> {
 
 	/**
@@ -94,3 +94,4 @@ public interface TrainPlanService extends IService<TrainPlan> {
 	 */
 	void checkNameRepeat(String name, String id, String userId);
 }
+

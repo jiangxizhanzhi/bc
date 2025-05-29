@@ -1,3 +1,31 @@
+package com.cyberpeace.cr.evaluation.service.impl;
+
+import com.cyberpeace.common.util.JsonUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.crbase.service.context.scene.ElementFlowListContext;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
+import com.cyberpeace.cr.evaluation.service.EvalSceneService;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskFlowListQuery;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.LocalSceneService;
+
+/**
+ * 评估场景Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalSceneServiceImpl` 的服务类，实现了 `EvalSceneService` 接口。该类主要用于处理与评估场景相关的业务逻辑。下面是对代码的简要分析： 
  * ### 类及方法概述 
@@ -40,34 +68,6 @@
  * - 依赖于 `LocalSceneService` 进行具体的场景操作。 
  * - 通过 `UserInfoContext` 获取当前用户ID，以确保操作的安全性和准确性。 
 **/
-package com.cyberpeace.cr.evaluation.service.impl;
-
-import com.cyberpeace.common.util.JsonUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
-import com.cyberpeace.cr.crbase.service.context.scene.ElementFlowListContext;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
-import com.cyberpeace.cr.evaluation.service.EvalSceneService;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskFlowListQuery;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.service.LocalSceneService;
-
-/**
- * 评估场景Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Slf4j
 @Service
 public class EvalSceneServiceImpl implements EvalSceneService {
@@ -155,3 +155,4 @@ public class EvalSceneServiceImpl implements EvalSceneService {
 	}
 
 }
+

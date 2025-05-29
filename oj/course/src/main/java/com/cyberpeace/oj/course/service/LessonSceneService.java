@@ -1,3 +1,19 @@
+package com.cyberpeace.oj.course.service;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
+
+import java.util.List;
+
+/**
+ * 课场景Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonSceneService` 的接口，该接口主要用于管理课程场景相关的操作。以下是对其主要功能和方法的简要分析： 
  * ### 接口名称 
@@ -56,22 +72,6 @@
  * - **返回类型**: 根据具体的功能，返回类型包括 `JSONObject` 和 `Boolean`，以提供操作结果或状态。 
  * 这个接口的设计考虑到了课程场景的多种管理需求，并且通过鉴权机制确保了操作的安全性。 
 **/
-package com.cyberpeace.oj.course.service;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
-
-import java.util.List;
-
-/**
- * 课场景Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface LessonSceneService {
 
 	/**
@@ -162,3 +162,4 @@ public interface LessonSceneService {
 	 */
 	List<SceneMonitorBo> lessonMonitor(String lessonId);
 }
+

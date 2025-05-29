@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.crbase.controller.rsp;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 靶场模板公共信息类
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `BusinessTemplateRsp` 的 Java 类，用于表示靶场模板的公共信息。以下是对其的主要分析： 
  * ### 类的功能与作用 
@@ -23,23 +40,6 @@
  * ### 总结 
  * 此代码是一个典型的 DTO（Data Transfer Object）类，用于在不同层之间传递数据。它结构清晰，注解丰富，便于后续开发和维护。 
 **/
-package com.cyberpeace.cr.crbase.controller.rsp;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 靶场模板公共信息类
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class BusinessTemplateRsp implements Serializable {
@@ -117,3 +117,4 @@ public class BusinessTemplateRsp implements Serializable {
 	private SceneConfigRsp sceneConfigInfo;
 
 }
+

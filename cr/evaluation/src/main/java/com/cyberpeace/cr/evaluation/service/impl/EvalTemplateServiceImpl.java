@@ -1,3 +1,49 @@
+package com.cyberpeace.cr.evaluation.service.impl;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.ListUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
+import com.cyberpeace.cr.crbase.service.CrConstantsService;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
+import com.cyberpeace.cr.evaluation.service.EvalTaskService;
+import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
+import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
+import com.cyberpeace.cs.dao.entity.Attachment;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * 评估模板Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTemplateServiceImpl` 的类，该类实现了 `EvalTemplateService` 接口。这个类主要用于处理与评估模板相关的业务逻辑。以下是对其主要功能和结构的简要分析： 
  * ### 类定义 
@@ -51,52 +97,6 @@
  * ### 总结 
  * 该类主要负责处理评估模板的CRUD操作以及相关的业务逻辑验证。通过依赖注入的方式引入了多个服务和映射器，从而能够方便地进行数据库操作和调用其他服务。整体设计遵循了良好的分层架构原则，确保了代码的可维护性和可扩展性。 
 **/
-package com.cyberpeace.cr.evaluation.service.impl;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.ListUtil;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
-import com.cyberpeace.cr.crbase.service.CrConstantsService;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
-import com.cyberpeace.cr.evaluation.service.EvalTaskService;
-import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
-import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
-import com.cyberpeace.cs.dao.entity.Attachment;
-import com.cyberpeace.cs.service.AttachmentService;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-
-/**
- * 评估模板Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Service
 @Slf4j
 public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, EvalTemplate> implements EvalTemplateService {

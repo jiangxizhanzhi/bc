@@ -1,38 +1,3 @@
-/**
- * 这段代码是一个Spring Boot后端控制器类，用于管理评估算法（`EvalAlgorithm`）。以下是代码的主要功能和结构分析： 
- * ### 主要功能： 
- * 1. **新增算法** (`POST /cr/eval/algorithm`) 
- * - 接收 `EvalAlgorithmReq` 请求体，将其转换为 `EvalAlgorithm` 实体并保存到数据库。 
- * 2. **编辑算法** (`PUT /cr/eval/algorithm`) 
- * - 更新已有算法。如果该算法已经被使用，则会创建一个新的算法实例，并将旧算法标记为不可用。 
- * 3. **删除算法** (`DELETE /cr/eval/algorithm`) 
- * - 批量删除算法，支持逻辑删除（如标记状态）或物理删除，同时检查内置算法是否被尝试删除。 
- * 4. **获取单个算法详情** (`GET /cr/eval/algorithm`) 
- * - 根据资源 ID 查询单个算法的详细信息。 
- * 5. **根据类型获取算法列表** (`GET /cr/eval/algorithm/type`) 
- * - 根据算法类型筛选并返回算法列表。 
- * 6. **获取所有算法** (`GET /cr/eval/algorithm/getAll`) 
- * - 返回系统中所有算法的列表。 
- * 7. **分页查询算法列表** (`GET /cr/eval/algorithm/list`) 
- * - 支持分页、模糊搜索、排序等功能，返回符合查询条件的算法列表。 
- * --- 
- * ### 技术要点： 
- * 1. **依赖注入与服务层交互** 
- * - 使用了 `EvalAlgorithmService` 和 `EvalAlgorithmMapper` 提供业务逻辑和数据访问支持。 
- * 2. **事务管理** 
- * - 在编辑和删除算法时，使用了 `TransactionTemplate` 管理事务，确保操作的原子性。 
- * 3. **校验与异常处理** 
- * - 包含多种校验逻辑（如名称重复、参数合法性等），并通过 `BusinessException` 抛出异常。 
- * 4. **JSON 数据转换** 
- * - 使用工具类 `JsonUtil` 将对象转换为 JSON 或数组格式，便于前端解析。 
- * 5. **权限控制** 
- * - 使用 `@RequiresPermissions` 注解限制接口的访问权限。 
- * 6. **流式操作** 
- * - 大量使用 Java 8 的 Stream API 进行集合操作，例如过滤、映射等。 
- * --- 
- * ### 总结： 
- * 该代码实现了一个完整的评估算法管理模块，覆盖了增删改查的核心功能。代码结构清晰，注释详尽，体现了良好的面向对象设计原则。同时，通过引入事务管理、校验机制和权限控制，增强了系统的健壮性和安全性。 
-**/
 package com.cyberpeace.cr.evaluation.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -85,6 +50,41 @@ import java.util.stream.Collectors;
  * @author SN
  * @date 2024/11/08
  */
+/**
+ * 这段代码是一个Spring Boot后端控制器类，用于管理评估算法（`EvalAlgorithm`）。以下是代码的主要功能和结构分析： 
+ * ### 主要功能： 
+ * 1. **新增算法** (`POST /cr/eval/algorithm`) 
+ * - 接收 `EvalAlgorithmReq` 请求体，将其转换为 `EvalAlgorithm` 实体并保存到数据库。 
+ * 2. **编辑算法** (`PUT /cr/eval/algorithm`) 
+ * - 更新已有算法。如果该算法已经被使用，则会创建一个新的算法实例，并将旧算法标记为不可用。 
+ * 3. **删除算法** (`DELETE /cr/eval/algorithm`) 
+ * - 批量删除算法，支持逻辑删除（如标记状态）或物理删除，同时检查内置算法是否被尝试删除。 
+ * 4. **获取单个算法详情** (`GET /cr/eval/algorithm`) 
+ * - 根据资源 ID 查询单个算法的详细信息。 
+ * 5. **根据类型获取算法列表** (`GET /cr/eval/algorithm/type`) 
+ * - 根据算法类型筛选并返回算法列表。 
+ * 6. **获取所有算法** (`GET /cr/eval/algorithm/getAll`) 
+ * - 返回系统中所有算法的列表。 
+ * 7. **分页查询算法列表** (`GET /cr/eval/algorithm/list`) 
+ * - 支持分页、模糊搜索、排序等功能，返回符合查询条件的算法列表。 
+ * --- 
+ * ### 技术要点： 
+ * 1. **依赖注入与服务层交互** 
+ * - 使用了 `EvalAlgorithmService` 和 `EvalAlgorithmMapper` 提供业务逻辑和数据访问支持。 
+ * 2. **事务管理** 
+ * - 在编辑和删除算法时，使用了 `TransactionTemplate` 管理事务，确保操作的原子性。 
+ * 3. **校验与异常处理** 
+ * - 包含多种校验逻辑（如名称重复、参数合法性等），并通过 `BusinessException` 抛出异常。 
+ * 4. **JSON 数据转换** 
+ * - 使用工具类 `JsonUtil` 将对象转换为 JSON 或数组格式，便于前端解析。 
+ * 5. **权限控制** 
+ * - 使用 `@RequiresPermissions` 注解限制接口的访问权限。 
+ * 6. **流式操作** 
+ * - 大量使用 Java 8 的 Stream API 进行集合操作，例如过滤、映射等。 
+ * --- 
+ * ### 总结： 
+ * 该代码实现了一个完整的评估算法管理模块，覆盖了增删改查的核心功能。代码结构清晰，注释详尽，体现了良好的面向对象设计原则。同时，通过引入事务管理、校验机制和权限控制，增强了系统的健壮性和安全性。 
+**/
 @Slf4j
 @Api(tags = "后台-测试靶场-算法管理")
 @RestController
@@ -405,3 +405,4 @@ public class EvalAlgorithmAdminController {
 	}
 
 }
+

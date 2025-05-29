@@ -1,3 +1,24 @@
+package com.cyberpeace.space.service.context.frame;
+
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.StreamApiUtils;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import org.apache.commons.compress.utils.Lists;
+
+import java.util.List;
+
+/**
+ * 动作框架层级
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/05
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceFrameLevel` 的类，用于表示某种动作框架的层级结构。以下是代码的主要功能和特点： 
  * 1. **类的功能**： 
@@ -22,27 +43,6 @@
  * - 抛出自定义异常 `BusinessException`，并使用 `ErrorCode` 来标识具体的错误类型。 
  * 总结来说，这个类主要用于构建和验证一个树状结构的数据模型，确保数据的完整性和一致性。 
 **/
-package com.cyberpeace.space.service.context.frame;
-
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.StreamApiUtils;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import org.apache.commons.compress.utils.Lists;
-
-import java.util.List;
-
-/**
- * 动作框架层级
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/05
- * @since 1.0.0
- */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -92,3 +92,4 @@ public class SpaceFrameLevel {
 	}
 
 }
+

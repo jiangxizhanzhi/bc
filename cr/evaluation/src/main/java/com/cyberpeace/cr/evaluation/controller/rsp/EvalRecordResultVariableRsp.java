@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 评估记录结果变量响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalRecordResultVariableRsp` 的 Java 类，用于表示评估记录结果变量的响应。以下是详细的分析： 
  * ### 类定义 
@@ -22,20 +36,6 @@
  * - **注解**：使用了 Swagger 注解来生成文档，并且使用了 Lombok 注解来简化代码，减少样板代码。 
  * 这个类的设计简洁明了，便于理解和维护。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 评估记录结果变量响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalRecordResultVariableRsp implements Serializable {
@@ -69,3 +69,4 @@ public class EvalRecordResultVariableRsp implements Serializable {
     @ApiModelProperty("评分算法信息")
     private EvalRecordResultAlgorithmRsp markAlgorithm;
 }
+

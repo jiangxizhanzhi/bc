@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 
+ * @TableName cr_eval_collection
+ */
 /**
  * 这段代码定义了一个名为 `EvalCollection` 的 Java 类，该类位于包 `com.cyberpeace.cr.evaluation.dao.entity` 中。以下是对其主要特性和功能的简要分析： 
  * 1. **继承关系**： 
@@ -17,20 +31,6 @@
  * - 代码中使用了 MyBatis-Plus（用于数据库操作）和 Lombok（用于简化 getter 和 setter 方法的生成）。 
  * 综上所述，这段代码定义了一个用于存储评估相关数据的实体类，并且通过继承和注解的方式，使其能够方便地与数据库进行交互。 
 **/
-package com.cyberpeace.cr.evaluation.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 
- * @TableName cr_eval_collection
- */
 @TableName(value = "cr_eval_collection")
 @Getter
 @Setter

@@ -1,34 +1,3 @@
-/**
- * 这段代码是一个针对 `SpaceSourceAnalyzeRuleController` 的单元测试类，使用了 JUnit 5 和 Spring Boot 测试框架。以下是对代码的简要分析： 
- * ### 主要功能 
- * 1. **测试目标**：该类主要用于测试 `SpaceSourceAnalyzeRuleController` 控制器的功能，包括分页、新增、更新、删除和获取详细信息等操作。 
- * 2. **依赖注入**： 
- * - 使用 `@Autowired` 注入 `MockMvc` 对象用于模拟 HTTP 请求。 
- * - 使用 `@MockBean` 模拟 `SpaceSourceAnalyzeRuleService` 的行为。 
- * - 使用 `@SpyBean` 模拟 `SpaceSourceAnalyzeRuleController` 的部分方法。 
- * ### 测试方法 
- * 1. **`testPage`**： 
- * - 测试分页功能，验证返回结果是否符合预期。 
- * - 使用 `get` 方法请求 `/space/rule/space_source_analyze_rule/list`。 
- * - 验证返回状态为 `200 OK`，且 JSON 内容与预期一致。 
- * 2. **`testAddAttack`**： 
- * - 测试新增功能，通过 `post` 方法请求 `/space/rule/space_source_analyze_rule`。 
- * - 验证返回状态为 `200 OK`，且 JSON 内容与预期一致。 
- * 3. **`testUpdateA`**： 
- * - 测试更新功能，通过 `patch` 方法请求 `/space/rule/space_source_analyze_rule`。 
- * - 验证返回状态为 `200 OK`，且 JSON 内容与预期一致。 
- * 4. **`testDeleteA`**： 
- * - 测试删除功能，通过 `delete` 方法请求 `/space/rule/space_source_analyze_rule`。 
- * - 验证返回状态为 `200 OK`，且 JSON 内容与预期一致。 
- * 5. **`testGetADetail`**： 
- * - 测试获取详细信息功能，通过 `get` 方法请求 `/space/rule/space_source_analyze_rule`。 
- * - 验证返回状态为 `200 OK`，且 JSON 内容与预期一致。 
- * ### 初始化设置 
- * - 在 `setUp` 方法中，通过 `when` 和 `doReturn` 设置了多个模拟行为，确保测试时服务层的行为可控。 
- * - 初始化了分页对象 `Page` 和表信息 `TableInfoHelper`，用于支持后续测试。 
- * ### 总结 
- * 该测试类覆盖了控制器的主要功能点，通过模拟 HTTP 请求和响应，验证了控制器的行为是否符合预期。代码结构清晰，测试用例设计合理，能够有效保证控制器的正确性。 
-**/
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
@@ -61,6 +30,37 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * 这段代码是一个针对 `SpaceSourceAnalyzeRuleController` 的单元测试类，使用了 JUnit 5 和 Spring Boot 测试框架。以下是对代码的简要分析： 
+ * ### 主要功能 
+ * 1. **测试目标**：该类主要用于测试 `SpaceSourceAnalyzeRuleController` 控制器的功能，包括分页、新增、更新、删除和获取详细信息等操作。 
+ * 2. **依赖注入**： 
+ * - 使用 `@Autowired` 注入 `MockMvc` 对象用于模拟 HTTP 请求。 
+ * - 使用 `@MockBean` 模拟 `SpaceSourceAnalyzeRuleService` 的行为。 
+ * - 使用 `@SpyBean` 模拟 `SpaceSourceAnalyzeRuleController` 的部分方法。 
+ * ### 测试方法 
+ * 1. **`testPage`**： 
+ * - 测试分页功能，验证返回结果是否符合预期。 
+ * - 使用 `get` 方法请求 `/space/rule/space_source_analyze_rule/list`。 
+ * - 验证返回状态为 `200 OK`，且 JSON 内容与预期一致。 
+ * 2. **`testAddAttack`**： 
+ * - 测试新增功能，通过 `post` 方法请求 `/space/rule/space_source_analyze_rule`。 
+ * - 验证返回状态为 `200 OK`，且 JSON 内容与预期一致。 
+ * 3. **`testUpdateA`**： 
+ * - 测试更新功能，通过 `patch` 方法请求 `/space/rule/space_source_analyze_rule`。 
+ * - 验证返回状态为 `200 OK`，且 JSON 内容与预期一致。 
+ * 4. **`testDeleteA`**： 
+ * - 测试删除功能，通过 `delete` 方法请求 `/space/rule/space_source_analyze_rule`。 
+ * - 验证返回状态为 `200 OK`，且 JSON 内容与预期一致。 
+ * 5. **`testGetADetail`**： 
+ * - 测试获取详细信息功能，通过 `get` 方法请求 `/space/rule/space_source_analyze_rule`。 
+ * - 验证返回状态为 `200 OK`，且 JSON 内容与预期一致。 
+ * ### 初始化设置 
+ * - 在 `setUp` 方法中，通过 `when` 和 `doReturn` 设置了多个模拟行为，确保测试时服务层的行为可控。 
+ * - 初始化了分页对象 `Page` 和表信息 `TableInfoHelper`，用于支持后续测试。 
+ * ### 总结 
+ * 该测试类覆盖了控制器的主要功能点，通过模拟 HTTP 请求和响应，验证了控制器的行为是否符合预期。代码结构清晰，测试用例设计合理，能够有效保证控制器的正确性。 
+**/
 @WebMvcTest(SpaceSourceAnalyzeRuleController.class)
 class SpaceSourceAnalyzeRuleControllerTest {
 
@@ -153,3 +153,4 @@ class SpaceSourceAnalyzeRuleControllerTest {
                 .andExpect(content().json("{\"data\":{\"resourceId\":null,\"name\":null,\"rule\":null},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 }
+

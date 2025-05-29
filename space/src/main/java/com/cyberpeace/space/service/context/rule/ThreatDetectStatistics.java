@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.rule;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 威胁检测统计信息
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个名为 `ThreatDetectStatistics` 的 Java 类，位于 `com.cyberpeace.space.service.context.rule` 包中。以下是代码的简要分析： 
  * ### 主要功能： 
@@ -22,20 +36,6 @@
  * ### 总结： 
  * 该类是一个简单的、结构化的数据容器，用于表示威胁检测中的多种统计信息。通过注解的使用，增强了代码的可读性和可维护性，适合在网络安全相关系统中使用。 
 **/
-package com.cyberpeace.space.service.context.rule;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 威胁检测统计信息
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class ThreatDetectStatistics {
@@ -97,3 +97,4 @@ public class ThreatDetectStatistics {
 	private Integer sourceAnalyze = 0;
 
 }
+

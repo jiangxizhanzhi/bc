@@ -1,3 +1,20 @@
+package com.cyberpeace.space.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 调用计数
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/12
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceCallCount` 的实体类，用于表示数据库中的 "space_call_count" 表。以下是代码的主要分析： 
  * 1. **包与导入**： 
@@ -16,23 +33,6 @@
  * - 提供了基本的 CRUD 操作支持，便于操作数据库表中的记录。 
  * 总结：这是一个简单的实体类，结合了 MyBatis-Plus 和 Lombok，用于管理 `space_call_count` 表的数据。 
 **/
-package com.cyberpeace.space.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 调用计数
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/12
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("space_call_count")
@@ -55,3 +55,4 @@ public class SpaceCallCount {
     private Integer calls;
 
 }
+

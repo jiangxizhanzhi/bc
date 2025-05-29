@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.frame;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Space Action 工具
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceActionTool` 的 Java 类，位于包 `com.cyberpeace.space.service.context.frame` 中。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -15,20 +29,6 @@
  * - 该类旨在封装与空间操作相关的信息，便于在前后端交互中传递数据。 
  * 总结来说，这是一个简单的工具类，主要用于封装与空间操作相关的数据结构，并通过注解增强了代码的可读性和文档生成能力。 
 **/
-package com.cyberpeace.space.service.context.frame;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * Space Action 工具
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceActionTool {
@@ -44,3 +44,4 @@ public class SpaceActionTool {
 	@ApiModelProperty(value = "平台")
 	private String platforms;
 }
+

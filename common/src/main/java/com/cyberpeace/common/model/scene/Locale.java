@@ -1,3 +1,17 @@
+package com.cyberpeace.common.model.scene;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 现场
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `Locale` 的 Java 类，位于包 `com.cyberpeace.common.model.scene` 下。以下是代码的主要分析和总结： 
  * 1. **类的功能**： 
@@ -17,20 +31,6 @@
  * - 此类可用于存储和传递区域信息，在国际化应用中作为关键配置的一部分。 
  * 总结：这是一个简单的数据模型类，封装了区域信息（语言、国家、变体），支持序列化，并通过 Lombok 提高了代码简洁性。 
 **/
-package com.cyberpeace.common.model.scene;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 现场
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class Locale implements Serializable {
@@ -50,3 +50,4 @@ public class Locale implements Serializable {
 	 */
 	private String VARIANT;
 }
+

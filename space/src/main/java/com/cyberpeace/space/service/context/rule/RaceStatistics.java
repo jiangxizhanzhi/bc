@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.rule;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 比赛统计数据
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个名为 `RaceStatistics` 的 Java 类，用于表示比赛中的统计数据。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -13,20 +27,6 @@
  * - 该类旨在集中管理比赛统计相关的数据，方便在系统中传递和使用这些信息。 
  * 总结：这是一个简单的 DTO 类，用于存储和传递比赛的统计数据，具有良好的可读性和扩展性。 
 **/
-package com.cyberpeace.space.service.context.rule;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 比赛统计数据
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class RaceStatistics {
@@ -56,3 +56,4 @@ public class RaceStatistics {
 	private Integer violationJudge = 0;
 
 }
+

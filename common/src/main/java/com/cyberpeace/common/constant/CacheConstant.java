@@ -1,3 +1,13 @@
+package com.cyberpeace.common.constant;
+
+/**
+ * 缓存常量
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CacheConstant` 的 Java 接口，用于存储与缓存相关的常量。以下是简要分析： 
  * 1. **功能描述**： 
@@ -14,16 +24,6 @@
  * - 适用于需要统一管理缓存键值的场景，有助于代码的可维护性和一致性。 
  * 总结：这是一个简单的缓存常量管理接口，定义了三个与缓存相关的字符串常量，适合在需要统一缓存键值的项目中使用。 
 **/
-package com.cyberpeace.common.constant;
-
-/**
- * 缓存常量
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface CacheConstant {
 
 	/**
@@ -47,3 +47,4 @@ public interface CacheConstant {
 	 */
 	String REMOTE_TOPO = "remote_topo";
 }
+

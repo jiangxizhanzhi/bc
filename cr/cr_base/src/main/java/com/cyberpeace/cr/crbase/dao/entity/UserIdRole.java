@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.crbase.dao.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 用户id岗位
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `UserIdRole` 的 Java 类，位于包 `com.cyberpeace.cr.crbase.dao.entity` 中。以下是简要分析： 
  * 1. **类的功能**： 
@@ -13,18 +25,6 @@
  * 这个类可能是作为数据传输对象（DTO）或实体类使用，用于在系统中存储和传递用户与岗位的关系。 
  * 总结：这是一个简单的实体类，通过 Lombok 减少了样板代码，专注于描述用户 ID 和岗位之间的关系。 
 **/
-package com.cyberpeace.cr.crbase.dao.entity;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 用户id岗位
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @AllArgsConstructor
@@ -39,3 +39,4 @@ public class UserIdRole {
      */
     private CrRole role;
 }
+

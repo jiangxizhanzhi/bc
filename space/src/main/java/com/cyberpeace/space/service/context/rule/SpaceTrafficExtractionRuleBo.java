@@ -1,3 +1,22 @@
+package com.cyberpeace.space.service.context.rule;
+
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.dao.entity.SpaceTrafficExtractionRule;
+import com.cyberpeace.space.model.SpaceBoBase;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间流量萃取统治Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析与总结 
  * #### 1. **功能概述** 
@@ -32,25 +51,6 @@
  * 该类是一个典型的业务对象类，用于封装“空间流量萃取规则”的数据模型，并提供便捷的转换方法。代码结构清晰，符合现代 Java 开发的最佳实践，但在字段类型定义和注释方面仍有优化空间。 
 **/
 
-package com.cyberpeace.space.service.context.rule;
-
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.dao.entity.SpaceTrafficExtractionRule;
-import com.cyberpeace.space.model.SpaceBoBase;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间流量萃取统治Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBoBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceTrafficExtractionRuleBo extends SpaceBoBase {

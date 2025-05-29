@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.tool.service.context;
+
+import com.cyberpeace.cr.tool.controller.res.WebToolCategoryRsp;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.compress.utils.Lists;
+
+import java.util.List;
+
+/**
+ * 工具类型类别
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 /**
  * 这段代码定义了一个名为 `ToolTypeCategory` 的类，该类用于表示工具类型类别。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -19,21 +34,6 @@
  * - 通过 Lombok 的注解减少了样板代码，提高了代码的可读性和简洁性。 
  * 这个类的设计使得工具类型及其相关类别信息能够方便地进行封装和传递。 
 **/
-package com.cyberpeace.cr.tool.service.context;
-
-import com.cyberpeace.cr.tool.controller.res.WebToolCategoryRsp;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.compress.utils.Lists;
-
-import java.util.List;
-
-/**
- * 工具类型类别
- *
- * @author SN
- * @date 2024/11/13
- */
 @Getter
 @Setter
 public class ToolTypeCategory {
@@ -53,3 +53,4 @@ public class ToolTypeCategory {
      */
     private List<WebToolCategoryRsp> categories = Lists.newArrayList();
 }
+

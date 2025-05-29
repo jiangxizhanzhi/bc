@@ -1,3 +1,19 @@
+package com.cyberpeace.gateway.controller.req;
+
+import java.io.Serializable;
+
+import javax.validation.constraints.NotBlank;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * NFS安装请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `NfsMountReq` 的 Java 类，该类用于表示 NFS（Network File System）安装请求的数据结构。以下是对其主要特性和功能的简要分析： 
  * ### 包声明与导入 
@@ -31,22 +47,6 @@
  * - **可序列化**：实现了 `Serializable` 接口，支持对象在网络上传输或持久化存储。 
  * 该类是一个典型的 DTO（Data Transfer Object），主要用于传输数据，并通过注解增强了数据验证和文档生成的功能。 
 **/
-package com.cyberpeace.gateway.controller.req;
-
-import java.io.Serializable;
-
-import javax.validation.constraints.NotBlank;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * NFS安装请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class NfsMountReq implements Serializable {
@@ -66,3 +66,4 @@ public class NfsMountReq implements Serializable {
 	private String path;
 
 }
+

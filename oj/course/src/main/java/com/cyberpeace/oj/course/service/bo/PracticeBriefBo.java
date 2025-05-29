@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 实践简报 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `PracticeBriefBo` 的 Java 类，用于表示实践简报的基本信息。以下是对其主要特性和功能的简要分析： 
  * ### 类概述 
@@ -23,24 +41,6 @@
  * ### 总结 
  * `PracticeBriefBo` 类是一个简单的数据传输对象（DTO），用于存储和传输实践简报的相关信息。通过使用 Lombok 和 Swagger 注解，它有效地减少了代码量并增强了文档的可读性。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 实践简报 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -87,3 +87,4 @@ public class PracticeBriefBo implements Serializable {
 	private Integer totalCount;
 
 }
+

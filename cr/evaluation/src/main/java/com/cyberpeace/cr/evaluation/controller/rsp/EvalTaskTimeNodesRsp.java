@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import java.io.Serializable;
+import java.util.List;
+
+import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估任务时间节点响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTaskTimeNodesRsp` 的 Java 类，用于表示评估任务的时间节点响应。以下是详细的分析： 
  * ### 包声明和导入 
@@ -42,23 +59,6 @@
  * - 通过 Swagger 注解描述了 API 文档中的字段信息。 
  * 这个类的设计简洁明了，适用于 RESTful API 的响应数据结构。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import java.io.Serializable;
-import java.util.List;
-
-import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估任务时间节点响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalTaskTimeNodesRsp implements Serializable {
@@ -76,3 +76,4 @@ public class EvalTaskTimeNodesRsp implements Serializable {
 	private List<EvalTimeLineContext> data;
 
 }
+

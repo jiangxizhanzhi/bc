@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.crbase.controller.rsp;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 任务响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MissionRsp` 的 Java 类，用于表示任务相关的响应数据。以下是简要分析： 
  * ### 主要功能： 
@@ -14,21 +29,6 @@
  * ### 总结： 
  * 这是一个简单的 DTO 类，主要用于任务相关的信息传递和展示，设计上注重清晰性和可维护性。 
 **/
-package com.cyberpeace.cr.crbase.controller.rsp;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 任务响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MissionRsp implements Serializable {
@@ -93,3 +93,4 @@ public class MissionRsp implements Serializable {
 	@ApiModelProperty("备注")
 	private String remark;
 }
+

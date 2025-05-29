@@ -1,3 +1,13 @@
+package com.cyberpeace.common.baseinterface;
+
+/**
+ * 自定义验证
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CustomValidate` 的接口，位于包 `com.cyberpeace.common.baseinterface` 中。以下是简要分析： 
  * 1. **功能描述**： 
@@ -13,16 +23,6 @@
  * - 可用于需要自定义校验逻辑的场景，例如表单校验、参数检查等。 
  * 总结：这是一个简单的接口定义，主要用于规范验证行为，为后续实现提供了统一的契约。 
 **/
-package com.cyberpeace.common.baseinterface;
-
-/**
- * 自定义验证
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface CustomValidate {
 
 	/**
@@ -31,3 +31,4 @@ public interface CustomValidate {
 	void validate();
 
 }
+

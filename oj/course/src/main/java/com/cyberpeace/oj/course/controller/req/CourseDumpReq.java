@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 课程转 储请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseDumpReq` 的 Java 类，该类用于处理课程转储请求。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -24,25 +43,6 @@
  * - **序列化支持**：由于实现了 `Serializable` 接口，该类的对象可以在网络上传输或保存到文件系统中。 
  * 这段代码简洁明了，使用了 Lombok 来减少样板代码，并且通过 Swagger 注解来提供文档化的信息。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 课程转 储请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -57,3 +57,4 @@ public class CourseDumpReq implements Serializable {
 	private List<String> resourceIds;
 
 }
+

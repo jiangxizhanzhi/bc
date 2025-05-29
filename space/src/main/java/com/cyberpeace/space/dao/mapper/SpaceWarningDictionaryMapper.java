@@ -1,3 +1,20 @@
+package com.cyberpeace.space.dao.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.space.dao.entity.SpaceWarningDictionary;
+
+/**
+ * 空间警告字典Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个基于 MyBatis-Plus 的 Mapper 接口，用于操作 `SpaceWarningDictionary` 实体类。以下是详细分析： 
  * ### 1. **包与导入** 
@@ -21,23 +38,6 @@
  * 该代码是一个典型的 MyBatis-Plus Mapper 接口，实现了对 `SpaceWarningDictionary` 实体类的通用数据操作。通过继承 `BaseMapper`，它具备了基础的 CRUD 功能，同时结合了 Spring 和 MyBatis 的注解机制，便于在 Spring Boot 项目中使用。 
 **/
 
-package com.cyberpeace.space.dao.mapper;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.space.dao.entity.SpaceWarningDictionary;
-
-/**
- * 空间警告字典Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 @Repository
 public interface SpaceWarningDictionaryMapper extends BaseMapper<SpaceWarningDictionary>

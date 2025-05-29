@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.dao.context;
+
+import java.util.List;
+
+import com.cyberpeace.common.model.PatternBase;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课程背景
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PatternBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonContext` 的 Java 类，该类继承自 `PatternBase`。以下是对代码的简要分析： 
  * ### 类定义 
@@ -26,23 +43,6 @@
  * - 该类继承自 `PatternBase`，可能包含了其他通用的属性或方法。 
  * - 使用了 Lombok 注解简化了代码，避免了手动编写 getter 和 setter 方法。 
 **/
-package com.cyberpeace.oj.course.dao.context;
-
-import java.util.List;
-
-import com.cyberpeace.common.model.PatternBase;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课程背景
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PatternBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class LessonContext extends PatternBase {
@@ -62,3 +62,4 @@ public class LessonContext extends PatternBase {
 	private List<String> courseIds;
 
 }
+

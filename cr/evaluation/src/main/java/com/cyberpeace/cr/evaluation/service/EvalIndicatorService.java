@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import java.util.List;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorReq;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
+import com.cyberpeace.cr.evaluation.service.context.EvalIndicatorContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+
+/**
+ * 评估指示器Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalIndicatorService` 的接口，该接口继承自 `IService<EvalIndicator>`。这个接口主要用于处理与评估指标相关的业务逻辑。以下是对该接口的简要分析： 
  * ### 接口概述 
@@ -42,23 +59,6 @@
  * - **扩展性**：由于该接口是基于 `IService` 的扩展，可以利用 `MyBatis-Plus` 提供的功能进行进一步的数据库操作优化。 
  * 通过上述分析，可以看出该接口设计较为全面，覆盖了评估指标管理的主要需求。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import java.util.List;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorReq;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
-import com.cyberpeace.cr.evaluation.service.context.EvalIndicatorContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
-
-/**
- * 评估指示器Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface EvalIndicatorService extends IService<EvalIndicator> {
 
 	/**
@@ -113,3 +113,4 @@ public interface EvalIndicatorService extends IService<EvalIndicator> {
 	 */
 	Integer selectIndexUsedNum(List<String> ids);
 }
+

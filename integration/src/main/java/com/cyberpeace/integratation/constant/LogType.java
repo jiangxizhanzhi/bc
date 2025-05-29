@@ -1,3 +1,13 @@
+package com.cyberpeace.integratation.constant;
+
+import lombok.Getter;
+
+/**
+ * 日志类型
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `LogType` 的枚举类，用于表示不同类型的日志。以下是详细的分析和总结： 
  * ### 类定义 
@@ -17,16 +27,6 @@
  * ### 总结 
  * 这个枚举类 `LogType` 定义了四种不同类型的日志，并且通过 `@Getter` 注解使得 `code` 和 `desc` 可以被外部访问。这种设计方式有助于提高代码的可读性和可维护性，同时方便在其他地方引用这些日志类型。 
 **/
-package com.cyberpeace.integratation.constant;
-
-import lombok.Getter;
-
-/**
- * 日志类型
- *
- * @author SN
- * @date 2024/11/08
- */
 public enum LogType {
     /**
      * 操作日志模块
@@ -64,3 +64,4 @@ public enum LogType {
     }
 
 }
+

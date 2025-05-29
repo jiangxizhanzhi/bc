@@ -1,3 +1,8 @@
+package com.cyberpeace.integratation.service.bo;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 这段代码定义了一个名为 `YxUserInfo` 的 Java 类，位于包 `com.cyberpeace.integratation.service.bo` 下。这个类使用了 Lombok 库来简化样板代码。 
  * ### 主要特点： 
@@ -14,11 +19,6 @@
  * - 这个类可能用于与用户相关的业务逻辑处理中，例如在服务层或数据访问层。 
  * 如果你有任何进一步的问题或需要更详细的分析，请告诉我！ 
 **/
-package com.cyberpeace.integratation.service.bo;
-
-import lombok.Getter;
-import lombok.Setter;
-
 @Getter
 @Setter
 public class YxUserInfo {
@@ -29,3 +29,4 @@ public class YxUserInfo {
 
 	private String name;
 }
+

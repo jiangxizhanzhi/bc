@@ -1,3 +1,24 @@
+package com.cyberpeace.space.service.context.rule;
+
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.space.dao.entity.SpaceScoreRankingRule;
+import com.cyberpeace.space.model.SpaceBoBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 空间得分排名统治Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 /**
  * ### 分析与总结 
  * #### 代码功能概述： 
@@ -33,27 +54,6 @@
  * `SpaceScoreRankingRuleBo` 是一个典型的业务对象类，设计合理且功能明确。通过继承和工具类的支持，它能够高效地完成 BO 到实体的转换，并具备良好的扩展性和维护性。 
 **/
 
-package com.cyberpeace.space.service.context.rule;
-
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.space.dao.entity.SpaceScoreRankingRule;
-import com.cyberpeace.space.model.SpaceBoBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 空间得分排名统治Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBoBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceScoreRankingRuleBo extends SpaceBoBase {

@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.oj.practice.service.bo.PracticeOperationDumpLoadBo;
+import com.cyberpeace.oj.practice.service.bo.PracticeTheoryDumpLoadBo;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 课程 dump load bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonDumpLoadBo` 的 Java 类，该类实现了 `Serializable` 接口。这个类用于表示课程相关的数据传输对象（DTO）。以下是对该类的简要分析： 
  * ### 类名及包结构 
@@ -34,26 +54,6 @@
  * ### 总结 
  * `LessonDumpLoadBo` 类是一个用于课程数据传输的对象，包含了课程的各种详细信息。它通过实现 `Serializable` 接口支持序列化操作，并且通过 Lombok 提供了自动化的 getter 和 setter 方法。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.oj.practice.service.bo.PracticeOperationDumpLoadBo;
-import com.cyberpeace.oj.practice.service.bo.PracticeTheoryDumpLoadBo;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 课程 dump load bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class LessonDumpLoadBo implements Serializable {
@@ -193,3 +193,4 @@ public class LessonDumpLoadBo implements Serializable {
 	 */
 	private List<PracticeOperationDumpLoadBo> operationPractice;
 }
+

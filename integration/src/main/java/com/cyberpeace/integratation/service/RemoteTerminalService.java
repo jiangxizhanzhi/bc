@@ -1,3 +1,19 @@
+package com.cyberpeace.integratation.service;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.model.scene.DeviceInfo;
+import com.cyberpeace.integratation.service.bo.ClusterImagePageReq;
+import com.cyberpeace.integratation.service.bo.TargetListReq;
+import com.cyberpeace.integratation.service.bo.mp.RealEquipmentPageRequest;
+import com.cyberpeace.integratation.service.bo.mp.VirtualUsbQueryParams;
+import com.mysql.cj.xdevapi.JsonArray;
+
+/**
+ * 靶标服务
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `RemoteTerminalService` 的接口，该接口包含多个方法，用于处理与远程终端相关的操作。以下是对其主要功能和结构的简要分析： 
  * ### 包声明和导入 
@@ -80,22 +96,6 @@
  * ### 总结 
  * `RemoteTerminalService` 接口提供了多种方法来处理与远程终端相关的操作，包括设备信息管理、图像分页、类别查询、探针系统分类查询等。这些方法通过不同的请求参数来实现特定的功能，并返回相应的结果。 
 **/
-package com.cyberpeace.integratation.service;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.model.scene.DeviceInfo;
-import com.cyberpeace.integratation.service.bo.ClusterImagePageReq;
-import com.cyberpeace.integratation.service.bo.TargetListReq;
-import com.cyberpeace.integratation.service.bo.mp.RealEquipmentPageRequest;
-import com.cyberpeace.integratation.service.bo.mp.VirtualUsbQueryParams;
-import com.mysql.cj.xdevapi.JsonArray;
-
-/**
- * 靶标服务
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface RemoteTerminalService {
 
 	/**
@@ -189,3 +189,4 @@ public interface RemoteTerminalService {
 	 */
 	JSONObject pageUsb(VirtualUsbQueryParams queryParams);
 }
+

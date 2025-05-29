@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 课程 dump load bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseDumpLoadBo` 的 Java 类，该类用于表示课程的详细信息，并实现了 `Serializable` 接口。以下是该类的简要分析： 
  * ### 类定义 
@@ -32,24 +50,6 @@
  * ### 总结 
  * 这个类是一个典型的业务对象（BO），用于封装课程的详细信息。它不仅包含了基础的信息字段，还包含了与课程相关的复杂对象，便于在不同的业务场景中使用。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
-/**
- * 课程 dump load bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class CourseDumpLoadBo implements Serializable {
@@ -180,3 +180,4 @@ public class CourseDumpLoadBo implements Serializable {
 	 */
 	private Map<String, String> filePathMap;
 }
+

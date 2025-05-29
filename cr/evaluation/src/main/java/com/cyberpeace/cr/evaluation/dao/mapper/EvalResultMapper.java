@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.evaluation.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalResult;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+
+/**
+ * 评估结果Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalResultMapper` 的接口，它继承了 `BaseMapper<EvalResult>`。以下是对此代码的简要分析： 
  * 1. **包声明**： 
@@ -15,23 +28,11 @@
  * - 作者和日期也被记录在注释中。 
  * 总结来说，这段代码定义了一个 MyBatis-Plus 的 Mapper 接口 `EvalResultMapper`，用于管理 `EvalResult` 实体类的数据操作。通过继承 `BaseMapper`，它提供了基本的 CRUD 操作，并且通过 Spring 的 `@Repository` 注解将其注册为一个数据访问组件。 
 **/
-package com.cyberpeace.cr.evaluation.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalResult;
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
-
-/**
- * 评估结果Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 @Repository
 public interface EvalResultMapper extends BaseMapper<EvalResult> {
 }
+
 
 
 

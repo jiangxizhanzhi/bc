@@ -1,29 +1,3 @@
-/**
- * 该代码是一个 `Spring` 服务类 `SpaceAptReportServiceImpl` 的实现，用于处理与空间易用性报告相关的业务逻辑。以下是代码的主要功能和结构分析： 
- * ### 主要功能： 
- * 1. **导出报告**： 
- * - 方法 `dump(List<String> ids)` 接收一组报告的 ID 列表。 
- * - 如果 ID 列表为空，则抛出异常。 
- * - 根据 ID 查询对应的报告数据，并将其转换为 `SpaceAptReportBo` 对象。 
- * - 将报告中的附件复制到指定的目标路径。 
- * - 将所有报告数据以 JSON 格式写入文件。 
- * - 使用 `ZipUtil` 将生成的文件夹压缩成 ZIP 文件，并返回压缩后的路径。 
- * 2. **加载报告**： 
- * - 方法 `loadReport(String realPath)` 接收一个压缩文件的真实路径。 
- * - 解压文件到临时目录。 
- * - 从解压后的目录中读取 JSON 数据文件并解析为 `SpaceAptReportBo` 对象列表。 
- * - 将 `SpaceAptReportBo` 对象转换为实体对象并保存到数据库。 
- * - 复制附件文件到实际存储位置。 
- * 3. **辅助方法**： 
- * - `copyFile(String storeDbPath, String destFilePath, String resourceId)`：将数据库中存储的文件复制到目标路径。 
- * ### 关键点： 
- * - 使用了 `MyBatis-Plus` 的 `ServiceImpl` 作为基础类，继承自 `SpaceAptReportMapper` 和 `SpaceAptReport`。 
- * - 依赖了多个工具类（如 `FileUtil`, `IDGeneratorUtil`, `JsonUtil`, `ZipUtil`）来处理文件操作、JSON 序列化等。 
- * - 数据库操作通过 `baseMapper` 实现。 
- * - 异常处理使用了自定义的 `BusinessException`。 
- * ### 总结： 
- * 此代码实现了报告的导出和加载功能，涉及文件的读写、压缩解压以及数据库交互，具有良好的模块化设计和清晰的功能划分。 
-**/
 package com.cyberpeace.space.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -60,6 +34,32 @@ import java.util.List;
  * @see SpaceAptReportService
  * @since 1.0.0
  */
+/**
+ * 该代码是一个 `Spring` 服务类 `SpaceAptReportServiceImpl` 的实现，用于处理与空间易用性报告相关的业务逻辑。以下是代码的主要功能和结构分析： 
+ * ### 主要功能： 
+ * 1. **导出报告**： 
+ * - 方法 `dump(List<String> ids)` 接收一组报告的 ID 列表。 
+ * - 如果 ID 列表为空，则抛出异常。 
+ * - 根据 ID 查询对应的报告数据，并将其转换为 `SpaceAptReportBo` 对象。 
+ * - 将报告中的附件复制到指定的目标路径。 
+ * - 将所有报告数据以 JSON 格式写入文件。 
+ * - 使用 `ZipUtil` 将生成的文件夹压缩成 ZIP 文件，并返回压缩后的路径。 
+ * 2. **加载报告**： 
+ * - 方法 `loadReport(String realPath)` 接收一个压缩文件的真实路径。 
+ * - 解压文件到临时目录。 
+ * - 从解压后的目录中读取 JSON 数据文件并解析为 `SpaceAptReportBo` 对象列表。 
+ * - 将 `SpaceAptReportBo` 对象转换为实体对象并保存到数据库。 
+ * - 复制附件文件到实际存储位置。 
+ * 3. **辅助方法**： 
+ * - `copyFile(String storeDbPath, String destFilePath, String resourceId)`：将数据库中存储的文件复制到目标路径。 
+ * ### 关键点： 
+ * - 使用了 `MyBatis-Plus` 的 `ServiceImpl` 作为基础类，继承自 `SpaceAptReportMapper` 和 `SpaceAptReport`。 
+ * - 依赖了多个工具类（如 `FileUtil`, `IDGeneratorUtil`, `JsonUtil`, `ZipUtil`）来处理文件操作、JSON 序列化等。 
+ * - 数据库操作通过 `baseMapper` 实现。 
+ * - 异常处理使用了自定义的 `BusinessException`。 
+ * ### 总结： 
+ * 此代码实现了报告的导出和加载功能，涉及文件的读写、压缩解压以及数据库交互，具有良好的模块化设计和清晰的功能划分。 
+**/
 @Service
 public class SpaceAptReportServiceImpl extends ServiceImpl<SpaceAptReportMapper, SpaceAptReport> implements SpaceAptReportService {
 
@@ -163,3 +163,4 @@ public class SpaceAptReportServiceImpl extends ServiceImpl<SpaceAptReportMapper,
 		FileUtil.copyFile(realPath, destPath, false);
 	}
 }
+

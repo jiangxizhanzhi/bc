@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.evaluation.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.BaseTable;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Getter;
+
+import java.util.Date;
+
 /**
  * 这段代码定义了一个名为 `EvalIndexRef` 的 Java 类，该类扩展了 `BaseTable` 类，并使用 Lombok 注解来简化 getter 和 setter 方法的生成。以下是对该代码的简要分析： 
  * ### 包与导入 
@@ -48,19 +61,6 @@
  * - **框架支持**：使用了 MyBatis Plus 框架的注解来简化数据库操作，并利用 Lombok 来减少样板代码。 
  * 这段代码是一个典型的 Java 实体类，适用于数据持久化和业务逻辑处理。 
 **/
-package com.cyberpeace.cr.evaluation.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.BaseTable;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Getter;
-
-import java.util.Date;
-
 @Getter
 @Setter
 @TableName("cr_eval_index_ref")
@@ -224,3 +224,4 @@ public class EvalIndexRef extends BaseTable {
     }
 
 }
+

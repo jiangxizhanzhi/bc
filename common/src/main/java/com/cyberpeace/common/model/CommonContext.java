@@ -1,3 +1,15 @@
+package com.cyberpeace.common.model;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.cyberpeace.common.constant.WebConstant;
+
+/**
+ * 常见上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `CommonContext` 的类，用于管理线程本地的上下文信息。以下是代码的主要功能和特点： 
  * 1. **线程本地存储**：使用 `ThreadLocal` 来存储不同线程独立的数据，确保每个线程的数据隔离性。 
@@ -14,18 +26,6 @@
  * 5. **依赖**：使用了 `org.apache.commons.lang3.StringUtils` 和 `com.cyberpeace.common.constant.WebConstant`，分别用于字符串操作和常量定义。 
  * 总结：该类通过 `ThreadLocal` 实现了线程安全的上下文管理，适用于需要在多线程环境中存储和访问特定上下文数据的场景。 
 **/
-package com.cyberpeace.common.model;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.cyberpeace.common.constant.WebConstant;
-
-/**
- * 常见上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 public class CommonContext {
 
 	/**
@@ -104,3 +104,4 @@ public class CommonContext {
 		cyberTokenContext.remove();
 	}
 }
+

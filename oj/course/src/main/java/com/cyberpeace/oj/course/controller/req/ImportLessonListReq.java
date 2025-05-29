@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import com.cyberpeace.common.model.PageReqBase;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 导入课列表请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ImportLessonListReq` 的 Java 类，它用于表示导入课程列表请求的数据模型。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -19,24 +37,6 @@
  * - **特点**：使用了 Swagger 注解和 Lombok 注解来简化代码。 
  * - **继承**：从 `PageReqBase` 继承，支持分页功能。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import com.cyberpeace.common.model.PageReqBase;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 导入课列表请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PageReqBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -59,3 +59,4 @@ public class ImportLessonListReq extends PageReqBase {
     private String exceptCourse;
 
 }
+

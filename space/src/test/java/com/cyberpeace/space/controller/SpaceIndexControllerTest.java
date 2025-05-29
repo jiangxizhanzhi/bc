@@ -1,3 +1,18 @@
+package com.cyberpeace.space.controller;
+
+import com.cyberpeace.space.service.SpaceIndexService;
+import com.cyberpeace.space.service.context.index.*;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 /**
  * 这段代码是一个单元测试类，用于测试 `SpaceIndexController` 控制器的功能。以下是代码的主要内容和功能分析： 
  * 1. **测试类结构**： 
@@ -22,21 +37,6 @@
  * - 这段代码通过 Mock 技术实现了对控制器层的单元测试，确保每个接口的返回数据和状态码符合预期。 
  * - 测试覆盖了多个业务场景，包括知识库、工具、框架和 AI 相关的功能。 
 **/
-
-package com.cyberpeace.space.controller;
-
-import com.cyberpeace.space.service.SpaceIndexService;
-import com.cyberpeace.space.service.context.index.*;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(SpaceIndexController.class)
 class SpaceIndexControllerTest {
@@ -119,3 +119,4 @@ class SpaceIndexControllerTest {
 				.andExpect(status().isOk()).andExpect(content().json("{\"data\":\"data\",\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
 	}
 }
+

@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.service.context;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * eval record 变量上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalRecordVariableContext` 的 Java 类，该类实现了 `Serializable` 接口。这个类主要用于表示评估记录中的变量上下文信息。以下是详细的分析： 
  * ### 类定义 
@@ -18,20 +32,6 @@
  * - 该类实现了 `Serializable` 接口，意味着它可以被序列化，便于在网络上传输或持久化存储。 
  * 这个类的设计简洁明了，适合用于传输和存储评估记录中的变量上下文信息。 
 **/
-package com.cyberpeace.cr.evaluation.service.context;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * eval record 变量上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalRecordVariableContext implements Serializable {
@@ -60,3 +60,4 @@ public class EvalRecordVariableContext implements Serializable {
     @ApiModelProperty(value = "选择主机可用探针ID", required = true)
     private String probeId;
 }
+

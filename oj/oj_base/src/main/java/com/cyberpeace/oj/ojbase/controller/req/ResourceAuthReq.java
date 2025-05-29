@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import java.util.List;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+/**
+ * 资源认证请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ResourceAuthReq` 的 Java 类，用于表示资源授权访问的请求体。以下是对该类的简要分析： 
  * ### 包声明和导入 
@@ -57,26 +77,6 @@
  * - 通过 Swagger 注解，可以方便地生成 API 文档。 
  * 这段代码结构清晰，注解使用得当，便于后续的开发和维护。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import java.util.List;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
-/**
- * 资源认证请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel("资源授权访问")
@@ -109,3 +109,4 @@ public class ResourceAuthReq {
 	private Integer readAuthType;
 
 }
+

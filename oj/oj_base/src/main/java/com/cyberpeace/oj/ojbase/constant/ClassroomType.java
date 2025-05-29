@@ -1,3 +1,19 @@
+package com.cyberpeace.oj.ojbase.constant;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+
+import lombok.Getter;
+
+/**
+ * 教室类型
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Enum
+ * @see GenericEnum
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomType` 的枚举类，用于表示不同类型的教室或竞赛类型。以下是对其主要特性和功能的简要分析： 
  * ### 主要特性 
@@ -28,22 +44,6 @@
  * ### 总结 
  * 这个枚举类 `ClassroomType` 提供了一种清晰且结构化的方式来表示和管理不同的教室类型或竞赛类型。通过实现 `GenericEnum` 接口和使用 Lombok 的 `@Getter` 注解，简化了代码并增强了可读性。 
 **/
-package com.cyberpeace.oj.ojbase.constant;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-
-import lombok.Getter;
-
-/**
- * 教室类型
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Enum
- * @see GenericEnum
- * @since 1.0.0
- */
 public enum ClassroomType implements GenericEnum {
 
 	/**
@@ -117,3 +117,4 @@ public enum ClassroomType implements GenericEnum {
 	}
 
 }
+

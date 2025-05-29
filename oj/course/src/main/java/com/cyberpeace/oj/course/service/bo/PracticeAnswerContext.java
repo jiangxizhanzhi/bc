@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 实践答案上下文
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `PracticeAnswerContext` 的 Java 类，用于表示实践答案的上下文信息。以下是该类的详细分析： 
  * ### 包声明和导入 
@@ -45,24 +63,6 @@
  * - 使用了 Swagger 的注解 `@ApiModel` 和 `@ApiModelProperty` 来生成 API 文档。 
  * 这个类的设计清晰且功能明确，适合用于在线评测系统中的实践题目管理。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 实践答案上下文
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -109,3 +109,4 @@ public class PracticeAnswerContext implements Serializable {
 	private Integer questionType;
 
 }
+

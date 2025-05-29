@@ -1,25 +1,3 @@
-/**
- * 这段代码是一个单元测试类 `SpaceAptFeatureControllerTest`，用于测试 `SpaceAptFeatureController` 的功能。以下是对代码的简要分析： 
- * 1. **测试框架**： 
- * - 使用了 JUnit 5 (`org.junit.jupiter`) 进行单元测试。 
- * - 使用了 Spring Boot 的 `@WebMvcTest` 注解来加载 `SpaceAptFeatureController` 并进行 Web 层的测试。 
- * 2. **依赖注入**： 
- * - `MockMvc`：用于模拟 HTTP 请求并验证响应。 
- * - `@MockBean` 和 `@SpyBean`：分别用于模拟 `SpaceAptFeatureService` 和 `SpaceAptFeatureController` 的行为。 
- * 3. **初始化方法**： 
- * - `setUp()` 方法在每个测试之前执行，设置服务层的模拟行为，并初始化表信息。 
- * 4. **测试方法**： 
- * - `testPage()`：测试分页功能，验证返回的 JSON 数据是否符合预期。 
- * - `testAddAttack()`：测试添加攻击特征的功能，验证返回的 JSON 数据是否正确。 
- * - `testUpdateA()`：测试更新攻击特征的功能，验证返回的 JSON 数据是否正确。 
- * - `testDeleteA()`：测试删除攻击特征的功能，验证返回的 JSON 数据是否正确。 
- * - `testGetADetail()`：测试获取单个攻击特征详情的功能，验证返回的 JSON 数据是否正确。 
- * 5. **数据准备**： 
- * - 使用 `Lists.newArrayList()` 和 `JsonUtil.toJsonString()` 准备测试数据。 
- * 6. **断言**： 
- * - 使用 `andExpect()` 验证 HTTP 状态码、响应内容是否符合预期。 
- * 总体来说，这段代码通过模拟服务层的行为，全面测试了 `SpaceAptFeatureController` 的各个接口功能，确保其正确性。 
-**/
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
@@ -52,6 +30,28 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * 这段代码是一个单元测试类 `SpaceAptFeatureControllerTest`，用于测试 `SpaceAptFeatureController` 的功能。以下是对代码的简要分析： 
+ * 1. **测试框架**： 
+ * - 使用了 JUnit 5 (`org.junit.jupiter`) 进行单元测试。 
+ * - 使用了 Spring Boot 的 `@WebMvcTest` 注解来加载 `SpaceAptFeatureController` 并进行 Web 层的测试。 
+ * 2. **依赖注入**： 
+ * - `MockMvc`：用于模拟 HTTP 请求并验证响应。 
+ * - `@MockBean` 和 `@SpyBean`：分别用于模拟 `SpaceAptFeatureService` 和 `SpaceAptFeatureController` 的行为。 
+ * 3. **初始化方法**： 
+ * - `setUp()` 方法在每个测试之前执行，设置服务层的模拟行为，并初始化表信息。 
+ * 4. **测试方法**： 
+ * - `testPage()`：测试分页功能，验证返回的 JSON 数据是否符合预期。 
+ * - `testAddAttack()`：测试添加攻击特征的功能，验证返回的 JSON 数据是否正确。 
+ * - `testUpdateA()`：测试更新攻击特征的功能，验证返回的 JSON 数据是否正确。 
+ * - `testDeleteA()`：测试删除攻击特征的功能，验证返回的 JSON 数据是否正确。 
+ * - `testGetADetail()`：测试获取单个攻击特征详情的功能，验证返回的 JSON 数据是否正确。 
+ * 5. **数据准备**： 
+ * - 使用 `Lists.newArrayList()` 和 `JsonUtil.toJsonString()` 准备测试数据。 
+ * 6. **断言**： 
+ * - 使用 `andExpect()` 验证 HTTP 状态码、响应内容是否符合预期。 
+ * 总体来说，这段代码通过模拟服务层的行为，全面测试了 `SpaceAptFeatureController` 的各个接口功能，确保其正确性。 
+**/
 @WebMvcTest(SpaceAptFeatureController.class)
 class SpaceAptFeatureControllerTest {
 
@@ -142,3 +142,4 @@ class SpaceAptFeatureControllerTest {
                 .andExpect(content().json("{\"data\":{\"resourceId\":null,\"name\":null,\"alias\":null,\"attackerType\":null,\"skill\":null,\"source\":null,\"firstTime\":null,\"latestTime\":null,\"effected\":null,\"industry\":null,\"method\":null,\"frequency\":null,\"language\":null,\"organization\":null,\"tactic\":null,\"historyReport\":[],\"logo\":null},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 }
+

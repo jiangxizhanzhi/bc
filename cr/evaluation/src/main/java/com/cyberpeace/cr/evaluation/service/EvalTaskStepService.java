@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
+
+/**
+ * 测评靶场-任务步骤的处理
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTaskStepService` 的接口，该接口继承自 `IService<EvalTaskStep>`。这个接口主要用于处理与测评靶场中的任务步骤相关的业务逻辑。下面是对代码的简要分析： 
  * ### 包声明 
@@ -59,21 +74,6 @@
  * ### 总结 
  * `EvalTaskStepService` 接口提供了一组方法来管理与测评靶场任务步骤相关的各种操作，包括获取、启动、停止、删除和查询步骤等。这些方法的设计使得调用者可以方便地进行任务步骤的管理和控制。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import java.util.List;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
-
-/**
- * 测评靶场-任务步骤的处理
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface EvalTaskStepService extends IService<EvalTaskStep> {
 
 	/**
@@ -133,3 +133,4 @@ public interface EvalTaskStepService extends IService<EvalTaskStep> {
 	List<EvalTimeLineContext> getFinishedSteps(String taskId);
 
 }
+

@@ -1,3 +1,24 @@
+package com.cyberpeace.oj.course.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.oj.course.controller.res.TrainPlanRsp;
+import com.cyberpeace.oj.course.dao.entity.TrainPlan;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * 训练计划Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `TrainPlanMapper` 的接口，继承自 `BaseMapper<TrainPlan>`。该接口使用了 MyBatis-Plus 框架，用于数据库操作。以下是代码的主要内容和功能分析： 
  * ### 主要类和方法 
@@ -44,27 +65,6 @@
  * - **输入输出**：方法参数包括字符串、布尔值和列表类型，返回值主要是 `TrainPlan` 对象或其列表，以及分页响应对象 `IPage<TrainPlanRsp>`。 
  * 通过这些方法，可以灵活地管理和查询训练计划数据。 
 **/
-package com.cyberpeace.oj.course.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.oj.course.controller.res.TrainPlanRsp;
-import com.cyberpeace.oj.course.dao.entity.TrainPlan;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
-
-/**
- * 训练计划Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 public interface TrainPlanMapper extends BaseMapper<TrainPlan> {
 
@@ -124,3 +124,4 @@ public interface TrainPlanMapper extends BaseMapper<TrainPlan> {
 	 */
 	IPage<TrainPlanRsp> listTrainPlan(Page page, String pattern, String organizationId, String userId, boolean isSuperUser, boolean isAdmin, List<String> courseIds);
 }
+

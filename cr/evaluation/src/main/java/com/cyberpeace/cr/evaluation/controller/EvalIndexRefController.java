@@ -1,3 +1,33 @@
+package com.cyberpeace.cr.evaluation.controller;
+
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.evaluation.controller.req.EvalIndexRefReq;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalIndexRef;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefMapper;
+import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
+import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+/**
+ * EVAL 索引引用控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 /**
  * 这段代码定义了一个名为 `EvalIndexRefController` 的 Spring Boot 控制器类，用于处理与评估索引引用相关的 HTTP 请求。以下是代码的简要分析： 
  * ### 包和导入 
@@ -32,36 +62,6 @@
  * ### 总结 
  * 这个控制器主要用于处理与评估索引引用相关的 CRUD 操作，并且确保这些操作需要认证和特定权限。它通过调用服务层和映射器来完成具体的业务逻辑和数据访问。 
 **/
-package com.cyberpeace.cr.evaluation.controller;
-
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.evaluation.controller.req.EvalIndexRefReq;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalIndexRef;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefMapper;
-import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
-import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-/**
- * EVAL 索引引用控制器
- *
- * @author SN
- * @date 2024/11/07
- */
 @Api(tags = "靶场测评-评估关联算法")
 @RestController
 @RequiresAuthentication
@@ -161,3 +161,4 @@ public class EvalIndexRefController {
 
 
 }
+

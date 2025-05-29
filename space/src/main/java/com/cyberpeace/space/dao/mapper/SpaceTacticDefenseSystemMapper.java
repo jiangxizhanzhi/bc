@@ -1,3 +1,19 @@
+package com.cyberpeace.space.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.space.dao.entity.SpaceTacticDefenseSystem;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+
+/**
+ * 空间战法防御系统Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个 MyBatis 的 Mapper 接口 `SpaceTacticDefenseSystemMapper`，用于操作数据库中与 `SpaceTacticDefenseSystem` 实体类相关的数据。以下是代码的简要分析： 
  * 1. **包名**：代码位于 `com.cyberpeace.space.dao.mapper` 包下，表明这是一个与数据访问层（DAO）相关的接口。 
@@ -16,22 +32,6 @@
  * 总结：这是一段典型的基于 MyBatis-Plus 的数据访问层代码，提供了对 `SpaceTacticDefenseSystem` 实体类的增删改查功能，并通过注解与 Spring 集成，方便在项目中使用。 
 **/
 
-package com.cyberpeace.space.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.space.dao.entity.SpaceTacticDefenseSystem;
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
-
-/**
- * 空间战法防御系统Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 @Repository
 public interface SpaceTacticDefenseSystemMapper extends BaseMapper<SpaceTacticDefenseSystem> {

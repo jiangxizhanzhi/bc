@@ -1,3 +1,18 @@
+package com.cyberpeace.space.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.space.dao.entity.SpaceScoreRankingRule;
+import com.cyberpeace.space.service.context.index.KnowledgeChart;
+
+/**
+ * 空间得分排名统治Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个接口 `SpaceScoreRankingRuleService`，它是基于 MyBatis-Plus 的 `IService` 接口扩展而来。以下是代码的简要分析： 
  * 1. **接口定义**： 
@@ -14,21 +29,6 @@
  * 总结：该接口主要用于管理空间得分排名规则，并提供获取知识点得分排名图表的功能。 
 **/
 
-package com.cyberpeace.space.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.space.dao.entity.SpaceScoreRankingRule;
-import com.cyberpeace.space.service.context.index.KnowledgeChart;
-
-/**
- * 空间得分排名统治Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see IService
- * @since 1.0.0
- */
 public interface SpaceScoreRankingRuleService extends IService<SpaceScoreRankingRule>
 
 {

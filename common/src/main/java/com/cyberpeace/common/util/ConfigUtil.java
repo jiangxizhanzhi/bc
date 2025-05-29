@@ -1,3 +1,15 @@
+package com.cyberpeace.common.util;
+
+import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
 /**
  * 这段代码定义了一个工具类 `ConfigUtil`，用于加载和管理配置属性。以下是代码的主要功能和结构分析： 
  * 1. **继承与功能**： 
@@ -18,18 +30,6 @@
  * - 如果属性较多，可能占用较多内存。 
  * 总结来说，这个工具类通过扩展 Spring 的 `PropertyPlaceholderConfigurer`，实现了自定义的属性管理功能，适合需要频繁访问配置属性的应用场景。 
 **/
-package com.cyberpeace.common.util;
-
-import com.google.common.collect.Maps;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
 public class ConfigUtil extends PropertyPlaceholderConfigurer {
 
     private static Map<String, String> ctxPropertiesMap;
@@ -75,4 +75,5 @@ public class ConfigUtil extends PropertyPlaceholderConfigurer {
     }
 
 }
+
 

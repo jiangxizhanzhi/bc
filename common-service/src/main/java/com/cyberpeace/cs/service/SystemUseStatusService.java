@@ -1,3 +1,15 @@
+package com.cyberpeace.cs.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cs.controller.res.SystemUseStatusRes;
+import com.cyberpeace.cs.dao.entity.SystemUseStatus;
+
+/**
+ * 系统用状态Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个接口 `SystemUseStatusService`，它是基于 MyBatis-Plus 的通用 Service 接口 `IService` 的扩展。以下是代码的简要分析： 
  * 1. **接口继承**： 
@@ -11,18 +23,6 @@
  * - 每个方法都有明确的注释描述其功能和参数。 
  * 总体而言，这个接口设计清晰，涵盖了基本的 CRUD 操作以及一些特定业务逻辑的方法。 
 **/
-package com.cyberpeace.cs.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cs.controller.res.SystemUseStatusRes;
-import com.cyberpeace.cs.dao.entity.SystemUseStatus;
-
-/**
- * 系统用状态Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface SystemUseStatusService extends IService<SystemUseStatus> {
 
 	/**
@@ -47,3 +47,4 @@ public interface SystemUseStatusService extends IService<SystemUseStatus> {
 	 */
 	void delete();
 }
+

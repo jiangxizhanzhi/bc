@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.BaseTable;
+
+import lombok.*;
+
+/**
+ * 课程类别
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseCategory` 的 Java 类，用于表示课程类别。以下是对该代码的简要分析： 
  * ### 包声明和导入 
@@ -35,25 +54,6 @@
  * - **扩展性**：通过枚举 `CourseType` 来表示课程类型，易于扩展新的课程类型。 
  * 这段代码简洁明了，利用了 Lombok 和 MyBatis-Plus 提供的功能，提高了开发效率。 
 **/
-package com.cyberpeace.oj.course.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.BaseTable;
-
-import lombok.*;
-
-/**
- * 课程类别
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @Builder
@@ -122,3 +122,4 @@ public class CourseCategory extends BaseTable {
 	}
 
 }
+

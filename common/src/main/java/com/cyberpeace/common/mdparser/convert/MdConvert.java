@@ -1,3 +1,17 @@
+package com.cyberpeace.common.mdparser.convert;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * 中路闪兑
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `MdConvert` 的工具类，用于根据枚举类及其相关方法进行转换操作。以下是代码的主要功能和结构分析： 
  * 1. **类和泛型设计**： 
@@ -16,20 +30,6 @@
  * - 该工具类适用于需要频繁进行枚举值与键值对之间转换的场景，例如状态码与描述之间的映射。 
  * 总结：这是一个灵活且通用的枚举转换工具类，通过泛型和流式操作实现了高效的枚举值管理。 
 **/
-package com.cyberpeace.common.mdparser.convert;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-/**
- * 中路闪兑
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public class MdConvert {
 
 	/**
@@ -83,3 +83,4 @@ public class MdConvert {
 	}
 
 }
+

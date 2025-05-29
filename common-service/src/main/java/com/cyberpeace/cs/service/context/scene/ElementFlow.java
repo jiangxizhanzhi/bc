@@ -1,3 +1,18 @@
+package com.cyberpeace.cs.service.context.scene;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 元素流
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * ### 代码分析 
  * #### 功能概述 
@@ -29,21 +44,6 @@
  * #### 总结 
  * 该类设计合理，字段齐全，功能明确，适合用作描述元素流的对象模型。通过使用枚举类和方法逻辑，确保了状态值的一致性和可维护性。 
 **/
-package com.cyberpeace.cs.service.context.scene;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 元素流
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class ElementFlow implements Serializable {
@@ -171,3 +171,4 @@ public class ElementFlow implements Serializable {
 	}
 
 }
+

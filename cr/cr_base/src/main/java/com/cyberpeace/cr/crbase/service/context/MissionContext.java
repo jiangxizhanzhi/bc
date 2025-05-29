@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.crbase.service.context;
+
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 任务模型
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * ### 代码分析 
  * #### 概述 
@@ -22,20 +36,6 @@
  * #### 总结 
  * `MissionContext` 是一个典型的领域模型类，继承自 `Mission` 并增强了功能。它结合了 Swagger 注解和 Lombok 工具，提升了开发效率并方便文档生成。整体结构清晰，适合用作任务管理系统的上下文模型。 
 **/
-package com.cyberpeace.cr.crbase.service.context;
-
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 任务模型
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MissionContext extends Mission {
@@ -61,3 +61,4 @@ public class MissionContext extends Mission {
 	private Boolean finished;
 
 }
+

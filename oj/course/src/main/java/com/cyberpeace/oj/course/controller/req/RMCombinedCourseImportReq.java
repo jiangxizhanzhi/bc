@@ -1,3 +1,24 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import com.cyberpeace.oj.course.service.bo.CombinedCourseImportContext;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * rm组合课程导入请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `RMCombinedCourseImportReq` 的 Java 类，该类用于表示组合课程导入请求的数据模型。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -24,27 +45,6 @@
  * ### 总结 
  * 这个类是一个数据传输对象（DTO），用于封装组合课程导入请求的数据。它实现了序列化接口，并使用 Lombok 和 Swagger 注解来简化代码和生成相关文档。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import com.cyberpeace.oj.course.service.bo.CombinedCourseImportContext;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * rm组合课程导入请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -59,3 +59,4 @@ public class RMCombinedCourseImportReq implements Serializable {
 	@NotNull
 	private List<CombinedCourseImportContext> courseInfos;
 }
+

@@ -1,3 +1,14 @@
+package com.cyberpeace.common.exception;
+
+/**
+ * 聊天异常
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BusinessException
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ChatException` 的自定义异常类，继承自 `BusinessException`。以下是简要分析： 
  * 1. **类的功能**： 
@@ -12,20 +23,10 @@
  * - 从注释中可以看出，`ChatException` 和 `BusinessException` 都是相关联的类，`ChatException` 是其子类。 
  * 总结：这是一个简单的自定义异常类，用于封装聊天功能中的业务异常，便于代码中抛出和捕获特定异常。 
 **/
-package com.cyberpeace.common.exception;
-
-/**
- * 聊天异常
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BusinessException
- * @since 1.0.0
- */
 public class ChatException extends BusinessException {
 
 	public ChatException(String message) {
 		super(message);
 	}
 }
+

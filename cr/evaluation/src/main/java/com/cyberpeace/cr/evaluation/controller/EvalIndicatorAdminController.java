@@ -1,3 +1,55 @@
+package com.cyberpeace.cr.evaluation.controller;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.cr.evaluation.controller.req.EvalAhpAlgorithmReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalNameListReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalIndicatorRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalIndexRef;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndicatorMapper;
+import com.cyberpeace.cr.evaluation.service.EvalAggregationService;
+import com.cyberpeace.cr.evaluation.service.EvalCollectionService;
+import com.cyberpeace.cr.evaluation.service.EvalIndicatorService;
+import com.cyberpeace.cr.evaluation.service.context.EvalIndicatorContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+import com.cyberpeace.integratation.model.evaluation.FormatData;
+import com.cyberpeace.integratation.service.RemotePythonService;
+import com.google.common.collect.Lists;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * 评估指示器管理Controller
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalIndicatorAdminController` 的控制器类，用于处理与评估指标相关的HTTP请求。以下是对其主要功能和结构的简要分析： 
  * ### 类及注解 
@@ -52,58 +104,6 @@
  * ### 总结 
  * 该控制器提供了完整的评估指标管理功能，包括添加、编辑、查询和删除等操作。每个操作都涉及复杂的业务逻辑处理，如事务管理和远程服务调用。整体设计遵循了RESTful架构风格，并通过Spring框架的依赖注入机制实现了各组件之间的松耦合。 
 **/
-package com.cyberpeace.cr.evaluation.controller;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cr.evaluation.controller.req.EvalAhpAlgorithmReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalNameListReq;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalIndicatorRsp;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalIndexRef;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndicatorMapper;
-import com.cyberpeace.cr.evaluation.service.EvalAggregationService;
-import com.cyberpeace.cr.evaluation.service.EvalCollectionService;
-import com.cyberpeace.cr.evaluation.service.EvalIndicatorService;
-import com.cyberpeace.cr.evaluation.service.context.EvalIndicatorContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
-import com.cyberpeace.integratation.model.evaluation.FormatData;
-import com.cyberpeace.integratation.service.RemotePythonService;
-import com.google.common.collect.Lists;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-/**
- * 评估指示器管理Controller
- *
- * @author SN
- * @date 2024/11/08
- */
 @Api(tags = "后台-测试靶场-指标项管理")
 @RestController
 @RequiresAuthentication

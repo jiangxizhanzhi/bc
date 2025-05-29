@@ -1,3 +1,14 @@
+package com.cyberpeace.gateway.service.impl;
+
+import com.cyberpeace.gateway.service.ExternalOperationService;
+import org.springframework.stereotype.Service;
+
+/**
+ * 外部实操Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ExternalOperationServiceImpl` 的类，该类实现了 `ExternalOperationService` 接口。以下是对这段代码的简要分析： 
  * 1. **包声明**： 
@@ -27,20 +38,10 @@
  * - 目前这个类没有提供任何方法的具体实现。 
  * - 需要在类中添加具体的方法实现以完成接口定义的功能。 
 **/
-package com.cyberpeace.gateway.service.impl;
-
-import com.cyberpeace.gateway.service.ExternalOperationService;
-import org.springframework.stereotype.Service;
-
-/**
- * 外部实操Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Service
 public class ExternalOperationServiceImpl implements ExternalOperationService {
 
 
 
 }
+

@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import java.io.Serializable;
+
+import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估模板列表响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTemplateListRsp` 的 Java 类，用于表示评估模板列表的响应。以下是对其主要特性和功能的简要分析： 
  * ### 包与导入 
@@ -27,22 +43,6 @@
  * - **Lombok 简化**：通过 Lombok 注解减少样板代码，使得类更加简洁易读。 
  * 总体来说，这个类是一个数据传输对象（DTO），用于封装评估模板列表的详细信息并提供给前端或外部系统。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import java.io.Serializable;
-
-import javax.validation.constraints.NotNull;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估模板列表响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalTemplateListRsp implements Serializable {
@@ -89,3 +89,4 @@ public class EvalTemplateListRsp implements Serializable {
 	}
 
 }
+

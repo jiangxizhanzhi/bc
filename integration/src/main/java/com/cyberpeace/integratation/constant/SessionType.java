@@ -1,3 +1,11 @@
+package com.cyberpeace.integratation.constant;
+
+/**
+ * 会话类型
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SessionType` 的枚举类，用于表示不同的会话类型。以下是对该代码的简要分析： 
  * ### 枚举类 `SessionType` 
@@ -12,14 +20,6 @@
  * ### 总结 
  * 这个枚举类主要用于定义和管理不同的会话类型，每个枚举值都有一个唯一的标识符和描述。通过这种方式，可以方便地管理和使用这些会话类型。 
 **/
-package com.cyberpeace.integratation.constant;
-
-/**
- * 会话类型
- *
- * @author SN
- * @date 2024/11/08
- */
 public enum SessionType {
 
 	/**

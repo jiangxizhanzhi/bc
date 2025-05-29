@@ -1,3 +1,18 @@
+package com.cyberpeace.gateway.service.bo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 外部实践设置博
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ExternalPracticeSetBo` 的 Java 类，用于表示外部实践设置的信息。以下是对此代码的简要分析： 
  * ### 类名和包声明 
@@ -36,21 +51,6 @@
  * - `createTime` 和 `updateTime` 字段类型建议使用 `LocalDateTime` 或 `Instant`，而不是 `String`，以提高可读性和易用性。 
  * - 可以添加一些验证注解（如 `@NotNull`）来确保数据的有效性。 
 **/
-package com.cyberpeace.gateway.service.bo;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 外部实践设置博
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @ApiModel
@@ -81,3 +81,4 @@ public class ExternalPracticeSetBo implements Serializable {
     private String updateTime;
 
 }
+

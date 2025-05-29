@@ -1,4 +1,3 @@
-
 package com.cyberpeace.oj.course.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -47,6 +46,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @Disabled
 @WebMvcTest(AdminCourseController.class)
@@ -248,3 +248,4 @@ class AdminCourseControllerTest {
 				.andExpect(content().json("{\"data\":{\"resourceId\":null,\"fileName\":\"123.png\",\"filePath\":\"filePath\",\"isPublic\":null},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
 	}
 }
+

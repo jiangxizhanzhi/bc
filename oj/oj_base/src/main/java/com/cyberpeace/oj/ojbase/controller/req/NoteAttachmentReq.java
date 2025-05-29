@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.Serializable;
+
+/**
+ * 注意附件请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `NoteAttachmentReq` 的 Java 类，用于处理与附件相关的请求体。以下是该类的主要特性和功能： 
  * ### 类概述 
@@ -23,25 +42,6 @@
  * - 该类实现了 `Serializable` 接口，意味着它可以被序列化，可以在网络中传输或保存到磁盘。 
  * 这个类的设计是为了方便在控制器层接收与附件相关的请求参数，并且可以与前端进行良好的交互。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.Serializable;
-
-/**
- * 注意附件请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -79,3 +79,4 @@ public class NoteAttachmentReq implements Serializable {
 		this.resourceType = resourceType;
 	}
 }
+

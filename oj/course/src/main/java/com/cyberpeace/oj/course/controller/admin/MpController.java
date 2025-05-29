@@ -1,3 +1,36 @@
+package com.cyberpeace.oj.course.controller.admin;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.integratation.service.RemoteTerminalService;
+import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.integratation.service.bo.ClusterImagePageReq;
+import com.cyberpeace.integratation.service.bo.TargetListReq;
+import com.cyberpeace.integratation.service.bo.TopoTemplatePageReq;
+import com.cyberpeace.integratation.service.bo.mp.MibInfoQueryRequest;
+import com.cyberpeace.integratation.service.bo.mp.RealEquipmentPageRequest;
+import com.cyberpeace.integratation.service.bo.mp.VirtualUsbQueryParams;
+import com.cyberpeace.oj.practice.controller.req.LoadResourceReq;
+
+import io.swagger.annotations.*;
+
+/**
+ * 中台Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/12/04
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `MpController` 的 Spring MVC 控制器类，主要用于处理与中台（MP）相关的 HTTP 请求。以下是对该代码的简要分析： 
  * ### 类定义和注解 
@@ -34,39 +67,6 @@
  * ### 总结 
  * `MpController` 是一个处理与中台相关的 HTTP 请求的控制器类。它提供了多种操作，如获取镜像列表、删除场景模板、上传文件等。每个方法都通过注解定义了其对应的 HTTP 请求类型和路径，并返回 `BaseRsp` 对象。这些方法通过依赖注入的服务对象来实现具体的功能。 
 **/
-package com.cyberpeace.oj.course.controller.admin;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.integratation.service.RemoteTerminalService;
-import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.cyberpeace.integratation.service.bo.ClusterImagePageReq;
-import com.cyberpeace.integratation.service.bo.TargetListReq;
-import com.cyberpeace.integratation.service.bo.TopoTemplatePageReq;
-import com.cyberpeace.integratation.service.bo.mp.MibInfoQueryRequest;
-import com.cyberpeace.integratation.service.bo.mp.RealEquipmentPageRequest;
-import com.cyberpeace.integratation.service.bo.mp.VirtualUsbQueryParams;
-import com.cyberpeace.oj.practice.controller.req.LoadResourceReq;
-
-import io.swagger.annotations.*;
-
-/**
- * 中台Controller
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/12/04
- * @since 1.0.0
- */
 @Api(tags = "转发mp接口api")
 @RestController
 @RequestMapping("/oj/mp")
@@ -432,3 +432,4 @@ public class MpController {
 	}
 
 }
+

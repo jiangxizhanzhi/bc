@@ -1,3 +1,18 @@
+package com.cyberpeace.integratation.model.mp;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 中台主机州
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MpHostState` 的 Java 类，用于表示中台主机的状态信息。以下是对其主要特性和功能的简要分析： 
  * ### 包声明和导入 
@@ -23,21 +38,6 @@
  * ### 总结 
  * `MpHostState` 类是一个数据模型类，用于封装和表示中台主机的性能状态信息。它包含了主机的 CPU、内存、磁盘等关键指标，并且可以通过 Swagger 自动生成相应的 API 文档。通过实现 `Serializable` 接口，该类的对象可以方便地进行序列化操作。 
 **/
-package com.cyberpeace.integratation.model.mp;
-
-import java.io.Serializable;
-import java.util.Date;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 中台主机州
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MpHostState implements Serializable {
@@ -103,3 +103,4 @@ public class MpHostState implements Serializable {
 	private Date time;
 
 }
+

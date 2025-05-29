@@ -1,3 +1,18 @@
+package com.cyberpeace.common.model;
+
+import com.google.common.collect.Lists;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.*;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 分页返回数据模型
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个泛型类 `ListRsp<T>`，用于封装分页返回的数据模型。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -19,21 +34,6 @@
  * - 实现了 `Serializable` 接口，表明该类的对象可以被序列化。 
  * 总结：这是一个通用的分页返回结果类，适用于需要返回分页数据的场景，具有良好的扩展性和可读性。 
 **/
-package com.cyberpeace.common.model;
-
-import com.google.common.collect.Lists;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 分页返回数据模型
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @AllArgsConstructor
@@ -65,3 +65,4 @@ public class ListRsp<T> implements Serializable {
 	@ApiModelProperty(value = "当前页")
 	private long currentPage;
 }
+

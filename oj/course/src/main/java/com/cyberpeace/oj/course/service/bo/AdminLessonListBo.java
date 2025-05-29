@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import com.cyberpeace.cs.service.context.AttachmentBo;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 管理员课程列表 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `AdminLessonListBo` 的 Java 类，该类用于表示管理员课程列表的数据传输对象（BO, Business Object）。以下是对该类的简要分析： 
  * ### 类定义 
@@ -41,26 +61,6 @@
  * - **特性**: 使用 Lombok 注解减少了样板代码，提高了可读性和维护性。同时，通过 Swagger 注解增强了 API 文档的自动生成能力。 
  * - **适用场景**: 适用于需要管理和展示课程信息的后台系统中，尤其是需要对课程进行分类、排序和过滤的场景。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import com.cyberpeace.cs.service.context.AttachmentBo;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 管理员课程列表 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -237,3 +237,4 @@ public class AdminLessonListBo implements Serializable {
 	@ApiModelProperty("是否内置")
 	private Boolean builtin;
 }
+

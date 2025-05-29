@@ -1,3 +1,14 @@
+package com.cyberpeace.cs.constant;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import lombok.Getter;
+
+/**
+ * 场景事件
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个枚举类 `SceneEvent`，用于表示场景事件。以下是对代码的简要分析： 
  * 1. **枚举类定义**： 
@@ -12,17 +23,6 @@
  * - 这个枚举类可以用于表示不同的场景事件，方便在代码中使用统一的事件标识和描述。 
  * 总结来说，这段代码提供了一种结构化的方式来管理场景事件，便于代码的可读性和维护性。 
 **/
-package com.cyberpeace.cs.constant;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import lombok.Getter;
-
-/**
- * 场景事件
- *
- * @author SN
- * @date 2024/11/08
- */
 public enum SceneEvent implements GenericEnum {
 
 	/**
@@ -88,3 +88,4 @@ public enum SceneEvent implements GenericEnum {
 	}
 
 }
+

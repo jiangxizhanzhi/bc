@@ -1,3 +1,15 @@
+package com.cyberpeace.common.model;
+
+import net.sf.sevenzipjbinding.*;
+
+import java.io.*;
+
+/**
+ * 提取回调
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ExtractCallback` 的类，实现了 `IArchiveExtractCallback` 接口，用于处理从压缩文件中提取文件的回调操作。以下是代码的主要功能和结构分析： 
  * ### 主要功能： 
@@ -20,18 +32,6 @@
  * ### 总结： 
  * 该类主要用于处理压缩文件的提取操作，能够自动创建必要的目录结构并将文件内容正确写入磁盘。代码逻辑清晰，但部分方法（如 `setCompleted` 和 `setTotal`）未被实现，可能需要根据具体需求进一步完善。 
 **/
-package com.cyberpeace.common.model;
-
-import net.sf.sevenzipjbinding.*;
-
-import java.io.*;
-
-/**
- * 提取回调
- *
- * @author SN
- * @date 2024/11/08
- */
 public class ExtractCallback implements IArchiveExtractCallback {
 
 
@@ -174,3 +174,4 @@ public class ExtractCallback implements IArchiveExtractCallback {
     }
 
 }
+

@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.crbase.controller.req;
+
+import com.cyberpeace.common.model.PageReqBase;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 模板请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `TemplateReq` 的 Java 类，用于表示模板请求体。以下是代码的主要特点和功能分析： 
  * 1. **继承关系**： 
@@ -16,22 +32,6 @@
  * - 该类主要用于接收前端传来的模板相关请求数据，并可能与分页功能结合使用。 
  * 总结：`TemplateReq` 是一个封装了模板请求数据的模型类，支持分页功能，并通过注解增强了其可读性和文档生成能力。 
 **/
-package com.cyberpeace.cr.crbase.controller.req;
-
-import com.cyberpeace.common.model.PageReqBase;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 模板请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @ApiModel
 @Getter
 @Setter
@@ -62,3 +62,4 @@ public class TemplateReq extends PageReqBase {
 	private String difficult;
 
 }
+

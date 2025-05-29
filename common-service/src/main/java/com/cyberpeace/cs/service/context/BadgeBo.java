@@ -1,3 +1,18 @@
+package com.cyberpeace.cs.service.context;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 红点
+ *
+ * @author SN
+ * @date 2023/06/08
+ */
 /**
  * 这段代码定义了一个名为 `BadgeBo` 的 Java 类，用于表示“红点”相关的业务对象。以下是代码的简要分析： 
  * 1. **类的基本信息**： 
@@ -14,21 +29,6 @@
  * - 这个类主要用于封装与红点相关的数据信息（如是否显示），便于在系统中传递和使用。 
  * 总结：`BadgeBo` 是一个简单的数据传输对象（DTO），用于表示红点的状态信息，支持序列化，并通过注解增强了可读性和文档生成能力。 
 **/
-package com.cyberpeace.cs.service.context;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 红点
- *
- * @author SN
- * @date 2023/06/08
- */
 @Getter
 @Setter
 public class BadgeBo implements Serializable {
@@ -42,3 +42,4 @@ public class BadgeBo implements Serializable {
 	// @ApiModelProperty(value = "")
 	// private Integer number;
 }
+

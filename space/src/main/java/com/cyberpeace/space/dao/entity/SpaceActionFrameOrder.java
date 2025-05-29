@@ -1,3 +1,25 @@
+package com.cyberpeace.space.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.model.IdAndName;
+import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderBo;
+import lombok.Data;
+
+import java.util.Map;
+
+/**
+ * 空间行动框架次序
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see BaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceActionFrameOrder` 的实体类，用于表示与数据库表 `space_action_frame_order` 对应的数据模型。以下是代码的简要分析： 
  * 1. **包名和依赖**： 
@@ -21,28 +43,6 @@
  * - 该类主要用于数据库操作和业务逻辑之间的数据传递，支持 MyBatis-Plus 的 ORM 功能。 
  * 总结：这是一个典型的基于 MyBatis-Plus 的实体类，设计清晰，功能单一，便于在持久层和业务层之间进行数据交互。 
 **/
-package com.cyberpeace.space.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.model.IdAndName;
-import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderBo;
-import lombok.Data;
-
-import java.util.Map;
-
-/**
- * 空间行动框架次序
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see BaseTable
- * @since 1.0.0
- */
 @Data
 @TableName("space_action_frame_order")
 public class SpaceActionFrameOrder extends BaseTable {
@@ -77,3 +77,4 @@ public class SpaceActionFrameOrder extends BaseTable {
 		return bo;
 	}
 }
+

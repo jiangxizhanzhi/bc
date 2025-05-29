@@ -1,3 +1,11 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import com.cyberpeace.oj.course.service.bo.*;
+import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 /**
  * 这段代码是一个JUnit测试类 `OjCourseServiceBoTest`，用于测试一系列业务对象（BO）。以下是对其主要部分的分析： 
  * ### 类结构和测试方法 
@@ -31,14 +39,6 @@
  * - 代码中使用了大量的反射操作，这使得它可以处理任意类型的业务对象，但同时也增加了代码的复杂性和潜在的错误风险。 
  * - 测试方法 `testModel` 中调用了多个业务对象的实例，这表明这是一个批量测试，可能用于验证整个业务对象模型的一致性。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import com.cyberpeace.oj.course.service.bo.*;
-import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
 public class OjCourseServiceBoTest {
 
     @Test

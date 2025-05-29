@@ -1,3 +1,14 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalProbeData;
+
+/**
+ * 评估探针数据Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalProbeDataService` 的接口，该接口继承自 `IService<EvalProbeData>`。以下是详细的分析： 
  * ### 包声明 
@@ -32,16 +43,6 @@
  * - **用途**：这个接口可以被实现类用来执行数据库操作，例如插入、更新、查询和删除 `EvalProbeData` 数据。 
  * 这个接口的设计遵循了面向接口编程的原则，并且使用了 MyBatis-Plus 框架提供的通用服务接口来简化数据访问层的开发。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalProbeData;
-
-/**
- * 评估探针数据Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface EvalProbeDataService extends IService<EvalProbeData> {
 }
+

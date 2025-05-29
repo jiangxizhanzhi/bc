@@ -1,3 +1,20 @@
+package com.cyberpeace.cs.service;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cs.dao.entity.Attachment;
+import com.cyberpeace.cs.service.context.AttachmentBo;
+
+/**
+ * 附件Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `AttachmentService` 的接口，继承自 `IService<Attachment>`，用于处理与附件相关的业务逻辑。以下是代码的主要功能和特点的简要分析： 
  * 1. **继承关系**： 
@@ -20,23 +37,6 @@
  * - 注解和注释清晰，便于理解方法的功能和用途。 
  * 总结来说，该接口提供了完整的附件管理功能，适用于需要高效处理文件上传、存储和查询的场景。 
 **/
-package com.cyberpeace.cs.service;
-
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.web.multipart.MultipartFile;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cs.dao.entity.Attachment;
-import com.cyberpeace.cs.service.context.AttachmentBo;
-
-/**
- * 附件Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface AttachmentService extends IService<Attachment> {
 
 	/**
@@ -131,3 +131,4 @@ public interface AttachmentService extends IService<Attachment> {
 	Boolean isExist(String attachmentId);
 
 }
+

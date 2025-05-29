@@ -1,3 +1,10 @@
+package com.cyberpeace.common.util;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
+import java.util.concurrent.TimeUnit;
+
 /**
  * 这段代码定义了一个工具类 `GuavaCacheUtil`，用于基于 Google Guava 提供的缓存功能创建缓存实例。以下是代码的简要分析： 
  * 1. **类设计**： 
@@ -18,13 +25,6 @@
  * - 参数 `kClass` 和 `vClass` 虽然作为输入，但没有实际用途，可以移除以简化代码。 
  * 总结：该工具类提供了一个简单的方法来创建基于访问时间的 Guava 缓存实例，适合需要动态控制缓存过期时间的场景。 
 **/
-package com.cyberpeace.common.util;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-
-import java.util.concurrent.TimeUnit;
-
 public class GuavaCacheUtil {
 
     private GuavaCacheUtil() {}
@@ -35,3 +35,4 @@ public class GuavaCacheUtil {
     }
 
 }
+

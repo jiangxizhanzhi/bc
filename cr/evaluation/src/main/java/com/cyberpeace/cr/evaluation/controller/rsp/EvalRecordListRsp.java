@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * 评估记录列表响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalRecordListRsp` 的 Java 类，该类用于表示评估记录列表的响应数据。以下是对该代码的简要分析： 
  * ### 类概述 
@@ -27,22 +43,6 @@
  * - **数据结构**: 包含多个字段，涵盖了评估记录的主要信息，如资源 ID、名称、描述、状态、得分等。 
  * 这个类的设计简洁明了，易于理解和维护，适合作为评估记录列表响应的数据模型。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Date;
-
-/**
- * 评估记录列表响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @ApiModel("评估列表数据")
@@ -119,3 +119,4 @@ public class EvalRecordListRsp implements Serializable {
     @ApiModelProperty("评估开始时间")
     private Date evalTime;
 }
+

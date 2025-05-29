@@ -1,3 +1,15 @@
+package com.cyberpeace.common.lock;
+
+import java.util.concurrent.locks.Lock;
+
+/**
+ * 锁具厂
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个接口 `LockFactory`，用于创建锁（`Lock`）。以下是简要分析： 
  * 1. **功能描述**： 
@@ -16,18 +28,7 @@
  * - 支持灵活扩展，不同业务场景可以有各自的锁实现。 
  * 总结：这是一个通用的锁工厂接口，通过传入业务类型和键值，能够动态生成所需的锁对象。 
 **/
-package com.cyberpeace.common.lock;
-
-import java.util.concurrent.locks.Lock;
-
-/**
- * 锁具厂
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface LockFactory {
      Lock getLock(String businessType,String key);
 }
+

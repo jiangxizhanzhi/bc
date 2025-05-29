@@ -1,3 +1,25 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import java.io.Serializable;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评论请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CommentReq` 的 Java 类，用于表示评论请求体。以下是该类的详细分析： 
  * ### 包声明 
@@ -63,28 +85,6 @@
  * - 字段通过 `@NotBlank` 和 `@NotNull` 注解进行了非空校验。 
  * - 实现了 `Serializable` 接口，支持对象序列化。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import java.io.Serializable;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评论请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel("资源评论信息")
@@ -143,3 +143,4 @@ public class CommentReq implements Serializable {
     private Integer businessType;
 
 }
+

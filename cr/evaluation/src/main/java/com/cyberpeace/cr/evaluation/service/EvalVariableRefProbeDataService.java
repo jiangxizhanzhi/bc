@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableDataPageRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRefProbeData;
+import com.cyberpeace.cr.evaluation.service.context.EvalVariableRefProbeDataContext;
+
+import java.util.List;
+
+/**
+ * 评估变量裁判探针数据Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalVariableRefProbeDataService` 的接口，该接口继承了 `IService<EvalVariableRefProbeData>`。这个接口提供了与评估变量裁判探针数据相关的服务方法。以下是具体的分析： 
  * ### 包和导入 
@@ -26,23 +43,6 @@
  * - 它提供了两个主要的方法：一个用于获取单次评估的探针数据上下文，另一个用于获取分页的探针原始数据。 
  * - 接口的设计符合面向服务的架构思想，使得业务逻辑可以更加清晰地分离和管理。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableDataPageRsp;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRefProbeData;
-import com.cyberpeace.cr.evaluation.service.context.EvalVariableRefProbeDataContext;
-
-import java.util.List;
-
-/**
- * 评估变量裁判探针数据Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface EvalVariableRefProbeDataService extends IService<EvalVariableRefProbeData> {
     /**
      * 获取单次评估关联变量项探针数据
@@ -61,3 +61,4 @@ public interface EvalVariableRefProbeDataService extends IService<EvalVariableRe
      */
     ListRsp<EvalVariableDataPageRsp> variableProbeData(Page page, String variableId);
 }
+

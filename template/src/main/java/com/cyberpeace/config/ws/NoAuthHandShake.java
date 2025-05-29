@@ -1,3 +1,25 @@
+package com.cyberpeace.config.ws;
+
+import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.model.ws.WebSocketConnectionContext;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.stereotype.Component;
+import org.springframework.web.socket.WebSocketHandler;
+
+import java.util.Map;
+
+/**
+ * 无身份验证握手
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see JwtHandShake
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 1. **功能概述** 
@@ -41,28 +63,6 @@
  * #### 5. **总结** 
  * `NoAuthHandShake` 是一个简单的 WebSocket 握手前置处理器，主要负责路径校验和上下文初始化。代码结构清晰，逻辑简单，适合无身份认证的场景。但可以通过优化日志级别和增强灵活性进一步提升代码质量。 
 **/
-package com.cyberpeace.config.ws;
-
-import com.cyberpeace.common.constant.WsPath;
-import com.cyberpeace.common.model.ws.WebSocketConnectionContext;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.server.ServerHttpRequest;
-import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.http.server.ServletServerHttpRequest;
-import org.springframework.stereotype.Component;
-import org.springframework.web.socket.WebSocketHandler;
-
-import java.util.Map;
-
-/**
- * 无身份验证握手
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see JwtHandShake
- * @since 1.0.0
- */
 @Slf4j
 @Component
 public class NoAuthHandShake extends JwtHandShake {

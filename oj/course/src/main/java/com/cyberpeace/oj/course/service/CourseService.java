@@ -1,3 +1,25 @@
+package com.cyberpeace.oj.course.service;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
+import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
+import com.cyberpeace.oj.course.service.bo.CourseWebBo;
+
+import java.util.List;
+
+/**
+ * 课程Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseService` 的接口，该接口扩展了 `IService<Course>`。这个接口主要用于处理与课程相关的服务操作。以下是该接口的主要功能和方法的简要分析： 
  * ### 接口定义 
@@ -96,28 +118,6 @@
  * ### 总结 
  * 该接口提供了全面的课程管理功能，包括查询、添加、更新、删除、导出和导入课程数据等。这些方法覆盖了课程管理的各个方面，并且通过 `AuthContext` 参数支持了权限控制的需求。 
 **/
-package com.cyberpeace.oj.course.service;
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.oj.course.dao.entity.Course;
-import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
-import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
-import com.cyberpeace.oj.course.service.bo.CourseWebBo;
-
-import java.util.List;
-
-/**
- * 课程Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see IService
- * @since 1.0.0
- */
 public interface CourseService extends IService<Course> {
 
 	/**
@@ -319,3 +319,4 @@ public interface CourseService extends IService<Course> {
 
 	Boolean loadCourseSlim(String realPath, AuthContext authContext);
 }
+

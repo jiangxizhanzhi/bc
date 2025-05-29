@@ -1,3 +1,27 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import java.io.Serializable;
+import java.util.List;
+
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.cyberpeace.cs.service.context.AttachmentBo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课程信息 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonInfoBo` 的 Java 类，用于表示课程信息。以下是对该类的简要分析： 
  * ### 类概述 
@@ -45,30 +69,6 @@
  * - **特点**：使用了 Lombok 注解简化代码，支持序列化，使用 Swagger 注解便于文档生成。 
  * - **功能**：除了基本的属性设置外，还提供了一个方法来动态设置前后课程编号，方便管理课程顺序。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import java.io.Serializable;
-import java.util.List;
-
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.cyberpeace.cs.service.context.AttachmentBo;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课程信息 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -341,3 +341,4 @@ public class LessonInfoBo implements Serializable {
 	}
 
 }
+

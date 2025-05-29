@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.evaluation.utils;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.util.JsonUtil;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Collection;
+import java.util.Iterator;
+
+/**
+ * 矩阵数据
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MatrixData` 的工具类，用于处理矩阵数据。具体来说，它提供了一个静态方法 `getFormatMatrixData`，该方法将字符串形式的矩阵数据转换为二维双精度浮点数数组。 
  * ### 主要组成部分 
@@ -27,22 +43,6 @@
  * - 可以添加异常处理机制，以处理可能的解析错误或类型转换错误。 
  * - 可以增加更多的注释，以便其他开发者更好地理解代码的功能和实现细节。 
 **/
-package com.cyberpeace.cr.evaluation.utils;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.util.JsonUtil;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Collection;
-import java.util.Iterator;
-
-/**
- * 矩阵数据
- *
- * @author SN
- * @date 2024/11/08
- */
 public class MatrixData {
 
     /**

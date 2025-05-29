@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+
+/**
+ * 流参数更新请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `FlowParamUpdateReq` 的 Java 类，用于表示更新流参数的请求体。以下是详细的分析： 
  * ### 类定义 
@@ -40,21 +55,6 @@
  * - 使用 Swagger 注解来生成 API 文档的描述信息。 
  * 这个类的设计简洁明了，适用于接收前端传来的更新流参数的数据。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-
-/**
- * 流参数更新请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class FlowParamUpdateReq implements Serializable {
@@ -86,3 +86,4 @@ public class FlowParamUpdateReq implements Serializable {
 	@ApiModelProperty(value = "源ip")
 	private String sourceIp;
 }
+

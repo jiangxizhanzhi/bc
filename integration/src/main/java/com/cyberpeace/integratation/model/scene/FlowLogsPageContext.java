@@ -1,3 +1,16 @@
+package com.cyberpeace.integratation.model.scene;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 流原木分页上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `FlowLogsPageContext` 的 Java 类，该类用于表示流原木（可能是指日志或记录）的分页上下文。以下是对其主要特性和功能的简要分析： 
  * ### 包声明与导入 
@@ -29,19 +42,6 @@
  * ### 总结 
  * 这个类主要用于构建分页查询时的请求参数，包含了分页信息、时间范围以及排序等信息。通过使用 Lombok 的注解，减少了样板代码的编写，使得代码更加简洁易读。此外，由于实现了 `Serializable` 接口，这个类的对象可以在需要时被序列化和反序列化，增加了其在分布式系统中的适用性。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 流原木分页上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class FlowLogsPageContext implements Serializable {
@@ -77,3 +77,4 @@ public class FlowLogsPageContext implements Serializable {
 	private String sort;
 
 }
+

@@ -1,3 +1,25 @@
+package com.cyberpeace.space.controller;
+
+import com.cyberpeace.space.dao.entity.SpaceAlgorithmIndividual;
+import com.cyberpeace.space.model.controller.SpaceControllerBase;
+import com.cyberpeace.space.model.req.SpacePageReqBase;
+import com.cyberpeace.space.service.SpaceAlgorithmIndividualService;
+import com.cyberpeace.space.service.context.algorithm.SpaceAlgorithmIndividualBo;
+import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * 空间算法个人Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceAlgorithmIndividualController` 的 Spring MVC 控制器类，用于处理与“空间算法个人”相关的请求。以下是代码的详细分析： 
  * ### 类的主要功能 
@@ -21,28 +43,6 @@
  * ### 总结 
  * 这个控制器主要负责管理“空间算法个人”的相关操作，包括但不限于创建、更新、删除等，并且通过继承基类实现了部分通用的功能。同时，它还集成了日志记录和权限控制等功能，确保系统的安全性和可维护性。 
 **/
-package com.cyberpeace.space.controller;
-
-import com.cyberpeace.space.dao.entity.SpaceAlgorithmIndividual;
-import com.cyberpeace.space.model.controller.SpaceControllerBase;
-import com.cyberpeace.space.model.req.SpacePageReqBase;
-import com.cyberpeace.space.service.SpaceAlgorithmIndividualService;
-import com.cyberpeace.space.service.context.algorithm.SpaceAlgorithmIndividualBo;
-import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-/**
- * 空间算法个人Controller
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceControllerBase
- * @since 1.0.0
- */
 @Api(tags = "知识库-算法库-个人能力评估算法")
 @RestController
 @RequestMapping("/space/algorithm/algorithm_individual")

@@ -1,3 +1,16 @@
+package com.cyberpeace.cs.dao.entity;
+
+import java.io.Serializable;
+
+import com.alibaba.fastjson.JSONObject;
+import lombok.*;
+
+/**
+ * 当地场景元
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `LocalSceneMeta` 的 Java 类，位于 `com.cyberpeace.cs.dao.entity` 包中。以下是代码的主要分析和总结： 
  * ### 功能概述： 
@@ -23,19 +36,6 @@
  * - 通过 Lombok 注解简化了代码，提高了可读性和开发效率。 
  * - 字段设计清晰，能够满足当前场景的需求，同时保留了扩展性。 
 **/
-package com.cyberpeace.cs.dao.entity;
-
-import java.io.Serializable;
-
-import com.alibaba.fastjson.JSONObject;
-import lombok.*;
-
-/**
- * 当地场景元
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @Builder
@@ -67,3 +67,4 @@ public class LocalSceneMeta implements Serializable {
 	 */
 	private Boolean isWeb;
 }
+

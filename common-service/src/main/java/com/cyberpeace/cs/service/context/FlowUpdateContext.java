@@ -1,3 +1,18 @@
+package com.cyberpeace.cs.service.context;
+
+import java.io.Serializable;
+import java.util.List;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 流更新上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `FlowUpdateContext` 的 Java 类，用于表示流更新的上下文信息。以下是简要分析： 
  * 1. **类的功能**： 
@@ -17,21 +32,6 @@
  * - 该类通常用于在服务层或控制器层传递流更新的相关信息。 
  * 总结：这是一个简单的 DTO 类，用于封装流更新的上下文信息，支持序列化，并提供了必要的构造方法和属性访问功能。 
 **/
-package com.cyberpeace.cs.service.context;
-
-import java.io.Serializable;
-import java.util.List;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 流更新上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class FlowUpdateContext implements Serializable {
@@ -60,3 +60,4 @@ public class FlowUpdateContext implements Serializable {
 	public FlowUpdateContext() {}
 
 }
+

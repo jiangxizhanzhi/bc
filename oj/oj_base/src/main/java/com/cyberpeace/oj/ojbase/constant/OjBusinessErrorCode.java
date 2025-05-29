@@ -1,3 +1,15 @@
+package com.cyberpeace.oj.ojbase.constant;
+
+/**
+ * 靶场自定义错误码。
+ * 1、从102001开始递增编号；
+ * 2、截止编号地址102999；
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `OjBusinessErrorCode` 的接口，用于存储和管理与靶场业务相关的自定义错误码。以下是对此代码的简要分析： 
  * ### 主要功能 
@@ -49,18 +61,6 @@
  * ### 总结 
  * 该接口提供了一套详细的错误码系统，适用于靶场业务场景中的各种错误处理。虽然存在一些冗余和缺少注释的问题，但整体上是一个结构清晰且易于扩展的错误码管理方案。 
 **/
-package com.cyberpeace.oj.ojbase.constant;
-
-/**
- * 靶场自定义错误码。
- * 1、从102001开始递增编号；
- * 2、截止编号地址102999；
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface OjBusinessErrorCode {
 
 	/**
@@ -860,3 +860,4 @@ public interface OjBusinessErrorCode {
 	 */
 	String RANDOM_FLAG_NOT_SUPPORTED = "102134";
 }
+

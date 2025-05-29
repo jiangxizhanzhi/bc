@@ -1,3 +1,24 @@
+package com.cyberpeace.cr.crbase.controller.rsp;
+
+import java.util.List;
+
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.service.context.TrainingSummary;
+import com.cyberpeace.cr.crbase.service.context.score.TaskStatistics;
+import com.cyberpeace.cr.crbase.service.context.score.TrainingScore;
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 学员得分响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `StudentScoreRsp` 的 Java 类，用于表示学员得分的响应数据模型。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -25,27 +46,6 @@
  * - 提供了灵活的方式来设置和获取能力分数及其结果。 
  * 总体来说，这个类是一个数据传输对象（DTO），用于在系统中传递学员得分的相关信息。 
 **/
-package com.cyberpeace.cr.crbase.controller.rsp;
-
-import java.util.List;
-
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.service.context.TrainingSummary;
-import com.cyberpeace.cr.crbase.service.context.score.TaskStatistics;
-import com.cyberpeace.cr.crbase.service.context.score.TrainingScore;
-import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 学员得分响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class StudentScoreRsp {

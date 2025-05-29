@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.ojbase.dao.context;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+
+/**
+ * 注意唯一上下文
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `NoteUniqueContext` 的 Java 类，该类实现了 `Serializable` 接口。这个类的主要目的是存储与某个唯一上下文相关的数据。以下是对代码的简要分析： 
  * ### 类定义 
@@ -20,25 +39,6 @@
  * ### 总结 
  * `NoteUniqueContext` 类是一个简单的数据传输对象（DTO），用于在系统中传递关于某个唯一上下文的信息。通过 Lombok 注解，减少了样板代码，使得类更加简洁易读。该类主要用于存储注释类型、业务类型、用户 ID 和业务 ID 等信息，并且可以被序列化以便在网络上传输或持久化到数据库。 
 **/
-package com.cyberpeace.oj.ojbase.dao.context;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
-
-/**
- * 注意唯一上下文
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @AllArgsConstructor
@@ -75,3 +75,4 @@ public class NoteUniqueContext implements Serializable {
 	private String businessId;
 
 }
+

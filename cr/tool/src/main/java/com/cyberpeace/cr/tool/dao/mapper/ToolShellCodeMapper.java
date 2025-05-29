@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.tool.dao.mapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.cr.tool.dao.entity.ToolShellCode;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+/**
+ * 工具壳代号Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolShellCodeMapper` 的接口，它继承了 `BaseMapper<ToolShellCode>`。这是一个使用 MyBatis-Plus 框架的 Mapper 接口，用于操作数据库中的 `ToolShellCode` 实体类。 
  * ### 主要组成部分： 
@@ -41,21 +56,6 @@
  * ### 总结： 
  * 这个接口主要用于从数据库中查询工具壳代码（`ToolShellCode`），支持根据作者、平台和 EDB 验证状态进行分页查询。通过继承 `BaseMapper`，它自动获得了基本的 CRUD 功能，并且可以通过 `list` 方法实现复杂的查询需求。 
 **/
-package com.cyberpeace.cr.tool.dao.mapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.cr.tool.dao.entity.ToolShellCode;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-/**
- * 工具壳代号Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 @Repository
 public interface ToolShellCodeMapper extends BaseMapper<ToolShellCode> {
@@ -72,3 +72,4 @@ public interface ToolShellCodeMapper extends BaseMapper<ToolShellCode> {
 	IPage<ToolShellCode> list(Page page, @Param("author") String author,
 			@Param("platform") String platform, @Param("edbVerified") Boolean edbVerified);
 }
+

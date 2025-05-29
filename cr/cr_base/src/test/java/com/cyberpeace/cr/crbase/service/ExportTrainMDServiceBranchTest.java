@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.crbase.service;;
+package com.cyberpeace.cr.crbase.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

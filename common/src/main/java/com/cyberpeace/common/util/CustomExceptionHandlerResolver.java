@@ -1,3 +1,17 @@
+package com.cyberpeace.common.util;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.ModelAndView;
+
+/**
+ * 自定义例外处理器解析 器
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个自定义的异常处理器类 `CustomExceptionHandlerResolver`，实现了 Spring 框架中的 `HandlerExceptionResolver` 接口。以下是代码的简要分析： 
  * ### 功能概述 
@@ -24,20 +38,6 @@
  * - **缺点**：当前实现未提供任何具体的异常处理逻辑，仅作为占位符存在。若需要定制化异常处理，需在 `resolveException` 方法中添加具体业务逻辑。 
  * - **适用场景**：适用于需要将异常透传至过滤器或其他全局异常处理机制的场景。 
 **/
-package com.cyberpeace.common.util;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.ModelAndView;
-
-/**
- * 自定义例外处理器解析 器
- *
- * @author SN
- * @date 2024/11/08
- */
 public class CustomExceptionHandlerResolver implements HandlerExceptionResolver {
 
 	/**
@@ -57,3 +57,4 @@ public class CustomExceptionHandlerResolver implements HandlerExceptionResolver 
 	}
 
 }
+

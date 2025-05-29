@@ -1,3 +1,27 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import java.io.Serializable;
+import java.util.List;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 导入课请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ImportLessonReq` 的 Java 类，用于表示导入课程请求的请求体。以下是对该代码的简要分析： 
  * ### 包声明和导入 
@@ -34,30 +58,6 @@
  * - 实现了 `Serializable` 接口，使得对象可以被序列化。 
  * 这个类在处理导入课程请求时，能够有效地验证输入数据的合法性，并提供清晰的文档说明。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import java.io.Serializable;
-import java.util.List;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 导入课请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -82,3 +82,4 @@ public class ImportLessonReq implements Serializable {
 	private List<String> lessonIds;
 
 }
+

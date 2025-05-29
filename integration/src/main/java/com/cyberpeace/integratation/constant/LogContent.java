@@ -1,3 +1,15 @@
+package com.cyberpeace.integratation.constant;
+
+import com.cyberpeace.constant.BaseI18n;
+
+import lombok.Getter;
+
+/**
+ * 日志内容
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `LogContent` 的枚举类，该类实现了 `BaseI18n` 接口，并且使用了 Lombok 库来自动生成 getter 方法。以下是详细的分析和总结： 
  * ### 类定义与继承 
@@ -43,18 +55,6 @@
  * - **结构**：枚举常量包含了各种日志内容的描述，方便在应用中进行多语言支持。 
  * 通过这种方式，可以确保在应用程序的不同部分使用统一的日志内容描述，并且易于扩展和维护。 
 **/
-package com.cyberpeace.integratation.constant;
-
-import com.cyberpeace.constant.BaseI18n;
-
-import lombok.Getter;
-
-/**
- * 日志内容
- *
- * @author SN
- * @date 2024/11/08
- */
 public enum LogContent implements BaseI18n {
 	/**
 	 * 操作日志内容描述前缀
@@ -177,4 +177,5 @@ public enum LogContent implements BaseI18n {
 		this.chinese = chinese;
 	}
 }
+
 

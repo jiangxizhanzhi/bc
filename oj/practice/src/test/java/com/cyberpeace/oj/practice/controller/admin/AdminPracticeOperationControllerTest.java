@@ -1,4 +1,3 @@
-
 package com.cyberpeace.oj.practice.controller.admin;
 
 import com.alibaba.fastjson.JSONObject;
@@ -52,6 +51,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @Disabled
 @WebMvcTest(AdminPracticeOperationController.class)
@@ -280,3 +280,4 @@ class AdminPracticeOperationControllerTest {
 				.andExpect(status().isOk()).andExpect(content().json("{\"data\":{},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
 	}
 }
+

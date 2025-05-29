@@ -1,3 +1,16 @@
+package com.cyberpeace.oj.ojbase.constant;
+
+import lombok.Getter;
+
+/**
+ * OJ 活动
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Enum
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `OjEvent` 的枚举类，用于表示与某个在线评测系统（OJ）相关的事件。以下是该代码的详细分析： 
  * ### 类定义 
@@ -21,19 +34,6 @@
  * ### 总结 
  * `OjEvent` 枚举类提供了一种方便的方式来表示和处理与在线评测系统相关的不同事件。每个事件都有一个唯一的代号和描述信息，使得事件的识别和处理变得更加直观和简单。通过使用 Lombok 的 `@Getter` 注解，可以简化代码并提高可读性。 
 **/
-package com.cyberpeace.oj.ojbase.constant;
-
-import lombok.Getter;
-
-/**
- * OJ 活动
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Enum
- * @since 1.0.0
- */
 public enum OjEvent {
 
     /**
@@ -95,3 +95,4 @@ public enum OjEvent {
     }
 
 }
+

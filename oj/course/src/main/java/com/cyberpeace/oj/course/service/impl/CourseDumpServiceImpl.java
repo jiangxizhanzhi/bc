@@ -1,33 +1,3 @@
-/**
- * 这段代码是一个Java类 `CourseDumpServiceImpl`，实现了 `CourseDumpService` 接口。该类主要用于处理课程资源的导出操作。以下是代码的主要功能和结构分析： 
- * ### 主要功能 
- * 1. **课程导出**：根据给定的资源ID (`resourceId`) 和其他参数（如是否导出拓扑、场景数等），将课程及其相关数据导出到指定路径。 
- * 2. **日志记录**：使用日志记录关键步骤，便于调试和问题追踪。 
- * 3. **错误处理**：在关键步骤中捕获并处理异常，确保程序的健壮性。 
- * ### 主要方法 
- * - **`rMCourseDump`**：主方法，负责整体的课程导出流程。 
- * - **`combineLessons`**：合并课时数据。 
- * - **`combineChapterFirst`**：处理章节数据。 
- * - **`combineChapterSecond`**：处理具体课时的数据。 
- * - **`generateLessonBase`**：生成课时的基本信息，包括附件、视频等。 
- * - **`combineTheoryLesson`** 和 **`combineOperationLesson`**：分别处理理论课和实验课的具体内容。 
- * - **`generateReadmeMD`** 和 **`generateOutlineMD`**：生成课程的README和大纲文件。 
- * ### 数据处理 
- * - **课程数据**：通过 `courseMapper` 获取课程信息。 
- * - **课时数据**：通过 `courseLessonMapper` 获取课时信息。 
- * - **章节数据**：通过 `lessonConfigMapper` 获取章节信息。 
- * - **用户数据**：通过 `remoteUserService` 获取用户信息。 
- * ### 工具和依赖 
- * - **日志记录**：使用 `slf4j` 进行日志记录。 
- * - **文件操作**：使用 `FileUtil` 进行文件创建和复制。 
- * - **MD文件处理**：使用 `MdParser` 和 `MdLesson` 进行Markdown文件的生成和写入。 
- * - **附件处理**：通过 `attachmentService` 获取附件信息。 
- * ### 错误处理 
- * - 在关键步骤中抛出 `BusinessException` 异常，例如当课程或章节不存在时。 
- * - 使用 `try-catch` 块捕获并记录异常，确保程序不会因未处理的异常而崩溃。 
- * ### 总结 
- * 该类主要负责课程资源的导出操作，从数据库中读取课程和课时信息，处理文件的创建和复制，并生成相关的Markdown文件。通过丰富的日志记录和异常处理机制，确保了系统的稳定性和可维护性。 
-**/
 package com.cyberpeace.oj.course.service.impl;
 
 import static com.cyberpeace.common.util.MdUtil.saveAsFileWriter;
@@ -75,6 +45,36 @@ import com.cyberpeace.oj.practice.service.PracticeTheoryRefService;
  * @see CourseDumpService
  * @since 1.0.0
  */
+/**
+ * 这段代码是一个Java类 `CourseDumpServiceImpl`，实现了 `CourseDumpService` 接口。该类主要用于处理课程资源的导出操作。以下是代码的主要功能和结构分析： 
+ * ### 主要功能 
+ * 1. **课程导出**：根据给定的资源ID (`resourceId`) 和其他参数（如是否导出拓扑、场景数等），将课程及其相关数据导出到指定路径。 
+ * 2. **日志记录**：使用日志记录关键步骤，便于调试和问题追踪。 
+ * 3. **错误处理**：在关键步骤中捕获并处理异常，确保程序的健壮性。 
+ * ### 主要方法 
+ * - **`rMCourseDump`**：主方法，负责整体的课程导出流程。 
+ * - **`combineLessons`**：合并课时数据。 
+ * - **`combineChapterFirst`**：处理章节数据。 
+ * - **`combineChapterSecond`**：处理具体课时的数据。 
+ * - **`generateLessonBase`**：生成课时的基本信息，包括附件、视频等。 
+ * - **`combineTheoryLesson`** 和 **`combineOperationLesson`**：分别处理理论课和实验课的具体内容。 
+ * - **`generateReadmeMD`** 和 **`generateOutlineMD`**：生成课程的README和大纲文件。 
+ * ### 数据处理 
+ * - **课程数据**：通过 `courseMapper` 获取课程信息。 
+ * - **课时数据**：通过 `courseLessonMapper` 获取课时信息。 
+ * - **章节数据**：通过 `lessonConfigMapper` 获取章节信息。 
+ * - **用户数据**：通过 `remoteUserService` 获取用户信息。 
+ * ### 工具和依赖 
+ * - **日志记录**：使用 `slf4j` 进行日志记录。 
+ * - **文件操作**：使用 `FileUtil` 进行文件创建和复制。 
+ * - **MD文件处理**：使用 `MdParser` 和 `MdLesson` 进行Markdown文件的生成和写入。 
+ * - **附件处理**：通过 `attachmentService` 获取附件信息。 
+ * ### 错误处理 
+ * - 在关键步骤中抛出 `BusinessException` 异常，例如当课程或章节不存在时。 
+ * - 使用 `try-catch` 块捕获并记录异常，确保程序不会因未处理的异常而崩溃。 
+ * ### 总结 
+ * 该类主要负责课程资源的导出操作，从数据库中读取课程和课时信息，处理文件的创建和复制，并生成相关的Markdown文件。通过丰富的日志记录和异常处理机制，确保了系统的稳定性和可维护性。 
+**/
 @Slf4j(topic = "resourceImport")
 @Service
 public class CourseDumpServiceImpl implements CourseDumpService {
@@ -693,3 +693,4 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 	}
 }
+

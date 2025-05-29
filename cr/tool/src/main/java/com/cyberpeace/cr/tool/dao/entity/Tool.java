@@ -1,3 +1,21 @@
+package com.cyberpeace.cr.tool.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.common.util.ConfigUtil;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
+/**
+ * 工具
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `Tool` 的 Java 类，该类继承自 `BaseTable`，用于表示工具实体。以下是对其主要部分的分析： 
  * ### 类定义与注解 
@@ -42,24 +60,6 @@
  * - 部分字段已弃用，表明可能存在历史遗留问题或未来的重构需求。 
  * - 通过枚举类型定义了工具的状态和类型，增加了代码的可读性和可维护性。 
 **/
-package com.cyberpeace.cr.tool.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-import com.cyberpeace.common.util.ConfigUtil;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
-
-/**
- * 工具
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @TableName("cr_tool_tool")

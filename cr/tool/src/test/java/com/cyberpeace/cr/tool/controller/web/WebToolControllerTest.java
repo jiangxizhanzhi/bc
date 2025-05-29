@@ -1,4 +1,3 @@
-
 package com.cyberpeace.cr.tool.controller.web;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -23,6 +22,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @Disabled
 @WebMvcTest(WebToolController.class)
@@ -81,3 +81,4 @@ class WebToolControllerTest {
 				.andExpect(content().json("{\"data\":{\"categoryI18nName\":\"categoryI18nName\",\"cracked\":false,\"deviceName\":\"deviceName\",\"id\":0,\"language\":[\"cn\"],\"name\":\"tool\",\"platforms\":null,\"resourceId\":\"toolId1\",\"toolType\":null,\"category\":null,\"cover\":null,\"coverUrl\":null,\"files\":null,\"toolFiles\":null,\"introduction\":null,\"version\":null,\"visible\":null,\"createTime\":null,\"updateTime\":null,\"deviceResourceId\":\"\",\"homePage\":\"\",\"imageResourceId\":\"\",\"manual\":null,\"scene\":null,\"sceneData\":null,\"tag\":[\"tag1\",\"tag2\"],\"disabled\":null,\"type\":null},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
 	}
 }
+

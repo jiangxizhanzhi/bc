@@ -1,3 +1,24 @@
+package com.cyberpeace.cs.service.impl;
+
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.integratation.service.impl.RemoteServerEnvService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.io.File;
+import java.util.List;
+
+/**
+ * utilService实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * ### 代码分析 
  * #### 1. **类概述** 
@@ -33,27 +54,6 @@
  * - 该类主要用于文件路径和 URL 的处理，提供了多种实用的方法，适用于文件上传、下载、预览等场景。 
  * - 代码结构清晰，依赖注入和配置管理良好，便于扩展和维护。 
 **/
-package com.cyberpeace.cs.service.impl;
-
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.integratation.service.impl.RemoteServerEnvService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-import java.io.File;
-import java.util.List;
-
-/**
- * utilService实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Service
 public class UtilServiceImpl implements UtilService {
 
@@ -292,3 +292,4 @@ public class UtilServiceImpl implements UtilService {
 		return LocalStringUtil.replaceAll(content, realPathList, nginxUrlList);
 	}
 }
+

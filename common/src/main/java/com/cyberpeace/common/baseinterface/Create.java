@@ -1,3 +1,13 @@
+package com.cyberpeace.common.baseinterface;
+
+/**
+ * 用于数据校验分组
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/12/04
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个空接口 `Create`，位于包 `com.cyberpeace.common.baseinterface` 中。以下是简要分析： 
  * 1. **功能定位**： 
@@ -12,14 +22,5 @@
  * - 注释详细说明了接口的用途、作者、版本、日期等信息，符合良好的代码文档规范。 
  * 总结：这是一个简单的标记接口，主要用于数据校验时的分组标识，便于后续扩展和维护。 
 **/
-package com.cyberpeace.common.baseinterface;
-
-/**
- * 用于数据校验分组
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/12/04
- * @since 1.0.0
- */
 public interface Create {}
+

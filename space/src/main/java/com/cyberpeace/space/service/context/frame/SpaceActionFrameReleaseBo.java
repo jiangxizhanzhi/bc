@@ -1,3 +1,18 @@
+package com.cyberpeace.space.service.context.frame;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间行动框架下发Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceActionFrameReleaseReq
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceActionFrameReleaseBo` 的 Java 类，继承自 `SpaceActionFrameReleaseReq`。以下是代码的主要特点和功能分析： 
  * 1. **类的功能**： 
@@ -15,21 +30,6 @@
  * - 通过继承和注解的使用，提高了代码的可读性和复用性。 
  * 总结：这是一个典型的业务对象类，用于封装空间行动框架下发的相关信息，并通过继承和注解增强了其功能和可维护性。 
 **/
-package com.cyberpeace.space.service.context.frame;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间行动框架下发Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceActionFrameReleaseReq
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceActionFrameReleaseBo extends SpaceActionFrameReleaseReq {
@@ -43,3 +43,4 @@ public class SpaceActionFrameReleaseBo extends SpaceActionFrameReleaseReq {
 	@ApiModelProperty(value = "下发状态")
 	private Boolean released = false;
 }
+

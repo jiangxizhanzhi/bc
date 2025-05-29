@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.algorithm;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Space 算法统计
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/07
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceAlgorithmStatistics` 的 Java 类，用于表示与空间算法相关的统计信息。以下是对其的简要分析： 
  * 1. **类的功能**： 
@@ -16,20 +30,6 @@
  * - 可能用于前端展示或后端逻辑处理中，需要对这些能力评估算法进行统一管理和操作的场景。 
  * 总体而言，这是一个简单但功能明确的数据结构类，适合用于封装和传递特定领域的统计信息。 
 **/
-package com.cyberpeace.space.service.context.algorithm;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * Space 算法统计
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/07
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceAlgorithmStatistics {
@@ -59,3 +59,4 @@ public class SpaceAlgorithmStatistics {
 	private Integer team;
 
 }
+

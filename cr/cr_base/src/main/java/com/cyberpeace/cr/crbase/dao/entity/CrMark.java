@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.crbase.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * cr标记
+ *
+ * @author SN
+ * @date 2023/05/24
+ */
 /**
  * 这段代码定义了一个名为 `CrMark` 的 Java 实体类，用于表示数据库表 `cr_mark` 中的数据。以下是代码的主要分析： 
  * 1. **类与注解**： 
@@ -18,23 +35,6 @@
  * - 该类主要用于数据持久化，通过 MyBatis-Plus 框架与数据库进行交互。 
  * 总结：`CrMark` 是一个典型的实体类，结合了 Lombok 和 MyBatis-Plus 的特性，用于操作数据库表 `cr_mark` 中的数据。 
 **/
-package com.cyberpeace.cr.crbase.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * cr标记
- *
- * @author SN
- * @date 2023/05/24
- */
 @TableName(value = "cr_mark")
 @Getter
 @Setter
@@ -76,3 +76,4 @@ public class CrMark extends BaseTable {
      */
     private Integer type;
 }
+

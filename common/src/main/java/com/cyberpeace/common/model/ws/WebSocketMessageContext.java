@@ -1,3 +1,14 @@
+package com.cyberpeace.common.model.ws;
+
+import java.io.Serializable;
+
+import lombok.*;
+
+/**
+ * Web 套接字消息上下文
+ *
+ * @author yinqingrong@date 2024/11/08
+ */
 /**
  * 该代码定义了一个通用的 `WebSocketMessageContext` 类，用于封装 WebSocket 消息的上下文信息。以下是简要分析： 
  * 1. **类的功能**： 
@@ -17,17 +28,6 @@
  * - 适用于需要灵活定义消息标识符和数据类型的 WebSocket 应用场景。 
  * 总结：这是一个通用且灵活的 WebSocket 消息上下文类，便于在 WebSocket 通信中传递结构化的消息。 
 **/
-package com.cyberpeace.common.model.ws;
-
-import java.io.Serializable;
-
-import lombok.*;
-
-/**
- * Web 套接字消息上下文
- *
- * @author yinqingrong@date 2024/11/08
- */
 @Getter
 @Setter
 @Builder
@@ -46,3 +46,4 @@ public class WebSocketMessageContext<I extends WsMessageIdentifier, M> implement
 	private M data;
 
 }
+

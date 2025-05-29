@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 评估房间双响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalRoomPairRsp` 的 Java 类，该类实现了 `Serializable` 接口。这个类用于表示评估房间双响应的数据模型。以下是详细的分析： 
  * ### 类名与包声明 
@@ -24,20 +38,6 @@
  * - 通过 Lombok 注解减少了样板代码，提高了代码的可读性和维护性。 
  * - 使用 Swagger 注解便于生成 API 文档，方便开发者理解和使用该类。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 评估房间双响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalRoomPairRsp implements Serializable {
@@ -53,3 +53,4 @@ public class EvalRoomPairRsp implements Serializable {
     @ApiModelProperty("名称")
     private String label;
 }
+

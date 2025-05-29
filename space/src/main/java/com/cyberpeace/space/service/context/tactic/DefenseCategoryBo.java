@@ -1,3 +1,14 @@
+package com.cyberpeace.space.service.context.tactic;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 国防类 bo
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 /**
  * 这段代码定义了一个名为 `DefenseCategoryBo` 的 Java 类，属于 `com.cyberpeace.space.service.context.tactic` 包。以下是代码的主要分析： 
  * 1. **注解与功能**： 
@@ -11,17 +22,6 @@
  * - `cover`：盖，具体含义需结合上下文理解，可能是某种覆盖物或状态。 
  * 总结：这是一个简单的数据传输对象（DTO），主要用于存储与国防相关的基本信息。 
 **/
-package com.cyberpeace.space.service.context.tactic;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 国防类 bo
- *
- * @author SN
- * @date 2024/11/07
- */
 @Getter
 @Setter
 public class DefenseCategoryBo {
@@ -41,3 +41,4 @@ public class DefenseCategoryBo {
 	 */
 	private String cover;
 }
+

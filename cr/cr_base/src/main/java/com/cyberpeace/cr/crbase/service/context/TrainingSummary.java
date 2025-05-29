@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.crbase.service.context;
+
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 训练概况
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `TrainingSummary` 的 Java 类，用于表示训练的概况。以下是对其功能的简要分析： 
  * 1. **类的功能**： 
@@ -18,20 +32,6 @@
  * - 该类依赖于 `Mission` 类的静态方法 `isObjective`，用于判断任务类型是否为客观任务。 
  * 总体而言，这个类设计简洁，主要负责管理和计算训练过程中的评分和时间相关信息。 
 **/
-package com.cyberpeace.cr.crbase.service.context;
-
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 训练概况
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class TrainingSummary {
@@ -89,3 +89,4 @@ public class TrainingSummary {
 	}
 
 }
+

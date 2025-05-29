@@ -1,3 +1,17 @@
+package com.cyberpeace.common.exception;
+
+import com.cyberpeace.constant.BaseI18nErrorMsg;
+import lombok.Getter;
+
+/**
+ * i18n 异常
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see RuntimeException
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `I18nException` 的自定义异常类，继承自 Java 的标准异常类 `RuntimeException`。以下是代码的简要分析： 
  * 1. **类的用途**： 
@@ -14,20 +28,6 @@
  * - 适用于需要在系统中传递和处理国际化错误信息的场景，特别是在多语言支持的应用中。 
  * 总结：`I18nException` 是一个简洁且实用的自定义异常类，专门用于处理国际化相关的错误信息，便于在代码中抛出和捕获特定的国际化异常。 
 **/
-package com.cyberpeace.common.exception;
-
-import com.cyberpeace.constant.BaseI18nErrorMsg;
-import lombok.Getter;
-
-/**
- * i18n 异常
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see RuntimeException
- * @since 1.0.0
- */
 public class I18nException extends RuntimeException {
 	/**
 	 * i18n 错误 msg
@@ -41,3 +41,4 @@ public class I18nException extends RuntimeException {
 		this.i18nErrorMsg = i18nErrorMsg;
 	}
 }
+

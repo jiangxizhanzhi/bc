@@ -1,3 +1,23 @@
+package com.cyberpeace.integratation.service;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.integratation.model.SceneConfig;
+import com.cyberpeace.integratation.model.scene.TopoDigest;
+import com.cyberpeace.integratation.model.scene.TopoNodeListReq;
+import com.cyberpeace.integratation.service.bo.TopoTemplatePageReq;
+import com.cyberpeace.integratation.service.bo.mp.MibInfoQueryRequest;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 远程拓扑Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `RemoteTopoService` 的接口，该接口提供了与远程拓扑相关的各种操作。以下是对代码的简要分析： 
  * ### 接口概述 
@@ -56,26 +76,6 @@
  * ### 总结 
  * `RemoteTopoService` 接口提供了一组丰富的功能来管理远程拓扑，包括创建、获取、保存、删除、设置属性、获取节点信息以及上传和查询相关文件等操作。这些方法使用了多种输入参数类型（如 `SceneConfig`, `TopoNodeListReq`, `TopoTemplatePageReq`, `MultipartFile`, `MibInfoQueryRequest` 等），并且返回类型也多样化（如 `String`, `JSONObject`, `JSONArray`, `Map<String, TopoDigest>` 等）。 
 **/
-package com.cyberpeace.integratation.service;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.integratation.model.SceneConfig;
-import com.cyberpeace.integratation.model.scene.TopoDigest;
-import com.cyberpeace.integratation.model.scene.TopoNodeListReq;
-import com.cyberpeace.integratation.service.bo.TopoTemplatePageReq;
-import com.cyberpeace.integratation.service.bo.mp.MibInfoQueryRequest;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-import java.util.Map;
-
-/**
- * 远程拓扑Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface RemoteTopoService {
 
 	/**
@@ -273,3 +273,4 @@ public interface RemoteTopoService {
 	 */
 	Object getMibNodeInfo(MibInfoQueryRequest queryRequest);
 }
+

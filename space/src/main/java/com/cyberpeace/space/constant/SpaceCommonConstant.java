@@ -1,3 +1,18 @@
+package com.cyberpeace.space.constant;
+
+/**
+ * 空间常用不断
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ * common constant
+ * @author zhangxiaofeng
+ * @version 1.0
+ * @date 2024/11/06
+ *
+ */
 /**
  * ### 代码分析 
  * #### 1. **代码结构** 
@@ -39,21 +54,6 @@
  * #### 总结 
  * 该代码是一个典型的常量类，通过分模块的方式组织了多个领域的通用常量。整体结构清晰，注释详细，适合用作配置类或枚举替代方案。 
 **/
-package com.cyberpeace.space.constant;
-
-/**
- * 空间常用不断
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- * common constant
- * @author zhangxiaofeng
- * @version 1.0
- * @date 2024/11/06
- *
- */
 public class SpaceCommonConstant {
     
 	/**
@@ -152,3 +152,4 @@ public class SpaceCommonConstant {
 	}
 
 }
+

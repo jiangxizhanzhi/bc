@@ -1,3 +1,19 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 类别新增博
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CategoryAddBo` 的 Java 类，该类用于表示在系统中添加类别时需要的信息。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -18,22 +34,6 @@
  * - 类实现了 `Serializable` 接口，说明它可能需要在网络传输或持久化存储时被序列化。 
  * 这个类的设计目的是为了在添加类别时提供必要的数据结构，并且通过实现 `Serializable` 接口，便于在分布式系统或持久化场景中的使用。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 类别新增博
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class CategoryAddBo implements Serializable {
@@ -67,3 +67,4 @@ public class CategoryAddBo implements Serializable {
 	private Integer courseType;
 
 }
+

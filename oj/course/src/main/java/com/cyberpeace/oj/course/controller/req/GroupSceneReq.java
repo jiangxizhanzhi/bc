@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+
+/**
+ * 群场景请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `GroupSceneReq` 的 Java 类，用于表示群场景请求体。以下是对该代码的简要分析： 
  * ### 包声明 
@@ -34,25 +53,6 @@
  * - 该类实现了 `Serializable` 接口，允许对象被序列化。 
  * 这个类的主要目的是在 API 请求中传递群组信息，并确保群组 ID 是必需且有效的。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-
-/**
- * 群场景请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -68,3 +68,4 @@ public class GroupSceneReq implements Serializable {
 	private String groupId;
 
 }
+

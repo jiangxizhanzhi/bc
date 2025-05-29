@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 评估记录得分响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalRecordScoreRsp` 的 Java 类，用于表示评估记录得分的响应。以下是对该类的简要分析： 
  * ### 类定义 
@@ -22,20 +36,6 @@
  * ### 总结 
  * 这个类主要用于构建评估记录得分的响应对象，包含了评估记录的基本信息以及可能的子级列表。通过使用 Lombok 和 Swagger 注解，使得代码更加简洁且具有良好的可读性。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 评估记录得分响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalRecordScoreRsp  {

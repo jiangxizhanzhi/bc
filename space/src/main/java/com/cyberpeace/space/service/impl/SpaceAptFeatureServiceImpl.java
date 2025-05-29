@@ -1,3 +1,29 @@
+package com.cyberpeace.space.service.impl;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.space.constant.SpaceKTypeEnum;
+import com.cyberpeace.space.dao.entity.SpaceAptFeature;
+import com.cyberpeace.space.dao.mapper.SpaceAptFeatureMapper;
+import com.cyberpeace.space.service.SpaceAptFeatureService;
+import com.cyberpeace.space.service.context.index.KnowledgeChart;
+import com.cyberpeace.space.service.context.index.KnowledgeChartCategory;
+import com.cyberpeace.space.service.context.index.KnowledgeChartItem;
+import com.cyberpeace.space.service.context.index.KnowledgeChartLink;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * 空间容易特征Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see ServiceImpl
+ * @see SpaceAptFeatureService
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析： 
  * #### 1. **功能概述** 
@@ -43,32 +69,6 @@
  * 该代码实现了从数据库读取数据并生成知识图表的功能，结构清晰且符合面向对象设计原则。但存在一些改进空间，例如增强可配置性和增加异常处理机制。 
 **/
 
-package com.cyberpeace.space.service.impl;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.space.constant.SpaceKTypeEnum;
-import com.cyberpeace.space.dao.entity.SpaceAptFeature;
-import com.cyberpeace.space.dao.mapper.SpaceAptFeatureMapper;
-import com.cyberpeace.space.service.SpaceAptFeatureService;
-import com.cyberpeace.space.service.context.index.KnowledgeChart;
-import com.cyberpeace.space.service.context.index.KnowledgeChartCategory;
-import com.cyberpeace.space.service.context.index.KnowledgeChartItem;
-import com.cyberpeace.space.service.context.index.KnowledgeChartLink;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-/**
- * 空间容易特征Service实现
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see ServiceImpl
- * @see SpaceAptFeatureService
- * @since 1.0.0
- */
 @Service
 @Slf4j
 public class SpaceAptFeatureServiceImpl extends ServiceImpl<SpaceAptFeatureMapper, SpaceAptFeature> implements SpaceAptFeatureService

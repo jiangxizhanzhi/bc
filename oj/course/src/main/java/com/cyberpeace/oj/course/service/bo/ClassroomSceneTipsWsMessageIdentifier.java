@@ -1,3 +1,18 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import com.cyberpeace.common.model.ws.WsMessageIdentifier;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课堂场景技巧WS消息标识符
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see WsMessageIdentifier
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomSceneTipsWsMessageIdentifier` 的类，该类继承自 `WsMessageIdentifier`。以下是对其简要分析： 
  * ### 类定义 
@@ -18,21 +33,6 @@
  * ### 总结 
  * 这个类用于表示课堂场景技巧中的 WebSocket 消息标识符，并且包含一个房间ID属性。通过继承 `WsMessageIdentifier` 类，它可能用于在特定的教室场景中发送和接收消息。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import com.cyberpeace.common.model.ws.WsMessageIdentifier;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课堂场景技巧WS消息标识符
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see WsMessageIdentifier
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class ClassroomSceneTipsWsMessageIdentifier extends WsMessageIdentifier {
@@ -45,3 +45,4 @@ public class ClassroomSceneTipsWsMessageIdentifier extends WsMessageIdentifier {
 	private String roomId;
 
 }
+

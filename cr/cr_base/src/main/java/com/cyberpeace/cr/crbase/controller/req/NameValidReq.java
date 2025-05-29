@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.crbase.controller.req;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 名称有效请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `NameValidReq` 的 Java 类，位于 `com.cyberpeace.cr.crbase.controller.req` 包中。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -14,19 +27,6 @@
  * - 该类主要用于控制器层接收前端传递的请求参数，便于后续处理逻辑使用。 
  * 总结：这是一个简单的数据传输对象（DTO），用于封装与名称有效性验证相关的请求参数，并通过注解增强了代码的可读性和文档生成能力。 
 **/
-package com.cyberpeace.cr.crbase.controller.req;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 名称有效请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class NameValidReq {
@@ -50,3 +50,4 @@ public class NameValidReq {
 	String id;
 
 }
+

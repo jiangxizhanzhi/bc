@@ -1,3 +1,21 @@
+package com.cyberpeace.demo.ws;
+
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
+
+import com.cyberpeace.common.component.SelfDefinedWsChecker;
+
+/**
+ * AA 自定义 WS 检查器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SelfDefinedWsChecker
+ * @since 1.0.0
+ */
 /**
  * 这段代码实现了一个自定义的 WebSocket 检查器 `AaSelfDefinedWsChecker`，继承自 `SelfDefinedWsChecker`。以下是代码的主要功能和逻辑分析： 
  * 1. **功能概述**： 
@@ -20,24 +38,6 @@
  * - 适用于需要对 WebSocket 连接进行路径级别检查的场景，特别是涉及课程相关的路径以及黑名单字段的过滤。 
  * 总结：该类通过简单的字符串匹配逻辑，实现了对 WebSocket 连接的路径校验和黑名单过滤，符合设计目标。 
 **/
-package com.cyberpeace.demo.ws;
-
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
-
-import com.cyberpeace.common.component.SelfDefinedWsChecker;
-
-/**
- * AA 自定义 WS 检查器
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SelfDefinedWsChecker
- * @since 1.0.0
- */
 @Component
 public class AaSelfDefinedWsChecker extends SelfDefinedWsChecker {
 
@@ -68,3 +68,4 @@ public class AaSelfDefinedWsChecker extends SelfDefinedWsChecker {
 		return !StringUtils.contains(wsPath, blackWord);
 	}
 }
+

@@ -1,3 +1,13 @@
+package com.cyberpeace.common.model.ws;
+
+import lombok.*;
+
+/**
+ * 聊天消息
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `ChatMessage` 的 Java 类，用于表示聊天消息的模型。以下是代码的主要特点和功能分析： 
  * 1. **注解与特性**： 
@@ -23,16 +33,6 @@
  * - 该类主要用于封装聊天消息的数据结构，支持多种场景（如群聊和私聊），便于在 WebSocket 或其他通信协议中传递消息数据。 
  * 总结：这是一个简洁且功能完善的聊天消息模型类，使用 Lombok 注解减少了冗余代码，同时提供了灵活的对象创建方式和必要的字段管理。 
 **/
-package com.cyberpeace.common.model.ws;
-
-import lombok.*;
-
-/**
- * 聊天消息
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @Builder
@@ -102,3 +102,4 @@ public class ChatMessage {
 	 */
 	private String uuid;
 }
+

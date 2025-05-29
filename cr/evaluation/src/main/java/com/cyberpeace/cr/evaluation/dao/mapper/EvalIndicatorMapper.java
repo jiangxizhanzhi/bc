@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.evaluation.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
+import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+
+/**
+ * 评估指示器Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalIndicatorMapper` 的接口，该接口继承了 `BaseMapper<EvalIndicator>`。`BaseMapper` 是 MyBatis-Plus 提供的一个基础接口，用于简化常见的 CRUD 操作。以下是代码的详细分析： 
  * ### 包和导入声明 
@@ -33,23 +50,6 @@
  * ### 总结 
  * `EvalIndicatorMapper` 接口提供了多个方法来处理评估指标相关的操作，包括分页查询、存在性检查、统计等。这些方法使得对 `EvalIndicator` 实体的操作更加方便和高效。通过继承 `BaseMapper`，这些方法可以利用 MyBatis-Plus 提供的默认实现，从而减少手动编写 SQL 的工作量。 
 **/
-package com.cyberpeace.cr.evaluation.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
-import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
-import org.apache.ibatis.annotations.Mapper;
-
-import java.util.List;
-
-/**
- * 评估指示器Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 public interface EvalIndicatorMapper extends BaseMapper<EvalIndicator> {
 
@@ -95,3 +95,4 @@ public interface EvalIndicatorMapper extends BaseMapper<EvalIndicator> {
 	 */
 	Integer selectIndexUsedNum(List<String> ids);
 }
+

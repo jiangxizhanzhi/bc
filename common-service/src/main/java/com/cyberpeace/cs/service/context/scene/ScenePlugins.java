@@ -1,3 +1,16 @@
+package com.cyberpeace.cs.service.context.scene;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 场景插件
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ScenePlugins` 的 Java 类，用于表示场景插件。以下是简要分析： 
  * 1. **类的功能**： 
@@ -13,19 +26,6 @@
  * - 这个类可能是某个更复杂系统的一部分，用于管理和操作场景中的各种资源或数据流。 
  * 总体来说，这是一个简单的数据传输对象（DTO），主要用于封装与场景相关的插件信息。 
 **/
-package com.cyberpeace.cs.service.context.scene;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 场景插件
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class ScenePlugins implements Serializable {
@@ -42,3 +42,4 @@ public class ScenePlugins implements Serializable {
 
 	private CpCloud cpcloud;
 }
+

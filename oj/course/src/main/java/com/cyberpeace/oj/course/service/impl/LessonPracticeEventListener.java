@@ -1,3 +1,32 @@
+package com.cyberpeace.oj.course.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.scene.MqContext;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.impl.MessageListener;
+import com.cyberpeace.oj.ojbase.constant.Event;
+import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
+import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 课程练习事件侦听器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see MessageListener
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonPracticeEventListener` 的类，该类实现了 `MessageListener` 接口。这个类的主要功能是监听特定的消息类型，并根据不同的消息类型执行相应的操作。以下是对代码的简要分析： 
  * ### 类概述 
@@ -40,35 +69,6 @@
  * - 该类依赖于 `OjLocalSceneService` 和 `PushMessageHandler` 两个服务来完成具体的操作。 
  * - 通过这些方法，可以确保在接收到特定消息时，能够正确地处理和响应。 
 **/
-package com.cyberpeace.oj.course.service.impl;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.scene.MqContext;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.service.impl.MessageListener;
-import com.cyberpeace.oj.ojbase.constant.Event;
-import com.cyberpeace.common.constant.JsonKeyConstant;
-import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
-import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
-import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
-
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 课程练习事件侦听器
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see MessageListener
- * @since 1.0.0
- */
 @Slf4j
 @Service
 public class LessonPracticeEventListener extends MessageListener {
@@ -192,3 +192,4 @@ public class LessonPracticeEventListener extends MessageListener {
 		return true;
 	}
 }
+

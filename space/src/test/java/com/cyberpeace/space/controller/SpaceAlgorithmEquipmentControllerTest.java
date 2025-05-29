@@ -1,25 +1,3 @@
-/**
- * 这段代码是一个Spring Boot单元测试类，用于测试`SpaceAlgorithmEquipmentController`控制器的功能。以下是代码的主要分析： 
- * 1. **测试环境配置**： 
- * - 使用`@WebMvcTest`注解来加载仅与Web相关的上下文，只初始化`SpaceAlgorithmEquipmentController`及其依赖。 
- * - `@MockBean`和`@SpyBean`分别用于模拟服务层和控制器实例。 
- * 2. **测试数据准备**： 
- * - 在`setUp`方法中，通过`when`方法设置mock服务的行为，例如返回空列表、单个对象等。 
- * - 初始化了数据库表信息，并设置了控制器的方法`checkNameDuplication`的返回值为`true`。 
- * 3. **具体测试方法**： 
- * - `testPage`：测试分页功能，验证GET请求返回的状态码和JSON格式是否符合预期。 
- * - `testAddAttack`：测试添加新记录的功能，验证POST请求的响应状态和JSON内容。 
- * - `testUpdateA`：测试更新记录的功能，验证PATCH请求的响应状态和JSON内容。 
- * - `testDeleteA`：测试删除记录的功能，验证DELETE请求的响应状态和JSON内容。 
- * - `testGetADetail`：测试获取单条记录详情的功能，验证GET请求的响应状态和JSON内容。 
- * 4. **工具使用**： 
- * - 使用`MockMvc`进行HTTP请求模拟和结果断言。 
- * - 使用`JsonUtil`将Java对象转换为JSON字符串。 
- * 5. **断言方式**： 
- * - 使用`status().isOk()`验证HTTP状态码为200。 
- * - 使用`content().json()`验证返回的JSON内容是否符合预期。 
- * 总体而言，这段代码通过模拟服务层行为，全面测试了控制器的各个接口功能，确保其正确性和健壮性。 
-**/
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
@@ -52,6 +30,28 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * 这段代码是一个Spring Boot单元测试类，用于测试`SpaceAlgorithmEquipmentController`控制器的功能。以下是代码的主要分析： 
+ * 1. **测试环境配置**： 
+ * - 使用`@WebMvcTest`注解来加载仅与Web相关的上下文，只初始化`SpaceAlgorithmEquipmentController`及其依赖。 
+ * - `@MockBean`和`@SpyBean`分别用于模拟服务层和控制器实例。 
+ * 2. **测试数据准备**： 
+ * - 在`setUp`方法中，通过`when`方法设置mock服务的行为，例如返回空列表、单个对象等。 
+ * - 初始化了数据库表信息，并设置了控制器的方法`checkNameDuplication`的返回值为`true`。 
+ * 3. **具体测试方法**： 
+ * - `testPage`：测试分页功能，验证GET请求返回的状态码和JSON格式是否符合预期。 
+ * - `testAddAttack`：测试添加新记录的功能，验证POST请求的响应状态和JSON内容。 
+ * - `testUpdateA`：测试更新记录的功能，验证PATCH请求的响应状态和JSON内容。 
+ * - `testDeleteA`：测试删除记录的功能，验证DELETE请求的响应状态和JSON内容。 
+ * - `testGetADetail`：测试获取单条记录详情的功能，验证GET请求的响应状态和JSON内容。 
+ * 4. **工具使用**： 
+ * - 使用`MockMvc`进行HTTP请求模拟和结果断言。 
+ * - 使用`JsonUtil`将Java对象转换为JSON字符串。 
+ * 5. **断言方式**： 
+ * - 使用`status().isOk()`验证HTTP状态码为200。 
+ * - 使用`content().json()`验证返回的JSON内容是否符合预期。 
+ * 总体而言，这段代码通过模拟服务层行为，全面测试了控制器的各个接口功能，确保其正确性和健壮性。 
+**/
 @WebMvcTest(SpaceAlgorithmEquipmentController.class)
 class SpaceAlgorithmEquipmentControllerTest {
 
@@ -145,3 +145,4 @@ class SpaceAlgorithmEquipmentControllerTest {
                 .andExpect(content().json("{\"data\":{\"resourceId\":null,\"name\":null,\"description\":null,\"assetManagement\":null,\"behaviorManagement\":null,\"moduleIsolation\":null,\"riskDiscovery\":null,\"threatMonitoring\":null,\"strategy\":null,\"capability\":null},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 }
+

@@ -1,3 +1,23 @@
+package com.cyberpeace.cr.tool.service.impl;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.tool.dao.entity.ToolShellCode;
+import com.cyberpeace.cr.tool.dao.mapper.ToolShellCodeMapper;
+import com.cyberpeace.cr.tool.service.ToolShellCodeService;
+import com.cyberpeace.cr.tool.controller.res.ToolShellCodeRsp;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+/**
+ * 工具壳代号Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolShellCodeServiceImpl` 的服务实现类，该类实现了 `ToolShellCodeService` 接口。以下是代码的主要组成部分和功能分析： 
  * ### 类定义 
@@ -28,26 +48,6 @@
  * - 利用了 MyBatis-Plus 的 `ServiceImpl` 类来简化数据库操作。 
  * - 数据查询和处理逻辑清晰，易于维护和扩展。 
 **/
-package com.cyberpeace.cr.tool.service.impl;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.tool.dao.entity.ToolShellCode;
-import com.cyberpeace.cr.tool.dao.mapper.ToolShellCodeMapper;
-import com.cyberpeace.cr.tool.service.ToolShellCodeService;
-import com.cyberpeace.cr.tool.controller.res.ToolShellCodeRsp;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-/**
- * 工具壳代号Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Service
 public class ToolShellCodeServiceImpl extends ServiceImpl<ToolShellCodeMapper, ToolShellCode>
 		implements ToolShellCodeService {
@@ -88,3 +88,4 @@ public class ToolShellCodeServiceImpl extends ServiceImpl<ToolShellCodeMapper, T
 	}
 
 }
+

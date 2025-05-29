@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.crbase.service.context;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Getter;
+
+/**
+ * 任务统计计数结果
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `TaskCounter` 的 Java 类，用于表示任务统计计数的结果。以下是代码的简要分析： 
  * 1. **类功能**： 
@@ -19,18 +31,6 @@
  * - 这个类可以用于任务管理系统的统计功能，方便记录和查询不同状态任务的数量。 
  * 总结：该类通过简单的字段和枚举类型实现了任务统计的功能，代码结构清晰，易于扩展和维护。 
 **/
-package com.cyberpeace.cr.crbase.service.context;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Getter;
-
-/**
- * 任务统计计数结果
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class TaskCounter {
@@ -67,3 +67,4 @@ public class TaskCounter {
 
 	}
 }
+

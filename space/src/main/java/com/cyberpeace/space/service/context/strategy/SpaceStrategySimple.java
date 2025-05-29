@@ -1,3 +1,16 @@
+package com.cyberpeace.space.service.context.strategy;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间策略
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/12/11
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceStrategySimple` 的 Java 类，属于 `com.cyberpeace.space.service.context.strategy` 包。以下是简要分析： 
  * 1. **类的功能**： 
@@ -15,19 +28,6 @@
  * - 此类可能是某个更复杂系统中的基础组件，用于存储和传递空间策略的相关信息。 
  * 总结：这是一个简单的数据传输对象（DTO），用于封装与空间策略相关的基础信息。 
 **/
-package com.cyberpeace.space.service.context.strategy;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间策略
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/12/11
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceStrategySimple {
@@ -67,3 +67,4 @@ public class SpaceStrategySimple {
      */
     private Boolean builtin;
 }
+

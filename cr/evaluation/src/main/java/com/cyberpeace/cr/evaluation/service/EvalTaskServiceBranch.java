@@ -1,3 +1,11 @@
+package com.cyberpeace.cr.evaluation.service;;
+
+/**
+ * single Train Branch
+ * this is branch method
+ * for the branch method
+ * is the fun toy for little bob
+ */
 /**
  * 这段代码定义了一个名为 `EvalTaskServiceBranch` 的类，其中包含一个方法 `getBranch`。该方法接受一个字符串参数 `input` 并返回一个布尔值。该方法的主要功能是检查输入字符串是否匹配预定义的一系列字符串之一，如果匹配，则返回 `true`；否则返回 `false`。 
  * ### 代码分析 
@@ -22,14 +30,6 @@
  * - 去除不必要的注释，保持代码的简洁性。 
  * - 考虑给方法和变量更具有描述性的名字，以提高代码的可读性和可维护性。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
-
-/**
- * single Train Branch
- * this is branch method
- * for the branch method
- * is the fun toy for little bob
- */
 public class EvalTaskServiceBranch {
 
     /**
@@ -588,3 +588,4 @@ public class EvalTaskServiceBranch {
         return false;
     }
 }
+

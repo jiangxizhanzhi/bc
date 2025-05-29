@@ -1,3 +1,14 @@
+package com.cyberpeace.common.exception;
+
+/**
+ * 远程用户认证失败异常
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Exception
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个自定义异常类 `RemoteUserAuthticationException`，继承自 Java 的标准异常类 `Exception`。以下是简要分析： 
  * ### 主要功能： 
@@ -10,15 +21,5 @@
  * 未来可以为该异常添加构造函数以接收更多上下文信息（如错误码、错误消息等），从而增强其表达能力。 
  * 总结来说，这是一个基础的自定义异常类，用于特定场景下的异常处理。 
 **/
-package com.cyberpeace.common.exception;
-
-/**
- * 远程用户认证失败异常
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Exception
- * @since 1.0.0
- */
 public class RemoteUserAuthticationException extends Exception {}
+

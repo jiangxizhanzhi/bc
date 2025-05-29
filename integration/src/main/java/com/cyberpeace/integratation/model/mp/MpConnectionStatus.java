@@ -1,3 +1,16 @@
+package com.cyberpeace.integratation.model.mp;
+
+import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 中台连接状态
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MpConnectionStatus` 的 Java 类，该类实现了 `Serializable` 接口。这个类的主要目的是表示一个中台连接的状态，并提供了两个属性：`connectionId` 和 `status`。 
  * ### 主要特点和功能： 
@@ -20,19 +33,6 @@
  * - 使用 Lombok 注解简化了代码，减少了手动编写 getter 和 setter 方法的工作量。 
  * - 类实现了 `Serializable` 接口，意味着它可以被序列化，可能用于网络传输或持久化存储。 
 **/
-package com.cyberpeace.integratation.model.mp;
-
-import java.io.Serializable;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 中台连接状态
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MpConnectionStatus implements Serializable {
@@ -48,3 +48,4 @@ public class MpConnectionStatus implements Serializable {
     private Integer status;
 
 }
+

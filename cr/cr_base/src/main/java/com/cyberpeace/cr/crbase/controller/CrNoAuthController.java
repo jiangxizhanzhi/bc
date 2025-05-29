@@ -1,3 +1,24 @@
+package com.cyberpeace.cr.crbase.controller;
+
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authc.AuthenticationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * 无需用户认证的接口
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `CrNoAuthController` 的 Spring MVC 控制器类，用于处理无需用户认证的接口。以下是代码的简要分析： 
  * 1. **包与导入**： 
@@ -22,27 +43,6 @@
  * - 通过调用远程用户服务进行身份验证，并在失败时记录详细日志。 
  * 总结：该代码实现了一个简单的 RESTful 接口，用于辅助用户认证操作，具有日志记录和异常处理功能。 
 **/
-package com.cyberpeace.cr.crbase.controller;
-
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authc.AuthenticationException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-/**
- * 无需用户认证的接口
- *
- * @author SN
- * @date 2024/11/08
- */
 @Api(tags = "靶场无需用户认证的接口")
 @RestController
 @Slf4j
@@ -80,3 +80,4 @@ public class CrNoAuthController {
 		return new BaseRsp();
 	}
 }
+

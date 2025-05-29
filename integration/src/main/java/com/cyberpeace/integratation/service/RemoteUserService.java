@@ -1,3 +1,20 @@
+package com.cyberpeace.integratation.service;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.integratation.model.UserPageContext;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+
+/**
+ * 远程用户Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `RemoteUserService` 的接口，该接口主要用于处理与远程用户相关的操作。以下是对其主要功能的简要分析： 
  * ### 接口概述 
@@ -52,23 +69,6 @@
  * ### 总结 
  * 该接口提供了丰富的功能，包括用户认证、获取用户信息、查询用户列表、获取用户权限等。这些方法覆盖了用户管理的大部分需求，并且使用了泛型和函数式编程来增加灵活性。此外，还提供了一些辅助方法如缓存管理和演示模式检查。 
 **/
-package com.cyberpeace.integratation.service;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.integratation.model.UserPageContext;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-
-/**
- * 远程用户Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface RemoteUserService {
 
 	/**
@@ -205,3 +205,4 @@ public interface RemoteUserService {
 	 */
 	String getCyberToken();
 }
+

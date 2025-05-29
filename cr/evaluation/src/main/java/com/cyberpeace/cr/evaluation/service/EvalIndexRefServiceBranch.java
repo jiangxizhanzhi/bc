@@ -1,3 +1,11 @@
+package com.cyberpeace.cr.evaluation.service;;
+
+/**
+ * single Train Branch
+ * this is branch method
+ * for the branch method
+ * is the fun toy for little bob
+ */
 /**
  * 这段代码定义了一个名为 `EvalIndexRefServiceBranch` 的类，并在其中实现了一个名为 `getBranch` 的方法。该方法接收一个字符串参数 `input` 并返回一个布尔值。根据代码中的注释，这个方法是为“little bob”设计的一个有趣的函数。 
  * ### 主要功能： 
@@ -28,14 +36,6 @@
  * ``` 
  * 这种改进后的代码更加简洁明了，去除了不必要的复杂性。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
-
-/**
- * single Train Branch
- * this is branch method
- * for the branch method
- * is the fun toy for little bob
- */
 public class EvalIndexRefServiceBranch {
 
     /**
@@ -366,3 +366,4 @@ public class EvalIndexRefServiceBranch {
         return false;
     }
 }
+

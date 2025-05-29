@@ -1,3 +1,26 @@
+package com.cyberpeace.common.util;
+
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.luciad.imageio.webp.WebPReadParam;
+import lombok.extern.slf4j.Slf4j;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.FileImageInputStream;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * img util
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码是一个工具类 `ImgUtil`，主要用于处理图像相关的操作。以下是代码的主要功能和结构分析： 
  * ### 主要功能： 
@@ -22,29 +45,6 @@
  * ### 适用场景： 
  * 该工具类适用于需要进行 WebP 图片转换、字节数组转十六进制以及在图片上添加文字等操作的场景。 
 **/
-package com.cyberpeace.common.util;
-
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.luciad.imageio.webp.WebPReadParam;
-import lombok.extern.slf4j.Slf4j;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.FileImageInputStream;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * img util
- *
- * @author SN
- * @date 2024/11/08
- */
 @Slf4j
 public class ImgUtil {
 
@@ -189,3 +189,4 @@ public class ImgUtil {
 	}
 
 }
+

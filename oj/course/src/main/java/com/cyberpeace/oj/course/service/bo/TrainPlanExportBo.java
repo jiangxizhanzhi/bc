@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * 不能增加和删除字段 也不能改变字段顺序
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `TrainPlanExportBo` 的 Java 类，该类实现了 `Serializable` 接口。这个类的主要目的是用于表示与训练计划导出相关的数据模型。以下是对该类的简要分析： 
  * ### 类定义 
@@ -18,23 +35,6 @@
  * ### 总结 
  * `TrainPlanExportBo` 是一个简单的数据传输对象（DTO），用于封装与训练计划导出相关的信息。由于该类实现了 `Serializable` 接口，可以被序列化为字节流，便于在网络上传输或存储到文件系统中。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Date;
-
-/**
- * 不能增加和删除字段 也不能改变字段顺序
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class TrainPlanExportBo implements Serializable {
@@ -82,3 +82,4 @@ public class TrainPlanExportBo implements Serializable {
 	private String orgPath;
 
 }
+

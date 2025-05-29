@@ -1,3 +1,22 @@
+package com.cyberpeace.cr.evaluation.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
+import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+/**
+ * 评估算法Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalAlgorithmMapper` 的接口，该接口继承自 `BaseMapper<EvalAlgorithm>`。这个接口主要用于数据库操作，与 `EvalAlgorithm` 实体类进行交互。以下是对这段代码的简要分析： 
  * ### 1. 包和导入声明 
@@ -26,25 +45,6 @@
  * - 通过继承 `BaseMapper<EvalAlgorithm>`，可以利用 MyBatis Plus 提供的默认实现来简化开发。 
  * 这段代码展示了如何使用 MyBatis Plus 和 Spring 来实现一个功能完善的数据库访问层。 
 **/
-package com.cyberpeace.cr.evaluation.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
-import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
-
-/**
- * 评估算法Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 @Repository
 public interface EvalAlgorithmMapper extends BaseMapper<EvalAlgorithm> {
@@ -110,6 +110,7 @@ public interface EvalAlgorithmMapper extends BaseMapper<EvalAlgorithm> {
 	 */
 	void deleteAllUnUsedBackup(List<String> algorithmIds);
 }
+
 
 
 

@@ -1,3 +1,25 @@
+package com.cyberpeace.oj.course.dao.entity;
+
+import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课堂
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `Classroom` 的 Java 类，该类继承自 `BaseTable`。这个类表示一个课堂实体，并且使用了 MyBatis-Plus 和 Lombok 库来简化开发。以下是对代码的简要分析： 
  * ### 主要内容 
@@ -24,28 +46,6 @@
  * - **数据模型**：该类对应于数据库中的 `oj_classroom` 表，并且定义了表中各个字段的映射关系。 
  * 这段代码是一个典型的用于数据持久化的 Java 实体类，适用于 Spring Boot 项目中。 
 **/
-package com.cyberpeace.oj.course.dao.entity;
-
-import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课堂
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("oj_classroom")
@@ -125,3 +125,4 @@ public class Classroom extends BaseTable {
     private String trainPlanId;
 
 }
+

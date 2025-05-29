@@ -1,3 +1,17 @@
+package com.cyberpeace.integratation.service.bo;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * 日历竞赛 bo
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `CalendarCompetitionBo` 的 Java 类，该类用于表示日历竞赛的业务对象（BO, Business Object）。以下是对该代码的简要分析： 
  * ### 包声明 
@@ -39,20 +53,6 @@
  * - **功能**：通过定义各种属性来描述一个赛事的基本信息，如赛事编号、名称、状态、类型等，并提供了自动生成的 getter 和 setter 方法。 
  * - **可序列化**：实现了 `Serializable` 接口，便于对象在不同场景下的存储和传输。 
 **/
-package com.cyberpeace.integratation.service.bo;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Date;
-
-/**
- * 日历竞赛 bo
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class CalendarCompetitionBo implements Serializable {
@@ -98,3 +98,4 @@ public class CalendarCompetitionBo implements Serializable {
 	private Integer classify;
 
 }
+

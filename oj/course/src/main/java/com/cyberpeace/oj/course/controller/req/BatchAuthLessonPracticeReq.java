@@ -1,3 +1,24 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import java.io.Serializable;
+
+import javax.validation.constraints.NotBlank;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+
+/**
+ * 批量认证课实践请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `BatchAuthLessonPracticeReq` 的 Java 类，用于处理批量认证课实践请求。以下是详细的分析和总结： 
  * ### 类名与包名 
@@ -26,27 +47,6 @@
  * - 类中的属性都带有相应的注解，以确保在 API 文档中正确显示，并且部分属性需要非空验证。 
  * - 使用 Lombok 的 `@Getter` 和 `@Setter` 注解简化了代码，减少了样板代码。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import java.io.Serializable;
-
-import javax.validation.constraints.NotBlank;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-
-/**
- * 批量认证课实践请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -88,3 +88,4 @@ public class BatchAuthLessonPracticeReq implements Serializable {
     private String classroomId;
 
 }
+

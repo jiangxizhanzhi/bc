@@ -1,3 +1,25 @@
+package com.cyberpeace.space.service.context.frame;
+
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.dao.entity.SpaceActionTarget;
+import com.cyberpeace.space.model.IdAndName;
+import com.cyberpeace.space.model.SpaceFrameBoBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Date;
+import java.util.List;
+
+/**
+ * 空间行动目标Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceFrameBoBase
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 1. **类的基本信息** 
@@ -32,28 +54,6 @@
  * #### 总结 
  * `SpaceActionTargetBo` 是一个封装“空间行动目标”数据的业务对象类，提供了基本的字段、getter/setter 方法以及 BO 到实体类的转换方法。代码结构清晰，符合常见的 DTO 设计规范，但可以根据实际需求进一步优化性能和安全性。 
 **/
-package com.cyberpeace.space.service.context.frame;
-
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.dao.entity.SpaceActionTarget;
-import com.cyberpeace.space.model.IdAndName;
-import com.cyberpeace.space.model.SpaceFrameBoBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Date;
-import java.util.List;
-
-/**
- * 空间行动目标Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceFrameBoBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceActionTargetBo extends SpaceFrameBoBase {
@@ -79,3 +79,4 @@ public class SpaceActionTargetBo extends SpaceFrameBoBase {
 	}
 
 }
+

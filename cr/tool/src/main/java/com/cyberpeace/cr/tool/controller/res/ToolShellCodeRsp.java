@@ -1,3 +1,14 @@
+package com.cyberpeace.cr.tool.controller.res;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 工具壳代号响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolShellCodeRsp` 的 Java 类，用于表示工具壳代号的响应数据。以下是详细的分析和总结： 
  * ### 类概述 
@@ -28,17 +39,6 @@
  * - **文档支持**：通过使用 Swagger 的 `@ApiModelProperty` 注解，使得该类在生成的 API 文档中更加清晰易懂。 
  * 这个类的设计简洁明了，符合现代 Java 开发的最佳实践。 
 **/
-package com.cyberpeace.cr.tool.controller.res;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 工具壳代号响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class ToolShellCodeRsp {
@@ -61,3 +61,4 @@ public class ToolShellCodeRsp {
 	@ApiModelProperty(name = "edb_verified", value = "是否验证")
 	private Boolean edbVerified;
 }
+

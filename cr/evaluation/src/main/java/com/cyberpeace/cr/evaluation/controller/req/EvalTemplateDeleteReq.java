@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import java.util.List;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估模板删除请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTemplateDeleteReq` 的 Java 类，该类用于表示删除评估模板请求的参数。以下是对这段代码的简要分析： 
  * ### 包声明 
@@ -43,23 +60,6 @@
  * - 使用了 Lombok 来简化代码，自动生成getter和setter方法。 
  * - 通过 Swagger 注解来生成API文档，使得接口更加易于理解和使用。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import java.util.List;
-
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估模板删除请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalTemplateDeleteReq {

@@ -1,49 +1,3 @@
-/**
- * ### 代码分析 
- * #### 类概述 
- * - **类名**: `SpaceActionFrameApplicationServiceImpl` 
- * - **功能**: 实现了空间行动框架行为依赖服务接口 `SpaceActionFrameApplicationService`。 
- * - **继承**: 继承自 `ServiceImpl`，并提供了具体实现。 
- * #### 主要功能模块 
- * 1. **创建空间行动框架应用** 
- * - 方法: `create(SpaceActionFrameApplicationReq req)` 
- * - 功能: 
- * - 验证 `RvbId` 和 `frameId` 的有效性。 
- * - 获取框架信息并复制请求参数到 `SpaceActionFrameApplication` 对象。 
- * - 生成唯一的资源 ID。 
- * - 设置框架的相关属性。 
- * - 处理框架结构（空或非空）并保存应用对象。 
- * 2. **根据 `RvbId` 和用户组获取应用用户列表** 
- * - 方法: `getUsers(String rvbId, Integer userGroup)` 
- * - 功能: 
- * - 验证输入参数的有效性。 
- * - 尝试从用户服务获取用户集合。 
- * - 如果失败，从 JSON 文件中读取用户数据。 
- * - 根据用户组类型获取相应用户信息并返回应用用户列表。 
- * 3. **根据 `RVB ID` 和用户组获取用户映射表** 
- * - 方法: `getUserMap(String rvbId, Integer userGroup)` 
- * - 功能: 
- * - 调用 `getUsers` 方法获取用户列表。 
- * - 使用 `StreamApiUtils.toMap` 将用户列表转换为用户 ID 到用户名的映射表。 
- * 4. **根据应用 ID 列表删除相关记录** 
- * - 方法: `deleteByIds(List<String> ids)` 
- * - 功能: 
- * - 构建查询条件以删除发布和订单表中的相关记录。 
- * - 在事务中执行删除操作，确保数据一致性。 
- * 5. **检查 RVB 框架是否已被使用** 
- * - 方法: `checkUsage(String rvbId, String frameId)` 
- * - 功能: 
- * - 查询数据库中是否存在匹配的记录。 
- * - 如果存在，抛出业务异常，阻止进一步操作。 
- * #### 关键技术点 
- * - **事务管理**: 使用 `TransactionTemplate` 确保删除操作的原子性。 
- * - **JSON 处理**: 使用 `JsonUtil` 进行 JSON 字符串与对象之间的转换。 
- * - **工具类**: 利用 `BeanUtils`, `IDGeneratorUtil`, `FileUtil` 等工具类简化代码。 
- * - **异常处理**: 自定义异常 `BusinessException` 用于处理业务逻辑错误。 
- * #### 总结 
- * 该类实现了多个功能模块，涵盖了从创建到删除空间行动框架应用的完整流程。通过事务管理和异常处理，确保了数据的一致性和可靠性。 
-**/
-
 package com.cyberpeace.space.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -96,6 +50,52 @@ import java.util.Map;
  * @see SpaceActionFrameApplicationService
  * @since 1.0.0
  */
+/**
+ * ### 代码分析 
+ * #### 类概述 
+ * - **类名**: `SpaceActionFrameApplicationServiceImpl` 
+ * - **功能**: 实现了空间行动框架行为依赖服务接口 `SpaceActionFrameApplicationService`。 
+ * - **继承**: 继承自 `ServiceImpl`，并提供了具体实现。 
+ * #### 主要功能模块 
+ * 1. **创建空间行动框架应用** 
+ * - 方法: `create(SpaceActionFrameApplicationReq req)` 
+ * - 功能: 
+ * - 验证 `RvbId` 和 `frameId` 的有效性。 
+ * - 获取框架信息并复制请求参数到 `SpaceActionFrameApplication` 对象。 
+ * - 生成唯一的资源 ID。 
+ * - 设置框架的相关属性。 
+ * - 处理框架结构（空或非空）并保存应用对象。 
+ * 2. **根据 `RvbId` 和用户组获取应用用户列表** 
+ * - 方法: `getUsers(String rvbId, Integer userGroup)` 
+ * - 功能: 
+ * - 验证输入参数的有效性。 
+ * - 尝试从用户服务获取用户集合。 
+ * - 如果失败，从 JSON 文件中读取用户数据。 
+ * - 根据用户组类型获取相应用户信息并返回应用用户列表。 
+ * 3. **根据 `RVB ID` 和用户组获取用户映射表** 
+ * - 方法: `getUserMap(String rvbId, Integer userGroup)` 
+ * - 功能: 
+ * - 调用 `getUsers` 方法获取用户列表。 
+ * - 使用 `StreamApiUtils.toMap` 将用户列表转换为用户 ID 到用户名的映射表。 
+ * 4. **根据应用 ID 列表删除相关记录** 
+ * - 方法: `deleteByIds(List<String> ids)` 
+ * - 功能: 
+ * - 构建查询条件以删除发布和订单表中的相关记录。 
+ * - 在事务中执行删除操作，确保数据一致性。 
+ * 5. **检查 RVB 框架是否已被使用** 
+ * - 方法: `checkUsage(String rvbId, String frameId)` 
+ * - 功能: 
+ * - 查询数据库中是否存在匹配的记录。 
+ * - 如果存在，抛出业务异常，阻止进一步操作。 
+ * #### 关键技术点 
+ * - **事务管理**: 使用 `TransactionTemplate` 确保删除操作的原子性。 
+ * - **JSON 处理**: 使用 `JsonUtil` 进行 JSON 字符串与对象之间的转换。 
+ * - **工具类**: 利用 `BeanUtils`, `IDGeneratorUtil`, `FileUtil` 等工具类简化代码。 
+ * - **异常处理**: 自定义异常 `BusinessException` 用于处理业务逻辑错误。 
+ * #### 总结 
+ * 该类实现了多个功能模块，涵盖了从创建到删除空间行动框架应用的完整流程。通过事务管理和异常处理，确保了数据的一致性和可靠性。 
+**/
+
 @Service
 @Slf4j
 public class SpaceActionFrameApplicationServiceImpl extends ServiceImpl<SpaceActionFrameApplicationMapper, SpaceActionFrameApplication> implements SpaceActionFrameApplicationService {
@@ -301,3 +301,4 @@ public class SpaceActionFrameApplicationServiceImpl extends ServiceImpl<SpaceAct
 	}
 
 }
+

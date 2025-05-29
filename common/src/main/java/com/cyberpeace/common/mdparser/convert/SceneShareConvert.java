@@ -1,3 +1,15 @@
+package com.cyberpeace.common.mdparser.convert;
+
+/**
+ * 场景共享转换
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Enum
+ * @see MdConvertEnum
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个枚举类 `SceneShareConvert`，用于表示场景共享的不同状态。以下是代码的简要分析： 
  * 1. **枚举定义**： 
@@ -15,18 +27,6 @@
  * - 这个枚举类可以用于在不同的场景中表示和转换状态，例如在用户界面或数据处理中使用。 
  * 总结来说，这个枚举类提供了一种类型安全的方式来管理场景共享的状态，并且可以通过实现的接口方法方便地进行状态转换。 
 **/
-package com.cyberpeace.common.mdparser.convert;
-
-/**
- * 场景共享转换
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Enum
- * @see MdConvertEnum
- * @since 1.0.0
- */
 public enum SceneShareConvert implements MdConvertEnum<Integer, String> {
 
 	/**
@@ -87,3 +87,4 @@ public enum SceneShareConvert implements MdConvertEnum<Integer, String> {
 		return mode;
 	}
 }
+

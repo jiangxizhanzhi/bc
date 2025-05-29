@@ -1,3 +1,21 @@
+package com.cyberpeace.cr.evaluation.dao.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
+
+/**
+ * 评估任务Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTaskMapper` 的接口，该接口继承自 MyBatis-Plus 的 `BaseMapper`。这个接口主要用于数据访问层（DAO），用于执行与 `EvalTask` 实体对象相关的数据库操作。以下是详细的分析： 
  * ### 包与导入 
@@ -28,24 +46,6 @@
  * - 使用了 MyBatis 和 Spring 的相关注解，使其能够被 Spring 容器管理，并且与 MyBatis 框架集成。 
  * 这些方法覆盖了常见的数据查询需求，使得业务逻辑层可以方便地调用这些方法来获取所需的数据。 
 **/
-package com.cyberpeace.cr.evaluation.dao.mapper;
-
-import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
-
-/**
- * 评估任务Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 @Repository
 public interface EvalTaskMapper extends BaseMapper<EvalTask> {
@@ -106,3 +106,4 @@ public interface EvalTaskMapper extends BaseMapper<EvalTask> {
 			@Param("templateId") String templateId, @Param("taskId") String taskId);
 
 }
+

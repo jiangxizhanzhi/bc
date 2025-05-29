@@ -1,3 +1,22 @@
+package com.cyberpeace.config.validation;
+
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+
+import org.hibernate.validator.HibernateValidator;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
+
+/**
+ * 验证配置
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码是一个 Spring Boot 的配置类 `ValidationConfig`，用于全局配置 Java Bean Validation（JSR 380）的验证规则。以下是代码的主要功能和结构分析： 
  * --- 
@@ -33,25 +52,6 @@
  * ### **总结** 
  * 这段代码的核心是通过 Spring 配置类提供了全局的校验能力，并结合 Hibernate Validator 的快速失败模式优化了校验流程。适用于需要对请求参数进行严格校验的场景，尤其是 RESTful API 开发中对输入数据的合法性要求较高的情况。 
 **/
-package com.cyberpeace.config.validation;
-
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-
-import org.hibernate.validator.HibernateValidator;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
-
-/**
- * 验证配置
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Configuration
 public class ValidationConfig {
 
@@ -88,3 +88,4 @@ public class ValidationConfig {
 		return postProcessor;
 	}
 }
+

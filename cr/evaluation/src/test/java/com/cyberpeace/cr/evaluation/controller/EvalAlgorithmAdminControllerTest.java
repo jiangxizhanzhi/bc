@@ -1,3 +1,36 @@
+package com.cyberpeace.cr.evaluation.controller;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalAlgorithmReq;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
+import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
+import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 /**
  * 这段代码是一个JUnit测试类 `EvalAlgorithmAdminControllerTest`，用于测试 `EvalAlgorithmAdminController` 控制器的功能。以下是对该代码的简要分析： 
  * ### 类概述 
@@ -58,39 +91,6 @@
  * ### 总结 
  * 该测试类通过模拟各种场景来验证 `EvalAlgorithmAdminController` 控制器的各个端点的功能。每个测试方法都设置了相应的模拟行为，并通过 `MockMvc` 发送请求来验证控制器的响应。这有助于确保控制器在不同条件下的正确性和健壮性。 
 **/
-package com.cyberpeace.cr.evaluation.controller;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalAlgorithmReq;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
-import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
-import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
-import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @WebMvcTest(EvalAlgorithmAdminController.class)
 class EvalAlgorithmAdminControllerTest {
 
@@ -424,3 +424,4 @@ class EvalAlgorithmAdminControllerTest {
                 .andExpect(content().json("{\"data\":{\"list\":[],\"total\":0,\"lastPage\":0,\"currentPage\":1},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 }
+

@@ -1,3 +1,26 @@
+package com.cyberpeace.common.util;
+
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import lombok.extern.slf4j.Slf4j;
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+/**
+ * zip 实用程序
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * ### 代码分析 
  * #### 1. **功能概述** 
@@ -39,29 +62,6 @@
  * #### 6. **总结** 
  * 该工具类设计合理，功能完整，适用于常见的 ZIP 文件操作场景。通过良好的异常处理和日志记录，提升了代码的健壮性和可调试性。 
 **/
-package com.cyberpeace.common.util;
-
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import lombok.extern.slf4j.Slf4j;
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.UUID;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-/**
- * zip 实用程序
- *
- * @author SN
- * @date 2024/11/08
- */
 @Slf4j
 public class ZipUtil {
 
@@ -245,3 +245,4 @@ public class ZipUtil {
 		}
 	}
 }
+

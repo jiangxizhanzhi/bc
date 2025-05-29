@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估任务id响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTaskIdRsp` 的 Java 类，该类用于表示评估任务ID的响应。以下是详细的分析： 
  * ### 类定义 
@@ -19,20 +33,6 @@
  * ### 总结 
  * 这个类的主要目的是封装评估任务的ID，并提供相应的序列化能力。通过 Swagger 注解，可以方便地在 API 文档中展示该类的结构。使用 Lombok 可以简化代码，减少样板代码的编写。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估任务id响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalTaskIdRsp implements Serializable {
@@ -48,3 +48,4 @@ public class EvalTaskIdRsp implements Serializable {
 	}
 
 }
+

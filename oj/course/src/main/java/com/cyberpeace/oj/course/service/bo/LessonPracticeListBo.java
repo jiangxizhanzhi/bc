@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 课程练习清单 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonPracticeListBo` 的类，该类用于表示课程练习清单。以下是对其主要特性和功能的简要分析： 
  * ### 类名和包声明 
@@ -25,26 +45,6 @@
  * ### 总结 
  * 这个类是一个简单的数据传输对象（DTO），用于封装课程练习清单的相关信息。它包括习题数量、总分以及一系列练习的业务对象。这个类的设计使得它可以方便地在不同服务之间传递数据，并且可以通过 Swagger 自动生成 API 文档。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 课程练习清单 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -74,3 +74,4 @@ public class LessonPracticeListBo implements Serializable {
 	private List<? extends TheoryLessonBo> practiceBos;
 
 }
+

@@ -1,3 +1,46 @@
+package com.cyberpeace.space.controller;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.cyberpeace.common.component.ExcelDataHandler;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ExcelHeader;
+import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.space.controller.req.SpaceLoadedFileThreatRulePageReq;
+import com.cyberpeace.space.dao.entity.SpaceLoadedFileThreatRule;
+import com.cyberpeace.space.model.controller.SpaceControllerBase;
+import com.cyberpeace.space.service.SpaceLoadedFileThreatRuleService;
+import com.cyberpeace.space.service.context.rule.SpaceLoadedFileThreatRuleBo;
+import com.cyberpeace.space.service.context.rule.SpaceLoadedFileThreatRuleExcelBo;
+import com.google.common.collect.Maps;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 空间加载文件威胁统治Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析： 
  * #### 1. **功能概述** 
@@ -46,49 +89,6 @@
  * 该代码实现了“空间加载文件威胁规则”的导出功能，设计合理、结构清晰，充分利用了Spring MVC、MyBatis-Plus及工具类的优势。但在异常处理、性能优化和安全细节上还有提升空间。 
 **/
 
-package com.cyberpeace.space.controller;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.cyberpeace.common.component.ExcelDataHandler;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ExcelHeader;
-import com.cyberpeace.common.constant.FileSunffixConstant;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.space.controller.req.SpaceLoadedFileThreatRulePageReq;
-import com.cyberpeace.space.dao.entity.SpaceLoadedFileThreatRule;
-import com.cyberpeace.space.model.controller.SpaceControllerBase;
-import com.cyberpeace.space.service.SpaceLoadedFileThreatRuleService;
-import com.cyberpeace.space.service.context.rule.SpaceLoadedFileThreatRuleBo;
-import com.cyberpeace.space.service.context.rule.SpaceLoadedFileThreatRuleExcelBo;
-import com.google.common.collect.Maps;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-
-/**
- * 空间加载文件威胁统治Controller
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceControllerBase
- * @since 1.0.0
- */
 @Api(tags = "规则库-病毒威胁防御规则")
 @RestController
 @RequestMapping("/space/rule/space_loaded_file_threat_rule")

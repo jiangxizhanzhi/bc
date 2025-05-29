@@ -1,3 +1,37 @@
+package com.cyberpeace.oj.ojbase.controller;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
+
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
+
+import io.swagger.annotations.ApiOperation;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 公共Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个抽象控制器类 `PublicController`，用于处理一些通用的业务逻辑。以下是详细的分析和总结： 
  * ### 类定义 
@@ -39,40 +73,6 @@
  * - `updateData` 方法封装了批量更新的逻辑，提高了代码的复用性和可维护性。 
  * 这个类的设计体现了良好的模块化和面向对象编程的原则，使得代码结构清晰、易于扩展和维护。 
 **/
-package com.cyberpeace.oj.ojbase.controller;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Function;
-
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
-
-import io.swagger.annotations.ApiOperation;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 公共Controller
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public abstract class PublicController<T extends IService<E>, E> {
 
 	/**
@@ -174,3 +174,4 @@ public abstract class PublicController<T extends IService<E>, E> {
 	}
 
 }
+

@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import com.cyberpeace.oj.ojbase.controller.req.RMImportReq;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Map;
+
+/**
+ * RMCOURSE 课程导入请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see RMImportReq
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `RMCourseImportReq` 的 Java 类，该类继承自 `RMImportReq`。这个类用于表示一个课程导入请求的参数。以下是对此代码的简要分析： 
  * ### 类定义 
@@ -34,23 +51,6 @@
  * - 这些属性使用了嵌套的 `Map` 结构，以支持灵活的数据组织方式。 
  * - Lombok 的 `@Getter` 和 `@Setter` 注解简化了代码，减少了样板代码的编写。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import com.cyberpeace.oj.ojbase.controller.req.RMImportReq;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Map;
-
-/**
- * RMCOURSE 课程导入请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see RMImportReq
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class RMCourseImportReq extends RMImportReq {
@@ -69,3 +69,4 @@ public class RMCourseImportReq extends RMImportReq {
 	 */
 	private Map<String, Map<String, String>> operationEnvReqs;
 }
+

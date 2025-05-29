@@ -1,3 +1,10 @@
+package com.cyberpeace.common.util;
+
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * 这段代码定义了一个工具类 `DateUtil`，用于将 `Date` 对象格式化为字符串。以下是代码的主要功能和结构分析： 
  * 1. **类与常量**： 
@@ -22,13 +29,6 @@
  * - 可以增加异常处理，例如捕获 `IllegalArgumentException` 并提供友好的错误提示。 
  * 总结：这是一个简单的日期格式化工具类，适用于基本的日期字符串转换需求。 
 **/
-package com.cyberpeace.common.util;
-
-import org.apache.commons.lang3.StringUtils;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class DateUtil {
 
 	public static final String SHOT_PATTERN = "yyyy-MM-dd";
@@ -44,3 +44,4 @@ public class DateUtil {
 		return simpleDateFormat.format(date);
 	}
 }
+

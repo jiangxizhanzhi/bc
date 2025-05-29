@@ -1,3 +1,13 @@
+package com.cyberpeace.gateway.service;
+
+import com.cyberpeace.gateway.service.bo.OfficeFileInfoBo;
+
+/**
+ * 办公室视图Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `OfficeViewService` 的接口，该接口位于 `com.cyberpeace.gateway.service` 包中。这个接口的主要功能是提供与办公室视图相关的服务。具体来说，它包含一个方法 `lessonHandoutInfo`。 
  * ### 接口定义 
@@ -22,16 +32,6 @@
  * - **输出结果**: 返回一个包含讲义文件信息的 `OfficeFileInfoBo` 对象。 
  * 这个接口的设计目的是为了提供一种标准的方式来获取讲义文件的信息，使得其他模块或服务可以通过实现或使用这个接口来获取所需的文件信息。 
 **/
-package com.cyberpeace.gateway.service;
-
-import com.cyberpeace.gateway.service.bo.OfficeFileInfoBo;
-
-/**
- * 办公室视图Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface OfficeViewService {
 
 	/**
@@ -43,3 +43,4 @@ public interface OfficeViewService {
 	OfficeFileInfoBo lessonHandoutInfo(String lessonId);
 
 }
+

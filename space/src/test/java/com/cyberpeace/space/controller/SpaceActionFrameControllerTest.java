@@ -1,28 +1,3 @@
-/**
- * 这段代码是一个单元测试类，用于测试`SpaceActionFrameController`的功能。以下是代码的主要内容和功能分析： 
- * 1. **测试环境设置**： 
- * - 使用了Spring Boot的`@WebMvcTest`注解来加载仅包含Web层的上下文。 
- * - 使用了`@MockBean`注解来模拟依赖的服务和Mapper。 
- * 2. **测试方法**： 
- * - `testGetFrame`：测试获取框架信息的功能，包括嵌套的子资源（方法和动作）。 
- * - `testAddAttack`：测试添加新的框架信息，并验证事务处理。 
- * - `testDeleteA`：测试删除多个框架信息的功能。 
- * - `testListAll`：测试列出所有框架信息的功能。 
- * - `testPage`：测试分页查询框架信息的功能。 
- * - `testUpdateA`：测试更新框架信息的功能。 
- * - `testSaveFrame`：测试保存框架信息的功能。 
- * 3. **工具和库**： 
- * - 使用了`MockMvc`来进行HTTP请求的模拟和响应的验证。 
- * - 使用了`JsonUtil`进行JSON字符串与对象之间的转换。 
- * - 使用了`MybatisConfiguration`和`MapperBuilderAssistant`来初始化表信息。 
- * 4. **测试数据准备**： 
- * - 每个测试方法都设置了相应的模拟行为（使用`when`），并创建了必要的测试数据对象。 
- * 5. **断言**： 
- * - 使用`andExpect`方法来验证HTTP状态码、响应内容等是否符合预期。 
- * 6. **事务管理**： 
- * - 每个涉及写操作的测试方法都验证了事务模板`transactionTemplate`的执行。 
- * 总结来说，这段代码通过JUnit和Mockito框架，全面地测试了`SpaceActionFrameController`的各种功能，确保其在不同场景下的正确性。 
-**/
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
@@ -61,6 +36,31 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * 这段代码是一个单元测试类，用于测试`SpaceActionFrameController`的功能。以下是代码的主要内容和功能分析： 
+ * 1. **测试环境设置**： 
+ * - 使用了Spring Boot的`@WebMvcTest`注解来加载仅包含Web层的上下文。 
+ * - 使用了`@MockBean`注解来模拟依赖的服务和Mapper。 
+ * 2. **测试方法**： 
+ * - `testGetFrame`：测试获取框架信息的功能，包括嵌套的子资源（方法和动作）。 
+ * - `testAddAttack`：测试添加新的框架信息，并验证事务处理。 
+ * - `testDeleteA`：测试删除多个框架信息的功能。 
+ * - `testListAll`：测试列出所有框架信息的功能。 
+ * - `testPage`：测试分页查询框架信息的功能。 
+ * - `testUpdateA`：测试更新框架信息的功能。 
+ * - `testSaveFrame`：测试保存框架信息的功能。 
+ * 3. **工具和库**： 
+ * - 使用了`MockMvc`来进行HTTP请求的模拟和响应的验证。 
+ * - 使用了`JsonUtil`进行JSON字符串与对象之间的转换。 
+ * - 使用了`MybatisConfiguration`和`MapperBuilderAssistant`来初始化表信息。 
+ * 4. **测试数据准备**： 
+ * - 每个测试方法都设置了相应的模拟行为（使用`when`），并创建了必要的测试数据对象。 
+ * 5. **断言**： 
+ * - 使用`andExpect`方法来验证HTTP状态码、响应内容等是否符合预期。 
+ * 6. **事务管理**： 
+ * - 每个涉及写操作的测试方法都验证了事务模板`transactionTemplate`的执行。 
+ * 总结来说，这段代码通过JUnit和Mockito框架，全面地测试了`SpaceActionFrameController`的各种功能，确保其在不同场景下的正确性。 
+**/
 @WebMvcTest(SpaceActionFrameController.class)
 class SpaceActionFrameControllerTest {
 
@@ -233,3 +233,4 @@ class SpaceActionFrameControllerTest {
         verify(baseService).saveFrame(any(SpaceFrameLevel.class));
     }
 }
+

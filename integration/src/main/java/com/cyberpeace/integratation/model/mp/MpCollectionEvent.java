@@ -1,3 +1,17 @@
+package com.cyberpeace.integratation.model.mp;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * 中台收集事件
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MpCollectionEvent` 的 Java 类，该类实现了 `Serializable` 接口。这个类主要用于表示某种“中台收集事件”的数据模型。以下是详细的分析： 
  * ### 包声明和导入 
@@ -42,20 +56,6 @@
  * - 所有属性都是字符串类型或日期类型，方便进行数据存储和传输。 
  * - 通过 Lombok 提供的注解，减少了样板代码，使类更简洁。 
 **/
-package com.cyberpeace.integratation.model.mp;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Date;
-
-/**
- * 中台收集事件
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MpCollectionEvent implements Serializable {
@@ -89,3 +89,4 @@ public class MpCollectionEvent implements Serializable {
      */
     private String sceneId;
 }
+

@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.crbase.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.AuthTable;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 靶场模板公共信息模型
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `BusinessTemplate` 的实体类，用于表示靶场模板的公共信息。以下是代码的主要分析： 
  * 1. **类的基本信息**： 
@@ -27,22 +43,6 @@
  * - 该类主要用于描述靶场中的模板信息，支持多种业务类型的管理，适用于需要进行靶场资源管理和测试场景关联的场景。 
  * 总结：这是一个典型的实体类，结合了 MyBatis-Plus 和 Lombok 的功能，旨在简化数据库操作和代码编写，同时通过枚举类提供了业务类型的规范化管理。 
 **/
-package com.cyberpeace.cr.crbase.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.AuthTable;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 靶场模板公共信息模型
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @TableName("cr_business_template")
@@ -111,3 +111,4 @@ public class BusinessTemplate extends AuthTable {
 		}
 	}
 }
+

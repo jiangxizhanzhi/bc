@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalAggregation;
+import com.cyberpeace.cr.evaluation.service.context.EvalAggregationContext;
+
+/**
+ * 评估集合体Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalAggregationService` 的接口，该接口扩展了 `IService<EvalAggregation>` 接口。这个接口主要用于处理与 `EvalAggregation` 实体相关的业务逻辑。以下是代码的详细分析： 
  * ### 1. 包声明和导入 
@@ -58,20 +72,6 @@
  * - `getContextByEvalIndicatorId`：根据指标项 ID 获取评估聚合项的上下文信息。 
  * 这个接口的设计目的是为了更好地管理和操作评估聚合项的数据。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import java.util.List;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalAggregation;
-import com.cyberpeace.cr.evaluation.service.context.EvalAggregationContext;
-
-/**
- * 评估集合体Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface EvalAggregationService extends IService<EvalAggregation> {
 
     /**
@@ -90,3 +90,4 @@ public interface EvalAggregationService extends IService<EvalAggregation> {
     List<EvalAggregationContext> getContextByEvalIndicatorId(String resourceId);
 
 }
+

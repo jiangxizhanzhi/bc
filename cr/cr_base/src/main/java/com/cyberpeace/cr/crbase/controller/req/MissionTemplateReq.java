@@ -1,3 +1,29 @@
+package com.cyberpeace.cr.crbase.controller.req;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 任务模板请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * ### 代码分析 
  * #### 1. **功能概述** 
@@ -56,32 +82,6 @@
  * #### 总结 
  * 该代码是一个典型的业务请求体类，通过严谨的验证机制确保输入数据的合法性，同时保持良好的可读性和扩展性。 
 **/
-package com.cyberpeace.cr.crbase.controller.req;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 任务模板请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @Slf4j
@@ -199,3 +199,4 @@ public class MissionTemplateReq implements Serializable {
 
 	}
 }
+

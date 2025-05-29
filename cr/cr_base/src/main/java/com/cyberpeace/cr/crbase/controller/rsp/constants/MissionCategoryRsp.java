@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.crbase.controller.rsp.constants;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 任务类别响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MissionCategoryRsp` 的 Java 类，用于表示任务类别的响应数据。以下是简要分析： 
  * 1. **类的功能**： 
@@ -14,19 +27,6 @@
  * - 该类是一个简单的数据传输对象（DTO），用于在系统中传递任务类别相关的数据。 
  * 总结：这是一个轻量级的数据传输类，通过 Lombok 和 Swagger 注解简化了代码编写和文档生成。 
 **/
-package com.cyberpeace.cr.crbase.controller.rsp.constants;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 任务类别响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MissionCategoryRsp {
@@ -48,3 +48,4 @@ public class MissionCategoryRsp {
 		this.name = name;
 	}
 }
+

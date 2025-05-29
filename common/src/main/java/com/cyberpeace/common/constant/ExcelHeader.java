@@ -1,3 +1,16 @@
+package com.cyberpeace.common.constant;
+
+import com.cyberpeace.common.model.CommonContext;
+
+/**
+ * Excel 标题
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Enum
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个枚举类 `ExcelHeader`，用于管理 Excel 表格中不同工作表的标题。以下是代码的主要特点和功能： 
  * 1. **枚举定义**： 
@@ -20,19 +33,6 @@
  * - 动态切换语言的功能提高了代码的灵活性。 
  * 总结：这是一个用于管理 Excel 表格标题的工具类，支持多语言动态切换，结构清晰且易于维护。 
 **/
-package com.cyberpeace.common.constant;
-
-import com.cyberpeace.common.model.CommonContext;
-
-/**
- * Excel 标题
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Enum
- * @since 1.0.0
- */
 public enum ExcelHeader {
 
 	/**
@@ -152,3 +152,4 @@ public enum ExcelHeader {
 		return CommonContext.isChinese() ? getCnName() : getEnName();
 	}
 }
+

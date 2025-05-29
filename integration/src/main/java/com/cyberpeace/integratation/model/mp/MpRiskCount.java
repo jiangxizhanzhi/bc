@@ -1,3 +1,17 @@
+package com.cyberpeace.integratation.model.mp;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 中台风险计数
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MpRiskCount` 的 Java 类，该类用于表示中台系统的风险计数信息。以下是对此代码的简要分析： 
  * ### 类定义 
@@ -21,20 +35,6 @@
  * - 通过 Swagger 注解，可以方便地生成 API 文档，便于前端开发人员理解如何使用这个类。 
  * 这个类的设计简单明了，适合用于中台系统中处理风险计数的数据传输场景。 
 **/
-package com.cyberpeace.integratation.model.mp;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 中台风险计数
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MpRiskCount implements Serializable {
@@ -58,3 +58,4 @@ public class MpRiskCount implements Serializable {
 	private Integer lowCount;
 
 }
+

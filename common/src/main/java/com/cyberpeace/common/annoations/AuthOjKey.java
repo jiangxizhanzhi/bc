@@ -1,3 +1,15 @@
+package com.cyberpeace.common.annoations;
+
+import java.lang.annotation.*;
+
+/**
+ * auth oj key
+ *
+ * @author chenzhuo@date 2024/11/08@see Annotation
+ * @version 1.0.0
+ * @date 2024/12/04
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个自定义注解 `@AuthOjKey`，以下是其详细分析： 
  * 1. **注解定义**： 
@@ -14,21 +26,10 @@
  * - 可能用于标记需要进行某种权限验证的方法或类。 
  * 总结：这是一个标记型注解，适用于方法和类/接口，运行时可用，并可能用于权限相关逻辑。 
 **/
-package com.cyberpeace.common.annoations;
-
-import java.lang.annotation.*;
-
-/**
- * auth oj key
- *
- * @author chenzhuo@date 2024/11/08@see Annotation
- * @version 1.0.0
- * @date 2024/12/04
- * @since 1.0.0
- */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface AuthOjKey {
 
 }
+

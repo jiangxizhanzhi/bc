@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import com.cyberpeace.common.baseinterface.Update;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+
+/**
+ * 课更新请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see LessonAddReq
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonUpdateReq` 的 Java 类，该类用于表示课程更新请求的数据模型。以下是对该代码的简要分析： 
  * ### 类定义和继承关系 
@@ -22,25 +41,6 @@
  * - 通过 Swagger 注解，该类可以在 API 文档中自动生成描述。 
  * - 需要注意的是，自定义的 setter 方法名称不符合 JavaBean 规范，建议统一使用标准命名规则以避免混淆。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import com.cyberpeace.common.baseinterface.Update;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-
-/**
- * 课更新请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see LessonAddReq
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -83,3 +83,4 @@ public class LessonUpdateReq extends LessonAddReq {
 		this.videoUrl = videoUrl;
 	}
 }
+

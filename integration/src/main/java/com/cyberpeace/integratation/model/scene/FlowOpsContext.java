@@ -1,3 +1,15 @@
+package com.cyberpeace.integratation.model.scene;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
+/**
+ * 流操作上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `FlowOpsContext` 的类，该类继承自 `NodeOpsContext`。以下是对其主要特性和功能的简要分析： 
  * ### 类概述 
@@ -19,18 +31,6 @@
  * ### 总结 
  * `FlowOpsContext` 类主要用于存储与流操作相关的上下文信息，包括流ID和源IP地址。通过继承自 `NodeOpsContext` 类，它可能还包含其他与节点操作相关的上下文信息。Lombok 的注解简化了代码量，而对 `source_ip` 的处理则保证了数据的有效性。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
-
-/**
- * 流操作上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class FlowOpsContext extends NodeOpsContext {
@@ -69,3 +69,4 @@ public class FlowOpsContext extends NodeOpsContext {
     }
 
 }
+

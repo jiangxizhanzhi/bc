@@ -1,3 +1,20 @@
+package com.cyberpeace.cs.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+
+/**
+ * 合并快照请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MergeSnapshotReq` 的 Java 类，用于表示合并快照请求的数据模型。以下是简要分析： 
  * 1. **类的功能**： 
@@ -16,23 +33,6 @@
  * - 字段 `imageType`、`snapshotName` 和 `uuid` 使用了 `@NotBlank` 注解，确保这些字段不能为空或仅包含空白字符。 
  * 总结：这是一个简洁且功能明确的请求体类，适用于合并快照操作的参数传递，并通过注解增强了代码的可读性和文档生成能力。 
 **/
-package com.cyberpeace.cs.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-
-/**
- * 合并快照请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @ApiModel
@@ -71,3 +71,4 @@ public class MergeSnapshotReq implements Serializable {
 	@ApiModelProperty(value = "场景编号", required = true)
 	private String sceneId;
 }
+

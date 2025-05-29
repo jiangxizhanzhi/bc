@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.crbase.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 任务计划模板
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MissionSchemeTemplate` 的实体类，用于表示任务计划模板。以下是代码的简要分析： 
  * 1. **包与导入**： 
@@ -19,23 +36,6 @@
  * - 该类主要用于 ORM（对象关系映射），便于在数据库中操作任务计划模板相关的数据。 
  * 总结：这是一个典型的 MyBatis-Plus 实体类，用于数据库表 `cr_mission_scheme_template` 的映射，提供了基本的 CRUD 功能支持。 
 **/
-package com.cyberpeace.cr.crbase.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 任务计划模板
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @TableName("cr_mission_scheme_template")
@@ -73,3 +73,4 @@ public class MissionSchemeTemplate extends BaseTable {
 	private String templateConfig;
 
 }
+

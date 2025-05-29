@@ -1,3 +1,19 @@
+package com.cyberpeace.cs.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * 系统用状态
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SystemUseStatus` 的 Java 类，用于表示系统使用状态的实体类。以下是代码的主要分析： 
  * 1. **包与依赖**： 
@@ -17,22 +33,6 @@
  * - 类和字段都有详细的注释，描述了其用途和功能，符合良好的编码规范。 
  * 总结：这是一个典型的 MyBatis-Plus 实体类，结合了 Lombok 的便捷注解，用于数据库操作和持久化管理。 
 **/
-package com.cyberpeace.cs.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Date;
-
-/**
- * 系统用状态
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @TableName("system_use_status")
@@ -66,3 +66,4 @@ public class SystemUseStatus implements Serializable {
 	private String disk;
 
 }
+

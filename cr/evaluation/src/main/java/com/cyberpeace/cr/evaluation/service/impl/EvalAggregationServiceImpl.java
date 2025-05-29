@@ -1,3 +1,26 @@
+package com.cyberpeace.cr.evaluation.service.impl;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalAggregation;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalAggregationMapper;
+import com.cyberpeace.cr.evaluation.service.EvalAggregationService;
+import com.cyberpeace.cr.evaluation.service.context.EvalAggregationContext;
+import com.google.common.collect.Lists;
+
+/**
+ * 评估集合体Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalAggregationServiceImpl` 的服务实现类，用于处理与 `EvalAggregation` 实体相关的业务逻辑。以下是对该代码的简要分析： 
  * ### 类概述 
@@ -29,29 +52,6 @@
  * ### 总结 
  * 这个类主要负责 `EvalAggregation` 和 `EvalAggregationContext` 之间的转换，并提供了批量保存和根据评估指示器 ID 查询相关数据的功能。使用了 MyBatis-Plus 提供的 `ServiceImpl` 基础实现，简化了数据库操作。 
 **/
-package com.cyberpeace.cr.evaluation.service.impl;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalAggregation;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalAggregationMapper;
-import com.cyberpeace.cr.evaluation.service.EvalAggregationService;
-import com.cyberpeace.cr.evaluation.service.context.EvalAggregationContext;
-import com.google.common.collect.Lists;
-
-/**
- * 评估集合体Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Service
 public class EvalAggregationServiceImpl extends ServiceImpl<EvalAggregationMapper, EvalAggregation> implements EvalAggregationService {
 
@@ -109,3 +109,4 @@ public class EvalAggregationServiceImpl extends ServiceImpl<EvalAggregationMappe
 		return evalAggregationContexts;
 	}
 }
+

@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.evaluation.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordListRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+/**
+ * 评估记录Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalRecordMapper` 的接口，它继承了 `BaseMapper<EvalRecord>`。这个接口用于数据库操作，并且使用了 MyBatis-Plus 框架来简化数据访问层的开发。以下是详细的分析： 
  * ### 1. 包声明和导入 
@@ -44,22 +60,6 @@
  * ### 总结 
  * 这段代码定义了一个用于管理评估记录的 Mapper 接口。它继承了 MyBatis-Plus 提供的基础映射器，并添加了一个自定义的方法 `pageList` 用于分页查询评估记录。通过这种方式，可以方便地进行数据库操作，并且代码结构清晰，易于维护。 
 **/
-package com.cyberpeace.cr.evaluation.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordListRsp;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-/**
- * 评估记录Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 @Repository
 public interface EvalRecordMapper extends BaseMapper<EvalRecord> {
@@ -77,3 +77,4 @@ public interface EvalRecordMapper extends BaseMapper<EvalRecord> {
                                      @Param("status") Integer status,
                                      @Param("pattern") String pattern);
 }
+

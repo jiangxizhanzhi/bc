@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.crbase.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 任务
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `Mission` 的 Java 类，属于 `com.cyberpeace.cr.crbase.dao.entity` 包。以下是代码的主要分析和总结： 
  * ### 1. **类的基本信息** 
@@ -30,21 +45,6 @@
  * ### 总结 
  * 这是一个典型的 Java 数据库实体类，设计简洁且功能明确，适用于基于 MyBatis-Plus 的后端开发场景。它通过注解实现了与数据库表的映射以及 API 文档的描述，提升了开发效率。 
 **/
-package com.cyberpeace.cr.crbase.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 任务
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @TableName("cr_mission")
@@ -68,3 +68,4 @@ public class Mission extends MissionBase {
 	@ApiModelProperty(value = "任务模板id")
 	private String missionTemplateId;
 }
+

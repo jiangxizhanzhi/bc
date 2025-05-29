@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * 课堂举报 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomReportBo` 的 Java 类，该类实现了 `Serializable` 接口。这个类主要用于表示课堂举报的信息，并且使用了 Lombok 注解来简化代码。 
  * ### 主要特性： 
@@ -23,25 +42,6 @@
  * - Swagger 注解有助于生成 API 文档，便于接口的理解和维护。 
  * 这段代码设计清晰，功能明确，适合用于课堂举报相关的业务场景。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Date;
-
-/**
- * 课堂举报 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -168,3 +168,4 @@ public class ClassroomReportBo implements Serializable {
 	private Boolean passed;
 
 }
+

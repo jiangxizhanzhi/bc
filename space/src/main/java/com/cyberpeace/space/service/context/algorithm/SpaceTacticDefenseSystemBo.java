@@ -1,3 +1,21 @@
+package com.cyberpeace.space.service.context.algorithm;
+
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.dao.entity.SpaceTacticDefenseSystem;
+import com.cyberpeace.space.model.SpaceBoBase;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+/**
+ * 空间战法防御系统Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceTacticDefenseSystemBo` 的类，它是 `SpaceBoBase` 的子类。以下是代码的主要特点和功能： 
  * 1. **类的功能**： 
@@ -18,24 +36,6 @@
  * 总结：该类是一个专门用于表示空间战法防御系统的业务对象，提供了字段定义、转换方法以及注解支持，便于在业务逻辑中使用和文档化。 
 **/
 
-package com.cyberpeace.space.service.context.algorithm;
-
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.dao.entity.SpaceTacticDefenseSystem;
-import com.cyberpeace.space.model.SpaceBoBase;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-/**
- * 空间战法防御系统Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBoBase
- * @since 1.0.0
- */
 @Data
 public class SpaceTacticDefenseSystemBo extends SpaceBoBase {
 
@@ -57,3 +57,4 @@ public class SpaceTacticDefenseSystemBo extends SpaceBoBase {
 	}
 
 }
+

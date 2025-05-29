@@ -1,3 +1,19 @@
+package com.cyberpeace.space.service.context.rule;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Date;
+
+/**
+ * 空间警告字典胜过Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceWarningDictionaryExcelBo` 的 Java 类，用于表示空间警告字典的业务对象（BO）。以下是代码的简要分析： 
  * ### 主要功能 
@@ -15,22 +31,6 @@
  * ### 总结 
  * 这是一个简单的数据传输类，主要目的是封装与空间警告相关的信息，并通过注解增强了代码的可读性和可维护性。适合在需要处理 Excel 数据或生成 API 文档的场景中使用。 
 **/
-package com.cyberpeace.space.service.context.rule;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Date;
-
-/**
- * 空间警告字典胜过Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceWarningDictionaryExcelBo {
@@ -83,3 +83,4 @@ public class SpaceWarningDictionaryExcelBo {
 	@ApiModelProperty("更新时间")
 	private Date updateTime;
 }
+

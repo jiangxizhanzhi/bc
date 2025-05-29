@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课实操博
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see OperationLessonBo
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonOperationBo` 的 Java 类，该类继承自 `OperationLessonBo`。以下是对这段代码的简要分析： 
  * ### 类定义 
@@ -20,24 +38,6 @@
  * - **用途**：这个类可能用于课程管理中记录学生的实操练习解题情况。 
  * 通过这段代码可以看出，`LessonOperationBo` 是一个用于记录和管理学生在课程中的实操练习解题详情的数据传输对象（DTO）。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课实操博
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see OperationLessonBo
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -53,3 +53,4 @@ LessonOperationBo extends OperationLessonBo {
 	private PracticeSolvedBo resolvedDetail;
 
 }
+

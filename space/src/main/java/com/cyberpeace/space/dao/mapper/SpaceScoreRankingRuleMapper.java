@@ -1,3 +1,20 @@
+package com.cyberpeace.space.dao.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.space.dao.entity.SpaceScoreRankingRule;
+
+/**
+ * 空间得分排名统治Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个 MyBatis 的 Mapper 接口 `SpaceScoreRankingRuleMapper`，用于操作数据库中的 `SpaceScoreRankingRule` 实体类。以下是详细分析： 
  * ### 关键点解析： 
@@ -16,23 +33,6 @@
  * 这段代码是一个典型的基于 MyBatis-Plus 的 Mapper 接口定义，用于操作 `SpaceScoreRankingRule` 表的数据。通过继承 `BaseMapper`，它提供了通用的数据库操作能力，同时结合注解 `@Mapper` 和 `@Repository`，使其成为 Spring 应用上下文中可用的组件。 
 **/
 
-package com.cyberpeace.space.dao.mapper;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.space.dao.entity.SpaceScoreRankingRule;
-
-/**
- * 空间得分排名统治Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 @Repository
 public interface SpaceScoreRankingRuleMapper extends BaseMapper<SpaceScoreRankingRule>

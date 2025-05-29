@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+
+/**
+ * 移动群用户请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `MoveGroupUserReq` 的 Java 类，用于表示移动群用户请求的数据结构。以下是对该代码的简要分析： 
  * ### 类概述 
@@ -19,25 +38,6 @@
  * ### 总结 
  * `MoveGroupUserReq` 是一个用于处理移动群用户请求的数据传输对象（DTO）。它包含了四个必填字段：原分组 ID、目的分组 ID、用户 ID 和课堂 ID。这些字段通过注解来验证其有效性，并且可以通过 Lombok 自动生成 getter 和 setter 方法。该类还实现了 `Serializable` 接口，使其能够进行序列化操作。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-
-/**
- * 移动群用户请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -80,3 +80,4 @@ public class MoveGroupUserReq implements Serializable {
 	private String classroomId;
 
 }
+

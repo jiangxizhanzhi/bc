@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import java.util.List;
+import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
+
+/**
+ * 重复课程检查请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `DuplicateCourseInspectReq` 的 Java 类，用于表示重复课程检查请求体。以下是对该代码的简要分析： 
  * ### 包声明和导入 
@@ -26,25 +45,6 @@
  * - **特性**：使用了 Swagger 注解来生成 API 文档，Lombok 注解简化了代码量，确保了列表不为空。 
  * 这段代码简洁明了，通过注解和 Lombok 提供了良好的可读性和功能。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import java.util.List;
-import javax.validation.constraints.NotEmpty;
-import java.io.Serializable;
-
-/**
- * 重复课程检查请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -60,3 +60,4 @@ public class DuplicateCourseInspectReq implements Serializable {
 	private List<String> fileNames;
 
 }
+

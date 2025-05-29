@@ -1,3 +1,17 @@
+package com.cyberpeace.integratation.model.mp;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 中台事件aggr
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MpEventAggr` 的 Java 类，该类实现了 `Serializable` 接口。这个类主要用于表示某个“中台事件”的聚合数据。以下是详细的分析： 
  * ### 包声明和导入 
@@ -57,20 +71,6 @@
  * - **用途**：通常在需要处理和传输这种类型的数据时使用，例如在监控系统中表示不同资源的使用情况。 
  * 这个类的设计简洁且功能明确，适用于需要快速开发 RESTful API 的场景。 
 **/
-package com.cyberpeace.integratation.model.mp;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 中台事件aggr
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MpEventAggr implements Serializable {
@@ -106,3 +106,4 @@ public class MpEventAggr implements Serializable {
 	private Double user;
 
 }
+

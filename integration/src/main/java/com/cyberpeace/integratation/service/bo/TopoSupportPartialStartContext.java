@@ -1,3 +1,16 @@
+package com.cyberpeace.integratation.service.bo;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 用于设置中台拓扑的部分启动
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `TopoSupportPartialStartContext` 的 Java 类，该类实现了 `Serializable` 接口。这个类主要用于表示一个与中台拓扑相关的部分启动支持的上下文信息。下面是对其主要特性的简要分析： 
  * ### 类名及功能 
@@ -16,19 +29,6 @@
  * ### 总结 
  * 这个类是一个简单的数据传输对象（DTO），它包含了一些关于拓扑是否支持部分启动的信息，并且可以通过 Lombok 注解来简化代码。此外，由于实现了 `Serializable` 接口，这个类的对象可以方便地进行序列化操作。 
 **/
-package com.cyberpeace.integratation.service.bo;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 用于设置中台拓扑的部分启动
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class TopoSupportPartialStartContext implements Serializable {
@@ -49,3 +49,4 @@ public class TopoSupportPartialStartContext implements Serializable {
 	}
 
 }
+

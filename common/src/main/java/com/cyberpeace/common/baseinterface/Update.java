@@ -1,3 +1,13 @@
+package com.cyberpeace.common.baseinterface;
+
+/**
+ * 用于数据校验分组
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个空接口 `Update`，位于包 `com.cyberpeace.common.baseinterface` 下。以下是分析和总结： 
  * ### 分析： 
@@ -13,14 +23,5 @@
  * ### 总结： 
  * 这是一个简单的标记接口，主要用于数据校验的分组功能。它不包含任何具体的功能实现，而是作为一种约定或标识来指导后续的业务逻辑处理。 
 **/
-package com.cyberpeace.common.baseinterface;
-
-/**
- * 用于数据校验分组
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface Update {}
+

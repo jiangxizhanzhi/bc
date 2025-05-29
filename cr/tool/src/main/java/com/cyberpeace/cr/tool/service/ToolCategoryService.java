@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.tool.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.cr.tool.controller.res.WebToolCategoryRsp;
+import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
+import com.cyberpeace.cr.tool.service.context.ToolTypeCategory;
+
+import java.util.List;
+
+/**
+ * 工具类别Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolCategoryService` 的接口，该接口扩展了 `IService<ToolCategory>` 接口。这个服务接口主要用于处理与工具分类相关的业务逻辑。以下是对代码的简要分析： 
  * ### 包声明 
@@ -52,23 +69,6 @@
  * - 提供了国际化支持，可以根据不同的语言环境返回相应的工具分类信息。 
  * - 接口设计清晰，方法命名规范，易于理解和使用。 
 **/
-package com.cyberpeace.cr.tool.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.cr.tool.controller.res.WebToolCategoryRsp;
-import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
-import com.cyberpeace.cr.tool.service.context.ToolTypeCategory;
-
-import java.util.List;
-
-/**
- * 工具类别Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface ToolCategoryService extends IService<ToolCategory> {
 
 	/**
@@ -149,3 +149,4 @@ public interface ToolCategoryService extends IService<ToolCategory> {
 	List<ToolTypeCategory> getAllTypeCategory();
 
 }
+

@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课堂 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomBo` 的 Java 类，该类用于表示课堂业务对象（BO）。以下是对该代码的简要分析： 
  * ### 类概述 
@@ -37,26 +57,6 @@
  * - 通过 Swagger 注解，使得该类可以方便地在 API 文档中展示其结构和属性。 
  * - 使用 Lombok 注解简化了代码，减少了样板代码的编写。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课堂 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -215,3 +215,4 @@ public class ClassroomBo implements Serializable {
 	private Integer roleGroup;
 
 }
+

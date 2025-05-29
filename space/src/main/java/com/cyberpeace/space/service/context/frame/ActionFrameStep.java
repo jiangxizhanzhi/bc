@@ -1,3 +1,19 @@
+package com.cyberpeace.space.service.context.frame;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 行动框架步骤
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ActionFrameStep` 的 Java 类，属于 `com.cyberpeace.space.service.context.frame` 包。以下是对其的简要分析： 
  * 1. **类功能**： 
@@ -16,22 +32,6 @@
  * - 这个类可能是某种业务逻辑中的“行动框架”模块的一部分，用于描述具体的步骤及其相关属性。 
  * 总结：这是一个简单的实体类，主要用于封装行动框架步骤的相关信息，并支持序列化和文档生成。 
 **/
-package com.cyberpeace.space.service.context.frame;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 行动框架步骤
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class ActionFrameStep {
@@ -51,3 +51,4 @@ public class ActionFrameStep {
 	@ApiModelProperty(value = "行动战法")
 	private List<ActionFrameTactic> tactics;
 }
+

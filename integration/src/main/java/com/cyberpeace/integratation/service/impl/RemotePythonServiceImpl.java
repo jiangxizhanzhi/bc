@@ -1,3 +1,36 @@
+package com.cyberpeace.integratation.service.impl;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+
+import com.alibaba.fastjson.JSONArray;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.integratation.model.evaluation.FormatData;
+import com.cyberpeace.integratation.model.evaluation.MarkData;
+import com.cyberpeace.integratation.model.evaluation.MatchData;
+import com.cyberpeace.integratation.service.RemotePythonService;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 远程蟒Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码是一个Spring服务实现类 `RemotePythonServiceImpl`，它实现了 `RemotePythonService` 接口。这个服务的主要功能是通过HTTP客户端调用远程Python服务，并处理返回的数据。以下是代码的主要部分及其功能分析： 
  * ### 主要组件和功能 
@@ -36,39 +69,6 @@
  * - **代码复用**: 部分代码（如日志记录）可以在框架级别进行统一管理，减少重复代码。 
  * 总体而言，这段代码实现了一个功能完善的远程Python服务调用接口，并具备良好的可维护性和扩展性。 
 **/
-package com.cyberpeace.integratation.service.impl;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-
-import com.alibaba.fastjson.JSONArray;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.SystemPropUtil;
-import com.cyberpeace.integratation.model.evaluation.FormatData;
-import com.cyberpeace.integratation.model.evaluation.MarkData;
-import com.cyberpeace.integratation.model.evaluation.MatchData;
-import com.cyberpeace.integratation.service.RemotePythonService;
-
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 远程蟒Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Slf4j
 @Service
 public class RemotePythonServiceImpl implements RemotePythonService {
@@ -321,3 +321,4 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 		return res;
 	}
 }
+

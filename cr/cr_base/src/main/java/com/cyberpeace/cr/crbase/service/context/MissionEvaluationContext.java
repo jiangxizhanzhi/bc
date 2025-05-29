@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.crbase.service.context;
+
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Date;
+
+/**
+ * 任务评估模型
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MissionEvaluationContext` 的 Java 类，属于任务评估模型。以下是简要分析： 
  * ### 功能描述 
@@ -14,20 +28,6 @@
  * ### 总结 
  * 这是一个典型的 DTO（Data Transfer Object），用于在系统中传递任务评估的相关数据。 
 **/
-package com.cyberpeace.cr.crbase.service.context;
-
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Date;
-
-/**
- * 任务评估模型
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MissionEvaluationContext {
@@ -122,3 +122,4 @@ public class MissionEvaluationContext {
 	 */
 	private Date createTime;
 }
+

@@ -1,3 +1,10 @@
+package com.cyberpeace.integratation.service.bo;
+
+import org.apache.commons.lang3.StringUtils;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 这段代码定义了一个名为 `TopoTemplatePageReq` 的 Java 类，属于包 `com.cyberpeace.integratation.service.bo`。该类主要用于构建一个分页查询请求，包含了一些基本属性和一个生成查询字符串的方法。 
  * ### 主要组成部分： 
@@ -17,13 +24,6 @@
  * - 使用了 Lombok 库来简化代码，减少了样板代码（如 getter 和 setter 方法）。 
  * - 通过 `StringUtils` 确保只有非空的 `search` 参数才会被添加到查询字符串中，这有助于避免不必要的查询参数。 
 **/
-package com.cyberpeace.integratation.service.bo;
-
-import org.apache.commons.lang3.StringUtils;
-
-import lombok.Getter;
-import lombok.Setter;
-
 @Getter
 @Setter
 public class TopoTemplatePageReq {
@@ -47,3 +47,4 @@ public class TopoTemplatePageReq {
         return builder.toString();
     }
 }
+

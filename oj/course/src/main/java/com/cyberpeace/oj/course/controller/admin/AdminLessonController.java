@@ -1,38 +1,3 @@
-/**
- * 这段代码是一个用于管理课程和课时的Spring Boot控制器类 `AdminLessonController`。它主要负责处理与课程和课时相关的各种操作，包括查询、添加、更新、删除等。以下是对该代码的简要分析： 
- * ### 类定义 
- * - **包名**：`com.cyberpeace.oj.course.controller.admin` 
- * - **继承关系**：`AdminLessonController` 继承自 `PublicController<CourseLessonService, CourseLesson>` 
- * - **注解**： 
- * - `@RestController`：表明这是一个RESTful风格的控制器。 
- * - `@RequestMapping("/oj/admin/lesson")`：定义了控制器的基本请求路径。 
- * - `@Slf4j`：使用Lombok注解自动生成日志对象。 
- * ### 成员变量 
- * - 注入了多个服务（如 `CourseLessonService`, `CourseService`, `LessonSceneService` 等）和工具类（如 `UtilService`, `RemoteLogService` 等），以支持具体的业务逻辑。 
- * ### 方法 
- * 1. **获取课时列表** 
- * - `@GetMapping("/list")`：处理GET请求，返回分页查询的课时列表。 
- * - 使用 `Page` 对象进行分页，并根据条件查询课时信息。 
- * 2. **获取课时详情** 
- * - `@GetMapping("")`：处理GET请求，通过课程ID和课时ID查询具体的课时详情。 
- * - 返回 `AdminLessonBo` 对象。 
- * 3. **新增课时** 
- * - `@PostMapping("")`：处理POST请求，接收 `LessonAddReq` 对象并将其转换为 `CourseLesson` 对象后保存。 
- * - 同时记录日志信息。 
- * 4. **更新课时** 
- * - `@PatchMapping("")`：处理PATCH请求，接收 `LessonUpdateReq` 对象并更新对应的课时信息。 
- * - 同样会记录日志信息。 
- * 5. **删除课时** 
- * - `@DeleteMapping("/batch")`：处理DELETE请求，批量删除课时。 
- * - 返回删除结果。 
- * 6. **获取课时附件** 
- * - `@GetMapping("/attachment")`：处理GET请求，查询指定课时的附件信息。 
- * - 返回 `AttachmentBo` 对象列表。 
- * 7. **其他功能** 
- * - 包括获取课后练习、更新练习、导入课程、上传附件、启动场景、更新场景状态、删除场景、重启节点、重建节点、获取场景监控信息等。 
- * ### 总结 
- * 这个控制器类主要实现了对课程和课时的CRUD操作，同时包含了日志记录和一些辅助功能。它依赖于多个服务和工具类来完成具体的功能实现。整体结构清晰，职责明确，符合RESTful设计原则。 
-**/
 package com.cyberpeace.oj.course.controller.admin;
 
 import com.alibaba.fastjson.JSONObject;
@@ -108,6 +73,41 @@ import java.util.stream.Collectors;
  * @see PublicController
  * @since 1.0.0
  */
+/**
+ * 这段代码是一个用于管理课程和课时的Spring Boot控制器类 `AdminLessonController`。它主要负责处理与课程和课时相关的各种操作，包括查询、添加、更新、删除等。以下是对该代码的简要分析： 
+ * ### 类定义 
+ * - **包名**：`com.cyberpeace.oj.course.controller.admin` 
+ * - **继承关系**：`AdminLessonController` 继承自 `PublicController<CourseLessonService, CourseLesson>` 
+ * - **注解**： 
+ * - `@RestController`：表明这是一个RESTful风格的控制器。 
+ * - `@RequestMapping("/oj/admin/lesson")`：定义了控制器的基本请求路径。 
+ * - `@Slf4j`：使用Lombok注解自动生成日志对象。 
+ * ### 成员变量 
+ * - 注入了多个服务（如 `CourseLessonService`, `CourseService`, `LessonSceneService` 等）和工具类（如 `UtilService`, `RemoteLogService` 等），以支持具体的业务逻辑。 
+ * ### 方法 
+ * 1. **获取课时列表** 
+ * - `@GetMapping("/list")`：处理GET请求，返回分页查询的课时列表。 
+ * - 使用 `Page` 对象进行分页，并根据条件查询课时信息。 
+ * 2. **获取课时详情** 
+ * - `@GetMapping("")`：处理GET请求，通过课程ID和课时ID查询具体的课时详情。 
+ * - 返回 `AdminLessonBo` 对象。 
+ * 3. **新增课时** 
+ * - `@PostMapping("")`：处理POST请求，接收 `LessonAddReq` 对象并将其转换为 `CourseLesson` 对象后保存。 
+ * - 同时记录日志信息。 
+ * 4. **更新课时** 
+ * - `@PatchMapping("")`：处理PATCH请求，接收 `LessonUpdateReq` 对象并更新对应的课时信息。 
+ * - 同样会记录日志信息。 
+ * 5. **删除课时** 
+ * - `@DeleteMapping("/batch")`：处理DELETE请求，批量删除课时。 
+ * - 返回删除结果。 
+ * 6. **获取课时附件** 
+ * - `@GetMapping("/attachment")`：处理GET请求，查询指定课时的附件信息。 
+ * - 返回 `AttachmentBo` 对象列表。 
+ * 7. **其他功能** 
+ * - 包括获取课后练习、更新练习、导入课程、上传附件、启动场景、更新场景状态、删除场景、重启节点、重建节点、获取场景监控信息等。 
+ * ### 总结 
+ * 这个控制器类主要实现了对课程和课时的CRUD操作，同时包含了日志记录和一些辅助功能。它依赖于多个服务和工具类来完成具体的功能实现。整体结构清晰，职责明确，符合RESTful设计原则。 
+**/
 @Api(tags = "oj-后台课时相关api")
 @RestController
 @RequestMapping("/oj/admin/lesson")
@@ -767,3 +767,4 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	}
 
 }
+

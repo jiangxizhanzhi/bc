@@ -1,3 +1,21 @@
+package com.cyberpeace.space.service.context.rule;
+
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.dao.entity.SpaceAptThreatDetectRule;
+import com.cyberpeace.space.model.SpaceBoBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间容易威胁检测统治Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceAptThreatDetectRuleBo` 的 Java 类，它继承自 `SpaceBoBase` 并用于表示空间APT威胁检测规则的业务对象（BO）。以下是代码的主要分析： 
  * 1. **类的结构与注解**： 
@@ -19,24 +37,6 @@
  * 总体而言，这段代码清晰地定义了一个用于处理空间APT威胁检测规则的业务对象，并提供了必要的数据转换支持。 
 **/
 
-package com.cyberpeace.space.service.context.rule;
-
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.dao.entity.SpaceAptThreatDetectRule;
-import com.cyberpeace.space.model.SpaceBoBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间容易威胁检测统治Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBoBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceAptThreatDetectRuleBo extends SpaceBoBase {

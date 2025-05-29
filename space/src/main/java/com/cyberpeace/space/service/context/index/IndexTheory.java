@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.index;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 编号理论
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * ### 分析与总结 
  * #### 1. **类的功能** 
@@ -30,20 +44,6 @@
  * - 该类适用于需要统计和管理理论课程、在线实验、考试题目等相关数据的场景，例如教育平台的数据统计模块。 
  * 总结：`IndexTheory` 是一个简洁且功能明确的数据模型类，适合用于存储与编号理论相关的统计数据，并提供了基本的计算功能。 
 **/
-package com.cyberpeace.space.service.context.index;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 编号理论
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class IndexTheory {
@@ -136,3 +136,4 @@ public class IndexTheory {
 		this.sum = this.theoryCourse + this.onlineExp + this.theoryExam + this.expExam;
 	}
 }
+

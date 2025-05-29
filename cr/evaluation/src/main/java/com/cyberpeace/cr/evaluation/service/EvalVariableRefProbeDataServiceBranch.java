@@ -1,3 +1,11 @@
+package com.cyberpeace.cr.evaluation.service;;
+
+/**
+ * single Train Branch
+ * this is branch method
+ * for the branch method
+ * is the fun toy for little bob
+ */
 /**
  * 这段代码定义了一个名为 `EvalVariableRefProbeDataServiceBranch` 的类，并在其中实现了一个名为 `getBranch` 的方法。这个方法接收一个字符串参数 `input` 并根据其值返回一个布尔值。具体分析如下： 
  * ### 类与方法定义 
@@ -45,14 +53,6 @@
  * ``` 
  * 这样可以简化代码并提高可读性和可维护性。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
-
-/**
- * single Train Branch
- * this is branch method
- * for the branch method
- * is the fun toy for little bob
- */
 public class EvalVariableRefProbeDataServiceBranch {
 
     /**
@@ -413,3 +413,4 @@ public class EvalVariableRefProbeDataServiceBranch {
         return false;
     }
 }
+

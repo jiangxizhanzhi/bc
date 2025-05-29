@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+
+/**
+ * 课堂标志在请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomSignInReq` 的 Java 类，用于处理课堂签到请求的数据传输对象（DTO）。以下是对该类的简要分析： 
  * ### 类名和包 
@@ -20,25 +39,6 @@
  * - 通过 Swagger 注解提供了 API 文档生成所需的信息。 
  * 这个类主要用于接收客户端提交的课堂签到请求，并验证其中的必要参数。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-
-/**
- * 课堂标志在请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -54,3 +54,4 @@ public class ClassroomSignInReq implements Serializable {
 	private String resourceId;
 
 }
+

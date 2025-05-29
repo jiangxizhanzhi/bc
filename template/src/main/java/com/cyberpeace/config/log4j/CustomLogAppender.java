@@ -1,3 +1,28 @@
+package com.cyberpeace.config.log4j;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.io.Writer;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import com.cyberpeace.common.util.FileUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Layout;
+import org.apache.log4j.helpers.OptionConverter;
+import org.apache.log4j.spi.LoggingEvent;
+
+/**
+ * 自定义日志附加程序
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see FileAppender
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 功能概述 
@@ -37,31 +62,6 @@
  * #### 总结 
  * 该代码实现了功能强大且灵活的日志管理工具，适用于需要复杂日志管理的场景。通过合理的配置和滚动策略，能够有效管理和控制日志文件的大小和数量，避免磁盘空间不足的问题。 
 **/
-package com.cyberpeace.config.log4j;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.io.Writer;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import com.cyberpeace.common.util.FileUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Layout;
-import org.apache.log4j.helpers.OptionConverter;
-import org.apache.log4j.spi.LoggingEvent;
-
-/**
- * 自定义日志附加程序
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see FileAppender
- * @since 1.0.0
- */
 @Slf4j
 public class CustomLogAppender extends FileAppender {
 

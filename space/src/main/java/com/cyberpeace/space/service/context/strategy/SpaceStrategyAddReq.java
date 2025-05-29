@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.strategy;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间策略新增请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceStrategyAddReq` 的 Java 类，属于 `com.cyberpeace.space.service.context.strategy` 包。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -20,20 +34,6 @@
  * 这个类通常会被用作后端服务中的请求参数对象，通过接收前端传来的 JSON 数据来新增或更新空间策略。 
  * 总结：这是一个简单的数据传输对象（DTO），用于封装新增空间策略的相关信息，方便后续业务逻辑处理。 
 **/
-package com.cyberpeace.space.service.context.strategy;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间策略新增请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceStrategyAddReq {
@@ -118,3 +118,4 @@ public class SpaceStrategyAddReq {
 	@ApiModelProperty("策略依据")
 	private String gauge;
 }
+

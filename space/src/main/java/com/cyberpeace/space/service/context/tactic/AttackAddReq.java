@@ -1,3 +1,18 @@
+package com.cyberpeace.space.service.context.tactic;
+
+import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 攻击新增请求体
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 /**
  * 这段代码定义了一个名为 `AttackAddReq` 的 Java 类，用于表示攻击新增请求体。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -17,21 +32,6 @@
  * 该类作为请求体的一部分，通常在接口中用于接收客户端提交的攻击新增信息。 
  * 总结：这是一个简洁且功能明确的数据传输对象（DTO），适用于处理攻击新增相关的业务逻辑。 
 **/
-package com.cyberpeace.space.service.context.tactic;
-
-import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 攻击新增请求体
- *
- * @author SN
- * @date 2024/11/11
- */
 @Getter
 @Setter
 public class AttackAddReq {
@@ -79,3 +79,4 @@ public class AttackAddReq {
 	@ApiModelProperty(value = "相关策略")
 	private List<SpaceActionStrategy> strategy;
 }
+

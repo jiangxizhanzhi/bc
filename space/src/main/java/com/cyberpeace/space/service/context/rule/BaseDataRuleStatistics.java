@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.rule;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 基本数据规则统计信息
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个名为 `BaseDataRuleStatistics` 的 Java 类，用于表示基本数据规则的统计信息。以下是代码的主要分析和总结： 
  * ### 主要内容： 
@@ -19,20 +33,6 @@
  * ### 总结： 
  * 这是一个轻量级的数据结构类，主要用于存储与安全相关的统计数据。通过 Lombok 和 Swagger 注解，简化了代码的开发和文档生成工作。 
 **/
-package com.cyberpeace.space.service.context.rule;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 基本数据规则统计信息
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class BaseDataRuleStatistics {
@@ -69,3 +69,4 @@ public class BaseDataRuleStatistics {
 	@ApiModelProperty(value = "ioc威胁情报")
 	private Integer ioc = 0;
 }
+

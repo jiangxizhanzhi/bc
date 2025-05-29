@@ -1,3 +1,13 @@
+package com.cyberpeace.common.baseinterface;
+
+/**
+ * 枚举实现此接口 可使用EnumUtils获取枚举相关信息
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `GenericEnum` 的 Java 接口。以下是简要分析： 
  * 1. **接口用途**： 
@@ -13,16 +23,6 @@
  * - 常用于需要动态操作枚举的场景，例如根据代码查找描述、反向解析等。 
  * 总结：这是一个简洁而通用的接口，为枚举提供了标准的代码和描述获取方法，适合在需要枚举管理的项目中使用。 
 **/
-package com.cyberpeace.common.baseinterface;
-
-/**
- * 枚举实现此接口 可使用EnumUtils获取枚举相关信息
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface GenericEnum {
 
     /**
@@ -40,3 +40,4 @@ public interface GenericEnum {
     String getDesc();
 
 }
+

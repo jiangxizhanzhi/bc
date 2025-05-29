@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.crbase.controller.rsp;
+
+import com.cyberpeace.cr.crbase.service.context.TrainingRecord;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 在获取训练记录接口使用
+ *
+ * @author 张晋宝@date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `TrainingRecordMissionRsp` 的 Java 类，用于表示从获取训练记录接口返回的数据结构。以下是简要分析： 
  * ### 主要功能 
@@ -19,20 +33,6 @@
  * - 可以进一步添加必要的构造函数或重载方法来增强类的灵活性。 
  * 总结来说，这是一个简洁且实用的数据传输对象（DTO），符合现代 Java 开发的最佳实践。 
 **/
-package com.cyberpeace.cr.crbase.controller.rsp;
-
-import com.cyberpeace.cr.crbase.service.context.TrainingRecord;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 在获取训练记录接口使用
- *
- * @author 张晋宝@date 2024/11/08
- */
 @Getter
 @Setter
 public class TrainingRecordMissionRsp implements Serializable {
@@ -67,3 +67,4 @@ public class TrainingRecordMissionRsp implements Serializable {
 	@ApiModelProperty("训练状态")
 	private Integer traininStatus;
 }
+

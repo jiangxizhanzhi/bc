@@ -1,3 +1,43 @@
+package com.cyberpeace.space.controller;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.oj.course.controller.req.LessonAddReq;
+import com.cyberpeace.oj.course.controller.req.LessonUpdateReq;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.service.CourseLessonService;
+import com.cyberpeace.oj.course.service.CourseService;
+import com.cyberpeace.oj.course.service.bo.AdminLessonBo;
+import com.cyberpeace.oj.course.service.bo.AdminLessonListBo;
+import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
+import com.cyberpeace.space.constant.SpaceCommonConstant;
+import com.cyberpeace.space.service.TheoryKService;
+import com.cyberpeace.space.service.context.IdListReq;
+import com.cyberpeace.space.service.context.ListKReq;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * 理论知识点Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `TheoryKnowledgeController` 的 Spring MVC 控制器类，用于管理理论知识点相关的操作。以下是代码的主要功能和结构分析： 
  * ### 主要功能 
@@ -76,46 +116,6 @@
  * - **服务依赖**：充分利用了注入的服务类，减少了重复代码。 
  * - **灵活性**：支持多种操作（增删改查），满足理论知识点管理的需求。 
 **/
-package com.cyberpeace.space.controller;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.oj.course.controller.req.LessonAddReq;
-import com.cyberpeace.oj.course.controller.req.LessonUpdateReq;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.service.CourseLessonService;
-import com.cyberpeace.oj.course.service.CourseService;
-import com.cyberpeace.oj.course.service.bo.AdminLessonBo;
-import com.cyberpeace.oj.course.service.bo.AdminLessonListBo;
-import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
-import com.cyberpeace.space.constant.SpaceCommonConstant;
-import com.cyberpeace.space.service.TheoryKService;
-import com.cyberpeace.space.service.context.IdListReq;
-import com.cyberpeace.space.service.context.ListKReq;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-/**
- * 理论知识点Controller
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Api(tags = "知识空间-理论知识库")
 @RestController
 @RequestMapping("/space/theory")
@@ -287,3 +287,4 @@ public class TheoryKnowledgeController {
 	    return courseLesson;
 	}
 }
+

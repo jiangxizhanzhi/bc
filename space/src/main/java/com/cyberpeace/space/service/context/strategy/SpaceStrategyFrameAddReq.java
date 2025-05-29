@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.strategy;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间策略框架新增请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceStrategyFrameAddReq` 的类，用于表示空间策略框架新增请求体。以下是代码的简要分析： 
  * 1. **类的用途**： 
@@ -13,20 +27,6 @@
  * - 使用了 Lombok 和 Swagger 注解，提高了代码的可读性和开发效率。 
  * 总结：这是一个轻量级的请求体类，适用于空间策略框架中的新增操作，具有良好的可扩展性和注解支持。 
 **/
-package com.cyberpeace.space.service.context.strategy;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间策略框架新增请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceStrategyFrameAddReq {
@@ -46,3 +46,4 @@ public class SpaceStrategyFrameAddReq {
 	 */
 	private String parent;
 }
+

@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 伊娃模板基础信息请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvaTemplateBaseInfoReq` 的 Java 类，该类用于表示评估靶场模板的基础信息请求体。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -19,20 +33,6 @@
  * ### 总结 
  * 这个类主要用于接收评估靶场模板的基础信息请求。它包含了一些必要的信息字段，并通过注解来确保数据的有效性和生成 API 文档。使用 Lombok 库简化了 getter 和 setter 方法的编写。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import javax.validation.constraints.NotNull;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 伊娃模板基础信息请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvaTemplateBaseInfoReq {

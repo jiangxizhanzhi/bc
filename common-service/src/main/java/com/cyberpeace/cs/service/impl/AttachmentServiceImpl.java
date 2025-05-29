@@ -1,3 +1,37 @@
+package com.cyberpeace.cs.service.impl;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.dao.entity.Attachment;
+import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.google.common.collect.Lists;
+import com.google.common.io.Files;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 附件Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * ### 分析与总结 
  * #### 代码功能概述 
@@ -42,40 +76,6 @@
  * #### 总结 
  * 该代码实现了一个功能全面的附件服务，涵盖了文件管理的主要场景。通过合理的模块划分和工具类的使用，代码具有较高的可读性和可维护性。但部分地方仍需优化，例如减少重复代码、增加日志详细程度以及完善参数校验等。 
 **/
-package com.cyberpeace.cs.service.impl;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.cs.dao.entity.Attachment;
-import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
-import com.cyberpeace.cs.service.AttachmentService;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.cs.service.context.AttachmentBo;
-import com.google.common.collect.Lists;
-import com.google.common.io.Files;
-
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 附件Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Service
 @Slf4j
 public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachment> implements AttachmentService {
@@ -424,3 +424,4 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 						+ attachment.getFilePath()).exists());
 	}
 }
+

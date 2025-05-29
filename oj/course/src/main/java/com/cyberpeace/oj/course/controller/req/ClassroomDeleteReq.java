@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+
+/**
+ * 课堂删除请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomDeleteReq` 的 Java 类，用于表示课堂删除请求的数据模型。以下是详细的分析： 
  * ### 包声明 
@@ -44,25 +63,6 @@
  * - 通过 Swagger 注解，该类可以在 API 文档中正确展示。 
  * 这个类的主要目的是作为请求体传递课堂编号给后端进行删除操作，并且确保传入的课堂编号不为空。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-
-/**
- * 课堂删除请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -78,3 +78,4 @@ public class ClassroomDeleteReq implements Serializable {
 	private String resourceId;
 
 }
+

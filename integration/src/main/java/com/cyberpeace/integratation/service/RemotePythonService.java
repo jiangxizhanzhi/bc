@@ -1,3 +1,18 @@
+package com.cyberpeace.integratation.service;
+
+import java.io.Serializable;
+import java.util.List;
+
+import com.cyberpeace.integratation.model.evaluation.FormatData;
+import com.cyberpeace.integratation.model.evaluation.MarkData;
+import com.cyberpeace.integratation.model.evaluation.MatchData;
+
+/**
+ * 远程蟒Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `RemotePythonService` 的接口，该接口用于与远程Python服务进行交互。以下是对其主要功能和结构的简要分析： 
  * ### 接口名称 
@@ -60,21 +75,6 @@
  * ### 总结 
  * 这个接口主要用于调用远程Python服务的各种算法，并且根据不同的算法类型返回不同类型的结果。通过这些方法，可以实现格式化、模型匹配、评分、聚合等多种计算任务。接口的设计考虑到了灵活性和扩展性，允许传入多种类型的输入参数，并且返回结果可以根据需要进行调整。 
 **/
-package com.cyberpeace.integratation.service;
-
-import java.io.Serializable;
-import java.util.List;
-
-import com.cyberpeace.integratation.model.evaluation.FormatData;
-import com.cyberpeace.integratation.model.evaluation.MarkData;
-import com.cyberpeace.integratation.model.evaluation.MatchData;
-
-/**
- * 远程蟒Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface RemotePythonService {
 	/**
 	 * 获取Python运行服务地址
@@ -156,3 +156,4 @@ public interface RemotePythonService {
 	 */
 	Object runAlgorithm(String algorithmId, String algorithmCode, Object data, Object listData, List<Serializable> otherArguments);
 }
+

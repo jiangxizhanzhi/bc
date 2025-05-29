@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.ojbase.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.ojbase.dao.entity.CommentLike;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * 评论喜欢Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CommentLikeMapper` 的接口，继承自 MyBatis-Plus 的 `BaseMapper`。这个接口主要用于操作 `CommentLike` 实体类的数据。以下是对其主要部分的分析： 
  * ### 包声明和导入 
@@ -50,24 +68,6 @@
  * ### 总结 
  * 该接口提供了针对 `CommentLike` 实体类的基本 CRUD 操作，并额外增加了根据评论ID查询所有点赞记录、根据评论ID和用户ID查询特定点赞记录、根据用户ID和评论ID删除特定点赞记录以及根据评论ID列表批量删除点赞记录的功能。这些方法使得对于点赞记录的操作更加灵活和方便。 
 **/
-package com.cyberpeace.oj.ojbase.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.ojbase.dao.entity.CommentLike;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
-
-/**
- * 评论喜欢Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 public interface CommentLikeMapper extends BaseMapper<CommentLike> {
 
@@ -118,3 +118,4 @@ public interface CommentLikeMapper extends BaseMapper<CommentLike> {
 	 */
 	void deleteByCommentIds(@Param("commentIds") List<String> commentIds);
 }
+

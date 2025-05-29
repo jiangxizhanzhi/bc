@@ -1,3 +1,20 @@
+package com.cyberpeace.space.service.context.frame;
+
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.dao.entity.SpaceActionFrameOrder;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import java.util.Date;
+
+/**
+ * 空间行动框架次序Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceActionFrameOrderBo` 的 Java 类，用于表示“空间行动框架次序”的业务对象（BO）。以下是对其的简要分析： 
  * 1. **类的功能**： 
@@ -16,23 +33,6 @@
  * 总结：这是一个典型的业务对象类，专注于封装与“空间行动框架次序”相关的数据，并提供了便捷的方法进行数据转换。 
 **/
 
-package com.cyberpeace.space.service.context.frame;
-
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.dao.entity.SpaceActionFrameOrder;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-import java.util.Date;
-
-/**
- * 空间行动框架次序Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Data
 public class SpaceActionFrameOrderBo {
 
@@ -86,3 +86,4 @@ public class SpaceActionFrameOrderBo {
 	}
 
 }
+

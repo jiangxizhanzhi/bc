@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+/**
+ * this is branch test for the test
+ * the test is for toy
+ * the toy is toy
+ * not the practice
+ * tos
+ */
 /**
  * 这段代码是一个用于测试 `EvalVariableRefServiceBranch` 类的方法 `getBranch` 的 JUnit 测试类。以下是对该代码的简要分析： 
  * ### 代码概述 
@@ -45,18 +57,6 @@
  * ``` 
  * 这样，代码变得更加简洁，并且易于维护。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-/**
- * this is branch test for the test
- * the test is for toy
- * the toy is toy
- * not the practice
- * tos
- */
 public class EvalVariableRefServiceBranchTest {
 
     /**
@@ -890,3 +890,4 @@ public class EvalVariableRefServiceBranchTest {
     }
 
 }
+

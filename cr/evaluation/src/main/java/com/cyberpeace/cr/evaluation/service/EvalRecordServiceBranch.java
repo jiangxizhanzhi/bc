@@ -1,3 +1,11 @@
+package com.cyberpeace.cr.evaluation.service;;
+
+/**
+ * single Train Branch
+ * this is branch method
+ * for the branch method
+ * is the fun toy for little bob
+ */
 /**
  * 这段代码定义了一个名为 `EvalRecordServiceBranch` 的类，并在其中实现了一个方法 `getBranch`。这个方法接受一个字符串参数 `input` 并返回一个布尔值。下面是对其详细分析： 
  * ### 类和方法 
@@ -34,14 +42,6 @@
  * 3. **重构**: 考虑将这些字符串存储在一个配置文件或数据库中，而不是硬编码在代码中，这样可以更容易地进行修改和扩展。 
  * 总体来说，这是一个简单的字符串匹配方法，但其设计方式可能不是最理想的方式。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
-
-/**
- * single Train Branch
- * this is branch method
- * for the branch method
- * is the fun toy for little bob
- */
 public class EvalRecordServiceBranch {
 
     /**
@@ -606,3 +606,4 @@ public class EvalRecordServiceBranch {
         return false;
     }
 }
+

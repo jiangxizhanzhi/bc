@@ -1,3 +1,20 @@
+package com.cyberpeace.gateway.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 外部批量请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ExternalBatchReq` 的 Java 类，该类用于表示外部批量请求的请求体。以下是对该代码的简要分析： 
  * ### 类和包声明 
@@ -35,23 +52,6 @@
  * - 可以删除 `setResource_ids` 方法，因为它与 Lombok 自动生成的方法重复。 
  * - 如果需要更严格的验证逻辑，可以在 `setResourceIds` 方法中添加额外的逻辑。 
 **/
-package com.cyberpeace.gateway.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotEmpty;
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 外部批量请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @ApiModel
@@ -73,3 +73,4 @@ public class ExternalBatchReq implements Serializable {
 		this.resourceIds = resourceIds;
 	}
 }
+

@@ -1,31 +1,3 @@
-/**
- * 这段代码是一个Spring Boot测试类，用于测试`SpaceActionMethodController`控制器的功能。以下是对代码的简要分析： 
- * 1. **测试类结构**： 
- * - 类名为`SpaceActionMethodControllerTest`，继承自`WebMvcTest`注解，表明这是一个针对Web MVC层的单元测试。 
- * - 使用了`@MockBean`和`@SpyBean`注解来模拟和部分模拟依赖服务。 
- * 2. **依赖注入**： 
- * - `mockMvc`：用于执行HTTP请求并验证响应。 
- * - `spaceActionMethodController`：被测试的控制器实例。 
- * - `mockTargetService`, `mockService`, `mockTransactionTemplate`, `mockRelationService`：这些是被模拟的服务对象。 
- * 3. **测试方法**： 
- * - `testPage()`：测试分页功能。 
- * - `testListAll()`：测试列出所有记录的功能。 
- * - `testAddAttack()`：测试添加新的记录。 
- * - `testUpdateA()`：测试更新记录。 
- * - `testDeleteA()`：测试删除记录。 
- * - `testGetADetail()`：测试获取单个记录的详细信息。 
- * 4. **测试准备**： 
- * - 在`setUp()`方法中设置了各种模拟行为，确保每个测试方法都能独立运行且结果可预测。 
- * 5. **断言与验证**： 
- * - 使用`andExpect()`方法对HTTP状态码、响应内容等进行断言。 
- * - 通过`print()`方法打印请求和响应日志以便调试。 
- * 6. **数据模型**： 
- * - 使用了多个内部类或模型对象（如`SpaceActionMethodBo`, `IdListReq`）来表示请求和响应的数据结构。 
- * 7. **工具类**： 
- * - 引入了`JsonUtil`用于JSON字符串的序列化/反序列化操作。 
- * - 使用了Guava库中的`Lists.newArrayList()`创建列表。 
- * 总体而言，这段代码展示了如何使用JUnit和Mockito框架编写高效、可靠的Spring Boot控制器单元测试。每种HTTP方法（GET, POST, PATCH, DELETE）都有相应的测试用例覆盖，并且对返回的数据格式进行了精确匹配。 
-**/
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
@@ -59,6 +31,34 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/**
+ * 这段代码是一个Spring Boot测试类，用于测试`SpaceActionMethodController`控制器的功能。以下是对代码的简要分析： 
+ * 1. **测试类结构**： 
+ * - 类名为`SpaceActionMethodControllerTest`，继承自`WebMvcTest`注解，表明这是一个针对Web MVC层的单元测试。 
+ * - 使用了`@MockBean`和`@SpyBean`注解来模拟和部分模拟依赖服务。 
+ * 2. **依赖注入**： 
+ * - `mockMvc`：用于执行HTTP请求并验证响应。 
+ * - `spaceActionMethodController`：被测试的控制器实例。 
+ * - `mockTargetService`, `mockService`, `mockTransactionTemplate`, `mockRelationService`：这些是被模拟的服务对象。 
+ * 3. **测试方法**： 
+ * - `testPage()`：测试分页功能。 
+ * - `testListAll()`：测试列出所有记录的功能。 
+ * - `testAddAttack()`：测试添加新的记录。 
+ * - `testUpdateA()`：测试更新记录。 
+ * - `testDeleteA()`：测试删除记录。 
+ * - `testGetADetail()`：测试获取单个记录的详细信息。 
+ * 4. **测试准备**： 
+ * - 在`setUp()`方法中设置了各种模拟行为，确保每个测试方法都能独立运行且结果可预测。 
+ * 5. **断言与验证**： 
+ * - 使用`andExpect()`方法对HTTP状态码、响应内容等进行断言。 
+ * - 通过`print()`方法打印请求和响应日志以便调试。 
+ * 6. **数据模型**： 
+ * - 使用了多个内部类或模型对象（如`SpaceActionMethodBo`, `IdListReq`）来表示请求和响应的数据结构。 
+ * 7. **工具类**： 
+ * - 引入了`JsonUtil`用于JSON字符串的序列化/反序列化操作。 
+ * - 使用了Guava库中的`Lists.newArrayList()`创建列表。 
+ * 总体而言，这段代码展示了如何使用JUnit和Mockito框架编写高效、可靠的Spring Boot控制器单元测试。每种HTTP方法（GET, POST, PATCH, DELETE）都有相应的测试用例覆盖，并且对返回的数据格式进行了精确匹配。 
+**/
 @WebMvcTest(SpaceActionMethodController.class)
 class SpaceActionMethodControllerTest {
 
@@ -169,3 +169,4 @@ class SpaceActionMethodControllerTest {
                 .andExpect(content().json("{\"data\":{\"resourceId\":null,\"name\":null,\"description\":null,\"tag\":[],\"createTime\":null},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 }
+

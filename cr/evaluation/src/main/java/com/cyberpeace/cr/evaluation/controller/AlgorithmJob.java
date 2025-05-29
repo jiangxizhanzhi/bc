@@ -1,3 +1,24 @@
+package com.cyberpeace.cr.evaluation.controller;
+
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
+import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
+import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.util.HashSet;
+import java.util.List;
+
+/**
+ * 定时一周清理一次不再使用的备份算法
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码是一个定时任务类 `AlgorithmJob`，用于每周清理一次数据库中未被使用的备份算法。以下是代码的主要功能和逻辑分析： 
  * 1. **类与注解**： 
@@ -20,27 +41,6 @@
  * - 使用了 Guava 的 `Lists.newArrayList` 来创建未使用算法ID的列表。 
  * 总结：该类通过定时任务每周清理一次未使用的备份算法，确保数据库的整洁性和高效性。 
 **/
-package com.cyberpeace.cr.evaluation.controller;
-
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
-import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
-import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
-import java.util.HashSet;
-import java.util.List;
-
-/**
- * 定时一周清理一次不再使用的备份算法
- *
- * @author SN
- * @date 2024/11/08
- */
 @Slf4j
 @Component
 public class AlgorithmJob {
@@ -85,3 +85,4 @@ public class AlgorithmJob {
 	}
 
 }
+

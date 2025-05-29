@@ -1,3 +1,17 @@
+package com.cyberpeace.cs.service.context;
+
+import com.alibaba.fastjson.JSONObject;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * WS场景报告数据
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `WsSceneReportData` 的 Java 类，用于表示某种 WS（WebSocket）场景的报告数据。以下是代码的简要分析： 
  * 1. **类名与功能**： 
@@ -17,20 +31,6 @@
  * - 该类主要用于封装 WS 场景的报告数据，支持灵活的数据结构存储。 
  * 总结：这是一个简单的数据传输对象（DTO），用于存储和传递 WS 场景的报告数据，具有良好的可扩展性和易用性。 
 **/
-package com.cyberpeace.cs.service.context;
-
-import com.alibaba.fastjson.JSONObject;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * WS场景报告数据
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class WsSceneReportData implements Serializable {
@@ -45,3 +45,4 @@ public class WsSceneReportData implements Serializable {
 	 */
 	private JSONObject data;
 }
+

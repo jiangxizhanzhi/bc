@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalAggregation;
+import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+
+/**
+ * 评估集合体Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalAggregationMapper` 的接口，该接口继承了 `BaseMapper<EvalAggregation>`。这个接口用于与数据库中的 `EvalAggregation` 实体进行交互，并提供了几个自定义的方法来执行特定的查询操作。 
  * ### 主要内容分析： 
@@ -20,20 +34,6 @@
  * - 这些方法通过传入不同的参数来实现不同的查询逻辑，例如根据评估指示器 ID 或算法 ID 来获取相应的数据。 
  * 这个接口的设计使得数据访问层可以更加灵活地处理各种查询需求，同时利用 MyBatis-Plus 提供的功能来减少样板代码。 
 **/
-package com.cyberpeace.cr.evaluation.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalAggregation;
-import org.apache.ibatis.annotations.Mapper;
-
-import java.util.List;
-
-/**
- * 评估集合体Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 public interface EvalAggregationMapper extends BaseMapper<EvalAggregation> {
 
@@ -61,6 +61,7 @@ public interface EvalAggregationMapper extends BaseMapper<EvalAggregation> {
 	 */
 	List<String> selectUsedAlgorithmIds(List<String> algorithmIds);
 }
+
 
 
 

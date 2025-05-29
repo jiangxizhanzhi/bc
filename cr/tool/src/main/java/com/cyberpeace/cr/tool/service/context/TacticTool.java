@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.tool.service.context;
+
+import com.cyberpeace.cr.tool.dao.entity.ToolFile;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 战术工具
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `TacticTool` 的 Java 类，用于表示战术工具的相关信息。以下是对其主要特性的简要分析： 
  * 1. **包声明**：该类位于 `com.cyberpeace.cr.tool.service.context` 包中。 
@@ -23,21 +38,6 @@
  * 6. **功能**：`TacticTool` 类主要用于封装战术工具的信息，并且通过 Swagger 注解为这些信息提供详细的描述，以便于 API 文档的生成。 
  * 总结来说，这个类是一个数据传输对象（DTO），用于在系统内部或与外部系统交互时传递战术工具的相关信息。 
 **/
-package com.cyberpeace.cr.tool.service.context;
-
-import com.cyberpeace.cr.tool.dao.entity.ToolFile;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 战术工具
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class TacticTool {
@@ -84,3 +84,4 @@ public class TacticTool {
 	@ApiModelProperty("工具文件")
 	private List<ToolFile> toolFiles;
 }
+

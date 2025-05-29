@@ -1,3 +1,14 @@
+package com.cyberpeace.cr.evaluation.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Date;
+
 /**
  * 这段代码定义了一个名为 `EvalProbeData` 的实体类，用于表示与评估探针数据相关的数据库表。以下是对其主要部分的分析： 
  * 1. **包声明**： 
@@ -30,17 +41,6 @@
  * - 主要字段包括主键、场景ID、设备ID、探针ID、采集时间、设备IP地址和内容。 
  * - 目前没有使用枚举类型 `Type`，这部分代码被注释掉了。 
 **/
-package com.cyberpeace.cr.evaluation.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Date;
-
 @Getter
 @Setter
 @TableName("cr_eval_probe_data")
@@ -77,3 +77,4 @@ public class EvalProbeData extends BaseTable {
 //    }
 
 }
+

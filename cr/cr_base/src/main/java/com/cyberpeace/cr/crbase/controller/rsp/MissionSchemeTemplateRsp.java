@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.crbase.controller.rsp;
+
+import java.util.List;
+
+import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 任务方案模板响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MissionSchemeTemplateRsp` 的 Java 类，用于作为任务方案模板的响应对象。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -20,23 +37,6 @@
  * - 使用了 Lombok 和 Swagger 注解，提高了开发效率并增强了代码的可读性。 
  * 总结：这是一个典型的 Java Bean 类，用于封装任务方案模板的响应数据，支持自动化注解和良好的文档生成能力。 
 **/
-package com.cyberpeace.cr.crbase.controller.rsp;
-
-import java.util.List;
-
-import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 任务方案模板响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MissionSchemeTemplateRsp {
@@ -95,3 +95,4 @@ public class MissionSchemeTemplateRsp {
 	@ApiModelProperty(value = "名称")
 	private String title;
 }
+

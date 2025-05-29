@@ -1,3 +1,30 @@
+package com.cyberpeace.space.controller;
+
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.space.service.SpaceAlgorithmExpertiseService;
+import com.cyberpeace.space.service.SpaceAlgorithmIndividualService;
+import com.cyberpeace.space.service.SpaceAlgorithmRoleService;
+import com.cyberpeace.space.service.SpaceAlgorithmTeamService;
+import com.cyberpeace.space.service.context.algorithm.SpaceAlgorithmStatistics;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 空间算法公共Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/07
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 1. **类的功能与作用** 
@@ -33,33 +60,6 @@
  * ### 总结 
  * 这段代码实现了空间算法相关的通用统计功能，具有良好的模块化设计和安全性保障。通过依赖注入和注解简化了代码结构，同时提供了清晰的接口文档支持。 
 **/
-package com.cyberpeace.space.controller;
-
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.space.service.SpaceAlgorithmExpertiseService;
-import com.cyberpeace.space.service.SpaceAlgorithmIndividualService;
-import com.cyberpeace.space.service.SpaceAlgorithmRoleService;
-import com.cyberpeace.space.service.SpaceAlgorithmTeamService;
-import com.cyberpeace.space.service.context.algorithm.SpaceAlgorithmStatistics;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 空间算法公共Controller
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/07
- * @since 1.0.0
- */
 @Api(tags = "知识库-算法库-通用")
 @RestController
 @RequestMapping("/space/algorithm/common")
@@ -107,3 +107,4 @@ public class SpaceAlgorithmCommonController {
 		return new BaseRsp(res);
 	}
 }
+

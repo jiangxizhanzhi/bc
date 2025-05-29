@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+
+/**
+ * rmimport请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `RMImportReq` 的 Java 类，该类用于表示某种导入请求的数据结构。以下是对其主要特性的分析： 
  * 1. **包声明**： 
@@ -21,25 +40,6 @@
  * - 通过使用 Swagger 注解，使得该类在API文档中有一个清晰的描述。 
  * - Lombok 注解简化了类的实现，减少了样板代码。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-
-/**
- * rmimport请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel("资管数据导入基础请求类")
@@ -55,3 +55,4 @@ public class RMImportReq implements Serializable {
     private String path;
 
 }
+

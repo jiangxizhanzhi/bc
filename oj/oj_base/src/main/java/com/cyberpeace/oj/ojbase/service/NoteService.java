@@ -1,3 +1,27 @@
+package com.cyberpeace.oj.ojbase.service;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.oj.ojbase.controller.req.ReportAddReq;
+import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
+import com.cyberpeace.oj.ojbase.dao.entity.Note;
+import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
+import com.cyberpeace.oj.ojbase.service.bo.NoteListBo;
+import com.cyberpeace.oj.ojbase.service.context.AdminNoteListQuery;
+import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
+
+import java.util.List;
+
+/**
+ * 注意Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `NoteService` 的接口，该接口继承了 `com.baomidou.mybatisplus.extension.service.IService<Note>`。这个接口提供了处理笔记（Note）相关操作的服务方法。以下是每个方法的简要分析： 
  * 1. **`NoteBo selectByUnique(NoteUniqueContext uniqueContext)`** 
@@ -38,30 +62,6 @@
  * - 这些方法使用了多个自定义的上下文对象和请求对象来传递参数，以确保操作的灵活性和可扩展性。 
  * - 接口继承了 `IService<Note>`，这表明它利用了 MyBatis-Plus 框架提供的基础服务功能，并在此基础上进行了扩展。 
 **/
-package com.cyberpeace.oj.ojbase.service;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.oj.ojbase.controller.req.ReportAddReq;
-import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
-import com.cyberpeace.oj.ojbase.dao.entity.Note;
-import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
-import com.cyberpeace.oj.ojbase.service.bo.NoteListBo;
-import com.cyberpeace.oj.ojbase.service.context.AdminNoteListQuery;
-import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
-
-import java.util.List;
-
-/**
- * 注意Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see IService
- * @since 1.0.0
- */
 public interface NoteService extends IService<Note> {
 
     /**
@@ -140,3 +140,4 @@ public interface NoteService extends IService<Note> {
      */
     void deleteByBusiness(String businessId, Integer noteType, Integer businessType);
 }
+

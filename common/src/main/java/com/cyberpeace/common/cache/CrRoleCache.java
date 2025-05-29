@@ -1,3 +1,19 @@
+package com.cyberpeace.common.cache;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
+import java.util.concurrent.TimeUnit;
+
+/**
+ * 靶场岗位缓存
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CrRoleCache` 的类，用于管理基于 Guava 的缓存。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -15,22 +31,6 @@
  * - 该缓存适用于需要动态加载数据的场景，但当前实现并未提供具体的加载逻辑，需进一步完善以满足实际需求。 
  * 总结：这段代码定义了一个基本的缓存结构，但尚未实现具体的数据加载逻辑，需要根据实际业务需求补充 `load` 方法的具体实现。 
 **/
-package com.cyberpeace.common.cache;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-
-import java.util.concurrent.TimeUnit;
-
-/**
- * 靶场岗位缓存
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public class CrRoleCache {
     /**
      * 缓存
@@ -43,3 +43,4 @@ public class CrRoleCache {
         }
     });
 }
+

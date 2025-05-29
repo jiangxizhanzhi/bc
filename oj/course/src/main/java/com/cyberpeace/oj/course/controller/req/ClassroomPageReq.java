@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.oj.course.dao.entity.TrainPlan;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课堂分页请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomPageReq` 的类，该类继承自 `PageReqBase`。这个类主要用于处理课堂分页请求的相关信息。以下是对该代码的简要分析： 
  * ### 类和属性 
@@ -22,24 +40,6 @@
  * - 可以考虑将 `setTrain_plan_id` 方法中的特殊处理逻辑提取到一个单独的方法中，以提高代码的可读性和复用性。 
  * - 如果 `TrainPlan.TASK_SET_ID` 是一个常量，可以将其定义为静态常量，以提高代码的可维护性。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.oj.course.dao.entity.TrainPlan;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课堂分页请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PageReqBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 
@@ -74,3 +74,4 @@ public class ClassroomPageReq extends PageReqBase {
 	}
 
 }
+

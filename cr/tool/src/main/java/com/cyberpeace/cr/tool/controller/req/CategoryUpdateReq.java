@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.tool.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+
+
+/**
+ * 类别更新请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `CategoryUpdateReq` 的 Java 类，它是 `CategoryAddReq` 类的一个子类。这个类用于表示类别更新请求的数据模型，并且使用了 Lombok、Swagger 和 JSR 380 (Bean Validation) 注解来简化开发和增强功能。 
  * ### 主要特性： 
@@ -17,22 +33,6 @@
  * - 它包含一个必填的 `resourceId` 字段，确保客户端在发送更新请求时必须提供有效的资源 ID。 
  * - 该类通过 Lombok 和 Swagger 注解增强了可读性和文档生成能力。 
 **/
-package com.cyberpeace.cr.tool.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-
-
-/**
- * 类别更新请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @ApiModel
@@ -45,3 +45,4 @@ public class CategoryUpdateReq extends CategoryAddReq {
     private String resourceId;
 
 }
+

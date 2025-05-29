@@ -1,3 +1,24 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import java.io.Serializable;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 收集请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CollectionReq` 的 Java 类，用于表示收藏请求的数据模型。以下是对此代码的简要分析： 
  * ### 包与导入 
@@ -29,27 +50,6 @@
  * - 使用了 Swagger 注解来帮助生成 API 文档。 
  * - 字段都有相应的验证注解以确保数据的有效性。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import java.io.Serializable;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 收集请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel("收藏请求")
@@ -83,3 +83,4 @@ public class CollectionReq implements Serializable {
     private Integer businessType;
 
 }
+

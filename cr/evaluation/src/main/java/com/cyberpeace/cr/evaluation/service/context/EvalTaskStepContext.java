@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.evaluation.service.context;
+
+import java.util.Date;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Getter;
+
+/**
+ * Eval 任务步骤上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTaskStepContext` 的 Java 类，用于表示评估任务中的步骤上下文。以下是对该类的简要分析： 
  * ### 类概述 
@@ -26,21 +41,6 @@
  * - 使用内部枚举类 `Status` 来管理步骤的各种状态，确保状态的一致性和可维护性。 
  * 这段代码结构清晰，注释详尽，适合用于评估任务的步骤管理和状态跟踪。 
 **/
-package com.cyberpeace.cr.evaluation.service.context;
-
-import java.util.Date;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Getter;
-
-/**
- * Eval 任务步骤上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalTaskStepContext {
@@ -139,3 +139,4 @@ public class EvalTaskStepContext {
 
 	}
 }
+

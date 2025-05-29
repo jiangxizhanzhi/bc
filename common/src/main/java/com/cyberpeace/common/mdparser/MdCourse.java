@@ -1,3 +1,19 @@
+package com.cyberpeace.common.mdparser;
+
+import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
+import com.cyberpeace.common.mdparser.convert.DifficultyConvert;
+import com.cyberpeace.common.mdparser.parser.ListParser;
+import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * Markdown课程
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `MdCourse` 的 Java 类，用于表示 Markdown 格式的课程信息。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -22,22 +38,6 @@
  * - 该类主要用于将 Markdown 格式的课程信息映射到 Java 对象，便于后续处理和展示。 
  * 总结：`MdCourse` 是一个基于注解驱动的数据模型类，用于解析和存储 Markdown 格式的课程信息，支持灵活的字段配置和数据转换。 
 **/
-package com.cyberpeace.common.mdparser;
-
-import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
-import com.cyberpeace.common.mdparser.convert.DifficultyConvert;
-import com.cyberpeace.common.mdparser.parser.ListParser;
-import lombok.Data;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * Markdown课程
- *
- * @author SN
- * @date 2024/11/08
- */
 @Data
 public class MdCourse implements Serializable {
 
@@ -66,3 +66,4 @@ public class MdCourse implements Serializable {
     private String description;
 
 }
+

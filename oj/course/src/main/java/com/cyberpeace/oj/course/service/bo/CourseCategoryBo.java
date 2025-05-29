@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 课程类别 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseCategoryBo` 的 Java 类，该类实现了 `Serializable` 接口。这个类主要用于表示课程类别，并包含了一些属性和注解来描述这些属性。以下是对代码的简要分析： 
  * ### 类定义 
@@ -42,25 +61,6 @@
  * ### 总结 
  * `CourseCategoryBo` 类主要用于表示课程类别，包含了类别名称、父类 ID、资源 ID、子类别列表以及课程类型等属性。通过 Swagger 注解，可以方便地生成 API 文档。此外，`@JsonIgnore` 注解用于忽略 `parentId` 属性的序列化。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 课程类别 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class CourseCategoryBo implements Serializable {
@@ -108,3 +108,4 @@ public class CourseCategoryBo implements Serializable {
 	private Boolean builtin;
 
 }
+

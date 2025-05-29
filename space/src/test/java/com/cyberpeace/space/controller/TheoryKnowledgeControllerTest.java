@@ -1,26 +1,3 @@
-/**
- * 这段代码是一个测试类 `TheoryKnowledgeControllerTest` 的实现，用于测试 `TheoryKnowledgeController` 的功能。以下是对代码的简要分析： 
- * 1. **测试框架**： 
- * - 使用了 JUnit 5 (`org.junit.jupiter`) 作为测试框架。 
- * - `@WebMvcTest` 注解表明这是一个针对 Spring MVC 控制器的单元测试。 
- * 2. **依赖注入**： 
- * - 使用 `@Autowired` 注入 `MockMvc` 对象，用于模拟 HTTP 请求。 
- * - 使用 `@MockBean` 和 `@SpyBean` 注入被测试类的依赖服务（如 `CourseService`, `CourseLessonService`, `TheoryKService` 等），以便在测试中进行行为模拟。 
- * 3. **测试方法**： 
- * - 测试了多个接口的功能，包括获取课程列表、删除课程、获取课程详情、添加课程和修改课程。 
- * - 每个测试方法都通过 `mockMvc.perform()` 模拟 HTTP 请求，并使用 `andExpect()` 验证响应状态码和 JSON 内容是否符合预期。 
- * 4. **具体测试内容**： 
- * - **`testGetLessonList`**：测试获取课程列表接口，验证返回的 JSON 数据是否正确。 
- * - **`testDelete`**：测试删除课程接口，验证删除操作是否成功。 
- * - **`testGetDetail`**：测试获取课程详情接口，验证返回的课程信息是否正确。 
- * - **`testAddK`**：测试添加课程接口，验证课程是否成功添加。 
- * - **`testModify`**：测试修改课程接口，验证课程信息是否成功更新。 
- * 5. **Mock 行为**： 
- * - 使用 Mockito 的 `when()` 方法定义依赖服务的行为，例如 `mockTheoryKService.pageK()` 和 `mockCourseLessonService.addLesson()` 等。 
- * 6. **JSON 校验**： 
- * - 使用 `content().json()` 验证返回的 JSON 响应是否与预期一致，确保接口返回的数据格式正确。 
- * 总体来说，这段代码展示了如何使用 Spring Boot 提供的测试工具和 Mockito 进行控制器层的功能测试，确保各个接口的行为符合预期。 
-**/
 package com.cyberpeace.space.controller;
 
 import com.alibaba.fastjson.JSONObject;
@@ -55,6 +32,29 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * 这段代码是一个测试类 `TheoryKnowledgeControllerTest` 的实现，用于测试 `TheoryKnowledgeController` 的功能。以下是对代码的简要分析： 
+ * 1. **测试框架**： 
+ * - 使用了 JUnit 5 (`org.junit.jupiter`) 作为测试框架。 
+ * - `@WebMvcTest` 注解表明这是一个针对 Spring MVC 控制器的单元测试。 
+ * 2. **依赖注入**： 
+ * - 使用 `@Autowired` 注入 `MockMvc` 对象，用于模拟 HTTP 请求。 
+ * - 使用 `@MockBean` 和 `@SpyBean` 注入被测试类的依赖服务（如 `CourseService`, `CourseLessonService`, `TheoryKService` 等），以便在测试中进行行为模拟。 
+ * 3. **测试方法**： 
+ * - 测试了多个接口的功能，包括获取课程列表、删除课程、获取课程详情、添加课程和修改课程。 
+ * - 每个测试方法都通过 `mockMvc.perform()` 模拟 HTTP 请求，并使用 `andExpect()` 验证响应状态码和 JSON 内容是否符合预期。 
+ * 4. **具体测试内容**： 
+ * - **`testGetLessonList`**：测试获取课程列表接口，验证返回的 JSON 数据是否正确。 
+ * - **`testDelete`**：测试删除课程接口，验证删除操作是否成功。 
+ * - **`testGetDetail`**：测试获取课程详情接口，验证返回的课程信息是否正确。 
+ * - **`testAddK`**：测试添加课程接口，验证课程是否成功添加。 
+ * - **`testModify`**：测试修改课程接口，验证课程信息是否成功更新。 
+ * 5. **Mock 行为**： 
+ * - 使用 Mockito 的 `when()` 方法定义依赖服务的行为，例如 `mockTheoryKService.pageK()` 和 `mockCourseLessonService.addLesson()` 等。 
+ * 6. **JSON 校验**： 
+ * - 使用 `content().json()` 验证返回的 JSON 响应是否与预期一致，确保接口返回的数据格式正确。 
+ * 总体来说，这段代码展示了如何使用 Spring Boot 提供的测试工具和 Mockito 进行控制器层的功能测试，确保各个接口的行为符合预期。 
+**/
 @WebMvcTest(TheoryKnowledgeController.class)
 class TheoryKnowledgeControllerTest {
 
@@ -212,3 +212,4 @@ class TheoryKnowledgeControllerTest {
 
     }
 }
+

@@ -1,3 +1,14 @@
+package com.cyberpeace.constant;
+
+import lombok.Getter;
+
+/**
+ * 国际化错误消息接口
+ * 相较国际化字符串多一个errorCode
+ * 另外提供一个参数化方法以满足国际化字符串中有参数的情形
+ *
+ * @author shazhichuan
+ */
 /**
  * 这段代码定义了一个用于国际化错误消息的接口 `BaseI18nErrorMsg` 和其实现类 `I18nErrorMsg`。以下是简要分析： 
  * ### 接口 `BaseI18nErrorMsg` 
@@ -15,17 +26,6 @@
  * ### 总结 
  * 这段代码设计了一个灵活的国际化错误消息处理机制，支持错误码和参数化消息，便于在不同语言环境中统一管理和使用错误信息。 
 **/
-package com.cyberpeace.constant;
-
-import lombok.Getter;
-
-/**
- * 国际化错误消息接口
- * 相较国际化字符串多一个errorCode
- * 另外提供一个参数化方法以满足国际化字符串中有参数的情形
- *
- * @author shazhichuan
- */
 public interface BaseI18nErrorMsg extends BaseI18n {
 	/**
 	 * 返回错误码
@@ -95,3 +95,4 @@ class I18nErrorMsg implements BaseI18nErrorMsg {
 		this.errorCode = errorCode;
 	}
 }
+

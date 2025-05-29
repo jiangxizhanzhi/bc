@@ -1,3 +1,22 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import com.cyberpeace.cr.evaluation.service.context.EvalSystemIndexesContext;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * 评估记录响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalRecordRsp` 的 Java 类，用于表示评估记录的响应信息。以下是该类的简要分析： 
  * ### 包声明和导入 
@@ -30,25 +49,6 @@
  * - 属性通过 Swagger 注解进行了文档化，便于前端开发人员理解每个字段的含义。 
  * - 该类实现了 `Serializable` 接口，意味着它可以被序列化为字节流，方便在网络上传输或持久化存储。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import com.cyberpeace.cr.evaluation.service.context.EvalSystemIndexesContext;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.models.auth.In;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-/**
- * 评估记录响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -113,3 +113,4 @@ public class EvalRecordRsp implements Serializable {
     @ApiModelProperty("指标体系结构")
     private List<EvalSystemIndexesContext> indexes;
 }
+

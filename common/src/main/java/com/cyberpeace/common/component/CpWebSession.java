@@ -1,3 +1,20 @@
+package com.cyberpeace.common.component;
+
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
+
+/**
+ * CP Web 会话
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CpWebSession` 的类，用于封装和扩展 `WebSocketSession` 的功能。以下是代码的主要分析和总结： 
  * --- 
@@ -45,23 +62,6 @@
  * - 实时数据推送服务 
  * 总结来说，这是一个设计合理、功能清晰的工具类，能够有效简化 WebSocket 的操作与管理。 
 **/
-package com.cyberpeace.common.component;
-
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
-
-/**
- * CP Web 会话
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public class CpWebSession {
 
 	/**
@@ -185,3 +185,4 @@ public class CpWebSession {
 		return session.hashCode();
 	}
 }
+

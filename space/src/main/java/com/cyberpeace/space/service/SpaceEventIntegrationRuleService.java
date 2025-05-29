@@ -1,3 +1,18 @@
+package com.cyberpeace.space.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.space.dao.entity.SpaceEventIntegrationRule;
+import com.cyberpeace.space.service.context.index.KnowledgeChart;
+
+/**
+ * 空间事件集成统治Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个服务接口 `SpaceEventIntegrationRuleService`，以下是简要分析： 
  * ### 功能概述 
@@ -21,21 +36,6 @@
  * 这是一个典型的基于 MyBatis-Plus 的服务接口，主要用于管理 `SpaceEventIntegrationRule` 数据，并提供额外的业务逻辑（如生成图表）。代码结构清晰，注释完整，便于后续开发和维护。 
 **/
 
-package com.cyberpeace.space.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.space.dao.entity.SpaceEventIntegrationRule;
-import com.cyberpeace.space.service.context.index.KnowledgeChart;
-
-/**
- * 空间事件集成统治Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see IService
- * @since 1.0.0
- */
 public interface SpaceEventIntegrationRuleService extends IService<SpaceEventIntegrationRule>
 
 {

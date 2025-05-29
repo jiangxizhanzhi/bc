@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.crbase.service.context;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 红蓝用户数据
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `RbUserData` 的 Java 类，用于表示红蓝用户的详细信息。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -16,18 +28,6 @@
  * - 使用注解提高了代码的可读性和开发效率，同时便于集成到 Swagger 等工具中。 
  * 总结：这是一个轻量级的数据传输对象（DTO），用于封装红蓝用户的相关信息，方便在系统中传递和使用。 
 **/
-package com.cyberpeace.cr.crbase.service.context;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 红蓝用户数据
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class RbUserData {
@@ -62,3 +62,4 @@ public class RbUserData {
 	@ApiModelProperty(value = "角色名")
 	private String roleName;
 }
+

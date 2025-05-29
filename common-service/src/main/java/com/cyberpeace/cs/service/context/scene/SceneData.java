@@ -1,3 +1,19 @@
+package com.cyberpeace.cs.service.context.scene;
+
+import java.io.Serializable;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import static com.cyberpeace.common.constant.MpSceneStatusConstant.*;
+
+/**
+ * 场景数据
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SceneData` 的 Java 类，用于表示场景相关的数据结构。以下是代码的简要分析： 
  * 1. **类的基本信息**： 
@@ -17,22 +33,6 @@
  * - 该类主要用于管理场景的状态，提供了一系列方法来检查场景的不同状态。 
  * 总体来说，这个类的设计目的是封装场景数据并提供状态查询的功能，便于在应用程序中管理和操作场景对象。 
 **/
-package com.cyberpeace.cs.service.context.scene;
-
-import java.io.Serializable;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-import static com.cyberpeace.common.constant.MpSceneStatusConstant.*;
-
-/**
- * 场景数据
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class SceneData implements Serializable {
@@ -75,3 +75,4 @@ public class SceneData implements Serializable {
 	}
 
 }
+

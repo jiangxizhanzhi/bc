@@ -1,3 +1,19 @@
+package com.cyberpeace.space.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.space.dao.entity.SpaceTacticDefensePlan;
+import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
+import com.cyberpeace.space.service.context.tactic.DefensePlanLevelUpdateReq;
+
+/**
+ * 空间战法防御计划Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceTacticDefensePlanService` 的接口，它继承了 MyBatis-Plus 提供的通用服务接口 `IService`，并扩展了两个自定义方法。以下是详细的分析： 
  * ### **1. 接口定义与继承** 
@@ -27,22 +43,6 @@
  * 该接口是一个典型的业务服务接口，主要负责处理与“空间战法防御计划”相关的业务逻辑。它不仅继承了通用的 CRUD 功能，还通过自定义方法扩展了特定的业务需求，如框架级别计算和更新。代码结构清晰，注释详尽，便于理解和维护。 
 **/
 
-package com.cyberpeace.space.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.space.dao.entity.SpaceTacticDefensePlan;
-import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
-import com.cyberpeace.space.service.context.tactic.DefensePlanLevelUpdateReq;
-
-/**
- * 空间战法防御计划Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see IService
- * @since 1.0.0
- */
 public interface SpaceTacticDefensePlanService extends IService<SpaceTacticDefensePlan> {
 
     /**
@@ -61,3 +61,4 @@ public interface SpaceTacticDefensePlanService extends IService<SpaceTacticDefen
      */
     SpaceFrameLevel renewFrame(DefensePlanLevelUpdateReq req);
 }
+

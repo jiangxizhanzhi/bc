@@ -1,3 +1,19 @@
+package com.cyberpeace.oj.course.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
+import com.cyberpeace.oj.course.service.bo.HelpStatusBo;
+
+/**
+ * 课堂标志Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomSignService` 的接口，该接口扩展了 `IService<ClassroomSign>` 接口。这个接口主要用于处理与课堂签到及远程协助相关的服务方法。以下是对每个方法的简要分析： 
  * 1. **signIn(String classroomId, AuthContext authContext)**: 
@@ -44,22 +60,6 @@
  * - 使用了 `AuthContext` 来传递认证信息，并通过特定的ID（如课堂ID、用户ID等）来定位具体的操作对象。 
  * - 方法中没有明确声明异常，但实际使用时可能需要处理潜在的异常情况。 
 **/
-package com.cyberpeace.oj.course.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
-import com.cyberpeace.oj.course.service.bo.HelpStatusBo;
-
-/**
- * 课堂标志Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see IService
- * @since 1.0.0
- */
 public interface ClassroomSignService extends IService<ClassroomSign> {
 
     /**
@@ -138,3 +138,4 @@ public interface ClassroomSignService extends IService<ClassroomSign> {
      */
     String getHelpUrl(String classroomId, String userId);
 }
+

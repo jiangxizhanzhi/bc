@@ -1,3 +1,5 @@
+package com.cyberpeace.cs.service;
+
 /**
  * 这段代码定义了一个名为 `UtilService` 的接口，位于 `com.cyberpeace.cs.service` 包下。该接口包含多个方法，用于处理与文件相关的 URL 和内容操作。以下是对其功能的简要分析： 
  * 1. **`handlerFileUrl(String fileUrl)`** 
@@ -27,8 +29,6 @@
  * ### 总结： 
  * 该接口主要服务于文件路径处理和 Markdown 文件的特殊需求，包括 URL 转换、文件路径提取、Markdown 内容处理等。这些方法覆盖了从文件路径处理到内容解析的多种场景，适用于需要对文件路径和内容进行统一管理的应用场景。 
 **/
-package com.cyberpeace.cs.service;
-
 public interface UtilService {
 
 	/**
@@ -76,3 +76,4 @@ public interface UtilService {
 	String replaceMarkdownFile(String content);
 
 }
+

@@ -1,3 +1,20 @@
+package com.cyberpeace.cs.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+
+/**
+ * 节点折拍摄请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `NodeSnapShotReq` 的 Java 类，用于表示节点快照请求体。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -18,23 +35,6 @@
  * - 类和字段都有详细的注释，说明了每个字段的用途，便于维护和理解。 
  * 总结：这是一个简洁且功能明确的请求体类，主要用于接收与节点快照相关的参数，并支持 API 文档生成和字段验证。 
 **/
-package com.cyberpeace.cs.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-
-/**
- * 节点折拍摄请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @ApiModel
@@ -67,3 +67,4 @@ public class NodeSnapShotReq implements Serializable {
 	@ApiModelProperty("快照描述")
 	private String description;
 }
+

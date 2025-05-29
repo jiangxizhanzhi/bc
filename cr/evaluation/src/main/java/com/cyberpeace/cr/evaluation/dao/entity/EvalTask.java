@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.dao.entity;
+
+import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.BaseTable;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Getter;
+
 /**
  * 这段代码定义了一个名为 `EvalTask` 的实体类，用于表示评估任务。以下是对代码的简要分析： 
  * ### 类概述 
@@ -27,20 +41,6 @@
  * ### 总结 
  * 这个类主要用于表示一个评估任务，并且通过继承 `BaseTable` 类来实现与数据库的交互。枚举 `Status` 定义了任务的不同状态，这些状态可以通过 `code` 和 `desc` 进行访问。整体来看，这是一个典型的 Java 实体类，用于数据持久化和业务逻辑处理。 
 **/
-package com.cyberpeace.cr.evaluation.dao.entity;
-
-import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.BaseTable;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Getter;
-
 @Getter
 @Setter
 @TableName("cr_eval_task")
@@ -87,3 +87,4 @@ public class EvalTask extends BaseTable {
 	}
 
 }
+

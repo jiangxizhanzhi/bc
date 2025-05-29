@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.rule;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间流量萃取胜过Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceTrafficExtractionExcelBo` 的 Java 类，位于包 `com.cyberpeace.space.service.context.rule` 下。以下是对其功能和结构的简要分析： 
  * ### 功能描述 
@@ -16,20 +30,6 @@
  * ### 总结 
  * 这是一个简单的数据传输对象（DTO），主要用于封装与空间流量萃取相关的信息。通过 Lombok 和 Swagger 注解，减少了样板代码，提高了开发效率。 
 **/
-package com.cyberpeace.space.service.context.rule;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间流量萃取胜过Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceTrafficExtractionExcelBo {
@@ -68,3 +68,4 @@ public class SpaceTrafficExtractionExcelBo {
 
 
 }
+

@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Date;
+
+/**
+ * 课程学习过程 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseStudyProcessBo` 的 Java 类，用于表示课程学习过程中的相关信息。以下是该类的详细分析： 
  * ### 包声明 
@@ -46,23 +63,6 @@
  * - 各个字段描述了课程学习过程中的各种状态和属性，包括课程的基本信息、学习进度等。 
  * 这个类可以作为 API 返回的数据传输对象（DTO），用于向客户端提供关于课程学习过程的相关信息。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Date;
-
-/**
- * 课程学习过程 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel("课程学习进度信息")
@@ -173,3 +173,4 @@ public class CourseStudyProcessBo {
     private Boolean interview = Boolean.TRUE;
 
 }
+

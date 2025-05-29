@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 评估系统变量结果响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalSystemVariableResultRsp` 的 Java 类，用于表示评估系统变量的结果。以下是该类的详细分析： 
  * ### 类名和包声明 
@@ -41,20 +55,6 @@
  * - **用途**：通常在后端服务中返回给前端或其他服务作为 JSON 格式的响应数据。 
  * 这段代码简洁明了，适用于 RESTful API 响应的数据传输对象（DTO）。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 评估系统变量结果响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalSystemVariableResultRsp {

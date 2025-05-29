@@ -1,32 +1,3 @@
-/**
- * 这段代码定义了一个用于管理“空间策略”的Spring MVC控制器类 `SpaceStrategyController`。以下是对其功能的简要分析： 
- * 1. **类注解**： 
- * - 使用了 `@RestController` 和 `@RequestMapping` 注解，表明这是一个RESTful风格的控制器，并且所有方法的映射路径都以 `/space/strategy` 开头。 
- * - `@Slf4j` 提供日志记录功能。 
- * 2. **依赖注入**： 
- * - 通过 `@Autowired` 注入了 `SpaceStrategyService` 服务层对象，用于处理具体的业务逻辑。 
- * 3. **API接口**： 
- * - **框架相关操作**： 
- * - `getFrame()`：获取框架结构。 
- * - `addFrame()`：新增框架。 
- * - `modifyFrame()`：修改框架。 
- * - `deleteFrame()`：删除框架。 
- * - **策略相关操作**： 
- * - `getStrategies()`：根据框架ID和名称获取策略列表。 
- * - `pageStrategies()`：分页查询策略。 
- * - `addStrategy()`：新增策略。 
- * - `updateStrategy()`：更新策略（内置策略不可修改）。 
- * - `deleteStrategy()`：批量删除策略。 
- * - `getDetail()`：查看单个策略的详细信息。 
- * - `getRoute()`：获取策略的路径信息。 
- * - **导出功能**： 
- * - `exportStrategy2PDF()`：将指定策略导出为PDF文件。 
- * 4. **异常处理**： 
- * - 在更新策略时，如果尝试修改内置策略会抛出自定义异常 `BusinessException`。 
- * 5. **文档支持**： 
- * - 使用了 Swagger 的注解（如 `@Api`、`@ApiOperation`），便于生成API文档。 
- * 总体而言，该控制器实现了对“空间策略”相关的CRUD操作以及一些辅助功能，结构清晰，职责明确。 
-**/
 package com.cyberpeace.space.controller;
 
 import com.cyberpeace.common.annoations.CallCount;
@@ -62,6 +33,35 @@ import java.util.List;
  * @date 2025/05/28
  * @since 1.0.0
  */
+/**
+ * 这段代码定义了一个用于管理“空间策略”的Spring MVC控制器类 `SpaceStrategyController`。以下是对其功能的简要分析： 
+ * 1. **类注解**： 
+ * - 使用了 `@RestController` 和 `@RequestMapping` 注解，表明这是一个RESTful风格的控制器，并且所有方法的映射路径都以 `/space/strategy` 开头。 
+ * - `@Slf4j` 提供日志记录功能。 
+ * 2. **依赖注入**： 
+ * - 通过 `@Autowired` 注入了 `SpaceStrategyService` 服务层对象，用于处理具体的业务逻辑。 
+ * 3. **API接口**： 
+ * - **框架相关操作**： 
+ * - `getFrame()`：获取框架结构。 
+ * - `addFrame()`：新增框架。 
+ * - `modifyFrame()`：修改框架。 
+ * - `deleteFrame()`：删除框架。 
+ * - **策略相关操作**： 
+ * - `getStrategies()`：根据框架ID和名称获取策略列表。 
+ * - `pageStrategies()`：分页查询策略。 
+ * - `addStrategy()`：新增策略。 
+ * - `updateStrategy()`：更新策略（内置策略不可修改）。 
+ * - `deleteStrategy()`：批量删除策略。 
+ * - `getDetail()`：查看单个策略的详细信息。 
+ * - `getRoute()`：获取策略的路径信息。 
+ * - **导出功能**： 
+ * - `exportStrategy2PDF()`：将指定策略导出为PDF文件。 
+ * 4. **异常处理**： 
+ * - 在更新策略时，如果尝试修改内置策略会抛出自定义异常 `BusinessException`。 
+ * 5. **文档支持**： 
+ * - 使用了 Swagger 的注解（如 `@Api`、`@ApiOperation`），便于生成API文档。 
+ * 总体而言，该控制器实现了对“空间策略”相关的CRUD操作以及一些辅助功能，结构清晰，职责明确。 
+**/
 @Api(tags = "知识空间-知识库-策略库")
 @RestController
 @RequestMapping("/space/strategy")
@@ -291,3 +291,4 @@ public class SpaceStrategyController {
 		FileUtil.setResponse(new File(spaceStrategyService.dumpStrategyPath(strategy_ids)), false, httpServletResponse);
 	}
 }
+

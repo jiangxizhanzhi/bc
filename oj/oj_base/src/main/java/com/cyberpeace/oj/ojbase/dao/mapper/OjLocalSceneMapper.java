@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.ojbase.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * OJ当地场景Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `OjLocalSceneMapper` 的接口，它继承自 `BaseMapper<OjLocalScene>`。这个接口用于与数据库交互，操作 `OjLocalScene` 实体类对应的数据表。以下是对其主要功能和方法的简要分析： 
  * ### 主要内容 
@@ -43,24 +61,6 @@
  * ### 总结 
  * `OjLocalSceneMapper` 提供了多种方法来根据不同的条件查询 `OjLocalScene` 实体对象及其相关数据。这些方法涵盖了私有场景、共有场景、课堂组场景等不同类型的查询需求，并且支持按用户、业务、小组等多种维度进行查询。这些功能使得应用程序能够方便地获取和管理场景相关的数据。 
 **/
-package com.cyberpeace.oj.ojbase.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
-
-/**
- * OJ当地场景Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 
@@ -143,3 +143,4 @@ public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 	 */
 	List<OjLocalScene> selectByGroupIds(@Param("groupIds") List<String> groupIds);
 }
+

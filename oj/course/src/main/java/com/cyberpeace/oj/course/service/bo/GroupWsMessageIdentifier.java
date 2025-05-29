@@ -1,3 +1,18 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import com.cyberpeace.common.model.ws.WsMessageIdentifier;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 组 WS 消息标识符
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see WsMessageIdentifier
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `GroupWsMessageIdentifier` 的类，该类继承自 `WsMessageIdentifier` 类，并添加了一个新的字段 `groupId`。以下是详细的分析： 
  * ### 类定义 
@@ -19,21 +34,6 @@
  * - 通过 Lombok 注解简化了 getter 和 setter 方法的生成。 
  * - 这个类可能是用于处理与群组相关的 WebSocket 消息标识符。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import com.cyberpeace.common.model.ws.WsMessageIdentifier;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 组 WS 消息标识符
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see WsMessageIdentifier
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class GroupWsMessageIdentifier extends WsMessageIdentifier {
@@ -46,3 +46,4 @@ public class GroupWsMessageIdentifier extends WsMessageIdentifier {
 	private String groupId;
 
 }
+

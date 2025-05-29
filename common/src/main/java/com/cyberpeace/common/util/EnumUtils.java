@@ -1,3 +1,11 @@
+package com.cyberpeace.common.util;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+
 /**
  * 这段代码是一个工具类 `EnumUtils`，主要用于操作实现了 `GenericEnum` 接口的枚举类型。以下是代码的主要功能和结构分析： 
  * 1. **泛型支持**： 
@@ -15,14 +23,6 @@
  * - 这些方法适用于需要频繁根据 `code` 或 `desc` 查询枚举值的场景，提高了代码的可读性和复用性。 
  * 总结：`EnumUtils` 提供了一系列实用的方法来操作实现了 `GenericEnum` 接口的枚举类，简化了常见的枚举查询和集合操作。 
 **/
-package com.cyberpeace.common.util;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-
 public class EnumUtils {
 
 	/***
@@ -67,3 +67,4 @@ public class EnumUtils {
 	}
 
 }
+

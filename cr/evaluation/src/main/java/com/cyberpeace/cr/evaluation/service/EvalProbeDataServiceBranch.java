@@ -1,3 +1,11 @@
+package com.cyberpeace.cr.evaluation.service;;
+
+/**
+ * single Train Branch
+ * this is branch method
+ * for the branch method
+ * is the fun toy for little bob
+ */
 /**
  * 这段代码定义了一个名为 `EvalProbeDataServiceBranch` 的类，其中包含一个名为 `getBranch` 的方法。该方法接受一个字符串参数 `input` 并返回一个布尔值。根据输入字符串的不同，该方法会返回 `true` 或 `false`。具体来说： 
  * 1. **方法注释**： 
@@ -19,14 +27,6 @@
  * - 该方法主要用于根据输入字符串返回布尔值，适用于某些特定的测试或示例场景。 
  * - 代码可以通过使用集合或映射来优化，以减少冗余并提高可维护性。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
-
-/**
- * single Train Branch
- * this is branch method
- * for the branch method
- * is the fun toy for little bob
- */
 public class EvalProbeDataServiceBranch {
 
     /**
@@ -375,3 +375,4 @@ public class EvalProbeDataServiceBranch {
         return false;
     }
 }
+

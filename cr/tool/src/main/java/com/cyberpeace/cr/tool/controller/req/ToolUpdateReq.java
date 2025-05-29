@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.tool.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+
+/**
+ * 工具更新请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolUpdateReq` 的类，该类用于处理工具更新的请求体。以下是对代码的简要分析： 
  * ### 类概述 
@@ -21,21 +36,6 @@
  * - 可以增加更多的验证注解，确保 `resourceId` 符合特定的格式要求（如长度、字符集等）。 
  * 整体而言，这段代码简洁明了，符合RESTful API的设计规范。 
 **/
-package com.cyberpeace.cr.tool.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-
-/**
- * 工具更新请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @ApiModel
@@ -47,3 +47,4 @@ public class ToolUpdateReq extends ToolAddReq{
     @NotBlank
     private String resourceId;
 }
+

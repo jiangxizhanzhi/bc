@@ -1,3 +1,22 @@
+package com.cyberpeace.cr.evaluation.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.BaseTable;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Getter;
+
+import java.util.Date;
+
+/**
+ * EVAL 可变参考探头数据
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalVariableRefProbeData` 的 Java 类，该类继承自 `BaseTable` 并且用于表示评估系统中的可变参考探头数据。以下是代码的详细分析： 
  * ### 包和导入 
@@ -31,25 +50,6 @@
  * - **扩展性**：通过枚举类定义状态，可以方便地扩展其他状态。 
  * 这段代码简洁明了，遵循了良好的编码规范，适用于实际应用中。 
 **/
-package com.cyberpeace.cr.evaluation.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.BaseTable;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Getter;
-
-import java.util.Date;
-
-/**
- * EVAL 可变参考探头数据
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @TableName("cr_eval_variable_ref_probe_data")
@@ -100,3 +100,4 @@ public class EvalVariableRefProbeData extends BaseTable {
         }
     }
 }
+

@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.crbase.controller.req;
+
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 标签请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `LabelReq` 的 Java 类，位于 `com.cyberpeace.cr.crbase.controller.req` 包中。以下是代码的主要分析和总结： 
  * ### 功能描述 
@@ -17,23 +34,6 @@
  * ### 总结 
  * 该类是一个简单的数据传输对象（DTO），用于接收标签信息，并结合注解实现数据校验和 API 文档生成。代码结构清晰，功能明确，适合用于后端接收和验证标签请求数据。 
 **/
-package com.cyberpeace.cr.crbase.controller.req;
-
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 标签请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class LabelReq {
@@ -47,3 +47,4 @@ public class LabelReq {
  
 
 }
+

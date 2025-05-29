@@ -1,3 +1,17 @@
+package com.cyberpeace.cs.service.context.scene;
+
+import java.io.Serializable;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * CP 集合
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `CpCollection` 的 Java 类，以下是其简要分析： 
  * 1. **类的功能**： 
@@ -13,20 +27,6 @@
  * - 这个类可能是某个系统中用于管理场景集合的组件，具体用途需结合上下文（如 `SceneCollection` 的定义）进一步理解。 
  * 总结：这是一个简单的数据容器类，主要用于存储与场景相关的集合信息。 
 **/
-package com.cyberpeace.cs.service.context.scene;
-
-import java.io.Serializable;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * CP 集合
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class CpCollection implements Serializable {
@@ -37,3 +37,4 @@ public class CpCollection implements Serializable {
 	private SceneCollection scene;
 
 }
+

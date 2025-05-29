@@ -1,3 +1,45 @@
+package com.cyberpeace.space.service.impl;
+
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.service.CourseLessonService;
+import com.cyberpeace.oj.course.service.bo.AdminLessonBo;
+import com.cyberpeace.oj.course.service.bo.AdminLessonListBo;
+import com.cyberpeace.space.service.TheoryKService;
+import com.cyberpeace.space.service.context.ListKReq;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.io.File;
+import java.util.List;
+
+/**
+ * 理论KSERVICE 服务实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see TheoryKService
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 1. **功能概述** 
@@ -55,48 +97,6 @@
  * #### 总结 
  * 该代码实现了一个功能全面且结构清晰的服务类，能够满足理论 K 的分页查询、批量删除及详情获取需求。通过合理的依赖注入和工具类辅助，代码具有较高的可读性和扩展性。 
 **/
-package com.cyberpeace.space.service.impl;
-
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cs.service.AttachmentService;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.cs.service.context.AttachmentBo;
-import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
-import com.cyberpeace.oj.course.service.CourseLessonService;
-import com.cyberpeace.oj.course.service.bo.AdminLessonBo;
-import com.cyberpeace.oj.course.service.bo.AdminLessonListBo;
-import com.cyberpeace.space.service.TheoryKService;
-import com.cyberpeace.space.service.context.ListKReq;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionTemplate;
-
-import java.io.File;
-import java.util.List;
-
-/**
- * 理论KSERVICE 服务实现
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see TheoryKService
- * @since 1.0.0
- */
 @Service
 @Slf4j
 public class TheoryKServiceImpl implements TheoryKService {
@@ -224,3 +224,4 @@ public class TheoryKServiceImpl implements TheoryKService {
 		return lessonInfoBo;
 	}
 }
+

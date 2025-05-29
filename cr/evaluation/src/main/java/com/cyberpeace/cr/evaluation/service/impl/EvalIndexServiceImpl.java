@@ -1,3 +1,25 @@
+package com.cyberpeace.cr.evaluation.service.impl;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexMapper;
+import com.cyberpeace.cr.evaluation.service.EvalIndexService;
+import com.cyberpeace.cr.evaluation.service.context.IndexContext;
+
+/**
+ * 评估指数Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalIndexServiceImpl` 的 Spring 服务类，实现了 `EvalIndexService` 接口。这个服务类主要用于处理与评估指数（EvalIndex）相关的业务逻辑。下面是对该代码的详细分析： 
  * ### 类定义 
@@ -36,28 +58,6 @@
  * - 使用了 MyBatis 提供的 Mapper 接口进行数据库操作。 
  * 这段代码展示了如何在 Spring Boot 项目中结合 MyBatis-Plus 和 Java Stream API 实现数据的查询和转换。 
 **/
-package com.cyberpeace.cr.evaluation.service.impl;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexMapper;
-import com.cyberpeace.cr.evaluation.service.EvalIndexService;
-import com.cyberpeace.cr.evaluation.service.context.IndexContext;
-
-/**
- * 评估指数Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Service
 public class EvalIndexServiceImpl extends ServiceImpl<EvalIndexMapper, EvalIndex> implements EvalIndexService {
 
@@ -105,3 +105,4 @@ public class EvalIndexServiceImpl extends ServiceImpl<EvalIndexMapper, EvalIndex
 		evalIndexMapper.deleteBatchByEvalSystemId(evalSystemId);
 	}
 }
+

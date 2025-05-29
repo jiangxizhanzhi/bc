@@ -1,3 +1,25 @@
+package com.cyberpeace.cr.evaluation.service.impl;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalCollection;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalCollectionMapper;
+import com.cyberpeace.cr.evaluation.service.EvalCollectionService;
+import com.cyberpeace.cr.evaluation.service.context.EvalCollectionContext;
+import com.google.common.collect.Lists;
+
+/**
+ * 评估收集Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalCollectionServiceImpl` 的服务实现类，用于处理与 `EvalCollection` 实体相关的业务逻辑。以下是对该代码的简要分析： 
  * ### 类概述 
@@ -30,28 +52,6 @@
  * - **依赖**: 依赖于 `EvalCollectionMapper` 进行数据库操作，依赖于 `BeanUtils` 进行对象复制。 
  * 这段代码展示了如何在 Spring Boot 应用程序中使用 MyBatis Plus 和 Java 8 的特性来实现一个简单的业务逻辑层。 
 **/
-package com.cyberpeace.cr.evaluation.service.impl;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalCollection;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalCollectionMapper;
-import com.cyberpeace.cr.evaluation.service.EvalCollectionService;
-import com.cyberpeace.cr.evaluation.service.context.EvalCollectionContext;
-import com.google.common.collect.Lists;
-
-/**
- * 评估收集Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Service
 public class EvalCollectionServiceImpl extends ServiceImpl<EvalCollectionMapper, EvalCollection> implements EvalCollectionService {
 
@@ -105,3 +105,4 @@ public class EvalCollectionServiceImpl extends ServiceImpl<EvalCollectionMapper,
 		return EvalCollectionContexts;
 	}
 }
+

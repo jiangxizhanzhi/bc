@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.tactic;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 战法行动
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `TacticAction` 的 Java 类，用于表示战法行动的相关信息。以下是对其的简要分析： 
  * 1. **类的功能**： 
@@ -14,20 +28,6 @@
  * - 该类的设计目的是为了封装战法行动的基本信息，便于在系统中传递和展示。 
  * 总结来说，`TacticAction` 是一个简洁且功能明确的数据类，适用于需要描述战法行动基本信息的场景。 
 **/
-package com.cyberpeace.space.service.context.tactic;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 战法行动
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class TacticAction {
@@ -57,3 +57,4 @@ public class TacticAction {
 	@ApiModelProperty(value = "行动描述")
 	private String content;
 }
+

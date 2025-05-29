@@ -1,3 +1,19 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 组织统计 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PublicStatsBo
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `OrgStatsBo` 的 Java 类，该类位于 `com.cyberpeace.oj.course.service.bo` 包中。以下是对此代码的简要分析： 
  * ### 类定义和继承 
@@ -23,22 +39,6 @@
  * - 使用 Swagger 注解来提供 API 文档中的描述信息。 
  * 这段代码主要用于在系统中表示和处理组织学习相关的统计数据。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 组织统计 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PublicStatsBo
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel("组织学习统计信息")
@@ -69,3 +69,4 @@ public class OrgStatsBo extends PublicStatsBo {
     private Integer orgUserCount;
 
 }
+

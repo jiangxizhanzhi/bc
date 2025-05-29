@@ -1,3 +1,17 @@
+package com.cyberpeace.integratation.model.evaluation;
+
+import java.io.Serializable;
+import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 设置数据格式
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `FormatData` 的 Java 类，位于包 `com.cyberpeace.integratation.model.evaluation` 中。以下是对其主要特性的简要分析： 
  * 1. **包声明**： 
@@ -18,20 +32,6 @@
  * - 使用 Lombok 的 `@Getter` 和 `@Setter` 注解来减少样板代码，使类更加简洁。 
  * - 这个类适用于需要处理和传输字符串列表数据的场景。 
 **/
-package com.cyberpeace.integratation.model.evaluation;
-
-import java.io.Serializable;
-import java.util.List;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 设置数据格式
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class FormatData implements Serializable {
@@ -41,3 +41,4 @@ public class FormatData implements Serializable {
 	 */
 	List<String> data;
 }
+

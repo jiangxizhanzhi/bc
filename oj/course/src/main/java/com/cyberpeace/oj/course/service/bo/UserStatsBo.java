@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import com.alibaba.fastjson.JSONObject;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 用户统计 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PublicStatsBo
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `UserStatsBo` 的 Java 类，该类用于表示用户的学习统计信息。以下是对代码的简要分析： 
  * ### 类概述 
@@ -22,25 +41,6 @@
  * - **继承**：从 `PublicStatsBo` 继承，可能包含一些公共的统计信息字段。 
  * 这个类的设计简洁明了，适合在用户统计相关的场景中使用。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import com.alibaba.fastjson.JSONObject;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 用户统计 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PublicStatsBo
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel("用户学习统计信息")
@@ -96,3 +96,4 @@ public class UserStatsBo extends PublicStatsBo {
 
 
 }
+

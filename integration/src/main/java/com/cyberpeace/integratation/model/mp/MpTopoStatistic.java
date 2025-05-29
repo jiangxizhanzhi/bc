@@ -1,3 +1,17 @@
+package com.cyberpeace.integratation.model.mp;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 中台拓扑统计
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MpTopoStatistic` 的 Java 类，用于表示中台拓扑统计信息。以下是该类的详细分析： 
  * ### 包声明和导入 
@@ -67,20 +81,6 @@
  * - 提供了一个方法来计算所有节点的总数。 
  * - 建议检查并修正 `npcCount` 字段的命名，使其更符合实际业务需求。 
 **/
-package com.cyberpeace.integratation.model.mp;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 中台拓扑统计
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MpTopoStatistic implements Serializable {
@@ -140,3 +140,4 @@ public class MpTopoStatistic implements Serializable {
 		return count;
 	}
 }
+

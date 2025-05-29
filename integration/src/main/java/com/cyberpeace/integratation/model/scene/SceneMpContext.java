@@ -1,3 +1,17 @@
+package com.cyberpeace.integratation.model.scene;
+
+import java.io.Serializable;
+import java.util.Map;
+
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.google.common.collect.Maps;
+
+/**
+ * 场景中台上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SceneMpContext` 的 Java 类，该类实现了 `Serializable` 接口。以下是对其主要特性和功能的简要分析： 
  * ### 类概述 
@@ -27,20 +41,6 @@
  * - 类和字段的文档注释较为简略，可以进一步补充详细说明其用途和使用场景。 
  * 总体来说，这是一个简单的工具类，用于封装场景应用的上下文信息。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import java.io.Serializable;
-import java.util.Map;
-
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.google.common.collect.Maps;
-
-/**
- * 场景中台上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 public class SceneMpContext implements Serializable {
 
 	/**

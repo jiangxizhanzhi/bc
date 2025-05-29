@@ -1,3 +1,22 @@
+package com.cyberpeace.cr.crbase.controller.req;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+/**
+ * 提交评估请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SubmitEvaluationReq` 的 Java 类，用于封装提交评估请求所需的信息。以下是对其功能和结构的简要分析： 
  * 1. **类的功能**： 
@@ -26,25 +45,6 @@
  * - 在 `setScore` 方法中，如果输入的分数不符合要求，会抛出自定义的 `BusinessException` 异常，并使用 `CrBusinessErrorCode.INVALID_SCORE` 来标识无效分数的情况。 
  * 总体来说，这个类设计合理，通过 Lombok 和注解减少了冗余代码，同时在关键位置加入了必要的校验和异常处理机制，确保了数据的安全性和一致性。 
 **/
-package com.cyberpeace.cr.crbase.controller.req;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-/**
- * 提交评估请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @Slf4j
@@ -105,3 +105,4 @@ public class SubmitEvaluationReq {
 		}
 	}
 }
+

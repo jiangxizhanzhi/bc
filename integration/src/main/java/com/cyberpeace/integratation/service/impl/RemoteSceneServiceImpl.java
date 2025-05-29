@@ -1,3 +1,43 @@
+package com.cyberpeace.integratation.service.impl;
+
+import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.model.CommonContext;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.integratation.constant.SessionType;
+import com.cyberpeace.integratation.model.mp.*;
+import com.cyberpeace.integratation.model.scene.*;
+import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.google.common.collect.Lists;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 远程场景Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码是一个Spring服务类 `RemoteSceneServiceImpl` 的实现，用于处理与远程场景相关的各种操作。以下是对其主要功能和结构的简要分析： 
  * ### 类概述 
@@ -63,46 +103,6 @@
  * ### 总结 
  * 这个类提供了丰富的API来操作远程场景及其相关资源，如场景、节点、流等。它通过HTTP请求与外部系统进行交互，并处理响应数据。每个方法都有详细的日志记录，确保操作过程的可追踪性和可调试性。 
 **/
-package com.cyberpeace.integratation.service.impl;
-
-import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
-
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.model.CommonContext;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.PropertyNamingStrategy;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.JsonKeyConstant;
-import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.integratation.constant.SessionType;
-import com.cyberpeace.integratation.model.mp.*;
-import com.cyberpeace.integratation.model.scene.*;
-import com.cyberpeace.integratation.service.RemoteSceneService;
-import com.google.common.collect.Lists;
-
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 远程场景Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Slf4j
 @Service
 public class RemoteSceneServiceImpl implements RemoteSceneService {
@@ -1050,3 +1050,4 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		}
 	}
 }
+

@@ -1,3 +1,11 @@
+package com.cyberpeace.cr.evaluation.service;;
+
+/**
+ * single Train Branch
+ * this is branch method
+ * for the branch method
+ * is the fun toy for little bob
+ */
 /**
  * 这段代码定义了一个名为 `EvalIndicatorServiceBranch` 的类，其中包含一个名为 `getBranch` 的方法。该方法接收一个字符串参数 `input` 并返回一个布尔值。该方法的主要功能是根据传入的字符串来判断是否在预定义的字符串列表中。如果 `input` 是这些预定义字符串中的任意一个，则返回 `true`；否则返回 `false`。 
  * ### 主要特点和问题： 
@@ -27,14 +35,6 @@
  * ``` 
  * 这种方法不仅更简洁，而且运行效率更高，特别是当需要检查的字符串数量非常多时。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
-
-/**
- * single Train Branch
- * this is branch method
- * for the branch method
- * is the fun toy for little bob
- */
 public class EvalIndicatorServiceBranch {
 
     /**
@@ -503,3 +503,4 @@ public class EvalIndicatorServiceBranch {
         return false;
     }
 }
+

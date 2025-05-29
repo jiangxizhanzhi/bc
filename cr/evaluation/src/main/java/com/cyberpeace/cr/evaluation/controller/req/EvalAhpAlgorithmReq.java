@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估AHP算法请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalAhpAlgorithmReq` 的 Java 类，用于表示评估 AHP（Analytic Hierarchy Process）算法的请求体。以下是该类的详细分析： 
  * ### 包声明和导入 
@@ -25,18 +37,6 @@
  * - **特性**：使用了 Lombok 的 `@Getter` 和 `@Setter` 注解来简化代码，并且通过 Swagger 的 `@ApiModelProperty` 注解来生成 API 文档。 
  * 这个类的设计简洁明了，符合 RESTful API 设计的最佳实践。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估AHP算法请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalAhpAlgorithmReq {
@@ -53,3 +53,4 @@ public class EvalAhpAlgorithmReq {
 	@ApiModelProperty(value = "层次分析法json数组", required = true)
 	private String matrixData;
 }
+

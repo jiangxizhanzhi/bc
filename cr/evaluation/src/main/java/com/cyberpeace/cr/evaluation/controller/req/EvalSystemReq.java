@@ -1,3 +1,21 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
+import com.cyberpeace.cr.evaluation.service.context.IndexContext;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估系统请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalSystemReq` 的 Java 类，该类用于表示评估系统的请求体。以下是详细的分析和总结： 
  * ### 类定义和注解 
@@ -26,24 +44,6 @@
  * - **Swagger 文档**：通过 `@ApiModelProperty` 注解为 Swagger 提供文档信息，方便 API 文档生成。 
  * 这个类的设计简洁明了，易于理解，并且通过注解实现了必要的数据验证。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import com.cyberpeace.cr.evaluation.service.context.IndexContext;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估系统请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalSystemReq {

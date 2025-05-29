@@ -1,3 +1,27 @@
+package com.cyberpeace.cr.crbase.dao.entity;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.constant.BaseI18n;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 靶场任务
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * ### 代码分析 
  * #### 1. **类的功能** 
@@ -33,30 +57,6 @@
  * - 该类结构清晰，功能明确，适合用于管理靶场任务的生命周期。 
  * - 枚举类的设计提高了代码的可读性和可维护性。 
 **/
-package com.cyberpeace.cr.crbase.dao.entity;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.BaseTable;
-import com.cyberpeace.constant.BaseI18n;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 靶场任务
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @TableName("cr_task")
@@ -210,3 +210,4 @@ public class CrTask extends BaseTable {
 
 	}
 }
+

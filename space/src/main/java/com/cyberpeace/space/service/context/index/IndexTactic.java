@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.index;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 编号战法
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `IndexTactic` 的 Java 类，位于包 `com.cyberpeace.space.service.context.index` 下。以下是代码的主要分析和总结： 
  * ### 主要功能 
@@ -19,20 +33,6 @@
  * ### 总结 
  * 这是一个简单的数据模型类，主要用于存储和管理战法相关的统计数据，并提供了基本的计算功能（如 `calSum`）。代码结构清晰，注释详细，符合良好的编码规范。 
 **/
-package com.cyberpeace.space.service.context.index;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 编号战法
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class IndexTactic {
@@ -94,3 +94,4 @@ public class IndexTactic {
         this.sum = this.attack + this.defense;
     }
 }
+

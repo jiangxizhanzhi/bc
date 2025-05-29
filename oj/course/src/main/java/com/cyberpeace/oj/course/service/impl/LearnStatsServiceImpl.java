@@ -1,37 +1,3 @@
-/**
- * 这段代码是一个Spring Boot服务类`LearnStatsServiceImpl`，实现了`LearnStatsService`接口。它主要负责处理用户和组织的学习统计相关功能。以下是代码的主要功能和结构分析： 
- * ### 主要功能 
- * 1. **用户学习统计** 
- * - `getUserStats`: 获取指定用户或组织的学习统计信息。 
- * - `getUserLearnRank`: 获取用户的学习排名。 
- * - `getPersonalStatsDetail4Count`: 获取用户的个人学习统计详情。 
- * - `getPersonalStatsDetail4Course`: 获取用户的课程学习统计详情。 
- * 2. **组织学习统计** 
- * - `getOrgStatsData`: 获取组织的学习统计信息。 
- * - `getOrgLearnRank`: 获取组织的学习排名。 
- * 3. **辅助方法** 
- * - 多线程任务执行：使用`ExecutorService`异步执行多个任务（如课时学习排行、完成报告排行等）。 
- * - 数据处理：如获取用户积分、用户计数、排名等。 
- * ### 关键组件 
- * 1. **依赖注入** 
- * - `@Autowired`注解用于注入其他服务类和Mapper，如`LearnStatsMapper`, `RemoteUserService`, `RemoteOrganizationService`, `RemoteAdService`等。 
- * 2. **常量定义** 
- * - `topTen`, `topFive`, `minScore`: 定义了常量值，用于控制排行榜的大小和最低分数标准。 
- * 3. **工具方法** 
- * - `getDefaultStartTime`: 获取默认的开始时间。 
- * - `pagedData`: 对数据进行分页处理。 
- * - `getTopCount`: 获取前N个元素。 
- * - `getUserWithIntegral`, `getUserWithCount`: 将数据转换为Map格式，方便后续处理。 
- * - `getAllChildrenOrg`: 递归收集所有子级组织。 
- * 4. **数据模型** 
- * - `UserStatsBo`, `UserStatsRankBo`, `OrgStatsBo`, `PersonalStatsDetail4CountBo`, `PersonalStatsDetail4CourseBo`, `HistogramRes`: 用于封装返回的数据模型。 
- * ### 代码结构 
- * - **主业务方法**：这些方法负责具体的业务逻辑，如用户学习统计、组织学习统计等。 
- * - **辅助方法**：这些方法主要用于数据处理和工具性操作，如数据转换、排序、分页等。 
- * - **多线程任务**：使用`ExecutorService`来异步执行多个任务，提高系统性能。 
- * ### 总结 
- * 该代码实现了一个复杂的学习统计服务，包含了用户和组织的学习统计功能，并且通过多线程技术提高了系统的响应速度。代码中使用了大量的工具类和数据模型，使得业务逻辑清晰且易于扩展。 
-**/
 package com.cyberpeace.oj.course.service.impl;
 
 import java.util.*;
@@ -84,6 +50,40 @@ import lombok.extern.slf4j.Slf4j;
  * @see LearnStatsService
  * @since 1.0.0
  */
+/**
+ * 这段代码是一个Spring Boot服务类`LearnStatsServiceImpl`，实现了`LearnStatsService`接口。它主要负责处理用户和组织的学习统计相关功能。以下是代码的主要功能和结构分析： 
+ * ### 主要功能 
+ * 1. **用户学习统计** 
+ * - `getUserStats`: 获取指定用户或组织的学习统计信息。 
+ * - `getUserLearnRank`: 获取用户的学习排名。 
+ * - `getPersonalStatsDetail4Count`: 获取用户的个人学习统计详情。 
+ * - `getPersonalStatsDetail4Course`: 获取用户的课程学习统计详情。 
+ * 2. **组织学习统计** 
+ * - `getOrgStatsData`: 获取组织的学习统计信息。 
+ * - `getOrgLearnRank`: 获取组织的学习排名。 
+ * 3. **辅助方法** 
+ * - 多线程任务执行：使用`ExecutorService`异步执行多个任务（如课时学习排行、完成报告排行等）。 
+ * - 数据处理：如获取用户积分、用户计数、排名等。 
+ * ### 关键组件 
+ * 1. **依赖注入** 
+ * - `@Autowired`注解用于注入其他服务类和Mapper，如`LearnStatsMapper`, `RemoteUserService`, `RemoteOrganizationService`, `RemoteAdService`等。 
+ * 2. **常量定义** 
+ * - `topTen`, `topFive`, `minScore`: 定义了常量值，用于控制排行榜的大小和最低分数标准。 
+ * 3. **工具方法** 
+ * - `getDefaultStartTime`: 获取默认的开始时间。 
+ * - `pagedData`: 对数据进行分页处理。 
+ * - `getTopCount`: 获取前N个元素。 
+ * - `getUserWithIntegral`, `getUserWithCount`: 将数据转换为Map格式，方便后续处理。 
+ * - `getAllChildrenOrg`: 递归收集所有子级组织。 
+ * 4. **数据模型** 
+ * - `UserStatsBo`, `UserStatsRankBo`, `OrgStatsBo`, `PersonalStatsDetail4CountBo`, `PersonalStatsDetail4CourseBo`, `HistogramRes`: 用于封装返回的数据模型。 
+ * ### 代码结构 
+ * - **主业务方法**：这些方法负责具体的业务逻辑，如用户学习统计、组织学习统计等。 
+ * - **辅助方法**：这些方法主要用于数据处理和工具性操作，如数据转换、排序、分页等。 
+ * - **多线程任务**：使用`ExecutorService`来异步执行多个任务，提高系统性能。 
+ * ### 总结 
+ * 该代码实现了一个复杂的学习统计服务，包含了用户和组织的学习统计功能，并且通过多线程技术提高了系统的响应速度。代码中使用了大量的工具类和数据模型，使得业务逻辑清晰且易于扩展。 
+**/
 @Service
 @Slf4j
 public class LearnStatsServiceImpl implements LearnStatsService {
@@ -936,3 +936,4 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 
 	}
 }
+

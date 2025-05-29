@@ -1,3 +1,23 @@
+package com.cyberpeace.space.service.context.rule;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.dao.entity.SpaceViolationJudgeRule;
+import com.cyberpeace.space.model.SpaceBoBase;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间违反法官统治Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceViolationJudgeRuleBo` 的 Java 类，继承自 `SpaceBoBase`。以下是对代码的简要分析： 
  * 1. **类的功能**： 
@@ -23,26 +43,6 @@
  * 总结：该类是一个典型的业务对象类，主要用于封装空间违反法官规则的数据，并提供了从 BO 到实体的转换方法，便于在业务逻辑和数据存储之间传递数据。 
 **/
 
-package com.cyberpeace.space.service.context.rule;
-
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.dao.entity.SpaceViolationJudgeRule;
-import com.cyberpeace.space.model.SpaceBoBase;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间违反法官统治Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBoBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceViolationJudgeRuleBo extends SpaceBoBase {

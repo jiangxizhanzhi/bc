@@ -1,3 +1,14 @@
+package com.cyberpeace.integratation.model.scene;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 快照删除上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SnapshotDeleteContext` 的 Java 类，该类是 `SceneOpsContext` 类的子类。这个类的主要目的是提供一个用于删除快照操作的上下文对象。以下是详细的分析： 
  * ### 类定义 
@@ -15,17 +26,6 @@
  * ### 总结 
  * `SnapshotDeleteContext` 类是一个简单的数据传输对象（DTO），主要用于在删除快照的操作中传递必要的信息（如节点 ID 和快照 ID）。通过继承 `SceneOpsContext` 类，它可能与其他场景操作共享一些通用的上下文信息。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 快照删除上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class SnapshotDeleteContext extends SceneOpsContext {
@@ -41,3 +41,4 @@ public class SnapshotDeleteContext extends SceneOpsContext {
 	private String snapshotId;
 
 }
+

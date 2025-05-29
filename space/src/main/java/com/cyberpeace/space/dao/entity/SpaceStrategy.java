@@ -1,3 +1,21 @@
+package com.cyberpeace.space.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间策略
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see BaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceStrategy` 的 Java 类，它是用于表示“空间策略”的实体类。以下是对代码的简要分析： 
  * 1. **包与依赖**： 
@@ -19,24 +37,6 @@
  * - 继承自 `BaseTable`，可能是为了复用一些通用的数据库操作逻辑或字段。 
  * 总结：这是一个典型的 JPA 或 MyBatis 实体类，用于与数据库表 `space_strategy` 进行映射，支持基本的 CRUD 操作。 
 **/
-package com.cyberpeace.space.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间策略
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see BaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("space_strategy")
@@ -71,3 +71,4 @@ public class SpaceStrategy extends BaseTable {
 
 	private Boolean builtin;
 }
+

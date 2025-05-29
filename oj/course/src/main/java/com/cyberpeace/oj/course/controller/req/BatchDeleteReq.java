@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 批量删除请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `BatchDeleteReq` 的 Java 类，用于处理批量删除请求。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -22,26 +42,6 @@
  * - 这是一个简单的数据传输对象（DTO），用于在客户端和服务器之间传递批量删除请求所需的数据。 
  * - 通过注解增强了类的可读性和自动生成了必要的方法，同时支持 Swagger 文档生成。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotEmpty;
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 批量删除请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -57,3 +57,4 @@ public class BatchDeleteReq implements Serializable {
     private List<String> resourceIds;
 
 }
+

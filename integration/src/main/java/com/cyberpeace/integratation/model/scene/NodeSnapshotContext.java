@@ -1,3 +1,14 @@
+package com.cyberpeace.integratation.model.scene;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 镜像快照上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `NodeSnapshotContext` 的 Java 类，该类继承自 `SceneOpsContext`。以下是详细的分析和总结： 
  * ### 类和继承关系 
@@ -18,17 +29,6 @@
  * - 使用 Lombok 的注解简化了代码，减少了手动编写 getter 和 setter 方法的工作量。 
  * 这个类的设计目的是为了方便管理和传递镜像快照相关的数据。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 镜像快照上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class NodeSnapshotContext extends SceneOpsContext {
@@ -49,3 +49,4 @@ public class NodeSnapshotContext extends SceneOpsContext {
 	private String description;
 
 }
+

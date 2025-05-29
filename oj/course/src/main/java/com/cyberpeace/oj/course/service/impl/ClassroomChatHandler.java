@@ -1,3 +1,31 @@
+package com.cyberpeace.oj.course.service.impl;
+
+import com.cyberpeace.common.model.ws.ChatContent;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cs.service.impl.ChatWebSocketHandler;
+import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
+import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
+import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+/**
+ * 课堂聊天处理程序
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see ChatWebSocketHandler
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomChatHandler` 的类，该类继承自 `ChatWebSocketHandler`。这个类主要用于处理与课堂相关的聊天信息。以下是代码的主要组成部分和功能分析： 
  * ### 类和依赖注入 
@@ -28,34 +56,6 @@
  * ### 总结 
  * `ClassroomChatHandler` 类主要用于处理与课堂相关的聊天消息，包括获取参与聊天的用户列表。它通过依赖注入获取数据库操作接口，并使用这些接口查询和处理数据。该类的功能主要集中在从数据库中获取课堂信息和相关群组信息，以及生成参与聊天的用户列表。 
 **/
-package com.cyberpeace.oj.course.service.impl;
-
-import com.cyberpeace.common.model.ws.ChatContent;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.cs.service.impl.ChatWebSocketHandler;
-import com.cyberpeace.oj.course.dao.entity.Classroom;
-import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
-import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
-import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.List;
-
-/**
- * 课堂聊天处理程序
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see ChatWebSocketHandler
- * @since 1.0.0
- */
 @Slf4j
 @Component
 public class ClassroomChatHandler extends ChatWebSocketHandler {
@@ -125,3 +125,4 @@ public class ClassroomChatHandler extends ChatWebSocketHandler {
 		return userIds;
 	}
 }
+

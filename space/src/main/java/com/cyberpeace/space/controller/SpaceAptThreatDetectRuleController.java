@@ -1,23 +1,3 @@
-/**
- * 这段代码定义了一个名为 `SpaceAptThreatDetectRuleController` 的 Spring MVC 控制器类，用于处理与特定 APT 威胁检测规则相关的操作。以下是代码的主要功能和结构分析： 
- * 1. **类定义与继承**： 
- * - 类 `SpaceAptThreatDetectRuleController` 继承自 `SpaceControllerBase`，并实现了泛型方法所需的类型参数。 
- * - 它使用了 `@RestController` 注解，表明这是一个 RESTful 风格的控制器。 
- * - 使用了 `@RequestMapping` 指定了基础 URL 路径。 
- * 2. **方法 `exportExcel`**： 
- * - 该方法通过 GET 请求接收 `HttpServletResponse` 和 `SpaceAptThreatDetectRulePageReq` 参数。 
- * - 功能是根据请求参数生成符合条件的数据，并将其导出为 Excel 文件。 
- * - 使用 `LambdaQueryWrapper` 构建查询条件，并调用服务层的方法获取数据。 
- * - 数据经过深拷贝后传递给 `ExcelDataHandler.exportExcel` 方法进行实际的 Excel 文件生成。 
- * - 最后通过 `FileUtil.setResponse` 将生成的文件作为附件返回给客户端。 
- * 3. **其他功能**： 
- * - 方法 `checkNameDuplication` 被覆盖以检查名称是否重复，但当前实现总是返回 `true`。 
- * 4. **依赖注入与工具类**： 
- * - 使用了多个工具类如 `IDGeneratorUtil`, `BeanUtils`, `FileUtil` 等来辅助完成业务逻辑。 
- * - 引入了 Swagger 注解 `@Api` 和 `@ApiOperation` 来描述 API 接口的功能。 
- * 总体而言，这个控制器专注于处理特定 APT 威胁检测规则的数据操作，特别是导出功能的实现较为详细且实用。 
-**/
-
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -58,6 +38,26 @@ import java.util.List;
  * @see SpaceControllerBase
  * @since 1.0.0
  */
+/**
+ * 这段代码定义了一个名为 `SpaceAptThreatDetectRuleController` 的 Spring MVC 控制器类，用于处理与特定 APT 威胁检测规则相关的操作。以下是代码的主要功能和结构分析： 
+ * 1. **类定义与继承**： 
+ * - 类 `SpaceAptThreatDetectRuleController` 继承自 `SpaceControllerBase`，并实现了泛型方法所需的类型参数。 
+ * - 它使用了 `@RestController` 注解，表明这是一个 RESTful 风格的控制器。 
+ * - 使用了 `@RequestMapping` 指定了基础 URL 路径。 
+ * 2. **方法 `exportExcel`**： 
+ * - 该方法通过 GET 请求接收 `HttpServletResponse` 和 `SpaceAptThreatDetectRulePageReq` 参数。 
+ * - 功能是根据请求参数生成符合条件的数据，并将其导出为 Excel 文件。 
+ * - 使用 `LambdaQueryWrapper` 构建查询条件，并调用服务层的方法获取数据。 
+ * - 数据经过深拷贝后传递给 `ExcelDataHandler.exportExcel` 方法进行实际的 Excel 文件生成。 
+ * - 最后通过 `FileUtil.setResponse` 将生成的文件作为附件返回给客户端。 
+ * 3. **其他功能**： 
+ * - 方法 `checkNameDuplication` 被覆盖以检查名称是否重复，但当前实现总是返回 `true`。 
+ * 4. **依赖注入与工具类**： 
+ * - 使用了多个工具类如 `IDGeneratorUtil`, `BeanUtils`, `FileUtil` 等来辅助完成业务逻辑。 
+ * - 引入了 Swagger 注解 `@Api` 和 `@ApiOperation` 来描述 API 接口的功能。 
+ * 总体而言，这个控制器专注于处理特定 APT 威胁检测规则的数据操作，特别是导出功能的实现较为详细且实用。 
+**/
+
 @Api(tags = "规则库-特定APT威胁检测规则")
 @RestController
 @RequestMapping("/space/rule/space_apt_threat_detect_rule")

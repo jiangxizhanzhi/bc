@@ -1,3 +1,24 @@
+package com.cyberpeace.oj.course.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.entity.LessonConfig;
+import com.cyberpeace.oj.course.service.bo.AddLessonConfigContext;
+import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
+import com.cyberpeace.oj.course.service.bo.LessonConfigDumpBo;
+
+import java.util.List;
+
+/**
+ * 课配置Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonConfigService` 的接口，该接口扩展了 `IService<LessonConfig>` 接口。这个服务接口主要用于处理与课程配置相关的业务逻辑。以下是对这段代码的简要分析： 
  * ### 包声明 
@@ -30,27 +51,6 @@
  * ### 总结 
  * `LessonConfigService` 接口提供了一系列方法来处理与课程配置相关的业务逻辑，包括查询、更新、导出和加载课程配置信息。这些方法使用了一些辅助的数据传输对象（DTO）和实体类来传递数据和状态信息。这个接口的设计考虑到了认证和授权的需求，通过 `AuthContext` 参数确保只有经过授权的用户才能访问或修改课程配置信息。 
 **/
-package com.cyberpeace.oj.course.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.dao.entity.LessonConfig;
-import com.cyberpeace.oj.course.service.bo.AddLessonConfigContext;
-import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
-import com.cyberpeace.oj.course.service.bo.LessonConfigDumpBo;
-
-import java.util.List;
-
-/**
- * 课配置Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see IService
- * @since 1.0.0
- */
 public interface LessonConfigService extends IService<LessonConfig> {
 
     /**
@@ -117,3 +117,4 @@ public interface LessonConfigService extends IService<LessonConfig> {
     List<LessonConfig> loadLessonConfig(LessonConfigDumpBo lessonConfig, String courseId,
 			List<CourseLesson> courseLessons);
 }
+

@@ -1,3 +1,24 @@
+package com.cyberpeace.space.service.context.rule;
+
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.space.dao.entity.SpaceBaseAlgorithm;
+import com.cyberpeace.space.model.SpaceBoBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 空间基础算法Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 /**
  * ### 分析与总结 
  * #### 1. **类的功能** 
@@ -39,27 +60,6 @@
  * `SpaceBaseAlgorithmBo` 是一个典型的业务对象类，主要用于封装算法相关的信息，并提供 BO 到实体对象的转换功能。设计合理，但需注意工具类依赖和数据校验问题。 
 **/
 
-package com.cyberpeace.space.service.context.rule;
-
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.space.dao.entity.SpaceBaseAlgorithm;
-import com.cyberpeace.space.model.SpaceBoBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 空间基础算法Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBoBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceBaseAlgorithmBo extends SpaceBoBase {

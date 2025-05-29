@@ -1,3 +1,25 @@
+package com.cyberpeace.cr.crbase.dao.mapper;
+
+import java.util.List;
+import java.util.Set;
+
+import org.apache.ibatis.annotations.Param;
+import org.mapstruct.Mapper;
+import org.springframework.stereotype.Repository;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.service.context.mission.CompletionStatus;
+import com.cyberpeace.cr.crbase.service.context.mission.CrTaskScore;
+import com.cyberpeace.cr.crbase.service.context.score.TaskScoreContext;
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingPersonalStatistics;
+
+/**
+ * 靶场任务Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `CrTaskMapper` 的接口，它继承了 `BaseMapper<CrTask>` 接口，并使用了 MyBatis 和 MapStruct 注解。以下是代码的主要功能和特点： 
  * 1. **接口定义**： 
@@ -21,28 +43,6 @@
  * - 返回类型多样，包括 `CrTask` 对象、`List<CrTask>`、`Integer`、`List<TaskScoreContext>` 等，以满足不同的业务需求。 
  * 总结来说，这个接口提供了丰富的数据库操作方法，支持多种复杂的查询和统计功能，适用于靶场任务管理系统的数据访问层。 
 **/
-package com.cyberpeace.cr.crbase.dao.mapper;
-
-import java.util.List;
-import java.util.Set;
-
-import org.apache.ibatis.annotations.Param;
-import org.mapstruct.Mapper;
-import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.service.context.mission.CompletionStatus;
-import com.cyberpeace.cr.crbase.service.context.mission.CrTaskScore;
-import com.cyberpeace.cr.crbase.service.context.score.TaskScoreContext;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingPersonalStatistics;
-
-/**
- * 靶场任务Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 @Repository
 public interface CrTaskMapper extends BaseMapper<CrTask> {
@@ -311,3 +311,4 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	List<TaskScoreContext> selectScoreContextByRoomIdAndUserId(@Param("roomId") String roomId,
 			@Param("userId") String userId);
 }
+

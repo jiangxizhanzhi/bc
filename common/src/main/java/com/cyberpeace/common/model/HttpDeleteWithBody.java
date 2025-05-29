@@ -1,3 +1,15 @@
+package com.cyberpeace.common.model;
+
+import java.net.URI;
+
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+
+/**
+ * 带正文 HTTP 删除
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个自定义的 HTTP 请求类 `HttpDeleteWithBody`，继承自 Apache HttpClient 的 `HttpEntityEnclosingRequestBase` 类。以下是简要分析： 
  * 1. **功能描述**： 
@@ -15,18 +27,6 @@
  * - 考虑增加异常处理逻辑，确保 URI 的合法性和请求的正确性。 
  * 总体而言，这是一个简洁且实用的工具类，适合在需要发送带请求体的 HTTP DELETE 请求时使用。 
 **/
-package com.cyberpeace.common.model;
-
-import java.net.URI;
-
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-
-/**
- * 带正文 HTTP 删除
- *
- * @author SN
- * @date 2024/11/08
- */
 public class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
 
 	/**
@@ -72,3 +72,4 @@ public class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
 	}
 
 }
+

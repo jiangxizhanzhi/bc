@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.dao.entity;
+
+import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
+import com.cyberpeace.common.mdparser.convert.DifficultyConvert;
+import com.cyberpeace.common.mdparser.parser.ListParser;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 课程 MD
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseMd` 的 Java 类，用于表示课程的元数据。以下是对其主要特性和功能的简要分析： 
  * ### 包与导入 
@@ -31,24 +49,6 @@
  * - 通过 `@MdHeadLine` 注解，可以方便地将类的属性映射到 Markdown 文件中的相应部分。 
  * - `setLogo` 方法提供了一种自定义处理 logo 字符串的方式，使其符合 Markdown 图片链接的格式。 
 **/
-package com.cyberpeace.oj.course.dao.entity;
-
-import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
-import com.cyberpeace.common.mdparser.convert.DifficultyConvert;
-import com.cyberpeace.common.mdparser.parser.ListParser;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 课程 MD
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class CourseMd {
@@ -128,3 +128,4 @@ public class CourseMd {
 		this.logo = "![](" + logo + ")";
 	}
 }
+

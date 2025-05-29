@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.evaluation.service.context;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
+/**
+ * 索引上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `IndexContext` 的 Java 类，该类用于表示索引上下文。以下是对其主要特性的简要分析： 
  * ### 类定义与注解 
@@ -22,21 +37,6 @@
  * - **可读性和维护性**：使用 Lombok 的 `@Getter` 和 `@Setter` 减少了样板代码，提高了代码的可读性和维护性。 
  * 这个类主要用于在某个评估系统中表示和传递关于索引的信息，包括其 ID、名称、描述、算法信息等。 
 **/
-package com.cyberpeace.cr.evaluation.service.context;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotNull;
-import java.util.List;
-
-/**
- * 索引上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class IndexContext {

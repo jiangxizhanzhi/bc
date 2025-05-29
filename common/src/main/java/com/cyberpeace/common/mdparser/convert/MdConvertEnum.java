@@ -1,3 +1,13 @@
+package com.cyberpeace.common.mdparser.convert;
+
+/**
+ * md convert 枚举
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个泛型接口 `MdConvertEnum`，用于表示一种转换关系。以下是代码的简要分析： 
  * 1. **接口定义**： 
@@ -11,16 +21,6 @@
  * - 注释清晰地描述了接口的功能，并标明了作者、版本、日期和依赖版本信息。 
  * 总结：这是一个通用的双向转换接口，适用于需要实现特定转换逻辑的场景。 
 **/
-package com.cyberpeace.common.mdparser.convert;
-
-/**
- * md convert 枚举
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface MdConvertEnum<K, V> {
 
     /**
@@ -38,3 +38,4 @@ public interface MdConvertEnum<K, V> {
     V reTo();
 
 }
+

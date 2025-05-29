@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 删除资源请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `DeleteResourceReq` 的 Java 类，用于处理删除资源的请求体。以下是详细的分析： 
  * ### 包声明 
@@ -40,25 +59,6 @@
  * - 使用了 Lombok 的注解来简化代码，同时使用 Swagger 注解来生成文档。 
  * - 该类实现了 `Serializable` 接口，因此可以在网络传输或持久化时进行序列化。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 删除资源请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -73,3 +73,4 @@ public class DeleteResourceReq implements Serializable {
 	private List<String> resourceIds;
 
 }
+

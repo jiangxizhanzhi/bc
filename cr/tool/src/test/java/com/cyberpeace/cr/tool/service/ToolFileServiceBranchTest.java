@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.tool.service;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+/**
+ * this is branch test for the test
+ * the test is for toy
+ * the toy is toy
+ * not the practice
+ * tos
+ */
 /**
  * 这段代码是一个JUnit测试类 `ToolFileServiceBranchTest`，用于测试 `ToolFileServiceBranch` 类中的 `getBranch` 方法。以下是详细的分析和总结： 
  * ### 1. 包声明和导入 
@@ -53,18 +65,6 @@
  * - **增加断言多样性**：除了 `assertTrue`，还可以添加其他类型的断言（如 `assertFalse`、`assertEquals` 等）以覆盖更多的测试场景。 
  * - **详细注释**：为每个测试方法添加注释，说明其目的和预期结果，以便其他开发者更容易理解这些测试的作用。 
 **/
-package com.cyberpeace.cr.tool.service;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-/**
- * this is branch test for the test
- * the test is for toy
- * the toy is toy
- * not the practice
- * tos
- */
 public class ToolFileServiceBranchTest {
 
     /**
@@ -708,3 +708,4 @@ public class ToolFileServiceBranchTest {
     }
 
 }
+

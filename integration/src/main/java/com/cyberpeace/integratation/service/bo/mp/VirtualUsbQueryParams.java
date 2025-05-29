@@ -1,3 +1,8 @@
+package com.cyberpeace.integratation.service.bo.mp;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 这段代码定义了一个名为 `VirtualUsbQueryParams` 的 Java 类，该类位于包 `com.cyberpeace.integratation.service.bo.mp` 中。这个类使用了 Lombok 库来简化 getter 和 setter 方法的生成。 
  * ### 详细分析： 
@@ -24,11 +29,6 @@
  * - 通过使用 Lombok 的 `@Getter` 和 `@Setter` 注解，简化了类的实现，避免了手动编写 getter 和 setter 方法。 
  * - 这个类适用于需要查询虚拟USB设备的场景，并且可能涉及到分页展示结果的需求。 
 **/
-package com.cyberpeace.integratation.service.bo.mp;
-
-import lombok.Getter;
-import lombok.Setter;
-
 @Getter
 @Setter
 public class VirtualUsbQueryParams {
@@ -39,3 +39,4 @@ public class VirtualUsbQueryParams {
 
 	private Integer per_page;
 }
+

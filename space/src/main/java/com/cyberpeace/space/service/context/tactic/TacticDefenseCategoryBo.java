@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.tactic;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 战法防御类别Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `TacticDefenseCategoryBo` 的 Java 类，属于 `com.cyberpeace.space.service.context.tactic` 包。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -15,20 +29,6 @@
  * - 该类主要用于封装战法防御类别相关的数据，便于在系统中传递和使用。 
  * 总体来说，这是一个简单的数据传输对象（DTO），用于存储和传输防御类别的基本信息。 
 **/
-package com.cyberpeace.space.service.context.tactic;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 战法防御类别Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class TacticDefenseCategoryBo {
@@ -53,3 +53,4 @@ public class TacticDefenseCategoryBo {
      */
     private String cover;
 }
+

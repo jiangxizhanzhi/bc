@@ -1,3 +1,27 @@
+package com.cyberpeace.integratation.service.impl;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.model.scene.DeviceInfo;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.integratation.model.mp.MpDeviceInfo;
+import com.cyberpeace.integratation.service.RemoteTerminalService;
+import com.cyberpeace.integratation.service.bo.ClusterImagePageReq;
+import com.cyberpeace.integratation.service.bo.TargetListReq;
+import com.cyberpeace.integratation.service.bo.mp.RealEquipmentPageRequest;
+import com.cyberpeace.integratation.service.bo.mp.VirtualUsbQueryParams;
+import com.mysql.cj.xdevapi.JsonArray;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+
+/**
+ * 远程终端Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `RemoteTerminalServiceImpl` 的 Spring 服务类，实现了 `RemoteTerminalService` 接口。以下是该代码的主要组成部分和功能分析： 
  * ### 类定义和注释 
@@ -32,30 +56,6 @@
  * - 通过依赖注入的方式，该类可以方便地访问其他服务，如 `MpEnvService` 和 `CyberSpaceMpEnvService`，以获取必要的配置信息。 
  * - 整个类的设计遵循了良好的面向对象原则，通过接口和依赖注入提高了代码的可维护性和扩展性。 
 **/
-package com.cyberpeace.integratation.service.impl;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.model.scene.DeviceInfo;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.integratation.model.mp.MpDeviceInfo;
-import com.cyberpeace.integratation.service.RemoteTerminalService;
-import com.cyberpeace.integratation.service.bo.ClusterImagePageReq;
-import com.cyberpeace.integratation.service.bo.TargetListReq;
-import com.cyberpeace.integratation.service.bo.mp.RealEquipmentPageRequest;
-import com.cyberpeace.integratation.service.bo.mp.VirtualUsbQueryParams;
-import com.mysql.cj.xdevapi.JsonArray;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-
-/**
- * 远程终端Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Service
 public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 
@@ -243,3 +243,4 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 		return HttpClientUtil.rawGetByParam(queryParams, targetUrl, JSONObject.class);
 	}
 }
+

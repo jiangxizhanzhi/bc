@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.tool.service;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+/**
+ * this is branch test for the test
+ * the test is for toy
+ * the toy is toy
+ * not the practice
+ * tos
+ */
 /**
  * 这段代码是一个JUnit测试类，用于测试`ToolShellCodeServiceBranch`类中的`getBranch`方法。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -29,18 +41,6 @@
  * - 提供更详细的注释，解释`getBranch`方法的功能以及每个测试用例的目的。 
  * - 如果可能，可以修改测试方法以验证`getBranch`方法在不同输入下的具体行为。 
 **/
-package com.cyberpeace.cr.tool.service;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-/**
- * this is branch test for the test
- * the test is for toy
- * the toy is toy
- * not the practice
- * tos
- */
 public class ToolShellCodeServiceBranchTest {
 
     /**
@@ -714,3 +714,4 @@ public class ToolShellCodeServiceBranchTest {
     }
 
 }
+

@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.crbase.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.constant.SelectI18nName;
+
+import lombok.Data;
+import lombok.Getter;
+
+/**
+ * 靶场常数配置
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `CrConstantsConfig` 的 Java 实体类，用于表示靶场常数配置。以下是代码的主要分析： 
  * 1. **类与注解**： 
@@ -15,21 +30,6 @@
  * - 内部定义了一个 `ConstantsType` 枚举类，用于描述常量项的类别。每个枚举值包含一个 `code` 和 `desc`，分别表示代码和描述。 
  * 总结：这是一个典型的实体类，结合了 Lombok 和 MyBatis-Plus 的功能，用于数据库表的映射，并且通过枚举类提供了常量项的类别定义。 
 **/
-package com.cyberpeace.cr.crbase.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.constant.SelectI18nName;
-
-import lombok.Data;
-import lombok.Getter;
-
-/**
- * 靶场常数配置
- *
- * @author SN
- * @date 2024/11/08
- */
 @Data
 @TableName("cr_constants_config")
 public class CrConstantsConfig implements SelectI18nName {
@@ -113,3 +113,4 @@ public class CrConstantsConfig implements SelectI18nName {
 		}
 	}
 }
+

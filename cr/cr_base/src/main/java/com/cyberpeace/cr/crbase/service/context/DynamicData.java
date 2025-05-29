@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.crbase.service.context;
+
+import java.util.Date;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 动态数据
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `DynamicData` 的 Java 类，位于包 `com.cyberpeace.cr.crbase.service.context` 下。以下是代码的主要分析： 
  * 1. **类的功能**： 
@@ -13,20 +27,6 @@
  * 这个类可以作为数据传输对象（DTO）或业务逻辑中的数据模型，用于封装与操作相关的动态数据。 
  * 总结：这是一个简单的 Java Bean 类，用于存储与操作相关的信息，并支持通过注解增强功能和文档生成。 
 **/
-package com.cyberpeace.cr.crbase.service.context;
-
-import java.util.Date;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 动态数据
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class DynamicData {
@@ -49,3 +49,4 @@ public class DynamicData {
 	@ApiModelProperty(value = "任务名")
 	private String missionName;
 }
+

@@ -1,3 +1,18 @@
+package com.cyberpeace.oj.ojbase.constant;
+
+import com.cyberpeace.constant.BaseI18n;
+import lombok.Getter;
+
+/**
+ * 课堂导出报告常量
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Enum
+ * @see BaseI18n
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomExportReportConstant` 的枚举类，该类实现了 `BaseI18n` 接口。这个枚举类主要用于存储与课堂导出报告相关的国际化（i18n）字符串常量。以下是详细的分析： 
  * ### 类定义 
@@ -46,21 +61,6 @@
  * - 使用 Lombok 的 `@Getter` 注解简化了字段的访问。 
  * - 该枚举类可以方便地在多语言环境下使用，根据需要选择合适的语言版本。 
 **/
-package com.cyberpeace.oj.ojbase.constant;
-
-import com.cyberpeace.constant.BaseI18n;
-import lombok.Getter;
-
-/**
- * 课堂导出报告常量
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Enum
- * @see BaseI18n
- * @since 1.0.0
- */
 public enum ClassroomExportReportConstant implements BaseI18n {
 
 	/**
@@ -140,3 +140,4 @@ public enum ClassroomExportReportConstant implements BaseI18n {
 	}
 
 }
+

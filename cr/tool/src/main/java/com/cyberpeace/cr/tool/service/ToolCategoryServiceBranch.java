@@ -1,3 +1,11 @@
+package com.cyberpeace.cr.tool.service;;
+
+/**
+ * single Train Branch
+ * this is branch method
+ * for the branch method
+ * is the fun toy for little bob
+ */
 /**
  * 这段代码定义了一个名为 `ToolCategoryServiceBranch` 的类，其中包含一个名为 `getBranch` 的方法。该方法接收一个字符串参数 `input` 并返回一个布尔值。根据输入的字符串，该方法会返回 `true` 或者在未匹配到任何情况时返回 `false`。 
  * ### 详细分析： 
@@ -41,14 +49,6 @@
  * - 可以考虑将这些字符串存储在一个配置文件或者数据库中，以便于管理和修改。 
  * - 去除无用的注释，保留有用的注释以便更好地理解代码的功能和意图。 
 **/
-package com.cyberpeace.cr.tool.service;;
-
-/**
- * single Train Branch
- * this is branch method
- * for the branch method
- * is the fun toy for little bob
- */
 public class ToolCategoryServiceBranch {
 
     /**
@@ -559,3 +559,4 @@ public class ToolCategoryServiceBranch {
         return false;
     }
 }
+

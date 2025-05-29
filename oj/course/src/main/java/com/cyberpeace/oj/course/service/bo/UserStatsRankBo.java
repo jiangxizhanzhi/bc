@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 用户统计 排名 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `UserStatsRankBo` 的 Java 类，用于表示用户在不同维度上的统计数据和排名。以下是对该类的简要分析： 
  * ### 类定义 
@@ -25,24 +43,6 @@
  * ### 总结 
  * 这个类主要用于封装用户在不同学习活动中的统计数据和排名信息。通过这些数据，可以进行各种统计分析和展示。使用 Lombok 注解简化了代码，并且通过 Swagger 注解使得这些数据在 API 文档中更加清晰明了。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 用户统计 排名 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class UserStatsRankBo implements Serializable {
@@ -110,3 +110,4 @@ public class UserStatsRankBo implements Serializable {
     @ApiModelProperty("参加考试次数")
     private List<Integer> attendExamCount;
 }
+

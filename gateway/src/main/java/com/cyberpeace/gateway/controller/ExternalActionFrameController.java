@@ -1,3 +1,15 @@
+package com.cyberpeace.gateway.controller;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cyberpeace.common.model.BaseRsp;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 这段代码定义了一个Spring Boot控制器类 `ExternalActionFrameController`，用于处理与防御安全策略相关的外部API请求。以下是对代码的简要分析： 
  * 1. **包和导入**： 
@@ -20,18 +32,6 @@
  * - `/defense`：获取防御战法详情。 
  * 总结：该控制器提供了一系列与防御安全策略相关的API，包括策略列表、策略详情、攻击战法列表和详情、防御战法列表和详情等。每个API方法都返回一个通用的响应对象 `BaseRsp`。 
 **/
-package com.cyberpeace.gateway.controller;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.cyberpeace.common.model.BaseRsp;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
-
 @Api(tags = "外部接口-防御安全策略相关api")
 @Slf4j
 @RestController
@@ -74,3 +74,4 @@ public class ExternalActionFrameController {
 		return new BaseRsp<>();
 	}
 }
+

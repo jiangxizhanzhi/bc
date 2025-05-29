@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.tool.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 删除请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `DeleteReq` 的 Java 类，该类用于处理删除请求的数据。以下是详细的分析： 
  * ### 类定义 
@@ -19,22 +35,6 @@
  * ### 总结 
  * 这个类的主要目的是作为删除请求的数据传输对象（DTO），包含一个 `ids` 属性，用于存储需要删除的多个 ID。通过 Lombok 注解简化了代码，并且通过 Swagger 注解使该类在生成的 API 文档中具有可读性。 
 **/
-package com.cyberpeace.cr.tool.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 删除请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @ApiModel
@@ -46,3 +46,4 @@ public class DeleteReq implements Serializable {
 	@ApiModelProperty("删除ID列表")
 	private List<String> ids;
 }
+

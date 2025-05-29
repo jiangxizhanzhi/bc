@@ -1,3 +1,25 @@
+package com.cyberpeace.cr.evaluation.service.impl;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableDataPageRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRefProbeData;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefProbeDataMapper;
+import com.cyberpeace.cr.evaluation.service.EvalVariableRefProbeDataService;
+import com.cyberpeace.cr.evaluation.service.context.EvalVariableRefProbeDataContext;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * 评估变量裁判探针数据Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalVariableRefProbeDataServiceImpl` 的服务类，用于处理与评估变量相关的探针数据。以下是对该代码的简要分析： 
  * ### 类结构 
@@ -31,28 +53,6 @@
  * ### 总结 
  * 这个类主要实现了两个核心功能：获取指定变量的探针数据结果和分页获取探针数据。通过继承 `ServiceImpl` 并使用 MyBatis-Plus 提供的功能，简化了数据访问层的操作。同时，通过 `PageUtil` 工具类处理分页逻辑，使得代码更加简洁易读。 
 **/
-package com.cyberpeace.cr.evaluation.service.impl;
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableDataPageRsp;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRefProbeData;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefProbeDataMapper;
-import com.cyberpeace.cr.evaluation.service.EvalVariableRefProbeDataService;
-import com.cyberpeace.cr.evaluation.service.context.EvalVariableRefProbeDataContext;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-/**
- * 评估变量裁判探针数据Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Slf4j
 @Service
 public class EvalVariableRefProbeDataServiceImpl extends ServiceImpl<EvalVariableRefProbeDataMapper, EvalVariableRefProbeData> implements EvalVariableRefProbeDataService {
@@ -80,3 +80,4 @@ public class EvalVariableRefProbeDataServiceImpl extends ServiceImpl<EvalVariabl
         return PageUtil.getListResult(this.getBaseMapper().selectVariableProbeData(page, variableId));
     }
 }
+

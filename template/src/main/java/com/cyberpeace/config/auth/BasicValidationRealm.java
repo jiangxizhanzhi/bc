@@ -1,22 +1,3 @@
-/**
- * 这段代码定义了一个名为 `BasicValidationRealm` 的类，继承自 Apache Shiro 框架中的 `AuthorizingRealm` 类。它实现了用户身份验证 (`Authentication`) 和权限授权 (`Authorization`) 的逻辑。以下是代码的主要功能和结构分析： 
- * ### 主要功能： 
- * 1. **身份验证 (`doGetAuthenticationInfo`)**: 
- * - 接收一个 `AuthenticationToken` 对象，从中提取用户的认证信息（如 token）。 
- * - 使用远程服务 (`RemoteUserService`) 验证 token 的有效性，并获取用户详细信息 (`UserInfo`)。 
- * - 如果验证失败，则抛出 `AuthenticationException`。 
- * - 成功后，将用户信息存储到上下文中，并返回一个 `SimpleAuthenticationInfo` 对象用于后续处理。 
- * 2. **权限授权 (`doGetAuthorizationInfo`)**: 
- * - 根据当前用户的信息 (`UserInfo`) 构建权限信息。 
- * - 使用 `SimpleAuthorizationInfo` 添加用户拥有的权限（如菜单权限）。 
- * - 注释中提到角色权限 (`roles`) 的设置被注释掉，目前仅使用菜单权限进行权限控制。 
- * ### 关键点： 
- * - **依赖注入**：通过 `SpringContextUtil.getBeanByClass()` 获取 `RemoteUserService` 实例，表明该类依赖于 Spring 容器管理的服务类。 
- * - **上下文管理**：使用了 `CommonContext` 和 `UserInfoContext` 来存储全局上下文信息，例如 token 和用户信息。 
- * - **日志记录**：使用了 `log.error` 记录错误信息，便于排查问题。 
- * ### 总结： 
- * `BasicValidationRealm` 是一个典型的 Shiro 自定义 Realm 实现，用于集成远程服务完成用户认证和授权操作。它结合了 Spring 和 Shiro 的特性，适用于需要分布式认证和动态权限管理的场景。 
-**/
 package com.cyberpeace.config.auth;
 
 import com.cyberpeace.common.model.CommonContext;
@@ -47,6 +28,25 @@ import java.util.Set;
  * @see AuthorizingRealm
  * @since 1.0.0
  */
+/**
+ * 这段代码定义了一个名为 `BasicValidationRealm` 的类，继承自 Apache Shiro 框架中的 `AuthorizingRealm` 类。它实现了用户身份验证 (`Authentication`) 和权限授权 (`Authorization`) 的逻辑。以下是代码的主要功能和结构分析： 
+ * ### 主要功能： 
+ * 1. **身份验证 (`doGetAuthenticationInfo`)**: 
+ * - 接收一个 `AuthenticationToken` 对象，从中提取用户的认证信息（如 token）。 
+ * - 使用远程服务 (`RemoteUserService`) 验证 token 的有效性，并获取用户详细信息 (`UserInfo`)。 
+ * - 如果验证失败，则抛出 `AuthenticationException`。 
+ * - 成功后，将用户信息存储到上下文中，并返回一个 `SimpleAuthenticationInfo` 对象用于后续处理。 
+ * 2. **权限授权 (`doGetAuthorizationInfo`)**: 
+ * - 根据当前用户的信息 (`UserInfo`) 构建权限信息。 
+ * - 使用 `SimpleAuthorizationInfo` 添加用户拥有的权限（如菜单权限）。 
+ * - 注释中提到角色权限 (`roles`) 的设置被注释掉，目前仅使用菜单权限进行权限控制。 
+ * ### 关键点： 
+ * - **依赖注入**：通过 `SpringContextUtil.getBeanByClass()` 获取 `RemoteUserService` 实例，表明该类依赖于 Spring 容器管理的服务类。 
+ * - **上下文管理**：使用了 `CommonContext` 和 `UserInfoContext` 来存储全局上下文信息，例如 token 和用户信息。 
+ * - **日志记录**：使用了 `log.error` 记录错误信息，便于排查问题。 
+ * ### 总结： 
+ * `BasicValidationRealm` 是一个典型的 Shiro 自定义 Realm 实现，用于集成远程服务完成用户认证和授权操作。它结合了 Spring 和 Shiro 的特性，适用于需要分布式认证和动态权限管理的场景。 
+**/
 @Slf4j
 @Service
 public class BasicValidationRealm extends AuthorizingRealm {
@@ -121,3 +121,4 @@ public class BasicValidationRealm extends AuthorizingRealm {
         return new SimpleAuthenticationInfo(userInfo.getUserId(), token, getName());
     }
 }
+

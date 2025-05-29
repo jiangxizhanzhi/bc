@@ -1,3 +1,17 @@
+package com.cyberpeace.integratation.service;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
+
+import java.util.Date;
+import java.util.List;
+
+/**
+ * 竞赛外部接口调用
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `RemoteAdService` 的接口，该接口包含两个方法，用于处理与竞赛相关的外部服务调用。以下是详细的分析： 
  * ### 接口名称 
@@ -27,20 +41,6 @@
  * ### 总结 
  * 这个接口主要用于查询竞赛数据，包括按时间段查询所有赛事以及按用户和最低分数查询符合条件的比赛次数。这些方法能够帮助前端或其他服务获取所需的数据，以便进行展示或进一步处理。 
 **/
-package com.cyberpeace.integratation.service;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
-
-import java.util.Date;
-import java.util.List;
-
-/**
- * 竞赛外部接口调用
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface RemoteAdService {
 
 	/**
@@ -66,3 +66,4 @@ public interface RemoteAdService {
 	List<JSONObject> competitionListWithMinScore(String startTime, String endTime, List<String> userIds, Integer minScore);
 
 }
+

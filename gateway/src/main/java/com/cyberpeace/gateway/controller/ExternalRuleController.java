@@ -1,3 +1,15 @@
+package com.cyberpeace.gateway.controller;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cyberpeace.common.model.BaseRsp;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 这段代码定义了一个Spring Boot控制器类 `ExternalRuleController`，用于处理与规则库相关的外部API请求。以下是对该代码的简要分析： 
  * ### 类概述 
@@ -38,18 +50,6 @@
  * ### 总结 
  * 该控制器类实现了与规则库相关的多个API接口，包括记分排行规则、轮次机制规则和违规判定规则的列表和详情获取。通过使用Spring Boot和Swagger，这些API可以方便地进行文档生成和测试。 
 **/
-package com.cyberpeace.gateway.controller;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.cyberpeace.common.model.BaseRsp;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
-
 @Api(tags = "外部接口-规则库相关api")
 @Slf4j
 @RestController
@@ -99,3 +99,4 @@ public class ExternalRuleController {
 	}
 
 }
+

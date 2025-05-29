@@ -1,3 +1,22 @@
+package com.cyberpeace.common.util;
+
+import com.cyberpeace.common.constant.CommonConstant;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+/**
+ * local string util （本地字符串 util）
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * ### 代码分析 
  * 该代码定义了一个名为 `LocalStringUtil` 的工具类，提供了一系列与字符串操作相关的实用方法。以下是对其功能的简要分析： 
@@ -64,25 +83,6 @@
  * #### **总结** 
  * 该工具类提供了丰富的字符串操作功能，包括格式化、转换、替换、正则匹配及随机字符串生成等。代码结构清晰，逻辑严谨，依赖了多个外部工具类（如 `CommonConstant`, `JsonUtil`, `IDGeneratorUtil` 等），适合在需要复杂字符串处理的场景中使用。 
 **/
-package com.cyberpeace.common.util;
-
-import com.cyberpeace.common.constant.CommonConstant;
-import com.google.common.collect.Lists;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-/**
- * local string util （本地字符串 util）
- *
- * @author SN
- * @date 2024/11/08
- */
 public class LocalStringUtil {
 
 	/**
@@ -401,3 +401,4 @@ public class LocalStringUtil {
 		return newPattern;
 	}
 }
+

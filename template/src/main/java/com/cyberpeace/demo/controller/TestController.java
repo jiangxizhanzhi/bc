@@ -1,22 +1,3 @@
-/**
- * 这段代码定义了一个名为 `TestController` 的 Spring MVC 控制器类，用于处理与测试相关的 HTTP 请求。以下是对代码的简要分析： 
- * 1. **类注解**： 
- * - `@RestController`：表明这是一个 RESTful 风格的控制器。 
- * - `@RequestMapping("/test")`：将该控制器的所有请求映射到 `/test` 路径下。 
- * - `@RequiresAuthentication`：确保只有经过身份验证的用户才能访问这些接口。 
- * 2. **依赖注入**： 
- * - 使用了 `@Autowired` 注解来自动装配三个服务类：`RemoteTopoService`, `RemoteSceneService`, 和 `RemoteLogService`。 
- * 3. **成员变量**： 
- * - `testTopoId`：一个字符串类型的成员变量，存储了一个固定的拓扑ID。 
- * 4. **方法分析**： 
- * - `createTopo()`：通过调用 `remoteTopoService.copyTopo()` 方法复制拓扑，并返回一个包含结果的 `BaseRsp` 对象。 
- * - `topoStatistic()`：获取指定拓扑的统计数据（`TopoDigest`），并将其封装在 `BaseRsp` 对象中返回。 
- * - `convertHtml()`：接收 JSON 格式的请求体（`DemoReq1`），调用工具类 `HtmlToPdfUtil` 将 HTML 文件转换为 PDF 文件，然后返回布尔值的结果。 
- * - `addMpLog()`：记录中台日志，使用当前用户的上下文信息（`UserInfoContext.getUserContext()`）以及操作模块和类型等参数。 
- * 5. **未实现的方法**： 
- * - 注释掉的 `startScene()` 和 `stopScene()` 方法展示了如何启动或停止场景服务，但目前尚未实现具体的逻辑。 
- * 总体来说，这个控制器主要负责处理与拓扑、场景及日志相关的业务逻辑，并且提供了多种不同的 API 接口供外部调用。 
-**/
 package com.cyberpeace.demo.controller;
 
 import com.cyberpeace.common.model.user.UserInfo;
@@ -44,6 +25,25 @@ import io.swagger.annotations.Api;
  * @date 2025/05/28
  * @since 1.0.0
  */
+/**
+ * 这段代码定义了一个名为 `TestController` 的 Spring MVC 控制器类，用于处理与测试相关的 HTTP 请求。以下是对代码的简要分析： 
+ * 1. **类注解**： 
+ * - `@RestController`：表明这是一个 RESTful 风格的控制器。 
+ * - `@RequestMapping("/test")`：将该控制器的所有请求映射到 `/test` 路径下。 
+ * - `@RequiresAuthentication`：确保只有经过身份验证的用户才能访问这些接口。 
+ * 2. **依赖注入**： 
+ * - 使用了 `@Autowired` 注解来自动装配三个服务类：`RemoteTopoService`, `RemoteSceneService`, 和 `RemoteLogService`。 
+ * 3. **成员变量**： 
+ * - `testTopoId`：一个字符串类型的成员变量，存储了一个固定的拓扑ID。 
+ * 4. **方法分析**： 
+ * - `createTopo()`：通过调用 `remoteTopoService.copyTopo()` 方法复制拓扑，并返回一个包含结果的 `BaseRsp` 对象。 
+ * - `topoStatistic()`：获取指定拓扑的统计数据（`TopoDigest`），并将其封装在 `BaseRsp` 对象中返回。 
+ * - `convertHtml()`：接收 JSON 格式的请求体（`DemoReq1`），调用工具类 `HtmlToPdfUtil` 将 HTML 文件转换为 PDF 文件，然后返回布尔值的结果。 
+ * - `addMpLog()`：记录中台日志，使用当前用户的上下文信息（`UserInfoContext.getUserContext()`）以及操作模块和类型等参数。 
+ * 5. **未实现的方法**： 
+ * - 注释掉的 `startScene()` 和 `stopScene()` 方法展示了如何启动或停止场景服务，但目前尚未实现具体的逻辑。 
+ * 总体来说，这个控制器主要负责处理与拓扑、场景及日志相关的业务逻辑，并且提供了多种不同的 API 接口供外部调用。 
+**/
 @Api(tags = "测试接口")
 @RestController
 @RequestMapping("/test")
@@ -156,3 +156,4 @@ public class TestController {
 	}
 
 }
+

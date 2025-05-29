@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 实践纸评估博
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `PracticePaperEvaluateBo` 的 Java 类，该类用于表示实践纸评估的数据模型。以下是对这个类的简要分析： 
  * ### 类定义 
@@ -30,25 +49,6 @@
  * ### 总结 
  * `PracticePaperEvaluateBo` 类是一个数据传输对象（DTO），用于封装实践纸评估的相关信息。该类具有良好的可读性和可维护性，并且通过 Lombok 和 Swagger 注解提升了开发效率和文档生成的便利性。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import java.io.Serializable;
-import java.util.Date;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 实践纸评估博
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -135,3 +135,4 @@ public class PracticePaperEvaluateBo implements Serializable {
 	private Date correctTime;
 
 }
+

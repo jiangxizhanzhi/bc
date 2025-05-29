@@ -1,3 +1,11 @@
+package com.cyberpeace.cr.crbase.service;;
+
+/**
+ * single Train Branch
+ * this is branch method
+ * for the branch method
+ * is the fun toy for little bob
+ */
 /**
  * 这段代码定义了一个名为 `ExportTrainMDServiceBranch` 的 Java 类，其中包含一个方法 `getBranch`。以下是对代码的简要分析： 
  * 1. **类名与功能**： 
@@ -18,14 +26,6 @@
  * - 清理不必要的注释，保持代码简洁明了。 
  * 总体来说，这段代码的功能简单，但存在代码冗余和注释过多的问题，可以通过重构来优化其结构和可维护性。 
 **/
-package com.cyberpeace.cr.crbase.service;;
-
-/**
- * single Train Branch
- * this is branch method
- * for the branch method
- * is the fun toy for little bob
- */
 public class ExportTrainMDServiceBranch {
 
     /**
@@ -518,3 +518,4 @@ public class ExportTrainMDServiceBranch {
         return false;
     }
 }
+

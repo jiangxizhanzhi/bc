@@ -1,3 +1,27 @@
+package com.cyberpeace.space.controller;
+
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cyberpeace.space.controller.req.SpaceAptFeaturePageReq;
+import com.cyberpeace.space.dao.entity.SpaceAptFeature;
+import com.cyberpeace.space.model.controller.SpaceControllerBase;
+import com.cyberpeace.space.service.SpaceAptFeatureService;
+import com.cyberpeace.space.service.context.rule.SpaceAptFeatureBo;
+
+import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 空间容易特征Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceAptFeatureController` 的 Spring MVC 控制器类，用于处理与空间容易特征（space_apt_feature）相关的请求。以下是对代码的简要分析： 
  * 1. **包名与导入**： 
@@ -23,30 +47,6 @@
  * `SpaceAptFeatureController` 是一个基于 Spring MVC 的 RESTful 控制器，用于处理与空间容易特征相关的 HTTP 请求。它通过继承通用基类实现了大部分业务逻辑，并结合 Shiro 权限控制和 Swagger 文档支持，方便前后端交互和权限管理。 
 **/
 
-package com.cyberpeace.space.controller;
-
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.cyberpeace.space.controller.req.SpaceAptFeaturePageReq;
-import com.cyberpeace.space.dao.entity.SpaceAptFeature;
-import com.cyberpeace.space.model.controller.SpaceControllerBase;
-import com.cyberpeace.space.service.SpaceAptFeatureService;
-import com.cyberpeace.space.service.context.rule.SpaceAptFeatureBo;
-
-import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 空间容易特征Controller
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceControllerBase
- * @since 1.0.0
- */
 @Api(tags = "知识库-规则库-APT组织库")
 @RestController
 @RequestMapping("/space/rule/space_apt_feature")

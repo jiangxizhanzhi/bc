@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 训练计划更新请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `TrainPlanUpdateReq` 的 Java 类，用于表示训练计划更新请求体。以下是该类的详细分析： 
  * ### 类声明 
@@ -34,23 +51,6 @@
  * - **结构**：该类包含两个字段 `resourceId` 和 `name`，分别用于存储资源 ID 和名称。 
  * 这段代码简洁明了，符合良好的编码实践。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 训练计划更新请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class TrainPlanUpdateReq implements Serializable {
@@ -71,3 +71,4 @@ public class TrainPlanUpdateReq implements Serializable {
 	@ApiModelProperty("资源名称")
 	private String name;
 }
+

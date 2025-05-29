@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import com.cyberpeace.common.model.PageReqBase;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotNull;
+
+/**
+ * 课统计请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonStatsReq` 的 Java 类，用于表示课程统计请求的数据模型。以下是该类的详细分析： 
  * ### 类定义 
@@ -27,25 +46,6 @@
  * - 这个类使用了 Lombok 和 Swagger 注解来简化代码并提供文档注释。 
  * 通过这些分析，可以清楚地了解 `LessonStatsReq` 类的功能及其在系统中的作用。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import com.cyberpeace.common.model.PageReqBase;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotNull;
-
-/**
- * 课统计请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PageReqBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -68,3 +68,4 @@ public class LessonStatsReq extends PageReqBase {
     private Integer type;
 
 }
+

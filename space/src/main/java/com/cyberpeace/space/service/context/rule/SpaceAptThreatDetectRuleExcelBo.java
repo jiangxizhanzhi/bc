@@ -1,3 +1,16 @@
+package com.cyberpeace.space.service.context.rule;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+/**
+ * 空间容易威胁检测统治胜过Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceAptThreatDetectRuleExcelBo` 的 Java 类，属于 `com.cyberpeace.space.service.context.rule` 包。以下是代码的简要分析： 
  * ### 功能描述： 
@@ -17,19 +30,6 @@
  * ### 总结： 
  * 这是一个简单的 DTO 类，主要用于封装与APT威胁检测相关的数据，并通过注解增强了代码的功能性和可读性。 
 **/
-package com.cyberpeace.space.service.context.rule;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-/**
- * 空间容易威胁检测统治胜过Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Data
 public class SpaceAptThreatDetectRuleExcelBo {
 
@@ -73,3 +73,4 @@ public class SpaceAptThreatDetectRuleExcelBo {
 	@ApiModelProperty(value = "应用工具")
 	private String tool;
 }
+

@@ -1,3 +1,45 @@
+package com.cyberpeace.cr.evaluation.service.impl;
+
+import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultIndexRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.*;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefMapper;
+import com.cyberpeace.cr.evaluation.service.EvalAlgorithmRefService;
+import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
+import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
+import com.cyberpeace.cr.evaluation.utils.AHPComputeWeight;
+import com.cyberpeace.cr.evaluation.utils.MatrixData;
+import com.cyberpeace.integratation.service.RemotePythonService;
+import com.google.common.collect.Sets;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * 评估指数裁判Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码是一个Spring Boot服务类 `EvalIndexRefServiceImpl` 的实现，主要负责处理评估指数相关的逻辑。以下是对代码的主要功能和结构的简要分析： 
  * ### 类概述 
@@ -49,48 +91,6 @@
  * - **设计模式**：递归方法和依赖注入是主要的设计模式。 
  * 这段代码展示了复杂的业务逻辑处理，包括多种数据类型处理、递归查询和异常处理等。 
 **/
-package com.cyberpeace.cr.evaluation.service.impl;
-
-import com.alibaba.fastjson.JSONArray;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultIndexRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
-import com.cyberpeace.cr.evaluation.dao.entity.*;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefMapper;
-import com.cyberpeace.cr.evaluation.service.EvalAlgorithmRefService;
-import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
-import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
-import com.cyberpeace.cr.evaluation.utils.AHPComputeWeight;
-import com.cyberpeace.cr.evaluation.utils.MatrixData;
-import com.cyberpeace.integratation.service.RemotePythonService;
-import com.google.common.collect.Sets;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionTemplate;
-
-import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collectors;
-
-/**
- * 评估指数裁判Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Service
 @Slf4j
 public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, EvalIndexRef> implements EvalIndexRefService {
@@ -519,3 +519,4 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		return results;
 	}
 }
+

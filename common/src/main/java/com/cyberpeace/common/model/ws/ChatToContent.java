@@ -1,3 +1,17 @@
+package com.cyberpeace.common.model.ws;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * Chat to Content （聊天到内容）
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ChatToContent` 的 Java 类，用于表示与聊天相关的数据模型。以下是对其的简要分析： 
  * ### 功能描述 
@@ -27,20 +41,6 @@
  * ### 总结 
  * `ChatToContent` 是一个简洁且功能明确的数据模型类，适合用作聊天系统的中间层数据载体。通过使用 Lombok 减少了样板代码量，同时良好的注释使得维护和扩展变得容易。 
 **/
-package com.cyberpeace.common.model.ws;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * Chat to Content （聊天到内容）
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class ChatToContent {
@@ -105,3 +105,4 @@ public class ChatToContent {
 	 */
 	private String uuid;
 }
+

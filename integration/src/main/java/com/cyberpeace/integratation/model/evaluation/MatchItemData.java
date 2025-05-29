@@ -1,3 +1,16 @@
+package com.cyberpeace.integratation.model.evaluation;
+
+import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 匹配项数据
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MatchItemData` 的 Java 类，该类实现了 `Serializable` 接口。这个类主要用于存储匹配项的数据，并提供了相应的 getter 和 setter 方法。 
  * ### 主要内容： 
@@ -45,19 +58,6 @@
  * - 通过实现 `Serializable` 接口，该类的对象可以在网络中传输或持久化保存。 
  * - 该类具有两个主要属性：`t` 和 `v`，分别用于存储时间戳和其他字符串信息。 
 **/
-package com.cyberpeace.integratation.model.evaluation;
-
-import java.io.Serializable;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 匹配项数据
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MatchItemData implements Serializable {
@@ -72,3 +72,4 @@ public class MatchItemData implements Serializable {
 	 */
 	private String v;
 }
+

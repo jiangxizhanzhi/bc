@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 分页报告博
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `PageReportBo` 的类，用于表示分页报告。以下是详细的分析： 
  * ### 类定义 
@@ -21,24 +39,6 @@
  * - **特性**：通过 Lombok 注解简化了代码，减少了样板代码的编写。 
  * 这段代码简洁明了，适用于需要分页展示数据的场景。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 分页报告博
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @AllArgsConstructor
@@ -59,3 +59,4 @@ public class PageReportBo implements Serializable {
     private Long total;
 
 }
+

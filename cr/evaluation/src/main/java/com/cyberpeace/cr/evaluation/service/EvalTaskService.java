@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
+
+/**
+ * 测评靶场-任务的处理
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTaskService` 的接口，该接口扩展了 `IService<EvalTask>` 接口。`EvalTaskService` 主要用于处理与测评靶场任务相关的各种操作。以下是详细的分析： 
  * ### 包和导入 
@@ -74,19 +87,6 @@
  * - 这些方法涵盖了任务的获取、启动、停止、删除以及任务场景信息的管理等。 
  * - 通过这些方法，可以实现对测评靶场任务的全面管理和控制。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
-
-/**
- * 测评靶场-任务的处理
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface EvalTaskService extends IService<EvalTask> {
 
 	/**
@@ -171,3 +171,4 @@ public interface EvalTaskService extends IService<EvalTask> {
 	Boolean validateName(String taskName, String templateId, String taskId);
 
 }
+

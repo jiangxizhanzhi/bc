@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * 评估变量图响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalVariableGraphRsp` 的 Java 类，用于表示评估变量图的响应。以下是对该类的简要分析： 
  * ### 类定义 
@@ -30,22 +46,6 @@
  * ### 总结 
  * 这个类主要用于封装评估变量图的响应数据，包含三个列表属性：时间、值和匹配结果。通过Swagger注解，这些属性可以在API文档中清晰地展示出来。使用Lombok注解减少了样板代码，提高了代码的可读性和简洁性。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-/**
- * 评估变量图响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalVariableGraphRsp implements Serializable {
@@ -67,3 +67,4 @@ public class EvalVariableGraphRsp implements Serializable {
     @ApiModelProperty("是否通过模型检测算法")
     private List<Boolean> isMatched;
 }
+

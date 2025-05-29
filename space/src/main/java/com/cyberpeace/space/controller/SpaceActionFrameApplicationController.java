@@ -1,3 +1,35 @@
+package com.cyberpeace.space.controller;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.space.dao.entity.SpaceActionFrameApplication;
+import com.cyberpeace.space.model.controller.SpaceControllerBase;
+import com.cyberpeace.space.model.req.IdReq;
+import com.cyberpeace.space.service.SpaceActionFrameApplicationService;
+import com.cyberpeace.space.service.SpaceActionFrameOrderService;
+import com.cyberpeace.space.service.SpaceActionFrameReleaseService;
+import com.cyberpeace.space.service.SpaceActionFrameService;
+import com.cyberpeace.space.service.context.IdListReq;
+import com.cyberpeace.space.service.context.frame.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
+
 /**
  * ### 代码分析 
  * #### 概述 
@@ -37,38 +69,6 @@
  * #### 总结 
  * 该代码实现了一个完整的防御行动框架管理系统，涵盖了框架的创建、更新、查询、删除等核心功能。代码结构清晰，功能模块划分明确，使用了现代Java开发的最佳实践，如依赖注入、事务管理以及工具类的支持。 
 **/
-package com.cyberpeace.space.controller;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.space.dao.entity.SpaceActionFrameApplication;
-import com.cyberpeace.space.model.controller.SpaceControllerBase;
-import com.cyberpeace.space.model.req.IdReq;
-import com.cyberpeace.space.service.SpaceActionFrameApplicationService;
-import com.cyberpeace.space.service.SpaceActionFrameOrderService;
-import com.cyberpeace.space.service.SpaceActionFrameReleaseService;
-import com.cyberpeace.space.service.SpaceActionFrameService;
-import com.cyberpeace.space.service.context.IdListReq;
-import com.cyberpeace.space.service.context.frame.*;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.List;
-
 @Api(tags = "防御行动框架-框架应用")
 @RestController
 @RequestMapping("/space/action_frame/application")
@@ -365,3 +365,4 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 		return new BaseRsp<>(baseService.getUsers(rvb_id, group));
 	}
 }
+

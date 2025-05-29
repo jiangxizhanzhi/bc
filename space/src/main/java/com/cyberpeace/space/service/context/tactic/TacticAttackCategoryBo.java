@@ -1,3 +1,16 @@
+package com.cyberpeace.space.service.context.tactic;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 战法攻击类别Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `TacticAttackCategoryBo` 的 Java 类，位于包 `com.cyberpeace.space.service.context.tactic` 下。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -14,19 +27,6 @@
  * - 这是一个简单的 POJO（Plain Old Java Object）类，仅包含数据字段和自动生成的访问器方法，适合用于数据传输或存储场景。 
  * 总结：这是一个轻量级的数据传输对象（DTO），用于存储和传递战法攻击类别的基本信息，结构清晰且易于扩展。 
 **/
-package com.cyberpeace.space.service.context.tactic;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 战法攻击类别Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class TacticAttackCategoryBo {
@@ -45,3 +45,4 @@ public class TacticAttackCategoryBo {
 	 */
 	private String name;
 }
+

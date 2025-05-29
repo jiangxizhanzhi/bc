@@ -1,3 +1,26 @@
+package com.cyberpeace.space.dao.entity;
+
+import java.util.Map;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.model.IdAndName;
+import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.context.rule.SpaceRoundMechanismRuleBo;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Space Round 机构规则
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBaseTable
+ * @since 1.0.0
+ */
 /**
  * ### 分析与总结 
  * #### 1. **代码功能** 
@@ -22,29 +45,6 @@
  * #### 总结 
  * 此代码是一个典型的实体类，主要用于数据持久化和业务逻辑中对象的传递。它结构清晰，注解丰富，体现了良好的代码规范和设计思路。 
 **/
-package com.cyberpeace.space.dao.entity;
-
-import java.util.Map;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.model.IdAndName;
-import com.cyberpeace.space.model.SpaceBaseTable;
-import com.cyberpeace.space.service.context.rule.SpaceRoundMechanismRuleBo;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * Space Round 机构规则
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("space_round_mechanism_rule")
@@ -71,3 +71,4 @@ public class SpaceRoundMechanismRule extends SpaceBaseTable {
 		return bo;
 	}
 }
+

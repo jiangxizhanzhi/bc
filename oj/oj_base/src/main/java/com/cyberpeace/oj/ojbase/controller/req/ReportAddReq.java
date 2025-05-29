@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+
+/**
+ * 报告新增请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ReportAddReq` 的 Java 类，该类用于处理报告新增请求的数据传输对象（DTO）。以下是对其主要特性和功能的简要分析： 
  * 1. **包与导入**: 
@@ -18,24 +36,6 @@
  * - 该类作为一个 DTO，主要用于从前端接收报告新增请求的数据，并进行相应的验证和处理。 
  * 总体来说，这段代码是一个结构清晰、注释详尽的数据传输对象类，适用于处理实验报告新增请求的数据。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-
-/**
- * 报告新增请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class ReportAddReq implements Serializable {
@@ -69,3 +69,4 @@ public class ReportAddReq implements Serializable {
 		return null == content ? "" : content;
 	}
 }
+

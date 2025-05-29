@@ -1,3 +1,16 @@
+package com.cyberpeace.common.model;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * auth 表
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * ### 代码分析 
  * #### 类概述 
@@ -38,19 +51,6 @@
  * #### 总结 
  * 该类主要用于管理授权相关的数据，包括操作认证和读取认证的类型及对应的 ID 列表。通过枚举类 `AuthType` 定义了授权类型的通用规范，并结合 Swagger 注解提升了代码的可读性和文档化程度。 
 **/
-package com.cyberpeace.common.model;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * auth 表
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class AuthTable extends BaseTable {
@@ -96,3 +96,4 @@ public class AuthTable extends BaseTable {
 
 	}
 }
+

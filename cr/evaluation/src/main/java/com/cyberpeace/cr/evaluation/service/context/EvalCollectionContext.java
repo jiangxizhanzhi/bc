@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.service.context;
+
+import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * eval 集合上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalCollectionContext` 的 Java 类，该类用于表示评估集合的上下文信息。以下是对此代码的简要分析： 
  * ### 类名与包名 
@@ -25,20 +39,6 @@
  * - **设计**: 通过 Lombok 减少了样板代码，提高了代码的可读性和维护性。 
  * 这个类的设计合理，适用于需要严格验证输入数据的场景，并且能够方便地生成 API 文档。 
 **/
-package com.cyberpeace.cr.evaluation.service.context;
-
-import javax.validation.constraints.NotNull;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * eval 集合上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalCollectionContext {
@@ -107,3 +107,4 @@ public class EvalCollectionContext {
 	private String name;
 
 }
+

@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.tactic;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 防御列表Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see AttackListBo
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `DefenseListBo` 的类，它是 `AttackListBo` 类的子类。以下是对其的简要分析： 
  * 1. **类的功能**： 
@@ -16,20 +30,6 @@
  * - 通过继承 `AttackListBo`，`DefenseListBo` 可能复用了 `AttackListBo` 中的一些通用逻辑或数据结构，减少了重复代码。 
  * 总结来说，这个类是一个专门用于存储防御策略相关信息的业务对象，具有良好的注释和使用了 Lombok 提高开发效率。 
 **/
-package com.cyberpeace.space.service.context.tactic;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 防御列表Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see AttackListBo
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class DefenseListBo extends AttackListBo {
@@ -49,3 +49,4 @@ public class DefenseListBo extends AttackListBo {
 //
 //    private List<String> tool;
 }
+

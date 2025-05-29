@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.space.dao.entity.SpaceFingerPrint;
+
+/**
+ * 空间手指打印Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个服务接口 `SpaceFingerPrintService`，它是基于 MyBatis-Plus 的 `IService` 接口扩展而来。以下是代码的分析和总结： 
  * ### 分析： 
@@ -16,19 +30,6 @@
  * ### 总结： 
  * 这段代码是一个典型的 MyBatis-Plus 服务接口定义，主要用于封装与 `SpaceFingerPrint` 实体类相关的业务逻辑。通过继承 `IService`，它已经具备了基本的 CRUD 功能，并为后续的业务扩展提供了基础。 
 **/
-package com.cyberpeace.space.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.space.dao.entity.SpaceFingerPrint;
-
-/**
- * 空间手指打印Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see IService
- * @since 1.0.0
- */
 public interface SpaceFingerPrintService extends IService<SpaceFingerPrint> {
 }
+

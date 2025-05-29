@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.controller.res;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 简单数据结果
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SimpleDataRes` 的 Java 类，该类用于表示一个简单的数据结果。以下是对代码的详细分析： 
  * ### 类定义 
@@ -31,23 +48,6 @@
  * - 使用 Lombok 注解自动生成 getter 和 setter 方法，使代码更简洁。 
  * - 通过 Swagger 注解，方便生成 API 文档。 
 **/
-package com.cyberpeace.oj.course.controller.res;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 简单数据结果
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SimpleDataRes implements Serializable {
@@ -69,3 +69,4 @@ public class SimpleDataRes implements Serializable {
 	private String name;
 
 }
+

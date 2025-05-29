@@ -1,3 +1,22 @@
+package com.cyberpeace.cr.crbase.dao.entity;
+
+import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 靶场任务提交
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `CrTaskSubmit` 的实体类，用于表示靶场任务提交的相关信息。以下是对其的简要分析： 
  * 1. **类的基本信息**： 
@@ -29,25 +48,6 @@
  * - 该类主要用于存储和管理靶场任务提交的信息，包括任务的提交情况、评估结果等。 
  * 总体而言，这是一个典型的实体类，用于在数据库中存储和操作靶场任务提交的相关数据。 
 **/
-package com.cyberpeace.cr.crbase.dao.entity;
-
-import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 靶场任务提交
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @TableName("cr_task_submit")
@@ -147,3 +147,4 @@ public class CrTaskSubmit extends BaseTable {
 		}
 	}
 }
+

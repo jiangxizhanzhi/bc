@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.crbase.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 任务模板
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MissionTemplate` 的 Java 类，用于表示任务模板实体。以下是简要分析： 
  * 1. **类名与功能**： 
@@ -16,20 +30,6 @@
  * - 该类主要用于数据库操作，结合 MyBatis-Plus 进行增删改查等操作。 
  * 总结：这是一个基于 MyBatis-Plus 的任务模板实体类，用于数据库表 `cr_mission_template` 的映射，支持基本的 CRUD 操作。 
 **/
-package com.cyberpeace.cr.crbase.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 任务模板
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @TableName("cr_mission_template")
@@ -50,3 +50,4 @@ public class MissionTemplate extends MissionBase {
 	 */
 	private String businessTemplateId;
 }
+

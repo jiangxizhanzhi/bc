@@ -1,3 +1,26 @@
+package com.cyberpeace.config.custom;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
+
+import com.cyberpeace.common.util.SystemPropUtil;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 服务启动，依赖的参数校验。
+ * <p>
+ * <p>
+ * <p>
+ * 目的在于快速发现可能的配置项错误！
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码是一个Spring Bean类 `InitChecker`，用于在服务启动时进行必要的参数校验。以下是代码的主要功能和结构分析： 
  * ### 主要功能 
@@ -23,29 +46,6 @@
  * ### 总结 
  * 该类的主要目的是在服务启动时对关键配置项进行校验，确保系统运行所需的必要条件已满足。通过使用 `@PostConstruct` 和 `blankCheck()` 方法，实现了自动化的参数检查机制，并且提供了详细的日志记录以便于问题排查。此外，代码还预留了一些扩展点，方便未来添加更多模块的检查逻辑。 
 **/
-package com.cyberpeace.config.custom;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
-
-import com.cyberpeace.common.util.SystemPropUtil;
-
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 服务启动，依赖的参数校验。
- * <p>
- * <p>
- * <p>
- * 目的在于快速发现可能的配置项错误！
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Slf4j
 @Component
 public class InitChecker {
@@ -125,3 +125,4 @@ public class InitChecker {
 		}
 	}
 }
+

@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.ojbase.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.BaseTable;
+import lombok.*;
+
+/**
+ * OJ当地场景
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `OjLocalScene` 的实体类，用于表示在线评测系统（OJ）中的本地场景。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -34,24 +52,6 @@
  * - 使用 MyBatis Plus 进行 ORM 操作，并通过 Lombok 减少样板代码。 
  * - 内部枚举 `BusinessType` 定义了不同类型的业务，方便管理和扩展。 
 **/
-package com.cyberpeace.oj.ojbase.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.BaseTable;
-import lombok.*;
-
-/**
- * OJ当地场景
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @Builder
@@ -135,3 +135,4 @@ public class OjLocalScene extends BaseTable {
 	}
 
 }
+

@@ -1,3 +1,17 @@
+package com.cyberpeace.integratation.model.scene;
+
+import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 操作场景实例的上下文。
+ * 部分场景相关接口需要传入该数据
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SceneOpsContext` 的 Java 类，它实现了 `Serializable` 接口。以下是对其主要特性的分析： 
  * ### 类定义 
@@ -18,20 +32,6 @@
  * - 代码中没有提供 `SceneMpContext` 类的详细信息，因此无法完全理解 `context` 字段的具体作用。如果 `SceneMpContext` 类也是自定义的，则需要进一步了解其内部结构和方法。 
  * - 使用 Lombok 注解简化了代码，减少了样板代码。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import java.io.Serializable;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 操作场景实例的上下文。
- * 部分场景相关接口需要传入该数据
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class SceneOpsContext implements Serializable {
@@ -47,3 +47,4 @@ public class SceneOpsContext implements Serializable {
 	private String id;
 
 }
+

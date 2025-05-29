@@ -1,4 +1,3 @@
-
 package com.cyberpeace.cr.tool.controller.admin;
 
 import com.cyberpeace.common.model.ListRsp;
@@ -20,6 +19,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @WebMvcTest(ToolCategoryController.class)
 class ToolCategoryControllerTest {
@@ -51,3 +51,4 @@ class ToolCategoryControllerTest {
 				.andExpect(content().json("{\"data\":{\"list\":[{\"id\":0,\"resourceId\":\"resourceId\",\"cnName\":\"cnName\",\"enName\":\"enName\",\"type\":\"type\"}],\"total\":1,\"lastPage\":1,\"currentPage\":1},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
 	}
 }
+

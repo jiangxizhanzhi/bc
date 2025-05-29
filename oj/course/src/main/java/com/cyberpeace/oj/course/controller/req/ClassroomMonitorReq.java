@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import com.cyberpeace.common.model.PageReqBase;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课堂监控请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomMonitorReq` 的 Java 类，该类继承自 `PageReqBase`。这个类主要用于处理与课堂监控相关的请求数据。以下是详细的分析： 
  * ### 类定义 
@@ -24,23 +41,6 @@
  * - **设计**：类的设计较为简单，主要包含一些基本的属性和方法。需要注意的是，虽然使用了 Lombok 的 `@Setter` 注解，但手动定义了一个同名的 setter 方法，这可能会导致不必要的重复代码。 
  * - **可改进点**：可以移除手动定义的 `setClassroom_id` 方法，以保持代码的一致性和简洁性。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import com.cyberpeace.common.model.PageReqBase;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课堂监控请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PageReqBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -67,3 +67,4 @@ public class ClassroomMonitorReq extends PageReqBase {
 	}
 
 }
+

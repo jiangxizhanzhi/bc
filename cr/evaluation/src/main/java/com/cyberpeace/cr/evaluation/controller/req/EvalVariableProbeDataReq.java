@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import com.cyberpeace.common.model.PageReqBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估变量探针数据请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalVariableProbeDataReq` 的 Java 类，该类位于 `com.cyberpeace.cr.evaluation.controller.req` 包中。这个类继承自 `PageReqBase` 类，并用于处理与评估变量探针数据相关的请求。 
  * ### 主要特点和功能： 
@@ -20,19 +33,6 @@
  * - 将自定义的 setter 方法 `setVariable_id` 改为 `setVariableId`，使其与 Lombok 自动生成的方法名称一致。 
  * - 确保所有自定义方法和注解都符合团队的编码规范。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import com.cyberpeace.common.model.PageReqBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估变量探针数据请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalVariableProbeDataReq extends PageReqBase {
@@ -46,3 +46,4 @@ public class EvalVariableProbeDataReq extends PageReqBase {
         this.variableId = variableId;
     }
 }
+

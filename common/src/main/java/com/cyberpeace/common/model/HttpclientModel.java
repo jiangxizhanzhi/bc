@@ -1,3 +1,20 @@
+package com.cyberpeace.common.model;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.impl.TraceIdContext;
+
+import com.cyberpeace.common.util.IDGeneratorUtil;
+
+import lombok.Data;
+
+/**
+ * httpclient 模型
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `HttpclientModel` 的 Java 类，用于记录和管理 HTTP 客户端请求的相关信息。以下是代码的主要功能和结构分析： 
  * ### 主要功能： 
@@ -20,23 +37,6 @@
  * ### 总结： 
  * 该类是一个典型的日志记录模型，适用于需要详细监控 HTTP 请求的场景。它结合了日志记录、异常处理和性能监控的功能，适合在分布式系统中作为请求上下文管理的一部分。 
 **/
-package com.cyberpeace.common.model;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.impl.TraceIdContext;
-
-import com.cyberpeace.common.util.IDGeneratorUtil;
-
-import lombok.Data;
-
-/**
- * httpclient 模型
- *
- * @author SN
- * @date 2024/11/08
- */
 @Data
 public class HttpclientModel {
 
@@ -124,3 +124,4 @@ public class HttpclientModel {
 		}
 	}
 }
+

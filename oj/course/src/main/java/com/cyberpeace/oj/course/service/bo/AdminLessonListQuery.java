@@ -1,3 +1,19 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import com.cyberpeace.common.model.PatternBase;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * admin 课程列表查询
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PatternBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `AdminLessonListQuery` 的 Java 类，该类用于管理员查询课程列表。以下是对代码的简要分析： 
  * ### 类定义 
@@ -24,22 +40,6 @@
  * ### 总结 
  * 这个类主要用于封装管理员查询课程列表时所需的参数。通过继承 `PatternBase` 类，可能是在某些框架或系统中实现特定的模式或行为。使用 Lombok 注解简化了代码量，提高了可读性和维护性。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import com.cyberpeace.common.model.PatternBase;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * admin 课程列表查询
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PatternBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class AdminLessonListQuery extends PatternBase {
@@ -73,3 +73,4 @@ public class AdminLessonListQuery extends PatternBase {
     private String exceptCourse;
 
 }
+

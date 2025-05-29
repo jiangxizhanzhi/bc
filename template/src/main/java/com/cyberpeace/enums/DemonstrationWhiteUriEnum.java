@@ -1,3 +1,15 @@
+package com.cyberpeace.enums;
+
+
+/**
+ * 演示白色 URI 枚举
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see Enum
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个枚举类 `DemonstrationWhiteUriEnum`，用于表示演示白色 URI 的相关路径信息。以下是代码的简要分析： 
  * 1. **功能概述**： 
@@ -17,18 +29,6 @@
  * - 代码中有详细的注释，说明了每个部分的功能和用途，包括枚举常量、字段和方法。 
  * 总结：这是一个简单的枚举类，用于管理与演示白色 URI 相关的路径信息，具有良好的可读性和结构化设计。 
 **/
-package com.cyberpeace.enums;
-
-
-/**
- * 演示白色 URI 枚举
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see Enum
- * @since 1.0.0
- */
 public enum DemonstrationWhiteUriEnum {
     /**
      * 白
@@ -92,3 +92,4 @@ public enum DemonstrationWhiteUriEnum {
     }
 
 }
+

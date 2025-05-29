@@ -1,3 +1,30 @@
+package com.cyberpeace.space.controller;
+
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
+import com.cyberpeace.space.service.SpaceTacticAttackService;
+import com.cyberpeace.space.service.context.IdListReq;
+import com.cyberpeace.space.service.context.tactic.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * 空间战法攻击Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 1. **功能概述** 
@@ -64,33 +91,6 @@
  * #### 5. **总结** 
  * 该代码实现了攻击战法及其类别的全生命周期管理，结构清晰，职责明确，符合RESTful API的设计规范。通过分层架构和异常处理机制，确保了系统的健壮性和可扩展性。 
 **/
-package com.cyberpeace.space.controller;
-
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
-import com.cyberpeace.space.service.SpaceTacticAttackService;
-import com.cyberpeace.space.service.context.IdListReq;
-import com.cyberpeace.space.service.context.tactic.*;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-/**
- * 空间战法攻击Controller
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Api(tags = "战法库-攻击战法")
 @RestController
 @RequestMapping("/space/tactic/attack")
@@ -264,3 +264,4 @@ public class SpaceTacticAttackController {
 		return new BaseRsp();
 	}
 }
+

@@ -1,3 +1,19 @@
+package com.cyberpeace.common.constant;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+
+import lombok.Getter;
+
+/**
+ * 文件 sunffix 常量
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Enum
+ * @see GenericEnum
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个枚举类 `FileSunffixConstant`，用于表示文件后缀类型的常量集合。以下是代码的主要分析和总结： 
  * ### **主要功能** 
@@ -34,22 +50,6 @@
  * ### **总结** 
  * 这是一个典型的枚举类设计，结构清晰、功能明确，适合用作文件后缀类型的常量集合。如果需要扩展或优化，可以根据具体业务需求调整枚举值或增加更多的功能逻辑。 
 **/
-package com.cyberpeace.common.constant;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-
-import lombok.Getter;
-
-/**
- * 文件 sunffix 常量
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Enum
- * @see GenericEnum
- * @since 1.0.0
- */
 public enum FileSunffixConstant implements GenericEnum {
 
 	/**
@@ -171,3 +171,4 @@ public enum FileSunffixConstant implements GenericEnum {
 	}
 
 }
+

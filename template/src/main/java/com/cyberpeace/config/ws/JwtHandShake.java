@@ -1,3 +1,35 @@
+package com.cyberpeace.config.ws;
+
+import java.util.Map;
+
+import com.cyberpeace.common.model.CommonContext;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.stereotype.Component;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.server.HandshakeInterceptor;
+
+import com.cyberpeace.common.component.SelfDefinedWsChecker;
+import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.ws.WebSocketConnectionContext;
+import com.cyberpeace.common.util.SpringContextUtil;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import com.google.common.collect.Maps;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * JWT 握手
+ *
+ * @author yinqingrong
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see HandshakeInterceptor
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 功能描述 
@@ -36,38 +68,6 @@
  * 潜在改进点： 
  * - 可以考虑将部分通用逻辑（如参数解析、日志格式化）封装为工具类，提高代码复用性。 
 **/
-package com.cyberpeace.config.ws;
-
-import java.util.Map;
-
-import com.cyberpeace.common.model.CommonContext;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.server.ServerHttpRequest;
-import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.http.server.ServletServerHttpRequest;
-import org.springframework.stereotype.Component;
-import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.server.HandshakeInterceptor;
-
-import com.cyberpeace.common.component.SelfDefinedWsChecker;
-import com.cyberpeace.common.constant.WsPath;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.ws.WebSocketConnectionContext;
-import com.cyberpeace.common.util.SpringContextUtil;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import com.google.common.collect.Maps;
-
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * JWT 握手
- *
- * @author yinqingrong
- * @version 1.0.0
- * @date 2025/05/28
- * @see HandshakeInterceptor
- * @since 1.0.0
- */
 @Slf4j
 @Component
 public class JwtHandShake implements HandshakeInterceptor {
@@ -272,3 +272,4 @@ public class JwtHandShake implements HandshakeInterceptor {
 		return stringBuilder.toString();
 	}
 }
+

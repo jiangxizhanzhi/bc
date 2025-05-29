@@ -1,3 +1,29 @@
+package com.cyberpeace.gateway.service.impl;
+
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.gateway.service.bo.OfficeFileInfoBo;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.service.impl.CourseValidateHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.cyberpeace.gateway.service.OfficeViewService;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.File;
+
+/**
+ * 办公室Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码是一个Spring服务类 `OfficeServiceImpl` 的实现，实现了 `OfficeViewService` 接口。该服务的主要功能是获取特定课时（lesson）的讲义文件信息，并返回一个 `OfficeFileInfoBo` 对象。以下是对代码的简要分析： 
  * ### 类和依赖注入 
@@ -29,32 +55,6 @@
  * - 代码结构清晰，依赖注入合理，异常处理也较为完善。 
  * - 使用了日志记录，便于调试和问题追踪。 
 **/
-package com.cyberpeace.gateway.service.impl;
-
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.gateway.service.bo.OfficeFileInfoBo;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.service.impl.CourseValidateHandler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.cyberpeace.gateway.service.OfficeViewService;
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
-
-import lombok.extern.slf4j.Slf4j;
-
-import java.io.File;
-
-/**
- * 办公室Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Slf4j
 @Service
 public class OfficeServiceImpl implements OfficeViewService {
@@ -111,3 +111,4 @@ public class OfficeServiceImpl implements OfficeViewService {
 		return officeFileInfoBo;
 	}
 }
+

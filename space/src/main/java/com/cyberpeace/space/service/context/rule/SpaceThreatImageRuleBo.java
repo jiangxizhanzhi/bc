@@ -1,3 +1,21 @@
+package com.cyberpeace.space.service.context.rule;
+
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.dao.entity.SpaceThreatImageRule;
+import com.cyberpeace.space.model.SpaceBoBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间威胁图像规则 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/07
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 /**
  * ### 分析与总结 
  * #### 1. **代码功能概述** 
@@ -35,24 +53,6 @@
  * #### 总结 
  * 这段代码实现了对“空间威胁图像规则”的封装，结构清晰，注释详细，功能实用。但在异常处理和字段校验方面可以进一步优化，以提高代码的健壮性和安全性。 
 **/
-package com.cyberpeace.space.service.context.rule;
-
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.dao.entity.SpaceThreatImageRule;
-import com.cyberpeace.space.model.SpaceBoBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间威胁图像规则 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/07
- * @see SpaceBoBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceThreatImageRuleBo extends SpaceBoBase {

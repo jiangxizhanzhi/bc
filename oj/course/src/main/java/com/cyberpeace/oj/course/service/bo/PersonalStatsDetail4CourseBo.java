@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 个人统计 Detail4 课程 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `PersonalStatsDetail4CourseBo` 的 Java 类，该类实现了 `Serializable` 接口。这个类主要用于表示与课程相关的个人统计信息。以下是对该类的简要分析： 
  * ### 类名 
@@ -27,23 +44,6 @@
  * ### 总结 
  * 这个类是一个数据传输对象（DTO），用于封装与课程相关的个人学习统计数据。它通过 Swagger 注解增强了其在 API 文档中的可读性和可用性。同时，Lombok 注解简化了代码，使其更简洁易读。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 个人统计 Detail4 课程 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class PersonalStatsDetail4CourseBo implements Serializable {
@@ -159,3 +159,4 @@ public class PersonalStatsDetail4CourseBo implements Serializable {
     @ApiModelProperty("课堂id")
     private String roomId;
 }
+

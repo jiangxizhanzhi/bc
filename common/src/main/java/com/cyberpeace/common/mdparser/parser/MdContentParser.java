@@ -1,3 +1,13 @@
+package com.cyberpeace.common.mdparser.parser;
+
+/**
+ * MD 内容解析器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个泛型接口 `MdContentParser`，用于解析和写入 Markdown 内容。以下是简要分析： 
  * 1. **接口定义**： 
@@ -13,16 +23,6 @@
  * - 方法分离了解析和写入逻辑，便于模块化实现。 
  * 总结：这是一个通用的 Markdown 内容解析器接口，支持自定义解析和写入逻辑，适用于多种应用场景。 
 **/
-package com.cyberpeace.common.mdparser.parser;
-
-/**
- * MD 内容解析器
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface MdContentParser<T, R> {
 
 	/**
@@ -42,3 +42,4 @@ public interface MdContentParser<T, R> {
 	R write(T t);
 
 }
+

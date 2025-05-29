@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.compress.utils.Lists;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
+/**
+ * 评估算法响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalAlgorithmRsp` 的 Java 类，该类用于表示评估算法的响应信息。以下是对代码的简要分析： 
  * ### 包声明和导入 
@@ -34,23 +51,6 @@
  * - 字段通过 Swagger 注解进行文档化，方便接口调用者了解每个字段的用途和约束条件。 
  * - 字段多数被标记为必填项（`@NotNull`），确保数据完整性。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.compress.utils.Lists;
-
-import javax.validation.constraints.NotNull;
-import java.util.List;
-
-/**
- * 评估算法响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalAlgorithmRsp {
@@ -140,3 +140,4 @@ public class EvalAlgorithmRsp {
 	private Integer paramsNum;
 
 }
+

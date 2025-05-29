@@ -1,3 +1,21 @@
+package com.cyberpeace.common.util;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.List;
+
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.google.common.collect.Lists;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * shell 工具
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * ### 代码分析 
  * #### 功能概述： 
@@ -35,24 +53,6 @@
  * #### 总结： 
  * 该工具类实现了基本的 Shell 命令执行功能，日志记录和异常处理较为完善。但在命令注入风险、资源管理以及异常信息丰富性方面仍有改进空间。 
 **/
-package com.cyberpeace.common.util;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.List;
-
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.google.common.collect.Lists;
-
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * shell 工具
- *
- * @author SN
- * @date 2024/11/08
- */
 @Slf4j
 public class ShellUtils {
 
@@ -124,3 +124,4 @@ public class ShellUtils {
 	}
 
 }
+

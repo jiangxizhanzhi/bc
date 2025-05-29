@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+/**
+ * 评估算法裁判请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalAlgorithmRefReq` 的 Java 类，用于表示评估算法裁判请求体。以下是详细的分析和总结： 
  * ### 类定义 
@@ -32,21 +47,6 @@
  * - **改进点**：`mode` 字段的 `@NotEmpty` 注解可能不合适，建议使用 `@NotNull` 或 `@Min(0)` 以确保正确的验证逻辑。 
  * 这段代码简洁明了，适合作为一个请求体类来使用。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
-/**
- * 评估算法裁判请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalAlgorithmRefReq {
@@ -80,3 +80,4 @@ public class EvalAlgorithmRefReq {
 
 
 }
+

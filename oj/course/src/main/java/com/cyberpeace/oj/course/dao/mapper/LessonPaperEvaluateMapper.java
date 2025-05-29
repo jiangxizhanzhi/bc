@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.course.dao.entity.LessonPaperEvaluate;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * 课纸评估Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonPaperEvaluateMapper` 的接口，该接口继承了 `BaseMapper<LessonPaperEvaluate>`。这是一个用于与数据库交互的 MyBatis Mapper 接口。以下是对代码的简要分析： 
  * ### 包声明 
@@ -46,24 +64,6 @@
  * 2. 根据课程 ID 和一组用户 ID 查询多条评估记录。 
  * 这些方法可以方便地进行数据库查询操作，并且由于继承了 `BaseMapper`，还可能包含一些默认的 CRUD 方法。 
 **/
-package com.cyberpeace.oj.course.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.course.dao.entity.LessonPaperEvaluate;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
-
-/**
- * 课纸评估Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 public interface LessonPaperEvaluateMapper extends BaseMapper<LessonPaperEvaluate> {
 
@@ -96,3 +96,4 @@ public interface LessonPaperEvaluateMapper extends BaseMapper<LessonPaperEvaluat
                                                @Param("lessonId") String lessonId);
 
 }
+

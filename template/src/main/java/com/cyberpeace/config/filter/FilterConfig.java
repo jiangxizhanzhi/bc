@@ -1,3 +1,18 @@
+package com.cyberpeace.config.filter;
+
+import com.cyberpeace.config.auth.*;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * 过滤器配置
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码是一个Spring Boot配置类 `FilterConfig`，用于定义并注册多个自定义过滤器。以下是代码的详细分析： 
  * --- 
@@ -52,21 +67,6 @@
  * - 所有过滤器都匹配所有 URL (`/*`)，这意味着它们会对所有的 HTTP 请求生效。 
  * 这段代码的设计体现了良好的模块化和可扩展性，方便后续添加新的过滤器或调整过滤器的执行顺序。 
 **/
-package com.cyberpeace.config.filter;
-
-import com.cyberpeace.config.auth.*;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-/**
- * 过滤器配置
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Configuration
 public class FilterConfig {
 
@@ -176,3 +176,4 @@ public class FilterConfig {
 		return filterRegistrationBean;
 	}
 }
+

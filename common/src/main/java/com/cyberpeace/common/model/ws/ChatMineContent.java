@@ -1,3 +1,15 @@
+package com.cyberpeace.common.model.ws;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 聊天挖矿内容
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ChatMineContent` 的 Java 类，位于包 `com.cyberpeace.common.model.ws` 中。以下是简要分析： 
  * 1. **类的功能**： 
@@ -17,18 +29,6 @@
  * - 该类封装了聊天挖矿所需的核心信息，便于在系统中传递和使用。 
  * 总结：这是一个简单的数据传输对象（DTO），用于存储和传输聊天挖矿相关的数据信息。 
 **/
-package com.cyberpeace.common.model.ws;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 聊天挖矿内容
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class ChatMineContent {
@@ -68,3 +68,4 @@ public class ChatMineContent {
 	 */
 	private String uuid;
 }
+

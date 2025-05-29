@@ -1,3 +1,27 @@
+package com.cyberpeace.common.util;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+/**
+ * 本工具类只针对简单对象处理。
+ * 简单对象的定义为：对象每一个field对应的value为基本数据类型。
+ * 基本数据类型参考java基本数据类型定义。
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * ### 代码分析 
  * #### 功能概述 
@@ -42,30 +66,6 @@
  * #### 总结 
  * `ObjUtil` 是一个实用的工具类，适用于简单的对象字段操作。它提供了丰富的功能来满足基本的需求，但在处理复杂对象时可能需要额外的逻辑补充。 
 **/
-package com.cyberpeace.common.util;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.alibaba.fastjson.JSON;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-/**
- * 本工具类只针对简单对象处理。
- * 简单对象的定义为：对象每一个field对应的value为基本数据类型。
- * 基本数据类型参考java基本数据类型定义。
- *
- * @author SN
- * @date 2024/11/08
- */
 public class ObjUtil {
 
 	/**
@@ -294,3 +294,4 @@ public class ObjUtil {
 
 	}
 }
+

@@ -1,3 +1,11 @@
+package com.cyberpeace.oj.ojbase.dao.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.ojbase.dao.entity.IndicatorMetrics;
+
 /**
  * 这段代码定义了一个名为 `IndicatorMetricsMapper` 的接口，它继承了 MyBatis-Plus 提供的 `BaseMapper` 接口，并且用于操作 `IndicatorMetrics` 实体类。以下是对该代码的简要分析： 
  * 1. **包声明**： 
@@ -14,16 +22,9 @@
  * - `@Repository`：表明这是一个 Spring 的数据访问组件，可以被 Spring 容器管理。 
  * 总结来说，这段代码定义了一个用于操作 `IndicatorMetrics` 表的 MyBatis-Plus Mapper 接口，提供了基本的 CRUD 功能，并且可以被 Spring 容器管理。 
 **/
-package com.cyberpeace.oj.ojbase.dao.mapper;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.ojbase.dao.entity.IndicatorMetrics;
-
 @Mapper
 @Repository
 public interface IndicatorMetricsMapper extends BaseMapper<IndicatorMetrics> {
 
 }
+

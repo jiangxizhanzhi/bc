@@ -1,49 +1,3 @@
-/**
- * ### 代码分析 
- * #### 功能概述： 
- * 该代码是一个名为 `SpaceStrategyServiceImpl` 的服务类，实现了 `SpaceStrategyService` 接口。主要功能是管理与“空间策略”相关的框架（Frame）和策略（Strategy），包括新增、修改、删除、查询等操作。 
- * --- 
- * #### 主要模块及功能： 
- * 1. **框架（Frame）相关操作**： 
- * - **获取框架**：`getFrame()` 返回默认框架。 
- * - **新增框架**：`addFrame()` 根据请求体创建并保存新框架。 
- * - **修改框架**：`modify()` 更新已有框架信息。 
- * - **删除框架**：`deleteFrame()` 删除指定框架及其关联的子框架和策略。 
- * - **框架缓存管理**： 
- * - 使用 `frameCache` 缓存框架数据以提高性能。 
- * - 提供 `initFrameCache()` 和 `refreshFrameCache()` 方法来初始化和刷新缓存。 
- * 2. **策略（Strategy）相关操作**： 
- * - **新增策略**：`addStrategy()` 创建新的策略。 
- * - **更新策略**：`updateStrategy()` 修改已有策略。 
- * - **删除策略**：`deleteStrategy()` 删除指定 ID 的策略。 
- * - **获取策略详情**：`getDetail()` 返回指定资源 ID 的策略详细信息，并更新其访问次数。 
- * - **分页查询策略**：`pageStrategiesByFrame()` 根据框架 ID 和名称分页查询策略。 
- * 3. **统计功能**： 
- * - **获取统计数据**：`getStatistics()` 统计不同类型策略的数量（如操作系统、数据库等）。 
- * 4. **导出与图表**： 
- * - **导出策略路径**：`dumpStrategyPath()` 将策略以 HTML 和 PDF 格式导出。 
- * - **生成策略图表**：`getStrategyChart()` 构建策略的层级结构图表。 
- * 5. **辅助方法**： 
- * - **类型转换**：`req2Entity()` 将请求体转换为实体对象。 
- * - **递归收集框架 ID 和路径**：`collectFrameId()` 和 `collectFrameRoute()` 用于构建框架的层级关系。 
- * - **填充图表数据**：`fillChart()` 将框架数据填充到知识图表中。 
- * --- 
- * #### 技术亮点： 
- * 1. **缓存机制**： 
- * - 使用 `ConcurrentHashMap` 缓存框架数据，减少数据库访问频率，提升性能。 
- * - 提供缓存刷新机制，确保数据一致性。 
- * 2. **链式调用与流式操作**： 
- * - 使用 Java 8 的流式操作（`Stream` API）简化集合处理逻辑。 
- * - 如 `countByFrameIds()` 方法通过流操作快速统计符合条件的策略数量。 
- * 3. **异常处理**： 
- * - 对资源未找到、内置框架不可修改等场景抛出自定义异常，便于上层调用方处理。 
- * 4. **工具类集成**： 
- * - 使用 `fastjson` 处理 JSON 数据。 
- * - 集成 `HtmlToPdfUtil` 实现 HTML 到 PDF 的转换。 
- * --- 
- * #### 总结： 
- * 该代码实现了完整的空间策略框架和策略的管理功能，具有良好的模块化设计和性能优化。通过缓存机制、流式操作和自定义异常处理，提升了代码的可维护性和运行效率。 
-**/
 package com.cyberpeace.space.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
@@ -98,6 +52,52 @@ import java.util.stream.Collectors;
  * @see SpaceStrategyService
  * @since 1.0.0
  */
+/**
+ * ### 代码分析 
+ * #### 功能概述： 
+ * 该代码是一个名为 `SpaceStrategyServiceImpl` 的服务类，实现了 `SpaceStrategyService` 接口。主要功能是管理与“空间策略”相关的框架（Frame）和策略（Strategy），包括新增、修改、删除、查询等操作。 
+ * --- 
+ * #### 主要模块及功能： 
+ * 1. **框架（Frame）相关操作**： 
+ * - **获取框架**：`getFrame()` 返回默认框架。 
+ * - **新增框架**：`addFrame()` 根据请求体创建并保存新框架。 
+ * - **修改框架**：`modify()` 更新已有框架信息。 
+ * - **删除框架**：`deleteFrame()` 删除指定框架及其关联的子框架和策略。 
+ * - **框架缓存管理**： 
+ * - 使用 `frameCache` 缓存框架数据以提高性能。 
+ * - 提供 `initFrameCache()` 和 `refreshFrameCache()` 方法来初始化和刷新缓存。 
+ * 2. **策略（Strategy）相关操作**： 
+ * - **新增策略**：`addStrategy()` 创建新的策略。 
+ * - **更新策略**：`updateStrategy()` 修改已有策略。 
+ * - **删除策略**：`deleteStrategy()` 删除指定 ID 的策略。 
+ * - **获取策略详情**：`getDetail()` 返回指定资源 ID 的策略详细信息，并更新其访问次数。 
+ * - **分页查询策略**：`pageStrategiesByFrame()` 根据框架 ID 和名称分页查询策略。 
+ * 3. **统计功能**： 
+ * - **获取统计数据**：`getStatistics()` 统计不同类型策略的数量（如操作系统、数据库等）。 
+ * 4. **导出与图表**： 
+ * - **导出策略路径**：`dumpStrategyPath()` 将策略以 HTML 和 PDF 格式导出。 
+ * - **生成策略图表**：`getStrategyChart()` 构建策略的层级结构图表。 
+ * 5. **辅助方法**： 
+ * - **类型转换**：`req2Entity()` 将请求体转换为实体对象。 
+ * - **递归收集框架 ID 和路径**：`collectFrameId()` 和 `collectFrameRoute()` 用于构建框架的层级关系。 
+ * - **填充图表数据**：`fillChart()` 将框架数据填充到知识图表中。 
+ * --- 
+ * #### 技术亮点： 
+ * 1. **缓存机制**： 
+ * - 使用 `ConcurrentHashMap` 缓存框架数据，减少数据库访问频率，提升性能。 
+ * - 提供缓存刷新机制，确保数据一致性。 
+ * 2. **链式调用与流式操作**： 
+ * - 使用 Java 8 的流式操作（`Stream` API）简化集合处理逻辑。 
+ * - 如 `countByFrameIds()` 方法通过流操作快速统计符合条件的策略数量。 
+ * 3. **异常处理**： 
+ * - 对资源未找到、内置框架不可修改等场景抛出自定义异常，便于上层调用方处理。 
+ * 4. **工具类集成**： 
+ * - 使用 `fastjson` 处理 JSON 数据。 
+ * - 集成 `HtmlToPdfUtil` 实现 HTML 到 PDF 的转换。 
+ * --- 
+ * #### 总结： 
+ * 该代码实现了完整的空间策略框架和策略的管理功能，具有良好的模块化设计和性能优化。通过缓存机制、流式操作和自定义异常处理，提升了代码的可维护性和运行效率。 
+**/
 @Service
 @Slf4j
 public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, SpaceStrategy> implements SpaceStrategyService {
@@ -775,3 +775,4 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 	}
 
 }
+

@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.service.impl;
+
+import com.cyberpeace.cr.evaluation.dao.entity.EvalIndexRef;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * 评估日志
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalLog` 的类，用于记录评估过程中的日志信息。以下是对该代码的简要分析： 
  * ### 类概述 
@@ -44,20 +58,6 @@
  * - 每个方法都根据不同的日志级别（Info, Debug, Error）来记录信息，并且能够处理不同类型的引用对象（如 `EvalVariableRef` 和 `EvalIndexRef`），从而提供了详细的上下文信息。 
  * 这些方法使得开发者可以方便地记录评估过程中发生的事件，并且可以根据需要调整日志级别以控制日志的详细程度和输出量。 
 **/
-package com.cyberpeace.cr.evaluation.service.impl;
-
-import com.cyberpeace.cr.evaluation.dao.entity.EvalIndexRef;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-/**
- * 评估日志
- *
- * @author SN
- * @date 2024/11/08
- */
 public class EvalLog {
     /**
      * 日志
@@ -166,3 +166,4 @@ public class EvalLog {
         debug(evalRecord, newMsg);
     }
 }
+

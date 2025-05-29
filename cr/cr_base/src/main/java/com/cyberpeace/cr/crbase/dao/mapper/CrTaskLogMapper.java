@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.crbase.dao.mapper;
+
+import java.util.List;
+
+import org.mapstruct.Mapper;
+import org.springframework.stereotype.Repository;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.crbase.dao.entity.CrTaskLog;
+import com.cyberpeace.cr.crbase.service.context.DynamicData;
+
+/**
+ * 靶场任务日志Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `CrTaskLogMapper` 的接口，用于操作数据库中的 `CrTaskLog` 实体类及其相关数据。以下是对其的简要分析： 
  * 1. **继承与注解**： 
@@ -16,23 +33,6 @@
  * - 使用了泛型和集合类型，支持灵活的数据处理需求。 
  * 总体而言，这段代码实现了对 `CrTaskLog` 实体类的多种查询和操作，适用于需要复杂查询逻辑的应用场景。 
 **/
-package com.cyberpeace.cr.crbase.dao.mapper;
-
-import java.util.List;
-
-import org.mapstruct.Mapper;
-import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.crbase.dao.entity.CrTaskLog;
-import com.cyberpeace.cr.crbase.service.context.DynamicData;
-
-/**
- * 靶场任务日志Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 @Repository
 public interface CrTaskLogMapper extends BaseMapper<CrTaskLog> {
@@ -82,3 +82,4 @@ public interface CrTaskLogMapper extends BaseMapper<CrTaskLog> {
 	 */
 	void batchInsert(List<CrTaskLog> taskLogs);
 }
+

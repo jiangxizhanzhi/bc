@@ -1,3 +1,12 @@
+package com.cyberpeace.oj.ojbase.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 这段代码定义了一个名为 `IndicatorMetrics` 的 Java 类，该类用于表示数据库中的 `p_metrics_indicator` 表。以下是对代码的详细分析： 
  * 1. **包声明**： 
@@ -49,15 +58,6 @@
  * - 主键 `id` 使用了 MyBatis-Plus 提供的 `@TableId` 注解，并设置了自增策略。 
  * - 其他字段包括 `metrics_id`、`indicatorId` 和 `parentId`，这些字段的具体含义需要根据业务逻辑来确定。 
 **/
-package com.cyberpeace.oj.ojbase.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-
-import lombok.Getter;
-import lombok.Setter;
-
 @Setter
 @Getter
 @TableName("p_metrics_indicator")
@@ -72,3 +72,4 @@ public class IndicatorMetrics {
 
 	private Integer parentId;
 }
+

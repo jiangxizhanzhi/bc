@@ -1,3 +1,22 @@
+package com.cyberpeace.cr.crbase.service.context;
+
+import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 任务模型
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `TaskContext` 的类，它继承自 `BaseTable` 类，并且使用了 Lombok 提供的 `@Getter` 和 `@Setter` 注解来简化属性的 getter 和 setter 方法生成。以下是对该代码的主要分析： 
  * ### 主要功能 
@@ -27,25 +46,6 @@
  * ### 总结 
  * 此代码片段定义了一个任务上下文类，主要用于存储和管理任务相关信息。通过继承 `BaseTable` 类和使用 Lombok 注解，提高了代码的可读性和开发效率。此外，还提供了一个便捷的方法来判断任务是否完成，增强了类的功能性。 
 **/
-package com.cyberpeace.cr.crbase.service.context;
-
-import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.cyberpeace.common.model.BaseTable;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 任务模型
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class TaskContext extends BaseTable {
@@ -126,3 +126,4 @@ public class TaskContext extends BaseTable {
 	}
 
 }
+

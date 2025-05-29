@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.crbase.controller.rsp;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 场景配置响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `SceneConfigRsp` 的 Java 类，用于表示场景配置的响应数据。以下是简要分析： 
  * 1. **类的功能**： 
@@ -13,19 +26,6 @@
  * - 该类封装了场景配置相关的必要信息，方便在 API 响应中传递给客户端。 
  * 总结：这是一个简单的数据传输对象（DTO），用于封装场景配置的响应数据，具有良好的可读性和扩展性。 
 **/
-package com.cyberpeace.cr.crbase.controller.rsp;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 场景配置响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class SceneConfigRsp {
@@ -48,3 +48,4 @@ public class SceneConfigRsp {
 	@ApiModelProperty(value = "拓扑中占用的授权节点数量")
 	private Integer resourceOccupiedNums;
 }
+

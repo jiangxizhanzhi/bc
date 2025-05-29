@@ -1,3 +1,20 @@
+package com.cyberpeace.space.dao.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.space.dao.entity.SpaceAptFeature;
+
+/**
+ * 空间容易特征Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个 MyBatis 的 Mapper 接口 `SpaceAptFeatureMapper`，用于操作数据库中与 `SpaceAptFeature` 实体类相关的数据。以下是详细分析： 
  * ### 主要内容： 
@@ -19,23 +36,6 @@
  * 这是一个基于 MyBatis 和 MyBatis-Plus 的数据访问层接口，通过继承 `BaseMapper` 提供了默认的 CRUD 操作，同时结合 Spring 的注解实现了 Bean 的自动注册。它的主要用途是操作 `SpaceAptFeature` 对应的数据库表。 
 **/
 
-package com.cyberpeace.space.dao.mapper;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.space.dao.entity.SpaceAptFeature;
-
-/**
- * 空间容易特征Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 @Repository
 public interface SpaceAptFeatureMapper extends BaseMapper<SpaceAptFeature>

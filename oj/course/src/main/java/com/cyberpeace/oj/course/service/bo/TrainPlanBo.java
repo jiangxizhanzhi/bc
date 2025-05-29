@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 训练计划博
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `TrainPlanBo` 的 Java 类，该类实现了 `Serializable` 接口。这个类用于表示训练计划业务对象（BO），并且使用了 Lombok 注解来简化 getter 和 setter 方法的编写。 
  * 具体分析如下： 
@@ -31,23 +48,6 @@
  * - 使用 Lombok 注解简化了 getter 和 setter 方法的生成。 
  * - 实现了 `Serializable` 接口，可以进行对象的序列化操作。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 训练计划博
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class TrainPlanBo implements Serializable {
@@ -77,3 +77,4 @@ public class TrainPlanBo implements Serializable {
 	private String username;
 
 }
+

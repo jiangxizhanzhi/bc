@@ -1,3 +1,24 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 新增课实践请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `AddLessonPracticeReq` 的 Java 类，用于表示添加课程实践请求的参数。以下是对该类的简要分析： 
  * ### 类定义 
@@ -25,27 +46,6 @@
  * ### 总结 
  * 该类是一个用于处理添加课程实践请求的数据传输对象 (DTO)。它包含两个主要属性：课程编号 (`resourceId`) 和习题数据列表 (`practiceList`)。这些属性都通过 Swagger 注解进行了文档化，并且 `resourceId` 属性还被标记为必填项。通过 Lombok 库，该类自动实现了 getter 和 setter 方法，从而减少了样板代码。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 新增课实践请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -69,3 +69,4 @@ public class AddLessonPracticeReq implements Serializable {
 	private List<PaperPracticeContext> practiceList;
 
 }
+

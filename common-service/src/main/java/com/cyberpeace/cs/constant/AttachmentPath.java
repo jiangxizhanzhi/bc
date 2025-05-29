@@ -1,3 +1,16 @@
+package com.cyberpeace.cs.constant;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import lombok.Getter;
+
+import java.io.File;
+
+/**
+ * 目录划分
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * ### 代码分析 
  * #### 1. **功能概述** 
@@ -37,19 +50,6 @@
  * #### 7. **总结** 
  * 该代码是一个典型的枚举类实现，用于管理文件目录路径。虽然功能完整，但仍需注意潜在的问题并进行适当优化以提高代码质量和可维护性。 
 **/
-package com.cyberpeace.cs.constant;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import lombok.Getter;
-
-import java.io.File;
-
-/**
- * 目录划分
- *
- * @author SN
- * @date 2024/11/08
- */
 public enum AttachmentPath implements GenericEnum {
 
 	/**
@@ -176,3 +176,4 @@ public enum AttachmentPath implements GenericEnum {
 	}
 
 }
+

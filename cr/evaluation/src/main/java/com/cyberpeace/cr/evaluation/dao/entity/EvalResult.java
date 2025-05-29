@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 
+ * @TableName cr_eval_result
+ */
 /**
  * 这段代码定义了一个名为 `EvalResult` 的 Java 类，该类用于表示与评估结果相关的实体。以下是对代码的简要分析： 
  * 1. **包声明**： 
@@ -29,20 +43,6 @@
  * - 这个类继承自 `BaseTable`，可能包含了其他通用的功能或字段。 
  * - 字段包括主键 `resource_id`、评估运行实例 ID `record`、各级指标得分以及执行轮次 `exeCycle`。 
 **/
-package com.cyberpeace.cr.evaluation.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 
- * @TableName cr_eval_result
- */
 @TableName(value = "cr_eval_result")
 @Getter
 @Setter

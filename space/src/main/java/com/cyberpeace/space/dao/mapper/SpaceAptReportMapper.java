@@ -1,3 +1,20 @@
+package com.cyberpeace.space.dao.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.space.dao.entity.SpaceAptReport;
+
+/**
+ * 空间容易报告Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个 MyBatis 的 Mapper 接口 `SpaceAptReportMapper`，用于操作数据库中与 `SpaceAptReport` 实体类相关的数据。以下是代码的简要分析： 
  * 1. **包名与导入**： 
@@ -16,23 +33,7 @@
  * - 结合了 Spring 的注解（`@Mapper` 和 `@Repository`），便于在 Spring 应用中管理和使用。 
  * 总结：这是一段简洁高效的 MyBatis Mapper 接口代码，通过继承 `BaseMapper` 提供了常见的数据库操作能力，并通过注解实现了与 Spring 的集成。 
 **/
-package com.cyberpeace.space.dao.mapper;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.space.dao.entity.SpaceAptReport;
-
-/**
- * 空间容易报告Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 @Repository
 public interface SpaceAptReportMapper extends BaseMapper<SpaceAptReport> {}
+

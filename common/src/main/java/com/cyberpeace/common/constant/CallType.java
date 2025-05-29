@@ -1,3 +1,13 @@
+package com.cyberpeace.common.constant;
+
+/**
+ * 调用类型
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/13
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CallType` 的公共类，位于包 `com.cyberpeace.common.constant` 中。该类主要用于定义一组常量字符串，表示不同的调用类型。以下是代码的简要分析： 
  * 1. **类功能**： 
@@ -18,16 +28,6 @@
  * - 常量命名采用全大写形式，符合 Java 常量命名规范。 
  * 总结：这是一个简单的工具类，提供了调用类型的常量定义，便于代码复用和维护。 
 **/
-package com.cyberpeace.common.constant;
-
-/**
- * 调用类型
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/13
- * @since 1.0.0
- */
 public class CallType {
 
 	/**
@@ -61,3 +61,4 @@ public class CallType {
 
 	public static final String RULE = "rule";
 }
+

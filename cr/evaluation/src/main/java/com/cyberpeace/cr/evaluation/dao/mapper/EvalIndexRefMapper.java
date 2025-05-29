@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.evaluation.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultIndexRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalIndexRef;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+/**
+ * 评估指数裁判Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalIndexRefMapper` 的接口，该接口继承自 `BaseMapper<EvalIndexRef>`。这个接口用于与数据库进行交互，特别是针对 `EvalIndexRef` 实体对象的操作。以下是对代码的详细分析： 
  * ### 包声明和导入 
@@ -26,23 +43,6 @@
  * - 它通过继承 `BaseMapper<EvalIndexRef>` 来获得基本的 CRUD 功能，并通过自定义方法 `selectResultIndexes` 提供特定的查询功能。 
  * - 使用 MyBatis 和 Spring 的注解来确保该接口可以被正确地识别和管理。 
 **/
-package com.cyberpeace.cr.evaluation.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultIndexRsp;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalIndexRef;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
-
-/**
- * 评估指数裁判Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 @Repository
 public interface EvalIndexRefMapper extends BaseMapper<EvalIndexRef> {
@@ -55,3 +55,4 @@ public interface EvalIndexRefMapper extends BaseMapper<EvalIndexRef> {
      */
     List<EvalRecordResultIndexRsp> selectResultIndexes(@Param("record_id")String recordId, @Param("level") Integer level);
 }
+

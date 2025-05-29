@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.controller.res;
+
+import java.io.Serializable;
+
+import javax.validation.constraints.NotBlank;
+
+import io.swagger.annotations.ApiModelProperty;
+
+/**
+ * 远程帮助请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `RemoteHelpReq` 的 Java 类，该类实现了 `Serializable` 接口。这个类用于表示远程帮助请求的数据结构。以下是代码的详细分析： 
  * ### 类和字段 
@@ -22,23 +39,6 @@
  * ### 总结 
  * `RemoteHelpReq` 类主要用于在远程帮助场景中传输必要的数据，如课程ID、节点ID和房间ID。通过实现 `Serializable` 接口，该类可以被序列化，便于在网络上传输。所有字段都是必需的，并且通过注解来确保这些字段的有效性。 
 **/
-package com.cyberpeace.oj.course.controller.res;
-
-import java.io.Serializable;
-
-import javax.validation.constraints.NotBlank;
-
-import io.swagger.annotations.ApiModelProperty;
-
-/**
- * 远程帮助请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 public class RemoteHelpReq implements Serializable {
 
 	/**
@@ -90,3 +90,4 @@ public class RemoteHelpReq implements Serializable {
 		return room_id;
 	}
 }
+

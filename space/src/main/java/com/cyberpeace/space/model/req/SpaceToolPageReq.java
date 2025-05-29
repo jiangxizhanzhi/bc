@@ -1,3 +1,10 @@
+package com.cyberpeace.space.model.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 这段代码定义了一个名为 `SpaceToolPageReq` 的 Java 类，它是基于 `SpacePageReqBase` 的一个扩展类。以下是对代码的简要分析： 
  * 1. **包与导入**： 
@@ -13,13 +20,6 @@
  * - 该类继承自 `SpacePageReqBase`，可能包含一些通用的分页或其他基础属性。 
  * 总结：这是一个用于分页查询工具信息的请求类，支持通过工具名称和阶段进行筛选，并且利用了 Swagger 和 Lombok 来简化开发和文档生成。 
 **/
-package com.cyberpeace.space.model.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
 @ApiModel
 public class SpaceToolPageReq extends SpacePageReqBase {
 
@@ -34,3 +34,4 @@ public class SpaceToolPageReq extends SpacePageReqBase {
     private Integer stage;
 
 }
+

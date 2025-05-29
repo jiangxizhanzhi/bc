@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估记录结果响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalRecordResultRsp` 的 Java 类，该类位于 `com.cyberpeace.cr.evaluation.controller.rsp` 包中。这个类是 `EvalRecordRsp` 类的子类。以下是对代码的简要分析： 
  * ### 主要功能 
@@ -20,18 +32,6 @@
  * - 在评估系统中，用于返回具体的评估结果和可能的错误信息。 
  * - 可以在 RESTful API 的响应体中使用这个类，返回给客户端评估的具体结果和任何潜在的错误信息。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估记录结果响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalRecordResultRsp extends EvalRecordRsp {
@@ -47,3 +47,4 @@ public class EvalRecordResultRsp extends EvalRecordRsp {
     @ApiModelProperty("运行错误信息")
     private String message;
 }
+

@@ -1,3 +1,17 @@
+package com.cyberpeace.integratation.service.impl;
+
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.integratation.service.YXUserService;
+import com.cyberpeace.integratation.service.bo.YxRvbUserColl;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+
 /**
  * 这段代码是一个Spring服务类 `YXUserServiceImpl`，实现了 `YXUserService` 接口。该类的主要功能是通过调用外部API获取用户信息，并将这些信息封装到 `YxRvbUserColl` 对象中返回。 
  * ### 主要组成部分： 
@@ -24,20 +38,6 @@
  * - **日志记录**：在关键步骤增加更多的日志记录，以便于问题排查和监控。 
  * - **配置管理**：考虑使用更灵活的配置管理方式（如配置中心），以方便配置的动态调整和维护。 
 **/
-package com.cyberpeace.integratation.service.impl;
-
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.common.util.SystemPropUtil;
-import com.cyberpeace.integratation.service.YXUserService;
-import com.cyberpeace.integratation.service.bo.YxRvbUserColl;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-
 @Service
 @Slf4j
 public class YXUserServiceImpl implements YXUserService {
@@ -64,3 +64,4 @@ public class YXUserServiceImpl implements YXUserService {
         return HttpClientUtil.post(url, body, YxRvbUserColl.class);
     }
 }
+

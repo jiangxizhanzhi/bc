@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.rule;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间加载文件威胁统治胜过Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个名为 `SpaceLoadedFileThreatRuleExcelBo` 的 Java 类，用于表示与空间加载文件威胁相关的业务对象。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -16,20 +30,6 @@
  * - 字段的设计较为简洁，覆盖了威胁规则的基本信息需求。 
  * 总结：该类是一个简单的数据传输对象（DTO），用于存储和传递空间加载文件威胁的相关信息，并通过注解增强了可读性和文档化能力。 
 **/
-package com.cyberpeace.space.service.context.rule;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间加载文件威胁统治胜过Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceLoadedFileThreatRuleExcelBo {
@@ -74,3 +74,4 @@ public class SpaceLoadedFileThreatRuleExcelBo {
 	@ApiModelProperty(value = "执行方式，自动2，手动1")
 	private String executeType;
 }
+

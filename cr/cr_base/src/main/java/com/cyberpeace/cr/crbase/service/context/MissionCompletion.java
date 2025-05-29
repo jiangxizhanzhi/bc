@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.crbase.service.context;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 任务完成数
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MissionCompletion` 的 Java 类，用于表示任务完成的相关信息。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -15,18 +27,6 @@
  * - `addCompletionNum()`：用于增加完成数量，每次调用时将 `completeNum` 增加 1。 
  * 总结：这是一个简单的数据传输对象（DTO），用于封装任务完成的信息，并提供了基本的操作功能。 
 **/
-package com.cyberpeace.cr.crbase.service.context;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 任务完成数
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MissionCompletion {
@@ -53,3 +53,4 @@ public class MissionCompletion {
 	}
 
 }
+

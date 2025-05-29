@@ -1,3 +1,18 @@
+package com.cyberpeace.integratation.model.mp;
+
+import java.io.Serializable;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Getter;
+
+/**
+ * 中台流
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MpFlow` 的 Java 类，用于表示某种“中台流”的模型。以下是对该代码的简要分析： 
  * ### 包和导入 
@@ -36,21 +51,6 @@
  * - 使用 Lombok 的 `@Getter` 和 `@Setter` 注解简化了代码，减少了样板代码的编写。 
  * 这段代码简洁明了地定义了一个包含多个字段和枚举类型的类，适用于在系统中表示和处理流相关的数据。 
 **/
-package com.cyberpeace.integratation.model.mp;
-
-import java.io.Serializable;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Getter;
-
-/**
- * 中台流
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MpFlow implements Serializable {
@@ -132,3 +132,4 @@ public class MpFlow implements Serializable {
 		}
 	}
 }
+

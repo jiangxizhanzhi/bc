@@ -1,3 +1,22 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import java.io.Serializable;
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
+import com.cyberpeace.cr.crbase.service.context.scene.FlowInfoContext;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估流老年 退休金 计划请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalFlowsOpsReq` 的 Java 类，该类用于表示评估流操作请求的数据结构。以下是对该类的简要分析： 
  * ### 类概述 
@@ -19,25 +38,6 @@
  * ### 总结 
  * 这个类是一个典型的请求对象，用于在控制器层接收客户端发送的评估流操作请求。它通过属性和注解来描述请求的数据结构，并提供了基本的数据验证功能。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import java.io.Serializable;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import com.cyberpeace.cr.crbase.service.context.scene.FlowInfoContext;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估流老年 退休金 计划请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalFlowsOpsReq implements Serializable {
@@ -69,3 +69,4 @@ public class EvalFlowsOpsReq implements Serializable {
 	@ApiModelProperty("流量列表")
 	private List<FlowInfoContext> flows;
 }
+

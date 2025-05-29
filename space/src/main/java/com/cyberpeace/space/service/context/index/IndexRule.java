@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.index;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 编号统治
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `IndexRule` 的 Java 类，位于 `com.cyberpeace.space.service.context.index` 包中。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -20,20 +34,6 @@
  * - 默认值的设置使得对象在初始化时具有合理的初始状态。 
  * 总体而言，这个类是一个简单的数据结构类，主要用于存储和计算与编号规则相关的数据。 
 **/
-package com.cyberpeace.space.service.context.index;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 编号统治
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class IndexRule {
@@ -95,3 +95,4 @@ public class IndexRule {
 		this.sum = this.base + this.warning + this.race + this.threat;
 	}
 }
+

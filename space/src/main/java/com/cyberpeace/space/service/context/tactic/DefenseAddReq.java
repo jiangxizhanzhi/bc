@@ -1,3 +1,18 @@
+package com.cyberpeace.space.service.context.tactic;
+
+import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 防御新增请求体
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 /**
  * 该代码定义了一个名为 `DefenseAddReq` 的类，用于表示防御新增请求的请求体。以下是对其主要特性和功能的简要分析： 
  * 1. **类的功能**： 
@@ -20,21 +35,6 @@
  * - 该类适用于需要处理防御技战术新增请求的场景，特别是在涉及多维度信息（如工具、行动、策略）的系统中。 
  * 总体而言，该类是一个结构清晰、功能明确的数据传输对象（DTO），便于在前后端交互中传递防御技战术的相关信息。 
 **/
-package com.cyberpeace.space.service.context.tactic;
-
-import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 防御新增请求体
- *
- * @author SN
- * @date 2024/11/07
- */
 @Getter
 @Setter
 public class DefenseAddReq {
@@ -128,3 +128,4 @@ public class DefenseAddReq {
 	@ApiModelProperty(value = "相关策略")
 	private List<SpaceActionStrategy> strategy;
 }
+

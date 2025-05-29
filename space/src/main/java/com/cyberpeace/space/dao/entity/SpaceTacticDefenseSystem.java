@@ -1,3 +1,23 @@
+package com.cyberpeace.space.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.model.IdAndName;
+import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.context.algorithm.SpaceTacticDefenseSystemBo;
+import lombok.Data;
+
+import java.util.Map;
+
+/**
+ * 空间战法防御系统
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceTacticDefenseSystem` 的实体类，用于表示空间战法防御系统的数据模型。以下是代码的简要分析： 
  * 1. **类的基本信息**： 
@@ -19,26 +39,6 @@
  * - `BeanUtils`：工具类，用于对象之间的属性复制。 
  * 总结：这是一个典型的 MyBatis-Plus 实体类，用于数据库操作，同时提供了将实体转换为业务对象的方法。 
 **/
-package com.cyberpeace.space.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.model.IdAndName;
-import com.cyberpeace.space.model.SpaceBaseTable;
-import com.cyberpeace.space.service.context.algorithm.SpaceTacticDefenseSystemBo;
-import lombok.Data;
-
-import java.util.Map;
-
-/**
- * 空间战法防御系统
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBaseTable
- * @since 1.0.0
- */
 @Data
 @TableName("space_tactic_defense_system")
 public class SpaceTacticDefenseSystem extends SpaceBaseTable {
@@ -52,3 +52,4 @@ public class SpaceTacticDefenseSystem extends SpaceBaseTable {
 		return bo;
 	}
 }
+

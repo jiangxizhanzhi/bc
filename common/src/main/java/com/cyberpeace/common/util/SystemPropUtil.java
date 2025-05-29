@@ -1,3 +1,7 @@
+package com.cyberpeace.common.util;
+
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * 这段代码定义了一个工具类 `SystemPropUtil`，用于从 JVM 系统属性或操作系统环境变量中读取指定键对应的值。以下是代码的简要分析： 
  * 1. **类设计**： 
@@ -13,10 +17,6 @@
  * - 可复用性高：通过工具类封装了常用的属性读取逻辑。 
  * 总结：这是一个简单而实用的工具类，用于统一管理系统属性和环境变量的读取逻辑。 
 **/
-package com.cyberpeace.common.util;
-
-import org.apache.commons.lang3.StringUtils;
-
 public class SystemPropUtil {
 
 	private SystemPropUtil() {}
@@ -39,3 +39,4 @@ public class SystemPropUtil {
 		return value;
 	}
 }
+

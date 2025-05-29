@@ -1,3 +1,16 @@
+package com.cyberpeace.space.service.context.tactic;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 战法攻击类别新增请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个名为 `TacticAttackCategoryAddReq` 的 Java 类，位于包 `com.cyberpeace.space.service.context.tactic` 中。以下是代码的主要分析： 
  * 1. **类的功能**： 
@@ -12,19 +25,6 @@
  * - 通过注释清晰地描述了类的用途及其字段的含义。 
  * 总结：这是一个简单的数据传输对象（DTO），用于封装新增战法攻击类别时需要的名称信息。 
 **/
-package com.cyberpeace.space.service.context.tactic;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 战法攻击类别新增请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class TacticAttackCategoryAddReq {
@@ -35,3 +35,4 @@ public class TacticAttackCategoryAddReq {
      */
     private String name;
     }
+

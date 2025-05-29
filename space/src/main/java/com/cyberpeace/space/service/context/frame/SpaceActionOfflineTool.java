@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.frame;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Space Action 脱机工具
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceActionOfflineTool` 的 Java 类，位于包 `com.cyberpeace.space.service.context.frame` 中。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -13,20 +27,6 @@
  * - 类的文档注释中指明了作者为 `SN`，版本为 `1.0.0`，并且提供了日期和版本控制信息。 
  * 总结：这是一个简单的 POJO（Plain Old Java Object）类，主要用于存储 `Space Action` 脱机工具的相关信息，并通过注解增强了类的功能性和可读性。 
 **/
-package com.cyberpeace.space.service.context.frame;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * Space Action 脱机工具
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceActionOfflineTool {
@@ -36,3 +36,4 @@ public class SpaceActionOfflineTool {
     @ApiModelProperty(value = "简述")
     private String introduction;
 }
+

@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+
+/**
+ * 评论是喜欢请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CommentIsLikeReq` 的 Java 类，该类用于表示一个请求体（request body），主要用于处理与评论点赞相关的操作。下面是对此代码的简要分析： 
  * 1. **包声明**： 
@@ -22,26 +42,6 @@
  * - 使用了 Lombok 来简化 getter 和 setter 方法的编写，使用了 Swagger 注解来生成 API 文档，使用了 JSR 380 (Bean Validation) 注解来确保输入的有效性。 
  * - 此类实现了 `Serializable` 接口，支持对象的序列化。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-
-/**
- * 评论是喜欢请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -66,3 +66,4 @@ public class CommentIsLikeReq implements Serializable {
     private String resourceId;
 
 }
+

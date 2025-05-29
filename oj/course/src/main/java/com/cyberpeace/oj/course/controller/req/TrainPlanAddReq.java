@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 训练计划新增请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `TrainPlanAddReq` 的 Java 类，该类用于表示训练计划新增请求体。以下是对代码的简要分析： 
  * ### 包声明和导入 
@@ -23,23 +40,6 @@
  * - **适用场景**：适用于需要接收和处理训练计划新增请求的场景，特别是在使用 Swagger 生成 API 文档时。 
  * 该类简洁明了，符合面向对象的设计原则，并且通过引入 Lombok 和 Swagger 提高了代码的可读性和维护性。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 训练计划新增请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class TrainPlanAddReq implements Serializable {
@@ -52,3 +52,4 @@ public class TrainPlanAddReq implements Serializable {
 	@ApiModelProperty("资源名称")
 	private String name;
 }
+

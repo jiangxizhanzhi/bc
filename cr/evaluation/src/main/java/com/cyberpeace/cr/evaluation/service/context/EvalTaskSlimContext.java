@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.evaluation.service.context;
+
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.model.CommonContext;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Eval Task Slim 上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTaskSlimContext` 的类，该类位于包 `com.cyberpeace.cr.evaluation.service.context` 下。以下是对其主要特性和功能的分析： 
  * ### 类定义与注释 
@@ -21,19 +34,6 @@
  * ### 总结 
  * 这个类主要用于封装评估任务的基本信息，如任务ID、任务名称和中台场景ID。通过Lombok注解简化了代码，使其更简洁。同时，它还提供了一种方式来处理国际化，使应用可以适应不同的语言环境。 
 **/
-package com.cyberpeace.cr.evaluation.service.context;
-
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.model.CommonContext;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * Eval Task Slim 上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalTaskSlimContext {
@@ -58,3 +58,4 @@ public class EvalTaskSlimContext {
 	}
 
 }
+

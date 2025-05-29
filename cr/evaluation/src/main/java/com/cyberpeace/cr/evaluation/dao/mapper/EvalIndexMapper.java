@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.dao.mapper;
+
+import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
+import org.apache.ibatis.annotations.Mapper;
+
+/**
+ * 评估指数Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalIndexMapper` 的接口，该接口继承自 `BaseMapper<EvalIndex>`，并且使用了 `@Mapper` 注解。`BaseMapper` 是 MyBatis-Plus 提供的一个基础接口，提供了许多常用的 CRUD（创建、读取、更新、删除）操作。通过继承这个接口，`EvalIndexMapper` 可以直接使用这些基本操作，而无需手动编写 SQL。 
  * ### 接口描述 
@@ -33,20 +47,6 @@
  * ### 总结 
  * `EvalIndexMapper` 接口定义了一组用于管理 `EvalIndex` 实体的方法，包括根据不同条件查询数据、批量删除数据以及检查某些条件的存在性等。这些方法可以简化数据库操作，并提高代码的可维护性和可读性。 
 **/
-package com.cyberpeace.cr.evaluation.dao.mapper;
-
-import java.util.List;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
-import org.apache.ibatis.annotations.Mapper;
-
-/**
- * 评估指数Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 public interface EvalIndexMapper extends BaseMapper<EvalIndex> {
 
@@ -99,6 +99,7 @@ public interface EvalIndexMapper extends BaseMapper<EvalIndex> {
      */
     List<String> selectUsedAlgorithmIds(List<String> algorithmIds);
 }
+
 
 
 

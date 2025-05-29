@@ -1,3 +1,15 @@
+package com.cyberpeace.common.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * 基础响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个泛型类 `BaseRsp<T>`，用于表示基础响应对象。以下是简要分析： 
  * 1. **类的功能**： 
@@ -16,18 +28,6 @@
  * - 提供了带 `data` 参数的构造方法，用于快速创建响应对象。 
  * 总结：这是一个简洁且通用的基础响应类，适用于需要返回数据和状态码的场景。 
 **/
-package com.cyberpeace.common.model;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-/**
- * 基础响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -62,3 +62,4 @@ public class BaseRsp<T> {
 		this.data = data;
 	}
 }
+

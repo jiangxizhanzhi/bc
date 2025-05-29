@@ -1,3 +1,14 @@
+package com.cyberpeace.cr.evaluation.service.context;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * eval 模板 base info 上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTemplateBaseInfoContext` 的 Java 类，位于包 `com.cyberpeace.cr.evaluation.service.context` 中。该类主要用于存储评估模板的基础信息上下文。以下是详细的分析和总结： 
  * ### 类定义 
@@ -52,17 +63,6 @@
  * - **特点**：使用 Lombok 来简化代码，自动提供 getter 和 setter 方法。 
  * - **用途**：作为数据传输对象（DTO），在不同模块或层之间传递评估模板的基本信息。 
 **/
-package com.cyberpeace.cr.evaluation.service.context;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * eval 模板 base info 上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalTemplateBaseInfoContext {
@@ -93,3 +93,4 @@ public class EvalTemplateBaseInfoContext {
 	private Integer categoryCode;
 
 }
+

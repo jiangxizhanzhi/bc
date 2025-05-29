@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.crbase.controller.req;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 任务模板修改请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MissionTemplateModifyReq` 的 Java 类，它是 `MissionTemplateReq` 的子类。以下是简要分析： 
  * 1. **类的功能**： 
@@ -12,19 +25,6 @@
  * - 该类主要用于接收任务模板修改请求的数据，便于前后端交互。 
  * 总结：这是一个简单的数据传输对象（DTO），用于封装任务模板修改所需的信息，并支持 Swagger 文档生成和 Lombok 自动化代码生成。 
 **/
-package com.cyberpeace.cr.crbase.controller.req;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 任务模板修改请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MissionTemplateModifyReq extends MissionTemplateReq {
@@ -36,3 +36,4 @@ public class MissionTemplateModifyReq extends MissionTemplateReq {
 	private String resourceId;
 
 }
+

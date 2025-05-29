@@ -1,3 +1,26 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import java.io.Serializable;
+
+import com.cyberpeace.common.model.ListRsp;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+/**
+ * 课堂练习 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomPracticeBo` 的 Java 类，用于表示课堂练习的业务对象（BO）。以下是对该类的简要分析： 
  * ### 类定义 
@@ -30,29 +53,6 @@
  * - **依赖**：依赖于 `ListRsp` 和 `PracticePaperEvaluateBo` 类或接口。 
  * 这段代码是一个典型的用于数据传输的对象（DTO），用于在不同层之间传递课堂练习的信息。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import java.io.Serializable;
-
-import com.cyberpeace.common.model.ListRsp;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-
-/**
- * 课堂练习 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -85,3 +85,4 @@ public class ClassroomPracticeBo implements Serializable {
 	@ApiModelProperty("练习完成统计")
 	private ListRsp<PracticePaperEvaluateBo> data;
 }
+

@@ -1,35 +1,3 @@
-/**
- * ### 代码分析 
- * #### 概述 
- * 该代码定义了一个名为 `SpaceWarningDictionaryController` 的 Spring MVC 控制器类，用于处理与空间警告字典相关的请求。该类继承自 `SpaceControllerBase`，并实现了多个功能，包括导出 Excel 表格。 
- * --- 
- * #### 主要功能模块 
- * 1. **类定义与注解** 
- * - 使用了 `@RestController` 和 `@RequestMapping` 注解，指定了该类的请求路径为 `/space/rule/space_warning_dictionary`。 
- * - `@RequiresAuthentication` 表明此接口需要用户认证才能访问。 
- * - `@Slf4j` 提供日志功能。 
- * 2. **方法：`exportExcel`** 
- * - **功能描述**： 
- * 该方法接收 `HttpServletResponse` 和 `SpaceEventIntegrationRulePageReq` 参数，用于将符合条件的空间警告字典数据导出为 Excel 文件，并返回给客户端。 
- * - **逻辑流程**： 
- * 1. 生成唯一的 Excel 文件路径和名称。 
- * 2. 构造查询条件（`LambdaQueryWrapper`），支持按名称和工具类型模糊查询。 
- * 3. 查询数据库中的符合条件的数据。 
- * 4. 将查询结果通过工具类深拷贝为适合导出的格式（`SpaceWarningDictionaryExcelBo`）。 
- * 5. 调用 `ExcelDataHandler.exportExcel` 方法将数据写入 Excel 文件。 
- * 6. 设置 HTTP 响应头，将文件作为附件返回给客户端。 
- * - **技术点**： 
- * - 使用 `IDGeneratorUtil` 生成唯一文件名。 
- * - 利用 `BeanUtils.deepCopyList` 实现对象的深拷贝。 
- * - 通过 `FileUtil.setResponse` 设置文件下载响应。 
- * 3. **依赖注入** 
- * - 依赖于 `SpaceWarningDictionaryService` 提供的服务层功能。 
- * - 使用 `SpaceWarningDictionaryBo` 和 `SpaceWarningDictionaryExcelBo` 作为业务对象。 
- * --- 
- * #### 总结 
- * 该代码实现了一个功能完整的控制器类，主要负责空间警告字典数据的导出操作。它结合了 MyBatis-Plus 的查询功能、工具类的深拷贝与文件处理能力，以及 Spring MVC 的请求响应机制，最终实现了数据的导出与下载功能。代码结构清晰，注释详尽，便于维护和扩展。 
-**/
-
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -71,6 +39,38 @@ import java.util.List;
  * @see SpaceControllerBase
  * @since 1.0.0
  */
+/**
+ * ### 代码分析 
+ * #### 概述 
+ * 该代码定义了一个名为 `SpaceWarningDictionaryController` 的 Spring MVC 控制器类，用于处理与空间警告字典相关的请求。该类继承自 `SpaceControllerBase`，并实现了多个功能，包括导出 Excel 表格。 
+ * --- 
+ * #### 主要功能模块 
+ * 1. **类定义与注解** 
+ * - 使用了 `@RestController` 和 `@RequestMapping` 注解，指定了该类的请求路径为 `/space/rule/space_warning_dictionary`。 
+ * - `@RequiresAuthentication` 表明此接口需要用户认证才能访问。 
+ * - `@Slf4j` 提供日志功能。 
+ * 2. **方法：`exportExcel`** 
+ * - **功能描述**： 
+ * 该方法接收 `HttpServletResponse` 和 `SpaceEventIntegrationRulePageReq` 参数，用于将符合条件的空间警告字典数据导出为 Excel 文件，并返回给客户端。 
+ * - **逻辑流程**： 
+ * 1. 生成唯一的 Excel 文件路径和名称。 
+ * 2. 构造查询条件（`LambdaQueryWrapper`），支持按名称和工具类型模糊查询。 
+ * 3. 查询数据库中的符合条件的数据。 
+ * 4. 将查询结果通过工具类深拷贝为适合导出的格式（`SpaceWarningDictionaryExcelBo`）。 
+ * 5. 调用 `ExcelDataHandler.exportExcel` 方法将数据写入 Excel 文件。 
+ * 6. 设置 HTTP 响应头，将文件作为附件返回给客户端。 
+ * - **技术点**： 
+ * - 使用 `IDGeneratorUtil` 生成唯一文件名。 
+ * - 利用 `BeanUtils.deepCopyList` 实现对象的深拷贝。 
+ * - 通过 `FileUtil.setResponse` 设置文件下载响应。 
+ * 3. **依赖注入** 
+ * - 依赖于 `SpaceWarningDictionaryService` 提供的服务层功能。 
+ * - 使用 `SpaceWarningDictionaryBo` 和 `SpaceWarningDictionaryExcelBo` 作为业务对象。 
+ * --- 
+ * #### 总结 
+ * 该代码实现了一个功能完整的控制器类，主要负责空间警告字典数据的导出操作。它结合了 MyBatis-Plus 的查询功能、工具类的深拷贝与文件处理能力，以及 Spring MVC 的请求响应机制，最终实现了数据的导出与下载功能。代码结构清晰，注释详尽，便于维护和扩展。 
+**/
+
 @Api(tags = "知识库-规则库-攻击告警字典规则")
 @RestController
 @RequestMapping("/space/rule/space_warning_dictionary")

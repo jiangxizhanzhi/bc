@@ -1,3 +1,21 @@
+package com.cyberpeace.cs.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.cyberpeace.common.model.BaseTable;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * 附件
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `Attachment` 的 Java 实体类，用于表示“附件”相关的数据模型。以下是简要分析： 
  * 1. **继承关系**： 
@@ -19,24 +37,6 @@
  * - 该类通常用于与数据库交互，可能是通过 MyBatis-Plus 框架操作附件表。 
  * 总结：这是一个典型的基于 MyBatis-Plus 和 Lombok 的实体类，设计简洁且功能完善，适用于管理附件相关信息。 
 **/
-package com.cyberpeace.cs.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.cyberpeace.common.model.BaseTable;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-/**
- * 附件
- *
- * @author SN
- * @date 2024/11/08
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -66,3 +66,4 @@ public class Attachment extends BaseTable {
 	private Boolean isPublic;
 
 }
+

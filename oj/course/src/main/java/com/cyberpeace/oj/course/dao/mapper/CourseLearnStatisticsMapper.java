@@ -1,3 +1,28 @@
+package com.cyberpeace.oj.course.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.oj.course.controller.res.AdminCourseStatisticsRes;
+import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsDetailRes;
+import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsRes;
+import com.cyberpeace.oj.course.dao.context.CourseContext;
+import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.entity.LessonRecord;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * 课程学习统计学Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseLearnStatisticsMapper` 的 MyBatis Mapper 接口。该接口继承了 `BaseMapper<LessonRecord>`，并扩展了一些自定义的方法用于课程和课程章节的学习统计。以下是对其主要功能的简要分析： 
  * ### 1. 接口定义 
@@ -40,31 +65,6 @@
  * ### 总结 
  * 这个 Mapper 接口主要用于课程和课程章节的学习统计，提供了一系列的方法来处理分页查询、统计和详细记录查询等操作。这些方法有助于实现课程管理系统的统计功能。 
 **/
-package com.cyberpeace.oj.course.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.oj.course.controller.res.AdminCourseStatisticsRes;
-import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsDetailRes;
-import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsRes;
-import com.cyberpeace.oj.course.dao.context.CourseContext;
-import com.cyberpeace.oj.course.dao.entity.Course;
-import com.cyberpeace.oj.course.dao.entity.LessonRecord;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
-
-/**
- * 课程学习统计学Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 public interface CourseLearnStatisticsMapper extends BaseMapper<LessonRecord> {
 
@@ -184,3 +184,4 @@ public interface CourseLearnStatisticsMapper extends BaseMapper<LessonRecord> {
 	List<AdminLessonStatisticsDetailRes> detailExpLessonByPage(@Param("lessonId") String lessonId,
 			@Param("userIds") List<String> userIds);
 }
+

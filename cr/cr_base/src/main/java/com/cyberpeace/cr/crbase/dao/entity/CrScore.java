@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.crbase.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 靶场得分
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `CrScore` 的实体类，用于表示靶场中的得分记录。以下是代码的主要分析和总结： 
  * ### 主要功能 
@@ -17,23 +34,6 @@
  * ### 总结 
  * 该类主要用于数据持久化，提供了基本的 CRUD 操作支持，并通过注解实现了与数据库表的映射关系。同时，通过枚举类规范了评分相关的约束条件。 
 **/
-package com.cyberpeace.cr.crbase.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 靶场得分
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @TableName(value = "cr_score")
@@ -105,3 +105,4 @@ public class CrScore extends BaseTable {
 
 	}
 }
+

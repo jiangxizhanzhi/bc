@@ -1,3 +1,13 @@
+package com.cyberpeace.common.constant;
+
+/**
+ * Web 常量
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `WebConstant` 的公共接口，用于存储与 Web 应用相关的常量值。以下是代码的简要分析： 
  * 1. **命名规范**：该接口遵循了良好的命名规范，名称为 `WebConstant`，清晰地表明其用途是存放与 Web 相关的常量。 
@@ -16,16 +26,6 @@
  * 5. **国际化支持**：提供了多种语言的支持（如中文和英文），有助于实现多语言环境下的应用。 
  * 总体而言，这段代码结构清晰，注释详尽，适合用作 Web 应用中的常量管理工具。 
 **/
-package com.cyberpeace.common.constant;
-
-/**
- * Web 常量
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface WebConstant {
 
 	/**
@@ -140,3 +140,4 @@ public interface WebConstant {
 	 */
 	String OJ_HEADER_KEY_VALUE = "Cmycjs1bWUHsKb8r";
 }
+

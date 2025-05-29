@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.space.dao.entity.SpaceAlgorithmExpertise;
+
+/**
+ * 空间算法专门知识Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个服务接口 `SpaceAlgorithmExpertiseService`，继承自 `IService<SpaceAlgorithmExpertise>`。以下是分析和总结： 
  * ### 分析： 
@@ -18,20 +32,6 @@
  * 该代码定义了一个基于 MyBatis-Plus 的服务接口，用于操作 `SpaceAlgorithmExpertise` 实体。通过继承 `IService`，它提供了通用的数据操作功能，并具备良好的可扩展性。 
 **/
 
-package com.cyberpeace.space.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.space.dao.entity.SpaceAlgorithmExpertise;
-
-/**
- * 空间算法专门知识Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see IService
- * @since 1.0.0
- */
 public interface SpaceAlgorithmExpertiseService extends IService<SpaceAlgorithmExpertise>{
 }
     

@@ -1,3 +1,16 @@
+package com.cyberpeace.integratation.model.scene;
+
+import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 元素通用上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ElementCommonContext` 的 Java 类，该类实现了 `Serializable` 接口。这个类主要用于存储元素在场景中的通用上下文信息。以下是详细的分析： 
  * ### 类定义 
@@ -21,19 +34,6 @@
  * ### 改进建议 
  * - **elementIds** 字段目前是以字符串形式存储，如果实际应用中需要处理多个元素 ID，建议改为 `List<String>` 类型，以便更好地管理和操作元素 ID 列表。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import java.io.Serializable;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 元素通用上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class ElementCommonContext implements Serializable {
@@ -49,3 +49,4 @@ public class ElementCommonContext implements Serializable {
 	private String elementIds;
 
 }
+

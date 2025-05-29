@@ -1,3 +1,11 @@
+package com.cyberpeace.cr.crbase.service;;
+
+/**
+ * single Train Branch
+ * this is branch method
+ * for the branch method
+ * is the fun toy for little bob
+ */
 /**
  * 这段代码定义了一个名为 `WebSocketPushServiceBranch` 的类，其中包含一个方法 `getBranch`。该方法接收一个字符串参数 `input` 并根据其值返回布尔值 `true` 或 `false`。 
  * ### 主要特点： 
@@ -11,14 +19,6 @@
  * - 如果这些字符串有实际的业务含义，应该提供更明确的命名或文档说明。 
  * 总体而言，这段代码实现了一个简单的字符串匹配功能，但在实际应用中需要考虑性能优化和代码可维护性。 
 **/
-package com.cyberpeace.cr.crbase.service;;
-
-/**
- * single Train Branch
- * this is branch method
- * for the branch method
- * is the fun toy for little bob
- */
 public class WebSocketPushServiceBranch {
 
     /**
@@ -409,3 +409,4 @@ public class WebSocketPushServiceBranch {
         return false;
     }
 }
+

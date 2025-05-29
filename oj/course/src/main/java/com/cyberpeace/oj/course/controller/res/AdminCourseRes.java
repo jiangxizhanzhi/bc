@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.course.controller.res;
+
+import com.alibaba.fastjson.JSONArray;
+import com.mysql.cj.xdevapi.JsonArray;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 管理课程结果
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `AdminCourseRes` 的 Java 类，用于表示管理课程的结果。以下是详细的分析和总结： 
  * ### 类定义 
@@ -40,26 +60,6 @@
  * - 需要检查并移除不必要的导入（如 `com.mysql.cj.xdevapi.JsonArray`）以避免潜在的冲突。 
  * 通过这些分析，可以更好地理解该类的功能和用途，并确保代码的清晰性和正确性。 
 **/
-package com.cyberpeace.oj.course.controller.res;
-
-import com.alibaba.fastjson.JSONArray;
-import com.mysql.cj.xdevapi.JsonArray;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 管理课程结果
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -183,3 +183,4 @@ public class AdminCourseRes implements Serializable {
 	@ApiModelProperty("岗位")
 	private Integer role;
 }
+

@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.course.service;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.oj.course.controller.req.LessonStatisticsListReq;
+import com.cyberpeace.oj.course.controller.res.AdminCourseStatisticsRes;
+import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsDetailRes;
+import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsRes;
+import com.cyberpeace.oj.course.controller.res.HistogramRes;
+import com.cyberpeace.oj.course.dao.context.CourseContext;
+
+/**
+ * 课程学习统计学Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseLearnStatisticsService` 的接口，该接口包含多个方法，用于处理与课程学习统计相关的功能。以下是对代码的简要分析： 
  * ### 接口名称 
@@ -49,26 +69,6 @@
  * ### 总结 
  * 该接口主要提供了与课程学习统计相关的功能，包括课程直方图、方向直方图、课程统计列表及详情等。通过这些方法，可以获取不同维度的学习统计数据，并进行分页展示。每个方法都有详细的参数说明和返回类型，便于理解和使用。 
 **/
-package com.cyberpeace.oj.course.service;
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.oj.course.controller.req.LessonStatisticsListReq;
-import com.cyberpeace.oj.course.controller.res.AdminCourseStatisticsRes;
-import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsDetailRes;
-import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsRes;
-import com.cyberpeace.oj.course.controller.res.HistogramRes;
-import com.cyberpeace.oj.course.dao.context.CourseContext;
-
-/**
- * 课程学习统计学Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface CourseLearnStatisticsService {
 
 	/**
@@ -146,3 +146,4 @@ public interface CourseLearnStatisticsService {
 			String lessonId, String usernameLike, Page page, String sort);
 
 }
+

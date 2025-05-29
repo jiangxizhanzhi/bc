@@ -1,3 +1,13 @@
+package com.cyberpeace.oj.ojbase.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 这段代码定义了一个名为 `Indicator` 的 Java 类，该类是用于表示某个数据库表 (`p_indicator`) 的实体。下面是对此代码的详细分析： 
  * 1. **包声明**: 
@@ -54,16 +64,6 @@
  * - `name` 和 `indicatorType` 字段没有特别的注解，所以它们只是简单的数据库字段。 
  * - 使用 Lombok 注解简化了类的实现，减少了样板代码。 
 **/
-package com.cyberpeace.oj.ojbase.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
 @Data
 @Getter
 @Setter
@@ -77,3 +77,4 @@ public class Indicator {
 
 	private Integer indicatorType;
 }
+

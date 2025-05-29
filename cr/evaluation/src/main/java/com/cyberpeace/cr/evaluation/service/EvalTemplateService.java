@@ -1,3 +1,22 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import java.util.List;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
+import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
+
+/**
+ * 测评靶场-模板的处理
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTemplateService` 的接口，该接口继承自 `IService<EvalTemplate>`。这个接口主要处理与“测评靶场模板”相关的操作。以下是对其方法的简要分析： 
  * 1. **getTemplate(String templateId)**: 
@@ -34,25 +53,6 @@
  * - 返回值：布尔值，表示步骤配置验证是否通过。 
  * 总结：`EvalTemplateService` 接口提供了多种操作，包括查询、验证和管理测评靶场模板及其相关任务的功能。这些功能覆盖了从基础信息验证到任务状态检查等多个方面。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import java.util.List;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
-import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
-
-/**
- * 测评靶场-模板的处理
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface EvalTemplateService extends IService<EvalTemplate> {
 
 	/**
@@ -122,3 +122,4 @@ public interface EvalTemplateService extends IService<EvalTemplate> {
 	Boolean validateStepConfig(List<EvalTaskStepConfig> evalTaskStepConfigList);
 
 }
+

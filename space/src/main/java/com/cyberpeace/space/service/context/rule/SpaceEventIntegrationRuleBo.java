@@ -1,18 +1,3 @@
-/**
- * 这段代码定义了一个名为 `SpaceEventIntegrationRuleBo` 的类，它是 `SpaceBoBase` 的子类。该类主要用于表示空间事件集成规则的业务对象（BO），并提供了将自身转换为实体对象的方法。 
- * ### 主要功能分析： 
- * 1. **属性定义**： 
- * - 该类包含多个属性，如 `resourceId`, `type`, `description`, `content`, `tool`, 和 `stage`。 
- * - 每个属性都有对应的注释说明其用途，并且使用了 `@ApiModelProperty` 注解来描述 API 文档中的字段信息。 
- * 2. **继承关系**： 
- * - 继承自 `SpaceBoBase`，表明它可能包含了基类的一些通用方法或属性。 
- * 3. **方法实现**： 
- * - 提供了一个 `bo2Entity()` 方法，用于将当前业务对象转换为目标实体类 `SpaceEventIntegrationRule`。 
- * - 使用了 `BeanUtils.copy()` 方法来完成对象之间的属性拷贝操作。 
- * ### 总结： 
- * 这个类的设计目的是为了在业务逻辑层和服务层之间传递数据模型，并提供一种方式将这些业务对象转换成数据库可以存储的实体对象。通过这样的设计，可以保持业务逻辑与数据访问层分离，便于维护和扩展。 
-**/
-
 package com.cyberpeace.space.service.context.rule;
 
 import com.cyberpeace.common.util.BeanUtils;
@@ -32,6 +17,21 @@ import lombok.Setter;
  * @see SpaceBoBase
  * @since 1.0.0
  */
+/**
+ * 这段代码定义了一个名为 `SpaceEventIntegrationRuleBo` 的类，它是 `SpaceBoBase` 的子类。该类主要用于表示空间事件集成规则的业务对象（BO），并提供了将自身转换为实体对象的方法。 
+ * ### 主要功能分析： 
+ * 1. **属性定义**： 
+ * - 该类包含多个属性，如 `resourceId`, `type`, `description`, `content`, `tool`, 和 `stage`。 
+ * - 每个属性都有对应的注释说明其用途，并且使用了 `@ApiModelProperty` 注解来描述 API 文档中的字段信息。 
+ * 2. **继承关系**： 
+ * - 继承自 `SpaceBoBase`，表明它可能包含了基类的一些通用方法或属性。 
+ * 3. **方法实现**： 
+ * - 提供了一个 `bo2Entity()` 方法，用于将当前业务对象转换为目标实体类 `SpaceEventIntegrationRule`。 
+ * - 使用了 `BeanUtils.copy()` 方法来完成对象之间的属性拷贝操作。 
+ * ### 总结： 
+ * 这个类的设计目的是为了在业务逻辑层和服务层之间传递数据模型，并提供一种方式将这些业务对象转换成数据库可以存储的实体对象。通过这样的设计，可以保持业务逻辑与数据访问层分离，便于维护和扩展。 
+**/
+
 @Getter
 @Setter
 public class SpaceEventIntegrationRuleBo extends SpaceBoBase {

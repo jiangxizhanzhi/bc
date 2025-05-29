@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课纸评估
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonPaperEvaluate` 的 Java 类，用于表示课纸评估实体。以下是该类的详细分析： 
  * ### 包和导入 
@@ -34,24 +52,6 @@
  * - 通过 MyBatis Plus 的注解来映射数据库表和字段。 
  * - 该类主要用于持久化到数据库中，实现课纸评估信息的存储和管理。 
 **/
-package com.cyberpeace.oj.course.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课纸评估
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("oj_lesson_paper_evaluate")
@@ -122,3 +122,4 @@ public class LessonPaperEvaluate extends BaseTable {
 	private String corrector;
 
 }
+

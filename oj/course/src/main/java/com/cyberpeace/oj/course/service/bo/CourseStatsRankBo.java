@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import com.alibaba.fastjson.JSONObject;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 课程统计 排名 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseStatsRankBo` 的 Java 类，该类用于表示课程学习排名的相关信息。以下是对其主要特性和功能的简要分析： 
  * ### 包与导入 
@@ -22,25 +41,6 @@
  * - 通过 Lombok 的注解简化了代码，减少了手动编写 getter 和 setter 方法的工作量。 
  * - 使用 Swagger 注解来帮助生成文档，便于其他开发者理解和使用这个类。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import com.alibaba.fastjson.JSONObject;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 课程统计 排名 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel("课程学习排名")
@@ -62,3 +62,4 @@ public class CourseStatsRankBo implements Serializable {
     private JSONObject directionOrderingData;
 
 }
+

@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.controller.res;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 直方图结果
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `HistogramRes` 的 Java 类，用于表示直方图的结果。以下是对该代码的简要分析： 
  * ### 包声明和导入 
@@ -52,25 +71,6 @@
  * - 实现了 `Serializable` 接口，允许对象被序列化。 
  * 这个类是一个典型的 POJO（Plain Old Java Object），用于封装直方图数据，并且通过注解增强了其可读性和文档生成能力。 
 **/
-package com.cyberpeace.oj.course.controller.res;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 直方图结果
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel("进度数据")
@@ -93,3 +93,4 @@ public class HistogramRes implements Serializable {
     private List<Integer> yValues;
 
 }
+

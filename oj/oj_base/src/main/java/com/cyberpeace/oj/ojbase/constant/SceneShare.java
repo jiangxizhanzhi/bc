@@ -1,3 +1,18 @@
+package com.cyberpeace.oj.ojbase.constant;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import lombok.Getter;
+
+/**
+ * 场景共享
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Enum
+ * @see GenericEnum
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SceneShare` 的枚举类，用于表示不同类型的场景共享。下面是对该代码的简要分析： 
  * ### 类定义 
@@ -25,21 +40,6 @@
  * - 使用 Lombok 的 `@Getter` 注解简化了代码，自动生成了字段的 getter 方法。 
  * 这个枚举类可以用于在应用程序中表示和处理不同类型的场景共享，提供了一种方便且类型安全的方式来管理这些共享类型。 
 **/
-package com.cyberpeace.oj.ojbase.constant;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import lombok.Getter;
-
-/**
- * 场景共享
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Enum
- * @see GenericEnum
- * @since 1.0.0
- */
 public enum SceneShare implements GenericEnum {
 
 	/**
@@ -82,3 +82,4 @@ public enum SceneShare implements GenericEnum {
 		this.desc = desc;
 	}
 }
+

@@ -1,3 +1,7 @@
+package com.cyberpeace.integratation.service;
+
+import com.cyberpeace.integratation.service.bo.YxRvbUserColl;
+
 /**
  * 这段代码定义了一个名为 `YXUserService` 的接口，该接口位于 `com.cyberpeace.integratation.service` 包中。下面是对这段代码的详细分析： 
  * 1. **包声明**： 
@@ -26,11 +30,8 @@
  * - `YxRvbUserColl` 作为返回类型，表示一个用户集合对象。 
  * - 该接口及其方法的实现可以由其他类来提供，这些类将负责具体的逻辑处理。 
 **/
-package com.cyberpeace.integratation.service;
-
-import com.cyberpeace.integratation.service.bo.YxRvbUserColl;
-
 public interface YXUserService {
 
 	YxRvbUserColl getYxRvbUsers(Integer rvbId);
 }
+

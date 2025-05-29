@@ -1,3 +1,22 @@
+package com.cyberpeace.cr.evaluation.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.BaseTable;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Getter;
+
+import java.util.Date;
+
+/**
+ * eval 变量 ref
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalVariableRef` 的 Java 类，该类位于 `com.cyberpeace.cr.evaluation.dao.entity` 包中。这个类主要用于表示一个评估变量引用（eval variable ref），并继承了 `BaseTable` 类。以下是对该代码的详细分析： 
  * ### 1. 类和注解 
@@ -35,25 +54,6 @@
  * - **注释**：部分字段的注释可以进一步细化，以便更清晰地理解每个字段的具体含义。 
  * 整体而言，这是一个典型的持久化实体类，用于在数据库中存储评估变量引用的相关信息。 
 **/
-package com.cyberpeace.cr.evaluation.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.BaseTable;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Getter;
-
-import java.util.Date;
-
-/**
- * eval 变量 ref
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @TableName("cr_eval_variable_ref")
@@ -186,3 +186,4 @@ public class EvalVariableRef extends BaseTable {
     }
 
 }
+

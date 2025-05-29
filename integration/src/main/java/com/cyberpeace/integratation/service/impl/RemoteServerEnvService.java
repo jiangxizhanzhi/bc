@@ -1,3 +1,18 @@
+package com.cyberpeace.integratation.service.impl;
+
+import com.cyberpeace.common.util.SystemPropUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+
+/**
+ * 远程服务器环境Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `RemoteServerEnvService` 的 Spring 服务类，用于初始化和提供远程服务器（包括办公室服务器和文件服务器）的URL。以下是详细的分析： 
  * ### 类定义 
@@ -31,21 +46,6 @@
  * ### 总结 
  * 这个类的主要功能是在应用启动时初始化办公室服务器和文件服务器的相关信息，并提供方法来获取这些服务器的URL。通过使用 `@PostConstruct` 注解，确保在依赖注入完成后进行必要的初始化操作。 
 **/
-package com.cyberpeace.integratation.service.impl;
-
-import com.cyberpeace.common.util.SystemPropUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-
-/**
- * 远程服务器环境Service
- *
- * @author SN
- * @date 2024/11/08
- */
 @Slf4j
 @Service
 public class RemoteServerEnvService {
@@ -125,3 +125,4 @@ public class RemoteServerEnvService {
 	}
 
 }
+

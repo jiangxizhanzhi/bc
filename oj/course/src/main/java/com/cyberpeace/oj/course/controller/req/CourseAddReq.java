@@ -1,3 +1,28 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 课程新增请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseAddReq` 的 Java 类，用于处理课程新增请求的数据。以下是该类的主要特性和功能： 
  * ### 类定义与注解 
@@ -36,31 +61,6 @@
  * ### 总结 
  * 这个类主要用于接收和验证课程新增请求的数据。它定义了课程的基本信息，并提供了验证方法以确保数据的完整性和有效性。使用 Lombok 注解减少了样板代码，使得类更简洁。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import com.cyberpeace.common.baseinterface.Create;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 课程新增请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel("课程新增信息")
@@ -199,3 +199,4 @@ public class CourseAddReq implements Serializable {
 		return StringUtils.isNotBlank(name) ? name.trim() : name;
 	}
 }
+

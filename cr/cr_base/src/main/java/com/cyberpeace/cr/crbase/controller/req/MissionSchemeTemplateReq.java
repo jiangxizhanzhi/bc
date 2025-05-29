@@ -1,3 +1,24 @@
+package com.cyberpeace.cr.crbase.controller.req;
+
+import java.io.Serializable;
+import java.util.List;
+
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.google.common.collect.Lists;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 任务方案模板请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MissionSchemeTemplateReq` 的 Java 类，用于表示任务方案模板的请求体。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -21,27 +42,6 @@
  * - 该类的设计目的是作为一个请求对象，用于接收前端传来的任务方案模板数据，并在后端进行必要的校验。 
  * 总结来说，这个类是一个典型的请求对象类，主要用于封装任务方案模板的数据，并提供数据验证功能。 
 **/
-package com.cyberpeace.cr.crbase.controller.req;
-
-import java.io.Serializable;
-import java.util.List;
-
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.google.common.collect.Lists;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 任务方案模板请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MissionSchemeTemplateReq implements Serializable {
@@ -91,3 +91,4 @@ public class MissionSchemeTemplateReq implements Serializable {
 				CrBusinessErrorCode.DUPLICATED_STAGE_NAME);
 	}
 }
+

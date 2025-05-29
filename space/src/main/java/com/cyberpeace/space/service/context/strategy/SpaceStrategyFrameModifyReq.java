@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.strategy;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间策略框架修改请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceStrategyFrameModifyReq` 的 Java 类，用于表示空间策略框架修改请求体。以下是简要分析： 
  * 1. **类的功能**： 
@@ -14,20 +28,6 @@
  * - 使用了 Lombok 和 Swagger 注解，提升了开发效率并增强了代码的可读性。 
  * 总结：这是一个简单的数据传输对象（DTO），用于传递空间策略框架修改的相关信息。 
 **/
-package com.cyberpeace.space.service.context.strategy;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间策略框架修改请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceStrategyFrameModifyReq{
@@ -46,3 +46,4 @@ public class SpaceStrategyFrameModifyReq{
     @ApiModelProperty(value = "")
     private String name;
 }
+

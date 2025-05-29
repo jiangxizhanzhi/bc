@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.crbase.service.context;
+
+import com.cyberpeace.common.model.PageReqBase;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 任务评估查询体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `MissionEvaluationQuery` 的 Java 类，用于表示任务评估查询的请求体。以下是简要分析： 
  * 1. **继承关系**： 
@@ -14,20 +28,6 @@
  * - 该类通常作为参数传递给后端接口，用于查询任务评估的相关数据。 
  * 总结：这是一个典型的请求体类，用于封装任务评估查询所需的参数，并支持 Swagger 文档生成和 Lombok 的便捷开发特性。 
 **/
-package com.cyberpeace.cr.crbase.service.context;
-
-import com.cyberpeace.common.model.PageReqBase;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 任务评估查询体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MissionEvaluationQuery extends PageReqBase {
@@ -57,3 +57,4 @@ public class MissionEvaluationQuery extends PageReqBase {
 	private Integer evaluateStatus;
 
 }
+

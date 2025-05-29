@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+
+/**
+ * 群场景延迟请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `GroupSceneDelayReq` 的 Java 类，用于表示群场景延迟请求体。以下是对该类的简要分析： 
  * ### 类定义 
@@ -27,26 +47,6 @@
  * - **文档**：通过 Swagger 注解，可以自动生成 API 文档，方便前端开发人员理解如何使用这个请求体。 
  * 这段代码简洁明了，符合良好的编程实践，并且易于扩展和维护。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-
-/**
- * 群场景延迟请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -71,3 +71,4 @@ public class GroupSceneDelayReq implements Serializable {
 	private Boolean end;
 
 }
+

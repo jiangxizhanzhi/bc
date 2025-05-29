@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.crbase.controller.req;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 释放任务请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `ReleaseMissionReq` 的 Java 类，用于表示“释放任务请求体”的请求参数。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -14,21 +29,6 @@
  * - 使用注解提升了代码可读性和开发效率。 
  * 总结：这是一个简洁且功能明确的 POJO 类，适用于接收释放任务请求的相关数据。 
 **/
-package com.cyberpeace.cr.crbase.controller.req;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 释放任务请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class ReleaseMissionReq {

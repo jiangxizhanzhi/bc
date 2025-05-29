@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+
+/**
+ * 场景节点请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SceneNodeReq` 的 Java 类，用于表示场景节点的请求体。以下是对其简要分析： 
  * ### 类概述 
@@ -31,25 +50,6 @@
  * ### 总结 
  * `SceneNodeReq` 类是一个数据传输对象 (DTO)，用于接收场景节点相关的请求参数。它包含了三个主要字段：`resourceId`、`nodeId` 和 `roomId`。这些字段通过注解进行详细的描述，并且通过 Lombok 和 Swagger 注解增强了代码的可读性和文档生成能力。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-
-/**
- * 场景节点请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -82,3 +82,4 @@ public class SceneNodeReq implements Serializable {
     private String roomId;
 
 }
+

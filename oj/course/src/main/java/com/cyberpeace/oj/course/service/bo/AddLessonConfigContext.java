@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import java.io.Serializable;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+/**
+ * 新增课配置上下文
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `AddLessonConfigContext` 的 Java 类，该类实现了 `Serializable` 接口。这个类主要用于表示添加课程配置时的上下文信息。以下是对代码的简要分析： 
  * ### 类定义 
@@ -22,25 +41,6 @@
  * - 类中的属性用于存储与课程配置相关的必要信息。 
  * - 实现 `Serializable` 接口意味着这个类的对象可以被序列化，便于在网络上传输或持久化到文件中。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import java.io.Serializable;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-
-/**
- * 新增课配置上下文
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @AllArgsConstructor
@@ -77,3 +77,4 @@ public class AddLessonConfigContext implements Serializable {
     private String name;
 
 }
+

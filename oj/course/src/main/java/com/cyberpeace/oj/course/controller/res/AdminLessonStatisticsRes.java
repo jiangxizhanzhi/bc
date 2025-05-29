@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.controller.res;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 管理课统计学结果
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `AdminLessonStatisticsRes` 的 Java 类，用于表示管理员查看课程统计信息的结果。以下是对该类的简要分析： 
  * ### 类概述 
@@ -22,24 +40,6 @@
  * ### 总结 
  * 这个类主要用于在后台管理系统中表示课程统计信息。它通过定义多个字段来存储与课程相关的各种统计数据，并使用 Lombok 注解简化了代码。Swagger 注解使得该类在生成 API 文档时更加友好和易读。 
 **/
-package com.cyberpeace.oj.course.controller.res;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 管理课统计学结果
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -109,3 +109,4 @@ public class AdminLessonStatisticsRes implements Serializable {
 	@ApiModelProperty("答题记录")
 	private String record;
 }
+

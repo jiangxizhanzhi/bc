@@ -1,3 +1,16 @@
+package com.cyberpeace.integratation.model.scene;
+
+import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 流批量老年 退休金 计划上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `FlowBatchOpsContext` 的 Java 类，该类继承自 `NodeOpsContext`。这个类的主要目的是作为流批量操作的上下文，用于处理与运行类型和流相关的数据。以下是详细的分析： 
  * ### 类定义 
@@ -23,19 +36,6 @@
  * - 提供了初始化上下文信息的构造函数，方便在创建对象时进行必要的配置。 
  * 这个类的设计目的是为了便于管理和传递流批量操作所需的信息。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import java.util.List;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 流批量老年 退休金 计划上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class FlowBatchOpsContext extends NodeOpsContext {
@@ -66,3 +66,4 @@ public class FlowBatchOpsContext extends NodeOpsContext {
 
 	public FlowBatchOpsContext() {}
 }
+

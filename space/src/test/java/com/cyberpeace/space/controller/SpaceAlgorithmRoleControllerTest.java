@@ -1,22 +1,3 @@
-/**
- * 这段代码是一个Spring Boot单元测试类，用于测试`SpaceAlgorithmRoleController`控制器的功能。以下是对代码的简要分析： 
- * 1. **测试环境配置**： 
- * - 使用`@WebMvcTest`注解来加载`SpaceAlgorithmRoleController`控制器，并自动配置Spring MVC测试环境。 
- * - 使用`@MockBean`创建了`CourseService`和`SpaceAlgorithmRoleService`的模拟对象，用于隔离依赖。 
- * - 使用`@SpyBean`创建了`SpaceAlgorithmRoleController`的实例，以便在测试中监控其行为。 
- * 2. **测试数据准备**： 
- * - 在`setUp`方法中，通过`when`方法定义了模拟服务的行为，例如返回空列表、特定的对象等。 
- * - 初始化了MyBatis的表信息助手，并设置了名称重复检查的方法返回值为`true`。 
- * 3. **测试方法**： 
- * - `testPage`：测试分页功能，验证GET请求返回的结果是否符合预期。 
- * - `testAddAttack`：测试添加功能，验证POST请求返回的结果是否正确。 
- * - `testUpdateA`：测试更新功能，验证PATCH请求返回的结果是否正确。 
- * - `testDeleteA`：测试删除功能，验证DELETE请求返回的结果是否正确。 
- * - `testGetADetail`：测试获取详情功能，验证GET请求返回的结果是否符合预期。 
- * 4. **断言**： 
- * - 使用`andExpect`方法对响应状态码、内容进行断言，确保API接口的行为与预期一致。 
- * 总结来说，这段代码通过Spring Boot的测试框架，全面地测试了`SpaceAlgorithmRoleController`控制器的各种功能，确保其能够正确处理HTTP请求并返回预期结果。 
-**/
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
@@ -55,6 +36,25 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * 这段代码是一个Spring Boot单元测试类，用于测试`SpaceAlgorithmRoleController`控制器的功能。以下是对代码的简要分析： 
+ * 1. **测试环境配置**： 
+ * - 使用`@WebMvcTest`注解来加载`SpaceAlgorithmRoleController`控制器，并自动配置Spring MVC测试环境。 
+ * - 使用`@MockBean`创建了`CourseService`和`SpaceAlgorithmRoleService`的模拟对象，用于隔离依赖。 
+ * - 使用`@SpyBean`创建了`SpaceAlgorithmRoleController`的实例，以便在测试中监控其行为。 
+ * 2. **测试数据准备**： 
+ * - 在`setUp`方法中，通过`when`方法定义了模拟服务的行为，例如返回空列表、特定的对象等。 
+ * - 初始化了MyBatis的表信息助手，并设置了名称重复检查的方法返回值为`true`。 
+ * 3. **测试方法**： 
+ * - `testPage`：测试分页功能，验证GET请求返回的结果是否符合预期。 
+ * - `testAddAttack`：测试添加功能，验证POST请求返回的结果是否正确。 
+ * - `testUpdateA`：测试更新功能，验证PATCH请求返回的结果是否正确。 
+ * - `testDeleteA`：测试删除功能，验证DELETE请求返回的结果是否正确。 
+ * - `testGetADetail`：测试获取详情功能，验证GET请求返回的结果是否符合预期。 
+ * 4. **断言**： 
+ * - 使用`andExpect`方法对响应状态码、内容进行断言，确保API接口的行为与预期一致。 
+ * 总结来说，这段代码通过Spring Boot的测试框架，全面地测试了`SpaceAlgorithmRoleController`控制器的各种功能，确保其能够正确处理HTTP请求并返回预期结果。 
+**/
 @WebMvcTest(SpaceAlgorithmRoleController.class)
 class SpaceAlgorithmRoleControllerTest {
 
@@ -149,3 +149,4 @@ class SpaceAlgorithmRoleControllerTest {
                 .andExpect(content().json("{\"data\":{\"resourceId\":null,\"name\":null,\"course\":[],\"coursePercent\":null,\"training\":[],\"trainingPercent\":null},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 }
+

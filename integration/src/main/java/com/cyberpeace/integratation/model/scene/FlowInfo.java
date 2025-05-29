@@ -1,3 +1,16 @@
+package com.cyberpeace.integratation.model.scene;
+
+import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 流程信息
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `FlowInfo` 的 Java 类，该类实现了 `Serializable` 接口，并使用了 Lombok 库来简化 getter 和 setter 方法的生成。以下是详细的分析： 
  * ### 类定义 
@@ -19,19 +32,6 @@
  * ### 总结 
  * `FlowInfo` 类用于存储与流程相关的简单信息，如流程 ID 和源 IP 地址。通过 Lombok 的注解，代码更加简洁且易于维护。建议删除冗余的方法并保持命名一致性。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import java.io.Serializable;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 流程信息
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class FlowInfo implements Serializable {
@@ -58,3 +58,4 @@ public class FlowInfo implements Serializable {
 		this.source_ip = sourceIp;
 	}
 }
+

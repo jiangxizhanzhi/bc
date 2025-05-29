@@ -1,3 +1,38 @@
+package com.cyberpeace.space.controller;
+
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.space.dao.entity.SpaceTacticDefensePlan;
+import com.cyberpeace.space.dao.entity.SpaceThreatImageRule;
+import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.SpaceTacticDefensePlanService;
+import com.cyberpeace.space.service.context.IdListReq;
+import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
+import com.cyberpeace.space.service.context.rule.SpaceWarningDictionaryBo;
+import com.cyberpeace.space.service.context.tactic.DefensePlanLevelUpdateReq;
+import com.cyberpeace.space.service.context.tactic.SpaceTacticDefensePlanBo;
+import com.google.common.collect.Lists;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Arrays;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 /**
  * 这段代码是一个针对 `SpaceTacticDefensePlanController` 的单元测试类，使用了 JUnit 5 和 Spring Boot 提供的测试工具。以下是代码的主要分析和总结： 
  * --- 
@@ -72,41 +107,6 @@
  * - 如果服务层逻辑复杂，可以单独编写服务层的单元测试，减少冗余。 
  * 总体而言，这段代码是一个高质量的单元测试示例，展示了如何使用 Spring Boot 提供的测试工具来验证控制器的行为。 
 **/
-package com.cyberpeace.space.controller;
-
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.space.dao.entity.SpaceTacticDefensePlan;
-import com.cyberpeace.space.dao.entity.SpaceThreatImageRule;
-import com.cyberpeace.space.model.SpaceBaseTable;
-import com.cyberpeace.space.service.SpaceTacticDefensePlanService;
-import com.cyberpeace.space.service.context.IdListReq;
-import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
-import com.cyberpeace.space.service.context.rule.SpaceWarningDictionaryBo;
-import com.cyberpeace.space.service.context.tactic.DefensePlanLevelUpdateReq;
-import com.cyberpeace.space.service.context.tactic.SpaceTacticDefensePlanBo;
-import com.google.common.collect.Lists;
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Arrays;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @WebMvcTest(SpaceTacticDefensePlanController.class)
 class SpaceTacticDefensePlanControllerTest {
 
@@ -214,3 +214,4 @@ class SpaceTacticDefensePlanControllerTest {
                 .andExpect(content().json("{\"data\":null,\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 }
+

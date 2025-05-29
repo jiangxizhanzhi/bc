@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.index;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 编号流量
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `IndexTraffic` 的 Java 类，用于表示编号流量相关的数据模型。以下是代码的简要分析： 
  * 1. **类的用途**： 
@@ -15,20 +29,6 @@
  * - 通过注解增强了代码的可读性和可维护性，特别是与 Swagger 集成后，便于生成清晰的 API 文档。 
  * 总结：这是一个简单但功能明确的数据模型类，适用于存储和管理编号流量相关的信息。 
 **/
-package com.cyberpeace.space.service.context.index;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 编号流量
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class IndexTraffic {
@@ -66,3 +66,4 @@ public class IndexTraffic {
     private Integer sum = 0;
 
 }
+

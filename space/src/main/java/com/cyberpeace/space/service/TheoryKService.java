@@ -1,3 +1,20 @@
+package com.cyberpeace.space.service;
+
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.oj.course.service.bo.AdminLessonBo;
+import com.cyberpeace.oj.course.service.bo.AdminLessonListBo;
+import com.cyberpeace.space.service.context.ListKReq;
+
+import java.util.List;
+
+/**
+ * 理论KSERVICE 服务
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个名为 `TheoryKService` 的接口，位于 `com.cyberpeace.space.service` 包中。以下是对其功能的简要分析： 
  * 1. **接口描述**： 
@@ -24,23 +41,6 @@
  * - 该接口适用于管理课时相关的操作，包括分页查询、批量删除和单条详情获取。 
  * 总结：`TheoryKService` 是一个面向理论 K 的服务接口，提供了课时管理的核心功能，包括分页查询、批量删除和详情获取，是课程管理系统的重要组成部分。 
 **/
-package com.cyberpeace.space.service;
-
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.oj.course.service.bo.AdminLessonBo;
-import com.cyberpeace.oj.course.service.bo.AdminLessonListBo;
-import com.cyberpeace.space.service.context.ListKReq;
-
-import java.util.List;
-
-/**
- * 理论KSERVICE 服务
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 public interface TheoryKService {
     /**
      * pagek
@@ -73,3 +73,4 @@ public interface TheoryKService {
      */
     AdminLessonBo getDetail(String resourceId);
 }
+

@@ -1,3 +1,14 @@
+package com.cyberpeace.cs.constant;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import lombok.Getter;
+
+/**
+ * 场景事件状态
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个枚举类 `SceneEventStatus`，用于表示场景事件的状态。以下是对代码的简要分析： 
  * 1. **枚举类定义**： 
@@ -12,17 +23,6 @@
  * - 该枚举类可以用来表示场景事件的不同状态，并且可以通过 `code` 或 `desc` 获取对应的状态信息。 
  * 总结：这是一个典型的枚举类实现，用于定义场景事件的状态，具有良好的封装性和可读性。 
 **/
-package com.cyberpeace.cs.constant;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import lombok.Getter;
-
-/**
- * 场景事件状态
- *
- * @author SN
- * @date 2024/11/08
- */
 public enum SceneEventStatus implements GenericEnum {
 
 	/**
@@ -67,3 +67,4 @@ public enum SceneEventStatus implements GenericEnum {
 		this.desc = desc;
 	}
 }
+

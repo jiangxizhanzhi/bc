@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 牌号分布 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `GradeDistributionBo` 的 Java 类，该类实现了 `Serializable` 接口。这个类的主要目的是存储和表示不同等级的分布情况。以下是详细的分析： 
  * ### 类定义 
@@ -19,24 +37,6 @@
  * ### 总结 
  * 这个类主要用于存储和表示某个课程或考试中不同成绩等级的数量分布。它通过五个字段来记录不同的成绩等级，并且每个字段都有默认值 0。这个类可以方便地与其他系统（如 Swagger 文档生成工具）集成，以便生成 API 文档。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 牌号分布 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -83,3 +83,4 @@ public class GradeDistributionBo implements Serializable {
 	private Integer pass = 0;
 
 }
+

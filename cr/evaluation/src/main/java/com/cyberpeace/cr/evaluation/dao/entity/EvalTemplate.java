@@ -1,3 +1,13 @@
+package com.cyberpeace.cr.evaluation.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 这段代码定义了一个名为 `EvalTemplate` 的 Java 类，该类位于包 `com.cyberpeace.cr.evaluation.dao.entity` 中。以下是对此代码的详细分析： 
  * 1. **包声明**： 
@@ -29,16 +39,6 @@
  * - 使用 Lombok 的 `@Getter` 和 `@Setter` 注解简化了属性的访问器生成。 
  * - 该类的实例将映射到数据库中的 `cr_eval_template` 表，并且可以通过这些属性进行操作。 
 **/
-package com.cyberpeace.cr.evaluation.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-
-import lombok.Getter;
-import lombok.Setter;
-
 @Getter
 @Setter
 @TableName("cr_eval_template")
@@ -70,3 +70,4 @@ public class EvalTemplate extends BaseTable {
 	}
 
 }
+

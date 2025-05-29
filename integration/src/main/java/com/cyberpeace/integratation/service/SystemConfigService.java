@@ -1,3 +1,11 @@
+package com.cyberpeace.integratation.service;
+
+/**
+ * 系统配置Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SystemConfigService` 的接口，位于 `com.cyberpeace.integratation.service` 包中。该接口由作者 SN 在 2024 年 11 月 8 日创建。 
  * ### 主要内容： 
@@ -13,14 +21,6 @@
  * - 接口的设计是面向服务的，意味着具体的实现可以由不同的类来完成，这些类可以提供实际的逻辑来从数据库、配置文件或其他数据源中读取配置信息。 
  * 这种设计模式通常用于微服务架构或者模块化的应用程序中，使得系统配置的获取具有良好的可扩展性和可维护性。 
 **/
-package com.cyberpeace.integratation.service;
-
-/**
- * 系统配置Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface SystemConfigService {
 
     /**
@@ -32,3 +32,4 @@ public interface SystemConfigService {
     String getSystemConfig(String name);
 
 }
+

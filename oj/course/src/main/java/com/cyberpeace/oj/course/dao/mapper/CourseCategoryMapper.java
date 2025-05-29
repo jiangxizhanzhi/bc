@@ -1,3 +1,25 @@
+package com.cyberpeace.oj.course.dao.mapper;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.oj.course.dao.entity.CourseCategory;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
+
+/**
+ * 课程类别Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseCategoryMapper` 的接口，它继承了 `BaseMapper<CourseCategory>` 接口。这个接口用于操作数据库中的 `CourseCategory` 实体类。以下是对该代码的简要分析： 
  * ### 主要组件 
@@ -22,28 +44,6 @@
  * - **设计**: 通过继承 `BaseMapper`，减少了重复的 CRUD 代码，同时增加了特定业务需求的方法。 
  * 整体来说，这个接口是为了方便管理课程分类而设计的，通过提供多种查询方式来满足不同的业务场景。 
 **/
-package com.cyberpeace.oj.course.dao.mapper;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.oj.course.dao.entity.CourseCategory;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
-import java.util.List;
-
-/**
- * 课程类别Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 @Repository
 public interface CourseCategoryMapper extends BaseMapper<CourseCategory> {
@@ -101,3 +101,4 @@ public interface CourseCategoryMapper extends BaseMapper<CourseCategory> {
      */
     CourseCategory selectByName(@Param("name") String name);
 }
+

@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+/**
+ * this is branch test for the test
+ * the test is for toy
+ * the toy is toy
+ * not the practice
+ * tos
+ */
 /**
  * 这段代码是一个用于测试 `EvalSceneServiceBranch` 类的方法的 JUnit 测试类。以下是对其主要特性的分析： 
  * ### 1. 类和包声明 
@@ -25,18 +37,6 @@
  * ### 总结 
  * 这段代码的主要问题是测试方法的重复和缺乏多样性。虽然这些测试可以验证 `getBranch` 方法在特定输入下是否返回 `true`，但它们并没有提供足够的信息来确认该方法的全面性和正确性。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-/**
- * this is branch test for the test
- * the test is for toy
- * the toy is toy
- * not the practice
- * tos
- */
 public class EvalSceneServiceBranchTest {
 
     /**
@@ -560,3 +560,4 @@ public class EvalSceneServiceBranchTest {
     }
 
 }
+

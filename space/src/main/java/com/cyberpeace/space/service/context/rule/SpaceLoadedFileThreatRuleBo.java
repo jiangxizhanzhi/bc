@@ -1,3 +1,22 @@
+package com.cyberpeace.space.service.context.rule;
+
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.dao.entity.SpaceLoadedFileThreatRule;
+import com.cyberpeace.space.model.SpaceBoBase;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间加载文件威胁统治Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析： 
  * #### 1. **类的功能** 
@@ -27,25 +46,6 @@
  * 该类是一个典型的业务对象（BO），专注于封装“空间加载文件威胁规则”的数据，并提供了一种便捷的方式来将 BO 转换为实体对象。它的设计符合面向对象原则，具有良好的可读性和可维护性。 
 **/
 
-package com.cyberpeace.space.service.context.rule;
-
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.dao.entity.SpaceLoadedFileThreatRule;
-import com.cyberpeace.space.model.SpaceBoBase;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间加载文件威胁统治Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBoBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceLoadedFileThreatRuleBo extends SpaceBoBase {

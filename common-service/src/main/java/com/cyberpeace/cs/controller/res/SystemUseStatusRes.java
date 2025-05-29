@@ -1,3 +1,18 @@
+package com.cyberpeace.cs.controller.res;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 系统用状态结果
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SystemUseStatusRes` 的 Java 类，用于表示系统使用状态的结果。以下是简要分析： 
  * 1. **类的功能**： 
@@ -15,21 +30,6 @@
  * - 该类通常用于 API 响应中，返回系统的实时使用状态数据。 
  * 总结：这是一个简单的数据传输对象（DTO），用于封装系统使用状态的数据，支持序列化并带有详细的注解说明。 
 **/
-package com.cyberpeace.cs.controller.res;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 系统用状态结果
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class SystemUseStatusRes implements Serializable {
@@ -59,3 +59,4 @@ public class SystemUseStatusRes implements Serializable {
 	private List<String> ramdata;
 
 }
+

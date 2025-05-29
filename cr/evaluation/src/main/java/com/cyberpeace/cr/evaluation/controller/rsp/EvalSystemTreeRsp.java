@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import java.util.List;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估系统树响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalSystemTreeRsp` 的 Java 类，用于表示评估系统的树形结构响应。以下是详细的分析： 
  * ### 类名及包名 
@@ -37,20 +51,6 @@
  * - **结构**: 类包含多个属性，其中 `children` 属性是一个递归引用，表示树形结构的层次关系。 
  * 这个类非常适合用于前端展示树形结构的数据，并且可以通过 Swagger 文档方便地进行 API 文档的生成和维护。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import java.util.List;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估系统树响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalSystemTreeRsp {

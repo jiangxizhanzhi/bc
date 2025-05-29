@@ -1,3 +1,13 @@
+package com.cyberpeace.cr.crbase.service;
+
+import java.util.List;
+
+/**
+ * Web插座推Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个接口 `WebSocketPushService`，用于处理通过 WebSocket 进行推送的通知功能。以下是代码的简要分析： 
  * 1. **类名与包名**： 
@@ -16,16 +26,6 @@
  * - 该接口的设计目的是提供一个统一的 API 来实现通过 WebSocket 推送通知的功能，支持批量用户、多种通知类型以及业务上下文的关联。 
  * 总结：这是一个典型的面向接口编程的例子，定义了 WebSocket 推送通知的核心功能，便于后续实现具体逻辑。 
 **/
-package com.cyberpeace.cr.crbase.service;
-
-import java.util.List;
-
-/**
- * Web插座推Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface WebSocketPushService {
      /**
       * 通知
@@ -37,3 +37,4 @@ public interface WebSocketPushService {
       */
      void notice(List<String> userList,Integer code,String businessId,String url);
 }
+

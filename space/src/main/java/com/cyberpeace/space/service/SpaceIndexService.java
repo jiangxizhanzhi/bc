@@ -1,3 +1,18 @@
+package com.cyberpeace.space.service;
+
+import com.cyberpeace.space.service.context.index.IndexFrame;
+import com.cyberpeace.space.service.context.index.IndexKnowledge;
+import com.cyberpeace.space.service.context.index.IndexTool;
+import com.cyberpeace.space.service.context.index.KnowledgeChart;
+
+/**
+ * 空间编号Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个名为 `SpaceIndexService` 的接口，位于 `com.cyberpeace.space.service` 包中。以下是对其功能和结构的简要分析： 
  * 1. **接口概述**： 
@@ -18,21 +33,6 @@
  * - 每个方法都有详细的 Javadoc 注释，说明了其功能、返回值类型以及可能的异常（尽管当前未列出具体异常）。 
  * 总结：这是一个面向空间编号服务的接口，定义了一系列与知识点、工具、框架及图表相关的操作方法，适用于需要这些数据的应用场景。 
 **/
-package com.cyberpeace.space.service;
-
-import com.cyberpeace.space.service.context.index.IndexFrame;
-import com.cyberpeace.space.service.context.index.IndexKnowledge;
-import com.cyberpeace.space.service.context.index.IndexTool;
-import com.cyberpeace.space.service.context.index.KnowledgeChart;
-
-/**
- * 空间编号Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 public interface SpaceIndexService {
     /**
      * 获取知识点存储 库统计学
@@ -80,3 +80,4 @@ public interface SpaceIndexService {
     KnowledgeChart getKChart();
 
 }
+

@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 课程统计 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseStatsBo` 的 Java 类，该类实现了 `Serializable` 接口。这个类主要用于表示课程统计信息，并且使用了 Lombok 库来简化 getter 和 setter 方法的生成。以下是代码的详细分析： 
  * ### 包声明和导入 
@@ -45,23 +62,6 @@
  * - 每个字段都有清晰的 Javadoc 注释，方便理解和维护。 
  * 这段代码是一个典型的业务对象（BO），适用于需要传输和存储课程统计信息的场景。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 课程统计 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class CourseStatsBo implements Serializable {
@@ -138,3 +138,4 @@ public class CourseStatsBo implements Serializable {
     @ApiModelProperty("创建用户姓名")
     private String createUsername;
 }
+

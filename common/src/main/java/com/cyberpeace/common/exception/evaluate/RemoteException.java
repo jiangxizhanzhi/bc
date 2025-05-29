@@ -1,3 +1,14 @@
+package com.cyberpeace.common.exception.evaluate;
+
+/**
+ * 远程异常
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see RuntimeException
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `RemoteException` 的自定义异常类，继承自 Java 标准库中的 `RuntimeException` 类。以下是对其的简要分析： 
  * ### 主要特点： 
@@ -13,16 +24,6 @@
  * ### 总结： 
  * 这是一个简单的自定义运行时异常类，用于封装远程调用失败的场景，简化了异常处理逻辑，同时保持代码的可读性与扩展性。 
 **/
-package com.cyberpeace.common.exception.evaluate;
-
-/**
- * 远程异常
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see RuntimeException
- * @since 1.0.0
- */
 public class RemoteException extends RuntimeException{
 }
+

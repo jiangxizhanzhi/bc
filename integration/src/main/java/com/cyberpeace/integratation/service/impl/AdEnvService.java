@@ -1,3 +1,19 @@
+package com.cyberpeace.integratation.service.impl;
+
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.util.SystemPropUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+
+/**
+ * 竞赛环境Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `AdEnvService` 的 Spring 服务类，用于处理与竞赛环境相关的配置。以下是代码的主要部分及其功能分析： 
  * ### 类和字段定义 
@@ -25,22 +41,6 @@
  * - 修改 `getAdHost()` 方法，使其正确返回 `AD_HOST`。 
  * - 可以考虑添加更多的错误处理逻辑，例如在读取系统属性失败时提供默认值或抛出异常。 
 **/
-package com.cyberpeace.integratation.service.impl;
-
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.util.SystemPropUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-
-/**
- * 竞赛环境Service
- *
- * @author SN
- * @date 2024/11/08
- */
 @Slf4j
 @Service
 public class AdEnvService {
@@ -84,3 +84,4 @@ public class AdEnvService {
 		log.info("ad host=[{}], port=[{}]", AD_HOST, AD_PORT);
 	}
 }
+

@@ -1,3 +1,46 @@
+package com.cyberpeace.cr.tool.service.impl;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.scene.DeviceInfo;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.tool.controller.res.ToolRsp;
+import com.cyberpeace.cr.tool.controller.res.ToolTypeCount;
+import com.cyberpeace.cr.tool.dao.context.MonthCount;
+import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
+import com.cyberpeace.cr.tool.dao.context.ToolStatistics;
+import com.cyberpeace.cr.tool.dao.entity.Tool;
+import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
+import com.cyberpeace.cr.tool.dao.entity.ToolFile;
+import com.cyberpeace.cr.tool.dao.mapper.ToolFileMapper;
+import com.cyberpeace.cr.tool.dao.mapper.ToolMapper;
+import com.cyberpeace.cr.tool.service.ToolCategoryService;
+import com.cyberpeace.cr.tool.service.ToolService;
+import com.cyberpeace.cr.tool.service.context.TacticTool;
+import com.cyberpeace.integratation.service.RemoteTerminalService;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * 工具Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码是一个名为 `ToolServiceImpl` 的服务实现类，用于处理与工具（`Tool`）相关的业务逻辑。以下是该类的主要功能和关键点的简要分析： 
  * ### 类概述 
@@ -57,49 +100,6 @@
  * ### 总结 
  * `ToolServiceImpl` 类主要负责处理工具的增删改查以及相关业务逻辑，如验证工具名称、统计工具信息等。它利用了 MyBatis-Plus 和 Spring 的事务管理来保证数据的一致性和完整性。 
 **/
-package com.cyberpeace.cr.tool.service.impl;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.scene.DeviceInfo;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.tool.controller.res.ToolRsp;
-import com.cyberpeace.cr.tool.controller.res.ToolTypeCount;
-import com.cyberpeace.cr.tool.dao.context.MonthCount;
-import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
-import com.cyberpeace.cr.tool.dao.context.ToolStatistics;
-import com.cyberpeace.cr.tool.dao.entity.Tool;
-import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
-import com.cyberpeace.cr.tool.dao.entity.ToolFile;
-import com.cyberpeace.cr.tool.dao.mapper.ToolFileMapper;
-import com.cyberpeace.cr.tool.dao.mapper.ToolMapper;
-import com.cyberpeace.cr.tool.service.ToolCategoryService;
-import com.cyberpeace.cr.tool.service.ToolService;
-import com.cyberpeace.cr.tool.service.context.TacticTool;
-import com.cyberpeace.integratation.service.RemoteTerminalService;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-/**
- * 工具Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Slf4j
 @Service
 public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements ToolService {
@@ -414,3 +414,4 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 		}
 	}
 }
+

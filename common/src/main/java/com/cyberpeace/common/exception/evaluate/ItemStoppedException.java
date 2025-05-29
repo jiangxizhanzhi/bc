@@ -1,3 +1,14 @@
+package com.cyberpeace.common.exception.evaluate;
+
+/**
+ * 项停止异常
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see RuntimeException
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ItemStoppedException` 的自定义异常类，继承自 Java 的 `RuntimeException` 类。以下是简要分析： 
  * 1. **类的功能**： 
@@ -12,16 +23,6 @@
  * 这个类可以用于在程序中抛出特定的运行时异常，例如当某个任务、流程或操作被人为停止时，可以通过抛出此异常来通知调用者。 
  * 总结：这是一个简单的自定义运行时异常类，主要用于标记“项停止”相关的错误场景。 
 **/
-package com.cyberpeace.common.exception.evaluate;
-
-/**
- * 项停止异常
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see RuntimeException
- * @since 1.0.0
- */
 public class ItemStoppedException extends RuntimeException{
 }
+

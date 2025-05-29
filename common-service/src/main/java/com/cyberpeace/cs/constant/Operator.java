@@ -1,3 +1,15 @@
+package com.cyberpeace.cs.constant;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+
+import lombok.Getter;
+
+/**
+ * 操作对象
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个枚举类 `Operator`，实现了接口 `GenericEnum`。以下是简要分析： 
  * 1. **功能**： 
@@ -13,18 +25,6 @@
  * - 定义了一个枚举常量 `BC`，表示“公元前”，其值为 `(1, "bc")`。 
  * 总结：这是一个简单的枚举类，用于表示特定的操作对象，并提供了代码和描述的访问方法。 
 **/
-package com.cyberpeace.cs.constant;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-
-import lombok.Getter;
-
-/**
- * 操作对象
- *
- * @author SN
- * @date 2024/11/08
- */
 public enum Operator implements GenericEnum {
 
 	/**
@@ -50,3 +50,4 @@ public enum Operator implements GenericEnum {
 	}
 
 }
+

@@ -1,3 +1,13 @@
+package com.cyberpeace.space.model.req;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.space.model.SpaceBaseTable;
+
+import io.swagger.annotations.ApiModel;
+
 /**
  * 这段代码定义了一个名为 `SpacePageReqBase` 的类，继承自 `PageReqBase`，并主要用于生成基于条件查询的 `LambdaQueryWrapper` 对象。以下是代码的主要分析和总结： 
  * ### 主要功能 
@@ -19,16 +29,6 @@
  * - 这是一个典型的业务层请求对象，结合了分页、条件查询和动态 SQL 构建的功能。 
  * - 通过继承和方法实现，简化了查询逻辑的复用性，适合在复杂的分页查询场景中使用。 
 **/
-package com.cyberpeace.space.model.req;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.space.model.SpaceBaseTable;
-
-import io.swagger.annotations.ApiModel;
-
 @ApiModel
 public class SpacePageReqBase extends PageReqBase {
 
@@ -42,3 +42,4 @@ public class SpacePageReqBase extends PageReqBase {
 		return wrapper;
 	}
 }
+

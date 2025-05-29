@@ -1,3 +1,32 @@
+package com.cyberpeace.common.util;
+
+import com.alibaba.fastjson.*;
+import com.alibaba.fastjson.parser.Feature;
+import com.alibaba.fastjson.serializer.SerializeConfig;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Iterator;
+import java.util.List;
+import java.util.TreeMap;
+
+/**
+ * json序列化和反序列化工具类
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码是一个用于 JSON 序列化和反序列化的工具类 `JsonUtil`，以下是对其功能和结构的简要分析： 
  * ### 功能概述： 
@@ -38,35 +67,6 @@
  * ### 总结： 
  * 该工具类提供了全面的 JSON 操作功能，适用于多种场景，包括序列化、反序列化、字段重命名、比较和格式化输出。代码结构清晰，注释详尽，适合作为通用的 JSON 工具类使用。 
 **/
-package com.cyberpeace.common.util;
-
-import com.alibaba.fastjson.*;
-import com.alibaba.fastjson.parser.Feature;
-import com.alibaba.fastjson.serializer.SerializeConfig;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Iterator;
-import java.util.List;
-import java.util.TreeMap;
-
-/**
- * json序列化和反序列化工具类
- *
- * @author SN
- * @date 2024/11/08
- */
 @Slf4j
 public class JsonUtil {
 
@@ -312,3 +312,4 @@ public class JsonUtil {
 	}
 
 }
+

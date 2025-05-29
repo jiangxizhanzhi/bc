@@ -1,3 +1,19 @@
+package com.cyberpeace.space.service.context.tactic;
+
+import com.cyberpeace.cr.tool.service.context.TacticTool;
+import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 防御详情
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 /**
  * 这段代码定义了一个名为 `DefenseDetail` 的 Java 类，位于包 `com.cyberpeace.space.service.context.tactic` 下。以下是对其功能和结构的简要分析： 
  * ### 主要功能 
@@ -16,22 +32,6 @@
  * ### 总结 
  * 此代码是一个典型的 DTO 类，用于封装防御相关的信息，并通过注解简化了代码开发和文档生成过程。 
 **/
-package com.cyberpeace.space.service.context.tactic;
-
-import com.cyberpeace.cr.tool.service.context.TacticTool;
-import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 防御详情
- *
- * @author SN
- * @date 2024/11/07
- */
 @Getter
 @Setter
 public class DefenseDetail {
@@ -136,3 +136,4 @@ public class DefenseDetail {
 	@ApiModelProperty(value = "策略")
 	private List<SpaceActionStrategy> strategy;
 }
+

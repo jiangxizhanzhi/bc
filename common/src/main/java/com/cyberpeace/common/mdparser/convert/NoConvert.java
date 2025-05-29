@@ -1,3 +1,17 @@
+package com.cyberpeace.common.mdparser.convert;
+
+import com.cyberpeace.common.constant.CommonConstant;
+
+/**
+ * 不转换
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Enum
+ * @see MdConvertEnum
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 功能描述 
@@ -17,20 +31,6 @@
  * #### 总结 
  * 这是一个简单的枚举类，用于表示“不转换”的操作，通过实现接口的方法提供了统一的行为规范，适合在需要灵活扩展转换逻辑的系统中使用。 
 **/
-package com.cyberpeace.common.mdparser.convert;
-
-import com.cyberpeace.common.constant.CommonConstant;
-
-/**
- * 不转换
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Enum
- * @see MdConvertEnum
- * @since 1.0.0
- */
 public enum NoConvert implements MdConvertEnum<String, String> {
     /**
      * 不转换
@@ -60,3 +60,4 @@ public enum NoConvert implements MdConvertEnum<String, String> {
     }
 
 }
+

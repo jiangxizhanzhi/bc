@@ -1,3 +1,16 @@
+package com.cyberpeace.common.mdparser.convert;
+
+
+/**
+ * 问题类型转换
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Enum
+ * @see MdConvertEnum
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个枚举类 `QuestionTypeConvert`，用于表示不同类型的问题，并提供了将问题类型从一种形式转换为另一种形式的功能。以下是代码的主要分析： 
  * 1. **功能概述**： 
@@ -16,19 +29,6 @@
  * - 该枚举类可以用于在不同上下文中统一管理问题类型的转换，例如在前端显示问题类型描述或在后端处理问题类型时使用。 
  * 总结来说，这段代码通过枚举类的方式封装了问题类型的定义及其转换逻辑，使得代码更加清晰和易于维护。 
 **/
-package com.cyberpeace.common.mdparser.convert;
-
-
-/**
- * 问题类型转换
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Enum
- * @see MdConvertEnum
- * @since 1.0.0
- */
 public enum QuestionTypeConvert implements MdConvertEnum<Integer, String> {
 
 	/**
@@ -126,3 +126,4 @@ public enum QuestionTypeConvert implements MdConvertEnum<Integer, String> {
 		return desc;
 	}
 }
+

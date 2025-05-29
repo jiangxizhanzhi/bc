@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import com.cyberpeace.common.model.PageReqBase;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotNull;
+
+/**
+ * 课程类别列表请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseCategoryListReq` 的 Java 类，用于处理课程类别列表的请求。以下是对该代码的简要分析： 
  * ### 类概述 
@@ -23,25 +42,6 @@
  * - 该类使用了 Lombok 和 Swagger 注解，简化了代码并增强了可读性和可维护性。 
  * 这个类的设计简洁明了，易于理解，并且符合现代 Java 开发的最佳实践。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import com.cyberpeace.common.model.PageReqBase;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotNull;
-
-/**
- * 课程类别列表请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PageReqBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -57,3 +57,4 @@ public class CourseCategoryListReq extends PageReqBase {
 	private Boolean children;
 
 }
+

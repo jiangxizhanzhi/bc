@@ -1,3 +1,17 @@
+package com.cyberpeace.common.model.ws;
+
+import java.io.Serializable;
+import java.util.Map;
+
+import com.cyberpeace.common.util.LocalStringUtil;
+import com.cyberpeace.common.util.ObjUtil;
+import com.google.common.collect.Maps;
+
+/**
+ * websocket标记的基类。
+ *
+ * @author yinqingrong@date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `WsMessageIdentifier` 的 Java 类，用于生成 WebSocket 消息标识符。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -21,20 +35,6 @@
  * - 使用 `StringBuilder` 提高字符串拼接效率。 
  * 总结：该类主要用于生成基于 WebSocket 消息的唯一业务标识符，适用于需要对多个字段进行组合并排序的场景。 
 **/
-package com.cyberpeace.common.model.ws;
-
-import java.io.Serializable;
-import java.util.Map;
-
-import com.cyberpeace.common.util.LocalStringUtil;
-import com.cyberpeace.common.util.ObjUtil;
-import com.google.common.collect.Maps;
-
-/**
- * websocket标记的基类。
- *
- * @author yinqingrong@date 2024/11/08
- */
 public class WsMessageIdentifier implements Serializable {
 
 	/**
@@ -88,3 +88,4 @@ public class WsMessageIdentifier implements Serializable {
 		this.path = path;
 	}
 }
+

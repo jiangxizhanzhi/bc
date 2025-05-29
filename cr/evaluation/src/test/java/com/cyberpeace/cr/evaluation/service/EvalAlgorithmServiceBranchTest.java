@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+/**
+ * this is branch test for the test
+ * the test is for toy
+ * the toy is toy
+ * not the practice
+ * tos
+ */
 /**
  * 这段代码是一个JUnit测试类，用于测试`EvalAlgorithmServiceBranch`类中的`getBranch`方法。以下是对这段代码的简要分析： 
  * ### 1. 类和包声明 
@@ -25,18 +37,6 @@
  * ### 总结 
  * 这段代码主要用于测试`EvalAlgorithmServiceBranch`类的`getBranch`方法。虽然每个测试方法的逻辑相同，但可以通过重构代码来提高可读性和可维护性。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-/**
- * this is branch test for the test
- * the test is for toy
- * the toy is toy
- * not the practice
- * tos
- */
 public class
 
 
@@ -903,3 +903,4 @@ EvalAlgorithmServiceBranchTest {
     }
 
 }
+

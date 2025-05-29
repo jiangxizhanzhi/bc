@@ -1,3 +1,23 @@
+package com.cyberpeace.cs.controller;
+
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.cs.controller.res.SystemUseStatusRes;
+import com.cyberpeace.cs.service.SystemUseStatusService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * 系统信息Controller
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码是一个基于Spring Boot框架的控制器类，用于处理与系统信息相关的请求。以下是代码的简要分析： 
  * 1. **包结构与依赖**： 
@@ -19,26 +39,6 @@
  * - 使用Lombok的`@Slf4j`注解简化了日志记录的实现。 
  * 总结来说，这个控制器主要负责提供系统的运行状态信息，并且通过Spring Security（Shiro）进行了权限控制，同时使用Swagger进行API文档管理。 
 **/
-package com.cyberpeace.cs.controller;
-
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.cs.controller.res.SystemUseStatusRes;
-import com.cyberpeace.cs.service.SystemUseStatusService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-/**
- * 系统信息Controller
- *
- * @author SN
- * @date 2024/11/08
- */
 @Api(tags = "系统信息服务接口")
 @RestController
 @RequestMapping("/system_info")
@@ -65,3 +65,4 @@ public class SystemInfoController {
 	}
 
 }
+

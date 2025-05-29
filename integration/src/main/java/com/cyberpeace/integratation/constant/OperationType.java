@@ -1,3 +1,15 @@
+package com.cyberpeace.integratation.constant;
+
+import com.cyberpeace.constant.BaseI18n;
+
+import lombok.Getter;
+
+/**
+ * 实操类型
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `OperationType` 的枚举类，该类实现了 `BaseI18n` 接口。以下是代码的主要组成部分和功能的简要分析： 
  * ### 类定义 
@@ -41,18 +53,6 @@
  * ### 总结 
  * 这个枚举类 `OperationType` 定义了一系列操作类型，并为每种类型提供了代码、中文描述和英文描述。这种设计有助于在应用程序中使用统一的操作类型标识，并支持国际化（I18n）。 
 **/
-package com.cyberpeace.integratation.constant;
-
-import com.cyberpeace.constant.BaseI18n;
-
-import lombok.Getter;
-
-/**
- * 实操类型
- *
- * @author SN
- * @date 2024/11/08
- */
 public enum OperationType implements BaseI18n {
 	/**
 	 * 操作类型
@@ -140,3 +140,4 @@ public enum OperationType implements BaseI18n {
 		this.english = english;
 	}
 }
+

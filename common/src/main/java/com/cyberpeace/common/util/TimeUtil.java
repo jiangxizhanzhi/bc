@@ -1,3 +1,14 @@
+package com.cyberpeace.common.util;
+
+import com.cyberpeace.common.model.CommonContext;
+import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * ### 代码分析 
  * #### 1. **功能概述** 
@@ -38,17 +49,6 @@
  * #### 总结 
  * 该代码是一个功能全面的时间处理工具类，适用于需要处理多种时间格式、计算和格式化的场景。通过引入国际化支持和灵活的格式化选项，代码具备较强的实用性和可维护性。 
 **/
-package com.cyberpeace.common.util;
-
-import com.cyberpeace.common.model.CommonContext;
-import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 public class TimeUtil {
 
 	private static final String DAY_ZH = "天";
@@ -696,3 +696,4 @@ class TimeUnitI18n {
 		return new TimeUnitI18n("天 ", ":", ":", ":");
 	}
 }
+

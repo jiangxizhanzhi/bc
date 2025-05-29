@@ -1,3 +1,15 @@
+package com.cyberpeace.common.model.ws;
+
+import lombok.*;
+
+import java.util.List;
+
+/**
+ * 聊天组
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ChatGroup` 的 Java 类，用于表示聊天组的信息。以下是简要分析： 
  * 1. **类的功能**： 
@@ -15,18 +27,6 @@
  * - 此类可以用于在聊天系统中管理群组信息，支持通过构建器模式轻松创建实例，并且提供了基本的 getter 和 setter 方法以访问或修改属性值。 
  * 总结来说，这是一个简单的数据传输对象（DTO），旨在封装聊天组的基本信息并提供便利的操作方式。 
 **/
-package com.cyberpeace.common.model.ws;
-
-import lombok.*;
-
-import java.util.List;
-
-/**
- * 聊天组
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @Builder
@@ -51,3 +51,4 @@ public class ChatGroup {
 	 */
 	private String roleName;
 }
+

@@ -1,3 +1,38 @@
+package com.cyberpeace.cs.service.impl;
+
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
+import com.cyberpeace.common.threadlocal.ThreadLocalContext;
+import com.cyberpeace.integratation.service.RemoteSceneService;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.model.scene.MqContext;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.SpringContextUtil;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
+import com.cyberpeace.cs.service.context.WsSceneReportBO;
+import com.google.common.collect.Maps;
+import com.rabbitmq.client.Channel;
+
+/**
+ * 消息侦听器
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * ### 代码分析 
  * #### 类概述 
@@ -37,41 +72,6 @@
  * - 增加单元测试和集成测试，确保各分支逻辑的正确性。 
  * 总体而言，这段代码设计合理，结构清晰，适合用于高并发、高性能的消息处理场景。 
 **/
-package com.cyberpeace.cs.service.impl;
-
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-
-import com.cyberpeace.common.threadlocal.ThreadLocalContext;
-import com.cyberpeace.integratation.service.RemoteSceneService;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONException;
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.model.scene.MqContext;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.SpringContextUtil;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
-import com.cyberpeace.cs.service.context.WsSceneReportBO;
-import com.google.common.collect.Maps;
-import com.rabbitmq.client.Channel;
-
-/**
- * 消息侦听器
- *
- * @author SN
- * @date 2024/11/08
- */
 @Service
 public class MessageListener implements ChannelAwareMessageListener {
 
@@ -333,3 +333,4 @@ public class MessageListener implements ChannelAwareMessageListener {
 	}
 
 }
+

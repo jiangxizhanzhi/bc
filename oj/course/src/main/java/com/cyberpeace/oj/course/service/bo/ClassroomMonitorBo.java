@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 教室监视器 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomMonitorBo` 的 Java 类，用于表示教室监视器的业务对象（BO, Business Object）。以下是对其主要特性的简要分析： 
  * 1. **包声明**：代码位于 `com.cyberpeace.oj.course.service.bo` 包中，这表明该类是课程服务的一部分。 
@@ -25,25 +44,6 @@
  * - 每个属性也有对应的 Javadoc 注释，描述了每个属性的作用。 
  * 总体来说，`ClassroomMonitorBo` 类是一个数据传输对象（DTO），用于在系统内部或者与其他系统之间传递关于教室监视器的信息。通过使用 Swagger 和 Lombok 注解，提高了代码的可读性和简洁性。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import java.io.Serializable;
-import java.util.Date;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 教室监视器 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -121,3 +121,4 @@ public class ClassroomMonitorBo implements Serializable {
 	@ApiModelProperty("远程协助地址")
 	private String helpUrl;
 }
+

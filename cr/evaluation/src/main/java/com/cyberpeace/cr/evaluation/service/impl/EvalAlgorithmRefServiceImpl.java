@@ -1,3 +1,24 @@
+package com.cyberpeace.cr.evaluation.service.impl;
+
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithmRef;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmRefMapper;
+import com.cyberpeace.cr.evaluation.service.EvalAlgorithmRefService;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
+import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 评估算法裁判Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalAlgorithmRefServiceImpl` 的类，该类实现了 `EvalAlgorithmRefService` 接口，并继承了 `ServiceImpl` 类。这个类主要用于处理与 `EvalAlgorithmRef` 实体相关的业务逻辑。以下是详细的分析： 
  * ### 包和导入 
@@ -32,27 +53,6 @@
  * - 使用了 Lombok 的 `@Slf4j` 注解来简化日志记录的代码。 
  * - 利用了 MyBatis-Plus 的 `ServiceImpl` 类来简化数据访问层的操作。 
 **/
-package com.cyberpeace.cr.evaluation.service.impl;
-
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithmRef;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmRefMapper;
-import com.cyberpeace.cr.evaluation.service.EvalAlgorithmRefService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
-import org.springframework.stereotype.Service;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 评估算法裁判Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Slf4j
 @Service
 public class EvalAlgorithmRefServiceImpl extends ServiceImpl<EvalAlgorithmRefMapper, EvalAlgorithmRef> implements EvalAlgorithmRefService {
@@ -102,3 +102,4 @@ public class EvalAlgorithmRefServiceImpl extends ServiceImpl<EvalAlgorithmRefMap
         return args;
     }
 }
+

@@ -1,3 +1,11 @@
+package com.cyberpeace.cr.crbase.constant;
+
+/**
+ * 靶场常用常量
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `CrCommonConstants` 的 Java 接口，用于存储靶场系统中的常用常量。以下是代码的主要分析和总结： 
  * ### 主要功能 
@@ -27,14 +35,6 @@
  * ### 总结 
  * 该代码是一个典型的常量管理类，结构清晰，功能明确，适合用于靶场系统的全局常量配置。通过引入动态配置机制，提高了灵活性和可维护性。建议在实际开发中继续优化命名和分组逻辑，确保代码的可读性和扩展性。 
 **/
-package com.cyberpeace.cr.crbase.constant;
-
-/**
- * 靶场常用常量
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface CrCommonConstants {
 
 	/**
@@ -233,3 +233,4 @@ public interface CrCommonConstants {
 	String WHITE_GROUP_JAR_AVATAR = "redvsblue/white_group_avatar_v1.png";
 
 }
+

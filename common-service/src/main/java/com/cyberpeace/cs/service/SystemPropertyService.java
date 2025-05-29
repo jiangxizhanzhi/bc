@@ -1,3 +1,14 @@
+package com.cyberpeace.cs.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cs.dao.entity.SystemProperty;
+
+/**
+ * 系统配置Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SystemPropertyService` 的接口，它是基于 MyBatis-Plus 提供的通用 Service 接口 `IService` 扩展而来。以下是代码的简要分析： 
  * 1. **继承关系**： 
@@ -10,17 +21,6 @@
  * - 方法 `getExportBuiltin()` 也有详细的注释，描述了方法的功能和返回值类型。 
  * 总结：这是一个扩展了 MyBatis-Plus 功能的服务接口，主要用于操作 `SystemProperty` 对象，并额外提供了一个自定义方法来获取导出内置的状态信息。 
 **/
-package com.cyberpeace.cs.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cs.dao.entity.SystemProperty;
-
-/**
- * 系统配置Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface SystemPropertyService extends IService<SystemProperty> {
 
 	/**
@@ -30,3 +30,4 @@ public interface SystemPropertyService extends IService<SystemProperty> {
 	 */
 	boolean getExportBuiltin();
 }
+

@@ -1,3 +1,20 @@
+package com.cyberpeace.integratation.model;
+
+import com.cyberpeace.common.constant.CommonConstant;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+
+/**
+ * 用户分页上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `UserPageContext` 的 Java 类，该类用于表示用户分页上下文。以下是对此代码的简要分析： 
  * ### 类概述 
@@ -23,23 +40,6 @@
  * - 默认值逻辑通过 `getPerPage()` 和 `getPage()` 方法实现，确保在这些值为 `null` 时有合理的默认值。 
  * 这个类的设计是简洁且功能明确的，适合用于分页查询场景。 
 **/
-package com.cyberpeace.integratation.model;
-
-import com.cyberpeace.common.constant.CommonConstant;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
-
-/**
- * 用户分页上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @Builder
@@ -75,3 +75,4 @@ public class UserPageContext implements Serializable {
 		return null == page ? CommonConstant.ONE : page;
 	}
 }
+

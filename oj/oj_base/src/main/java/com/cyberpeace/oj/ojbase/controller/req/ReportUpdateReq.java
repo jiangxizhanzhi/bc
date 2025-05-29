@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+
+/**
+ * 报告更新请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see ReportAddReq
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ReportUpdateReq` 的类，该类继承自 `ReportAddReq`。以下是对其主要特性的简要分析： 
  * 1. **包声明**： 
@@ -23,23 +40,6 @@
  * - 类的设计考虑到了 API 文档生成和数据验证的需求。 
  * - 通过继承 `ReportAddReq` 类，它可能还包含了其他与报告相关的通用属性或方法。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-
-/**
- * 报告更新请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see ReportAddReq
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class ReportUpdateReq extends ReportAddReq{
@@ -54,3 +54,4 @@ public class ReportUpdateReq extends ReportAddReq{
 	private String resourceId;
 
 }
+

@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.compress.utils.Lists;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
+/**
+ * 评估算法请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalAlgorithmReq` 的 Java 类，用于表示评估算法请求体。以下是对该类的简要分析： 
  * ### 包与导入 
@@ -32,23 +49,6 @@
  * - 使用 Swagger 的 `@ApiModelProperty` 注解来提供字段的文档描述。 
  * - 类中的字段涵盖了评估算法的各种属性，如名称、类型、代码等，并且通过注解确保了数据的有效性和文档的可读性。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.compress.utils.Lists;
-
-import javax.validation.constraints.NotNull;
-import java.util.List;
-
-/**
- * 评估算法请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalAlgorithmReq {
@@ -124,3 +124,4 @@ public class EvalAlgorithmReq {
 	private List<AlgorithmParamContext> params = Lists.newArrayList();
 
 }
+

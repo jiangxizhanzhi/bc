@@ -1,3 +1,10 @@
+package com.cyberpeace.oj.ojbase.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.ojbase.dao.entity.Indicator;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+
 /**
  * 这段代码定义了一个名为 `IndicatorMapper` 的接口，该接口继承自 `BaseMapper<Indicator>`。以下是对这段代码的详细分析： 
  * 1. **包声明**： 
@@ -31,14 +38,8 @@
  * - 通过继承 `BaseMapper<Indicator>`，它自动获得了基本的 CRUD 操作方法。 
  * - 使用 `@Mapper` 和 `@Repository` 注解，使得该接口可以被 Spring 容器管理和 MyBatis 自动扫描到。 
 **/
-package com.cyberpeace.oj.ojbase.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.ojbase.dao.entity.Indicator;
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
-
 @Mapper
 @Repository
 public interface IndicatorMapper extends BaseMapper<Indicator> {
 }
+

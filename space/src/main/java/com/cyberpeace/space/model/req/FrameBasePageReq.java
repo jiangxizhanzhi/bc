@@ -1,3 +1,12 @@
+package com.cyberpeace.space.model.req;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.common.model.PageReqBase;
+import io.swagger.annotations.ApiModel;
+import org.apache.commons.compress.utils.Lists;
+
+import java.util.List;
+
 /**
  * 这段代码定义了一个名为 `FrameBasePageReq` 的 Java 类，位于包 `com.cyberpeace.space.model.req` 中。以下是对其功能和结构的简要分析： 
  * 1. **类继承与注解**： 
@@ -13,15 +22,6 @@
  * - 这是一个请求模型类，主要用于封装分页请求数据，并可能结合 MyBatis-Plus 构建动态查询条件。 
  * 总结：这是一个基础的分页请求模型类，需补充具体业务逻辑以满足实际需求。 
 **/
-package com.cyberpeace.space.model.req;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.cyberpeace.common.model.PageReqBase;
-import io.swagger.annotations.ApiModel;
-import org.apache.commons.compress.utils.Lists;
-
-import java.util.List;
-
 @ApiModel
 public class FrameBasePageReq extends PageReqBase {
 
@@ -37,3 +37,4 @@ public class FrameBasePageReq extends PageReqBase {
 		return Lists.newArrayList();
 	}
 }
+

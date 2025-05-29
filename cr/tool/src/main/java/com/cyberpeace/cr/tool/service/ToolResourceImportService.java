@@ -1,3 +1,11 @@
+package com.cyberpeace.cr.tool.service;
+
+/**
+ * 工具资源导入Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolResourceImportService` 的接口，该接口用于处理工具资源的导入操作。以下是对此代码的简要分析： 
  * ### 接口概述 
@@ -27,14 +35,6 @@
  * - 两个方法的实现细节没有在接口中定义，需要在具体的实现类中完成。 
  * - 接口中的注释信息有助于理解每个方法的功能和参数用途。 
 **/
-package com.cyberpeace.cr.tool.service;
-
-/**
- * 工具资源导入Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface ToolResourceImportService {
 
 	/**
@@ -56,3 +56,4 @@ public interface ToolResourceImportService {
 	void importResource2(String excelPath, String toolsPath, String publicPhotoPath);
 
 }
+

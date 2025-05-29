@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.crbase.service;
+
+import java.util.List;
+
+import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
+
+/**
+ * 靶场常数Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `CrConstantsService` 的接口，用于处理靶场常量相关的业务逻辑。以下是对其的简要分析： 
  * 1. **接口定义**： 
@@ -14,18 +26,6 @@
  * 这个接口主要用于管理靶场中的常量配置，包括查询、验证和翻译等操作，适用于需要动态加载或校验常量的场景。 
  * 总结：这是一个典型的业务服务接口，通过定义清晰的方法签名来提供常量相关的功能支持。 
 **/
-package com.cyberpeace.cr.crbase.service;
-
-import java.util.List;
-
-import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
-
-/**
- * 靶场常数Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface CrConstantsService {
 
 	/**
@@ -55,3 +55,4 @@ public interface CrConstantsService {
 	String geCnNameByTypeAndCode(Integer type, Integer code);
 
 }
+

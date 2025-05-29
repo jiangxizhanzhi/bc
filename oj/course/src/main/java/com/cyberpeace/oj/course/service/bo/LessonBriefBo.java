@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 课程简介 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonBriefBo` 的 Java 类，该类用于表示课程简介。以下是对其主要特性和功能的简要分析： 
  * ### 类定义 
@@ -17,24 +35,6 @@
  * ### 总结 
  * `LessonBriefBo` 类主要用于封装课程的基本信息，如课程编号、课程名称、课时编号及课时名称等。通过使用 Lombok 的注解，简化了代码量并提高了可读性。此外，通过 Swagger 注解，便于生成文档，提高 API 的可维护性和易用性。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 课程简介 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -73,3 +73,4 @@ public class LessonBriefBo implements Serializable {
 	private String lessonName;
 
 }
+

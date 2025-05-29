@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.dao.entity;
+
+import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.BaseTable;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Getter;
+
 /**
  * 这段代码定义了一个名为 `EvalTaskStep` 的 Java 类，该类继承自 `BaseTable`。这个类代表一个评估任务步骤，并且使用了 MyBatis-Plus 框架来处理数据库操作。以下是对代码的简要分析： 
  * ### 包和导入 
@@ -26,20 +40,6 @@
  * - 使用 Lombok 来简化代码，减少样板代码。 
  * 这个类主要用于数据持久化和业务逻辑处理，是一个典型的实体类。 
 **/
-package com.cyberpeace.cr.evaluation.dao.entity;
-
-import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.BaseTable;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Getter;
-
 @Getter
 @Setter
 @TableName("cr_eval_task_step")
@@ -80,3 +80,4 @@ public class EvalTaskStep extends BaseTable {
 	}
 
 }
+

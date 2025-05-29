@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.evaluation.service.context;
+
+import java.io.Serializable;
+
+import com.cyberpeace.common.model.PageReqBase;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * EVAL 模板列表查询
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTemplateListQuery` 的 Java 类，该类用于表示评估模板列表查询的相关信息。以下是对这段代码的简要分析： 
  * ### 类定义 
@@ -17,23 +34,6 @@
  * - 删除手动定义的 `setCategory_code` 方法，因为 Lombok 已经自动生成了对应的 `setCategoryCode` 方法。 
  * - 确保 `PageReqBase` 类的功能满足分页查询的需求。 
 **/
-package com.cyberpeace.cr.evaluation.service.context;
-
-import java.io.Serializable;
-
-import com.cyberpeace.common.model.PageReqBase;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * EVAL 模板列表查询
- *
- * @author SN
- * @date 2024/11/08
- */
 @ApiModel
 public class EvalTemplateListQuery extends PageReqBase implements Serializable {
 
@@ -50,3 +50,4 @@ public class EvalTemplateListQuery extends PageReqBase implements Serializable {
 	}
 
 }
+

@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.crbase.constant;
+
+/**
+ * 靶场自定义错误码。
+ * 1、从101001开始递增编号；
+ * 2、截止编号地址101999；
+ * <p>
+ * 编号定义完成后，需要在wiki填写编号对应的错误原因。
+ * wiki地址：http://10.10.10.11/pages/viewpage.action?pageId=27367377
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码是一个Java接口 `CrBusinessErrorCode`，用于定义一系列业务错误码。以下是对其的简要分析： 
  * 1. **目的**： 
@@ -14,19 +27,6 @@
  * - 文档化要求明确，要求在错误码定义完成后，需在指定的Wiki页面上补充详细的错误原因。 
  * 总结来说，这段代码提供了一个清晰且易于维护的错误码管理机制，适用于复杂业务系统的错误处理场景。 
 **/
-package com.cyberpeace.cr.crbase.constant;
-
-/**
- * 靶场自定义错误码。
- * 1、从101001开始递增编号；
- * 2、截止编号地址101999；
- * <p>
- * 编号定义完成后，需要在wiki填写编号对应的错误原因。
- * wiki地址：http://10.10.10.11/pages/viewpage.action?pageId=27367377
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface CrBusinessErrorCode {
 
 	/**
@@ -733,3 +733,4 @@ public interface CrBusinessErrorCode {
 	 */
 	String TEMPLATE_DELETED_OR_NOT_PERMITTED = "101141";
 }
+

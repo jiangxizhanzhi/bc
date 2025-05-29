@@ -1,3 +1,12 @@
+package com.cyberpeace.common.util;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import lombok.Data;
+
 /**
  * 这段代码定义了一个名为 `DeepModelB` 的 Java 类，位于包 `com.cyberpeace.common.util` 下。以下是代码的简要分析： 
  * 1. **类的定义**： 
@@ -14,15 +23,6 @@
  * - `ModelB` 是一个外部类，可能是与 `DeepModelB` 相关的另一个类，但未在代码中展示。 
  * 总结：这是一个包含多种数据类型的复杂对象模型类，主要用于存储和操作嵌套结构的数据。 
 **/
-package com.cyberpeace.common.util;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import lombok.Data;
-
 @Data
 public class DeepModelB implements Serializable {
 
@@ -38,3 +38,4 @@ public class DeepModelB implements Serializable {
 
 	private Map<String, ModelB> map;
 }
+

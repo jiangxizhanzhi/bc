@@ -1,3 +1,21 @@
+package com.cyberpeace.space.service.context.tactic;
+
+import com.cyberpeace.cr.tool.service.context.TacticTool;
+import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 攻击详情
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `AttackDetail` 的 Java 类，用于表示攻击详情的信息模型。以下是代码的主要分析和总结： 
  * ### 主要功能 
@@ -28,24 +46,6 @@
  * ### 总结 
  * 该类是一个典型的 DTO（Data Transfer Object）类，主要用于在系统中传递和存储攻击相关的详细信息。通过注解的使用，增强了代码的可读性和可维护性，同时方便与其他框架（如 Swagger）集成以生成 API 文档。 
 **/
-package com.cyberpeace.space.service.context.tactic;
-
-import com.cyberpeace.cr.tool.service.context.TacticTool;
-import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 攻击详情
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class AttackDetail {
@@ -130,3 +130,4 @@ public class AttackDetail {
 	@ApiModelProperty(value = "策略")
 	private List<SpaceActionStrategy> strategy;
 }
+

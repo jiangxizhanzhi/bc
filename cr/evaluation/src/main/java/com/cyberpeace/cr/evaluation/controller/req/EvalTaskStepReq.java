@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估任务步请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTaskStepReq` 的 Java 类，用于表示评估任务步骤的请求体。以下是对其主要特性的简要分析： 
  * ### 类定义与注解 
@@ -22,20 +36,6 @@
  * - **简洁性**：借助 Lombok 注解简化了代码，减少了样板代码。 
  * 这个类的设计考虑到了数据验证和文档化的需求，适用于 RESTful API 的请求体定义。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import javax.validation.constraints.NotNull;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估任务步请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalTaskStepReq {

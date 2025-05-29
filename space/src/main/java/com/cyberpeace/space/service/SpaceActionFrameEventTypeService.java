@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.space.dao.entity.SpaceActionFrameEventType;
+
+/**
+ * 空间行动框架事件类型Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个服务接口 `SpaceActionFrameEventTypeService`，它继承自 `IService<SpaceActionFrameEventType>`。以下是对代码的简要分析： 
  * 1. **包名与导入**： 
@@ -15,20 +29,6 @@
  * 总结：这是一段典型的基于 MyBatis-Plus 的服务接口定义代码，旨在为 `SpaceActionFrameEventType` 提供标准的数据操作支持。 
 **/
 
-package com.cyberpeace.space.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.space.dao.entity.SpaceActionFrameEventType;
-
-/**
- * 空间行动框架事件类型Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see IService
- * @since 1.0.0
- */
 public interface SpaceActionFrameEventTypeService extends IService<SpaceActionFrameEventType>{
 }
     

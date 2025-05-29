@@ -1,3 +1,24 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import com.cyberpeace.common.baseinterface.Create;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+
+/**
+ * 课新增请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonAddReq` 的类，用于表示创建新课程时的请求体。以下是对该代码的简要分析： 
  * ### 类概述 
@@ -41,27 +62,6 @@
  * - 使用了 Lombok 注解简化代码，减少样板代码。 
  * - 通过 Swagger 注解支持 API 文档生成，便于开发者理解和使用。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import com.cyberpeace.common.baseinterface.Create;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-
-/**
- * 课新增请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -225,3 +225,4 @@ public class LessonAddReq implements Serializable {
 		this.practiceList = practiceList;
 	}
 }
+

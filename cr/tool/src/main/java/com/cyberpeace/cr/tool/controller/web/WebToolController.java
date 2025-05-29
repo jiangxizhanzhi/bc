@@ -1,3 +1,39 @@
+package com.cyberpeace.cr.tool.controller.web;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.tool.controller.req.WebToolListReq;
+import com.cyberpeace.cr.tool.controller.res.ToolRsp;
+import com.cyberpeace.cr.tool.controller.res.WebToolRsp;
+import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
+import com.cyberpeace.cr.tool.dao.entity.Tool;
+import com.cyberpeace.cr.tool.service.ToolService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.constraints.NotBlank;
+
+/**
+ * Web工具Controller
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `WebToolController` 的 Spring MVC 控制器类，用于处理与工具库相关的前端请求。以下是该代码的详细分析： 
  * ### 类和注解 
@@ -38,42 +74,6 @@
  * ### 总结 
  * 该控制器主要处理工具库的列表查询和详情查询操作。它通过 `ToolService` 来获取数据，并使用分页和转换工具将数据封装成响应对象返回给客户端。整个过程涉及到分页、权限控制和数据转换等操作。 
 **/
-package com.cyberpeace.cr.tool.controller.web;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.tool.controller.req.WebToolListReq;
-import com.cyberpeace.cr.tool.controller.res.ToolRsp;
-import com.cyberpeace.cr.tool.controller.res.WebToolRsp;
-import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
-import com.cyberpeace.cr.tool.dao.entity.Tool;
-import com.cyberpeace.cr.tool.service.ToolService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.constraints.NotBlank;
-
-/**
- * Web工具Controller
- *
- * @author SN
- * @date 2024/11/08
- */
 @Api(tags = "前台-资源中心-工具库")
 @RestController
 @RequestMapping("/cr/tools")
@@ -132,3 +132,4 @@ public class WebToolController {
 	}
 
 }
+

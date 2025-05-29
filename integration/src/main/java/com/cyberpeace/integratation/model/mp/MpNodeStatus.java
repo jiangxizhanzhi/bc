@@ -1,3 +1,17 @@
+package com.cyberpeace.integratation.model.mp;
+
+import java.io.Serializable;
+import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 中台节点状态
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MpNodeStatus` 的 Java 类，该类用于表示中台节点的状态。以下是对此代码的简要分析： 
  * ### 类定义 
@@ -22,20 +36,6 @@
  * - 通过 Lombok 注解简化了代码，减少了手动编写 getter 和 setter 方法的工作量。 
  * - 该类实现了 `Serializable` 接口，方便进行对象的序列化操作。 
 **/
-package com.cyberpeace.integratation.model.mp;
-
-import java.io.Serializable;
-import java.util.List;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 中台节点状态
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MpNodeStatus implements Serializable {
@@ -56,3 +56,4 @@ public class MpNodeStatus implements Serializable {
     private List<MpConnectionStatus> connectionStatusList;
 
 }
+

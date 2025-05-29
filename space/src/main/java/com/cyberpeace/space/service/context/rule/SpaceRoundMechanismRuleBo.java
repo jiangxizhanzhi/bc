@@ -1,3 +1,24 @@
+package com.cyberpeace.space.service.context.rule;
+
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.space.dao.entity.SpaceRoundMechanismRule;
+import com.cyberpeace.space.model.SpaceBoBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 空间圆机制统治Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceRoundMechanismRuleBo` 的 Java 类，继承自 `SpaceBoBase`。以下是代码的主要功能和结构分析： 
  * 1. **类的定义**： 
@@ -24,27 +45,6 @@
  * 总结来说，这段代码实现了一个业务对象类，用于管理和传递“空间圆机制规则”的相关信息，并且通过工具类简化了对象转换的过程。 
 **/
 
-package com.cyberpeace.space.service.context.rule;
-
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.space.dao.entity.SpaceRoundMechanismRule;
-import com.cyberpeace.space.model.SpaceBoBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 空间圆机制统治Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBoBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceRoundMechanismRuleBo extends SpaceBoBase {

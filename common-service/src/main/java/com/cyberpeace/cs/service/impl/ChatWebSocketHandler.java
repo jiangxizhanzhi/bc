@@ -1,28 +1,3 @@
-/**
- * ### 代码分析 
- * #### 功能概述 
- * 该代码实现了一个基于 `WebSocket` 的聊天服务处理类 `ChatWebSocketHandler`，用于管理聊天消息的接收、处理和分发。它支持单聊和群聊功能，并且能够根据业务类型动态注册不同的处理器。 
- * #### 主要功能模块 
- * 1. **初始化与注册**： 
- * - 使用 `@PostConstruct` 注解在类加载时完成初始化，将当前实例注册到全局 `register` 映射中。 
- * - 如果声明的消息类型重复，则抛出异常。 
- * 2. **消息处理**： 
- * - 在 `handleMessage` 方法中解析收到的消息，包括获取发送者信息、消息内容等。 
- * - 根据消息类型（单聊或群聊）调用 `getFriends` 或 `getGroup` 方法获取目标用户列表。 
- * - 遍历目标用户列表，通过 `sendChatMessage` 方法发送消息。 
- * 3. **消息组装与推送**： 
- * - 提供了多个方法用于将前端传递的消息转换为内部使用的 `ChatMessage` 对象。 
- * - 支持不同类型的推送（如单聊、群聊）以及不同角色的消息推送。 
- * 4. **辅助功能**： 
- * - 提供了日志记录 (`slf4j`) 和异常处理机制，确保系统的健壮性。 
- * - 利用了工具类（如 `SpringContextUtil`、`TimeUtil` 等）来增强功能。 
- * #### 技术亮点 
- * - **设计模式**：采用了工厂模式的思想，通过 `register` 映射动态管理不同业务类型的消息处理器。 
- * - **线程安全**：`register` 使用了线程安全的 `Maps.newHashMap()` 方法。 
- * - **依赖注入**：利用了 Spring 的依赖注入机制，例如通过 `SpringContextUtil` 获取远程服务实例。 
- * #### 总结 
- * 此代码实现了一个较为完整的聊天服务逻辑，涵盖了从消息接收、解析到分发的全流程。它具有良好的扩展性和维护性，适合应用于需要灵活配置的消息传递场景。 
-**/
 package com.cyberpeace.cs.service.impl;
 
 import java.util.Date;
@@ -61,6 +36,31 @@ import lombok.extern.slf4j.Slf4j;
  * @author SN
  * @date 2024/11/08
  */
+/**
+ * ### 代码分析 
+ * #### 功能概述 
+ * 该代码实现了一个基于 `WebSocket` 的聊天服务处理类 `ChatWebSocketHandler`，用于管理聊天消息的接收、处理和分发。它支持单聊和群聊功能，并且能够根据业务类型动态注册不同的处理器。 
+ * #### 主要功能模块 
+ * 1. **初始化与注册**： 
+ * - 使用 `@PostConstruct` 注解在类加载时完成初始化，将当前实例注册到全局 `register` 映射中。 
+ * - 如果声明的消息类型重复，则抛出异常。 
+ * 2. **消息处理**： 
+ * - 在 `handleMessage` 方法中解析收到的消息，包括获取发送者信息、消息内容等。 
+ * - 根据消息类型（单聊或群聊）调用 `getFriends` 或 `getGroup` 方法获取目标用户列表。 
+ * - 遍历目标用户列表，通过 `sendChatMessage` 方法发送消息。 
+ * 3. **消息组装与推送**： 
+ * - 提供了多个方法用于将前端传递的消息转换为内部使用的 `ChatMessage` 对象。 
+ * - 支持不同类型的推送（如单聊、群聊）以及不同角色的消息推送。 
+ * 4. **辅助功能**： 
+ * - 提供了日志记录 (`slf4j`) 和异常处理机制，确保系统的健壮性。 
+ * - 利用了工具类（如 `SpringContextUtil`、`TimeUtil` 等）来增强功能。 
+ * #### 技术亮点 
+ * - **设计模式**：采用了工厂模式的思想，通过 `register` 映射动态管理不同业务类型的消息处理器。 
+ * - **线程安全**：`register` 使用了线程安全的 `Maps.newHashMap()` 方法。 
+ * - **依赖注入**：利用了 Spring 的依赖注入机制，例如通过 `SpringContextUtil` 获取远程服务实例。 
+ * #### 总结 
+ * 此代码实现了一个较为完整的聊天服务逻辑，涵盖了从消息接收、解析到分发的全流程。它具有良好的扩展性和维护性，适合应用于需要灵活配置的消息传递场景。 
+**/
 @Slf4j
 @Component
 public class ChatWebSocketHandler extends MyWebSocketHandler {
@@ -372,3 +372,4 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 		}
 	}
 }
+

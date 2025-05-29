@@ -1,3 +1,10 @@
+package com.cyberpeace.cs;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.web.servlet.ServletComponentScan;
+
 /**
  * 该代码是一个 Spring Boot 应用程序的主类，以下是简要分析： 
  * 1. **注解说明**： 
@@ -12,13 +19,6 @@
  * - 排除了默认的数据源配置，可能是因为项目不需要默认的数据源。 
  * - 指定的包路径确保了 Spring 扫描范围仅限于 `com.cyberpeace` 及其子包。 
 **/
-package com.cyberpeace.cs;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.web.servlet.ServletComponentScan;
-
 @ServletComponentScan
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class },
 		scanBasePackages = { "com.cyberpeace" })
@@ -29,3 +29,4 @@ public class CommonApplication {
 	}
 
 }
+

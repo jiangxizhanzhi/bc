@@ -1,3 +1,20 @@
+package com.cyberpeace.common.mdparser.parser;
+
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.util.LocalStringUtil;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+/**
+ * 字符串解析器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see MdContentParser
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个名为 `StringParser` 的类，实现了 `MdContentParser<String, String>` 接口。以下是代码的主要功能和特点： 
  * 1. **功能描述**： 
@@ -18,23 +35,6 @@
  * - 该类旨在提供一种通用的字符串解析和格式化能力，适用于需要处理文本内容的场景。 
  * 总结来说，`StringParser` 是一个简单的字符串处理器，主要用于清理和格式化输入字符串，符合单一职责原则，适合在需要字符串操作的模块中使用。 
 **/
-package com.cyberpeace.common.mdparser.parser;
-
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.util.LocalStringUtil;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
-/**
- * 字符串解析器
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see MdContentParser
- * @since 1.0.0
- */
 @Service
 public class StringParser implements MdContentParser<String, String> {
 
@@ -68,3 +68,4 @@ public class StringParser implements MdContentParser<String, String> {
         return LocalStringUtil.frontBackLine(content);
     }
 }
+

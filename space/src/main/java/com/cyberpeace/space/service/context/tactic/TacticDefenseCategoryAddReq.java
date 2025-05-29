@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.tactic;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 战法防御类别新增请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个名为 `TacticDefenseCategoryAddReq` 的 Java 类，用于表示战法防御类别新增请求体。以下是简要分析： 
  * 1. **类的功能**： 
@@ -13,20 +27,6 @@
  * - 代码由 `SN` 编写，版本为 `1.0.0`，创建日期为 `2025/05/28`。 
  * 总结：这是一个简单的 DTO 类，用于封装战法防御类别新增请求所需的数据。代码结构清晰，注解使用合理。 
 **/
-package com.cyberpeace.space.service.context.tactic;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 战法防御类别新增请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class TacticDefenseCategoryAddReq {
@@ -52,3 +52,4 @@ public class TacticDefenseCategoryAddReq {
 	 */
 	private String cover;
 }
+

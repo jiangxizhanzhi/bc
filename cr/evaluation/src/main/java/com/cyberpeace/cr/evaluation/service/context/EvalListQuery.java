@@ -1,3 +1,21 @@
+package com.cyberpeace.cr.evaluation.service.context;
+
+import com.cyberpeace.common.model.PageReqBase;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 评估列表查询
+ *
+ * @author SN
+ * @date 2024/11/08
+ *//*
+ * 前台使用的查询类
+ */
 /**
  * 这段代码定义了一个名为 `EvalListQuery` 的 Java 类，用于表示评估列表查询的请求参数。以下是详细的分析： 
  * ### 包声明和导入 
@@ -41,24 +59,6 @@
  * ### 适用场景 
  * - 这个类通常在前端需要获取某个评估项目的列表时使用，可以通过不同的查询条件（如名称、类型等）来过滤结果。 
 **/
-package com.cyberpeace.cr.evaluation.service.context;
-
-import com.cyberpeace.common.model.PageReqBase;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 评估列表查询
- *
- * @author SN
- * @date 2024/11/08
- *//*
- * 前台使用的查询类
- */
 @ApiModel
 @Getter
 @Setter

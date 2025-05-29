@@ -1,3 +1,13 @@
+package com.cyberpeace.oj.ojbase.constant;
+
+/**
+ * 资源导入文件名称配置
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ResourceDumpConstant` 的接口，用于存储与资源导入相关的常量。这些常量包括各种文件名、文件夹名以及一些路径。以下是对这段代码的简要分析： 
  * ### 主要功能 
@@ -39,16 +49,6 @@
  * ``` 
  * 这种方式可以使代码更加简洁，并且更容易管理和扩展。 
 **/
-package com.cyberpeace.oj.ojbase.constant;
-
-/**
- * 资源导入文件名称配置
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface ResourceDumpConstant {
 
 	/**
@@ -220,3 +220,4 @@ public interface ResourceDumpConstant {
 	 */
 	String DEFAULT_LOGO_PATH = "/cpms/built_in/logo.png";
 }
+

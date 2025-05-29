@@ -1,3 +1,23 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
+import com.cyberpeace.cr.evaluation.service.context.EvalAggregationContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalCollectionContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalIndicatorContext;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估指示器响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalIndicatorRsp` 的 Java 类，用于表示评估指示器的响应。该类使用了 Lombok 库来自动生成 getter 和 setter 方法，并且使用了 Swagger 注解来描述 API 接口中的字段。以下是对该类的简要分析： 
  * ### 类概述 
@@ -30,26 +50,6 @@
  * - 字段的注释详细描述了每个字段的用途和要求，使得该类易于理解和使用。 
  * 这个类的设计很好地满足了评估指示器响应数据的结构化需求，并且通过注解使得 API 文档更加清晰。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import com.cyberpeace.cr.evaluation.service.context.EvalAggregationContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalCollectionContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalIndicatorContext;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估指示器响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalIndicatorRsp {
@@ -142,3 +142,4 @@ public class EvalIndicatorRsp {
 	@NotNull
 	private Integer evalCollectionNum;
 }
+

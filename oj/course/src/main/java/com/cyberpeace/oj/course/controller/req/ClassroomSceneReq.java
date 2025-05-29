@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+
+/**
+ * 课堂场景请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomSceneReq` 的 Java 类，用于表示课堂场景的请求体。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -22,25 +41,6 @@
  * - **验证**: 使用了 `@NotBlank` 注解来确保 `classroomId` 字段不为空。 
  * 这个类主要用于处理与课堂相关的请求，并确保请求中包含有效的课堂编号。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-
-/**
- * 课堂场景请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -56,3 +56,4 @@ public class ClassroomSceneReq implements Serializable {
 	private String classroomId;
 
 }
+

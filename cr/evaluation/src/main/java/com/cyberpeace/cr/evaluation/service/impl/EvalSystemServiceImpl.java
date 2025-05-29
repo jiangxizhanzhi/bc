@@ -1,3 +1,28 @@
+package com.cyberpeace.cr.evaluation.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalSystem;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalSystemMapper;
+import com.cyberpeace.cr.evaluation.service.EvalSystemService;
+import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+
+/**
+ * 评估系统Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalSystemServiceImpl` 的类，它是 `EvalSystemService` 接口的一个实现。这个类主要用于处理与评估系统（EvalSystem）相关的业务逻辑，包括批量删除和分页查询。以下是详细的分析： 
  * ### 类定义和注解 
@@ -32,31 +57,6 @@
  * - 该类使用了 MyBatis-Plus 的 `ServiceImpl` 基类来简化数据访问。 
  * - 类中的方法通过事务管理确保数据的一致性，并且能够处理复杂的业务逻辑，如批量删除和分页查询。 
 **/
-package com.cyberpeace.cr.evaluation.service.impl;
-
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalSystem;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalSystemMapper;
-import com.cyberpeace.cr.evaluation.service.EvalSystemService;
-import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
-
-/**
- * 评估系统Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Service
 public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSystem> implements EvalSystemService {
 
@@ -117,3 +117,4 @@ public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSys
         return evalSystemMapper.listEvalSystems(page, listQuery);
 	}
 }
+

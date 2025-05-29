@@ -1,3 +1,26 @@
+package com.cyberpeace.cr.crbase.controller.req;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
+
+import io.swagger.annotations.ApiModelProperty;
+
+
+/**
+ * 靶场通知请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `CrNoticeReq` 的 Java 类，用于表示靶场通知请求体。以下是对其的简要分析： 
  * 1. **类的基本信息**： 
@@ -22,29 +45,6 @@
  * - 该类主要用于接收和传递靶场通知的相关信息，适用于 RESTful API 的请求体。 
  * 总结：这是一个简洁且功能明确的数据传输对象（DTO），通过注解增强了数据验证和文档生成的能力。 
 **/
-package com.cyberpeace.cr.crbase.controller.req;
-
-import java.io.Serializable;
-import java.util.Date;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.validator.constraints.Length;
-
-import io.swagger.annotations.ApiModelProperty;
-
-
-/**
- * 靶场通知请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class CrNoticeReq implements Serializable {
@@ -92,3 +92,4 @@ public class CrNoticeReq implements Serializable {
     private Boolean isRb;
 
 }
+

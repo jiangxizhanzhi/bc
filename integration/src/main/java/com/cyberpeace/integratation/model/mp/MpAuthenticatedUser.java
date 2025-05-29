@@ -1,3 +1,16 @@
+package com.cyberpeace.integratation.model.mp;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * mp token校验返回的用户模型
+ *
+ * @author yinqingrong@date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MpAuthenticatedUser` 的 Java 类，该类实现了 `Serializable` 接口。这个类用于表示通过 MP Token 验证后返回的用户信息模型。以下是该类的主要特点和属性： 
  * ### 主要特点 
@@ -24,19 +37,6 @@
  * ### 总结 
  * 这个类主要用于存储和传输通过 MP Token 验证后的用户信息。它包含了各种用户相关的属性，并且通过 Lombok 提供的注解简化了代码的编写。这个类的设计是围绕着用户的详细信息展开的，适合在需要用户身份验证和管理的应用场景中使用。 
 **/
-package com.cyberpeace.integratation.model.mp;
-
-import java.io.Serializable;
-import java.util.Date;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * mp token校验返回的用户模型
- *
- * @author yinqingrong@date 2024/11/08
- */
 @Getter
 @Setter
 public class MpAuthenticatedUser implements Serializable {
@@ -126,3 +126,4 @@ public class MpAuthenticatedUser implements Serializable {
 	 */
 	private Date dateJoined;
 }
+

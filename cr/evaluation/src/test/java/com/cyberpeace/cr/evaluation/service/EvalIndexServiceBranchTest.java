@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+/**
+ * this is branch test for the test
+ * the test is for toy
+ * the toy is toy
+ * not the practice
+ * tos
+ */
 /**
  * 这段代码是一个JUnit测试类，用于测试名为`EvalIndexServiceBranch`的服务类。该类包含多个测试方法，每个方法都调用`EvalIndexServiceBranch`实例的`getBranch`方法，并使用`Assertions.assertTrue`来验证该方法的返回值为`true`。 
  * ### 代码分析 
@@ -22,18 +34,6 @@
  * - 确保测试方法能够验证`getBranch`方法的实际功能，而不仅仅是它的返回值。 
  * - 清理和优化代码中的注释，使其更具描述性和有用性。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-/**
- * this is branch test for the test
- * the test is for toy
- * the toy is toy
- * not the practice
- * tos
- */
 public class EvalIndexServiceBranchTest {
 
     /**
@@ -697,3 +697,4 @@ public class EvalIndexServiceBranchTest {
     }
 
 }
+

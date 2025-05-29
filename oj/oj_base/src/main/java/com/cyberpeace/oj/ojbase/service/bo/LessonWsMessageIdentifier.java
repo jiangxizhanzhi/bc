@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.ojbase.service.bo;
+
+import com.cyberpeace.common.model.ws.WsMessageIdentifier;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+/**
+ * 第 WS 课文标识符
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see WsMessageIdentifier
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonWsMessageIdentifier` 的 Java 类，该类继承自 `WsMessageIdentifier`。以下是详细的分析： 
  * ### 包声明 
@@ -61,24 +79,6 @@
  * - **特性**：通过 Lombok 注解简化了代码，如自动生成 getter、setter、构造函数和 builder 方法。 
  * 这段代码主要用于处理与课程相关的 WebSocket 通信，并且通过 Lombok 注解减少了样板代码。 
 **/
-package com.cyberpeace.oj.ojbase.service.bo;
-
-import com.cyberpeace.common.model.ws.WsMessageIdentifier;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-
-/**
- * 第 WS 课文标识符
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see WsMessageIdentifier
- * @since 1.0.0
- */
 @Getter
 @Setter
 @Builder
@@ -108,3 +108,4 @@ public class LessonWsMessageIdentifier extends WsMessageIdentifier {
 	private Boolean fromWeb;
 
 }
+

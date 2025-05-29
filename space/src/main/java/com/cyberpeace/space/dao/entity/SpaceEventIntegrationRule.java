@@ -1,3 +1,25 @@
+package com.cyberpeace.space.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.model.IdAndName;
+import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.context.rule.SpaceEventIntegrationRuleBo;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Map;
+
+/**
+ * 空间事件集成规则
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceEventIntegrationRule` 的 Java 实体类，用于表示空间事件集成规则。以下是对代码的简要分析： 
  * 1. **类的基本信息**： 
@@ -22,28 +44,6 @@
  * - `BeanUtils`：工具类，用于对象之间的属性复制。 
  * 总结：该类是一个数据传输对象（DTO），主要用于存储和操作空间事件集成规则的数据，并提供了一种方式将其转换为业务对象。 
 **/
-package com.cyberpeace.space.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.model.IdAndName;
-import com.cyberpeace.space.model.SpaceBaseTable;
-import com.cyberpeace.space.service.context.rule.SpaceEventIntegrationRuleBo;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Map;
-
-/**
- * 空间事件集成规则
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("space_event_integration_rule")
@@ -69,3 +69,4 @@ public class SpaceEventIntegrationRule extends SpaceBaseTable {
 		return bo;
 	}
 }
+

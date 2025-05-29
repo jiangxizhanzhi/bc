@@ -1,3 +1,21 @@
+package com.cyberpeace.integratation.model.scene;
+
+import java.io.Serializable;
+import java.util.List;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 场景节点列表请求体
+ *
+ * @author SN
+ * @date 2023/05/30
+ */
 /**
  * 这段代码定义了一个名为 `SceneNodeListReq` 的类，该类继承自 `TopoNodeListReq` 并实现了 `Serializable` 接口。这个类用于表示场景节点列表请求体，并包含一些属性和方法。 
  * ### 主要内容 
@@ -26,24 +44,6 @@
  * ### 总结 
  * 这个类的主要功能是提供一种结构化的方式来封装场景节点列表请求所需的各种参数（如实时主机状态、节点ID、系统类型名称等）。通过重写 `getQuery` 方法，它可以灵活地根据不同的参数组合生成查询条件。这种设计使得在处理复杂的查询逻辑时更加清晰和易于维护。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import java.io.Serializable;
-import java.util.List;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 场景节点列表请求体
- *
- * @author SN
- * @date 2023/05/30
- */
 @Getter
 @Setter
 @Slf4j
@@ -81,3 +81,4 @@ public class SceneNodeListReq extends TopoNodeListReq implements Serializable {
 		return queries;
 	}
 }
+

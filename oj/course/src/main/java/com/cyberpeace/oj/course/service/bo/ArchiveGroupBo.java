@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 归档组 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ArchiveGroupBo` 的 Java 类，该类实现了 `Serializable` 接口。这个类被用作业务对象（BO），主要用于数据传输或存储。以下是对代码的简要分析： 
  * ### 包声明和导入 
@@ -23,24 +41,6 @@
  * - 实现了 `Serializable` 接口，表明它可以被序列化，可能用于网络传输或持久化存储。 
  * 这个类的设计简洁明了，适合在服务层中使用，特别是在需要传递或存储“归档组”相关信息时。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 归档组 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -71,3 +71,4 @@ public class ArchiveGroupBo implements Serializable {
 	private String resourceId;
 
 }
+

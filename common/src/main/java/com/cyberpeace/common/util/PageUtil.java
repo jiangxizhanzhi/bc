@@ -1,3 +1,26 @@
+package com.cyberpeace.common.util;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.Function;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.model.ListRsp;
+import com.google.common.collect.Lists;
+
+/**
+ * 分页util
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码是一个用于处理分页和数据转换的工具类 `PageUtil`。以下是代码的主要功能和结构分析： 
  * ### 主要功能 
@@ -26,29 +49,6 @@
  * - 排序逻辑：在 `getListResult` 方法中，排序部分较为复杂，涉及到反射操作，需确保字段存在且可访问。 
  * 总体而言，这个工具类提供了丰富的分页和数据处理功能，适用于需要频繁进行分页操作的场景。 
 **/
-package com.cyberpeace.common.util;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.function.Function;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.model.ListRsp;
-import com.google.common.collect.Lists;
-
-/**
- * 分页util
- *
- * @author SN
- * @date 2024/11/08
- */
 public class PageUtil {
 
 	/**
@@ -210,3 +210,4 @@ public class PageUtil {
 		return PageUtil.getListResult(resPage);
 	}
 }
+

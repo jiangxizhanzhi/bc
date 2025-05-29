@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import java.util.List;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalSystem;
+import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+
+/**
+ * 评估系统Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalSystemService` 的接口，该接口继承自 `IService<EvalSystem>`。这个接口提供了与评估系统（`EvalSystem`）相关的服务方法。下面是对这段代码的详细分析： 
  * ### 接口定义 
@@ -24,21 +39,6 @@
  * - **可扩展性**：通过继承 `IService`，该接口可以利用 MyBatis-Plus 提供的一些默认实现，同时还可以自定义其他方法来满足特定需求。 
  * 这段代码是典型的业务服务接口定义，适用于需要管理评估系统的场景。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import java.util.List;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalSystem;
-import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
-
-/**
- * 评估系统Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface EvalSystemService extends IService<EvalSystem> {
 
 	/**
@@ -57,3 +57,4 @@ public interface EvalSystemService extends IService<EvalSystem> {
 	 */
 	IPage<EvalSystem> page(EvalListQuery listQuery);
 }
+

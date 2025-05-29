@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.crbase.service.context;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 统计信息
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `StatisticalInfo` 的 Java 类，位于包 `com.cyberpeace.cr.crbase.service.context` 中。以下是简要分析： 
  * 1. **类的功能**： 
@@ -13,18 +25,6 @@
  * - 该类主要用于在服务层或接口中传递统计信息，可能用于前端展示或其他逻辑处理。 
  * 总结：这是一个简单的 DTO 类，用于封装统计信息，便于在系统中传递和使用。 
 **/
-package com.cyberpeace.cr.crbase.service.context;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 统计信息
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class StatisticalInfo {
@@ -41,3 +41,4 @@ public class StatisticalInfo {
 	@ApiModelProperty(value = "值")
 	private Integer value;
 }
+

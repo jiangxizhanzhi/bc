@@ -1,3 +1,19 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import com.cyberpeace.common.model.PageReqBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 用户统计请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `UserStatsReq` 的 Java 类，它是用于处理用户统计数据请求的。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -18,22 +34,6 @@
  * - **继承**：通过继承 `PageReqBase` 类，该类可能还包含了分页相关的属性和方法。 
  * 总体来看，这是一个简单的数据传输对象（DTO）类，用于封装前端传来的查询条件，以便后端进行相应的数据处理和统计。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import com.cyberpeace.common.model.PageReqBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 用户统计请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PageReqBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class UserStatsReq extends PageReqBase {
@@ -69,3 +69,4 @@ public class UserStatsReq extends PageReqBase {
     @ApiModelProperty(value = "模糊查询筛选参数(不会转义)")
     private String pattern;
 }
+

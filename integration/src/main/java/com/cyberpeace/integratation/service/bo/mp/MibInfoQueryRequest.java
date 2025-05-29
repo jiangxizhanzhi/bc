@@ -1,3 +1,12 @@
+package com.cyberpeace.integratation.service.bo.mp;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 /**
  * 这段代码定义了一个名为 `MibInfoQueryRequest` 的 Java 类，用于表示查询 MIB（管理信息库）信息时所需的请求参数。这个类使用了 Lombok 库来简化代码，并且通过 Swagger 注解来描述 API 接口。 
  * ### 主要特性： 
@@ -23,15 +32,6 @@
  * - 该类通过注解驱动的方式简化了代码编写，并且通过 Swagger 注解使得这些字段可以在 API 文档中清晰地展示出来。 
  * 这个类的设计合理，能够有效地传递查询 MIB 信息所需的参数，并且具备一定的数据验证功能。 
 **/
-package com.cyberpeace.integratation.service.bo.mp;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
 @Getter
 @Setter
 public class MibInfoQueryRequest {
@@ -73,3 +73,4 @@ public class MibInfoQueryRequest {
 	@ApiModelProperty(value = "v3加密密码")
 	private String priv_key;
 }
+

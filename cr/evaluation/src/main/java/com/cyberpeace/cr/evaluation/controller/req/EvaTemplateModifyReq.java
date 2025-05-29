@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import javax.validation.constraints.NotEmpty;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 伊娃模板修改请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvaTemplateModifyReq` 的 Java 类，它是 `EvaTemplateAddReq` 类的子类。以下是对其主要特性的简要分析： 
  * 1. **包声明**： 
@@ -18,20 +32,6 @@
  * - `@Getter` 和 `@Setter` 注解由 Lombok 自动生成，无需手动编写这些方法。 
  * 总结来说，这个类主要用于表示用于修改伊娃模板的请求数据，其中包含一个必需的资源 ID 字段，并且继承了另一个与添加模板相关的请求类。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import javax.validation.constraints.NotEmpty;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 伊娃模板修改请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvaTemplateModifyReq extends EvaTemplateAddReq {

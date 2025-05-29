@@ -1,3 +1,19 @@
+package com.cyberpeace.integratation.service;
+
+import java.util.List;
+import java.util.Map;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.integratation.model.mp.*;
+import com.cyberpeace.integratation.model.scene.*;
+
+/**
+ * 场景事件状态代号： http://10.10.10.11/download/attachments/2461959/222.png?version=1&modificationDate=1607060293000&api=v2
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `RemoteSceneService` 的接口，该接口包含多个方法用于管理和操作与场景相关的各种功能。以下是对这些方法的简要分析： 
  * ### 接口概述 
@@ -57,22 +73,6 @@
  * ### 总结 
  * 该接口主要涉及场景的生命周期管理、流量控制、节点操作、数据获取及辅助功能。每个方法都提供了特定的功能，以满足对复杂场景的管理和操作需求。通过这些方法，可以实现对场景中各个组件的全面控制和监控。 
 **/
-package com.cyberpeace.integratation.service;
-
-import java.util.List;
-import java.util.Map;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.integratation.model.mp.*;
-import com.cyberpeace.integratation.model.scene.*;
-
-/**
- * 场景事件状态代号： http://10.10.10.11/download/attachments/2461959/222.png?version=1&modificationDate=1607060293000&api=v2
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface RemoteSceneService {
 
 	/**
@@ -430,3 +430,4 @@ public interface RemoteSceneService {
 	 */
 	JSONArray sceneTrend(String mpSceneId);
 }
+

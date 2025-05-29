@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+
+/**
+ * 实践提交请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `PracticeSubmitReq` 的类，用于表示实践提交请求体。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -40,26 +60,6 @@
  * - **文档生成**：通过 Swagger 注解提供清晰的文档说明，便于前端开发人员理解如何使用该请求体。 
  * 这个类的设计目的是为了方便管理和验证用户提交的实践作业信息，并且提供了详细的注释和描述，有助于后续的维护和扩展。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-
-/**
- * 实践提交请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -109,3 +109,4 @@ public class PracticeSubmitReq implements Serializable {
     private Integer questionType;
 
 }
+

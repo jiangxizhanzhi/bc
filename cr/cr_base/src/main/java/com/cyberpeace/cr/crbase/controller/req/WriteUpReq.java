@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.crbase.controller.req;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 写入向上请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `WriteUpReq` 的 Java 类，位于包 `com.cyberpeace.cr.crbase.controller.req` 中。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -13,18 +25,6 @@
  * - 该类通常用于 API 请求中，作为接收前端传递的数据结构，支持前后端交互。 
  * 总结：这是一个简单的数据传输对象（DTO），用于封装写入向上请求所需的基本信息，便于在控制器层处理业务逻辑。 
 **/
-package com.cyberpeace.cr.crbase.controller.req;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 写入向上请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class WriteUpReq {
@@ -48,3 +48,4 @@ public class WriteUpReq {
 	private Boolean writeUpShow;
 
 }
+

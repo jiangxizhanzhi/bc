@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.frame;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 行动框架战法
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ActionFrameTactic` 的 Java 类，位于包 `com.cyberpeace.space.service.context.frame` 中。以下是代码的简要分析： 
  * 1. **类功能**： 
@@ -14,20 +28,6 @@
  * - 该类主要用于封装战法的相关信息，便于在系统中传递和管理战法的状态和属性。 
  * 总结：这是一个简单的 POJO（Plain Old Java Object）类，用于描述战法的基本信息及其状态，支持序列化和文档生成。 
 **/
-package com.cyberpeace.space.service.context.frame;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 行动框架战法
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class ActionFrameTactic {
@@ -42,3 +42,4 @@ public class ActionFrameTactic {
 	@ApiModelProperty(value = "状态，0未下发，1已完成，2已下发未完成")
 	private Integer status = 0;
 }
+

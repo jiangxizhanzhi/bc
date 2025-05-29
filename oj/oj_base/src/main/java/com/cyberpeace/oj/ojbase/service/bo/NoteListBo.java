@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.ojbase.service.bo;
+
+import com.cyberpeace.oj.ojbase.dao.entity.Note;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 备注列表 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Note
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `NoteListBo` 的类，该类继承自 `Note` 类。以下是对其主要特性和功能的简要分析： 
  * 1. **包声明**： 
@@ -20,23 +37,6 @@
  * - 使用 Lombok 的注解简化了代码，减少了手动编写 getter 和 setter 方法的工作量。 
  * - 通过 Swagger 注解，可以方便地生成 API 文档。 
 **/
-package com.cyberpeace.oj.ojbase.service.bo;
-
-import com.cyberpeace.oj.ojbase.dao.entity.Note;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 备注列表 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Note
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class NoteListBo extends Note {
@@ -50,3 +50,4 @@ public class NoteListBo extends Note {
     private String userName;
 
 }
+

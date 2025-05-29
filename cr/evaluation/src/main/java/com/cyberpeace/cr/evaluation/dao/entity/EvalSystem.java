@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.evaluation.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 
+ * @TableName cr_eval_system
+ */
 /**
  * 这段代码定义了一个名为 `EvalSystem` 的 Java 类，该类位于 `com.cyberpeace.cr.evaluation.dao.entity` 包中。这个类继承自 `BaseTable`，并且使用了 Lombok 注解来简化 getter 和 setter 方法的生成。此外，它还使用了 MyBatis-Plus 和 Swagger 注解。 
  * ### 主要功能和特性： 
@@ -19,21 +34,6 @@
  * ### 总结： 
  * `EvalSystem` 类主要用于表示和操作评估系统相关的数据。通过继承 `BaseTable`，它可能包含了与数据库操作相关的通用方法。MyBatis-Plus 注解确保了类与数据库表之间的映射关系，而 Swagger 注解则有助于生成 API 文档。整体来看，这是一个典型的实体类，用于在应用程序中表示评估系统的数据模型。 
 **/
-package com.cyberpeace.cr.evaluation.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 
- * @TableName cr_eval_system
- */
 @TableName(value = "cr_eval_system")
 @Getter
 @Setter

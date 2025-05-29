@@ -1,26 +1,3 @@
-/**
- * 这段代码定义了一个名为 `EvalAlgorithmRefController` 的 Spring MVC 控制器类，用于处理与评估算法相关的 HTTP 请求。以下是对其功能和结构的简要分析：
- * ### 主要功能
- * 1. **编辑算法 (`editAlgorithm`)**
- * - 接收一个包含算法信息的请求体 (`EvalAlgorithmRefReq`)。
- * - 根据请求中的模式 (`mode`) 更新数据库中的算法记录。
- * - 如果模式为格式化算法 (`FORMAT_ALGORITHM`), 它会检查矩阵数据的有效性，并使用 AHP 方法计算权重。
- * - 使用事务模板确保更新操作的一致性。
- * 2. **获取评估算法裁判 (`getEvalAlgorithmRef`)**
- * - 根据资源 ID 和类型查询特定的评估算法。
- * - 对于聚合算法 (`AGGREGATING_ALGORITHM`)，它会进一步解析相关索引引用 (`EvalIndexRef`) 并设置矩阵数据。
- * - 对于其他类型的算法，它直接从数据库中获取相应的引用并返回其参数。
- * ### 技术细节
- * - **依赖注入**: 使用了多个自定义的服务、映射器以及工具类（如 `EvalAlgorithmRefMapper`, `EvalAlgorithmRefService`）来完成业务逻辑。
- * - **异常处理**: 当找不到资源或发生错误时抛出适当的业务异常。
- * - **线程安全**: 注入了 `Executor` 来执行异步任务。
- * - **日志记录**: 使用 `log` 对象记录重要事件。
- * - **Swagger 文档支持**: 提供了 API 文档注解以便于前端开发者理解接口用途。
- * ### 关键点总结
- * - 此控制器主要负责管理和检索评估算法的相关信息。
- * - 它集成了多种复杂的业务规则和技术特性，包括但不限于事务管理、矩阵数据分析等。
- * - 通过分层设计使得代码易于维护且具有良好的扩展性。
-**/
 package com.cyberpeace.cr.evaluation.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -72,6 +49,29 @@ import java.util.concurrent.Executor;
  * @author SN
  * @date 2024/11/07
  */
+/**
+ * 这段代码定义了一个名为 `EvalAlgorithmRefController` 的 Spring MVC 控制器类，用于处理与评估算法相关的 HTTP 请求。以下是对其功能和结构的简要分析：
+ * ### 主要功能
+ * 1. **编辑算法 (`editAlgorithm`)**
+ * - 接收一个包含算法信息的请求体 (`EvalAlgorithmRefReq`)。
+ * - 根据请求中的模式 (`mode`) 更新数据库中的算法记录。
+ * - 如果模式为格式化算法 (`FORMAT_ALGORITHM`), 它会检查矩阵数据的有效性，并使用 AHP 方法计算权重。
+ * - 使用事务模板确保更新操作的一致性。
+ * 2. **获取评估算法裁判 (`getEvalAlgorithmRef`)**
+ * - 根据资源 ID 和类型查询特定的评估算法。
+ * - 对于聚合算法 (`AGGREGATING_ALGORITHM`)，它会进一步解析相关索引引用 (`EvalIndexRef`) 并设置矩阵数据。
+ * - 对于其他类型的算法，它直接从数据库中获取相应的引用并返回其参数。
+ * ### 技术细节
+ * - **依赖注入**: 使用了多个自定义的服务、映射器以及工具类（如 `EvalAlgorithmRefMapper`, `EvalAlgorithmRefService`）来完成业务逻辑。
+ * - **异常处理**: 当找不到资源或发生错误时抛出适当的业务异常。
+ * - **线程安全**: 注入了 `Executor` 来执行异步任务。
+ * - **日志记录**: 使用 `log` 对象记录重要事件。
+ * - **Swagger 文档支持**: 提供了 API 文档注解以便于前端开发者理解接口用途。
+ * ### 关键点总结
+ * - 此控制器主要负责管理和检索评估算法的相关信息。
+ * - 它集成了多种复杂的业务规则和技术特性，包括但不限于事务管理、矩阵数据分析等。
+ * - 通过分层设计使得代码易于维护且具有良好的扩展性。
+**/
 @Slf4j
 @Api(tags = "前台-测试靶场-算法管理")
 @RestController
@@ -298,3 +298,4 @@ public class EvalAlgorithmRefController {
 	}
 
 }
+

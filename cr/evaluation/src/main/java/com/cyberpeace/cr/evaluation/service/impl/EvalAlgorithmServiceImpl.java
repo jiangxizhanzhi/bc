@@ -1,3 +1,26 @@
+package com.cyberpeace.cr.evaluation.service.impl;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
+import com.cyberpeace.cr.evaluation.dao.mapper.*;
+import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
+import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+import com.cyberpeace.integratation.service.RemotePythonService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * 评估算法Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalAlgorithmServiceImpl` 的类，它实现了 `EvalAlgorithmService` 接口，并且继承了 `ServiceImpl` 类。该类主要用于处理与评估算法相关的业务逻辑。以下是对代码的简要分析： 
  * ### 类结构 
@@ -44,29 +67,6 @@
  * ### 总结 
  * 这个类主要负责处理评估算法相关的业务逻辑，包括增删改查操作以及运行算法。通过注入不同的 Mapper 和远程服务，可以灵活地操作数据库和执行外部算法。整体设计合理，职责清晰。 
 **/
-package com.cyberpeace.cr.evaluation.service.impl;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
-import com.cyberpeace.cr.evaluation.dao.mapper.*;
-import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
-import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
-import com.cyberpeace.integratation.service.RemotePythonService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.stream.Collectors;
-
-/**
- * 评估算法Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Service
 public class EvalAlgorithmServiceImpl extends ServiceImpl<EvalAlgorithmMapper, EvalAlgorithm> implements EvalAlgorithmService {
 
@@ -210,3 +210,4 @@ public class EvalAlgorithmServiceImpl extends ServiceImpl<EvalAlgorithmMapper, E
 		return remotePythonService.runAlgorithm(algorithmId, algorithm.getCode(), data, listData, (List<Serializable>) otherArgs);
 	}
 }
+

@@ -1,3 +1,25 @@
+package com.cyberpeace.space.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.model.IdAndName;
+import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.context.rule.SpaceTrafficDetectRuleBo;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Map;
+
+/**
+ * 空间流量检测统治
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceTrafficDetectRule` 的 Java 实体类，用于表示空间流量检测规则。以下是代码的主要分析： 
  * 1. **类的基本信息**： 
@@ -25,28 +47,6 @@
  * - `com.cyberpeace.space.service.context.rule.SpaceTrafficDetectRuleBo`：目标 BO 类。 
  * 总结：这是一个典型的持久层实体类，主要用于数据库操作，并提供了从实体到业务对象的转换方法。 
 **/
-package com.cyberpeace.space.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.model.IdAndName;
-import com.cyberpeace.space.model.SpaceBaseTable;
-import com.cyberpeace.space.service.context.rule.SpaceTrafficDetectRuleBo;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Map;
-
-/**
- * 空间流量检测统治
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("space_traffic_detect_rule")
@@ -79,3 +79,4 @@ public class SpaceTrafficDetectRule extends SpaceBaseTable {
 		return bo;
 	}
 }
+

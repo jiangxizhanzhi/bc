@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.ojbase.service.bo;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评论 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CommentBo` 的 Java 类，用于表示一个评论对象。以下是该类的简要分析： 
  * ### 类定义 
@@ -30,25 +49,6 @@
  * - **结构**：属性丰富，涵盖了评论相关的所有关键信息，并且可以递归地表示评论的回复结构。 
  * 这个类的设计适用于需要详细记录和展示评论信息的应用场景，特别是在在线教育平台或论坛中。 
 **/
-package com.cyberpeace.oj.ojbase.service.bo;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评论 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class CommentBo implements Serializable {
@@ -190,3 +190,4 @@ public class CommentBo implements Serializable {
 	private List<CommentBo> commentReply;
 
 }
+

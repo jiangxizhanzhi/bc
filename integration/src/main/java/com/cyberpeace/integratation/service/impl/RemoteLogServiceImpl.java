@@ -1,3 +1,27 @@
+package com.cyberpeace.integratation.service.impl;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.model.mp.MpLog;
+import com.cyberpeace.integratation.service.RemoteLogService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+
+/**
+ * 远程日志Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `RemoteLogServiceImpl` 的 Spring 服务类，实现了 `RemoteLogService` 接口。以下是该代码的主要功能和结构的简要分析： 
  * ### 类定义与注解 
@@ -53,30 +77,6 @@
  * ### 总结 
  * 这个服务类主要负责管理和发送日志信息到远程服务器。它通过 `addLog` 方法异步发送日志，并提供了两个具体的方法 `addCrLog` 和 `addOjLog` 来处理不同类型的操作日志。这些方法首先生成日志的基本信息，然后设置具体内容，并最终发送到远程服务器。 
 **/
-package com.cyberpeace.integratation.service.impl;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.integratation.constant.LogContent;
-import com.cyberpeace.integratation.constant.OperationModule;
-import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.integratation.model.mp.MpLog;
-import com.cyberpeace.integratation.service.RemoteLogService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-
-/**
- * 远程日志Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Slf4j
 @Service
 public class RemoteLogServiceImpl implements RemoteLogService {
@@ -183,3 +183,4 @@ public class RemoteLogServiceImpl implements RemoteLogService {
 		addLog(mpLog);
 	}
 }
+

@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.crbase.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.crbase.dao.entity.CrNotice;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+
+/**
+ * 靶场通知Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个基于 MyBatis-Plus 的数据访问接口 `CrNoticeMapper`，用于操作数据库中与 `CrNotice` 实体类相关的数据。以下是代码的简要分析： 
  * 1. **包名**： 
@@ -15,19 +28,6 @@
  * 总结： 
  * 这是一段简洁高效的代码，利用 MyBatis-Plus 的特性实现了对 `CrNotice` 实体的数据库操作，减少了冗余代码，提高了开发效率。 
 **/
-package com.cyberpeace.cr.crbase.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.crbase.dao.entity.CrNotice;
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
-
-/**
- * 靶场通知Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 @Repository
 public interface CrNoticeMapper extends BaseMapper<CrNotice> {
@@ -35,3 +35,4 @@ public interface CrNoticeMapper extends BaseMapper<CrNotice> {
 
 
 }
+

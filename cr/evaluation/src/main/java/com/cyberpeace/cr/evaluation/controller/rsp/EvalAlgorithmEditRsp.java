@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithmRef;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估算法编辑响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalAlgorithmEditRsp` 的类，该类用于表示评估算法编辑的响应。这个类继承自 `EvalAlgorithmRef` 类，并使用了 Lombok 库的 `@Getter` 和 `@Setter` 注解来自动生成属性的 getter 和 setter 方法。下面是详细的分析： 
  * ### 类定义 
@@ -30,19 +43,6 @@
  * - **日期**：2024年11月8日 
  * 这段代码简洁明了，通过继承和注解的方式实现了类的功能，并且具备良好的可扩展性和文档生成能力。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithmRef;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估算法编辑响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalAlgorithmEditRsp extends EvalAlgorithmRef {
@@ -59,3 +59,4 @@ public class EvalAlgorithmEditRsp extends EvalAlgorithmRef {
 	@ApiModelProperty(value = "算法矩阵内容一致性返回信息")
 	private String msg;
 }
+

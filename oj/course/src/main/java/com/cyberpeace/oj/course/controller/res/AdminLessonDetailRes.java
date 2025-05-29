@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.controller.res;
+
+import java.io.Serializable;
+import java.util.List;
+
+import com.cyberpeace.cs.service.context.AttachmentBo;
+import io.swagger.annotations.ApiModel;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 管理课详情结果
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `AdminLessonDetailRes` 的 Java 类，用于表示管理员查看课程详细信息的结果。以下是该类的主要特性和功能： 
  * ### 类定义与继承 
@@ -19,25 +38,6 @@
  * - 类中的属性涵盖了课程的各个方面，包括基本信息、配置信息、附件等。 
  * - 通过实现 `Serializable` 接口，使得该类的对象可以被序列化，方便在网络传输和持久化存储中使用。 
 **/
-package com.cyberpeace.oj.course.controller.res;
-
-import java.io.Serializable;
-import java.util.List;
-
-import com.cyberpeace.cs.service.context.AttachmentBo;
-import io.swagger.annotations.ApiModel;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 管理课详情结果
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel("后台课时详情")
@@ -191,3 +191,4 @@ public class AdminLessonDetailRes implements Serializable {
     private Boolean scenePermission;
 
 }
+

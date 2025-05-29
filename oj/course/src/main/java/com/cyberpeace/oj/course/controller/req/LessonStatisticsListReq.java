@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.controller.req;
+
+
+import com.cyberpeace.common.model.PageReqBase;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课统计学列表请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonStatisticsListReq` 的 Java 类，该类用于表示获取课程统计信息列表的请求参数。以下是对该代码的简要分析： 
  * ### 包声明和导入 
@@ -22,24 +40,6 @@
  * - **文档**：通过 Swagger 注解，可以方便地生成 API 文档，便于前端开发人员了解接口使用方式。 
  * 这个类的设计简洁且实用，适用于典型的 RESTful API 开发场景。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-
-import com.cyberpeace.common.model.PageReqBase;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课统计学列表请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PageReqBase
- * @since 1.0.0
- */
 @ApiModel
 @Getter
 @Setter
@@ -70,3 +70,4 @@ public class LessonStatisticsListReq extends PageReqBase {
 	private Integer type;
 
 }
+

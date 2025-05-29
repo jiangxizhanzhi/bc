@@ -1,28 +1,3 @@
-/**
- * 这段代码是一个基于Spring Boot的单元测试类，用于测试`SpaceAlgorithmTeamController`控制器的功能。以下是对代码的简要分析： 
- * 1. **测试类结构**： 
- * - 类名为`SpaceAlgorithmTeamControllerTest`，继承自`WebMvcTest`，表明这是一个针对Web MVC层的单元测试。 
- * - 使用了JUnit 5的`@Test`注解来定义测试方法。 
- * 2. **依赖注入与模拟**： 
- * - 使用`@Autowired`注解注入`MockMvc`对象，用于发送HTTP请求并验证响应。 
- * - 使用`@MockBean`创建`SpaceAlgorithmTeamService`的模拟实例，用于模拟服务层的行为。 
- * - 使用`@SpyBean`创建`SpaceAlgorithmTeamController`的spy实例，用于部分模拟控制器行为。 
- * 3. **初始化设置**： 
- * - 在`setUp`方法中，通过`when`和`doReturn`设置模拟服务的行为，例如返回空列表、特定的对象等。 
- * - 初始化`TableInfoHelper`以支持MyBatis的动态SQL功能。 
- * 4. **测试方法**： 
- * - `testPage`：测试分页功能，验证GET请求返回正确的JSON格式数据。 
- * - `testAddAttack`：测试添加新记录的功能，验证POST请求返回正确的响应。 
- * - `testUpdateA`：测试更新记录的功能，验证PATCH请求返回正确的响应。 
- * - `testDeleteA`：测试删除记录的功能，验证DELETE请求返回正确的响应。 
- * - `testGetADetail`：测试获取单个记录详情的功能，验证GET请求返回正确的响应。 
- * 5. **断言**： 
- * - 使用`andExpect`方法断言HTTP状态码为`200 OK`，以及响应内容是否符合预期的JSON格式。 
- * 6. **工具类**： 
- * - 使用了`JsonUtil`将对象转换为JSON字符串。 
- * - 使用了Guava库中的`Lists.newArrayList`创建列表。 
- * 总体而言，这段代码展示了如何使用Spring Boot的测试框架来验证控制器的各个端点的功能，确保其行为符合预期。 
-**/
 package com.cyberpeace.space.controller;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
@@ -55,6 +30,31 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * 这段代码是一个基于Spring Boot的单元测试类，用于测试`SpaceAlgorithmTeamController`控制器的功能。以下是对代码的简要分析： 
+ * 1. **测试类结构**： 
+ * - 类名为`SpaceAlgorithmTeamControllerTest`，继承自`WebMvcTest`，表明这是一个针对Web MVC层的单元测试。 
+ * - 使用了JUnit 5的`@Test`注解来定义测试方法。 
+ * 2. **依赖注入与模拟**： 
+ * - 使用`@Autowired`注解注入`MockMvc`对象，用于发送HTTP请求并验证响应。 
+ * - 使用`@MockBean`创建`SpaceAlgorithmTeamService`的模拟实例，用于模拟服务层的行为。 
+ * - 使用`@SpyBean`创建`SpaceAlgorithmTeamController`的spy实例，用于部分模拟控制器行为。 
+ * 3. **初始化设置**： 
+ * - 在`setUp`方法中，通过`when`和`doReturn`设置模拟服务的行为，例如返回空列表、特定的对象等。 
+ * - 初始化`TableInfoHelper`以支持MyBatis的动态SQL功能。 
+ * 4. **测试方法**： 
+ * - `testPage`：测试分页功能，验证GET请求返回正确的JSON格式数据。 
+ * - `testAddAttack`：测试添加新记录的功能，验证POST请求返回正确的响应。 
+ * - `testUpdateA`：测试更新记录的功能，验证PATCH请求返回正确的响应。 
+ * - `testDeleteA`：测试删除记录的功能，验证DELETE请求返回正确的响应。 
+ * - `testGetADetail`：测试获取单个记录详情的功能，验证GET请求返回正确的响应。 
+ * 5. **断言**： 
+ * - 使用`andExpect`方法断言HTTP状态码为`200 OK`，以及响应内容是否符合预期的JSON格式。 
+ * 6. **工具类**： 
+ * - 使用了`JsonUtil`将对象转换为JSON字符串。 
+ * - 使用了Guava库中的`Lists.newArrayList`创建列表。 
+ * 总体而言，这段代码展示了如何使用Spring Boot的测试框架来验证控制器的各个端点的功能，确保其行为符合预期。 
+**/
 @WebMvcTest(SpaceAlgorithmTeamController.class)
 class SpaceAlgorithmTeamControllerTest {
 
@@ -145,3 +145,4 @@ class SpaceAlgorithmTeamControllerTest {
                 .andExpect(content().json("{\"data\":{\"resourceId\":null,\"name\":null,\"expertisePercent\":null,\"rolePercent\":null},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 }
+

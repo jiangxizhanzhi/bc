@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+
+/**
+ * 课堂档案请求体
+ *
+ * @author SN
+ * @see Serializable
+ * @version 1.0.0
+ * @since 1.0.0
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomArchiveReq` 的 Java 类，用于表示课堂档案请求体。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -26,25 +45,6 @@
  * ### 总结 
  * 这个类是一个用于表示课堂档案请求体的数据传输对象（DTO），包含两个必须填写的字符串属性：`classroomId` 和 `groupArchiveId`。通过使用 Swagger 注解，可以方便地生成相关的 API 文档。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-
-/**
- * 课堂档案请求体
- *
- * @author SN
- * @see Serializable
- * @version 1.0.0
- * @since 1.0.0
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @ApiModel
@@ -69,3 +69,4 @@ public class ClassroomArchiveReq implements Serializable {
 	private String groupArchiveId;
 
 }
+

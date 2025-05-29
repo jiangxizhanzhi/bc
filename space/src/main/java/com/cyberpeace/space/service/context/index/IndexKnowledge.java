@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.index;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 编号知识点
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个名为 `IndexKnowledge` 的 Java 类，用于表示编号知识点（index knowledge）。以下是对其功能和结构的简要分析： 
  * ### 主要功能： 
@@ -17,20 +31,6 @@
  * ### 总结： 
  * 该类是一个知识管理工具的核心部分，负责整合多种类型的知识库，并提供一个接口来计算这些知识库的总和。通过默认初始化某些属性（如 `traffic` 和 `scene`），它简化了对象的创建过程，同时提供了灵活的数据管理和计算能力。 
 **/
-package com.cyberpeace.space.service.context.index;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 编号知识点
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class IndexKnowledge {
@@ -110,3 +110,4 @@ public class IndexKnowledge {
 				+ this.scene.getSum();
 	}
 }
+

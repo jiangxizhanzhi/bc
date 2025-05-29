@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 课实践场景状态请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonPracticeSceneStatusReq` 的 Java 类，用于表示课实践场景的状态请求体。以下是对其简要分析： 
  * ### 类定义 
@@ -27,24 +45,6 @@
  * - 使用 Lombok 的注解减少了样板代码，提高了代码的可读性和简洁性。 
  * - Swagger 注解使得这个类在生成 API 文档时更加清晰明了。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 课实践场景状态请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -75,3 +75,4 @@ public class LessonPracticeSceneStatusReq implements Serializable {
 	private Integer status;
 
 }
+

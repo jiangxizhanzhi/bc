@@ -1,3 +1,16 @@
+package com.cyberpeace.integratation.model.scene;
+
+import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 合并快照上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MergeSnapshotContext` 的 Java 类，该类实现了 `Serializable` 接口。这个类主要用于表示合并快照时的上下文信息。以下是详细的分析： 
  * ### 类定义 
@@ -20,19 +33,6 @@
  * - 可以考虑添加更多的属性来丰富上下文信息，例如时间戳、用户信息等。 
  * 总体来说，这个类设计简洁明了，能够满足基本需求。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import java.io.Serializable;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 合并快照上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MergeSnapshotContext implements Serializable {
@@ -58,3 +58,4 @@ public class MergeSnapshotContext implements Serializable {
 	private String uuid;
 
 }
+

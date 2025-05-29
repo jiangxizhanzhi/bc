@@ -1,3 +1,14 @@
+package com.cyberpeace.space.service.context.tactic;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 攻击修改请求体
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 /**
  * 这段代码定义了一个名为 `AttackModifyReq` 的类，它是 `AttackAddReq` 类的子类。以下是简要分析： 
  * 1. **类的功能**： 
@@ -12,17 +23,6 @@
  * - 该类的设计目的是为了支持攻击修改操作，通过扩展父类来满足特定需求（如新增 `resourceId` 字段）。 
  * 总结：这是一个简单的数据传输对象（DTO），用于封装攻击修改请求的相关信息，继承自通用的攻击添加请求类，并新增了资源 ID 字段以满足修改场景的需求。 
 **/
-package com.cyberpeace.space.service.context.tactic;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 攻击修改请求体
- *
- * @author SN
- * @date 2024/11/07
- */
 @Getter
 @Setter
 public class AttackModifyReq extends AttackAddReq {
@@ -32,3 +32,4 @@ public class AttackModifyReq extends AttackAddReq {
 	 */
 	private String resourceId;
 }
+

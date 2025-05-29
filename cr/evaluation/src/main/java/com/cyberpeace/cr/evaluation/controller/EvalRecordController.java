@@ -1,3 +1,46 @@
+package com.cyberpeace.cr.evaluation.controller;
+
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalRecordListReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalRecordStartReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalVariableProbeDataReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.*;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
+import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
+import com.cyberpeace.cr.evaluation.service.EvalRecordService;
+import com.cyberpeace.cr.evaluation.service.EvalTaskService;
+import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 评估记录Controller
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalRecordController` 的 Spring MVC 控制器类，用于处理与评估记录相关的HTTP请求。以下是对该代码的简要分析： 
  * ### 类概述 
@@ -53,49 +96,6 @@
  * - 方法命名清晰，符合RESTful风格，便于理解和维护。 
  * - 注解的使用使得每个方法的功能和权限控制更加明确。 
 **/
-package com.cyberpeace.cr.evaluation.controller;
-
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalRecordListReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalRecordStartReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalVariableProbeDataReq;
-import com.cyberpeace.cr.evaluation.controller.rsp.*;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
-import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
-import com.cyberpeace.cr.evaluation.service.EvalRecordService;
-import com.cyberpeace.cr.evaluation.service.EvalTaskService;
-import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-/**
- * 评估记录Controller
- *
- * @author SN
- * @date 2024/11/08
- */
 @Api(tags = "靶场测评-评估")
 @RestController
 @RequiresAuthentication
@@ -411,3 +411,4 @@ public class EvalRecordController {
         return new BaseRsp<>(evalRecordService.getAllCycleResult(resourceId));
     }
 }
+

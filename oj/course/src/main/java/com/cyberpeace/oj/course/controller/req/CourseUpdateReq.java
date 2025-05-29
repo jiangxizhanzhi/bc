@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import com.cyberpeace.common.baseinterface.Update;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+
+/**
+ * 课程更新请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see CourseAddReq
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseUpdateReq` 的 Java 类，它是用于课程更新请求的模型类。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -23,25 +42,6 @@
  * - **文档生成**：通过 Swagger 注解，可以自动生成 API 文档。 
  * 这个类的设计目的是确保在更新课程时能够正确地传递和验证必要的信息。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import com.cyberpeace.common.baseinterface.Update;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-
-/**
- * 课程更新请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see CourseAddReq
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -57,3 +57,4 @@ public class CourseUpdateReq extends CourseAddReq {
 	private String resourceId;
 
 }
+

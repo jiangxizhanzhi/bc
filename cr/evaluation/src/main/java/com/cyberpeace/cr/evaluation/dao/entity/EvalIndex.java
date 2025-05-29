@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.evaluation.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.BaseTable;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Getter;
+
+/**
+ * 
+ * @TableName cr_eval_index
+ */
 /**
  * 这段代码定义了一个名为 `EvalIndex` 的 Java 类，用于表示评估指标。以下是对其主要特性和功能的简要分析： 
  * ### 包与导入 
@@ -30,22 +46,6 @@
  * ### 总结 
  * 该类主要用于表示评估指标的相关信息，并提供了必要的属性和方法来支持这些功能。通过继承 `BaseTable` 和使用 Lombok 注解，该类简化了代码的编写和维护。枚举 `Level` 提供了标准化的指标级别表示。 
 **/
-package com.cyberpeace.cr.evaluation.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.BaseTable;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Getter;
-
-/**
- * 
- * @TableName cr_eval_index
- */
 @TableName(value = "cr_eval_index")
 @Getter
 @Setter

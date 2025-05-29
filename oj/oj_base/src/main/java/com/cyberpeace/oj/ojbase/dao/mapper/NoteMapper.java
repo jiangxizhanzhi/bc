@@ -1,3 +1,26 @@
+package com.cyberpeace.oj.ojbase.dao.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
+import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
+import com.cyberpeace.oj.ojbase.dao.entity.Note;
+
+import java.util.List;
+
+/**
+ * 笔记Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `NoteMapper` 的接口，它继承自 `BaseMapper<Note>`，并且使用了 MyBatis 的 `@Mapper` 注解。这个接口用于与数据库进行交互，执行各种针对 `Note` 实体的操作。以下是对该接口方法的简要分析： 
  * 1. **继承关系**: 
@@ -23,29 +46,6 @@
  * - 每个方法都有详细的文档注释，描述了方法的功能、输入参数和返回值，这有助于其他开发者理解和使用这些方法。 
  * 总体来说，`NoteMapper` 接口提供了一套丰富的功能来操作 `Note` 数据实体，涵盖了增删改查等各种常见需求，并且通过 MyBatis 和 MyBatis Plus 提供了灵活的数据库访问方式。 
 **/
-package com.cyberpeace.oj.ojbase.dao.mapper;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
-import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
-import com.cyberpeace.oj.ojbase.dao.entity.Note;
-
-import java.util.List;
-
-/**
- * 笔记Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 public interface NoteMapper extends BaseMapper<Note> {
 

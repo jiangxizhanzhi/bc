@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.controller.res;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 管理课程统计学结果
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `AdminCourseStatisticsRes` 的 Java 类，该类用于表示管理员课程统计结果。以下是详细的分析： 
  * ### 包声明和导入 
@@ -44,24 +62,6 @@
  * - 实现 `Serializable` 接口，使得该对象可以进行序列化操作。 
  * 该类主要用于后台管理系统中展示课程统计信息，并且支持 API 文档的自动生成。 
 **/
-package com.cyberpeace.oj.course.controller.res;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 管理课程统计学结果
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -131,3 +131,4 @@ public class AdminCourseStatisticsRes implements Serializable {
 	@ApiModelProperty("创建者")
 	private String createUser;
 }
+

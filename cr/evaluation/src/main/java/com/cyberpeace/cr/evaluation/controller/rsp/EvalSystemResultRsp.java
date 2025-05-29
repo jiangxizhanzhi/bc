@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 评估系统结果响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalSystemResultRsp` 的 Java 类，用于表示评估系统的结果响应。以下是对该类的简要分析： 
  * ### 类名和包 
@@ -17,21 +32,6 @@
  * ### 总结 
  * 这个类主要用于封装评估系统的各种结果数据，并且支持 JSON 序列化和反序列化。它具有递归结构，可以包含子级结果，适用于表示多层次的评估结果。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 评估系统结果响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @Setter

@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 评估收集上下文响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalCollectionContextRsp` 的 Java 类，该类用于表示评估收集上下文的响应。以下是对代码的简要分析： 
  * ### 类定义 
@@ -24,19 +37,6 @@
  * - **可序列化**：由于实现了 `Serializable` 接口，这个类可以被序列化，便于在网络上传输或持久化存储。 
  * 这段代码是一个典型的 POJO（Plain Old Java Object），适用于需要传输或存储评估上下文数据的场景。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 评估收集上下文响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalCollectionContextRsp implements Serializable {
@@ -81,3 +81,4 @@ public class EvalCollectionContextRsp implements Serializable {
      */
     private String scoreAlgorithmName;
 }
+

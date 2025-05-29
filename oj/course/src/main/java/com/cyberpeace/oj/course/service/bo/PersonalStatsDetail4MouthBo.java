@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 个人数据详情4口无双
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `PersonalStatsDetail4MouthBo` 的 Java 类，该类实现了 `Serializable` 接口。这个类的主要目的是封装用户在近30天内的各种学习统计数据。以下是对代码的简要分析： 
  * ### 类名和包 
@@ -20,24 +38,6 @@
  * - 通过 Lombok 和 Swagger 注解，减少了样板代码，提高了代码的可读性和维护性。 
  * 这个类可以作为一个数据传输对象（DTO），用于在不同层之间传递数据。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 个人数据详情4口无双
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class PersonalStatsDetail4MouthBo implements Serializable {
@@ -75,3 +75,4 @@ public class PersonalStatsDetail4MouthBo implements Serializable {
     private List<Integer> averageScore;
 
 }
+

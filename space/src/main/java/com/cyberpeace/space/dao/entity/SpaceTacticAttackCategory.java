@@ -1,3 +1,22 @@
+package com.cyberpeace.space.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间战法攻击类别
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see BaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceTacticAttackCategory` 的 Java 类，用于表示数据库中的 "space_tactic_attack_category" 表。以下是代码的主要分析： 
  * 1. **类的基本信息**： 
@@ -18,25 +37,6 @@
  * - 类上有详细的注释，描述了类的功能、作者、版本和依赖的基类 `BaseTable`。 
  * 总结：这是一个典型的 MyBatis-Plus 实体类，用于与数据库表进行映射，支持自动化的 CRUD 操作。 
 **/
-package com.cyberpeace.space.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间战法攻击类别
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see BaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("space_tactic_attack_category")
@@ -48,3 +48,4 @@ public class SpaceTacticAttackCategory extends BaseTable {
 	private String name;
 
 }
+

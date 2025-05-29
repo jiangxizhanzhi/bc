@@ -1,3 +1,18 @@
+package com.cyberpeace.common.model;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 名称计数
+ *
+ * @author SN
+ * @date 2023/05/10
+ */
 /**
  * 该代码定义了一个名为 `NameCount` 的 Java 类，用于表示名称及其对应的计数。以下是代码的主要分析： 
  * 1. **类的功能**： 
@@ -16,21 +31,6 @@
  * - 该类适用于需要统计某个名称出现次数的场景，例如统计用户输入的关键词频率、日志记录等。 
  * 总结：这是一个轻量级的数据模型类，结构清晰，功能单一，适合用作 DTO（数据传输对象）。 
 **/
-package com.cyberpeace.common.model;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 名称计数
- *
- * @author SN
- * @date 2023/05/10
- */
 @Getter
 @Setter
 public class NameCount implements Serializable {
@@ -58,3 +58,4 @@ public class NameCount implements Serializable {
 		this.count += 1;
 	}
 }
+

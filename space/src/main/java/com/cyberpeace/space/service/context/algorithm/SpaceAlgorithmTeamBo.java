@@ -1,3 +1,21 @@
+package com.cyberpeace.space.service.context.algorithm;
+
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.dao.entity.SpaceAlgorithmTeam;
+import com.cyberpeace.space.model.SpaceBoBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间算法团队Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceAlgorithmTeamBo` 的 Java 类，它是基于 `SpaceBoBase` 的子类，并且主要用于表示空间算法团队的相关业务对象（BO, Business Object）。以下是代码的主要分析： 
  * 1. **类的基本信息**： 
@@ -18,24 +36,6 @@
  * 总体来说，这个类是一个典型的业务对象类，用于封装业务逻辑中的数据结构，并提供了必要的功能（如对象转换）来支持业务操作。 
 **/
 
-package com.cyberpeace.space.service.context.algorithm;
-
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.dao.entity.SpaceAlgorithmTeam;
-import com.cyberpeace.space.model.SpaceBoBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间算法团队Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBoBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceAlgorithmTeamBo extends SpaceBoBase {

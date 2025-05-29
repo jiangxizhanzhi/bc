@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * 课堂标志Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomSignMapper` 的接口，它继承自 `BaseMapper<ClassroomSign>`。这个接口用于操作与 `ClassroomSign` 实体类相关的数据库表。以下是对代码的简要分析： 
  * ### 包声明和导入 
@@ -28,24 +46,6 @@
  * - 使用 MyBatis-Plus 提供的 `BaseMapper` 进行基本的 CRUD 操作，并扩展了两个自定义查询方法。 
  * 这个接口的设计符合良好的面向对象编程实践，并且充分利用了 MyBatis-Plus 的功能来简化数据库操作。 
 **/
-package com.cyberpeace.oj.course.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
-
-/**
- * 课堂标志Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 public interface ClassroomSignMapper extends BaseMapper<ClassroomSign> {
 
@@ -74,3 +74,4 @@ public interface ClassroomSignMapper extends BaseMapper<ClassroomSign> {
 	ClassroomSign selectByRoomAndUser(@Param("roomId") String roomId,
 			@Param("userId") String userId);
 }
+

@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估系统列表响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalSystemListRsp` 的 Java 类，该类用于表示评估系统的列表响应。以下是详细的分析： 
  * ### 类定义 
@@ -23,20 +37,6 @@
  * - 使用了 Swagger 的 `@ApiModelProperty` 注解来生成 API 文档。 
  * 这个类可以作为 RESTful API 的响应对象，返回评估系统的信息。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import javax.validation.constraints.NotNull;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估系统列表响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalSystemListRsp {

@@ -1,3 +1,24 @@
+package com.cyberpeace.space.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
+import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
+import com.cyberpeace.space.service.context.index.KnowledgeChart;
+import com.cyberpeace.space.service.context.tactic.*;
+
+import java.util.List;
+
+/**
+ * 空间战法防御Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceTacticDefenseService` 的接口，它继承自 `IService<SpaceTacticDefense>`。该接口主要用于处理与“空间战法防御”相关的业务逻辑。以下是对代码的简要分析： 
  * 1. **继承关系**： 
@@ -26,27 +47,6 @@
  * - 该接口的设计目的是为了提供一套完整的、面向服务的 API，支持对“空间战法防御”的全面管理，包括但不限于创建、修改、删除、查询等基本 CRUD 操作，并且还涵盖了更复杂的业务场景，如分页、分类管理和图表展示等。 
  * 总结来说，这个接口是一个典型的基于领域驱动设计（DDD）的服务层接口，旨在封装与“空间战法防御”相关的复杂业务逻辑，便于上层应用调用。 
 **/
-package com.cyberpeace.space.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
-import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
-import com.cyberpeace.space.service.context.index.KnowledgeChart;
-import com.cyberpeace.space.service.context.tactic.*;
-
-import java.util.List;
-
-/**
- * 空间战法防御Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see IService
- * @since 1.0.0
- */
 public interface SpaceTacticDefenseService extends IService<SpaceTacticDefense> {
     /**
      * 分页
@@ -212,3 +212,4 @@ public interface SpaceTacticDefenseService extends IService<SpaceTacticDefense> 
      */
     List<String> listByCategoryids(List<String> ids);
 }
+

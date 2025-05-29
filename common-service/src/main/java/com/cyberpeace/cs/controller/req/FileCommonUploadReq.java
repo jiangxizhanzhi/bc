@@ -1,3 +1,20 @@
+package com.cyberpeace.cs.controller.req;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
+
+import lombok.Data;
+
+/**
+ * 文件常见上传请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `FileCommonUploadReq` 的 Java 类，用于处理文件上传的请求体。以下是代码的主要特点和功能分析： 
  * 1. **类的功能**： 
@@ -16,23 +33,6 @@
  * - 适用于需要接收文件并附带额外信息（如类型）的文件上传场景，结合 Spring Boot 和 Swagger 使用。 
  * 总结：这是一个简洁且功能明确的文件上传请求体类，通过 Lombok 减少了样板代码，并使用 Swagger 注解增强了可读性和文档生成能力。 
 **/
-package com.cyberpeace.cs.controller.req;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
-
-import lombok.Data;
-
-/**
- * 文件常见上传请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class FileCommonUploadReq implements Serializable {
@@ -50,3 +50,4 @@ public class FileCommonUploadReq implements Serializable {
 	private Integer type;
 
 }
+

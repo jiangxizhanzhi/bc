@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.course.service;
+
+import java.util.List;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.oj.course.dao.entity.CourseCategory;
+import com.cyberpeace.oj.course.service.bo.CategoryAddBo;
+import com.cyberpeace.oj.course.service.bo.CourseCategoryBo;
+
+/**
+ * 课程类别Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseCategoryService` 的接口，该接口扩展了 `IService<CourseCategory>` 接口。这个接口主要用于处理与课程分类相关的业务逻辑。以下是对该接口的简要分析： 
  * ### 接口概述 
@@ -50,26 +70,6 @@
  * ### 总结 
  * 该接口提供了全面的课程分类管理功能，包括查询、新增、更新、删除和批量操作等。通过这些方法，可以方便地管理和维护课程分类的数据。 
 **/
-package com.cyberpeace.oj.course.service;
-
-import java.util.List;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.oj.course.dao.entity.CourseCategory;
-import com.cyberpeace.oj.course.service.bo.CategoryAddBo;
-import com.cyberpeace.oj.course.service.bo.CourseCategoryBo;
-
-/**
- * 课程类别Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see IService
- * @since 1.0.0
- */
 public interface CourseCategoryService extends IService<CourseCategory> {
 
 	/**
@@ -157,3 +157,4 @@ public interface CourseCategoryService extends IService<CourseCategory> {
 	 */
 	CourseCategory getOrCreate(String categoryName);
 }
+

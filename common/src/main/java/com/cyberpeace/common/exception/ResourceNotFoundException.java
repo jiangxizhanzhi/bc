@@ -1,3 +1,14 @@
+package com.cyberpeace.common.exception;
+
+/**
+ * 数据库对应资源失败，抛出此异常
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see RuntimeException
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个自定义异常类 `ResourceNotFoundException`，继承自 Java 的标准运行时异常类 `RuntimeException`。以下是简要分析： 
  * ### 功能分析： 
@@ -11,17 +22,6 @@
  * 当在数据库操作中无法找到指定资源时，可以抛出此异常，并传入相关字段（如 `resource_id`）作为消息，便于定位问题。 
  * 总结：这是一个简单的、针对特定业务场景设计的运行时异常类。 
 **/
-package com.cyberpeace.common.exception;
-
-/**
- * 数据库对应资源失败，抛出此异常
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see RuntimeException
- * @since 1.0.0
- */
 public class ResourceNotFoundException extends RuntimeException {
 
 	/**
@@ -32,3 +32,4 @@ public class ResourceNotFoundException extends RuntimeException {
 		super(message);
 	}
 }
+

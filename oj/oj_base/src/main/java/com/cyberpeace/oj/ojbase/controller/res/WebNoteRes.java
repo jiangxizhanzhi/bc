@@ -1,3 +1,24 @@
+package com.cyberpeace.oj.ojbase.controller.res;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * Web注意结果
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `WebNoteRes` 的 Java 类，用于表示与 Web 网页相关的笔记结果。以下是对该类的简要分析： 
  * ### 类名与包声明 
@@ -30,27 +51,6 @@
  * - **功能**: 提供了笔记的详细信息，包括笔记的基本信息、评分、状态等。 
  * 总体来说，这是一个简洁且功能明确的数据传输对象（DTO），适用于前后端交互和数据传输。 
 **/
-package com.cyberpeace.oj.ojbase.controller.res;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
-import java.util.Date;
-
-/**
- * Web注意结果
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @Builder
@@ -123,3 +123,4 @@ public class WebNoteRes implements Serializable {
 	private Boolean isSubmit;
 
 }
+

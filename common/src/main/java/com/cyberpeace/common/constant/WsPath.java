@@ -1,3 +1,18 @@
+package com.cyberpeace.common.constant;
+
+import com.google.common.collect.Sets;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Set;
+
+/**
+ * 对外暴露的websocket路径
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个常量类 `WsPath`，用于存储 WebSocket 路径相关的常量，并提供路径验证的功能。以下是代码的主要分析： 
  * ### 主要功能 
@@ -23,21 +38,6 @@
  * - 如果路径是动态变化的，可以考虑使用其他数据结构（如数据库或配置文件）来存储路径，而不是硬编码。 
  * 总体来说，这段代码逻辑清晰，结构合理，适合用作 WebSocket 路径管理的基础工具类。 
 **/
-package com.cyberpeace.common.constant;
-
-import com.google.common.collect.Sets;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Set;
-
-/**
- * 对外暴露的websocket路径
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public class WsPath {
 
 	/**
@@ -169,3 +169,4 @@ public class WsPath {
 		return cache.contains(path);
 	}
 }
+

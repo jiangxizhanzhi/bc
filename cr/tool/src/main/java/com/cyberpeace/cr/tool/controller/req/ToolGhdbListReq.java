@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.tool.controller.req;
+
+import com.cyberpeace.common.model.PageReqBase;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 工具GHDB 数据库列表请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolGhdbListReq` 的 Java 类，该类用于处理工具 GHDB 数据库列表请求的数据。以下是对该代码的简要分析： 
  * ### 包声明 
@@ -43,21 +58,6 @@
  * - 使用 Swagger 注解生成 API 文档，并通过 Lombok 减少了样板代码。 
  * 这个类的设计目的是为了方便前端发送查询请求时传递相关参数，并且可以通过 Swagger 自动生成 API 文档，方便接口的使用和维护。 
 **/
-package com.cyberpeace.cr.tool.controller.req;
-
-import com.cyberpeace.common.model.PageReqBase;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 工具GHDB 数据库列表请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @ApiModel
 public class ToolGhdbListReq extends PageReqBase {
 
@@ -77,3 +77,4 @@ public class ToolGhdbListReq extends PageReqBase {
 	@Setter
 	private String author;
 }
+

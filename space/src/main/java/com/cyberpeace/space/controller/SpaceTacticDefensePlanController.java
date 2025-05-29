@@ -1,3 +1,35 @@
+package com.cyberpeace.space.controller;
+
+import com.cyberpeace.space.model.controller.SpaceControllerBase;
+import com.cyberpeace.space.model.req.SpacePageReqBase;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.space.dao.entity.SpaceTacticDefensePlan;
+import com.cyberpeace.space.service.SpaceTacticDefensePlanService;
+import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
+import com.cyberpeace.space.service.context.tactic.DefensePlanLevelUpdateReq;
+import com.cyberpeace.space.service.context.tactic.SpaceTacticDefensePlanBo;
+import com.google.common.collect.Maps;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 空间战法防御计划Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个名为 `SpaceTacticDefensePlanController` 的 Spring MVC 控制器类，用于处理与空间战法防御计划相关的 HTTP 请求。以下是代码的主要功能和结构分析： 
  * ### 类的功能和继承关系 
@@ -39,38 +71,6 @@
  * 2. 根据请求体生成新的框架级别。 
  * 通过继承基类和使用注解，代码保持了良好的可读性和扩展性，同时利用了 Spring 和 Swagger 提供的功能来简化开发过程。 
 **/
-package com.cyberpeace.space.controller;
-
-import com.cyberpeace.space.model.controller.SpaceControllerBase;
-import com.cyberpeace.space.model.req.SpacePageReqBase;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.space.dao.entity.SpaceTacticDefensePlan;
-import com.cyberpeace.space.service.SpaceTacticDefensePlanService;
-import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
-import com.cyberpeace.space.service.context.tactic.DefensePlanLevelUpdateReq;
-import com.cyberpeace.space.service.context.tactic.SpaceTacticDefensePlanBo;
-import com.google.common.collect.Maps;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 空间战法防御计划Controller
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceControllerBase
- * @since 1.0.0
- */
 @Api(tags = "战法库-防御战法方案")
 @RestController
 @RequestMapping("/space/tactic/defense_plan")
@@ -113,3 +113,4 @@ public class SpaceTacticDefensePlanController extends SpaceControllerBase<SpaceT
 	}
 
 }
+

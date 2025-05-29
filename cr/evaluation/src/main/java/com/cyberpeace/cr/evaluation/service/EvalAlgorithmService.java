@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import java.util.List;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
+import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+
+/**
+ * 评估算法Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalAlgorithmService` 的接口，该接口扩展了 `IService<EvalAlgorithm>` 接口。这个服务接口用于处理与评估算法相关的业务逻辑。以下是对该接口的简要分析： 
  * ### 主要功能 
@@ -31,21 +46,6 @@
  * 该接口提供了多种方法来管理和操作评估算法，包括查询、删除、更新算法状态、分页查询等。特别地，还提供了一个运行算法的方法，允许根据给定的算法ID和输入参数执行具体的算法逻辑。 
  * 这个接口设计合理，功能全面，能够满足大多数评估算法管理的需求。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import java.util.List;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
-import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
-
-/**
- * 评估算法Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface EvalAlgorithmService extends IService<EvalAlgorithm> {
 
 	/**
@@ -113,3 +113,4 @@ public interface EvalAlgorithmService extends IService<EvalAlgorithm> {
 	 */
 	Object runAlgorithm(String algorithmId, Object data, Object listData, Object otherArgs);
 }
+

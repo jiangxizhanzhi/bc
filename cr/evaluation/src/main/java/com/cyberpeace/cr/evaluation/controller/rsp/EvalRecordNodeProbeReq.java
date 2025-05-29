@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 评估记录节点探针请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalRecordNodeProbeReq` 的 Java 类，该类用于表示评估记录节点探针的请求体。以下是对该代码的简要分析： 
  * ### 包声明 
@@ -53,21 +68,6 @@
  * - 该类实现了 `Serializable` 接口，支持对象的序列化。 
  * - 使用 Swagger 的 `@ApiModelProperty` 注解来描述属性，以便生成 API 文档。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 评估记录节点探针请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalRecordNodeProbeReq implements Serializable {
@@ -89,3 +89,4 @@ public class EvalRecordNodeProbeReq implements Serializable {
     @ApiModelProperty("场景节点探针数据")
     private List<EvalRoomPairRsp> data;
 }
+

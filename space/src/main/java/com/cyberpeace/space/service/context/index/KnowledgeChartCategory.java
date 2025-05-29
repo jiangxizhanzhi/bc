@@ -1,3 +1,18 @@
+package com.cyberpeace.space.service.context.index;
+
+import com.cyberpeace.space.constant.SpaceKTypeEnum;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 知识点图表类别
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `KnowledgeChartCategory` 的 Java 类，用于表示知识点图表类别。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -15,21 +30,6 @@
  * - 该类可以作为知识点图表类别数据模型，便于在应用程序中传递和使用。 
  * 总体来说，这是一个简单的数据模型类，设计目的是为了方便管理和操作知识点图表类别信息。 
 **/
-package com.cyberpeace.space.service.context.index;
-
-import com.cyberpeace.space.constant.SpaceKTypeEnum;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 知识点图表类别
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class KnowledgeChartCategory {
@@ -74,3 +74,4 @@ public class KnowledgeChartCategory {
 		this.id = id;
 	}
 }
+

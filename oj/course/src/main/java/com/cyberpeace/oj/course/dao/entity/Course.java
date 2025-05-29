@@ -1,3 +1,24 @@
+package com.cyberpeace.oj.course.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.AuthTable;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课程
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see AuthTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `Course` 的实体类，用于表示课程信息。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -33,27 +54,6 @@
  * ### 总结 
  * 该类主要用于表示课程信息，并提供了详细的属性来描述课程的各种特征。通过继承 `AuthTable` 可能是为了增加一些权限相关的功能。枚举 `Difficulty` 提供了课程难度的标准，使得课程难度的表示更加规范和易于维护。 
 **/
-package com.cyberpeace.oj.course.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.AuthTable;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课程
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see AuthTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("oj_course")
@@ -235,3 +235,4 @@ public class Course extends AuthTable {
 		}
 	}
 }
+

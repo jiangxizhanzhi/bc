@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+/**
+ * this is branch test for the test
+ * the test is for toy
+ * the toy is toy
+ * not the practice
+ * tos
+ */
 /**
  * 这段代码是一个JUnit测试类 `EvalRecordServiceBranchTest`，用于测试名为 `EvalRecordServiceBranch` 的服务类的方法 `getBranch`。该类包含91个测试方法（从 `testGetBranch0` 到 `testGetBranch90`），每个方法都以不同的字符串作为参数调用 `getBranch` 方法，并使用 `Assertions.assertTrue` 断言返回结果为 `true`。 
  * ### 分析要点： 
@@ -14,18 +26,6 @@
  * 5. **提高测试效率**：考虑在类级别创建共享实例，避免每次测试都创建新的对象。 
  * 通过这些改进，可以使测试更加有效和可靠，同时提高代码质量和维护性。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-/**
- * this is branch test for the test
- * the test is for toy
- * the toy is toy
- * not the practice
- * tos
- */
 public class EvalRecordServiceBranchTest {
 
     /**
@@ -939,3 +939,4 @@ public class EvalRecordServiceBranchTest {
     }
 
 }
+

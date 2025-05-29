@@ -1,3 +1,26 @@
+package com.cyberpeace.space.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.model.IdAndName;
+import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.context.rule.SpaceTrafficExtractionRuleBo;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Map;
+
+/**
+ * 空间流量萃取统治
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBaseTable
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 类的功能 
@@ -28,29 +51,6 @@
  * - 提供了实用的方法，方便从实体类生成业务对象。 
  * - **扩展性**：如果需要新增字段或功能，只需在类中添加对应的属性和方法即可，符合面向对象的设计原则。 
 **/
-package com.cyberpeace.space.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.model.IdAndName;
-import com.cyberpeace.space.model.SpaceBaseTable;
-import com.cyberpeace.space.service.context.rule.SpaceTrafficExtractionRuleBo;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Map;
-
-/**
- * 空间流量萃取统治
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("space_traffic_extraction_rule")
@@ -76,3 +76,4 @@ public class SpaceTrafficExtractionRule extends SpaceBaseTable {
 		return bo;
 	}
 }
+

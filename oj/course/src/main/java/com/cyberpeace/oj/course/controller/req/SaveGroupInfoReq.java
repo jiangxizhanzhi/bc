@@ -1,3 +1,25 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 保存群信息请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SaveGroupInfoReq` 的 Java 类，该类用于处理保存群信息的请求。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -24,28 +46,6 @@
  * - **数据传输**：实现了 `Serializable` 接口，方便在不同系统组件之间传递数据。 
  * 这个类的设计简洁明了，符合 RESTful API 的设计原则，同时也考虑到了数据验证的需求。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 保存群信息请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -78,3 +78,4 @@ public class SaveGroupInfoReq implements Serializable {
 	private List<GroupInfoBo> data;
 
 }
+

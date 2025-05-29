@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.tool.utils;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Lists;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * 解析Markdown
+ * 传入f.readlines()的返回值或小段内容列表
+ * 默认解析标题（##）及正文（###）的内容
+ * 也可传入tag，如'*'，则解析两个'*'之间的内容或直到文本结束
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码是一个用于解析Markdown文件的工具类。以下是对其主要部分的简要分析： 
  * ### 类定义与成员变量 
@@ -22,23 +39,6 @@
  * - 该类通过读取文件并逐行解析，根据行的前缀来确定内容类型并进行存储。 
  * 这个工具类能够有效地从Markdown文件中提取出标题和正文内容，并将其组织成易于访问的数据结构。 
 **/
-package com.cyberpeace.cr.tool.utils;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * 解析Markdown
- * 传入f.readlines()的返回值或小段内容列表
- * 默认解析标题（##）及正文（###）的内容
- * 也可传入tag，如'*'，则解析两个'*'之间的内容或直到文本结束
- *
- * @author SN
- * @date 2024/11/08
- */
 public class ParseMarkdown {
 
 
@@ -155,3 +155,4 @@ public class ParseMarkdown {
 		}
 	}
 }
+

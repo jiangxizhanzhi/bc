@@ -1,4 +1,3 @@
-
 package com.cyberpeace.oj.course.controller.admin;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -31,6 +30,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @Disabled
 @WebMvcTest(AdminCourseCategoryController.class)
@@ -138,3 +138,4 @@ class AdminCourseCategoryControllerTest {
 		verify(mockCourseValidateHandler).categoryNameLengthValidate("categoryName1");
 	}
 }
+

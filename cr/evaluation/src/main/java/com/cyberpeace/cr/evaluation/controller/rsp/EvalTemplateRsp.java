@@ -1,3 +1,22 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import java.io.Serializable;
+import java.util.List;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估模板响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTemplateRsp` 的 Java 类，该类用于表示评估模板的响应信息。以下是对该类的简要分析： 
  * ### 类概述 
@@ -21,25 +40,6 @@
  * ### 总结 
  * 该类主要用于封装评估模板的响应数据，包括录屏设置、场景配置、步骤配置以及当前任务等信息。通过使用 Lombok 注解和 Swagger 注解，使得代码更加简洁且具有良好的文档说明。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import java.io.Serializable;
-import java.util.List;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估模板响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalTemplateRsp extends EvalTemplateListRsp implements Serializable {
@@ -73,3 +73,4 @@ public class EvalTemplateRsp extends EvalTemplateListRsp implements Serializable
 	}
 
 }
+

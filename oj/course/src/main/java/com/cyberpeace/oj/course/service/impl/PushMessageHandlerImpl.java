@@ -1,3 +1,37 @@
+package com.cyberpeace.oj.course.service.impl;
+
+import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
+import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.oj.course.service.bo.ClassHelpWsMessageIdentifier;
+import com.cyberpeace.oj.ojbase.constant.OjEvent;
+import com.cyberpeace.oj.ojbase.service.bo.ClassroomWsMessageIdentifier;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.component.MyWebSocketHandler;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.model.ws.WebSocketMessageContext;
+import com.cyberpeace.common.model.ws.WsMessageIdentifier;
+import com.cyberpeace.oj.ojbase.constant.SceneShare;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
+import com.cyberpeace.oj.ojbase.service.bo.LessonPracticeWsMessageIdentifier;
+import com.cyberpeace.oj.ojbase.service.bo.LessonWsMessageIdentifier;
+import com.cyberpeace.oj.ojbase.service.bo.OperationWsMessageIdentifier;
+
+/**
+ * 推消息处理器实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PushMessageHandler
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `PushMessageHandlerImpl` 的 Spring 服务类，实现了 `PushMessageHandler` 接口。该类的主要功能是通过 WebSocket 向不同的场景（如课程、操作、课堂等）推送消息。以下是对代码的简要分析： 
  * ### 类和接口定义 
@@ -76,40 +110,6 @@
  * - 每个公共方法都负责组装消息标识符和数据，并通过 `MyWebSocketHandler` 推送消息。 
  * - 私有方法主要用于内部逻辑处理，如获取群组信息或向特定用户或课堂推送消息。 
 **/
-package com.cyberpeace.oj.course.service.impl;
-
-import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
-import com.cyberpeace.common.constant.JsonKeyConstant;
-import com.cyberpeace.oj.course.service.bo.ClassHelpWsMessageIdentifier;
-import com.cyberpeace.oj.ojbase.constant.OjEvent;
-import com.cyberpeace.oj.ojbase.service.bo.ClassroomWsMessageIdentifier;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.component.MyWebSocketHandler;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.WsPath;
-import com.cyberpeace.common.model.ws.WebSocketMessageContext;
-import com.cyberpeace.common.model.ws.WsMessageIdentifier;
-import com.cyberpeace.oj.ojbase.constant.SceneShare;
-import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
-import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
-import com.cyberpeace.oj.ojbase.service.bo.LessonPracticeWsMessageIdentifier;
-import com.cyberpeace.oj.ojbase.service.bo.LessonWsMessageIdentifier;
-import com.cyberpeace.oj.ojbase.service.bo.OperationWsMessageIdentifier;
-
-/**
- * 推消息处理器实现
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PushMessageHandler
- * @since 1.0.0
- */
 @Slf4j
 @Service
 public class PushMessageHandlerImpl implements PushMessageHandler {
@@ -398,3 +398,4 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 		myWebSocketHandler.pushMessage(context, false);
 	}
 }
+

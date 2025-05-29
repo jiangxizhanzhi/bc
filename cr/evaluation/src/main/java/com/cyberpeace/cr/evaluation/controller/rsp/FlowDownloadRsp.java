@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 流下载响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `FlowDownloadRsp` 的 Java 类，该类用于表示流下载操作的响应。以下是对该代码的简要分析： 
  * ### 类名及包名 
@@ -21,20 +35,6 @@
  * - 使用了 Lombok 来简化代码，使得不需要手动编写 getter 和 setter 方法。 
  * - 包含了 Swagger 注解，方便生成 API 文档。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 流下载响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class FlowDownloadRsp implements Serializable {
@@ -50,3 +50,4 @@ public class FlowDownloadRsp implements Serializable {
 	}
 
 }
+

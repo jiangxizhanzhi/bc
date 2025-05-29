@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.index;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 编号场景
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `IndexScene` 的 Java 类，用于表示某种编号场景。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -15,20 +29,6 @@
  * - 这个类可能用于统计或管理不同场景的运行次数或状态，方便后续处理和展示。 
  * 总结：这是一个简单的数据模型类，用于封装与场景相关的计数信息，并通过注解增强了代码的可读性和可维护性。 
 **/
-package com.cyberpeace.space.service.context.index;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 编号场景
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class IndexScene {
@@ -70,3 +70,4 @@ public class IndexScene {
     private Integer sum = 0;
 
 }
+

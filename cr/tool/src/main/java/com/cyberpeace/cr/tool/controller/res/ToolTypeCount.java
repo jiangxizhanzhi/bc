@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.tool.controller.res;
+
+import com.cyberpeace.cr.tool.dao.context.MonthCount;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 工具类型计数
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolTypeCount` 的 Java 类，该类实现了 `Serializable` 接口。这个类主要用于表示工具类型的计数信息，并且使用了 Lombok 注解来简化 getter 和 setter 方法的编写。 
  * ### 主要组成部分 
@@ -61,22 +77,6 @@
  * - 包含三个字段：`name`、`count` 和 `countList`，分别用于存储工具类型名称、计数以及计数变化列表。 
  * - 通过实现 `Serializable` 接口，使得对象可以被序列化。 
 **/
-package com.cyberpeace.cr.tool.controller.res;
-
-import com.cyberpeace.cr.tool.dao.context.MonthCount;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 工具类型计数
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class ToolTypeCount implements Serializable {
@@ -100,3 +100,4 @@ public class ToolTypeCount implements Serializable {
 	private List<MonthCount> countList;
 
 }
+

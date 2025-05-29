@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.evaluation.service.context;
+
+import java.io.Serializable;
+
+import com.cyberpeace.common.model.PageReqBase;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估任务流列表查询
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTaskFlowListQuery` 的 Java 类，用于表示评估任务流列表查询的参数。以下是详细的分析： 
  * ### 类概述 
@@ -21,22 +37,6 @@
  * ### 总结 
  * 这个类是一个数据传输对象（DTO），用于在服务层之间传递评估任务流列表查询的参数。它继承了 `PageReqBase` 类，可能包含了分页相关的属性和方法。通过使用 Lombok 的注解，减少了样板代码，提高了代码的可读性和维护性。 
 **/
-package com.cyberpeace.cr.evaluation.service.context;
-
-import java.io.Serializable;
-
-import com.cyberpeace.common.model.PageReqBase;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估任务流列表查询
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalTaskFlowListQuery extends PageReqBase implements Serializable {
@@ -72,3 +72,4 @@ public class EvalTaskFlowListQuery extends PageReqBase implements Serializable {
 	}
 
 }
+

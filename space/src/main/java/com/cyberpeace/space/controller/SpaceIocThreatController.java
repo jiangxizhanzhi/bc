@@ -1,3 +1,27 @@
+package com.cyberpeace.space.controller;
+
+import com.cyberpeace.space.model.req.SpacePageReqBase;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cyberpeace.space.dao.entity.SpaceIocThreat;
+import com.cyberpeace.space.model.controller.SpaceControllerBase;
+import com.cyberpeace.space.service.SpaceIocThreatService;
+import com.cyberpeace.space.service.context.rule.SpaceIocThreatBo;
+
+import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 空间国际 奥委会威胁Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 概述 
@@ -28,30 +52,6 @@
  * 该代码是一个典型的基于 Spring Boot 和 Shiro 的 RESTful 控制器类，专注于 IOC 威胁情报的管理。通过继承父类 `SpaceControllerBase`，它复用了通用的 CRUD 功能，同时结合 Swagger 文档注解增强了 API 的可读性和可维护性。此外，通过日志记录和权限控制，提升了系统的安全性和可靠性。 
 **/
 
-package com.cyberpeace.space.controller;
-
-import com.cyberpeace.space.model.req.SpacePageReqBase;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.cyberpeace.space.dao.entity.SpaceIocThreat;
-import com.cyberpeace.space.model.controller.SpaceControllerBase;
-import com.cyberpeace.space.service.SpaceIocThreatService;
-import com.cyberpeace.space.service.context.rule.SpaceIocThreatBo;
-
-import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 空间国际 奥委会威胁Controller
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceControllerBase
- * @since 1.0.0
- */
 @Api(tags = "知识库-规则库-IOC威胁情报库")
 @RestController
 @RequestMapping("/space/rule/space_ioc_threat")

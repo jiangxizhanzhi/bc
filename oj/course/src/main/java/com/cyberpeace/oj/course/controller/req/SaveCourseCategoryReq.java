@@ -1,3 +1,25 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.oj.course.dao.entity.CourseCategory;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+
+/**
+ * 保存课程类别请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SaveCourseCategoryReq` 的 Java 类，用于处理保存课程类别的请求。以下是对该代码的简要分析： 
  * ### 类概述 
@@ -30,28 +52,6 @@
  * - **文档说明**：使用 Swagger 注解描述字段信息。 
  * 这段代码主要用于接收前端发送的保存课程类别的请求，并进行必要的数据验证和格式处理。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import com.cyberpeace.common.baseinterface.Create;
-import com.cyberpeace.oj.course.dao.entity.CourseCategory;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-
-/**
- * 保存课程类别请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -86,3 +86,4 @@ public class SaveCourseCategoryReq implements Serializable {
 		return StringUtils.isNotBlank(name) ? name.trim() : name;
 	}
 }
+

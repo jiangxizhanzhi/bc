@@ -1,3 +1,18 @@
+package com.cyberpeace.integratation.model.mp;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 中台流趋势
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MpFlowTrend` 的 Java 类，用于表示中台流趋势的数据模型。以下是该类的详细分析： 
  * ### 包声明和导入 
@@ -27,21 +42,6 @@
  * - **可扩展性**：如果需要添加更多字段或功能，可以很方便地进行扩展。 
  * 总体来说，这是一个简洁且功能明确的数据模型类，适用于需要记录流量趋势的应用场景。 
 **/
-package com.cyberpeace.integratation.model.mp;
-
-import java.io.Serializable;
-import java.util.Date;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 中台流趋势
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MpFlowTrend implements Serializable {
@@ -59,3 +59,4 @@ public class MpFlowTrend implements Serializable {
 	private Date time;
 
 }
+

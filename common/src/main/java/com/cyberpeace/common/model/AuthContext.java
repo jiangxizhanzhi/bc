@@ -1,3 +1,16 @@
+package com.cyberpeace.common.model;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * auth 上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `AuthContext` 的 Java 类，用于表示认证上下文信息。以下是简要分析： 
  * 1. **类的功能**： 
@@ -17,19 +30,6 @@
  * - 提供了默认值处理逻辑，确保字段在未初始化时不会导致空指针异常。 
  * 总结：该类是一个简单的数据传输对象（DTO），用于封装认证相关的上下文信息，并提供了基本的默认值处理功能。 
 **/
-package com.cyberpeace.common.model;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * auth 上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class AuthContext implements Serializable {
@@ -67,3 +67,4 @@ public class AuthContext implements Serializable {
 		return null == isSuperAdmin ? false : isSuperAdmin;
 	}
 }
+

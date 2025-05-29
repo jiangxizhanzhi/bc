@@ -1,3 +1,35 @@
+package com.cyberpeace.space.controller;
+
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.space.dao.entity.SpaceAlgorithmIndividual;
+import com.cyberpeace.space.dao.entity.SpaceAlgorithmTeam;
+import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.SpaceAlgorithmIndividualService;
+import com.cyberpeace.space.service.context.IdListReq;
+import com.cyberpeace.space.service.context.rule.SpaceWarningDictionaryBo;
+import com.google.common.collect.Lists;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Arrays;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 /**
  * ### 代码分析 
  * #### 概述 
@@ -31,38 +63,6 @@
  * #### 总结 
  * 该代码展示了如何使用 Spring Boot 和 Mockito 构建高效的单元测试，验证了 `SpaceAlgorithmIndividualController` 的核心功能。测试用例设计合理，能够有效捕获潜在问题，并保证接口行为符合预期。 
 **/
-package com.cyberpeace.space.controller;
-
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.space.dao.entity.SpaceAlgorithmIndividual;
-import com.cyberpeace.space.dao.entity.SpaceAlgorithmTeam;
-import com.cyberpeace.space.model.SpaceBaseTable;
-import com.cyberpeace.space.service.SpaceAlgorithmIndividualService;
-import com.cyberpeace.space.service.context.IdListReq;
-import com.cyberpeace.space.service.context.rule.SpaceWarningDictionaryBo;
-import com.google.common.collect.Lists;
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Arrays;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @WebMvcTest(SpaceAlgorithmIndividualController.class)
 class SpaceAlgorithmIndividualControllerTest {
 
@@ -153,3 +153,4 @@ class SpaceAlgorithmIndividualControllerTest {
                 .andExpect(content().json("{\"data\":{\"resourceId\":null,\"name\":null,\"expertisePercent\":null,\"rolePercent\":null},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 }
+

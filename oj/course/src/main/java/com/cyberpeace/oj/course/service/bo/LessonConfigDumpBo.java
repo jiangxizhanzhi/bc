@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 课程配置 dump bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonConfigDumpBo` 的 Java 类，用于表示课程配置的转储（dump）。以下是该类的详细分析： 
  * ### 类定义 
@@ -20,23 +37,6 @@
  * ### 总结 
  * 这个类是一个简单的数据传输对象（DTO），用于表示课程配置信息，并支持多级嵌套。它使用了 Lombok 来简化代码，减少了样板代码的编写。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 课程配置 dump bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class LessonConfigDumpBo implements Serializable {
@@ -70,3 +70,4 @@ public class LessonConfigDumpBo implements Serializable {
 	private List<LessonConfigDumpBo> children;
 
 }
+

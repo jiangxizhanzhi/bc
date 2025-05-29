@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.crbase.controller.rsp;
+
+import java.util.Date;
+
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 任务评估响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MissionEvaluationRsp` 的 Java 类，用于表示任务评估的响应数据结构。以下是对其的简要分析： 
  * ### 主要功能 
@@ -16,23 +33,6 @@
  * ### 总结 
  * 这是一个典型的 DTO（Data Transfer Object）类，用于在服务端和客户端之间传输数据。通过使用 Lombok 和 Swagger 注解，提高了代码的可读性和开发效率。 
 **/
-package com.cyberpeace.cr.crbase.controller.rsp;
-
-import java.util.Date;
-
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 任务评估响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MissionEvaluationRsp {
@@ -155,3 +155,4 @@ public class MissionEvaluationRsp {
 		private String userAnswer;
 	}
 }
+

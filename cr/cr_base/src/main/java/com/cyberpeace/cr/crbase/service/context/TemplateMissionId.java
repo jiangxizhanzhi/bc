@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.crbase.service.context;
+
+import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 模版任务id
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `TemplateMissionId` 的 Java 类，用于表示模板任务的 ID。以下是代码的简要分析： 
  * 1. **包声明**：代码位于 `com.cyberpeace.cr.crbase.service.context` 包中。 
@@ -13,19 +26,6 @@
  * - `@Getter` 和 `@Setter`：由 Lombok 自动生成 getter 和 setter 方法，简化代码。 
  * 总结：这是一个简单的数据传输对象（DTO），主要用于存储与模板任务相关的资源 ID，并支持序列化操作。 
 **/
-package com.cyberpeace.cr.crbase.service.context;
-
-import java.io.Serializable;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 模版任务id
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class TemplateMissionId implements Serializable {
@@ -37,3 +37,4 @@ public class TemplateMissionId implements Serializable {
 
 
 }
+

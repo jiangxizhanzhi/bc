@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.evaluation.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.*;
+import com.cyberpeace.common.model.BaseTable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 
+ * @TableName cr_eval_indicator
+ */
 /**
  * 这段代码定义了一个名为 `EvalIndicator` 的 Java 类，该类继承自 `BaseTable`。这个类表示一个评价指标（Evaluation Indicator）实体，并且与数据库表 `cr_eval_indicator` 相关联。以下是对代码的简要分析： 
  * ### 主要特点： 
@@ -30,18 +42,6 @@
  * - 通过 MyBatis Plus 的注解实现了与数据库的映射，包括主键生成策略和字段忽略策略。 
  * 这个类的设计符合面向对象编程的基本原则，能够方便地进行数据库操作和业务逻辑处理。 
 **/
-package com.cyberpeace.cr.evaluation.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.*;
-import com.cyberpeace.common.model.BaseTable;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 
- * @TableName cr_eval_indicator
- */
 @TableName(value = "cr_eval_indicator")
 @Getter
 @Setter

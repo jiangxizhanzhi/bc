@@ -1,3 +1,17 @@
+package com.cyberpeace.integratation.service;
+
+import java.util.List;
+import java.util.Map;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
+/**
+ * 远程组织Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `RemoteOrganizationService` 的接口，该接口主要用于处理远程组织相关的操作。以下是对其主要功能和方法的简要分析： 
  * ### 接口概述 
@@ -51,20 +65,6 @@
  * ### 总结 
  * `RemoteOrganizationService` 接口提供了处理组织层级结构的一系列方法，包括获取子组织、父组织、组织路径、组织名称、组织编号与名称映射等。这些方法通过不同的参数和返回值类型，满足了不同场景下的需求。 
 **/
-package com.cyberpeace.integratation.service;
-
-import java.util.List;
-import java.util.Map;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-
-/**
- * 远程组织Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface RemoteOrganizationService {
 
 	/**
@@ -134,3 +134,4 @@ public interface RemoteOrganizationService {
 	JSONObject getById(String orgId);
 
 }
+

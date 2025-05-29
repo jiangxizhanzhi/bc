@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 评估记录开始请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalRecordStartReq` 的 Java 类，该类用于表示评估记录开始请求的数据结构。以下是对该代码的简要分析： 
  * ### 类名和包声明 
@@ -27,20 +41,6 @@
  * - 该类实现了 `Serializable` 接口，使其可以在网络上传输或持久化。 
  * - 使用 Lombok 注解简化了代码，减少了样板代码。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 评估记录开始请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalRecordStartReq implements Serializable {
@@ -50,3 +50,4 @@ public class EvalRecordStartReq implements Serializable {
     @ApiModelProperty("评估id")
     private String resourceId;
 }
+

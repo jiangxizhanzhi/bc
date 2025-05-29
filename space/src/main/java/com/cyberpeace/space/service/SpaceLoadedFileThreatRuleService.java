@@ -1,3 +1,18 @@
+package com.cyberpeace.space.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.space.dao.entity.SpaceLoadedFileThreatRule;
+import com.cyberpeace.space.service.context.index.KnowledgeChart;
+
+/**
+ * 空间加载文件威胁统治Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 1. **代码功能概述** 
@@ -31,21 +46,6 @@
  * 这段代码是一个典型的基于 MyBatis-Plus 的服务接口定义，继承了通用的服务接口并扩展了自定义功能。整体结构清晰，注释完整，但需要修正方法名拼写错误以提高代码规范性。 
 **/
 
-package com.cyberpeace.space.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.space.dao.entity.SpaceLoadedFileThreatRule;
-import com.cyberpeace.space.service.context.index.KnowledgeChart;
-
-/**
- * 空间加载文件威胁统治Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see IService
- * @since 1.0.0
- */
 public interface SpaceLoadedFileThreatRuleService extends IService<SpaceLoadedFileThreatRule> {
 
     /**

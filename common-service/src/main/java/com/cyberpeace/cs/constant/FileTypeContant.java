@@ -1,3 +1,11 @@
+package com.cyberpeace.cs.constant;
+
+/**
+ * 文件类型 contant
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `FileTypeContant` 的 Java 接口，用于存储不同类型的文件后缀常量。以下是代码的简要分析： 
  * 1. **接口定义**： 
@@ -24,14 +32,6 @@
  * - 如果某些字段可能动态变化，可以考虑将其存储在配置文件中，而不是硬编码。 
  * 总结：该接口通过常量字段集中管理了多种文件类型的后缀，便于在项目中统一使用和维护。 
 **/
-package com.cyberpeace.cs.constant;
-
-/**
- * 文件类型 contant
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface FileTypeContant {
 
 	/**
@@ -80,3 +80,4 @@ public interface FileTypeContant {
 	String HANDOUT_ATTACHMENT_TYPE = "PDF,ZIP,DOC,DOCX,PPT,PPTX";
 
 }
+

@@ -1,3 +1,19 @@
+package com.cyberpeace.space.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.space.dao.entity.SpaceAlgorithmIndividual;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+
+/**
+ * 空间算法个人Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个 MyBatis 的 Mapper 接口 `SpaceAlgorithmIndividualMapper`，用于操作数据库中与 `SpaceAlgorithmIndividual` 实体类相关的数据。以下是详细分析： 
  * ### 主要功能 
@@ -21,22 +37,6 @@
  * 这段代码是一个典型的基于 MyBatis-Plus 的数据访问层接口，通过继承 `BaseMapper` 提供了默认的 CRUD 方法，并通过注解（`@Mapper` 和 `@Repository`）与 Spring 集成。它简化了数据库操作，提高了开发效率。 
 **/
 
-package com.cyberpeace.space.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.space.dao.entity.SpaceAlgorithmIndividual;
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
-
-/**
- * 空间算法个人Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 @Repository
 public interface SpaceAlgorithmIndividualMapper extends BaseMapper<SpaceAlgorithmIndividual> {

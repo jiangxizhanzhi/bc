@@ -1,3 +1,19 @@
+package com.cyberpeace.space.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Date;
+
+/**
+ * 空间作关系
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceActionRelation` 的实体类，用于表示数据库表 `space_action_relation` 中的数据。以下是代码的详细分析： 
  * ### 1. **类的基本信息** 
@@ -31,22 +47,6 @@
  * ### 4. **适用场景** 
  * 该类适用于需要管理空间或对象之间层级关系的场景，例如组织架构、树形结构等。通过 `upperId` 和 `lowerId`，可以灵活地表示上下级关系。 
 **/
-package com.cyberpeace.space.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.*;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Date;
-
-/**
- * 空间作关系
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("space_action_relation")
@@ -62,3 +62,4 @@ public class SpaceActionRelation {
 	@TableField(fill = FieldFill.INSERT)
 	private Date createTime;
 }
+

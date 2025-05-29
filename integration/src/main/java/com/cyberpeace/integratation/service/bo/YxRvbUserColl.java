@@ -1,3 +1,11 @@
+package com.cyberpeace.integratation.service.bo;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.compress.utils.Lists;
+
+import java.util.List;
+
 /**
  * 这段代码定义了一个名为 `YxRvbUserColl` 的类，该类位于包 `com.cyberpeace.integratation.service.bo` 中。这个类使用了 Lombok 库来自动生成 getter 和 setter 方法。下面是对代码的详细分析： 
  * 1. **包声明**： 
@@ -38,14 +46,6 @@
  * - 列表的初始值是通过 `Lists.newArrayList()` 创建的空列表，这有助于确保对象在创建时有一个明确的状态。 
  * 这段代码主要用于在某个集成服务中管理不同类型用户的集合。 
 **/
-package com.cyberpeace.integratation.service.bo;
-
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.compress.utils.Lists;
-
-import java.util.List;
-
 @Getter
 @Setter
 public class YxRvbUserColl {
@@ -57,3 +57,4 @@ public class YxRvbUserColl {
 	private List<YxUserInfo> worker = Lists.newArrayList();
 
 }
+

@@ -1,3 +1,30 @@
+package com.cyberpeace.cr.tool.controller.web;
+
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.cr.tool.controller.req.ToolGhdbListReq;
+import com.cyberpeace.cr.tool.dao.entity.ToolGhdb;
+import com.cyberpeace.cr.tool.service.ToolGhdbService;
+import com.cyberpeace.cr.tool.controller.res.ToolGhdbRsp;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * 工具GHDB 数据库Controller
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolGhdbController` 的控制器类，用于处理与工具数据库（ToolGhdb）相关的HTTP请求。以下是代码的详细分析： 
  * ### 包和导入 
@@ -27,33 +54,6 @@
  * - 使用了分层架构，将业务逻辑和数据访问逻辑分离在服务层实现。 
  * 这段代码展示了如何使用Spring Boot和Shiro来构建一个简单的RESTful API，处理基本的CRUD操作，并添加了必要的安全控制。 
 **/
-package com.cyberpeace.cr.tool.controller.web;
-
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.cr.tool.controller.req.ToolGhdbListReq;
-import com.cyberpeace.cr.tool.dao.entity.ToolGhdb;
-import com.cyberpeace.cr.tool.service.ToolGhdbService;
-import com.cyberpeace.cr.tool.controller.res.ToolGhdbRsp;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-/**
- * 工具GHDB 数据库Controller
- *
- * @author SN
- * @date 2024/11/08
- */
 @Api(tags = "前台-资源中心-ghdb")
 @RestController
 @RequestMapping("/cr/tool/ghdb")
@@ -97,3 +97,4 @@ public class ToolGhdbController {
 		return new BaseRsp<>(toolGhdb);
 	}
 }
+

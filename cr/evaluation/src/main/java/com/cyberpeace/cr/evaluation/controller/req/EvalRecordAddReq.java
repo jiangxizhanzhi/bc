@@ -1,3 +1,23 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.cr.evaluation.service.context.EvalRecordIndexContext;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * 评估记录新增请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalRecordAddReq` 的 Java 类，用于表示评估记录新增请求的数据结构。该类实现了 `Serializable` 接口，使其可以序列化以便在网络上传输或持久化存储。以下是对该类的简要分析： 
  * ### 主要功能 
@@ -26,26 +46,6 @@
  * - **特点**：该类实现了数据校验逻辑，确保了传入数据的合法性。 
  * - **应用场景**：通常在后端服务中使用，作为接收和处理评估记录新增请求的一部分。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cr.evaluation.service.context.EvalRecordIndexContext;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-/**
- * 评估记录新增请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalRecordAddReq implements Serializable {
@@ -106,3 +106,4 @@ public class EvalRecordAddReq implements Serializable {
         }
     }
 }
+

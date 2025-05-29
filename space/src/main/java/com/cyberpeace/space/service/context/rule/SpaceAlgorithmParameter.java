@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.rule;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Space 算法参数
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceAlgorithmParameter` 的 Java 类，用于表示与 Space 算法相关的参数对象。以下是对其的简要分析： 
  * ### 功能描述： 
@@ -21,20 +35,6 @@
  * - 借助 Lombok 减少了冗长的 getter 和 setter 方法实现。 
  * - 类设计清晰，适合用作数据传输对象（DTO）或业务逻辑中的参数模型。 
 **/
-package com.cyberpeace.space.service.context.rule;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * Space 算法参数
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceAlgorithmParameter {
@@ -71,3 +71,4 @@ public class SpaceAlgorithmParameter {
 	@ApiModelProperty(value = "参数说明")
 	private String description;
 }
+

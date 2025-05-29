@@ -1,3 +1,19 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 提交答案上下文
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SubmitAnswerContext` 的 Java 类，用于表示提交答案时的上下文信息。以下是对此代码的简要分析： 
  * ### 类定义 
@@ -28,22 +44,6 @@
  * - 在在线教育平台中，当用户提交某个课程或课时的答案时，可以使用这个类来传递相关的上下文信息。 
  * - 可以在服务层或控制器层中创建并填充这个对象，然后传递给其他业务逻辑或持久化操作。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import java.io.Serializable;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 提交答案上下文
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SubmitAnswerContext implements Serializable {
@@ -70,3 +70,4 @@ public class SubmitAnswerContext implements Serializable {
     private String userId;
 
 }
+

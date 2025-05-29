@@ -1,3 +1,20 @@
+package com.cyberpeace.space.service.context.frame;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+/**
+ * 空间行动框架次序请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceActionFrameOrderReq` 的 Java 类，用于表示空间行动框架次序的请求体。以下是对其的简要分析： 
  * 1. **类的功能**： 
@@ -18,23 +35,6 @@
  * - 字段的校验规则明确，有助于在运行时进行参数验证。 
  * 总结：这是一个简洁且功能明确的请求体类，适用于需要严格参数校验的 API 场景。 
 **/
-package com.cyberpeace.space.service.context.frame;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
-/**
- * 空间行动框架次序请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceActionFrameOrderReq {
@@ -77,3 +77,4 @@ public class SpaceActionFrameOrderReq {
     @NotBlank
     private String sender;
 }
+

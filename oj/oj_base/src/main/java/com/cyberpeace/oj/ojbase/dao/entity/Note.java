@@ -1,3 +1,26 @@
+package com.cyberpeace.oj.ojbase.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.AuthTable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Getter;
+
+/**
+ * 注意
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see AuthTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `Note` 的实体类，该类继承自 `AuthTable`。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -30,29 +53,6 @@
  * ### 总结 
  * 这个 `Note` 类主要用于表示笔记相关的数据模型，包含笔记的基本信息（如资源ID、内容等）以及一些扩展信息（如笔记类型、业务类型等）。通过继承 `AuthTable`，可以实现一些通用的权限控制功能。枚举类型 `NoteType` 和 `NoteResourceType` 提供了笔记类型的分类。 
 **/
-package com.cyberpeace.oj.ojbase.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.AuthTable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Getter;
-
-/**
- * 注意
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see AuthTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("oj_note")
@@ -163,3 +163,4 @@ public class Note extends AuthTable {
 	}
 
 }
+

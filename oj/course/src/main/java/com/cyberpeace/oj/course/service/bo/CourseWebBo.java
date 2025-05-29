@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 课程 Web bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseWebBo` 的 Java 类，该类用于表示前端课程的基本信息。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -33,24 +51,6 @@
  * - **用途**: 通常在 Web 应用中作为传输对象（DTO）使用，用于前后端数据交互。 
  * 这段代码设计清晰，结构合理，适用于典型的 Web 应用场景。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 课程 Web bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel("前端课程基本信息")
@@ -214,3 +214,4 @@ public class CourseWebBo implements Serializable {
     private Boolean builtin;
 
 }
+

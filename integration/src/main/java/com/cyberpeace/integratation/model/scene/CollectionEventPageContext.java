@@ -1,3 +1,18 @@
+package com.cyberpeace.integratation.model.scene;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * 收集事件分页上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `CollectionEventPageContext` 的 Java 类，该类实现了 `Serializable` 接口。这个类用于表示收集事件的分页上下文。下面是对这段代码的简要分析： 
  * ### 类和包声明 
@@ -31,21 +46,6 @@
  * - 一些属性（如 `page` 和 `pageSize`）在 ES 查询时可能没有实际用途，这些属性可能在其他场景下有用。 
  * 这个类的设计是为了提供一个结构化的对象来存储和传递与收集事件相关的分页信息。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Date;
-
-/**
- * 收集事件分页上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class CollectionEventPageContext implements Serializable {
@@ -90,3 +90,4 @@ public class CollectionEventPageContext implements Serializable {
      */
     private String requestId;
 }
+

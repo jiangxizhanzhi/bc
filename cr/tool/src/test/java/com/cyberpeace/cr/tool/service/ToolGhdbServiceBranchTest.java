@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.tool.service;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+/**
+ * this is branch test for the test
+ * the test is for toy
+ * the toy is toy
+ * not the practice
+ * tos
+ */
 /**
  * 这段代码是一个JUnit测试类，名为 `ToolGhdbServiceBranchTest`。它主要用于测试 `ToolGhdbServiceBranch` 类中的 `getBranch` 方法。以下是代码的主要特点和分析： 
  * ### 代码结构和目的 
@@ -22,18 +34,6 @@
  * 3. **增强测试覆盖**：增加更多样化的测试用例，包括验证不同的输入参数和预期结果，以提高测试覆盖率。 
  * 总的来说，这段代码在测试方法的设计上存在一些问题，需要进一步优化和改进。 
 **/
-package com.cyberpeace.cr.tool.service;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-/**
- * this is branch test for the test
- * the test is for toy
- * the toy is toy
- * not the practice
- * tos
- */
 public class ToolGhdbServiceBranchTest {
 
     /**
@@ -897,3 +897,4 @@ public class ToolGhdbServiceBranchTest {
     }
 
 }
+

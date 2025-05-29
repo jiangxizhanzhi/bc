@@ -1,3 +1,50 @@
+package com.cyberpeace.cr.evaluation.service.impl;
+
+import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
+import com.cyberpeace.cr.evaluation.service.EvalRecordService;
+import com.cyberpeace.cr.evaluation.service.EvalSceneService;
+import com.cyberpeace.cr.evaluation.service.EvalTaskService;
+import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
+import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.model.scene.SceneStartContext;
+import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * 评估任务Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTaskServiceImpl` 的服务类，实现了 `EvalTaskService` 接口。这个类主要负责处理与评估任务相关的业务逻辑。以下是对代码的简要分析： 
  * ### 类结构 
@@ -48,53 +95,6 @@
  * - **日志记录**：通过 `log.error` 记录错误信息，帮助调试和维护。 
  * 这段代码展示了如何通过面向对象的方法来组织和处理复杂的业务逻辑，确保每个操作都有相应的验证和异常处理机制。 
 **/
-package com.cyberpeace.cr.evaluation.service.impl;
-
-import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
-import com.cyberpeace.cr.evaluation.service.EvalRecordService;
-import com.cyberpeace.cr.evaluation.service.EvalSceneService;
-import com.cyberpeace.cr.evaluation.service.EvalTaskService;
-import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
-import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.integratation.model.scene.SceneStartContext;
-import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-
-/**
- * 评估任务Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Service
 @Slf4j
 public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> implements EvalTaskService {

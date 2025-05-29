@@ -1,3 +1,19 @@
+package com.cyberpeace.common.mdparser.convert;
+
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+
+/**
+ * 训练类型转换
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Enum
+ * @see MdConvertEnum
+ * @see GenericEnum
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 功能概述： 
@@ -20,22 +36,6 @@
  * #### 总结： 
  * `TrainTypeConvert` 是一个功能清晰的枚举类，主要用于训练类型的管理和转换。它通过实现接口提供了标准化的方法来获取训练类型的代码和描述，便于在不同模块间使用。 
 **/
-package com.cyberpeace.common.mdparser.convert;
-
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-
-/**
- * 训练类型转换
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Enum
- * @see MdConvertEnum
- * @see GenericEnum
- * @since 1.0.0
- */
 public enum TrainTypeConvert implements MdConvertEnum<Integer, String> , GenericEnum {
 
 	/**
@@ -134,3 +134,4 @@ public enum TrainTypeConvert implements MdConvertEnum<Integer, String> , Generic
 		return desc;
 	}
 }
+

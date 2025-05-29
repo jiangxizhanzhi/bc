@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.crbase.constant;
+
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.ConfigUtil;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 配置读取器
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `ConfigReader` 的工具类，用于从配置中读取字符串和整数类型的值，并在配置缺失或格式不正确时抛出异常。以下是代码的主要分析和总结： 
  * ### 功能分析： 
@@ -25,19 +38,6 @@
  * - 考虑对 `ConfigUtil.getContextProperty(name)` 的空值返回进行更详细的日志记录，便于定位问题来源。 
  * 总体而言，这段代码是一个简洁且实用的配置读取工具类，适合在项目中作为基础组件使用。 
 **/
-package com.cyberpeace.cr.crbase.constant;
-
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.ConfigUtil;
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 配置读取器
- *
- * @author SN
- * @date 2024/11/08
- */
 @Slf4j
 class ConfigReader {
 
@@ -72,3 +72,4 @@ class ConfigReader {
 		}
 	}
 }
+

@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.ojbase.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评论赞
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CommentLike` 的 Java 类，该类继承自 `BaseTable`。这个类表示一个“评论赞”的实体，并且使用了 MyBatis-Plus 框架来简化数据库操作。以下是详细的分析： 
  * ### 类和注解 
@@ -23,24 +41,6 @@
  * - Lombok 注解减少了样板代码，自动提供了 getter 和 setter 方法。 
  * 这个类的主要目的是为了与数据库中的 `oj_comment_like` 表进行交互，可以用于创建、读取、更新和删除操作。 
 **/
-package com.cyberpeace.oj.ojbase.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评论赞
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("oj_comment_like")
@@ -69,3 +69,4 @@ public class CommentLike extends BaseTable {
     private String commentId;
 
 }
+

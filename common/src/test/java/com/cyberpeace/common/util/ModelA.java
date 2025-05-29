@@ -1,3 +1,10 @@
+package com.cyberpeace.common.util;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import lombok.Data;
+
 /**
  * 这段代码定义了一个名为 `ModelA` 的 Java 类，用于表示某种数据模型。以下是对其的简要分析： 
  * 1. **类的定义**： 
@@ -15,13 +22,6 @@
  * - 该类可能是某个业务逻辑中的数据传输对象（DTO）或实体类，用于封装相关数据。 
  * 总结：`ModelA` 是一个简单的数据模型类，通过 Lombok 提供的功能减少了样板代码，便于快速开发和维护。 
 **/
-package com.cyberpeace.common.util;
-
-import java.io.Serializable;
-import java.util.Date;
-
-import lombok.Data;
-
 @Data
 public class ModelA implements Serializable {
 
@@ -33,3 +33,4 @@ public class ModelA implements Serializable {
 
 	private String a;
 }
+

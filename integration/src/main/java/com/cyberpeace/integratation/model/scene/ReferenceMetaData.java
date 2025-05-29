@@ -1,3 +1,13 @@
+package com.cyberpeace.integratation.model.scene;
+
+import java.io.Serializable;
+
+/**
+ * 引用元数据
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ReferenceMetaData` 的 Java 类，该类实现了 `Serializable` 接口。这个类用于表示引用元数据，并包含了几个字段以及对应的 getter 和 setter 方法。以下是详细的分析： 
  * ### 类定义 
@@ -29,16 +39,6 @@
  * - 如果某些字段目前未使用，可以考虑将其标记为 `@Deprecated` 或删除以保持代码简洁。 
  * 总体来说，这是一个设计良好的类，但可以通过一些小的改进使其更加完善。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import java.io.Serializable;
-
-/**
- * 引用元数据
- *
- * @author SN
- * @date 2024/11/08
- */
 public class ReferenceMetaData implements Serializable {
 
 	/**
@@ -106,3 +106,4 @@ public class ReferenceMetaData implements Serializable {
 		this.create_user_id = create_user_id;
 	}
 }
+

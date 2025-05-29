@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.ojbase.controller.res;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 实操用户信息
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `OperationUserInfo` 的 Java 类，用于表示操作用户的详细信息。以下是对其主要特性的简要分析： 
  * 1. **包声明**：该类位于 `com.cyberpeace.oj.ojbase.controller.res` 包中。 
@@ -18,25 +37,6 @@
  * - 通过 Swagger 注解，可以帮助开发者生成文档，以便于其他开发者理解如何使用这些数据结构。 
  * 总体而言，`OperationUserInfo` 类是一个简单的数据传输对象（DTO），用于在系统内传输操作用户的详细信息，并且支持序列化以便于网络传输和持久化。 
 **/
-package com.cyberpeace.oj.ojbase.controller.res;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 实操用户信息
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -75,3 +75,4 @@ public class OperationUserInfo implements Serializable {
 	private List<List<String>> orgpaths;
 
 }
+

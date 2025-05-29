@@ -1,3 +1,22 @@
+package com.cyberpeace.space.service.context.rule;
+
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.dao.entity.SpaceTrafficDetectRule;
+import com.cyberpeace.space.model.SpaceBoBase;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间流量检测统治Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析： 
  * #### 类概述： 
@@ -24,25 +43,6 @@
  * 该类是一个典型的业务对象类，主要用于封装空间流量检测规则的相关信息，并提供方法将 BO 转换为实体对象。通过 Lombok 注解简化了代码量，提高了可读性和维护性。 
 **/
 
-package com.cyberpeace.space.service.context.rule;
-
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.dao.entity.SpaceTrafficDetectRule;
-import com.cyberpeace.space.model.SpaceBoBase;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间流量检测统治Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBoBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceTrafficDetectRuleBo extends SpaceBoBase {

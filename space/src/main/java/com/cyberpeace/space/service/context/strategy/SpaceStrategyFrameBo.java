@@ -1,3 +1,20 @@
+package com.cyberpeace.space.service.context.strategy;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.compress.utils.Lists;
+
+import java.util.List;
+
+/**
+ * 空间策略框架Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceStrategyFrameBo` 的 Java 类，用于表示空间策略框架的业务对象（BO）。以下是代码的简要分析： 
  * 1. **类的用途**： 
@@ -19,23 +36,6 @@
  * - 灵活扩展：字段带有注释和元信息，便于在 API 文档中展示。 
  * 总结：这是一个典型的树形结构数据对象，用于表示空间策略中的资源及其层级关系，支持内置、删除等属性的灵活配置。 
 **/
-package com.cyberpeace.space.service.context.strategy;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.compress.utils.Lists;
-
-import java.util.List;
-
-/**
- * 空间策略框架Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceStrategyFrameBo {
@@ -85,3 +85,4 @@ public class SpaceStrategyFrameBo {
 	private List<SpaceStrategyFrameBo> children = Lists.newArrayList();
 
 }
+

@@ -1,3 +1,20 @@
+package com.cyberpeace.space.dao.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.space.dao.entity.SpaceTrafficDetectRule;
+
+/**
+ * 空间流量检测统治Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个 MyBatis 的 Mapper 接口 `SpaceTrafficDetectRuleMapper`，用于操作数据库中与 `SpaceTrafficDetectRule` 实体类相关的数据。以下是代码的详细分析： 
  * ### 主要功能 
@@ -16,23 +33,6 @@
  * 这段代码是一个典型的 MyBatis-Plus Mapper 接口实现，通过继承 `BaseMapper` 提供了基本的增删改查功能，并结合 Spring 的注解实现了容器管理。适用于快速开发基于数据库的操作场景。 
 **/
 
-package com.cyberpeace.space.dao.mapper;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.space.dao.entity.SpaceTrafficDetectRule;
-
-/**
- * 空间流量检测统治Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 @Repository
 public interface SpaceTrafficDetectRuleMapper extends BaseMapper<SpaceTrafficDetectRule>

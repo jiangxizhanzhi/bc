@@ -1,3 +1,12 @@
+package com.cyberpeace.common.util;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import lombok.Data;
+
 /**
  * 这段代码定义了一个名为 `DeepModelA` 的 Java 类，位于包 `com.cyberpeace.common.util` 下。以下是代码的简要分析： 
  * 1. **类的定义**： 
@@ -15,15 +24,6 @@
  * - 该类依赖于 `ModelA` 类，但未在代码中显示其定义。 
  * 总结：`DeepModelA` 是一个包含多种数据类型的复杂对象模型，主要用于存储和传递数据，具有良好的可序列化能力，并通过 Lombok 减少了冗余代码。 
 **/
-package com.cyberpeace.common.util;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import lombok.Data;
-
 @Data
 public class DeepModelA implements Serializable {
 
@@ -39,3 +39,4 @@ public class DeepModelA implements Serializable {
 
     private Map<String, ModelA> map;
 }
+

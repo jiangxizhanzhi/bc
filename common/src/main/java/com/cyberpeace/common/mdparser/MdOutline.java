@@ -1,3 +1,16 @@
+package com.cyberpeace.common.mdparser;
+
+import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
+import lombok.Data;
+
+import java.io.Serializable;
+
+/**
+ * MD 大纲
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MdOutline` 的 Java 类，用于表示 Markdown 文件的大纲。以下是代码的简要分析： 
  * 1. **类定义**： 
@@ -15,19 +28,6 @@
  * - 该类主要用于解析和存储 Markdown 文件中的大纲信息，通过注解 `@MdHeadLine` 提供额外的结构化信息。 
  * 总结：`MdOutline` 是一个简单的数据传输对象（DTO），结合注解用于描述 Markdown 文件的大纲内容。 
 **/
-package com.cyberpeace.common.mdparser;
-
-import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
-import lombok.Data;
-
-import java.io.Serializable;
-
-/**
- * MD 大纲
- *
- * @author SN
- * @date 2024/11/08
- */
 @Data
 public class MdOutline implements Serializable {
 
@@ -35,3 +35,4 @@ public class MdOutline implements Serializable {
     private String outline;
 
 }
+

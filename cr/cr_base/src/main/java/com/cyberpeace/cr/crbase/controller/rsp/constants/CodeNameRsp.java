@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.crbase.controller.rsp.constants;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 代号名称响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `CodeNameRsp` 的 Java 类，位于包 `com.cyberpeace.cr.crbase.controller.rsp.constants` 中。以下是代码的主要功能和特点： 
  * 1. **类的功能**： 
@@ -12,19 +25,6 @@
  * - 该类是一个简单的 POJO（Plain Old Java Object），通常用于作为 API 响应的数据载体。 
  * 总结：这是一个轻量级的 Java 数据模型类，用于封装代号和名称的响应数据，并支持通过 Lombok 和 Swagger 注解简化开发。 
 **/
-package com.cyberpeace.cr.crbase.controller.rsp.constants;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 代号名称响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class CodeNameRsp {
@@ -46,3 +46,4 @@ public class CodeNameRsp {
 		this.name = name;
 	}
 }
+

@@ -1,3 +1,20 @@
+package com.cyberpeace.space.dao.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.space.dao.entity.SpaceTrafficExtractionRule;
+
+/**
+ * 空间流量萃取统治Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个 MyBatis 的 Mapper 接口 `SpaceTrafficExtractionRuleMapper`，用于操作数据库中的 `SpaceTrafficExtractionRule` 实体类。以下是代码的详细分析： 
  * ### 1. **包结构** 
@@ -24,23 +41,6 @@
  * 该代码是一个典型的 MyBatis-Plus Mapper 接口，利用了框架的默认功能减少了代码量。通过继承 `BaseMapper` 和注解 `@Mapper` 和 `@Repository`，实现了与数据库的交互能力。 
 **/
 
-package com.cyberpeace.space.dao.mapper;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.space.dao.entity.SpaceTrafficExtractionRule;
-
-/**
- * 空间流量萃取统治Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 @Repository
 public interface SpaceTrafficExtractionRuleMapper extends BaseMapper<SpaceTrafficExtractionRule>

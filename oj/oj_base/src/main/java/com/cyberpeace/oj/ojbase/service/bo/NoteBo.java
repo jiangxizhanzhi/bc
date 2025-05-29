@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.ojbase.service.bo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * 注意 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `NoteBo` 的 Java 类，属于 `com.cyberpeace.oj.ojbase.service.bo` 包。这个类的主要目的是封装关于“笔记”（note）的相关信息，并且使用 Lombok 库来简化 getter 和 setter 方法的生成。 
  * ### 主要特点和功能 
@@ -21,25 +40,6 @@
  * ### 总结 
  * `NoteBo` 类主要用于存储和传输与笔记相关的数据，包括笔记的基本信息、类型、创建者、以及与之关联的资源信息等。通过使用 Lombok 和 Swagger 相关注解，提高了代码的可读性和维护性，同时便于文档生成和 API 接口测试。 
 **/
-package com.cyberpeace.oj.ojbase.service.bo;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Date;
-
-/**
- * 注意 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -118,3 +118,4 @@ public class NoteBo implements Serializable {
     private Boolean isSubmit;
 
 }
+

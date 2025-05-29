@@ -1,3 +1,13 @@
+package com.cyberpeace.common.constant;
+
+/**
+ * 模式常数
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `PatternConstant` 的 Java 接口，主要用于存储各种正则表达式模式的常量。这些常量用于匹配或解析不同类型的文本内容，如 Markdown 文件、HTML 标签、图片链接等。以下是代码的主要分析： 
  * ### 主要功能： 
@@ -20,16 +30,6 @@
  * ### 总结： 
  * 该代码是一个典型的工具类接口，主要用于提供通用的正则表达式模式。它简化了正则表达式的重复编写，并提高了代码的可维护性和复用性。适用于需要处理多种文本格式的应用场景。 
 **/
-package com.cyberpeace.common.constant;
-
-/**
- * 模式常数
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface PatternConstant {
 
 	/**
@@ -263,3 +263,4 @@ public interface PatternConstant {
 	 */
 	String LOWER_CASE_LETTER = "[a-z]";
 }
+

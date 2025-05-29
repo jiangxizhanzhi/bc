@@ -1,3 +1,19 @@
+package com.cyberpeace.gateway.controller.req;
+
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.model.PageReqBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+
+/**
+ * 实操分页请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `OperationPageReq` 的 Java 类，用于处理操作（实践）的分页请求。以下是该类的简要分析： 
  * ### 类概述 
@@ -18,22 +34,6 @@
  * ### 总结 
  * `OperationPageReq` 类是一个数据传输对象（DTO），用于接收前端传递过来的分页请求参数，并且通过各种注解确保了数据的有效性。 
 **/
-package com.cyberpeace.gateway.controller.req;
-
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.model.PageReqBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-
-/**
- * 实操分页请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class OperationPageReq extends PageReqBase {
@@ -63,3 +63,4 @@ public class OperationPageReq extends PageReqBase {
     @NotBlank(message = ErrorCode.USER_INFO_MISSING)
     private String userId;
 }
+

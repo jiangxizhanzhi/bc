@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import java.io.Serializable;
+import java.util.List;
+
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估模板任务列表响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTemplateTaskListRsp` 的 Java 类，该类用于表示评估模板任务列表的响应。以下是对该代码的简要分析： 
  * ### 类名及包声明 
@@ -32,23 +49,6 @@
  * - 类实现了 `Serializable` 接口，方便在网络上传输或持久化存储。 
  * 这个类的设计简洁明了，符合 RESTful API 设计的最佳实践。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import java.io.Serializable;
-import java.util.List;
-
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估模板任务列表响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalTemplateTaskListRsp implements Serializable {
@@ -66,3 +66,4 @@ public class EvalTemplateTaskListRsp implements Serializable {
 	private String currentTaskId;
 
 }
+

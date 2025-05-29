@@ -1,3 +1,26 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultVariableRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableDataPageRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableGraphRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithmRef;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 评估变量裁判Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalVariableRefService` 的接口，该接口继承自 `IService<EvalVariableRef>`。这个接口主要用于处理与评估变量相关的业务逻辑。以下是详细的分析和总结： 
  * ### 接口概述 
@@ -38,29 +61,6 @@
  * - 使用了 MyBatis-Plus 进行数据库操作，并且部分方法涉及到与 Elasticsearch 的交互。 
  * - 接口中定义了一些常量，用于标识特定的时间字段和探针 ID，这些常量在实际业务中可能有重要的作用。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultVariableRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableDataPageRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableGraphRsp;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithmRef;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-/**
- * 评估变量裁判Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface EvalVariableRefService extends IService<EvalVariableRef> {
 
     /**
@@ -112,3 +112,4 @@ public interface EvalVariableRefService extends IService<EvalVariableRef> {
      */
     EvalRecordResultVariableRsp resultVariable(String variableId);
 }
+

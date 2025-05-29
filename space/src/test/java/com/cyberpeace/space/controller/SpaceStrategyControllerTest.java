@@ -1,3 +1,32 @@
+package com.cyberpeace.space.controller;
+
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.space.dao.entity.SpaceStrategy;
+import com.cyberpeace.space.model.req.IdReq;
+import com.cyberpeace.space.service.SpaceStrategyService;
+import com.cyberpeace.space.service.context.IdListReq;
+import com.cyberpeace.space.service.context.strategy.*;
+import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 /**
  * ### 分析 
  * 这段代码是一个Spring Boot单元测试类，用于测试`SpaceStrategyController`的功能。以下是代码的主要内容和功能： 
@@ -57,35 +86,6 @@
  * #### **4. 总结** 
  * 该测试类覆盖了`SpaceStrategyController`的所有主要功能接口，包括框架管理（增删改查）、策略管理（增删改查）以及详细信息和路由查询。测试通过模拟服务层行为，验证了控制器的输入输出是否符合预期，并确保了服务层方法被正确调用。 
 **/
-package com.cyberpeace.space.controller;
-
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.space.dao.entity.SpaceStrategy;
-import com.cyberpeace.space.model.req.IdReq;
-import com.cyberpeace.space.service.SpaceStrategyService;
-import com.cyberpeace.space.service.context.IdListReq;
-import com.cyberpeace.space.service.context.strategy.*;
-import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @WebMvcTest(SpaceStrategyController.class)
 class SpaceStrategyControllerTest {
 
@@ -309,3 +309,4 @@ class SpaceStrategyControllerTest {
                 .andExpect(content().json("{\"data\":\"data\",\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 }
+

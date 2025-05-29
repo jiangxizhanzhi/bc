@@ -1,3 +1,19 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import com.cyberpeace.common.model.ws.WsMessageIdentifier;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 类帮助 WS 消息标识符
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see WsMessageIdentifier
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassHelpWsMessageIdentifier` 的类，该类继承自 `WsMessageIdentifier`。以下是对这段代码的简要分析： 
  * ### 类定义 
@@ -23,22 +39,6 @@
  * - 这个类可能用于处理与课堂相关的 WebSocket 消息标识符。 
  * 通过这段代码，我们可以看到它是一个简单的数据传输对象（DTO），用于在系统中传递课堂相关的消息标识符。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import com.cyberpeace.common.model.ws.WsMessageIdentifier;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 类帮助 WS 消息标识符
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see WsMessageIdentifier
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class ClassHelpWsMessageIdentifier extends WsMessageIdentifier {
@@ -51,3 +51,4 @@ public class ClassHelpWsMessageIdentifier extends WsMessageIdentifier {
     private String classroomId;
 
 }
+

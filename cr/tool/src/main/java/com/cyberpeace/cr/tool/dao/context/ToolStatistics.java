@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.tool.dao.context;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 工具统计
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolStatistics` 的 Java 类，用于表示工具统计信息。以下是详细的分析： 
  * ### 包声明和导入 
@@ -39,19 +52,6 @@
  * - 类实现了 `Serializable` 接口，支持对象的序列化操作。 
  * 这个类非常适合用于记录特定类型的工具在特定日期的统计数据。 
 **/
-package com.cyberpeace.cr.tool.dao.context;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 工具统计
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class
@@ -67,3 +67,4 @@ ToolStatistics implements Serializable {
 	 */
 	private String date;
 }
+

@@ -1,3 +1,26 @@
+package com.cyberpeace.common.mdparser.parser;
+
+import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.util.LocalStringUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.google.common.collect.Maps;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 列表钥匙值解析 器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see MdContentParser
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 类概述 
@@ -33,29 +56,6 @@
  * #### 总结 
  * 该类主要用于处理列表键值对的解析和生成，适用于需要将结构化数据转换为 Markdown 格式的场景。代码逻辑清晰，使用了多种工具类和方法来简化操作，体现了良好的代码复用性和可维护性。 
 **/
-package com.cyberpeace.common.mdparser.parser;
-
-import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.common.util.LocalStringUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.google.common.collect.Maps;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-/**
- * 列表钥匙值解析 器
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see MdContentParser
- * @since 1.0.0
- */
 @Service
 public class ListKeyValueParser implements MdContentParser<Map<String, String>, String> {
 
@@ -107,3 +107,4 @@ public class ListKeyValueParser implements MdContentParser<Map<String, String>, 
 		return LocalStringUtil.frontBackLine(value);
 	}
 }
+

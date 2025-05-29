@@ -1,3 +1,24 @@
+package com.cyberpeace.common.model;
+
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.google.common.collect.Lists;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
+
+/**
+ * 分页请求体基础
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `PageReqBase` 的类，用于处理分页请求的基本信息。以下是对其功能和结构的简要分析： 
  * 1. **继承与注解**： 
@@ -23,27 +44,6 @@
  * - 当 `sort` 包含非法字符时，会抛出自定义异常 `BusinessException`，并携带错误码 `ErrorCode.METHOD_ARG_NOT_VALID`。 
  * 总结来说，这个类是一个通用的分页请求封装类，支持基本的分页和排序功能，并且通过注解和异常机制确保了数据的安全性和规范性。 
 **/
-package com.cyberpeace.common.model;
-
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.google.common.collect.Lists;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.List;
-
-/**
- * 分页请求体基础
- *
- * @author SN
- * @date 2024/11/08
- */
 @ApiModel
 public class PageReqBase extends PatternBase {
 
@@ -106,3 +106,4 @@ public class PageReqBase extends PatternBase {
 		this.page = page;
 	}
 }
+

@@ -1,3 +1,27 @@
+package com.cyberpeace.space.controller;
+
+import com.cyberpeace.space.model.controller.SpaceControllerBase;
+import com.cyberpeace.space.model.req.SpacePageReqBase;
+import com.cyberpeace.space.service.context.rule.SpaceSourceAnalyzeRuleBo;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cyberpeace.space.dao.entity.SpaceSourceAnalyzeRule;
+import com.cyberpeace.space.service.SpaceSourceAnalyzeRuleService;
+
+import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 空间源分析统治Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceSourceAnalyzeRuleController` 的 Spring MVC 控制器类，继承自 `SpaceControllerBase`。以下是代码的主要分析： 
  * 1. **类的基本信息**： 
@@ -24,30 +48,6 @@
  * 总结来说，这段代码是一个典型的基于 Spring Boot 和 Shiro 安全框架的 RESTful 控制器类，用于管理“空间源分析规则”的相关操作，并且通过 Swagger 提供了清晰的 API 文档支持。 
 **/
 
-package com.cyberpeace.space.controller;
-
-import com.cyberpeace.space.model.controller.SpaceControllerBase;
-import com.cyberpeace.space.model.req.SpacePageReqBase;
-import com.cyberpeace.space.service.context.rule.SpaceSourceAnalyzeRuleBo;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.cyberpeace.space.dao.entity.SpaceSourceAnalyzeRule;
-import com.cyberpeace.space.service.SpaceSourceAnalyzeRuleService;
-
-import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 空间源分析统治Controller
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceControllerBase
- * @since 1.0.0
- */
 @Api(tags = "知识库-规则库-攻击源分析规则")
 @RestController
 @RequestMapping("/space/rule/space_source_analyze_rule")

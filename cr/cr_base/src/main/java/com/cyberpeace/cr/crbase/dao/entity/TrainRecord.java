@@ -1,3 +1,22 @@
+package com.cyberpeace.cr.crbase.dao.entity;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 训练记录，记录训练房间的创建和销毁
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `TrainRecord` 的 Java 类，用于表示训练记录实体。以下是代码的简要分析： 
  * 1. **类名与功能**： 
@@ -21,25 +40,6 @@
  * - 实现了 `Serializable` 接口，表明该类的对象可以序列化，便于在网络中传输或持久化存储。 
  * 总结：这是一个典型的实体类，用于映射数据库中的 `cr_train_record` 表，提供了数据存储和操作的基础结构。 
 **/
-package com.cyberpeace.cr.crbase.dao.entity;
-
-import java.io.Serializable;
-import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 训练记录，记录训练房间的创建和销毁
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @TableName("cr_train_record")
@@ -92,3 +92,4 @@ public class TrainRecord implements Serializable {
 	private String extra;
 
 }
+

@@ -1,3 +1,17 @@
+package com.cyberpeace.common.model;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.*;
+
+import java.io.Serializable;
+
+/**
+ * 提取基础
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ExtractBase` 的 Java 类，用于表示文件提取的基础信息。以下是对其的简要分析： 
  * 1. **类的功能**： 
@@ -19,20 +33,6 @@
  * - `isExtract`：布尔值，指示是否为提取后的文件内容。 
  * 总结：这是一个简单的数据传输对象（DTO），用于在系统中传递文件相关信息，并支持序列化和 Swagger 文档生成。 
 **/
-package com.cyberpeace.common.model;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
-
-import java.io.Serializable;
-
-/**
- * 提取基础
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @ApiModel
@@ -65,3 +65,4 @@ public class ExtractBase implements Serializable {
     @ApiModelProperty("是否是解压后文件内容 true=是 false=否")
     private Boolean isExtract;
 }
+

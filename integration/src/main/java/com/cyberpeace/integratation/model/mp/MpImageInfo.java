@@ -1,3 +1,14 @@
+package com.cyberpeace.integratation.model.mp;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 中台图像信息
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MpImageInfo` 的 Java 类，位于包 `com.cyberpeace.integratation.model.mp` 下。以下是对该代码的简要分析： 
  * 1. **包声明**： 
@@ -35,19 +46,9 @@
  * - 使用 Lombok 的 `@Getter` 和 `@Setter` 注解，避免了手动编写 getter 和 setter 方法。 
  * - 目前这个类没有包含任何字段或方法，只是一个空类。 
 **/
-package com.cyberpeace.integratation.model.mp;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 中台图像信息
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MpImageInfo {
 
 }
+

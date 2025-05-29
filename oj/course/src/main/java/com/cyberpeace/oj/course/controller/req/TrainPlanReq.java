@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import com.cyberpeace.common.model.PageReqBase;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 训练计划请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `TrainPlanReq` 的 Java 类，该类用于表示训练计划请求的数据结构。以下是对该代码的简要分析： 
  * ### 包声明和导入 
@@ -24,23 +41,6 @@
  * - 通过 Swagger 的注解提供了属性的文档说明，有助于 API 文档的生成。 
  * - 显式的 `setOrganization_id` 方法是多余的，可以移除以保持代码简洁。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import com.cyberpeace.common.model.PageReqBase;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 训练计划请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PageReqBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class TrainPlanReq extends PageReqBase {
@@ -57,3 +57,4 @@ public class TrainPlanReq extends PageReqBase {
 		this.organizationId = organizationId;
 	}
 }
+

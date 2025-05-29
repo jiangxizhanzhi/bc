@@ -1,3 +1,18 @@
+package com.cyberpeace.common.constant;
+
+
+import lombok.Getter;
+import org.springframework.util.ClassUtils;
+
+/**
+ * HTML 模板枚举
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Enum
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个枚举类 `JsonFileResponseEnum`，用于表示 JSON 文件的相关信息。以下是代码的简要分析： 
  * 1. **功能描述**： 
@@ -17,21 +32,6 @@
  * - 该枚举类适用于需要统一管理 JSON 文件路径和名称的场景，便于在项目中通过枚举值快速获取文件信息。 
  * 总结：这是一个简洁且实用的枚举类，用于封装 JSON 文件的名称和路径，方便在项目中进行统一管理和使用。 
 **/
-package com.cyberpeace.common.constant;
-
-
-import lombok.Getter;
-import org.springframework.util.ClassUtils;
-
-/**
- * HTML 模板枚举
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Enum
- * @since 1.0.0
- */
 public enum JsonFileResponseEnum {
 
     ATTACK("attack.json", "static/demonstration/attack.json"),
@@ -63,4 +63,5 @@ public enum JsonFileResponseEnum {
     }
 
 }
+
 

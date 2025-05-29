@@ -1,3 +1,23 @@
+package com.cyberpeace.cr.evaluation.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.BaseTable;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Getter;
+
+import java.util.List;
+
+/**
+ * eval 算法 ref
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalAlgorithmRef` 的 Java 类，该类是用于表示评估算法引用的实体。以下是对其主要特性和功能的简要分析： 
  * ### 包与导入 
@@ -28,26 +48,6 @@
  * - **代码生成**：使用 Lombok 库来简化 getter 和 setter 的编写。 
  * 这段代码展示了如何使用现代 Java 技术（如 Lombok、MyBatis Plus 和 Swagger）来构建一个简单的实体类，用于数据库操作和 API 文档生成。 
 **/
-package com.cyberpeace.cr.evaluation.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.BaseTable;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Getter;
-
-import java.util.List;
-
-/**
- * eval 算法 ref
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @TableName("cr_eval_algorithm_ref")
@@ -131,3 +131,4 @@ public class EvalAlgorithmRef extends BaseTable {
 
 
 }
+

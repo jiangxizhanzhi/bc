@@ -1,3 +1,21 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
+import com.cyberpeace.cr.evaluation.service.context.IndexContext;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估系统响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalSystemRsp` 的 Java 类，用于表示评估系统的响应数据。以下是对该类的简要分析： 
  * ### 类概述 
@@ -22,24 +40,6 @@
  * ### 总结 
  * `EvalSystemRsp` 类是一个典型的 DTO（Data Transfer Object），用于在控制器层和外部系统之间传输评估系统的详细信息。该类通过 Lombok 和 Swagger 注解增强了其可读性和文档生成能力。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import com.cyberpeace.cr.evaluation.service.context.IndexContext;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估系统响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalSystemRsp {

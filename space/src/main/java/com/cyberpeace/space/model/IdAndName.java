@@ -1,3 +1,19 @@
+package com.cyberpeace.space.model;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+/**
+ * id和名称
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `IdAndName` 的 Java 类，位于包 `com.cyberpeace.space.model` 中。以下是代码的主要分析： 
  * 1. **功能描述**： 
@@ -18,22 +34,6 @@
  * - 使用 Lombok 减少了样板代码，提升了开发效率。 
  * 总结：这是一个简单的 DTO 类，用于传递 `id` 和 `name` 数据，适合在 API 中作为请求或响应的一部分使用。 
 **/
-package com.cyberpeace.space.model;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-
-/**
- * id和名称
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -49,3 +49,4 @@ public class IdAndName {
 	private String name;
 
 }
+

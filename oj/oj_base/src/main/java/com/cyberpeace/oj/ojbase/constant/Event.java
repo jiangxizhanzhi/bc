@@ -1,3 +1,18 @@
+package com.cyberpeace.oj.ojbase.constant;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import lombok.Getter;
+
+/**
+ * 事件
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Enum
+ * @see GenericEnum
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `Event` 的枚举类，该类实现了 `GenericEnum` 接口。以下是对其简要分析： 
  * ### 类定义与继承 
@@ -22,21 +37,6 @@
  * - 枚举实例通过构造函数初始化，并且使用了 Lombok 的 `@Getter` 注解来简化代码。 
  * - 代码具有良好的可读性和维护性，适合在需要表示特定事件类型的场景中使用。 
 **/
-package com.cyberpeace.oj.ojbase.constant;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import lombok.Getter;
-
-/**
- * 事件
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Enum
- * @see GenericEnum
- * @since 1.0.0
- */
 public enum Event implements GenericEnum {
 
 	/**
@@ -67,3 +67,4 @@ public enum Event implements GenericEnum {
 		this.desc = desc;
 	}
 }
+

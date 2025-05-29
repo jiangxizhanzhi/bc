@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.evaluation.service.context;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * eval record index 上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalRecordIndexContext` 的 Java 类，该类用于表示评估记录索引的上下文。以下是对其主要特性和功能的简要分析： 
  * ### 类定义 
@@ -17,21 +32,6 @@
  * ### 总结 
  * `EvalRecordIndexContext` 类主要用于存储和传递评估记录中的索引上下文信息。它包含了多个属性，如资源 ID、类型、得分、关联变量项、关联聚合项以及专家评分配置等。通过使用 Lombok 和 Swagger 注释，该类在保持简洁性的同时提供了丰富的元数据信息，便于在 API 开发中使用。 
 **/
-package com.cyberpeace.cr.evaluation.service.context;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * eval record index 上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalRecordIndexContext implements Serializable {
@@ -71,3 +71,4 @@ public class EvalRecordIndexContext implements Serializable {
     @ApiModelProperty("指标项专家评分配置")
     private EvalRecordSpecialistContext specialist;
 }
+

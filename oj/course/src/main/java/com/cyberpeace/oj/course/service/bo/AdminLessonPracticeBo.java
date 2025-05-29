@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 管理员课程练习 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `AdminLessonPracticeBo` 的 Java 类，用于表示管理员课程练习的相关信息。该类实现了 `Serializable` 接口，表明它可以被序列化以便在网络上传输或持久化存储。 
  * ### 主要特点： 
@@ -18,23 +35,6 @@
  * ### 总结： 
  * `AdminLessonPracticeBo` 类是一个数据传输对象（DTO），用于在系统中传递与管理员课程练习相关的数据。该类通过 Lombok 和 Swagger 注解简化了代码，并且易于理解和维护。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 管理员课程练习 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class AdminLessonPracticeBo implements Serializable {
@@ -128,3 +128,4 @@ public class AdminLessonPracticeBo implements Serializable {
     private Double score;
 
 }
+

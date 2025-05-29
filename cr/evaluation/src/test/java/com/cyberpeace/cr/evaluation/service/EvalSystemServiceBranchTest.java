@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+/**
+ * this is branch test for the test
+ * the test is for toy
+ * the toy is toy
+ * not the practice
+ * tos
+ */
 /**
  * 这段代码是一个JUnit测试类 `EvalSystemServiceBranchTest`，用于测试 `EvalSystemServiceBranch` 类中的 `getBranch` 方法。以下是对这段代码的简要分析： 
  * ### 1. 文件结构与导入 
@@ -36,18 +48,6 @@
  * ### 总结 
  * 这段代码是一个基本的单元测试类，用于测试 `EvalSystemServiceBranch` 类中的 `getBranch` 方法。然而，测试方法的重复性较高，缺乏多样性和边界条件的测试。建议改进测试策略，以提高测试的覆盖面和有效性。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-/**
- * this is branch test for the test
- * the test is for toy
- * the toy is toy
- * not the practice
- * tos
- */
 public class EvalSystemServiceBranchTest {
 
     /**
@@ -711,3 +711,4 @@ public class EvalSystemServiceBranchTest {
     }
 
 }
+

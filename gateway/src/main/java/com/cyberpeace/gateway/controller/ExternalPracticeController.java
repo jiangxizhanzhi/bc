@@ -1,3 +1,10 @@
+package com.cyberpeace.gateway.controller;
+
+import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 /**
  * 这段代码定义了一个名为 `ExternalPracticeController` 的 Spring MVC 控制器类，用于处理与“练习题”相关的外部接口请求。以下是详细的分析： 
  * 1. **包声明**： 
@@ -38,13 +45,6 @@
  * - 它将处理以 `/gateway/practice` 路径开头的所有请求。 
  * - 该类当前为空，需要添加具体的方法来处理具体的业务逻辑。 
 **/
-package com.cyberpeace.gateway.controller;
-
-import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 @Api(tags = "外部接口-练习题相关api")
 @Slf4j
 @RestController
@@ -52,3 +52,4 @@ import org.springframework.web.bind.annotation.RestController;
 public class ExternalPracticeController {
 
 }
+

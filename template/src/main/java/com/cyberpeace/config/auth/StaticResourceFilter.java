@@ -1,3 +1,27 @@
+package com.cyberpeace.config.auth;
+
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.servlet.*;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+/**
+ * 静态资源过滤器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see Filter
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 功能概述 
@@ -40,30 +64,6 @@
  * #### 总结 
  * 该代码实现了基于 JWT 的静态资源访问权限控制，具有良好的扩展性和日志记录能力。通过合理的配置和动态调整，能够满足大部分场景下的需求。 
 **/
-package com.cyberpeace.config.auth;
-
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.SystemPropUtil;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.servlet.*;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
-/**
- * 静态资源过滤器
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see Filter
- * @since 1.0.0
- */
 @Slf4j
 public class StaticResourceFilter implements Filter {
 
@@ -177,3 +177,4 @@ public class StaticResourceFilter implements Filter {
 
     }
 }
+

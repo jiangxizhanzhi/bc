@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotEmpty;
+
+/**
+ * 评估指数裁判请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalIndexRefReq` 的 Java 类，该类用于表示评估指数裁判请求体。以下是对该代码的简要分析： 
  * ### 包声明 
@@ -81,21 +96,6 @@
  * - 使用了 Lombok 的注解来简化代码，并通过 Swagger 注解来生成 API 文档。 
  * - 字段中的 `resourceId` 是必需的，并且不允许为空。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotEmpty;
-
-/**
- * 评估指数裁判请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalIndexRefReq {

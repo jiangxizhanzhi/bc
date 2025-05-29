@@ -1,3 +1,16 @@
+package com.cyberpeace.integratation.model.scene;
+
+import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 拓扑摘要数据
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `TopoDigest` 的 Java 类，该类实现了 `Serializable` 接口。以下是详细的分析： 
  * ### 类定义 
@@ -21,19 +34,6 @@
  * - **序列化**：通过实现 `Serializable` 接口，该类可以被序列化，便于在网络传输或持久化存储时使用。 
  * 这个类的设计简洁明了，适合用于存储和传递拓扑的基本摘要信息。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import java.io.Serializable;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 拓扑摘要数据
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class TopoDigest implements Serializable {
@@ -53,3 +53,4 @@ public class TopoDigest implements Serializable {
 	 */
 	private String topoId;
 }
+

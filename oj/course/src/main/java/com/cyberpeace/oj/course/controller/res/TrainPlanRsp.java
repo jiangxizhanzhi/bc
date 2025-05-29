@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.controller.res;
+
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * 训练计划响应
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `TrainPlanRsp` 的 Java 类，用于表示训练计划的响应数据。以下是对该类的简要分析： 
  * ### 类定义 
@@ -26,25 +45,6 @@
  * - 该类主要用于封装训练计划的相关信息，并且通过 Swagger 注解使其易于在 API 文档中展示。 
  * - 类的设计简洁明了，提供了必要的属性和方法来表示训练计划的响应数据。 
 **/
-package com.cyberpeace.oj.course.controller.res;
-
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.models.auth.In;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Date;
-
-/**
- * 训练计划响应
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class TrainPlanRsp implements Serializable {
@@ -113,3 +113,4 @@ public class TrainPlanRsp implements Serializable {
     @ApiModelProperty("创建人名称")
     private String createUser;
 }
+

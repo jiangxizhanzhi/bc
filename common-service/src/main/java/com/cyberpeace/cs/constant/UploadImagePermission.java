@@ -1,3 +1,20 @@
+package com.cyberpeace.cs.constant;
+
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.UnauthorizedException;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.util.FileUtil;
+
+import lombok.Getter;
+
+/**
+ * 上传图片权限
+ *
+ * @author chenzhuo@date 2024/11/08
+ */
+
 /**
  * ### 代码分析 
  * #### 概述 
@@ -22,23 +39,6 @@
  * #### 总结 
  * 这是一个典型的权限控制枚举类，适用于需要对不同类型的图片上传进行精细化权限管理的场景。通过结合枚举类型和权限校验逻辑，可以有效提升代码的可读性和维护性。 
 **/
-package com.cyberpeace.cs.constant;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.UnauthorizedException;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.util.FileUtil;
-
-import lombok.Getter;
-
-/**
- * 上传图片权限
- *
- * @author chenzhuo@date 2024/11/08
- */
-
 public enum UploadImagePermission implements GenericEnum {
 
 	/**
@@ -156,3 +156,4 @@ public enum UploadImagePermission implements GenericEnum {
 	}
 
 }
+

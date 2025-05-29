@@ -1,3 +1,24 @@
+package com.cyberpeace.oj.course.dao.entity;
+
+import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.BaseTable;
+
+import lombok.*;
+
+/**
+ * 教室标志
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomSign` 的实体类，用于表示与教室签到相关的数据。以下是对其主要部分的简要分析： 
  * ### 类定义 
@@ -32,27 +53,6 @@
  * - **设计模式**: 使用了 Lombok 提供的注解来简化代码，同时使用枚举来管理状态。 
  * 总体来说，这段代码是一个典型的 Java 实体类，用于映射数据库表，并提供了相应的业务逻辑支持。 
 **/
-package com.cyberpeace.oj.course.dao.entity;
-
-import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.BaseTable;
-
-import lombok.*;
-
-/**
- * 教室标志
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @Builder
@@ -132,3 +132,4 @@ public class ClassroomSign extends BaseTable {
 	}
 
 }
+

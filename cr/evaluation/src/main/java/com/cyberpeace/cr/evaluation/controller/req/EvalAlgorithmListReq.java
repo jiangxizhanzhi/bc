@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import com.cyberpeace.common.model.PageReqBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 评估算法列表请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalAlgorithmListReq` 的 Java 类，该类用于表示评估算法列表的请求体。以下是对该代码的简要分析： 
  * ### 类概述 
@@ -16,21 +31,6 @@
  * ### 总结 
  * 这个类主要用于封装从客户端传来的关于评估算法列表的查询条件，包括算法类型、应用类型以及编程语言等信息。通过继承 `PageReqBase` 类，它可能还包含了分页相关的参数。使用 Lombok 注解简化了代码量，并且通过 Swagger 注解增强了 API 文档的可读性和可用性。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import com.cyberpeace.common.model.PageReqBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 评估算法列表请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalAlgorithmListReq extends PageReqBase implements Serializable {
@@ -47,3 +47,4 @@ public class EvalAlgorithmListReq extends PageReqBase implements Serializable {
 	@ApiModelProperty(value = "算法语言 0:python,1:java")
 	private Integer algorithm_language;
 }
+

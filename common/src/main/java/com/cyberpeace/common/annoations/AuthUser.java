@@ -1,3 +1,15 @@
+package com.cyberpeace.common.annoations;
+
+import java.lang.annotation.*;
+
+/**
+ * auth 用户
+ *
+ * @author chenzhuo@see Annotation
+ * @version 1.0.0
+ * @date 2024/12/04
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个自定义注解 `@AuthUser`，主要用于权限或用户相关的场景。以下是简要分析： 
  * 1. **注解作用范围**： 
@@ -14,18 +26,6 @@
  * - 该注解可能是为了标记需要用户认证的方法或类，并通过配置的属性实现特定的用户验证逻辑。 
  * 总结：这是一个功能性的自定义注解，主要用于标识需要用户认证的类或方法，并预留了扩展校验逻辑的能力。 
 **/
-package com.cyberpeace.common.annoations;
-
-import java.lang.annotation.*;
-
-/**
- * auth 用户
- *
- * @author chenzhuo@see Annotation
- * @version 1.0.0
- * @date 2024/12/04
- * @since 1.0.0
- */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
@@ -37,3 +37,4 @@ public @interface AuthUser {
     String method() default "validateUser";
 
 }
+

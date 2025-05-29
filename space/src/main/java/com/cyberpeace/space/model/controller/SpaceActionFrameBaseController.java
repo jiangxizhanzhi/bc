@@ -1,3 +1,49 @@
+package com.cyberpeace.space.model.controller;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.space.dao.entity.SpaceActionRelation;
+import com.cyberpeace.space.model.IdAndName;
+import com.cyberpeace.space.model.SpaceFrameBaseTable;
+import com.cyberpeace.space.model.SpaceFrameBoBase;
+import com.cyberpeace.space.model.req.FrameBasePageReq;
+import com.cyberpeace.space.service.SpaceActionRelationService;
+import com.cyberpeace.space.service.context.IdListReq;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+/**
+ * 空间行动框架基础Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个抽象类 `SpaceActionFrameBaseController`，用于处理与空间行动框架相关的 CRUD 操作。以下是对代码的主要分析： 
  * ### 类的功能概述 
@@ -47,52 +93,6 @@
  * ### 总结 
  * 该类提供了一个通用的框架来处理与空间行动框架相关的 CRUD 操作，并且通过泛型和抽象方法的设计，使得具体的实现类可以根据需求进行定制化开发。 
 **/
-package com.cyberpeace.space.model.controller;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.space.dao.entity.SpaceActionRelation;
-import com.cyberpeace.space.model.IdAndName;
-import com.cyberpeace.space.model.SpaceFrameBaseTable;
-import com.cyberpeace.space.model.SpaceFrameBoBase;
-import com.cyberpeace.space.model.req.FrameBasePageReq;
-import com.cyberpeace.space.service.SpaceActionRelationService;
-import com.cyberpeace.space.service.context.IdListReq;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-/**
- * 空间行动框架基础Controller
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 public abstract class SpaceActionFrameBaseController<S extends IService<E>, E extends SpaceFrameBaseTable, B extends SpaceFrameBoBase, R extends FrameBasePageReq> {
 
 	@Autowired
@@ -258,3 +258,4 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 	protected void checkReference(List<String> ids) {}
 
 }
+

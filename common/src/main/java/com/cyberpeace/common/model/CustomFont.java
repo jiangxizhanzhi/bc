@@ -1,3 +1,15 @@
+package com.cyberpeace.common.model;
+
+import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+
+/**
+ * 自定义字体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个 `CustomFont` 类，用于加载自定义字体。以下是代码的主要功能和结构分析： 
  * 1. **类与方法**： 
@@ -18,18 +30,6 @@
  * - 异常处理简单直接，直接抛出运行时异常。 
  * 总结：该类封装了字体加载的逻辑，便于在项目中使用自定义字体，同时提供了灵活性以支持不同样式和大小的字体。 
 **/
-package com.cyberpeace.common.model;
-
-import java.awt.*;
-import java.io.IOException;
-import java.io.InputStream;
-
-/**
- * 自定义字体
- *
- * @author SN
- * @date 2024/11/08
- */
 public class CustomFont {
 
 	public Font loadFonts(String fontFilename, int style, int size) {
@@ -47,3 +47,4 @@ public class CustomFont {
 
 	}
 }
+

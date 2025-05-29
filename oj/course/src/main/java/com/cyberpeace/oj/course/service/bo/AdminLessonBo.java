@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.cs.service.context.AttachmentBo;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 管理员课程 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `AdminLessonBo` 的 Java 类，用于表示管理员课程业务对象（BO, Business Object）。该类主要用于存储和管理与课程相关的详细信息。下面是对该代码的简要分析： 
  * ### 类定义 
@@ -23,26 +43,6 @@
  * - 支持序列化，可能用于持久化或网络传输。 
  * 这段代码简洁明了地定义了一个用于管理课程信息的数据模型，并且使用了现代的开发工具和库来简化开发工作。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.cs.service.context.AttachmentBo;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 管理员课程 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class AdminLessonBo implements Serializable {
@@ -219,3 +219,4 @@ public class AdminLessonBo implements Serializable {
     private Integer videoDuration;
 
 }
+

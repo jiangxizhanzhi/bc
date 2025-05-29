@@ -1,3 +1,11 @@
+package com.cyberpeace.integratation.service.bo.mp;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
 /**
  * 这段代码定义了一个名为 `RealEquipmentPageRequest` 的 Java 类，该类用于表示查询真实设备分页请求的参数。以下是对该代码的简要分析： 
  * 1. **包声明**： 
@@ -37,14 +45,6 @@
  * - 可以考虑使用枚举类型来替代整型字段，提高代码的可读性和健壮性。 
  * 总的来说，这个类的设计简洁明了，符合现代 Java 开发的最佳实践，能够很好地满足分页查询设备的需求。 
 **/
-package com.cyberpeace.integratation.service.bo.mp;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -97,3 +97,4 @@ public class RealEquipmentPageRequest {
 
 	private Integer per_page;
 }
+

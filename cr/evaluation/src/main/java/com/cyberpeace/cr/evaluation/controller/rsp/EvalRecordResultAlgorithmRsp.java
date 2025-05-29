@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 评估记录结果算法响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalRecordResultAlgorithmRsp` 的 Java 类，用于表示评估记录结果算法的响应。以下是该类的主要特性和功能的简要分析： 
  * ### 类概述 
@@ -20,22 +36,6 @@
  * ### 总结 
  * `EvalRecordResultAlgorithmRsp` 类是一个数据传输对象（DTO），它包含了评估记录结果算法的相关信息，并且提供了序列化的能力。这些信息在评估记录过程中可能会被用来传递算法的详细信息给前端或者其他服务。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 评估记录结果算法响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalRecordResultAlgorithmRsp implements Serializable {
@@ -81,3 +81,4 @@ public class EvalRecordResultAlgorithmRsp implements Serializable {
     @ApiModelProperty("配置参数")
     private List<AlgorithmParamContext> params;
 }
+

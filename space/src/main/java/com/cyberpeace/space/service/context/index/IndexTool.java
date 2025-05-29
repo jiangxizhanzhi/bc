@@ -1,3 +1,19 @@
+package com.cyberpeace.space.service.context.index;
+
+import java.util.Map;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 编号工具
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `IndexTool` 的 Java 类，位于包 `com.cyberpeace.space.service.context.index` 下。以下是对其功能和结构的简要分析： 
  * 1. **类的功能**： 
@@ -15,22 +31,6 @@
  * - 字段命名清晰，注释详细，便于理解其用途。 
  * 总结：`IndexTool` 是一个用于存储和管理编号工具相关统计数据的数据模型类，适合在需要统计不同类型工具数量的场景中使用。 
 **/
-package com.cyberpeace.space.service.context.index;
-
-import java.util.Map;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 编号工具
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class IndexTool {
@@ -92,3 +92,4 @@ public class IndexTool {
 	@ApiModelProperty(value = "平台统计")
 	private Map<String, Integer> platform;
 }
+

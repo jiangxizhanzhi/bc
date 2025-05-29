@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 简单用户数据
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SimpleUserData` 的 Java 类，该类实现了 `Serializable` 接口。这个类主要用于表示简单的用户数据信息。以下是详细的分析： 
  * ### 类定义 
@@ -22,24 +40,6 @@
  * - 使用 Swagger 注解方便在 API 文档中展示这些字段的信息。 
  * 这个类可以被其他服务或模块用来传递和处理简单的用户信息。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 简单用户数据
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -78,3 +78,4 @@ public class SimpleUserData implements Serializable {
 	private String organizationId;
 
 }
+

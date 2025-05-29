@@ -1,3 +1,16 @@
+package com.cyberpeace.integratation.model.mp;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 中台装置信息
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MpDeviceInfo` 的 Java 类，该类实现了 `Serializable` 接口，并且使用了 Lombok 库来简化 getter 和 setter 方法的生成。以下是详细的分析： 
  * ### 类定义 
@@ -17,19 +30,6 @@
  * ### 总结 
  * 这段代码是一个简单的数据传输对象（DTO），用于在不同系统或模块之间传递装置信息。通过 Lombok 注解，简化了代码的编写，使得代码更加简洁和易于维护。 
 **/
-package com.cyberpeace.integratation.model.mp;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 中台装置信息
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MpDeviceInfo implements Serializable {
@@ -44,3 +44,4 @@ public class MpDeviceInfo implements Serializable {
 	 */
 	private String resourceId;
 }
+

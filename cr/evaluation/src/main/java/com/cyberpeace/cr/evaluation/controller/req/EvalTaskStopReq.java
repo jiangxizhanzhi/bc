@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估任务停请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTaskStopReq` 的 Java 类，用于表示评估任务停止请求的数据结构。以下是对该类的简要分析： 
  * ### 类定义 
@@ -28,20 +42,6 @@
  * - 使用了 Lombok 和 Swagger 注解来简化代码并生成文档。 
  * 这个类的设计目的是确保在停止评估任务时，必须提供模板ID和任务ID，并且这些字段不能为空。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import javax.validation.constraints.NotNull;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估任务停请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalTaskStopReq {

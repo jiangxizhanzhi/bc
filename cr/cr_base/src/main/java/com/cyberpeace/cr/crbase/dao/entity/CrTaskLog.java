@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.crbase.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+
+import lombok.*;
+
+/**
+ * 靶场任务日志
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `CrTaskLog` 的实体类，用于表示靶场任务日志。以下是对代码的简要分析： 
  * 1. **包与导入**： 
@@ -20,21 +35,6 @@
  * - 自动生成 getter、setter、构造函数、toString 等方法，简化代码。 
  * 总结：这是一个基于 MyBatis-Plus 的实体类，用于存储靶场任务日志数据，支持丰富的功能（如 UUID 主键、枚举类型等），并使用 Lombok 提高开发效率。 
 **/
-package com.cyberpeace.cr.crbase.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-
-import lombok.*;
-
-/**
- * 靶场任务日志
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @AllArgsConstructor
@@ -92,3 +92,4 @@ public class CrTaskLog extends BaseTable {
 		}
 	}
 }
+

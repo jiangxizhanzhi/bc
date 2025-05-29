@@ -1,3 +1,25 @@
+package com.cyberpeace.oj.course.dao.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
+import com.cyberpeace.oj.course.dao.entity.Classroom;
+
+/**
+ * 课堂Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomMapper` 的接口，继承自 `BaseMapper<Classroom>`，并使用了 MyBatis 的注解 `@Mapper`。这个接口提供了多个方法来操作 `Classroom` 实体类的数据。以下是代码的简要分析： 
  * ### 主要功能 
@@ -33,28 +55,6 @@
  * ### 总结 
  * `ClassroomMapper` 接口是一个功能丰富的数据访问层接口，它不仅提供了基本的 CRUD 操作，还提供了复杂的查询功能，如分页查询、多条件组合查询等。这些方法可以满足不同场景下的课堂管理需求。 
 **/
-package com.cyberpeace.oj.course.dao.mapper;
-
-import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
-import com.cyberpeace.oj.course.dao.entity.Classroom;
-
-/**
- * 课堂Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 public interface ClassroomMapper extends BaseMapper<Classroom> {
 
@@ -197,3 +197,4 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 */
 	List<String> selectTempTaskIdsByUser(String userId, boolean isSuperUser);
 }
+

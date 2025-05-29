@@ -1,3 +1,21 @@
+package com.cyberpeace.cr.evaluation.service;
+
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultIndexRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * 评估指数裁判Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalIndexRefService` 的接口，该接口继承自 `IService<EvalIndexRef>`。这个接口主要用于评估指数裁判相关的业务逻辑操作。以下是对其主要方法的简要分析： 
  * 1. **startIndex** 
@@ -41,24 +59,6 @@
  * - **使用场景**: 主要应用于评估系统的后台逻辑处理，支持评估过程中的各项计算和数据检索操作。 
  * - **依赖**: 接口依赖于多个实体类（如 `EvalIndexRef`, `EvalAlgorithmRef`, `EvalRecord` 等）和响应类（如 `EvalRoomPairRsp`, `EvalRecordResultIndexRsp`）。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultIndexRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
-import com.cyberpeace.cr.evaluation.dao.entity.*;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-/**
- * 评估指数裁判Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface EvalIndexRefService extends IService<EvalIndexRef> {
     /**
      * 指标项计算
@@ -111,3 +111,4 @@ public interface EvalIndexRefService extends IService<EvalIndexRef> {
      */
     EvalRecordResultIndexRsp resultIndex(String indexId);
 }
+

@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.crbase.controller.req.scene;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 场景老年 退休金 计划请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SceneOpsReq` 的 Java 类，用于表示场景操作请求体。以下是代码的简要分析： 
  * 1. **类名与功能**： 
@@ -14,21 +29,6 @@
  * - 注释中指明了作者为“SN”以及创建日期为“2024/11/08”。 
  * 总结：这是一个简单的 POJO（Plain Old Java Object）类，主要用于接收场景操作的请求参数，支持序列化，并通过注解增强了可读性和功能性。 
 **/
-package com.cyberpeace.cr.crbase.controller.req.scene;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 场景老年 退休金 计划请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class SceneOpsReq implements Serializable {
@@ -39,3 +39,4 @@ public class SceneOpsReq implements Serializable {
 	@ApiModelProperty(value = "业务实例id", required = true)
 	private String roomId;
 }
+

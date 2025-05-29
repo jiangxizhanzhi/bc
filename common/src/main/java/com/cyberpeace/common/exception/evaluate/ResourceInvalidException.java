@@ -1,3 +1,14 @@
+package com.cyberpeace.common.exception.evaluate;
+
+/**
+ * 资源无效异常
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see RuntimeException
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个自定义异常类 `ResourceInvalidException`，继承自 Java 标准库中的 `RuntimeException`。以下是对其的简要分析： 
  * 1. **功能定位**： 
@@ -14,17 +25,6 @@
  * - 当某个资源（如文件、数据库连接等）无效时，可以抛出此异常，提示调用方进行处理。 
  * 总结：这是一个标准的自定义运行时异常类，设计简洁且符合 Java 异常机制的最佳实践。 
 **/
-package com.cyberpeace.common.exception.evaluate;
-
-/**
- * 资源无效异常
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see RuntimeException
- * @since 1.0.0
- */
 public class ResourceInvalidException extends RuntimeException {
 
 	public ResourceInvalidException(String message) {
@@ -35,3 +35,4 @@ public class ResourceInvalidException extends RuntimeException {
 		super();
 	}
 }
+

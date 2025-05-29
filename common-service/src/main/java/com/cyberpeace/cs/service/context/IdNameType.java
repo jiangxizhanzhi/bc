@@ -1,3 +1,18 @@
+package com.cyberpeace.cs.service.context;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * id名称类型
+ *
+ * @author SN
+ * @date 2023/05/18
+ */
 /**
  * 这段代码定义了一个名为 `IdNameType` 的 Java 类，用于表示包含 ID、名称和类型的简单数据结构。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -14,21 +29,6 @@
  * - 该类可能作为数据传输对象（DTO）或实体类，在系统中传递或存储相关信息。 
  * 总结来说，这是一个轻量级的 Java Bean，用于封装基本的 ID、名称和类型信息，并支持序列化和文档生成。 
 **/
-package com.cyberpeace.cs.service.context;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * id名称类型
- *
- * @author SN
- * @date 2023/05/18
- */
 @Getter
 @Setter
 public class IdNameType implements Serializable {
@@ -51,3 +51,4 @@ public class IdNameType implements Serializable {
 	@ApiModelProperty(value = "类型")
 	private Integer type;
 }
+

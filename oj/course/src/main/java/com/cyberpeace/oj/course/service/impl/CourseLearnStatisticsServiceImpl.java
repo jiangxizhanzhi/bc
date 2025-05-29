@@ -1,3 +1,45 @@
+package com.cyberpeace.oj.course.service.impl;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.course.controller.req.LessonStatisticsListReq;
+import com.cyberpeace.oj.course.controller.res.AdminCourseStatisticsRes;
+import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsDetailRes;
+import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsRes;
+import com.cyberpeace.oj.course.controller.res.HistogramRes;
+import com.cyberpeace.oj.course.dao.context.CourseContext;
+import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.mapper.CourseLearnStatisticsMapper;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.course.service.CourseLearnStatisticsService;
+import org.springframework.util.CollectionUtils;
+
+/**
+ * 课程学习统计学Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see CourseLearnStatisticsService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseLearnStatisticsServiceImpl` 的服务类，实现了 `CourseLearnStatisticsService` 接口。这个服务类主要用于处理与课程学习统计相关的业务逻辑。下面是对代码的主要功能和结构的简要分析： 
  * ### 类结构 
@@ -41,48 +83,6 @@
  * ### 总结 
  * 该服务类主要负责处理课程及其课时的学习统计数据，包括生成直方图、获取统计列表和详细信息等功能。通过依赖注入的方式使用了多个 Mapper 和 Service 来访问数据库和远程服务，并利用 Java 8 的流式 API 进行数据处理。 
 **/
-package com.cyberpeace.oj.course.service.impl;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.course.controller.req.LessonStatisticsListReq;
-import com.cyberpeace.oj.course.controller.res.AdminCourseStatisticsRes;
-import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsDetailRes;
-import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsRes;
-import com.cyberpeace.oj.course.controller.res.HistogramRes;
-import com.cyberpeace.oj.course.dao.context.CourseContext;
-import com.cyberpeace.oj.course.dao.entity.Course;
-import com.cyberpeace.oj.course.dao.mapper.CourseLearnStatisticsMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import com.cyberpeace.oj.course.service.CourseLearnStatisticsService;
-import org.springframework.util.CollectionUtils;
-
-/**
- * 课程学习统计学Service实现
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see CourseLearnStatisticsService
- * @since 1.0.0
- */
 @Service
 public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsService {
 
@@ -365,3 +365,4 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		return userIds;
 	}
 }
+

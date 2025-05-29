@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.evaluation.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalCollectionContextRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalCollection;
+import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+
+/**
+ * 评估收集Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalCollectionMapper` 的接口，它继承了 `BaseMapper<EvalCollection>`。这个接口主要用于数据库操作，具体来说是与 `EvalCollection` 实体类相关的 CRUD 操作。以下是对该代码的简要分析： 
  * ### 主要内容 
@@ -19,21 +34,6 @@
  * ### 总结 
  * `EvalCollectionMapper` 是一个用于处理 `EvalCollection` 实体类的 MyBatis Mapper 接口。它不仅继承了基本的 CRUD 方法，还提供了一些自定义方法以满足特定的业务需求。这些自定义方法主要涉及根据不同的ID列表查询相关的 `EvalCollection` 数据。 
 **/
-package com.cyberpeace.cr.evaluation.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalCollectionContextRsp;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalCollection;
-import org.apache.ibatis.annotations.Mapper;
-
-import java.util.List;
-
-/**
- * 评估收集Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 public interface EvalCollectionMapper extends BaseMapper<EvalCollection> {
 
@@ -84,6 +84,7 @@ public interface EvalCollectionMapper extends BaseMapper<EvalCollection> {
 	 */
 	List<EvalCollectionContextRsp> selectByEvalIndicatorIds(List<String> evalIndicatorIds);
 }
+
 
 
 

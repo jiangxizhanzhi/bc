@@ -1,3 +1,19 @@
+package com.cyberpeace.integratation.service.impl;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.stereotype.Service;
+
+import com.cyberpeace.common.util.SystemPropUtil;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 中台环境Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MpEnvService` 的 Spring 服务类，用于初始化和获取中台环境的相关配置信息。以下是对代码的简要分析： 
  * ### 类定义与注解 
@@ -22,22 +38,6 @@
  * 3. **改进**: 应将 `getMpHost()` 方法中的 `return MP_URL;` 改为 `return MP_HOST;`。 
  * 总体来说，这段代码实现了基本的功能，但存在一个小错误需要修正。 
 **/
-package com.cyberpeace.integratation.service.impl;
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.stereotype.Service;
-
-import com.cyberpeace.common.util.SystemPropUtil;
-
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 中台环境Service
- *
- * @author SN
- * @date 2024/11/08
- */
 @Slf4j
 @Service
 public class MpEnvService {
@@ -78,3 +78,4 @@ public class MpEnvService {
 		log.info("mp host=[{}], port=[{}]", MP_HOST, MP_PORT);
 	}
 }
+

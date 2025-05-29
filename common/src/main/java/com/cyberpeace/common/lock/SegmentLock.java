@@ -1,3 +1,16 @@
+package com.cyberpeace.common.lock;
+
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+/**
+ * 段锁
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 该代码实现了一个基于分段锁的设计模式，目的是通过将锁分散到多个小锁（分段锁）中，减少锁竞争，提高并发性能。以下是代码的简要分析： 
  * 1. **功能概述**： 
@@ -19,19 +32,6 @@
  * - 缺乏异常处理机制，例如在构造函数或锁操作中未处理可能的异常。 
  * 总体而言，该代码提供了一个简单而有效的分段锁实现，适合需要细粒度控制并发访问的场景。 
 **/
-package com.cyberpeace.common.lock;
-
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-/**
- * 段锁
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public class SegmentLock {
 
     /**
@@ -77,3 +77,4 @@ public class SegmentLock {
     }
 
 }
+

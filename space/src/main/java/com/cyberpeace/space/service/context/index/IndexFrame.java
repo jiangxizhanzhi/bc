@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.index;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 编号框架
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 类定义 
@@ -27,20 +41,6 @@
  * #### 总结 
  * `IndexFrame` 是一个简单的数据传输对象（DTO），主要用于存储和传递编号框架的相关信息。它通过`@ApiModelProperty`注解增强了API文档的可读性，并通过`Lombok`注解简化了代码的冗余部分。该类的设计目的是为了方便在系统中管理和展示编号相关的计数和趋势信息。 
 **/
-package com.cyberpeace.space.service.context.index;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 编号框架
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class IndexFrame {
@@ -61,3 +61,4 @@ public class IndexFrame {
 	@ApiModelProperty(value = "趋势图")
 	private IndexActionFrameChart trending;
 }
+

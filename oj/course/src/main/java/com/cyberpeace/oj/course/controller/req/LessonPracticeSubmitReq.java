@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 课实践提交请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonPracticeSubmitReq` 的 Java 类，用于表示提交课程实践的请求体。以下是对该类的简要分析： 
  * ### 类名及包信息 
@@ -28,26 +48,6 @@
  * - 类中的每个字段都有相应的注解，确保字段的必填性和文档化描述。 
  * 该类适用于处理与课程实践相关的请求，确保数据的完整性和可读性。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 课实践提交请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -80,3 +80,4 @@ public class LessonPracticeSubmitReq implements Serializable {
 	private List<PracticeSubmitReq> answers;
 
 }
+

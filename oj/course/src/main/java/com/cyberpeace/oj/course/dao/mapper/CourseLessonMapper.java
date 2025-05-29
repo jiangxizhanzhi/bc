@@ -1,3 +1,26 @@
+package com.cyberpeace.oj.course.dao.mapper;
+
+import java.util.List;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.oj.course.dao.context.LessonContext;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+
+/**
+ * 课程课Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseLessonMapper` 的接口，继承自 `BaseMapper<CourseLesson>`。这个接口主要用于操作与课程（Course）相关的课时（Lesson）数据。以下是对该代码的简要分析： 
  * ### 1. 包和导入 
@@ -35,29 +58,6 @@
  * ### 总结 
  * 这个接口主要提供了与课程课时相关的各种操作，包括查询、分页、删除和统计等。通过继承 `BaseMapper`，它已经具备了基本的 CRUD 功能，并且还添加了一些特定于课程课时的功能。这些方法涵盖了从简单的单条记录查询到复杂的分页查询以及批量删除等操作。 
 **/
-package com.cyberpeace.oj.course.dao.mapper;
-
-import java.util.List;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.oj.course.dao.context.LessonContext;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-
-/**
- * 课程课Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 @Repository
 public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
@@ -192,3 +192,4 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 
 	List<CourseLesson> selectAllVideoLesson();
 }
+

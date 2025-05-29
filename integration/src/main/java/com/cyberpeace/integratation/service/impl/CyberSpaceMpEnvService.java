@@ -1,3 +1,19 @@
+package com.cyberpeace.integratation.service.impl;
+
+import com.cyberpeace.common.util.SystemPropUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+
+/**
+ * 网络空间中台环境Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ *//*
+数字空间mp地址
+ */
 /**
  * 这段代码定义了一个名为 `CyberSpaceMpEnvService` 的 Spring 服务类，用于管理网络空间中台环境的相关配置。以下是详细的分析： 
  * ### 类与注解 
@@ -29,22 +45,6 @@
  * ``` 
  * 通过这些改进，代码的功能将更加清晰和正确。 
 **/
-package com.cyberpeace.integratation.service.impl;
-
-import com.cyberpeace.common.util.SystemPropUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-
-/**
- * 网络空间中台环境Service
- *
- * @author SN
- * @date 2024/11/08
- *//*
-数字空间mp地址
- */
 @Slf4j
 @Service
 public class CyberSpaceMpEnvService {
@@ -85,3 +85,4 @@ public class CyberSpaceMpEnvService {
         log.info("cyber space mp host=[{}], port=[{}]", MP_HOST, MP_PORT);
     }
 }
+

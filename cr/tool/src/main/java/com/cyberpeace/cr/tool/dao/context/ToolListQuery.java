@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.tool.dao.context;
+
+import com.cyberpeace.common.model.PatternBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 工具列表查询
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolListQuery` 的 Java 类，该类继承自 `PatternBase`。这个类主要用于工具列表查询，并包含了一些字段用于存储查询条件。下面是详细的分析： 
  * ### 类定义 
@@ -22,19 +35,6 @@
  * ### 总结 
  * 这个类是一个数据传输对象（DTO），用于封装工具列表查询的参数。它通过继承 `PatternBase` 类和使用 Lombok 注解简化了代码编写。Swagger 注解使得这个类在生成 API 文档时能够提供更好的文档说明。 
 **/
-package com.cyberpeace.cr.tool.dao.context;
-
-import com.cyberpeace.common.model.PatternBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 工具列表查询
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class ToolListQuery extends PatternBase {
@@ -68,3 +68,4 @@ public class ToolListQuery extends PatternBase {
 	private String tag;
 
 }
+

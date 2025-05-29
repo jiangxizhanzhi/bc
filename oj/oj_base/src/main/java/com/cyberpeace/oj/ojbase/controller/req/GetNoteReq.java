@@ -1,3 +1,24 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import java.io.Serializable;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 获取注意请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `GetNoteReq` 的 Java 类，该类用于表示获取笔记请求的请求体。以下是对此代码的简要分析： 
  * ### 类概述 
@@ -39,27 +60,6 @@
  * - 手动定义的 setter 方法是多余的，可以删除这些方法。 
  * - 可以进一步优化属性的命名风格，使其更一致和易读（例如将 `setResource_id` 改为 `setResourceId`）。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import java.io.Serializable;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 获取注意请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -117,3 +117,4 @@ public class GetNoteReq implements Serializable {
 	}
 
 }
+

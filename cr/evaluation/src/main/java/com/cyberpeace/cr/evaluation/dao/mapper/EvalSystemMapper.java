@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.evaluation.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalSystem;
+import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+import org.apache.ibatis.annotations.Mapper;
+
+/**
+ * 评估系统Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalSystemMapper` 的接口，继承自 `BaseMapper<EvalSystem>`。`BaseMapper` 是 MyBatis-Plus 提供的一个基础接口，通常用于处理常见的 CRUD 操作。以下是代码的具体分析： 
  * ### 包和导入声明 
@@ -25,21 +40,6 @@
  * - 使用 MyBatis-Plus 的 `Page` 和 `IPage` 进行分页查询，使得数据库操作更加方便和高效。 
  * 这段代码展示了如何使用 MyBatis-Plus 和自定义方法来处理数据访问需求，特别是对于分页查询和条件检查的需求。 
 **/
-package com.cyberpeace.cr.evaluation.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalSystem;
-import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
-import org.apache.ibatis.annotations.Mapper;
-
-/**
- * 评估系统Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 public interface EvalSystemMapper extends BaseMapper<EvalSystem> {
 
@@ -61,6 +61,7 @@ public interface EvalSystemMapper extends BaseMapper<EvalSystem> {
      */
     boolean existByName(String name, String resourceId);
 }
+
 
 
 

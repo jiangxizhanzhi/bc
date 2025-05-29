@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+/**
+ * this is branch test for the test
+ * the test is for toy
+ * the toy is toy
+ * not the practice
+ * tos
+ */
 /**
  * 这段代码是一个JUnit测试类，用于测试 `EvalIndexRefServiceBranch` 类的方法 `getBranch`。以下是详细的分析和总结： 
  * ### 1. 包声明和导入 
@@ -24,18 +36,6 @@
  * - 考虑引入更具代表性的测试数据，包括边界条件和异常情况。 
  * - 如果可能，重构测试方法以减少重复代码。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-/**
- * this is branch test for the test
- * the test is for toy
- * the toy is toy
- * not the practice
- * tos
- */
 public class EvalIndexRefServiceBranchTest {
 
     /**
@@ -559,3 +559,4 @@ public class EvalIndexRefServiceBranchTest {
     }
 
 }
+

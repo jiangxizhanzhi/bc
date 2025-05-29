@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.service.context;
+
+import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * algorithm param 上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `AlgorithmParamContext` 的 Java 类，该类用于表示算法参数的上下文。以下是详细的分析： 
  * ### 类定义 
@@ -36,20 +50,6 @@
  * - **文档**: 使用了 Swagger 注解 (`@ApiModelProperty`) 来帮助生成 API 文档，便于前端和其他服务理解该类的用途。 
  * 这个类是一个典型的 Java Bean，适用于在服务层或控制器层中传递算法参数的信息。 
 **/
-package com.cyberpeace.cr.evaluation.service.context;
-
-import javax.validation.constraints.NotNull;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * algorithm param 上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class AlgorithmParamContext {
@@ -81,3 +81,4 @@ public class AlgorithmParamContext {
 	@NotNull
 	private String defaultValue;
 }
+

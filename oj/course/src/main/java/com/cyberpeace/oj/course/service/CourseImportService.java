@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.service;
+
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.entity.LessonConfig;
+import com.cyberpeace.oj.course.service.bo.CombinedCourseImportContext;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 课程导入Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseImportService` 的接口，该接口包含了多个方法，用于处理课程导入相关的功能。以下是该接口的简要分析： 
  * ### 接口概述 
@@ -53,25 +72,6 @@
  * - 方法涉及到了课程 (`Course`)、课时 (`CourseLesson`)、课时配置 (`LessonConfig`) 等对象，并且使用了 `Map` 和 `List` 等集合类来处理复杂的数据结构。 
  * - 使用了认证上下文 (`AuthContext`) 来确保操作的安全性。 
 **/
-package com.cyberpeace.oj.course.service;
-
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.oj.course.dao.entity.Course;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.dao.entity.LessonConfig;
-import com.cyberpeace.oj.course.service.bo.CombinedCourseImportContext;
-
-import java.util.List;
-import java.util.Map;
-
-/**
- * 课程导入Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface CourseImportService {
 
 	/**
@@ -159,3 +159,4 @@ public interface CourseImportService {
 	 */
 	void destroyFailedTopo(Map<String, String> envReqs, Map<String, Map<String, String>> operationEnvReqs);
 }
+

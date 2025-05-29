@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.tool.controller.res;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * Web工具类别响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `WebToolCategoryRsp` 的 Java 类，用于表示前端工具类别的响应数据。以下是对其主要特性的简要分析： 
  * 1. **包声明与导入**: 
@@ -17,22 +33,6 @@
  * - 使用 Lombok 注解简化了代码，减少了样板代码。 
  * 总结来说，这段代码是一个简洁且功能明确的数据传输对象（DTO），适用于在前后端交互中传递工具分类的相关信息。 
 **/
-package com.cyberpeace.cr.tool.controller.res;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * Web工具类别响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @ApiModel("前台工具分类")
 @Getter
 @Setter
@@ -50,3 +50,4 @@ public class WebToolCategoryRsp implements Serializable {
     @ApiModelProperty("工具分类名称")
     private String categoryI18nName;
 }
+

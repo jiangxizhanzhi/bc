@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+import lombok.Getter;
+import lombok.Setter;
+
+
+/**
+ * 课堂群组信息
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomGroupInfo` 的 Java 类，该类继承自 `BaseTable`。这个类用于表示课堂群组的信息，并使用 MyBatis-Plus 进行数据库操作。以下是代码的主要分析： 
  * ### 包声明和导入 
@@ -27,25 +46,6 @@
  * - 使用 Lombok 的注解减少了样板代码，提高了代码的可读性和简洁性。 
  * 这个类的设计使得它可以方便地进行数据库操作，同时保持代码的简洁和清晰。 
 **/
-package com.cyberpeace.oj.course.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-import lombok.Getter;
-import lombok.Setter;
-
-
-/**
- * 课堂群组信息
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("oj_classroom_group_info")
@@ -109,3 +109,4 @@ public class ClassroomGroupInfo extends BaseTable {
 	private String topoId;
 
 }
+

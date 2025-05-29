@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.ojbase.controller.res;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 实操认证信息
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `OperationAuthInfo` 的 Java 类，用于表示实操认证信息。以下是对其主要特性和功能的简要分析： 
  * ### 类概述 
@@ -22,24 +40,6 @@
  * - **权限管理**：根据 `operationAuthType` 和 `operationAuthIds`，可以实现不同的权限控制逻辑，比如基于角色的访问控制（RBAC）。 
  * 总之，这段代码定义了一个简洁且功能明确的数据传输对象，适用于实操认证信息的处理。 
 **/
-package com.cyberpeace.oj.ojbase.controller.res;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 实操认证信息
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class OperationAuthInfo implements Serializable {
@@ -61,3 +61,4 @@ public class OperationAuthInfo implements Serializable {
 	private List<OperationUserInfo> operationAuthIds;
 
 }
+

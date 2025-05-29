@@ -1,3 +1,14 @@
+package com.cyberpeace.common.model.user;
+
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Set;
+
 /**
  * 这段代码定义了一个名为 `UserInfo` 的 Java 类，用于表示用户的信息。以下是代码的主要特点和功能分析： 
  * 1. **类的基本信息**： 
@@ -24,17 +35,6 @@
  * - 支持序列化，适合在分布式系统中传递对象。 
  * 总体来说，这个类是一个典型的用户信息模型，适用于需要管理用户详细信息的应用场景。 
 **/
-package com.cyberpeace.common.model.user;
-
-import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Lists;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Set;
-
 @Getter
 @Setter
 public class UserInfo implements Serializable {
@@ -109,3 +109,4 @@ public class UserInfo implements Serializable {
     private Set<String> permissions;
 
 }
+

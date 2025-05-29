@@ -1,3 +1,35 @@
+package com.cyberpeace.common.component;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
+import org.springframework.web.socket.*;
+
+import com.cyberpeace.common.model.ws.ChatMessage;
+import com.cyberpeace.common.model.ws.WebSocketConnectionContext;
+import com.cyberpeace.common.model.ws.WebSocketMessageContext;
+import com.cyberpeace.common.util.JsonUtil;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 我 Web 套接字处理程序
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see WebSocketHandler
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 功能概述 
@@ -61,38 +93,6 @@
  * #### 总结 
  * 该代码实现了完整的 WebSocket 会话管理和消息推送功能，设计合理且具有良好的扩展性。通过分层存储和线程安全措施，能够满足大多数业务场景的需求。但在高并发环境下需注意内存使用情况，并进一步优化异常处理逻辑。 
 **/
-package com.cyberpeace.common.component;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
-import org.springframework.web.socket.*;
-
-import com.cyberpeace.common.model.ws.ChatMessage;
-import com.cyberpeace.common.model.ws.WebSocketConnectionContext;
-import com.cyberpeace.common.model.ws.WebSocketMessageContext;
-import com.cyberpeace.common.util.JsonUtil;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 我 Web 套接字处理程序
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see WebSocketHandler
- * @since 1.0.0
- */
 @Slf4j
 @Component
 @Primary
@@ -398,3 +398,4 @@ public class MyWebSocketHandler implements WebSocketHandler {
 
 	}
 }
+

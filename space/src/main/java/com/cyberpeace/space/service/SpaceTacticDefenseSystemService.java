@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.space.dao.entity.SpaceTacticDefenseSystem;
+
+/**
+ * 空间战法防御系统Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个接口 `SpaceTacticDefenseSystemService`，它是基于 MyBatis-Plus 的 `IService` 接口的扩展。以下是代码的简要分析： 
  * 1. **包名与导入**： 
@@ -13,20 +27,6 @@
  * 总结来说，这是一个标准的 MyBatis-Plus 服务接口，用于封装对 `SpaceTacticDefenseSystem` 数据的操作。 
 **/
 
-package com.cyberpeace.space.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.space.dao.entity.SpaceTacticDefenseSystem;
-
-/**
- * 空间战法防御系统Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see IService
- * @since 1.0.0
- */
 public interface SpaceTacticDefenseSystemService extends IService<SpaceTacticDefenseSystem>{
 }
     

@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.tool.controller.res;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * Web工具响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `WebToolRsp` 的 Java 类，用于表示 Web 工具库的信息。以下是对其主要特性和功能的简要分析： 
  * ### 类概述 
@@ -25,22 +41,6 @@
  * ### 总结 
  * 这个类是一个数据传输对象（DTO），用于在客户端和服务端之间传递 Web 工具库的信息。它使用了 Lombok 来简化代码，并通过 Swagger 注解来增强文档生成的功能。 
 **/
-package com.cyberpeace.cr.tool.controller.res;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * Web工具响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @ApiModel("前台工具库信息")
 @Getter
 @Setter
@@ -98,3 +98,4 @@ public class WebToolRsp implements Serializable {
     @ApiModelProperty("标签")
     private List<String> tag;
 }
+

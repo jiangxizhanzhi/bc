@@ -1,3 +1,21 @@
+package com.cyberpeace.gateway.service.bo;
+
+import com.cyberpeace.oj.practice.service.bo.PracticeOperationFileBo;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * 外部实操博
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ExternalOperationBo` 的 Java 类，用于表示外部实践操作的相关信息。以下是该类的简要分析： 
  * ### 包和导入 
@@ -45,24 +63,6 @@
  * ### 总结 
  * 这个类主要用于表示和管理外部实践操作的相关信息，包括习题的基本属性、答案、知识点、附件等，并且支持序列化。通过 Lombok 注解，自动提供了 getter 和 setter 方法，简化了代码编写。同时，使用 Swagger 注解来帮助生成 API 文档。 
 **/
-package com.cyberpeace.gateway.service.bo;
-
-import com.cyberpeace.oj.practice.service.bo.PracticeOperationFileBo;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-/**
- * 外部实操博
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @ApiModel
@@ -212,3 +212,4 @@ public class ExternalOperationBo implements Serializable {
 	@ApiModelProperty("随机flag文件")
 	private List<PracticeOperationFileBo> attachment;
 }
+

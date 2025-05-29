@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.course.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.BaseTable;
+import lombok.*;
+
+
+/**
+ * 课程配置
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonConfig` 的实体类，用于表示课程配置信息。以下是详细的分析： 
  * ### 类定义 
@@ -32,26 +52,6 @@
  * - **枚举**：定义了节点类型的枚举，便于管理和维护节点类型。 
  * 这个类主要用于数据库表 `oj_lesson_config` 的映射，可以用于持久化课程配置数据。 
 **/
-package com.cyberpeace.oj.course.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.BaseTable;
-import lombok.*;
-
-
-/**
- * 课程配置
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @Builder
@@ -133,3 +133,4 @@ public class LessonConfig extends BaseTable {
 	}
 
 }
+

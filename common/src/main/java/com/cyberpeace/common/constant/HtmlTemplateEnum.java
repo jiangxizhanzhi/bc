@@ -1,3 +1,19 @@
+package com.cyberpeace.common.constant;
+
+import lombok.Getter;
+import org.springframework.util.ClassUtils;
+
+import java.io.File;
+
+/**
+ * HTML 模板枚举
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Enum
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个名为 `HtmlTemplateEnum` 的枚举类，用于管理 HTML 模板的相关信息。以下是代码的主要功能和结构分析： 
  * 1. **枚举定义**： 
@@ -17,22 +33,6 @@
  * - 该枚举类主要用于统一管理 HTML 模板的路径和名称，便于在项目中复用和维护。 
  * 总结：该代码通过枚举的方式封装了 HTML 模板的路径和名称，提高了代码的可读性和可维护性。 
 **/
-package com.cyberpeace.common.constant;
-
-import lombok.Getter;
-import org.springframework.util.ClassUtils;
-
-import java.io.File;
-
-/**
- * HTML 模板枚举
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Enum
- * @since 1.0.0
- */
 public enum HtmlTemplateEnum {
 	/**
 	 * html模板枚举
@@ -98,3 +98,4 @@ public enum HtmlTemplateEnum {
 	}
 
 }
+

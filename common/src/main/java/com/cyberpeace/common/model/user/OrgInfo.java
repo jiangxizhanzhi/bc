@@ -1,3 +1,18 @@
+package com.cyberpeace.common.model.user;
+
+import com.google.common.collect.Lists;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 组织信息
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `OrgInfo` 的 Java 类，用于表示组织信息。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -16,21 +31,6 @@
  * - 提供了默认的集合初始化（`Lists.newArrayList()`），避免了手动初始化集合的麻烦。 
  * 总结：这是一个简单的数据模型类，用于表示组织的层级信息，支持序列化，并通过 Lombok 减少了样板代码。 
 **/
-package com.cyberpeace.common.model.user;
-
-import com.google.common.collect.Lists;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 组织信息
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class OrgInfo implements Serializable {
@@ -60,3 +60,4 @@ public class OrgInfo implements Serializable {
      */
     private String path;
 }
+

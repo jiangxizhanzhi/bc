@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 公开统计 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `PublicStatsBo` 的 Java 类，该类实现了 `Serializable` 接口。这个类用于表示公开统计信息，适用于课程相关的统计数据。以下是对代码的详细分析： 
  * ### 包声明 
@@ -58,23 +75,6 @@
  * - 类中的字段包含了课程统计的各种信息，如课时、练习、实验和考试的完成情况以及实验的平均得分。 
  * 这个类可以被其他服务或模块使用，以获取和展示课程相关的统计数据。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 公开统计 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class PublicStatsBo implements Serializable {
@@ -116,3 +116,4 @@ public class PublicStatsBo implements Serializable {
     @ApiModelProperty("完成考试数")
     private Integer finishExamCount = 0;
 }
+

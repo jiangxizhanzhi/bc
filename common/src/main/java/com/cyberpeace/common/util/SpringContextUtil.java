@@ -1,3 +1,18 @@
+package com.cyberpeace.common.util;
+
+import java.util.Map;
+
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.Nullable;
+
+/**
+ * Spring 上下文实用程序
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个工具类 `SpringContextUtil`，用于在 Spring 应用中获取 `ApplicationContext` 及其管理的 Bean。以下是代码的简要分析： 
  * 1. **功能概述**： 
@@ -15,21 +30,6 @@
  * - 在多线程环境中需确保 `applicationContext` 的线程安全性。 
  * 总体而言，这段代码提供了一个便捷的方式来访问 Spring 容器中的 Bean，但在实际开发中应尽量减少直接依赖此类，以保持代码的可维护性和解耦性。 
 **/
-package com.cyberpeace.common.util;
-
-import java.util.Map;
-
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
-
-/**
- * Spring 上下文实用程序
- *
- * @author SN
- * @date 2024/11/08
- */
 public class SpringContextUtil implements ApplicationContextAware {
 
 	/**
@@ -93,3 +93,4 @@ public class SpringContextUtil implements ApplicationContextAware {
 		return applicationContext.getBeansOfType(type);
 	}
 }
+

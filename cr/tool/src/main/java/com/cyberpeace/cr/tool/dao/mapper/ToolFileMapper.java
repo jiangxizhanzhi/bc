@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.tool.dao.mapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.tool.dao.entity.ToolFile;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
+
+/**
+ * 工具文件Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolFileMapper` 的接口，它继承了 `BaseMapper<ToolFile>`，用于操作 `ToolFile` 实体类。以下是对其主要部分的分析： 
  * 1. **包声明**： 
@@ -22,22 +38,6 @@
  * - 该接口使用了 MyBatis 和 Spring 提供的注解来简化开发和增强功能。 
  * - 这段代码展示了如何使用 MyBatis-Plus 来简化数据库操作。 
 **/
-package com.cyberpeace.cr.tool.dao.mapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.tool.dao.entity.ToolFile;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-import javax.validation.constraints.NotEmpty;
-import java.util.List;
-
-/**
- * 工具文件Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 @Repository
 public interface ToolFileMapper extends BaseMapper<ToolFile> {
@@ -50,3 +50,4 @@ public interface ToolFileMapper extends BaseMapper<ToolFile> {
 	 */
 	List<ToolFile> selectByIds(@NotEmpty @Param("ids") List<Integer> ids);
 }
+

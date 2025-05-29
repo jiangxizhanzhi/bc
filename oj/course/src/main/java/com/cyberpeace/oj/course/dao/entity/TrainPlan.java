@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+import lombok.Getter;
+import lombok.Setter;
+
+
+/**
+ * 训练计划
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `TrainPlan` 的 Java 类，该类位于 `com.cyberpeace.oj.course.dao.entity` 包中。这个类是 `BaseTable` 类的一个子类，并且使用了 Lombok 库来简化 getter 和 setter 方法的生成。 
  * ### 主要特性： 
@@ -21,25 +40,6 @@
  * ### 适用场景： 
  * 这个类适用于需要管理训练计划的应用场景，例如在线学习平台、教育管理系统等。通过继承 `BaseTable` 和使用 MyBatis Plus 注解，可以方便地进行数据库操作，而无需编写大量的 CRUD 代码。 
 **/
-package com.cyberpeace.oj.course.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-import lombok.Getter;
-import lombok.Setter;
-
-
-/**
- * 训练计划
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("oj_train_plan")
@@ -81,3 +81,4 @@ public class TrainPlan extends BaseTable {
 	 */
 	public static String TASK_SET_ID = "task_set_id";
 }
+

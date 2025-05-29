@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * 课堂群信息Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomGroupInfoMapper` 的接口，该接口继承了 MyBatis-Plus 提供的 `BaseMapper` 接口，并添加了一些自定义的方法来操作 `ClassroomGroupInfo` 实体类。以下是详细的分析： 
  * ### 包与导入 
@@ -36,24 +54,6 @@
  * - 它提供了多种查询和删除功能，包括按课堂编号和用户ID查询、按课堂编号查询所有分组信息、查询指定课堂的最后一组组号以及删除指定课堂的所有分组信息。 
  * - 通过继承 `BaseMapper`，该接口还自动获得了许多基本的 CRUD 操作方法。 
 **/
-package com.cyberpeace.oj.course.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
-
-/**
- * 课堂群信息Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo> {
 
@@ -102,3 +102,4 @@ public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo>
 	 */
 	void deleteByRoom(@Param("roomId") String classroomId);
 }
+

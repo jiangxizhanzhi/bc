@@ -1,3 +1,11 @@
+package com.cyberpeace.cr.tool.service;;
+
+/**
+ * single Train Branch
+ * this is branch method
+ * for the branch method
+ * is the fun toy for little bob
+ */
 /**
  * 这段代码定义了一个名为 `ToolGhdbServiceBranch` 的类，其中包含一个名为 `getBranch` 的方法。该方法接收一个字符串参数 `input` 并返回一个布尔值。根据输入字符串的不同情况，该方法会返回 `true` 或 `false`。具体来说： 
  * 1. **方法功能**：`getBranch` 方法用于判断传入的字符串是否匹配预定义的特定字符串列表。如果匹配，则返回 `true`；否则返回 `false`。 
@@ -29,14 +37,6 @@
  * 2. **优化注释**：注释应该提供有意义的信息，而不是随机生成的内容。如果这些字符串有特定的含义或用途，应该在注释中说明。 
  * 通过上述改进，可以使代码更加简洁、易读且高效。 
 **/
-package com.cyberpeace.cr.tool.service;;
-
-/**
- * single Train Branch
- * this is branch method
- * for the branch method
- * is the fun toy for little bob
- */
 public class ToolGhdbServiceBranch {
 
     /**
@@ -571,3 +571,4 @@ public class ToolGhdbServiceBranch {
         return false;
     }
 }
+

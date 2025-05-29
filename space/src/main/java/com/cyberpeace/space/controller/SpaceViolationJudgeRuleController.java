@@ -1,3 +1,27 @@
+package com.cyberpeace.space.controller;
+
+import com.cyberpeace.space.model.controller.SpaceControllerBase;
+import com.cyberpeace.space.model.req.SpacePageReqBase;
+import com.cyberpeace.space.service.context.rule.SpaceViolationJudgeRuleBo;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cyberpeace.space.dao.entity.SpaceViolationJudgeRule;
+import com.cyberpeace.space.service.SpaceViolationJudgeRuleService;
+
+import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 空间违反法官统治Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceControllerBase
+ * @since 1.0.0
+ */
 /**
  * ### 分析与总结 
  * #### 代码概述 
@@ -27,30 +51,6 @@
  * 该代码是一个基于 Spring Boot 和 Shiro 权限框架的 RESTful 接口控制器，主要用于管理“空间违反法官规则”的相关操作。通过继承通用的 `SpaceControllerBase` 类，实现了代码复用，并通过注解简化了开发过程。同时，Swagger 文档支持使得接口易于被其他开发者理解与使用。 
 **/
 
-package com.cyberpeace.space.controller;
-
-import com.cyberpeace.space.model.controller.SpaceControllerBase;
-import com.cyberpeace.space.model.req.SpacePageReqBase;
-import com.cyberpeace.space.service.context.rule.SpaceViolationJudgeRuleBo;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.cyberpeace.space.dao.entity.SpaceViolationJudgeRule;
-import com.cyberpeace.space.service.SpaceViolationJudgeRuleService;
-
-import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 空间违反法官统治Controller
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceControllerBase
- * @since 1.0.0
- */
 @Api(tags = "知识库-规则库-违规判定规则")
 @RestController
 @RequestMapping("/space/rule/space_violation_judge_rule")

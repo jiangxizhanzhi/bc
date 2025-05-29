@@ -1,3 +1,14 @@
+package com.cyberpeace.cr.crbase.constant;
+
+import com.cyberpeace.constant.BaseI18n;
+import lombok.Getter;
+
+/**
+ * 训练i18n
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个枚举类 `TrainI18n`，用于存储国际化（i18n）相关的键值对。以下是代码的主要分析： 
  * 1. **功能概述**： 
@@ -14,17 +25,6 @@
  * - 适合用于需要多语言支持的国际化项目。 
  * 总结来说，这段代码是一个典型的国际化枚举类实现，提供了清晰且易于维护的语言资源管理方式。 
 **/
-package com.cyberpeace.cr.crbase.constant;
-
-import com.cyberpeace.constant.BaseI18n;
-import lombok.Getter;
-
-/**
- * 训练i18n
- *
- * @author SN
- * @date 2024/11/08
- */
 public enum TrainI18n implements BaseI18n {
 
     /**
@@ -84,3 +84,4 @@ public enum TrainI18n implements BaseI18n {
     }
 
 }
+

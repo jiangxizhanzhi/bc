@@ -1,3 +1,52 @@
+package com.cyberpeace.oj.course.service.impl;
+
+import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
+import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
+import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.model.scene.SceneStartContext;
+import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.oj.ojbase.constant.SceneShare;
+import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
+import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.service.LessonPracticeSceneService;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
+import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
+import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperationRef;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+/**
+ * 课实践Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see LessonPracticeSceneService
+ * @since 1.0.0
+ */
 /**
  * 这段代码是一个Java类`LessonPracticeServiceImpl`，实现了`LessonPracticeSceneService`接口。该类主要负责处理与课程实践相关的场景操作，包括启动、删除、重启节点、重新创建节点、更新场景状态以及获取拓扑场景等。以下是代码的主要组成部分和功能： 
  * ### 主要成员变量 
@@ -57,55 +106,6 @@
  * ### 总结 
  * 这个类通过依赖注入的方式使用了多个服务和映射器来处理与课程实践相关的各种场景操作。每个主要方法都有详细的验证和数据初始化步骤，确保操作的安全性和一致性。 
 **/
-package com.cyberpeace.oj.course.service.impl;
-
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
-import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
-import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.integratation.model.scene.SceneStartContext;
-import com.cyberpeace.integratation.service.RemoteSceneService;
-import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.cyberpeace.common.constant.JsonKeyConstant;
-import com.cyberpeace.oj.ojbase.constant.SceneShare;
-import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
-import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
-import com.cyberpeace.oj.course.service.LessonPracticeSceneService;
-import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
-import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
-import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
-import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperationRef;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
-
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
-/**
- * 课实践Service实现
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see LessonPracticeSceneService
- * @since 1.0.0
- */
 @Slf4j
 @Service
 public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
@@ -570,3 +570,4 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 		return localScene;
 	}
 }
+

@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+
+/**
+ * 课堂群请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomGroupReq` 的 Java 类，用于表示课堂群请求体。以下是对该代码的简要分析： 
  * ### 类概述 
@@ -27,26 +47,6 @@
  * - **可读性**: 通过 Swagger 注解，便于文档生成和 API 使用者理解。 
  * 该类的设计简洁明了，并且通过注解实现了必要的数据校验，提高了代码的健壮性和可维护性。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-
-/**
- * 课堂群请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -71,3 +71,4 @@ public class ClassroomGroupReq implements Serializable {
 	private Integer groupCount;
 
 }
+

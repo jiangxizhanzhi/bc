@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.evaluation.service;
+
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithmRef;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 评估算法裁判Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalAlgorithmRefService` 的接口，该接口继承自 `IService<EvalAlgorithmRef>`。这个接口用于描述与 `EvalAlgorithmRef` 实体相关的服务方法。下面是对这段代码的详细分析： 
  * ### 1. 包声明 
@@ -40,21 +55,6 @@
  * - 接口中定义了一个 `buildOtherArguments` 方法，用于解析算法的可配置参数并返回一个参数列表。 
  * 这个接口主要用于管理与评估算法相关的数据，并提供特定的方法来解析算法的可配置参数。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithmRef;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 评估算法裁判Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface EvalAlgorithmRefService extends IService<EvalAlgorithmRef> {
     /**
      * 解析算法可配置参数
@@ -64,3 +64,4 @@ public interface EvalAlgorithmRefService extends IService<EvalAlgorithmRef> {
      */
     List<Serializable> buildOtherArguments(String argumentsString);
 }
+

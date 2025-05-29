@@ -1,3 +1,16 @@
+package com.cyberpeace.integratation.model.evaluation;
+
+import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 标记项目数据
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MarkItemData` 的 Java 类，该类位于包 `com.cyberpeace.integratation.model.evaluation` 中。以下是对此代码的简要分析： 
  * ### 包声明 
@@ -36,19 +49,6 @@
  * - 使用 Lombok 的 `@Getter` 和 `@Setter` 注解可以简化代码，避免手动编写 getter 和 setter 方法。 
  * - 该类实现了 `Serializable` 接口，表明它可以被序列化，这在需要将对象保存到磁盘或通过网络传输时非常有用。 
 **/
-package com.cyberpeace.integratation.model.evaluation;
-
-import java.io.Serializable;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 标记项目数据
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MarkItemData implements Serializable {
@@ -68,3 +68,4 @@ public class MarkItemData implements Serializable {
 	 */
 	private Integer m;
 }
+

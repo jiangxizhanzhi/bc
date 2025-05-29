@@ -1,3 +1,15 @@
+package com.cyberpeace.common.exception;
+
+/**
+ * 远程Service例外
+ *
+ * @author yinqingrong
+ * 调用mp的服务出错，抛出此异常@date 2024/11/08@see RuntimeException
+ * @version 1.0.0
+ * @date 2024/12/04
+ * @see RuntimeException
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个自定义异常类 `RemoteServiceException`，继承自 Java 标准库中的 `RuntimeException`。以下是对其的简要分析： 
  * ### 功能描述 
@@ -21,18 +33,6 @@
  * ### 总结 
  * 这是一个简单但功能明确的自定义异常类，适用于处理远程服务调用相关的错误场景。通过继承 `RuntimeException`，它避免了强制要求调用方显式捕获，提升了代码的灵活性。 
 **/
-package com.cyberpeace.common.exception;
-
-/**
- * 远程Service例外
- *
- * @author yinqingrong
- * 调用mp的服务出错，抛出此异常@date 2024/11/08@see RuntimeException
- * @version 1.0.0
- * @date 2024/12/04
- * @see RuntimeException
- * @since 1.0.0
- */
 public class RemoteServiceException extends RuntimeException {
 
 	public RemoteServiceException(String message) {
@@ -41,3 +41,4 @@ public class RemoteServiceException extends RuntimeException {
 
 	public RemoteServiceException() {}
 }
+

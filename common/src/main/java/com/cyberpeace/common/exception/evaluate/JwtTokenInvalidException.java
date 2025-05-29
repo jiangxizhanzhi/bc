@@ -1,3 +1,14 @@
+package com.cyberpeace.common.exception.evaluate;
+
+/**
+ * JWT 令牌无效异常
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see RuntimeException
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个自定义异常类 `JwtTokenInvalidException`，继承自 Java 的标准运行时异常类 `RuntimeException`。以下是简要分析： 
  * 1. **功能**： 
@@ -15,17 +26,6 @@
  * - 类上有详细的 Javadoc 注释，说明了异常的用途、作者、版本等信息，符合良好的编码规范。 
  * 总结：这是一个简洁且功能明确的自定义异常类，适用于 JWT 相关的异常处理场景。 
 **/
-package com.cyberpeace.common.exception.evaluate;
-
-/**
- * JWT 令牌无效异常
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see RuntimeException
- * @since 1.0.0
- */
 public class JwtTokenInvalidException extends RuntimeException {
 
 	public JwtTokenInvalidException(String message) {
@@ -36,3 +36,4 @@ public class JwtTokenInvalidException extends RuntimeException {
 		super();
 	}
 }
+

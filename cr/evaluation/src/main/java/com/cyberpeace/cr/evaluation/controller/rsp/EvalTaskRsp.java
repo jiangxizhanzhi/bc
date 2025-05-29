@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import java.io.Serializable;
+
+import com.alibaba.fastjson.JSONObject;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估任务响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTaskRsp` 的 Java 类，用于表示评估任务的响应。以下是该类的详细分析： 
  * ### 包声明 
@@ -54,22 +70,6 @@
  * - 使用了 Swagger 注解来提供文档说明，方便 API 文档的生成。 
  * - 类实现了 `Serializable` 接口，支持对象的序列化操作。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import java.io.Serializable;
-
-import com.alibaba.fastjson.JSONObject;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估任务响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalTaskRsp implements Serializable {
@@ -129,3 +129,4 @@ public class EvalTaskRsp implements Serializable {
 	private JSONObject sceneData;
 
 }
+

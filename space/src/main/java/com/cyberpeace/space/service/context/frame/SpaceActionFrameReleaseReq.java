@@ -1,3 +1,19 @@
+package com.cyberpeace.space.service.context.frame;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+
+/**
+ * 空间行动框架下发请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceActionFrameReleaseReq` 的 Java 类，用于表示空间行动框架下发请求的请求体。以下是对其的简要分析： 
  * 1. **类的功能**： 
@@ -15,22 +31,6 @@
  * 该类的主要目的是封装空间行动框架下发请求所需的必要信息，并通过注解约束字段的格式和必填性，便于后续接口调用和数据验证。 
  * 总结：这是一个简洁且功能明确的数据传输类，适用于 RESTful API 请求场景。 
 **/
-package com.cyberpeace.space.service.context.frame;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-
-/**
- * 空间行动框架下发请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceActionFrameReleaseReq {
@@ -50,3 +50,4 @@ public class SpaceActionFrameReleaseReq {
 	@ApiModelProperty(value = "用户名", required = true)
 	private String userName;
 }
+

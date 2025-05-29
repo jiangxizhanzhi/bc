@@ -1,3 +1,46 @@
+package com.cyberpeace.cr.tool.controller.admin;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.tool.controller.req.DeleteReq;
+import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
+import com.cyberpeace.cr.tool.controller.req.ToolUpdateReq;
+import com.cyberpeace.cr.tool.controller.res.ToolRsp;
+import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
+import com.cyberpeace.cr.tool.dao.entity.Tool;
+import com.cyberpeace.cr.tool.service.ToolService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.NotBlank;
+import java.util.List;
+
+/**
+ * 工具Controller
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码是一个Spring Boot控制器类，用于管理工具库中的工具。以下是对其主要部分的简要分析： 
  * ### 类定义和注解 
@@ -44,49 +87,6 @@
  * - 使用了Swagger注解来生成API文档。 
  * 这个控制器设计合理，功能完整，涵盖了工具库的基本管理需求。 
 **/
-package com.cyberpeace.cr.tool.controller.admin;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.tool.controller.req.DeleteReq;
-import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
-import com.cyberpeace.cr.tool.controller.req.ToolUpdateReq;
-import com.cyberpeace.cr.tool.controller.res.ToolRsp;
-import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
-import com.cyberpeace.cr.tool.dao.entity.Tool;
-import com.cyberpeace.cr.tool.service.ToolService;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.integratation.constant.OperationModule;
-import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.integratation.service.RemoteLogService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.constraints.NotBlank;
-import java.util.List;
-
-/**
- * 工具Controller
- *
- * @author SN
- * @date 2024/11/08
- */
 @Api(tags = "后台-资源中心-工具库")
 @RestController
 @RequestMapping("/cr/admin/tools")
@@ -231,3 +231,4 @@ public class ToolController {
 
 
 }
+

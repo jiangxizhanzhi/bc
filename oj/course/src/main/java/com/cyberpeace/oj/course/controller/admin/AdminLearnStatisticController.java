@@ -1,42 +1,3 @@
-/**
- * 这段代码定义了一个名为 `AdminLearnStatisticController` 的 Spring MVC 控制器类，用于处理后台管理的学习统计相关的 API 请求。以下是对该代码的简要分析： 
- * ### 类结构与注解 
- * 1. **类声明**： 
- * - `AdminLearnStatisticController` 类位于 `com.cyberpeace.oj.course.controller.admin` 包下。 
- * - 使用了 `@RestController` 注解，表明这是一个 RESTful 风格的控制器。 
- * - 使用了 `@RequestMapping` 注解，指定该控制器的所有请求路径前缀为 `/oj/admin/statistic`。 
- * 2. **权限控制**： 
- * - 使用了 `@RequiresAuthentication` 注解，表示所有方法都需要用户进行认证。 
- * - 使用了 `@RequiresPermissions` 注解，限制只有具有特定权限的用户才能访问某些方法（例如 `MenuConstant.CMS_COURSE_STATISTICS`）。 
- * 3. **日志记录**： 
- * - 使用了 `@Slf4j` 注解，自动引入了 SLF4J 日志记录功能。 
- * ### 成员变量 
- * 1. **依赖注入**： 
- * - `courseLearnStatisticsService`：通过 `@Autowired` 注入，用于处理课程学习统计相关的业务逻辑。 
- * - `courseCategoryService`：通过 `@Autowired` 注入，用于处理课程类别相关的业务逻辑。 
- * ### 方法 
- * 1. **课程统计柱状图 (`courseHistogram`)** 
- * - 返回一个 `BaseRsp<HistogramRes>` 对象。 
- * - 调用 `courseLearnStatisticsService.courseHistogram` 方法获取数据，并封装到响应对象中返回。 
- * 2. **方向统计柱状图 (`directionHistogram`)** 
- * - 返回一个 `BaseRsp<HistogramRes>` 对象。 
- * - 调用 `courseLearnStatisticsService.directionHistogram` 方法获取数据，并封装到响应对象中返回。 
- * 3. **课程统计列表 (`courseStatisticsList`)** 
- * - 接受一个 `CourseStatisticsListReq` 请求体参数。 
- * - 将请求体转换为 `CourseContext` 对象，并设置相关参数。 
- * - 调用 `courseLearnStatisticsService.courseStatisticsList` 方法获取数据，并封装到响应对象中返回。 
- * 4. **课时统计列表 (`lessonStatisticsList`)** 
- * - 接受一个 `LessonStatisticsListReq` 请求体参数。 
- * - 调用 `courseLearnStatisticsService.LessonStatisticsList` 方法获取数据，并封装到响应对象中返回。 
- * 5. **课时统计详情 (`lessonStatisticsDetail`)** 
- * - 接受一个 `LessonStatisticsDetailReq` 请求体参数。 
- * - 调用 `courseLearnStatisticsService.LessonStatisticsDetail` 方法获取数据，并封装到响应对象中返回。 
- * ### 总结 
- * - `AdminLearnStatisticController` 类主要负责处理后台管理的学习统计相关的 API 请求。 
- * - 通过依赖注入的 `CourseLearnStatisticsService` 和 `CourseCategoryService` 来处理具体的业务逻辑。 
- * - 方法返回的数据都封装在 `BaseRsp` 或其子类 `ListRsp` 中，便于统一处理响应格式。 
- * - 所有方法均需用户认证并通过权限检查后才能访问。 
-**/
 package com.cyberpeace.oj.course.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -82,6 +43,45 @@ import java.util.List;
  * @date 2024/11/08
  * @since 1.0.0
  */
+/**
+ * 这段代码定义了一个名为 `AdminLearnStatisticController` 的 Spring MVC 控制器类，用于处理后台管理的学习统计相关的 API 请求。以下是对该代码的简要分析： 
+ * ### 类结构与注解 
+ * 1. **类声明**： 
+ * - `AdminLearnStatisticController` 类位于 `com.cyberpeace.oj.course.controller.admin` 包下。 
+ * - 使用了 `@RestController` 注解，表明这是一个 RESTful 风格的控制器。 
+ * - 使用了 `@RequestMapping` 注解，指定该控制器的所有请求路径前缀为 `/oj/admin/statistic`。 
+ * 2. **权限控制**： 
+ * - 使用了 `@RequiresAuthentication` 注解，表示所有方法都需要用户进行认证。 
+ * - 使用了 `@RequiresPermissions` 注解，限制只有具有特定权限的用户才能访问某些方法（例如 `MenuConstant.CMS_COURSE_STATISTICS`）。 
+ * 3. **日志记录**： 
+ * - 使用了 `@Slf4j` 注解，自动引入了 SLF4J 日志记录功能。 
+ * ### 成员变量 
+ * 1. **依赖注入**： 
+ * - `courseLearnStatisticsService`：通过 `@Autowired` 注入，用于处理课程学习统计相关的业务逻辑。 
+ * - `courseCategoryService`：通过 `@Autowired` 注入，用于处理课程类别相关的业务逻辑。 
+ * ### 方法 
+ * 1. **课程统计柱状图 (`courseHistogram`)** 
+ * - 返回一个 `BaseRsp<HistogramRes>` 对象。 
+ * - 调用 `courseLearnStatisticsService.courseHistogram` 方法获取数据，并封装到响应对象中返回。 
+ * 2. **方向统计柱状图 (`directionHistogram`)** 
+ * - 返回一个 `BaseRsp<HistogramRes>` 对象。 
+ * - 调用 `courseLearnStatisticsService.directionHistogram` 方法获取数据，并封装到响应对象中返回。 
+ * 3. **课程统计列表 (`courseStatisticsList`)** 
+ * - 接受一个 `CourseStatisticsListReq` 请求体参数。 
+ * - 将请求体转换为 `CourseContext` 对象，并设置相关参数。 
+ * - 调用 `courseLearnStatisticsService.courseStatisticsList` 方法获取数据，并封装到响应对象中返回。 
+ * 4. **课时统计列表 (`lessonStatisticsList`)** 
+ * - 接受一个 `LessonStatisticsListReq` 请求体参数。 
+ * - 调用 `courseLearnStatisticsService.LessonStatisticsList` 方法获取数据，并封装到响应对象中返回。 
+ * 5. **课时统计详情 (`lessonStatisticsDetail`)** 
+ * - 接受一个 `LessonStatisticsDetailReq` 请求体参数。 
+ * - 调用 `courseLearnStatisticsService.LessonStatisticsDetail` 方法获取数据，并封装到响应对象中返回。 
+ * ### 总结 
+ * - `AdminLearnStatisticController` 类主要负责处理后台管理的学习统计相关的 API 请求。 
+ * - 通过依赖注入的 `CourseLearnStatisticsService` 和 `CourseCategoryService` 来处理具体的业务逻辑。 
+ * - 方法返回的数据都封装在 `BaseRsp` 或其子类 `ListRsp` 中，便于统一处理响应格式。 
+ * - 所有方法均需用户认证并通过权限检查后才能访问。 
+**/
 @Api(tags = "oj-后台学习统计相关api")
 @RestController
 @RequestMapping("/oj/admin/statistic")
@@ -210,3 +210,4 @@ public class AdminLearnStatisticController {
 		return new BaseRsp(res);
 	}
 }
+

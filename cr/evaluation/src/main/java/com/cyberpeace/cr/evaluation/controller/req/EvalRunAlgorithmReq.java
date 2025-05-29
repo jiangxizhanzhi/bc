@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 评估跑算法请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalRunAlgorithmReq` 的 Java 类，该类用于表示评估跑算法请求体。以下是对其主要特性的分析： 
  * ### 类定义 
@@ -36,20 +50,6 @@
  * - **文档生成**：使用 Swagger 注解提供了清晰的 API 文档信息，方便开发人员理解每个字段的含义。 
  * 这个类的设计简洁明了，适合用于需要传递多种类型数据的场景。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 评估跑算法请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalRunAlgorithmReq implements Serializable {
@@ -78,3 +78,4 @@ public class EvalRunAlgorithmReq implements Serializable {
     @ApiModelProperty("其他参数")
     private Object otherArgs;
 }
+

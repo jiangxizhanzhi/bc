@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.ojbase.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
+import com.cyberpeace.oj.ojbase.service.context.CollectionContext;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * 资源收集Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ResourceCollectionMapper` 的接口，该接口继承了 `BaseMapper<ResourceCollection>`。这个接口使用 MyBatis-Plus 框架来操作数据库中的 `ResourceCollection` 实体类。以下是对代码的简要分析： 
  * ### 包声明和导入 
@@ -69,25 +88,6 @@
  * - 该接口提供了多种方法来执行特定的查询和删除操作。 
  * - 这些方法覆盖了常见的业务需求，如根据唯一索引删除或查询资源，以及根据不同类型或业务ID查询资源等。 
 **/
-package com.cyberpeace.oj.ojbase.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
-import com.cyberpeace.oj.ojbase.service.context.CollectionContext;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
-
-/**
- * 资源收集Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 public interface ResourceCollectionMapper extends BaseMapper<ResourceCollection> {
 
@@ -159,3 +159,4 @@ public interface ResourceCollectionMapper extends BaseMapper<ResourceCollection>
 	List<ResourceCollection> selectByBusinessIds(@Param("userId") String userId, @Param("businessType")Integer businessType,
 														@Param("businessIds") List<String> businessIds);
 }
+

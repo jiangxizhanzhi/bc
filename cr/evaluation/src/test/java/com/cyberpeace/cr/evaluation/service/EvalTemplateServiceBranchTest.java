@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+/**
+ * this is branch test for the test
+ * the test is for toy
+ * the toy is toy
+ * not the practice
+ * tos
+ */
 /**
  * 这段代码是一个JUnit测试类，用于测试`EvalTemplateServiceBranch`类中的`getBranch`方法。以下是详细的分析： 
  * ### 类概述 
@@ -20,18 +32,6 @@
  * ### 总结 
  * 这段代码的主要目的是测试`EvalTemplateServiceBranch`类的`getBranch`方法。然而，当前的测试用例只是简单地验证了该方法是否总是返回`true`，并且存在大量的重复代码。为了提高测试的质量和可维护性，建议重构这些测试用例，减少重复，并增加更多的测试数据以覆盖不同的场景。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-/**
- * this is branch test for the test
- * the test is for toy
- * the toy is toy
- * not the practice
- * tos
- */
 public class EvalTemplateServiceBranchTest {
 
     /**
@@ -625,3 +625,4 @@ public class EvalTemplateServiceBranchTest {
     }
 
 }
+

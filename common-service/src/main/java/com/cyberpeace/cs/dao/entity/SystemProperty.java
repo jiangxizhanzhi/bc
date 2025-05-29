@@ -1,3 +1,19 @@
+package com.cyberpeace.cs.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 系统属性
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SystemProperty` 的 Java 实体类，用于表示系统属性。以下是代码的简要分析： 
  * 1. **类定义**： 
@@ -16,22 +32,6 @@
  * - 该类主要用于系统属性的管理，支持通过 MyBatis-Plus 进行数据库操作，并且通过枚举类提供了标准化的属性名称。 
  * 总结：这是一个典型的实体类，结合了 MyBatis-Plus 的表映射功能和枚举类的标准化定义，适用于系统属性的管理和数据库操作。 
 **/
-package com.cyberpeace.cs.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 系统属性
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @TableName("system_property")
@@ -70,3 +70,4 @@ public class SystemProperty implements Serializable {
 		}
 	}
 }
+

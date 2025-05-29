@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.frame;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 太空行动策略
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceActionStrategy` 的 Java 类，用于表示“太空行动策略”。以下是对其的简要分析： 
  * 1. **类的功能**： 
@@ -14,20 +28,6 @@
  * - 该类是一个数据传输对象（DTO），用于在系统中传递与“太空行动策略”相关的信息。 
  * 总结：这是一个简单的 DTO 类，通过注解增强了代码的可读性和可维护性，适用于 API 数据交互场景。 
 **/
-package com.cyberpeace.space.service.context.frame;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 太空行动策略
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceActionStrategy {
@@ -43,3 +43,4 @@ public class SpaceActionStrategy {
 	@ApiModelProperty(value = "执行脚本")
 	private String content;
 }
+

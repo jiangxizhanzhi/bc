@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.dao.context;
+
+import java.util.List;
+
+import com.cyberpeace.common.model.PatternBase;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课程背景
+ *
+ * @author SN
+ * @version 1.0.0
+ * @see PatternBase
+ * @since 1.0.0@date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `CourseContext` 的类，该类继承自 `PatternBase` 类。这个类主要用于表示课程背景信息，并且使用了 Lombok 库来简化 getter 和 setter 方法的编写。以下是详细的分析： 
  * ### 类定义 
@@ -29,23 +46,6 @@
  * - 如果 `eBook` 和 `difficulty` 是布尔值或枚举类型的值，建议使用更合适的类型，如 `Boolean` 或自定义的枚举类。 
  * 总体来说，这是一个简洁且功能明确的类，用于表示课程背景信息。 
 **/
-package com.cyberpeace.oj.course.dao.context;
-
-import java.util.List;
-
-import com.cyberpeace.common.model.PatternBase;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课程背景
- *
- * @author SN
- * @version 1.0.0
- * @see PatternBase
- * @since 1.0.0@date 2024/11/08
- */
 @Getter
 @Setter
 public class CourseContext extends PatternBase {
@@ -72,3 +72,4 @@ public class CourseContext extends PatternBase {
 	private Integer difficulty;
 
 }
+

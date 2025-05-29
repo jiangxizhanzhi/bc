@@ -1,3 +1,13 @@
+package com.cyberpeace.common.constant;
+
+/**
+ * 公共常数
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个名为 `CommonConstant` 的公共接口，用于存储一些常用的常量。这些常量涵盖了字符串、整数、布尔值以及一些特定路径等类型的数据。以下是代码的主要特点和功能： 
  * 1. **常量分类**： 
@@ -13,16 +23,6 @@
  * - 接口形式的设计允许其他类通过实现或引用此接口来使用这些常量，具有良好的扩展性。 
  * 总结：这是一个典型的工具类接口，提供了多种类型的常量，适合在项目中作为公共配置使用，有助于减少硬编码并提高代码的一致性。 
 **/
-package com.cyberpeace.common.constant;
-
-/**
- * 公共常数
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface CommonConstant {
 
 	/** 常量定义 便于后续查找代码中默认值使用*/
@@ -366,3 +366,4 @@ public interface CommonConstant {
 	String BACKSLASH = "\\";
 
 }
+

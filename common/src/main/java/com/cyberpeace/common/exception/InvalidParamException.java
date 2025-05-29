@@ -1,3 +1,14 @@
+package com.cyberpeace.common.exception;
+
+/**
+ * 用户输入参数异常
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see RuntimeException
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个自定义异常类 `InvalidParamException`，继承自 Java 的 `RuntimeException`。以下是简要分析： 
  * 1. **功能描述**： 
@@ -11,20 +22,10 @@
  * - 通过继承 `RuntimeException`，该类可以灵活地与其他异常机制结合使用。 
  * 总结：这是一个简单的自定义运行时异常类，适用于处理与用户输入相关的错误场景。 
 **/
-package com.cyberpeace.common.exception;
-
-/**
- * 用户输入参数异常
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see RuntimeException
- * @since 1.0.0
- */
 public class InvalidParamException extends RuntimeException {
 
 	public InvalidParamException(String message) {
 		super(message);
 	}
 }
+

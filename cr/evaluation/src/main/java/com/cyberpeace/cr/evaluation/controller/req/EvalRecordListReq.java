@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import com.cyberpeace.common.model.PageReqBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotNull;
+
+/**
+ * 评估记录列表请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalRecordListReq` 的 Java 类，该类位于包 `com.cyberpeace.cr.evaluation.controller.req` 中。这是一个用于处理评估记录列表请求的请求体类，并继承自 `PageReqBase` 类。以下是对这段代码的详细分析： 
  * ### 包声明和导入 
@@ -30,21 +45,6 @@
  * - 使用 Lombok 注解简化了 getter 和 setter 方法的生成。 
  * 这个类主要用于前端或其他服务端组件向后端发送请求时携带相关参数。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import com.cyberpeace.common.model.PageReqBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotNull;
-
-/**
- * 评估记录列表请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalRecordListReq extends PageReqBase {
@@ -61,3 +61,4 @@ public class EvalRecordListReq extends PageReqBase {
     @ApiModelProperty("状态查询")
     private Integer status;
 }
+

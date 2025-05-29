@@ -1,3 +1,24 @@
+package com.cyberpeace.space.service.impl;
+
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.space.dao.entity.SpaceCallCount;
+import com.cyberpeace.space.dao.mapper.SpaceCallCountMapper;
+import com.cyberpeace.space.service.SpaceCallCountService;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 空间调用计数Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/12
+ * @see ServiceImpl
+ * @see SpaceCallCountService
+ * @since 1.0.0
+ */
 /**
  * ### 分析与总结 
  * #### 1. **代码概述** 
@@ -42,27 +63,6 @@
  * - **参数校验**：缺少对输入参数的有效性校验，例如 `name` 是否为空或非法字符。 
  * 总体而言，该代码逻辑清晰，符合面向对象的设计原则，适合中小型项目使用。 
 **/
-package com.cyberpeace.space.service.impl;
-
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.space.dao.entity.SpaceCallCount;
-import com.cyberpeace.space.dao.mapper.SpaceCallCountMapper;
-import com.cyberpeace.space.service.SpaceCallCountService;
-
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 空间调用计数Service实现
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/12
- * @see ServiceImpl
- * @see SpaceCallCountService
- * @since 1.0.0
- */
 @Service
 @Slf4j
 public class SpaceCallCountServiceImpl extends ServiceImpl<SpaceCallCountMapper, SpaceCallCount> implements SpaceCallCountService {
@@ -142,3 +142,4 @@ public class SpaceCallCountServiceImpl extends ServiceImpl<SpaceCallCountMapper,
 		return this.lambdaQuery().eq(SpaceCallCount::getName, name).one();
 	}
 }
+

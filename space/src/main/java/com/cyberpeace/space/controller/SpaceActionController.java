@@ -1,3 +1,46 @@
+package com.cyberpeace.space.controller;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.tool.dao.entity.Tool;
+import com.cyberpeace.cr.tool.service.ToolService;
+import com.cyberpeace.space.constant.SpaceError;
+import com.cyberpeace.space.dao.entity.SpaceAction;
+import com.cyberpeace.space.dao.entity.SpaceActionFrame;
+import com.cyberpeace.space.dao.entity.SpaceActionMethod;
+import com.cyberpeace.space.model.IdAndName;
+import com.cyberpeace.space.model.controller.SpaceActionFrameBaseController;
+import com.cyberpeace.space.service.SpaceActionFrameService;
+import com.cyberpeace.space.service.SpaceActionMethodService;
+import com.cyberpeace.space.service.SpaceActionService;
+import com.cyberpeace.space.service.SpaceStrategyService;
+import com.cyberpeace.space.service.context.frame.SpaceActionBo;
+import com.cyberpeace.space.service.context.frame.SpaceActionOfflineTool;
+import com.cyberpeace.space.service.context.frame.SpaceActionPageReq;
+import com.cyberpeace.space.service.context.frame.SpaceActionTool;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+/**
+ * 空间操作控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 /**
  * ### 代码分析 
  * #### 功能概述 
@@ -44,49 +87,6 @@
  * #### 总结 
  * 该代码实现了资源的详细信息获取、依赖检查等功能，结构清晰，模块化程度高。通过工具类和Spring的依赖注入机制，提升了代码的可读性和复用性。同时，异常处理和安全性设计也体现了良好的开发规范。 
 **/
-package com.cyberpeace.space.controller;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.cr.tool.dao.entity.Tool;
-import com.cyberpeace.cr.tool.service.ToolService;
-import com.cyberpeace.space.constant.SpaceError;
-import com.cyberpeace.space.dao.entity.SpaceAction;
-import com.cyberpeace.space.dao.entity.SpaceActionFrame;
-import com.cyberpeace.space.dao.entity.SpaceActionMethod;
-import com.cyberpeace.space.model.IdAndName;
-import com.cyberpeace.space.model.controller.SpaceActionFrameBaseController;
-import com.cyberpeace.space.service.SpaceActionFrameService;
-import com.cyberpeace.space.service.SpaceActionMethodService;
-import com.cyberpeace.space.service.SpaceActionService;
-import com.cyberpeace.space.service.SpaceStrategyService;
-import com.cyberpeace.space.service.context.frame.SpaceActionBo;
-import com.cyberpeace.space.service.context.frame.SpaceActionOfflineTool;
-import com.cyberpeace.space.service.context.frame.SpaceActionPageReq;
-import com.cyberpeace.space.service.context.frame.SpaceActionTool;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-
-/**
- * 空间操作控制器
- *
- * @author SN
- * @date 2024/11/07
- */
 @Api(tags = "防御行动框架-攻击、防御活动管理")
 @RestController
 @RequestMapping("/space/action_frame/action")
@@ -229,3 +229,4 @@ public class SpaceActionController extends SpaceActionFrameBaseController<SpaceA
 	    }
 	}
 }
+

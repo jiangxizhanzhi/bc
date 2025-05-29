@@ -1,3 +1,22 @@
+package com.cyberpeace.integratation.service.impl;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.integratation.service.SystemConfigService;
+
+/**
+ * 系统配置Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码是一个Spring服务类，实现了`SystemConfigService`接口。以下是详细的分析和总结： 
  * ### 类和接口定义 
@@ -25,25 +44,6 @@
  * - 通过HTTP客户端工具类`HttpClientUtil`进行网络请求。 
  * 这段代码展示了如何在一个Spring应用中实现一个简单的配置服务，通过远程API获取配置信息并提供访问接口。 
 **/
-package com.cyberpeace.integratation.service.impl;
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.integratation.service.SystemConfigService;
-
-/**
- * 系统配置Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Service
 public class SystemConfigServiceImpl implements SystemConfigService {
 
@@ -85,3 +85,4 @@ public class SystemConfigServiceImpl implements SystemConfigService {
 		return null;
 	}
 }
+

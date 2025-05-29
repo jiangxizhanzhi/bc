@@ -1,3 +1,17 @@
+package com.cyberpeace.integratation.model.evaluation;
+
+import java.io.Serializable;
+import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 匹配数据
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MatchData` 的 Java 类，位于包 `com.cyberpeace.integratation.model.evaluation` 中。这个类的主要目的是存储匹配数据，并提供相应的访问方法。以下是对该代码的详细分析： 
  * ### 主要组成部分 
@@ -19,20 +33,6 @@
  * - **用途**: 适用于需要序列化和存储匹配数据的应用场景，例如在网络通信或数据库操作中。 
  * 这段代码简洁且功能明确，利用了 Lombok 来减少样板代码，提高了可读性和维护性。 
 **/
-package com.cyberpeace.integratation.model.evaluation;
-
-import java.io.Serializable;
-import java.util.List;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 匹配数据
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MatchData implements Serializable {
@@ -47,3 +47,4 @@ public class MatchData implements Serializable {
 	 */
 	private List<MatchItemData> data;
 }
+

@@ -1,3 +1,19 @@
+package com.cyberpeace.space.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.space.dao.entity.SpaceActionFrameApplication;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+
+/**
+ * 空间行动框架行为依赖Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个 MyBatis 的 Mapper 接口 `SpaceActionFrameApplicationMapper`，用于操作数据库中的 `SpaceActionFrameApplication` 实体类。以下是代码的详细分析： 
  * --- 
@@ -27,22 +43,6 @@
  * 该代码适用于需要快速实现数据访问逻辑的场景，特别是当数据库表结构稳定且不需要复杂查询时，可以显著提高开发效率。如果需要更复杂的 SQL 查询，则需扩展此接口或添加自定义方法。 
 **/
 
-package com.cyberpeace.space.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.space.dao.entity.SpaceActionFrameApplication;
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
-
-/**
- * 空间行动框架行为依赖Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 @Repository
 public interface SpaceActionFrameApplicationMapper extends BaseMapper<SpaceActionFrameApplication> {

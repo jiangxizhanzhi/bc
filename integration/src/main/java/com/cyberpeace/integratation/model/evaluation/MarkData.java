@@ -1,3 +1,17 @@
+package com.cyberpeace.integratation.model.evaluation;
+
+import java.io.Serializable;
+import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 标记数据
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MarkData` 的 Java 类，该类位于包 `com.cyberpeace.integratation.model.evaluation` 中。这个类的主要目的是存储某种标记数据。下面是详细的分析： 
  * ### 包声明 
@@ -43,20 +57,6 @@
  * ### 总结 
  * `MarkData` 类主要用于存储与时间相关的标记数据。它有两个主要成员变量：`baseTime` 和 `data`。通过使用 Lombok 库中的 `@Getter` 和 `@Setter` 注解，省去了手动编写 getter 和 setter 方法的繁琐过程。这个类可以被序列化，因此可以方便地在网络中传输或保存到文件中。 
 **/
-package com.cyberpeace.integratation.model.evaluation;
-
-import java.io.Serializable;
-import java.util.List;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 标记数据
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MarkData implements Serializable {
@@ -71,3 +71,4 @@ public class MarkData implements Serializable {
 	 */
 	List<MarkItemData> data;
 }
+

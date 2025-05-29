@@ -1,3 +1,20 @@
+package com.cyberpeace.space.service.context.rule;
+
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.dao.entity.SpaceAptReport;
+import com.cyberpeace.space.model.SpaceBoBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+/**
+ * 空间容易报告Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceAptReportBo` 的 Java 类，继承自 `SpaceBoBase`，用于表示空间易受攻击报告的业务对象（BO）。以下是代码的主要分析： 
  * 1. **类的功能**： 
@@ -22,23 +39,6 @@
  * - 提供了与实体类的双向转换能力，便于持久化操作。 
  * 总结：这是一个典型的业务对象类，用于封装空间易受攻击报告的信息，并提供了与实体类的转换方法。代码结构清晰，功能明确，适合在业务逻辑中使用。 
 **/
-package com.cyberpeace.space.service.context.rule;
-
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.dao.entity.SpaceAptReport;
-import com.cyberpeace.space.model.SpaceBoBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-/**
- * 空间容易报告Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBoBase
- * @since 1.0.0
- */
 @Data
 public class SpaceAptReportBo extends SpaceBoBase {
 
@@ -118,3 +118,4 @@ public class SpaceAptReportBo extends SpaceBoBase {
         return entity;
 	}
 }
+

@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.crbase.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.Date;
+
+/**
+ * 训练记录Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `TrainRecordMapper` 的接口，继承自 MyBatis-Plus 提供的 `BaseMapper` 接口，并扩展了一些自定义方法。以下是代码的简要分析： 
  * ### 主要功能 
@@ -21,22 +37,6 @@
  * ### 总结 
  * 这段代码是一个典型的 MyBatis Mapper 接口，主要用于操作 `TrainRecord` 数据表中的数据。它结合了 MyBatis-Plus 的通用功能和一些自定义 SQL 方法，为具体的业务场景提供了灵活的支持。 
 **/
-package com.cyberpeace.cr.crbase.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-import java.util.Date;
-
-/**
- * 训练记录Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 @Repository
 public interface TrainRecordMapper extends BaseMapper<TrainRecord> {
@@ -106,3 +106,4 @@ public interface TrainRecordMapper extends BaseMapper<TrainRecord> {
 	 */
 	void updateEndTimeByRoomId(@Param("roomId") String roomId, @Param("endTime") Date endTime);
 }
+

@@ -1,3 +1,13 @@
+package com.cyberpeace.common.util;
+
+import java.util.UUID;
+
+/**
+ * idgenerator 实用程序
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个工具类 `IDGeneratorUtil`，用于生成唯一标识符（ID）。以下是代码的简要分析： 
  * 1. **类设计**： 
@@ -10,16 +20,6 @@
  * - 该工具类适用于需要生成唯一字符串 ID 的场景，例如生成数据库主键、会话 ID 或其他唯一标识。 
  * 总结：这是一段简洁高效的工具类代码，封装了 UUID 的生成逻辑，并去除了不必要的连字符，方便调用者直接使用。 
 **/
-package com.cyberpeace.common.util;
-
-import java.util.UUID;
-
-/**
- * idgenerator 实用程序
- *
- * @author SN
- * @date 2024/11/08
- */
 public class IDGeneratorUtil {
 
     /**
@@ -36,3 +36,4 @@ public class IDGeneratorUtil {
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
 }
+

@@ -1,21 +1,3 @@
-/**
- * 这段代码定义了一个用于分页查询的空间加载文件威胁规则请求体类 `SpaceLoadedFileThreatRulePageReq`，继承自 `SpaceToolPageReq`。以下是代码的主要功能和结构分析： 
- * ### 主要功能 
- * 1. **类的功能**： 
- * - 该类用于封装分页查询空间加载文件威胁规则所需的各种条件。 
- * - 提供了一个方法 `req2QueryWrapper()`，将请求参数转换为 `LambdaQueryWrapper` 对象，用于数据库查询。 
- * 2. **核心方法**： 
- * - `req2QueryWrapper()`：根据请求中的条件（如模式、工具、类型、阶段等）动态构造查询条件，并返回 `LambdaQueryWrapper` 对象。支持模糊查询和精确查询，并按照更新时间降序排序。 
- * 3. **字段说明**： 
- * - `type`：表示威胁规则的类型，支持模糊查询。 
- * 4. **依赖的其他类**： 
- * - `SpaceLoadedFileThreatRule`：威胁规则实体类。 
- * - `SpaceToolPageReq`：分页请求基类。 
- * - `LambdaQueryWrapper`：MyBatis-Plus 提供的查询包装器。 
- * - `StringUtils`：字符串工具类，用于判断字符串是否为空。 
- * ### 总结 
- * 该类的主要目的是提供一个灵活的分页查询请求体，能够根据不同的查询条件动态构造查询语句。通过继承 `SpaceToolPageReq` 和实现 `req2QueryWrapper()` 方法，实现了从请求参数到数据库查询条件的映射，具有良好的扩展性和可维护性。 
-**/
 package com.cyberpeace.space.controller.req;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -35,6 +17,24 @@ import lombok.Setter;
  * @see SpaceToolPageReq
  * @since 1.0.0
  */
+/**
+ * 这段代码定义了一个用于分页查询的空间加载文件威胁规则请求体类 `SpaceLoadedFileThreatRulePageReq`，继承自 `SpaceToolPageReq`。以下是代码的主要功能和结构分析： 
+ * ### 主要功能 
+ * 1. **类的功能**： 
+ * - 该类用于封装分页查询空间加载文件威胁规则所需的各种条件。 
+ * - 提供了一个方法 `req2QueryWrapper()`，将请求参数转换为 `LambdaQueryWrapper` 对象，用于数据库查询。 
+ * 2. **核心方法**： 
+ * - `req2QueryWrapper()`：根据请求中的条件（如模式、工具、类型、阶段等）动态构造查询条件，并返回 `LambdaQueryWrapper` 对象。支持模糊查询和精确查询，并按照更新时间降序排序。 
+ * 3. **字段说明**： 
+ * - `type`：表示威胁规则的类型，支持模糊查询。 
+ * 4. **依赖的其他类**： 
+ * - `SpaceLoadedFileThreatRule`：威胁规则实体类。 
+ * - `SpaceToolPageReq`：分页请求基类。 
+ * - `LambdaQueryWrapper`：MyBatis-Plus 提供的查询包装器。 
+ * - `StringUtils`：字符串工具类，用于判断字符串是否为空。 
+ * ### 总结 
+ * 该类的主要目的是提供一个灵活的分页查询请求体，能够根据不同的查询条件动态构造查询语句。通过继承 `SpaceToolPageReq` 和实现 `req2QueryWrapper()` 方法，实现了从请求参数到数据库查询条件的映射，具有良好的扩展性和可维护性。 
+**/
 @ApiModel
 public class SpaceLoadedFileThreatRulePageReq extends SpaceToolPageReq {
 
@@ -86,3 +86,4 @@ public class SpaceLoadedFileThreatRulePageReq extends SpaceToolPageReq {
 	    return wrapper;
 	}
 }
+

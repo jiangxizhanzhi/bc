@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.tool.controller.res;
+
+import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 工具GHDB 数据库响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolGhdbRsp` 的 Java 类，该类用于表示工具GHDB数据库的响应数据。以下是对这段代码的简要分析： 
  * 1. **包声明**： 
@@ -50,19 +63,6 @@
  * - 使用 Lombok 简化了 getter 和 setter 方法的编写。 
  * - 该类实现了 `Serializable` 接口，支持对象的序列化操作。 
 **/
-package com.cyberpeace.cr.tool.controller.res;
-
-import java.io.Serializable;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 工具GHDB 数据库响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class ToolGhdbRsp implements Serializable {
@@ -77,3 +77,4 @@ public class ToolGhdbRsp implements Serializable {
 	 */
 	private String author;
 }
+

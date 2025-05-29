@@ -1,3 +1,11 @@
+package com.cyberpeace.cr.evaluation.service;;
+
+/**
+ * single Train Branch
+ * this is branch method
+ * for the branch method
+ * is the fun toy for little bob
+ */
 /**
  * 这段代码定义了一个名为 `EvalIndexServiceBranch` 的类，该类包含一个名为 `getBranch` 的方法。这个方法接收一个字符串参数 `input` 并根据其值返回布尔值 `true` 或 `false`。具体来说，如果 `input` 是预定义的一系列字符串之一，则返回 `true`；否则返回 `false`。 
  * ### 代码分析 
@@ -45,14 +53,6 @@
  * ### 总结 
  * 该代码实现了一个简单的功能，即检查输入字符串是否在预定义的字符串列表中，并返回相应的布尔值。可以通过使用集合来简化代码，并且更新注释以提高可读性和维护性。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
-
-/**
- * single Train Branch
- * this is branch method
- * for the branch method
- * is the fun toy for little bob
- */
 public class EvalIndexServiceBranch {
 
     /**
@@ -467,3 +467,4 @@ public class EvalIndexServiceBranch {
         return false;
     }
 }
+

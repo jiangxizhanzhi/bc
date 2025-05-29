@@ -1,38 +1,3 @@
-/**
- * 这段代码定义了一个名为 `ExternalYXController` 的 Spring MVC 控制器类，用于处理与外部系统（如永信）相关的 API 请求。以下是对该代码的主要功能和结构的简要分析： 
- * ### 主要功能 
- * 1. **分页查询**： 
- * - 提供了多个方法用于分页查询不同类型的资源，如实践操作、理论题目、分类等。 
- * - 示例方法：`list(AdminOperationListReq listReq)` 和 `list(TheoryListReq pageReq)`。 
- * 2. **获取单个资源**： 
- * - 可以通过特定的 ID 获取某个实践操作或理论题目的详细信息。 
- * - 示例方法：`get(@RequestParam("resource_id") String resourceId)`。 
- * 3. **统计信息**： 
- * - 提供了多种统计方法，如工具统计、知识库统计、行动框架统计等。 
- * - 示例方法：`toolStatistics()` 和 `knowledgeStatistics()`。 
- * 4. **随机选择题目**： 
- * - 支持根据类别随机选择实践操作或理论题目。 
- * - 示例方法：`getTheoryRandom(PracticeRandomChoiceReq queryParams)` 和 `getOperationRandom(PracticeRandomChoiceReq choiceReq)`。 
- * 5. **运行算法**： 
- * - 提供了执行评估算法的方法，并返回相应的结果。 
- * - 示例方法：`runAlgorithm(@RequestBody EvalRunAlgorithmReq evalRunAlgorithmReq)`。 
- * 6. **其他功能**： 
- * - 包括记录策略使用情况、导出策略、查看策略详情等功能。 
- * - 示例方法：`useActionFrame(@PathVariable String type)` 和 `exportStrategy2PDF(HttpServletResponse httpServletResponse, List<String> strategy_ids)`。 
- * ### 结构特点 
- * 1. **依赖注入**： 
- * - 使用了 Spring 的 `@Autowired` 注解来注入各种服务和数据访问对象（如 `PracticeCategoryService`、`PracticeTheoryService` 等）。 
- * 2. **响应封装**： 
- * - 所有对外的 API 响应都封装在 `BaseRsp` 对象中，以统一的格式返回给客户端。 
- * 3. **Swagger 文档注解**： 
- * - 使用了 Swagger 注解（如 `@Api`、`@ApiOperation`）来生成 API 文档。 
- * 4. **日志记录**： 
- * - 使用了 Lombok 的 `@Slf4j` 注解来简化日志记录。 
- * 5. **数据转换**： 
- * - 使用了工具类（如 `BeanUtils`）来进行对象之间的转换。 
- * ### 总结 
- * `ExternalYXController` 是一个多功能的控制器类，主要用于处理与外部系统的交互请求，提供了丰富的查询、统计、随机选择和算法执行等功能。代码结构清晰，依赖注入和响应封装良好，便于维护和扩展。 
-**/
 package com.cyberpeace.gateway.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -113,6 +78,41 @@ import java.util.stream.Collectors;
  * @author SN
  * @date 2024/11/08
  */
+/**
+ * 这段代码定义了一个名为 `ExternalYXController` 的 Spring MVC 控制器类，用于处理与外部系统（如永信）相关的 API 请求。以下是对该代码的主要功能和结构的简要分析： 
+ * ### 主要功能 
+ * 1. **分页查询**： 
+ * - 提供了多个方法用于分页查询不同类型的资源，如实践操作、理论题目、分类等。 
+ * - 示例方法：`list(AdminOperationListReq listReq)` 和 `list(TheoryListReq pageReq)`。 
+ * 2. **获取单个资源**： 
+ * - 可以通过特定的 ID 获取某个实践操作或理论题目的详细信息。 
+ * - 示例方法：`get(@RequestParam("resource_id") String resourceId)`。 
+ * 3. **统计信息**： 
+ * - 提供了多种统计方法，如工具统计、知识库统计、行动框架统计等。 
+ * - 示例方法：`toolStatistics()` 和 `knowledgeStatistics()`。 
+ * 4. **随机选择题目**： 
+ * - 支持根据类别随机选择实践操作或理论题目。 
+ * - 示例方法：`getTheoryRandom(PracticeRandomChoiceReq queryParams)` 和 `getOperationRandom(PracticeRandomChoiceReq choiceReq)`。 
+ * 5. **运行算法**： 
+ * - 提供了执行评估算法的方法，并返回相应的结果。 
+ * - 示例方法：`runAlgorithm(@RequestBody EvalRunAlgorithmReq evalRunAlgorithmReq)`。 
+ * 6. **其他功能**： 
+ * - 包括记录策略使用情况、导出策略、查看策略详情等功能。 
+ * - 示例方法：`useActionFrame(@PathVariable String type)` 和 `exportStrategy2PDF(HttpServletResponse httpServletResponse, List<String> strategy_ids)`。 
+ * ### 结构特点 
+ * 1. **依赖注入**： 
+ * - 使用了 Spring 的 `@Autowired` 注解来注入各种服务和数据访问对象（如 `PracticeCategoryService`、`PracticeTheoryService` 等）。 
+ * 2. **响应封装**： 
+ * - 所有对外的 API 响应都封装在 `BaseRsp` 对象中，以统一的格式返回给客户端。 
+ * 3. **Swagger 文档注解**： 
+ * - 使用了 Swagger 注解（如 `@Api`、`@ApiOperation`）来生成 API 文档。 
+ * 4. **日志记录**： 
+ * - 使用了 Lombok 的 `@Slf4j` 注解来简化日志记录。 
+ * 5. **数据转换**： 
+ * - 使用了工具类（如 `BeanUtils`）来进行对象之间的转换。 
+ * ### 总结 
+ * `ExternalYXController` 是一个多功能的控制器类，主要用于处理与外部系统的交互请求，提供了丰富的查询、统计、随机选择和算法执行等功能。代码结构清晰，依赖注入和响应封装良好，便于维护和扩展。 
+**/
 @Api(tags = "外部接口-永信相关api")
 @Slf4j
 @RestController
@@ -690,3 +690,4 @@ public class ExternalYXController {
 	}
 
 }
+

@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.crbase.service.context;
+
+import java.util.List;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 授权模型
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ShareContext` 的 Java 类，位于包 `com.cyberpeace.cr.crbase.service.context` 中。以下是对其的简要分析： 
  * 1. **类的功能**： 
@@ -14,20 +28,6 @@
  * - 该类旨在封装与共享相关的上下文信息，方便在系统中传递和使用这些数据。 
  * 总体来说，这是一个简单的数据传输对象（DTO），主要用于存储和传输共享相关的信息。 
 **/
-package com.cyberpeace.cr.crbase.service.context;
-
-import java.util.List;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 授权模型
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class ShareContext {
@@ -51,3 +51,4 @@ public class ShareContext {
 	private List<String> shareTeachers;
 
 }
+

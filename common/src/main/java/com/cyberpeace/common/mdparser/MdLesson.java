@@ -1,3 +1,17 @@
+package com.cyberpeace.common.mdparser;
+
+import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
+import com.cyberpeace.common.mdparser.convert.DifficultyConvert;
+import lombok.Data;
+
+import java.io.Serializable;
+
+/**
+ * md 课程
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MdLesson` 的 Java 类，用于表示 Markdown 格式的课程信息。以下是对代码的简要分析： 
  * 1. **类的功能**： 
@@ -16,20 +30,6 @@
  * - 通过注解方式灵活定义数据结构与 Markdown 输出的映射关系，便于后续生成或解析 Markdown 文件。 
  * 总结：该类是一个基于注解的数据模型，主要用于解析和生成 Markdown 格式的课程信息，具有良好的扩展性和灵活性。 
 **/
-package com.cyberpeace.common.mdparser;
-
-import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
-import com.cyberpeace.common.mdparser.convert.DifficultyConvert;
-import lombok.Data;
-
-import java.io.Serializable;
-
-/**
- * md 课程
- *
- * @author SN
- * @date 2024/11/08
- */
 @Data
 public class MdLesson implements Serializable {
 
@@ -52,3 +52,4 @@ public class MdLesson implements Serializable {
     private String compulsory;
 
 }
+

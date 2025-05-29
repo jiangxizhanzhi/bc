@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.dao.context;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import com.cyberpeace.common.model.PageReqBase;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 类房间分页查询
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassRoomPageQuery` 的 Java 类，该类继承自 `PageReqBase`。这个类主要用于房间分页查询，并包含了一些与用户、训练计划和组织相关的属性。以下是详细的分析： 
  * ### 类定义 
@@ -31,25 +50,6 @@
  * - **注解**: 使用 Lombok 简化了 getter 和 setter 方法的编写。 
  * 这个类的设计是为了方便进行房间分页查询时传递相关参数，同时也利用了 Lombok 提供的功能来减少样板代码。 
 **/
-package com.cyberpeace.oj.course.dao.context;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import com.cyberpeace.common.model.PageReqBase;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 类房间分页查询
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PageReqBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class ClassRoomPageQuery extends PageReqBase {
@@ -84,3 +84,4 @@ public class ClassRoomPageQuery extends PageReqBase {
 	private List<String> childrenOrg;
 
 }
+

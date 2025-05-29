@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 练习解决了 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `PracticeSolvedBo` 的 Java 类，该类主要用于表示用户在某个练习中提交的答案及其结果。以下是对这段代码的简要分析： 
  * ### 包声明 
@@ -46,24 +64,6 @@
  * - 类实现了 `Serializable` 接口，使其可以在网络上传输或持久化存储。 
  * - 使用 Swagger 注解来帮助生成 API 文档。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 练习解决了 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -102,3 +102,4 @@ public class PracticeSolvedBo implements Serializable {
 	private Double score;
 
 }
+

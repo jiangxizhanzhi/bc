@@ -1,3 +1,23 @@
+package com.cyberpeace.cr.evaluation.service;
+
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.*;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 评估记录Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalRecordService` 的接口，该接口继承了 `IService<EvalRecord>` 接口。这个接口主要用于处理与评估记录相关的各种操作和服务。以下是对其主要功能的简要分析： 
  * ### 接口概述 
@@ -73,26 +93,6 @@
  * ### 总结 
  * `EvalRecordService` 接口提供了全面的评估记录管理功能，包括创建、更新、删除、查询以及导出评估报告等。这些方法覆盖了评估记录生命周期的各个方面，并且通过丰富的参数支持了灵活的查询和操作需求。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
-import com.cyberpeace.cr.evaluation.controller.rsp.*;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
-
-import java.util.List;
-import java.util.Map;
-
-/**
- * 评估记录Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface EvalRecordService extends IService<EvalRecord> {
 
     /**
@@ -228,3 +228,4 @@ public interface EvalRecordService extends IService<EvalRecord> {
 
     List<EvalSystemResultRsp> getAllCycleResult(String resourceId);
 }
+

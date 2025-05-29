@@ -1,3 +1,19 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import com.cyberpeace.common.model.PageReqBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 分页子级评论请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `PageChildrenCommentReq` 的 Java 类，该类继承自 `PageReqBase`。以下是对其的简要分析： 
  * 1. **包声明**： 
@@ -20,22 +36,6 @@
  * - 使用 Lombok 简化了 getter 和 setter 方法的编写。 
  * - 通过 Swagger 注解描述了 API 中的模型属性。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import com.cyberpeace.common.model.PageReqBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 分页子级评论请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PageReqBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class PageChildrenCommentReq extends PageReqBase {
@@ -51,3 +51,4 @@ public class PageChildrenCommentReq extends PageReqBase {
         this.resourceId = resourceId;
     }
 }
+

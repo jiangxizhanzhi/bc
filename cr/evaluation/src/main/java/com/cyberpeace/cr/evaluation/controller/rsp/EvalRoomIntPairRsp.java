@@ -1,3 +1,15 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估房间int双响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalRoomIntPairRsp` 的 Java 类，该类位于包 `com.cyberpeace.cr.evaluation.controller.rsp` 中。这个类主要用于表示评估房间中的整数对响应数据。以下是详细的分析： 
  * ### 类定义 
@@ -22,18 +34,6 @@
  * - 使用 Swagger 注解便于 API 文档的生成和管理。 
  * 这段代码是一个典型的 POJO（Plain Old Java Object），用于在后端系统中传输数据。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估房间int双响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalRoomIntPairRsp {
@@ -49,3 +49,4 @@ public class EvalRoomIntPairRsp {
     @ApiModelProperty("名称")
     private String label;
 }
+

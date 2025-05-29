@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.evaluation.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+/**
+ * 评估变量裁判Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalVariableRefMapper` 的接口，继承自 `BaseMapper<EvalVariableRef>`。这个接口用于与数据库进行交互，处理与 `EvalVariableRef` 实体相关的数据操作。以下是对代码的详细分析： 
  * ### 包声明和导入 
@@ -42,22 +58,6 @@
  * - 自定义的方法允许通过 `recordId` 和 `evalIndicatorIds` 获取特定的变量信息。 
  * - 使用了 MyBatis 和 Spring 的相关注解来确保接口可以被正确地识别和管理。 
 **/
-package com.cyberpeace.cr.evaluation.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
-
-/**
- * 评估变量裁判Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 @Repository
 public interface EvalVariableRefMapper extends BaseMapper<EvalVariableRef> {
@@ -86,3 +86,4 @@ public interface EvalVariableRefMapper extends BaseMapper<EvalVariableRef> {
      */
     List<EvalVariableRef> getVariableIdByRecordIds(List<String> evalIndicatorIds);
 }
+

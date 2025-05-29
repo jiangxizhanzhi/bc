@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import java.util.List;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估任务删除请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTaskDeleteReq` 的 Java 类，用于处理评估任务删除请求。以下是该类的简要分析： 
  * ### 类概述 
@@ -21,23 +38,6 @@
  * - 通过 `@ApiModelProperty` 注解，使得该类在 Swagger 文档中易于理解和使用。 
  * 这段代码简洁明了地定义了一个用于接收评估任务删除请求的数据模型，同时保证了数据的完整性和有效性。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import java.util.List;
-
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估任务删除请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalTaskDeleteReq {

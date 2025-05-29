@@ -1,3 +1,21 @@
+package com.cyberpeace.cr.evaluation.service.context;
+
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * eval 任务步骤配置
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTaskStepConfig` 的 Java 类，该类用于表示评估任务中的步骤配置。以下是对代码的简要分析： 
  * ### 类定义 
@@ -26,24 +44,6 @@
  * - 包含验证方法确保配置数据的有效性。 
  * - 使用 Lombok 注解减少样板代码，提高可读性和维护性。 
 **/
-package com.cyberpeace.cr.evaluation.service.context;
-
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * eval 任务步骤配置
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @Slf4j
@@ -76,3 +76,4 @@ public class EvalTaskStepConfig {
 	}
 
 }
+

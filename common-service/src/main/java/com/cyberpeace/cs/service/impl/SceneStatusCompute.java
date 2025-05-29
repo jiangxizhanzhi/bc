@@ -1,3 +1,15 @@
+package com.cyberpeace.cs.service.impl;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+
+/**
+ * 场景状态计算
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * ### 代码分析 
  * #### 功能概述： 
@@ -18,18 +30,6 @@
  * #### 总结： 
  * 该方法设计清晰，逻辑严谨，能够处理空输入和复杂的 JSON 数据结构，适合用于动态场景状态的计算场景。 
 **/
-package com.cyberpeace.cs.service.impl;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.JsonKeyConstant;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-
-/**
- * 场景状态计算
- *
- * @author SN
- * @date 2024/11/08
- */
 public class SceneStatusCompute {
 
 	/**
@@ -64,3 +64,4 @@ public class SceneStatusCompute {
 	}
 
 }
+

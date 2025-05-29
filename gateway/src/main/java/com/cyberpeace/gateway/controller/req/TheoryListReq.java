@@ -1,3 +1,17 @@
+package com.cyberpeace.gateway.controller.req;
+
+import com.cyberpeace.common.model.PageReqBase;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 理论列表请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `TheoryListReq` 的 Java 类，用于表示理论列表请求的数据模型。以下是对其主要特性的简要分析： 
  * 1. **继承关系**: 
@@ -13,20 +27,6 @@
  * - 这个类主要用于封装从客户端传递过来的查询参数，以便后端处理逻辑可以方便地获取这些参数进行数据检索或过滤。 
  * 总结来说，`TheoryListReq` 是一个数据传输对象（DTO），用于接收客户端请求中关于理论列表查询的参数，并提供了良好的可读性和文档支持。 
 **/
-package com.cyberpeace.gateway.controller.req;
-
-import com.cyberpeace.common.model.PageReqBase;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 理论列表请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @ApiModel
@@ -51,3 +51,4 @@ public class TheoryListReq extends PageReqBase {
 	private Integer theoryType;
 
 }
+

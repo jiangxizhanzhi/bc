@@ -1,3 +1,21 @@
+package com.cyberpeace.space.controller;
+
+import com.cyberpeace.space.service.SpaceRuleCommonService;
+import com.cyberpeace.space.service.context.rule.BaseDataRuleStatistics;
+import com.cyberpeace.space.service.context.rule.RaceStatistics;
+import com.cyberpeace.space.service.context.rule.ThreatDetectStatistics;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 /**
  * 这段代码是一个Spring Boot单元测试类，用于测试`SpaceRuleCommonController`控制器的功能。以下是代码的主要分析： 
  * 1. **测试类结构**： 
@@ -17,24 +35,6 @@
  * - 使用`status().isOk()`验证HTTP响应状态码为200。 
  * 总结来说，这段代码通过模拟服务层的行为，全面测试了`SpaceRuleCommonController`中不同统计数据接口的功能，确保其返回的数据格式和内容符合预期。 
 **/
-package com.cyberpeace.space.controller;
-
-import com.cyberpeace.space.service.SpaceRuleCommonService;
-import com.cyberpeace.space.service.context.rule.BaseDataRuleStatistics;
-import com.cyberpeace.space.service.context.rule.RaceStatistics;
-import com.cyberpeace.space.service.context.rule.ThreatDetectStatistics;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @WebMvcTest(SpaceRuleCommonController.class)
 class SpaceRuleCommonControllerTest {
 
@@ -98,3 +98,4 @@ class SpaceRuleCommonControllerTest {
                 .andExpect(content().json("{\"data\":{\"vuln\":0,\"fingerPrint\":0,\"apt\":0,\"ioc\":0},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 }
+

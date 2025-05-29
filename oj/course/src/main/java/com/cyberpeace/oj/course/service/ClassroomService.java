@@ -1,3 +1,29 @@
+package com.cyberpeace.oj.course.service;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.room.DashboardUser;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
+import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
+import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.service.bo.*;
+
+import java.util.List;
+
+/**
+ * 课堂Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomService` 的接口，该接口继承自 `IService<Classroom>`。这个接口包含多个方法，用于处理与“课堂”相关的各种操作。以下是对这些方法的简要分析： 
  * ### 接口定义 
@@ -64,32 +90,6 @@
  * ### 总结 
  * `ClassroomService` 接口提供了丰富的功能来管理课堂相关的信息，包括查询、统计、导入、导出等操作。每个方法都有明确的功能描述和参数，确保了清晰的接口使用方式。 
 **/
-package com.cyberpeace.oj.course.service;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.room.DashboardInfo;
-import com.cyberpeace.common.model.room.DashboardUser;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
-import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
-import com.cyberpeace.oj.course.dao.entity.Classroom;
-import com.cyberpeace.oj.course.service.bo.*;
-
-import java.util.List;
-
-/**
- * 课堂Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see IService
- * @since 1.0.0
- */
 public interface ClassroomService extends IService<Classroom> {
 
 	/**
@@ -269,3 +269,4 @@ public interface ClassroomService extends IService<Classroom> {
 	 */
 	List<String> selectTempTaskIdsByUser(UserInfo userContext);
 }
+

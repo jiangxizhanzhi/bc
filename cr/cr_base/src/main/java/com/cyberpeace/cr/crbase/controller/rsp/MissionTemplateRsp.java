@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.crbase.controller.rsp;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 任务模板响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `MissionTemplateRsp` 的 Java 类，用于表示任务模板的响应数据结构。以下是对其功能和特性的简要分析： 
  * 1. **类的功能**： 
@@ -21,21 +36,6 @@
  * - 使用 Lombok 和 Swagger 注解提升了开发效率和代码可读性。 
  * 总体而言，这是一个简洁且功能明确的数据传输对象（DTO），适合在前后端交互中使用。 
 **/
-package com.cyberpeace.cr.crbase.controller.rsp;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 任务模板响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MissionTemplateRsp {
@@ -100,3 +100,4 @@ public class MissionTemplateRsp {
     private String writeUp;
 
 }
+

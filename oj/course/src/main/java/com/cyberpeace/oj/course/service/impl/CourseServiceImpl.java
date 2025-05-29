@@ -1,39 +1,3 @@
-/**
- * 这段代码是一个Java类 `CourseServiceImpl`，实现了 `CourseService` 接口。这个类主要负责处理与课程相关的业务逻辑。以下是代码的主要功能和结构分析： 
- * ### 主要功能 
- * 1. **课程管理**： 
- * - 查询课程信息 (`selectById`, `selectByIds`, `selectPage`) 
- * - 添加、更新和删除课程 (`addCourse`, `updateCourse`, `batchDelete`) 
- * - 导出和导入课程 (`dumpCourse`, `loadCourse`) 
- * 2. **课程数据转换**： 
- * - 将课程实体对象转换为业务对象 (`courseToBo`, `transferToBo`) 
- * 3. **辅助方法**： 
- * - 处理课程数据的验证和权限检查 (`courseValidateHandler`) 
- * - 事务管理 (`TransactionTemplate`) 
- * ### 关键组件 
- * - **依赖注入**：通过 `@Autowired` 注入了多个DAO和Service，如 `CourseMapper`, `CourseCategoryMapper`, `TransactionTemplate` 等。 
- * - **日志记录**：使用 `@Slf4j` 注入日志记录器 `log`。 
- * ### 主要方法 
- * 1. **`selectById`**: 
- * - 根据课程ID查询课程信息，并处理权限验证和访问量统计。 
- * 2. **`selectByIds`**: 
- * - 根据课程ID列表查询课程信息。 
- * 3. **`selectPage`**: 
- * - 分页查询课程信息，支持条件过滤。 
- * 4. **`addCourse`**: 
- * - 添加新课程，包括基本数据校验和事务管理。 
- * 5. **`updateCourse`**: 
- * - 更新现有课程信息，包括数据校验和事务管理。 
- * 6. **`batchDelete`**: 
- * - 批量删除课程及其相关数据（如课时、收藏等）。 
- * 7. **`dumpCourse` 和 `loadCourse`**: 
- * - 导出和导入课程数据，包括课程信息、课时、章节等。 
- * ### 数据转换 
- * - **`courseToBo`**: 将课程实体对象转换为 `CourseInfoBo` 对象。 
- * - **`transferToBo`**: 将课程实体对象或 `CourseInfoBo` 对象进一步转换为 `CourseWebBo` 或 `CourseAdminBo` 对象。 
- * ### 总结 
- * `CourseServiceImpl` 类是一个复杂的业务服务层实现，包含了丰富的功能和复杂的逻辑处理。它通过依赖注入获取各种DAO和Service的支持，并利用事务管理来保证数据的一致性和完整性。同时，通过数据转换方法确保了不同业务对象之间的数据流转和适配。 
-**/
 package com.cyberpeace.oj.course.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -97,6 +61,42 @@ import java.util.stream.Collectors;
  * @see CourseService
  * @since 1.0.0
  */
+/**
+ * 这段代码是一个Java类 `CourseServiceImpl`，实现了 `CourseService` 接口。这个类主要负责处理与课程相关的业务逻辑。以下是代码的主要功能和结构分析： 
+ * ### 主要功能 
+ * 1. **课程管理**： 
+ * - 查询课程信息 (`selectById`, `selectByIds`, `selectPage`) 
+ * - 添加、更新和删除课程 (`addCourse`, `updateCourse`, `batchDelete`) 
+ * - 导出和导入课程 (`dumpCourse`, `loadCourse`) 
+ * 2. **课程数据转换**： 
+ * - 将课程实体对象转换为业务对象 (`courseToBo`, `transferToBo`) 
+ * 3. **辅助方法**： 
+ * - 处理课程数据的验证和权限检查 (`courseValidateHandler`) 
+ * - 事务管理 (`TransactionTemplate`) 
+ * ### 关键组件 
+ * - **依赖注入**：通过 `@Autowired` 注入了多个DAO和Service，如 `CourseMapper`, `CourseCategoryMapper`, `TransactionTemplate` 等。 
+ * - **日志记录**：使用 `@Slf4j` 注入日志记录器 `log`。 
+ * ### 主要方法 
+ * 1. **`selectById`**: 
+ * - 根据课程ID查询课程信息，并处理权限验证和访问量统计。 
+ * 2. **`selectByIds`**: 
+ * - 根据课程ID列表查询课程信息。 
+ * 3. **`selectPage`**: 
+ * - 分页查询课程信息，支持条件过滤。 
+ * 4. **`addCourse`**: 
+ * - 添加新课程，包括基本数据校验和事务管理。 
+ * 5. **`updateCourse`**: 
+ * - 更新现有课程信息，包括数据校验和事务管理。 
+ * 6. **`batchDelete`**: 
+ * - 批量删除课程及其相关数据（如课时、收藏等）。 
+ * 7. **`dumpCourse` 和 `loadCourse`**: 
+ * - 导出和导入课程数据，包括课程信息、课时、章节等。 
+ * ### 数据转换 
+ * - **`courseToBo`**: 将课程实体对象转换为 `CourseInfoBo` 对象。 
+ * - **`transferToBo`**: 将课程实体对象或 `CourseInfoBo` 对象进一步转换为 `CourseWebBo` 或 `CourseAdminBo` 对象。 
+ * ### 总结 
+ * `CourseServiceImpl` 类是一个复杂的业务服务层实现，包含了丰富的功能和复杂的逻辑处理。它通过依赖注入获取各种DAO和Service的支持，并利用事务管理来保证数据的一致性和完整性。同时，通过数据转换方法确保了不同业务对象之间的数据流转和适配。 
+**/
 @Service
 @Slf4j
 public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> implements CourseService {
@@ -1476,3 +1476,4 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	}
 }
+

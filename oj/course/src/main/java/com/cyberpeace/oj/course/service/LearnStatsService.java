@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.service;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.oj.course.controller.res.HistogramRes;
+import com.cyberpeace.oj.course.service.bo.*;
+
+import javax.servlet.http.HttpServletRequest;
+
+/**
+ * 学习统计Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LearnStatsService` 的接口，该接口主要用于处理与学习统计相关的服务。以下是对其主要功能和方法的简要分析： 
  * ### 接口概述 
@@ -53,23 +70,6 @@
  * ### 总结 
  * 该接口提供了丰富的学习统计功能，包括用户学习统计、学习排行、课程学习统计等。通过这些方法，可以方便地获取不同维度的学习统计数据，从而帮助管理员或教师更好地了解用户和组织的学习情况。 
 **/
-package com.cyberpeace.oj.course.service;
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.oj.course.controller.res.HistogramRes;
-import com.cyberpeace.oj.course.service.bo.*;
-
-import javax.servlet.http.HttpServletRequest;
-
-/**
- * 学习统计Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface LearnStatsService {
 
     /**
@@ -171,3 +171,4 @@ public interface LearnStatsService {
      */
     ListRsp<OrgStatsBo> getOrgStatsData(Page page, String pattern, String organization, String startTime, String endTime, boolean isPage);
 }
+

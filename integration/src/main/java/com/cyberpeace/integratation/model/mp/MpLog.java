@@ -1,3 +1,13 @@
+package com.cyberpeace.integratation.model.mp;
+
+import java.io.Serializable;
+
+/**
+ * 中台日志
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MpLog` 的 Java 类，用于表示中台日志。以下是该类的简要分析： 
  * ### 类名和包 
@@ -26,16 +36,6 @@
  * - 该类实现了 `Serializable` 接口，表明它可以被序列化，便于在分布式系统中使用。 
  * 这个类可以用于记录各种操作日志，包括操作内容、描述、来源、类型等详细信息。 
 **/
-package com.cyberpeace.integratation.model.mp;
-
-import java.io.Serializable;
-
-/**
- * 中台日志
- *
- * @author SN
- * @date 2024/11/08
- */
 public class MpLog implements Serializable {
 
 	/**
@@ -194,3 +194,4 @@ public class MpLog implements Serializable {
 		this.user_type = userType;
 	}
 }
+

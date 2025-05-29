@@ -1,3 +1,19 @@
+package com.cyberpeace.integratation.model.mp;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * 中台认证许可
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MpAuthPermission` 的 Java 类，用于表示用户菜单权限。以下是对其主要特性和功能的简要分析： 
  * ### 包与导入 
@@ -27,22 +43,6 @@
  * ### 总结 
  * `MpAuthPermission` 类是一个数据传输对象（DTO），用于表示用户菜单权限相关的数据。它包含了多个属性，每个属性都有相应的注释和 Swagger 文档描述。Lombok 注解简化了代码，减少了样板代码的编写。 
 **/
-package com.cyberpeace.integratation.model.mp;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Date;
-
-/**
- * 中台认证许可
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @ApiModel("用户菜单权限")
@@ -106,3 +106,4 @@ public class MpAuthPermission implements Serializable {
     @ApiModelProperty("菜单是否可见")
     private String visible;
 }
+

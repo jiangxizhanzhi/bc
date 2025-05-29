@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.ojbase.constant;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+
+import com.cyberpeace.constant.BaseI18n;
+import lombok.Getter;
+
+/**
+ * 课堂岗位
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Enum
+ * @see GenericEnum
+ * @see BaseI18n
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomRole` 的枚举类，用于表示课堂中的不同角色。以下是对该代码的简要分析： 
  * ### 类定义与继承 
@@ -23,24 +41,6 @@
  * - 通过实现 `GenericEnum` 接口，可能还支持一些通用的枚举操作功能。 
  * 这段代码简洁明了，通过枚举类型和 Lombok 注解提高了代码的可读性和维护性。 
 **/
-package com.cyberpeace.oj.ojbase.constant;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-
-import com.cyberpeace.constant.BaseI18n;
-import lombok.Getter;
-
-/**
- * 课堂岗位
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Enum
- * @see GenericEnum
- * @see BaseI18n
- * @since 1.0.0
- */
 public enum ClassroomRole implements GenericEnum, BaseI18n {
 
 	/**
@@ -97,3 +97,4 @@ public enum ClassroomRole implements GenericEnum, BaseI18n {
 		return getMsg();
 	}
 }
+

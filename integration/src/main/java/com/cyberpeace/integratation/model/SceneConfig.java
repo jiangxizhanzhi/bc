@@ -1,3 +1,11 @@
+package com.cyberpeace.integratation.model;
+
+/**
+ * 场景拓扑配置模型
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SceneConfig` 的 Java 类，位于包 `com.cyberpeace.integratation.model` 中。以下是对其简要分析： 
  * ### 代码结构 
@@ -27,12 +35,5 @@
  * - **当前状态**：目前这个类没有任何属性或方法，需要进一步开发以实现具体的业务逻辑。 
  * 如果未来需要添加属性或方法来存储和处理场景拓扑配置数据，可以在此基础上进行扩展。 
 **/
-package com.cyberpeace.integratation.model;
-
-/**
- * 场景拓扑配置模型
- *
- * @author SN
- * @date 2024/11/08
- */
 public class SceneConfig {}
+

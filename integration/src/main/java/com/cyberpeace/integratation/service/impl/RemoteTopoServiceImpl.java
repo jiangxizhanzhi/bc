@@ -1,3 +1,36 @@
+package com.cyberpeace.integratation.service.impl;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.integratation.model.SceneConfig;
+import com.cyberpeace.integratation.model.mp.MpTopoStatistic;
+import com.cyberpeace.integratation.model.scene.TopoDigest;
+import com.cyberpeace.integratation.model.scene.TopoNodeListReq;
+import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.integratation.service.bo.TopoSupportPartialStartContext;
+import com.cyberpeace.integratation.service.bo.TopoTemplatePageReq;
+import com.cyberpeace.integratation.service.bo.mp.MibInfoQueryRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+/**
+ * 远程拓扑Service实现
+ *
+ * @author chenzhuo@date 2024/11/08
+ */
 /**
  * 这段代码是一个Spring服务类 `RemoteTopoServiceImpl`，实现了 `RemoteTopoService` 接口。这个类主要负责与远程拓扑相关的操作。以下是对代码的简要分析： 
  * ### 类定义和依赖注入 
@@ -41,39 +74,6 @@
  * ### 总结 
  * 该类提供了丰富的接口来处理与远程拓扑相关的各种操作，包括创建、获取、保存、删除、导出拓扑以及上传文件等。这些方法通过HTTP客户端工具 `HttpClientUtil` 与远程服务进行交互，并处理响应结果。 
 **/
-package com.cyberpeace.integratation.service.impl;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.integratation.model.SceneConfig;
-import com.cyberpeace.integratation.model.mp.MpTopoStatistic;
-import com.cyberpeace.integratation.model.scene.TopoDigest;
-import com.cyberpeace.integratation.model.scene.TopoNodeListReq;
-import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.cyberpeace.integratation.service.bo.TopoSupportPartialStartContext;
-import com.cyberpeace.integratation.service.bo.TopoTemplatePageReq;
-import com.cyberpeace.integratation.service.bo.mp.MibInfoQueryRequest;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.annotation.PostConstruct;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-/**
- * 远程拓扑Service实现
- *
- * @author chenzhuo@date 2024/11/08
- */
 @Slf4j
 @Service
 public class RemoteTopoServiceImpl implements RemoteTopoService {
@@ -490,3 +490,4 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		json.put("context", userContext);
 	}
 }
+

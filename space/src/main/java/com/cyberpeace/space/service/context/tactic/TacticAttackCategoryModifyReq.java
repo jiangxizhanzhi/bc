@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.tactic;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 战法攻击类别修改请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see TacticAttackCategoryAddReq
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个名为 `TacticAttackCategoryModifyReq` 的 Java 类，继承自 `TacticAttackCategoryAddReq`。以下是代码的主要分析： 
  * 1. **类的功能**： 
@@ -13,20 +27,6 @@
  * - 注释中提到了作者、版本号（1.0.0）、日期（2025/05/28），以及相关类 `TacticAttackCategoryAddReq`，表明这是一个有明确上下文的业务类。 
  * 总结：该类是一个专门用于战法攻击类别修改的请求体类，通过继承增强了功能，并使用 Lombok 提高了代码简洁性。 
 **/
-package com.cyberpeace.space.service.context.tactic;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 战法攻击类别修改请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see TacticAttackCategoryAddReq
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class TacticAttackCategoryModifyReq extends TacticAttackCategoryAddReq {
@@ -37,3 +37,4 @@ public class TacticAttackCategoryModifyReq extends TacticAttackCategoryAddReq {
      */
     private String resourceId;
 }
+

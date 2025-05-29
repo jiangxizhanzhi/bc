@@ -1,3 +1,26 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import com.cyberpeace.oj.ojbase.service.bo.UserNoteScoreBo;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 课堂统计 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomStatisticBo` 的 Java 类，用于表示课堂统计信息。以下是该类的详细分析： 
  * ### 类定义 
@@ -24,29 +47,6 @@
  * - **文档**：通过 Swagger 注解生成 API 文档，便于前端或其他服务理解该类的用途和结构。 
  * 这个类的设计使得课堂统计信息的获取和展示变得简洁明了，并且易于扩展和维护。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import com.cyberpeace.oj.ojbase.service.bo.UserNoteScoreBo;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 课堂统计 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -80,3 +80,4 @@ public class ClassroomStatisticBo implements Serializable {
 	private List<UserNoteScoreBo> top20;
 
 }
+

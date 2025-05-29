@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.ojbase.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Date;
+
+/**
+ * 注意评估
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `NoteEvaluate` 的 Java 类，该类继承自 `BaseTable`。这个类用于表示与“注意评估”相关的实体对象，并且它使用了 MyBatis-Plus 框架来映射数据库表。下面是对代码的详细分析： 
  * ### 包和导入 
@@ -25,26 +45,6 @@
  * ### 总结 
  * 这段代码定义了一个用于存储评估信息的实体类 `NoteEvaluate`。它继承自一个基础表类 `BaseTable`，并使用了一些框架注解来简化开发。类中的属性代表了评估记录中的不同字段，如资源ID、得分、是否通过等。 
 **/
-package com.cyberpeace.oj.ojbase.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Date;
-
-/**
- * 注意评估
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("oj_note_evaluate")
@@ -101,3 +101,4 @@ public class NoteEvaluate extends BaseTable {
 	private Date evaluateTime;
 
 }
+

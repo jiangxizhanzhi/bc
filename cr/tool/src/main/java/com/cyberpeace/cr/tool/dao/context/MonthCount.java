@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.tool.dao.context;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+
+/**
+ * 月计数
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `MonthCount` 的 Java 类，该类实现了 `Serializable` 接口。以下是对其主要特性和功能的简要分析： 
  * ### 类定义 
@@ -17,22 +33,6 @@
  * ### 总结 
  * 这个类主要用于存储和表示某个月份的计数值。通过 Lombok 注解，减少了大量样板代码，使得代码更加简洁。此外，通过 Swagger 注解，有助于生成 API 文档，便于前端开发人员理解和使用。 
 **/
-package com.cyberpeace.cr.tool.dao.context;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
-
-/**
- * 月计数
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -51,3 +51,4 @@ public class MonthCount implements Serializable {
 	@ApiModelProperty("新增的数量")
 	private Integer count;
 }
+

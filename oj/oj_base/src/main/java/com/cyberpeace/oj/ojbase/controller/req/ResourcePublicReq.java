@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import java.util.List;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+/**
+ * 资源公共请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @since 1.0.0
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ResourcePublicReq` 的 Java 类，该类用于表示资源公共请求体。以下是对其主要特性和功能的简要分析： 
  * ### 类概述 
@@ -30,25 +49,6 @@
  * ### 总结 
  * `ResourcePublicReq` 类是一个简洁且功能明确的数据传输对象（DTO），用于在系统中处理资源的公开状态更新。它包含了必要的验证逻辑，并通过Lombok减少了样板代码的编写。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import java.util.List;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
-/**
- * 资源公共请求体
- *
- * @author SN
- * @version 1.0.0
- * @since 1.0.0
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class ResourcePublicReq {
@@ -71,3 +71,4 @@ public class ResourcePublicReq {
     @NotNull
     private Boolean isPublic;
 }
+

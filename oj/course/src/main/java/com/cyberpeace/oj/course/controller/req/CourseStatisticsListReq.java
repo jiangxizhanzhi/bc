@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.controller.req;
+
+
+import com.cyberpeace.common.model.PageReqBase;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课程统计学列表请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseStatisticsListReq` 的 Java 类，它位于包 `com.cyberpeace.oj.course.controller.req` 中。这个类用于处理课程统计学列表请求的数据。以下是详细的分析： 
  * ### 包声明和导入 
@@ -38,24 +56,6 @@
  * - 使用了 Lombok 注解来自动生成 getter 和 setter 方法。 
  * 这个类主要用于前端与后端交互时传递课程统计学列表请求的数据。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-
-import com.cyberpeace.common.model.PageReqBase;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课程统计学列表请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PageReqBase
- * @since 1.0.0
- */
 @ApiModel
 @Getter
 @Setter
@@ -79,3 +79,4 @@ public class CourseStatisticsListReq extends PageReqBase {
 	private Integer difficulty;
 
 }
+

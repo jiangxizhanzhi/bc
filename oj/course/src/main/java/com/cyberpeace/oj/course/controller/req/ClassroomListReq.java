@@ -1,3 +1,25 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.validation.constraints.NotNull;
+
+import com.cyberpeace.common.util.TimeUtil;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课堂列表请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomListReq` 的 Java 类，用于表示课堂列表请求体。以下是该类的详细分析： 
  * ### 类定义 
@@ -34,28 +56,6 @@
  * - 通过 `TimeUtil.toDate2` 方法将字符串形式的时间转换为 `Date` 对象，方便后续处理。 
  * - 该类还包含了 Swagger 注解，用于生成 API 文档。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import java.io.Serializable;
-import java.util.Date;
-
-import javax.validation.constraints.NotNull;
-
-import com.cyberpeace.common.util.TimeUtil;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课堂列表请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @ApiModel
 @Getter
 @Setter
@@ -123,3 +123,4 @@ public class ClassroomListReq implements Serializable {
 		this.trainPlanId = trainPlanId;
 	}
 }
+

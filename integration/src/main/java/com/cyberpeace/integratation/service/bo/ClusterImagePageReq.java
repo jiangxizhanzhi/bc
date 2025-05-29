@@ -1,3 +1,16 @@
+package com.cyberpeace.integratation.service.bo;
+
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 簇图像分页请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ClusterImagePageReq` 的 Java 类，用于处理簇图像分页请求。以下是该类的简要分析： 
  * ### 类定义 
@@ -27,19 +40,6 @@
  * - 通过 `StringUtils` 提供的工具方法来检查字符串是否为空或空白。 
  * 这个类的设计简洁明了，能够满足基本的分页请求参数封装需求。 
 **/
-package com.cyberpeace.integratation.service.bo;
-
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 簇图像分页请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class ClusterImagePageReq {
@@ -111,3 +111,4 @@ public class ClusterImagePageReq {
 		return builder.toString();
 	}
 }
+

@@ -1,3 +1,37 @@
+package com.cyberpeace.config.auth;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+
+import com.alibaba.fastjson.JSONArray;
+import com.cyberpeace.common.threadlocal.ThreadLocalContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.SpringContextUtil;
+import com.cyberpeace.enums.DemonstrationWhiteUriEnum;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ResourceUtils;
+
+import com.alibaba.fastjson.JSON;
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.common.util.SystemPropUtil;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
+/**
+ * 示范白过滤器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see Filter
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 功能概述 
@@ -42,40 +76,6 @@
  * #### 总结 
  * 该代码实现了一个功能完善的演示模式过滤器，结合了配置管理、文件操作、缓存机制和线程本地变量等技术，能够有效满足演示环境的需求。但需要注意增强异常处理和日志记录，以提高代码的健壮性和可维护性。 
 **/
-package com.cyberpeace.config.auth;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-
-import com.alibaba.fastjson.JSONArray;
-import com.cyberpeace.common.threadlocal.ThreadLocalContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.SpringContextUtil;
-import com.cyberpeace.enums.DemonstrationWhiteUriEnum;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.ResourceUtils;
-
-import com.alibaba.fastjson.JSON;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.SystemPropUtil;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-
-/**
- * 示范白过滤器
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see Filter
- * @since 1.0.0
- */
 @Slf4j
 public class DemonstrationWhiteFilter implements Filter {
 
@@ -192,3 +192,4 @@ public class DemonstrationWhiteFilter implements Filter {
     }
 
 }
+

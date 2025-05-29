@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.ojbase.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.BaseTable;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Getter;
+
+/**
+ * 评论
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `Comment` 的实体类，用于表示评论信息。以下是详细的分析和总结： 
  * ### 类定义 
@@ -33,26 +53,6 @@
  * - **扩展性**: 通过定义枚举类 `CommentType`，可以方便地添加或修改评论类型，同时保持代码的可读性和可维护性。 
  * 这个类的设计是标准的 Java 实体类设计，适用于数据库操作，并且具有良好的扩展性。 
 **/
-package com.cyberpeace.oj.ojbase.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.BaseTable;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Getter;
-
-/**
- * 评论
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("oj_comment")
@@ -140,3 +140,4 @@ public class Comment extends BaseTable {
 	}
 
 }
+

@@ -1,3 +1,13 @@
+package com.cyberpeace.common.constant;
+
+/**
+ * 中台场景状态不断
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个常量接口 `MpSceneStatusConstant`，用于存储与中台场景状态相关的整型常量值。以下是代码的简要分析： 
  * 1. **接口定义**： 
@@ -16,16 +26,6 @@
  * - 通过将这些常量集中在一个接口中，便于统一管理，避免在代码中硬编码，提高可维护性和可读性。 
  * 总结：这是一个典型的常量接口设计，用于集中管理与中台场景状态相关的整型常量值，方便后续代码引用和维护。 
 **/
-package com.cyberpeace.common.constant;
-
-/**
- * 中台场景状态不断
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface MpSceneStatusConstant {
 
 
@@ -56,3 +56,4 @@ public interface MpSceneStatusConstant {
 	 */
 	Integer MP_SCENE_PROGRESS_FINISH_CODE = 4;
 }
+

@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.crbase.controller.rsp;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 开始场景响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `StartSceneRsp` 的 Java 类，用于表示“开始场景”的响应数据结构。以下是简要分析： 
  * 1. **类的功能**： 
@@ -14,21 +29,6 @@
  * - 该类通常在后端服务中返回给前端或其他系统，用于表示“开始场景”操作的结果。 
  * 总结：这是一个简单的 DTO 类，用于封装“开始场景”操作的响应数据，支持序列化并提供了清晰的字段说明。 
 **/
-package com.cyberpeace.cr.crbase.controller.rsp;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 开始场景响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class StartSceneRsp implements Serializable {
@@ -43,3 +43,4 @@ public class StartSceneRsp implements Serializable {
 		this.mpSceneId = mpSceneId;
 	}
 }
+

@@ -1,3 +1,18 @@
+package com.cyberpeace.cs.service.context;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * WS 消息 bo
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个泛型类 `WsMessageBO`，用于表示 WebSocket 消息的业务对象（BO）。以下是简要分析： 
  * 1. **类的功能**： 
@@ -15,21 +30,6 @@
  * - 该类适用于需要通过 WebSocket 传输结构化消息的场景，尤其是需要携带不同类型的业务数据时。 
  * 总结：这是一个轻量级、可扩展的消息封装类，适合用作 WebSocket 消息的载体。 
 **/
-package com.cyberpeace.cs.service.context;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * WS 消息 bo
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class WsMessageBO<T> implements Serializable {
@@ -52,3 +52,4 @@ public class WsMessageBO<T> implements Serializable {
 	}
 
 }
+

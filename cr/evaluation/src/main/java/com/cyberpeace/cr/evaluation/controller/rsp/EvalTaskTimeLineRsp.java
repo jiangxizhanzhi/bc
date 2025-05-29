@@ -1,3 +1,21 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估任务时间线响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTaskTimeLineRsp` 的 Java 类，用于表示评估任务的时间线响应。以下是对该类的简要分析： 
  * ### 类名与包名 
@@ -21,24 +39,6 @@
  * - 使用 Swagger 注解使得这个类更容易被 API 文档工具识别，方便生成文档。 
  * 总体来说，这是一个功能明确、设计良好的类，适用于在 API 响应中传递评估任务的时间线信息。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估任务时间线响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalTaskTimeLineRsp implements Serializable {
@@ -74,3 +74,4 @@ public class EvalTaskTimeLineRsp implements Serializable {
 	private Date currentTime;
 
 }
+

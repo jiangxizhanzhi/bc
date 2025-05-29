@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.tool.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.cr.tool.dao.entity.ToolGhdb;
+import com.cyberpeace.cr.tool.controller.res.ToolGhdbRsp;
+
+/**
+ * 工具GHDB 数据库Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolGhdbService` 的接口，该接口继承自 `IService<ToolGhdb>`。以下是详细的分析： 
  * ### 包声明和导入 
@@ -28,20 +42,6 @@
  * - **灵活性**：通过传入 `PageReqBase` 和 `ToolGhdbRsp`，该方法具有一定的灵活性，可以根据需求进行扩展。 
  * 总的来说，这段代码是一个典型的基于 MyBatis-Plus 的数据访问层接口，提供了分页查询的功能，并且可以通过扩展进一步定制查询行为。 
 **/
-package com.cyberpeace.cr.tool.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.cr.tool.dao.entity.ToolGhdb;
-import com.cyberpeace.cr.tool.controller.res.ToolGhdbRsp;
-
-/**
- * 工具GHDB 数据库Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface ToolGhdbService extends IService<ToolGhdb> {
 
 	/**
@@ -53,3 +53,4 @@ public interface ToolGhdbService extends IService<ToolGhdb> {
 	 */
 	ListRsp<ToolGhdb> listGhdb(PageReqBase pageReqBase, ToolGhdbRsp toolGhdbRsp);
 }
+

@@ -1,3 +1,22 @@
+package com.cyberpeace.common.util;
+
+import com.cyberpeace.common.constant.CommonConstant;
+import com.google.common.cache.Cache;
+import lombok.extern.slf4j.Slf4j;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.Java2DFrameConverter;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * @author SN
+ * @date 2024/04/16
+ */
 /**
  * 这段代码定义了一个工具类 `VideoUtil`，用于处理视频相关的操作。以下是代码的主要功能和结构分析： 
  * ### 主要功能 
@@ -21,25 +40,6 @@
  * ### 总结 
  * 该工具类封装了视频时长获取和帧截图的功能，适用于需要处理视频文件的应用场景。通过缓存机制优化了性能，同时提供了灵活的截图选项（如是否缩放）。 
 **/
-package com.cyberpeace.common.util;
-
-import com.cyberpeace.common.constant.CommonConstant;
-import com.google.common.cache.Cache;
-import lombok.extern.slf4j.Slf4j;
-import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.Java2DFrameConverter;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.concurrent.TimeUnit;
-
-/**
- * @author SN
- * @date 2024/04/16
- */
 @Slf4j
 public class VideoUtil {
 
@@ -127,3 +127,4 @@ public class VideoUtil {
         return capture;
     }
 }
+

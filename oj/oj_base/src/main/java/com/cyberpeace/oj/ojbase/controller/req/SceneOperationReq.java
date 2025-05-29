@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import java.io.Serializable;
+
+import javax.validation.constraints.NotBlank;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 场景实操请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SceneOperationReq` 的 Java 类，用于表示场景实操请求体。以下是对该代码的简要分析： 
  * ### 包声明和导入 
@@ -22,26 +42,6 @@
  * - `resourceId` 属性是必需的（非空），并且会出现在 Swagger 文档中作为 "课时、习题编号"。 
  * 这个类的设计目的是接收一个包含资源 ID 的请求体，并确保该 ID 不为空。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import java.io.Serializable;
-
-import javax.validation.constraints.NotBlank;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 场景实操请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -57,3 +57,4 @@ public class SceneOperationReq implements Serializable {
 	private String resourceId;
 
 }
+

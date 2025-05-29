@@ -1,3 +1,18 @@
+package com.cyberpeace.gateway.service.bo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 外部执业类 bo
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ExternalPracticeCategoryBo` 的 Java 类，该类实现了 `Serializable` 接口，并使用了 Lombok 注解来简化代码。以下是对这段代码的详细分析： 
  * ### 包声明 
@@ -48,21 +63,6 @@
  * - 该类实现了 `Serializable` 接口，说明它可能需要在网络传输或持久化存储中使用。 
  * 整体来说，这是一个简洁且功能明确的类，适用于需要在不同层之间传递数据的场景。 
 **/
-package com.cyberpeace.gateway.service.bo;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 外部执业类 bo
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @ApiModel
@@ -81,3 +81,4 @@ public class ExternalPracticeCategoryBo implements Serializable {
      private String name;
 
 }
+

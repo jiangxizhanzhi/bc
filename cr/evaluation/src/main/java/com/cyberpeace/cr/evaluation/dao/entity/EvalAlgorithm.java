@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.evaluation.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.BaseTable;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 
+ * @TableName cr_eval_algorithm
+ */
 /**
  * 这段代码定义了一个名为 `EvalAlgorithm` 的实体类，用于表示评估算法的信息。以下是对该代码的简要分析： 
  * ### 类概述 
@@ -40,21 +55,6 @@
  * ### 总结 
  * 这个类主要用来表示和管理评估算法的相关信息，并通过枚举类型定义了一些固定的状态和类型。这些信息可能被用于数据库操作、API 文档生成等场景。 
 **/
-package com.cyberpeace.cr.evaluation.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.BaseTable;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 
- * @TableName cr_eval_algorithm
- */
 @TableName(value ="cr_eval_algorithm")
 @Getter
 @Setter

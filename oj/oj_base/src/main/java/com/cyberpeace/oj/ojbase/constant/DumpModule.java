@@ -1,3 +1,18 @@
+package com.cyberpeace.oj.ojbase.constant;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import lombok.Getter;
+
+/**
+ * 目录划分
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Enum
+ * @see GenericEnum
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `DumpModule` 的枚举类，该枚举类实现了 `GenericEnum` 接口。以下是对代码的简要分析： 
  * ### 类定义 
@@ -24,21 +39,6 @@
  * ### 总结 
  * 这段代码定义了一个用于表示目录划分的枚举类 `DumpModule`，其中包含两个枚举值 `COURSE` 和 `CTF_PRACTICE`。每个枚举值都具有一个代码和描述，这些信息可以通过 Lombok 自动生成的 getter 方法访问。 
 **/
-package com.cyberpeace.oj.ojbase.constant;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import lombok.Getter;
-
-/**
- * 目录划分
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Enum
- * @see GenericEnum
- * @since 1.0.0
- */
 public enum DumpModule implements GenericEnum {
 
 	/**
@@ -78,3 +78,4 @@ public enum DumpModule implements GenericEnum {
 	}
 
 }
+

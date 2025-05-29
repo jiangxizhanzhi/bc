@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.evaluation.service.context;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * eval 系统索引上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalSystemIndexesContext` 的 Java 类，该类用于表示评估系统中的索引上下文。以下是对此代码的简要分析： 
  * ### 类定义 
@@ -28,22 +44,6 @@
  * - `children` 字段表示树形结构中的子节点，这使得该类适用于表示具有层次结构的数据。 
  * 这个类的设计目的是为了便于管理和操作评估系统的数据结构。 
 **/
-package com.cyberpeace.cr.evaluation.service.context;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * eval 系统索引上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -96,3 +96,4 @@ public class EvalSystemIndexesContext implements Serializable {
     @ApiModelProperty("指标项专家评分配置")
     private EvalRecordSpecialistContext specialist;
 }
+

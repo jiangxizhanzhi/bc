@@ -1,3 +1,13 @@
+package com.cyberpeace.common.model.scene;
+
+import java.io.Serializable;
+
+/**
+ * MQ 上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `MqContext` 的 Java 类，用于表示 MQ（消息队列）上下文信息。以下是代码的主要分析： 
  * 1. **类的功能**： 
@@ -17,16 +27,6 @@
  * - 修改 getter/setter 方法名以匹配字段名，例如 `getUserId()` 和 `setUserId(String userId)`。 
  * 总结：这是一个简单的数据传输对象（DTO），但命名风格不符合常规，建议改进以提高代码可读性和维护性。 
 **/
-package com.cyberpeace.common.model.scene;
-
-import java.io.Serializable;
-
-/**
- * MQ 上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 public class MqContext implements Serializable {
 
 	/**
@@ -121,3 +121,4 @@ public class MqContext implements Serializable {
 		this.LOCALE = LOCALE;
 	}
 }
+

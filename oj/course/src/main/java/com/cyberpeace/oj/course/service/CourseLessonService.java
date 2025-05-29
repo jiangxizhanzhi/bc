@@ -1,3 +1,30 @@
+package com.cyberpeace.oj.course.service;
+
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.oj.course.dao.context.LessonContext;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.service.bo.*;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
+import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
+import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 课程课Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseLessonService` 的接口，该接口扩展了 `IService<CourseLesson>` 接口。这个服务接口主要用于处理与课程课时相关的各种操作。以下是该接口方法的简要分析： 
  * ### 方法概述 
@@ -58,33 +85,6 @@
  * ### 总结 
  * 该接口提供了丰富的功能，包括课时的增删改查、课后练习管理、视频和讲义管理以及数据导出等功能。这些方法覆盖了从课时的基本信息管理到复杂的场景管理和数据处理，是一个全面的课程课时管理服务。 
 **/
-package com.cyberpeace.oj.course.service;
-
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.oj.course.dao.context.LessonContext;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.service.bo.*;
-import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
-import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
-import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
-import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
-
-import java.util.List;
-import java.util.Map;
-
-/**
- * 课程课Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see IService
- * @since 1.0.0
- */
 public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
@@ -466,3 +466,4 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 */
 	void countVideo();
 }
+

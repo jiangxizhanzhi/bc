@@ -1,3 +1,24 @@
+package com.cyberpeace.space.service.context.rule;
+
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.space.dao.entity.SpaceSourceAnalyzeRule;
+import com.cyberpeace.space.model.SpaceBoBase;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * 空间源分析统治Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBoBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceSourceAnalyzeRuleBo` 的 Java 类，它是基于 `SpaceBoBase` 的扩展类。以下是代码的主要分析和总结： 
  * --- 
@@ -35,27 +56,6 @@
  * 该类是一个典型的业务对象（BO）类，主要用于封装“空间源分析规则”的数据结构，并提供简单的对象转换功能。通过继承和工具类的使用，代码实现了简洁且高效的实现方式。但部分字段设计和方法命名仍有优化空间，特别是在复杂场景下需要更严格的类型定义和空值处理逻辑。 
 **/
 
-package com.cyberpeace.space.service.context.rule;
-
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.space.dao.entity.SpaceSourceAnalyzeRule;
-import com.cyberpeace.space.model.SpaceBoBase;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-/**
- * 空间源分析统治Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBoBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceSourceAnalyzeRuleBo extends SpaceBoBase {

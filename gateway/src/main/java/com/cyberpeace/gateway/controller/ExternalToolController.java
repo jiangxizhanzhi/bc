@@ -1,3 +1,10 @@
+package com.cyberpeace.gateway.controller;
+
+import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 /**
  * 这段代码定义了一个名为 `ExternalToolController` 的 Spring MVC 控制器类。以下是对该代码的简要分析： 
  * 1. **包声明**： 
@@ -28,13 +35,6 @@
  * - 它使用了 Swagger 和 Lombok 来简化开发和文档生成。 
  * - 当前这个类没有具体的方法实现，需要进一步添加处理请求的方法来完成具体的业务逻辑。 
 **/
-package com.cyberpeace.gateway.controller;
-
-import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 @Api(tags = "外部接口-工具库相关api")
 @Slf4j
 @RestController
@@ -42,3 +42,4 @@ import org.springframework.web.bind.annotation.RestController;
 public class ExternalToolController {
 
 }
+

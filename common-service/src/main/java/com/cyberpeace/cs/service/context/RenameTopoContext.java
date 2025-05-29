@@ -1,3 +1,17 @@
+package com.cyberpeace.cs.service.context;
+
+import java.io.Serializable;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 重命名拓扑上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `RenameTopoContext` 的 Java 类，用于表示“重命名拓扑上下文”。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -13,20 +27,6 @@
  * - 构造函数提供了一种方便的方式来创建对象并初始化必要的属性。 
  * 总体而言，这是一个轻量级的 POJO（Plain Old Java Object），用于传递数据。 
 **/
-package com.cyberpeace.cs.service.context;
-
-import java.io.Serializable;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 重命名拓扑上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class RenameTopoContext implements Serializable {
@@ -46,3 +46,4 @@ public class RenameTopoContext implements Serializable {
 		this.name = newName;
 	}
 }
+

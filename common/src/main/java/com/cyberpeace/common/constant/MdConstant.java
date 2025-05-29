@@ -1,3 +1,13 @@
+package com.cyberpeace.common.constant;
+
+/**
+ * md 常数
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `MdConstant` 的 Java 接口，用于存储与 Markdown 格式相关的常量。以下是简要分析： 
  * 1. **接口作用**： 
@@ -13,16 +23,6 @@
  * - 这些常量适用于需要生成或解析 Markdown 文本的场景，特别是在处理图片相关的语法时。 
  * 总结：这是一个简单的工具类接口，提供了常用的 Markdown 图片语法常量，有助于代码的可读性和复用性。 
 **/
-package com.cyberpeace.common.constant;
-
-/**
- * md 常数
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface MdConstant {
 
     /**
@@ -47,3 +47,4 @@ public interface MdConstant {
     String ONLY_DESCRIPTION_IMG = "![%s]()";
 
 }
+

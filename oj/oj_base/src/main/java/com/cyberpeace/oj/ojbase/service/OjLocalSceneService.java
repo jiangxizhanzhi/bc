@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.ojbase.service;
+
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
+import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
+
+import java.util.List;
+
+/**
+ * OJ当地场景Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `OjLocalSceneService` 的接口，该接口继承自 `IService<OjLocalScene>`。这个接口包含了多个方法，用于处理与 OJ 当地场景（OjLocalScene）相关的操作。以下是对这些方法的简要分析： 
  * ### 方法概述 
@@ -55,26 +75,6 @@
  * ### 总结 
  * 这个接口主要处理 OJ 当地场景的查询、初始化、删除、启动消息组装、监控信息获取等操作。每个方法都有明确的职责，并且参数和返回值都经过精心设计，以确保清晰和可维护性。 
 **/
-package com.cyberpeace.oj.ojbase.service;
-
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
-import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
-import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
-
-import java.util.List;
-
-/**
- * OJ当地场景Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see IService
- * @since 1.0.0
- */
 public interface OjLocalSceneService extends IService<OjLocalScene> {
 
 	/**
@@ -198,3 +198,4 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	JSONObject switchScreenRecord(String topoId, Boolean record);
 
 }
+

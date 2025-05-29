@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.ojbase.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.oj.ojbase.dao.entity.Comment;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * 评论Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CommentMapper` 的接口，继承自 `BaseMapper<Comment>`。这个接口主要用于数据库中与评论（`Comment`）相关的操作。下面是对代码的简要分析： 
  * ### 接口定义 
@@ -56,26 +76,6 @@
  * - **使用场景**: 适用于需要进行复杂查询和管理评论的应用场景，如在线论坛、问答平台等。 
  * - **优点**: 利用了 MyBatis 和 MyBatis Plus 提供的分页功能，提高了查询效率和用户体验。 
 **/
-package com.cyberpeace.oj.ojbase.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.oj.ojbase.dao.entity.Comment;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
-
-/**
- * 评论Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 public interface CommentMapper extends BaseMapper<Comment> {
 
@@ -174,3 +174,4 @@ public interface CommentMapper extends BaseMapper<Comment> {
 	 */
 	IPage<Comment> selectParent(Page page,@Param("businessType") Integer businessType,@Param("content") String content);
 }
+

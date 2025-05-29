@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.service;
+
+import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
+import com.cyberpeace.cr.evaluation.service.context.IndexContext;
+
+/**
+ * 评估指数Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalIndexService` 的接口，该接口继承自 `IService<EvalIndex>`。这个接口是用于管理评估指数（`EvalIndex`）的业务逻辑。以下是对代码的简要分析： 
  * ### 主要组成部分 
@@ -28,20 +42,6 @@
  * - 这个接口可以方便地与数据层交互，实现对评估指数的增删改查操作。 
  * 这些方法的具体实现需要在具体的实现类中完成。 
 **/
-package com.cyberpeace.cr.evaluation.service;
-
-import java.util.List;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
-import com.cyberpeace.cr.evaluation.service.context.IndexContext;
-
-/**
- * 评估指数Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface EvalIndexService extends IService<EvalIndex> {
 
     /**
@@ -60,3 +60,4 @@ public interface EvalIndexService extends IService<EvalIndex> {
      */
     void deleteBatchByEvalSystemId(String evalSystemId);
 }
+

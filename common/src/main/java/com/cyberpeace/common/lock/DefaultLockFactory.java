@@ -1,3 +1,22 @@
+package com.cyberpeace.common.lock;
+
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+/**
+ * 默认锁工厂
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see LockFactory
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 功能概述 
@@ -37,25 +56,6 @@
  * #### 总结 
  * 该代码实现了一个基本的锁工厂，支持单例模式和简单的锁管理逻辑。但部分功能（如自定义锁类型）尚未实现，需要进一步完善以满足实际需求。 
 **/
-package com.cyberpeace.common.lock;
-
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-/**
- * 默认锁工厂
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see LockFactory
- * @since 1.0.0
- */
 public class DefaultLockFactory implements LockFactory {
     /**
      * 实例
@@ -114,3 +114,4 @@ public class DefaultLockFactory implements LockFactory {
         return null;
     }
 }
+

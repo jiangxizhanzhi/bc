@@ -1,3 +1,18 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import com.cyberpeace.oj.course.dao.context.CourseContext;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课程查询 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see CourseContext
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseQueryBo` 的类，该类是 `com.cyberpeace.oj.course.service.bo` 包的一部分。这个类的主要目的是作为课程查询的数据传输对象（DTO），用于封装与课程查询相关的数据。 
  * ### 类概述 
@@ -14,21 +29,6 @@
  * ### 总结 
  * 这个类是一个典型的 DTO，用于在服务层和控制器层之间传递数据。通过继承 `CourseContext` 类，它可能包含了一些上下文信息或默认行为。属性的设计使得它可以灵活地满足不同场景下的课程查询需求。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import com.cyberpeace.oj.course.dao.context.CourseContext;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课程查询 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see CourseContext
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class CourseQueryBo extends CourseContext {
@@ -69,3 +69,4 @@ public class CourseQueryBo extends CourseContext {
 	private Integer role;
 
 }
+

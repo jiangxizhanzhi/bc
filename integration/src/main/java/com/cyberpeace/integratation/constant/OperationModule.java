@@ -1,3 +1,14 @@
+package com.cyberpeace.integratation.constant;
+
+import com.cyberpeace.constant.BaseI18n;
+import lombok.Getter;
+
+/**
+ * 实操模块
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `OperationModule` 的枚举类，该类实现了 `BaseI18n` 接口。这个枚举类用于表示操作模块的不同类型，并且每个枚举实例都有一个对应的代码、中文名称和英文名称。 
  * ### 主要组成部分： 
@@ -18,17 +29,6 @@
  * - 使用 Lombok 的 `@Getter` 注解简化了属性的访问器方法的生成。 
  * 这个枚举类的设计使得操作模块的管理和国际化变得更加方便和统一。 
 **/
-package com.cyberpeace.integratation.constant;
-
-import com.cyberpeace.constant.BaseI18n;
-import lombok.Getter;
-
-/**
- * 实操模块
- *
- * @author SN
- * @date 2024/11/08
- */
 public enum OperationModule implements BaseI18n {
 	/**
 	 * 操作日志模块
@@ -132,3 +132,4 @@ public enum OperationModule implements BaseI18n {
 		this.english = english;
 	}
 }
+

@@ -1,3 +1,25 @@
+package com.cyberpeace.space.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.model.IdAndName;
+import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.context.rule.SpaceLoadedFileThreatRuleBo;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Map;
+
+/**
+ * 空间加载文件威胁规则
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBaseTable
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 1. **类的基本信息** 
@@ -30,28 +52,6 @@
  * - 提供了对象转换的功能，便于在不同层之间传递数据。 
  * - 使用了Lombok简化代码，提升了可读性和开发效率。 
 **/
-package com.cyberpeace.space.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.model.IdAndName;
-import com.cyberpeace.space.model.SpaceBaseTable;
-import com.cyberpeace.space.service.context.rule.SpaceLoadedFileThreatRuleBo;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Map;
-
-/**
- * 空间加载文件威胁规则
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("space_loaded_file_threat_rule")
@@ -80,3 +80,4 @@ public class SpaceLoadedFileThreatRule extends SpaceBaseTable {
 		return bo;
 	}
 }
+

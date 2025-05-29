@@ -1,3 +1,20 @@
+package com.cyberpeace.oj.course.controller.res;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * Web课程结果
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `WebCourseRes` 的 Java 类，该类实现了 `Serializable` 接口。这个类主要用于表示与 Web 课程相关的数据结构，并且使用了 Lombok 库来自动生成 getter 和 setter 方法。以下是对该类的详细分析： 
  * ### 包声明 
@@ -41,23 +58,6 @@
  * ### 总结 
  * `WebCourseRes` 类是一个数据传输对象（DTO），用于表示 Web 课程的相关信息。它包含多个属性，如课程名称、简介、难度等，并且这些属性都通过 Swagger 注解进行了文档描述。Lombok 注解使得不需要手动编写 getter 和 setter 方法，提高了代码的简洁性和可维护性。此外，该类实现了 `Serializable` 接口，可以在需要时进行序列化操作。 
 **/
-package com.cyberpeace.oj.course.controller.res;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * Web课程结果
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class WebCourseRes implements Serializable {
@@ -167,3 +167,4 @@ public class WebCourseRes implements Serializable {
 	private Integer heat;
 
 }
+

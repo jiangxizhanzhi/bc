@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.crbase.service.context;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 任务模板简要信息
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `AddTemplateMission` 的 Java 类，用于表示任务模板的简要信息。以下是对其的简要分析： 
  * 1. **类的功能**： 
@@ -15,20 +29,6 @@
  * - 符合面向对象编程的原则，通过封装实现数据的管理。 
  * 总结：这是一个轻量级的数据传输对象（DTO），用于在系统中传递任务模板的基本信息，具有良好的可读性和扩展性。 
 **/
-package com.cyberpeace.cr.crbase.service.context;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 任务模板简要信息
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class AddTemplateMission implements Serializable {
@@ -52,3 +52,4 @@ public class AddTemplateMission implements Serializable {
 	private String description;
 
 }
+

@@ -1,3 +1,28 @@
+package com.cyberpeace.space.service.context.frame;
+
+import java.util.Date;
+import java.util.List;
+
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.space.dao.entity.SpaceAction;
+import com.cyberpeace.space.model.IdAndName;
+import com.cyberpeace.space.model.SpaceFrameBoBase;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间行动Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceFrameBoBase
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个名为 `SpaceActionBo` 的类，继承自 `SpaceFrameBoBase`。以下是代码的主要分析和总结： 
  * ### 类的功能 
@@ -27,31 +52,6 @@
  * ### 总结 
  * 该类主要用于封装与空间行动相关的业务数据，并提供从业务对象到实体对象的转换功能。通过 Lombok 和 Stream API 提高了代码的简洁性和可读性。 
 **/
-package com.cyberpeace.space.service.context.frame;
-
-import java.util.Date;
-import java.util.List;
-
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.space.dao.entity.SpaceAction;
-import com.cyberpeace.space.model.IdAndName;
-import com.cyberpeace.space.model.SpaceFrameBoBase;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间行动Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceFrameBoBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceActionBo extends SpaceFrameBoBase {
@@ -113,3 +113,4 @@ public class SpaceActionBo extends SpaceFrameBoBase {
 	}
 
 }
+

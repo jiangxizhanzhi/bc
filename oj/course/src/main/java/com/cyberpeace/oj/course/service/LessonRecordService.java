@@ -1,3 +1,19 @@
+package com.cyberpeace.oj.course.service;
+
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.entity.LessonRecord;
+
+import java.util.Date;
+import java.util.List;
+
+/**
+ * 课记录Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonRecordService` 的接口，用于处理与课程学习记录相关的操作。以下是对该代码的简要分析： 
  * ### 包声明 
@@ -44,22 +60,6 @@
  * - 这些方法使用了 `String`、`Date` 和 `List` 等常见的 Java 数据类型，并依赖于 `CourseLesson` 和 `LessonRecord` 实体类。 
  * - 该接口的设计目的是为了提供一个清晰的 API 来处理与课程学习记录相关的核心业务逻辑。 
 **/
-package com.cyberpeace.oj.course.service;
-
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.dao.entity.LessonRecord;
-
-import java.util.Date;
-import java.util.List;
-
-/**
- * 课记录Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface LessonRecordService {
 
     /**
@@ -91,3 +91,4 @@ public interface LessonRecordService {
     List<String> recordBelongCourse(List<String> recordLesson, List<CourseLesson> lessons);
 
 }
+

@@ -1,3 +1,14 @@
+package com.cyberpeace.common.model.ws;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 聊天内容
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ChatContent` 的 Java 类，用于表示聊天内容。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -15,17 +26,6 @@
  * - 该类依赖于两个内部类或外部类：`ChatToContent` 和 `ChatMineContent`，但代码中未提供这些类的具体实现。 
  * 总结：这是一个简单的数据传输对象（DTO），用于封装聊天信息，并提供了方便的方法来获取特定的聊天属性。 
 **/
-package com.cyberpeace.common.model.ws;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 聊天内容
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class ChatContent {
@@ -71,3 +71,4 @@ public class ChatContent {
 	}
 
 }
+

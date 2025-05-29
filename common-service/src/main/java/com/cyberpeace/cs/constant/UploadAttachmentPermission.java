@@ -1,3 +1,19 @@
+package com.cyberpeace.cs.constant;
+
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.UnauthorizedException;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.util.FileUtil;
+
+import lombok.Getter;
+
+/**
+ * 上传附件权限
+ *
+ * @author chenzhuo@date 2024/11/08
+ */
 /**
  * ### 代码分析 
  * #### 概述 
@@ -25,22 +41,6 @@
  * #### 总结 
  * 该代码提供了一种结构化的权限管理方式，适合用于文件上传场景中对用户权限的控制。通过枚举和方法封装，代码清晰且易于扩展，但需要确保 `FileUtil` 和 Shiro 的配置正确以避免运行时异常。 
 **/
-package com.cyberpeace.cs.constant;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.UnauthorizedException;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.util.FileUtil;
-
-import lombok.Getter;
-
-/**
- * 上传附件权限
- *
- * @author chenzhuo@date 2024/11/08
- */
 public enum UploadAttachmentPermission implements GenericEnum {
 
     /**
@@ -148,3 +148,4 @@ public enum UploadAttachmentPermission implements GenericEnum {
     }
 
 }
+

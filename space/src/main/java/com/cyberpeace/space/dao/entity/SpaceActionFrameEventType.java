@@ -1,3 +1,24 @@
+package com.cyberpeace.space.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.model.IdAndName;
+import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.context.frame.SpaceActionFrameEventTypeBo;
+import lombok.Data;
+
+import java.util.Map;
+
+
+/**
+ * 空间行动框架事件类型
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceBaseTable
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 1. **类的功能** 
@@ -24,27 +45,6 @@
  * - 提供了一个方法将实体对象转换为业务对象，便于在业务层使用。 
  * - 类的设计体现了分层架构的思想，通过工具类实现对象转换，保持了代码的可读性和可维护性。 
 **/
-package com.cyberpeace.space.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.space.model.IdAndName;
-import com.cyberpeace.space.model.SpaceBaseTable;
-import com.cyberpeace.space.service.context.frame.SpaceActionFrameEventTypeBo;
-import lombok.Data;
-
-import java.util.Map;
-
-
-/**
- * 空间行动框架事件类型
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceBaseTable
- * @since 1.0.0
- */
 @Data
 @TableName("space_action_frame_event_type")
 public class SpaceActionFrameEventType extends SpaceBaseTable {

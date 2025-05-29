@@ -1,3 +1,19 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课程管理员 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see CourseWebBo
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseAdminBo` 的类，它是 `CourseWebBo` 类的子类。以下是对其主要特性和功能的简要分析： 
  * ### 包声明和导入 
@@ -18,22 +34,6 @@
  * ### 总结 
  * 这个类主要用于表示后台管理系统中的课程信息，特别是与权限管理和共享操作相关的属性。通过继承 `CourseWebBo` 类，它可以扩展或覆盖其父类的功能。Swagger 注解使得这个类在生成 API 文档时更加清晰易懂。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课程管理员 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see CourseWebBo
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel("后台课程信息")
@@ -78,3 +78,4 @@ public class CourseAdminBo extends CourseWebBo {
     @ApiModelProperty("是否内置")
     private Boolean builtin;
 }
+

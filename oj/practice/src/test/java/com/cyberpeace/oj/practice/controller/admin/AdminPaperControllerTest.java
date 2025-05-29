@@ -1,4 +1,3 @@
-
 package com.cyberpeace.oj.practice.controller.admin;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -32,6 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @WebMvcTest(AdminPaperController.class)
 class AdminPaperControllerTest {
@@ -134,3 +134,4 @@ class AdminPaperControllerTest {
 				.andExpect(status().isOk()).andExpect(content().json("{\"data\":[{\"resourceId\":\"resourceId\",\"blankCount\":0,\"title\":\"title\",\"content\":\"content\",\"categoryId\":\"categoryId\",\"categoryName\":null,\"practiceType\":null,\"questionType\":null,\"option\":null,\"score\":null,\"answer\":null}],\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
 	}
 }
+

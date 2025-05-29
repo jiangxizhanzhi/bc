@@ -1,3 +1,8 @@
+package com.cyberpeace.common.util;
+
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+
 /**
  * 该代码是一个用于建立与 RabbitMQ 消息队列服务连接的工具类 `ConnectionUtil`。以下是代码的简要分析： 
  * 1. **功能概述**： 
@@ -15,11 +20,6 @@
  * - 适用于需要频繁访问 RabbitMQ 的应用场景，封装了连接逻辑以便复用。 
  * 总结：该代码实现了 RabbitMQ 连接的基本功能，但需注意连接管理以避免资源浪费。 
 **/
-package com.cyberpeace.common.util;
-
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-
 public class ConnectionUtil {
 	/**
 	 * 建立与RabbitMQ的连接
@@ -42,3 +42,4 @@ public class ConnectionUtil {
 		return connection;
 	}
 }
+

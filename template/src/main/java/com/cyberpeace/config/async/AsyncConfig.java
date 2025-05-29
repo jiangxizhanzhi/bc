@@ -1,3 +1,25 @@
+package com.cyberpeace.config.async;
+
+import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
+
+import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
+import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.AsyncConfigurer;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+/**
+ * 异步配置
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see AsyncConfigurer
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个Spring配置类 `AsyncConfig`，用于配置异步任务相关的线程池和异常处理逻辑。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -21,28 +43,6 @@
  * - 线程池的配置适合中等规模的任务量，能够有效管理并发任务并避免资源浪费。 
  * - 未捕获异常的处理较为简单，直接记录异常信息，适用于大多数场景。 
 **/
-package com.cyberpeace.config.async;
-
-import java.util.concurrent.Executor;
-import java.util.concurrent.ThreadPoolExecutor;
-
-import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
-import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.AsyncConfigurer;
-import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-
-/**
- * 异步配置
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see AsyncConfigurer
- * @since 1.0.0
- */
 @Configuration
 @EnableAsync
 public class AsyncConfig implements AsyncConfigurer {
@@ -81,3 +81,4 @@ public class AsyncConfig implements AsyncConfigurer {
 		return new SimpleAsyncUncaughtExceptionHandler();
 	}
 }
+

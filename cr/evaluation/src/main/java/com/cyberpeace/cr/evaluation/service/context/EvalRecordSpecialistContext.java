@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.evaluation.service.context;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+
+/**
+ * EVAL 记录专家背景
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalRecordSpecialistContext` 的 Java 类，该类用于表示评估记录中的专家背景信息。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -22,21 +37,6 @@
  * ### 总结 
  * 该类主要用于存储评估记录中与专家背景相关的数据，包括数据类型、数据属性和具体数值。通过使用 Lombok 的注解，减少了手动编写 getter 和 setter 方法的工作量，并且通过 Swagger 注解使得该类在文档生成时能够被正确描述。 
 **/
-package com.cyberpeace.cr.evaluation.service.context;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-
-/**
- * EVAL 记录专家背景
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalRecordSpecialistContext implements Serializable {
@@ -58,3 +58,4 @@ public class EvalRecordSpecialistContext implements Serializable {
     @ApiModelProperty(value = "值")
     private Integer value;
 }
+

@@ -1,3 +1,15 @@
+package com.cyberpeace.common.mdparser.convert;
+
+/**
+ * 课程类型 转换
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Enum
+ * @see MdConvertEnum
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 概述 
@@ -20,18 +32,6 @@
  * #### 总结 
  * 该代码通过枚举类实现了课程类型的规范化管理，提供了清晰的名称和类型映射，便于在系统中进行课程类型的转换操作。 
 **/
-package com.cyberpeace.common.mdparser.convert;
-
-/**
- * 课程类型 转换
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Enum
- * @see MdConvertEnum
- * @since 1.0.0
- */
 public enum LessonTypeConvert implements MdConvertEnum<String, Integer> {
 
     /**
@@ -92,3 +92,4 @@ public enum LessonTypeConvert implements MdConvertEnum<String, Integer> {
         this.type = type;
     }
 }
+

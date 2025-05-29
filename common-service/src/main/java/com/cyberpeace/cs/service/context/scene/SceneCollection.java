@@ -1,3 +1,17 @@
+package com.cyberpeace.cs.service.context.scene;
+
+import java.io.Serializable;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 场景收集
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SceneCollection` 的 Java 类，用于场景收集相关的功能。以下是简要分析： 
  * 1. **类的功能**： 
@@ -13,20 +27,6 @@
  * - 该类的设计目的是提供一个简单的配置类，用于控制不同类型的场景数据收集功能是否开启。 
  * 总结：这是一个简单的、可序列化的配置类，用于管理场景数据收集功能的开关状态。 
 **/
-package com.cyberpeace.cs.service.context.scene;
-
-import java.io.Serializable;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 场景收集
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class SceneCollection implements Serializable {
@@ -41,3 +41,4 @@ public class SceneCollection implements Serializable {
 	 */
 	private Boolean enableProbeCollect;
 }
+

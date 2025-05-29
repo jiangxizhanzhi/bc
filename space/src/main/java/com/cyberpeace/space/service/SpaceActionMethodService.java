@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.space.dao.entity.SpaceActionMethod;
+
+/**
+ * 空间行动方法Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个服务接口 `SpaceActionMethodService`，它是基于 MyBatis-Plus 框架的扩展服务接口 `IService` 的实现。以下是详细分析： 
  * ### **代码结构与功能** 
@@ -17,20 +31,6 @@
  * - **技术栈**：基于 MyBatis-Plus 框架，提供高效的数据库操作支持。 
  * - **可扩展性**：由于继承自 `IService`，可以根据需求进一步扩展自定义业务逻辑。 
 **/
-package com.cyberpeace.space.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.space.dao.entity.SpaceActionMethod;
-
-/**
- * 空间行动方法Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see IService
- * @since 1.0.0
- */
 public interface SpaceActionMethodService extends IService<SpaceActionMethod>
     {
 }

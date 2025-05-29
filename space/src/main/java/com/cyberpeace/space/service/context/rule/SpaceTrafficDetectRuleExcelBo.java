@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.rule;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间流量检测统治胜过Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceTrafficDetectRuleExcelBo` 的 Java 类，用于表示空间流量检测规则的相关信息。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -17,20 +31,6 @@
  * - 使用了现代 Java 特性（如 Lombok 和 Swagger 注解），减少了样板代码，提高了开发效率。 
  * 总结：这是一个简单的 DTO 类，用于封装空间流量检测规则的相关信息，适合在服务层和外部接口之间传递数据。 
 **/
-package com.cyberpeace.space.service.context.rule;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间流量检测统治胜过Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceTrafficDetectRuleExcelBo {
@@ -75,3 +75,4 @@ public class SpaceTrafficDetectRuleExcelBo {
     @ApiModelProperty(value = "工具")
     private String tool;
 }
+

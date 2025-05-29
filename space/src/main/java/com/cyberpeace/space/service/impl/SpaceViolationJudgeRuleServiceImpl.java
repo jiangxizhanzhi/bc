@@ -1,3 +1,27 @@
+package com.cyberpeace.space.service.impl;
+
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.space.constant.SpaceKTypeEnum;
+import com.cyberpeace.space.dao.entity.SpaceViolationJudgeRule;
+import com.cyberpeace.space.dao.mapper.SpaceViolationJudgeRuleMapper;
+import com.cyberpeace.space.service.SpaceViolationJudgeRuleService;
+import com.cyberpeace.space.service.context.index.KnowledgeChart;
+import com.cyberpeace.space.service.context.index.KnowledgeChartItem;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 空间违反法官统治Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see ServiceImpl
+ * @see SpaceViolationJudgeRuleService
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 概述 
@@ -23,30 +47,6 @@
  * 该类的核心功能是提供一个方法来生成一个包含特定知识点信息的知识图谱对象。它结合了 MyBatis-Plus 的基础查询能力和自定义业务逻辑，实现了从数据库中读取数据并将其封装成所需格式的功能。 
 **/
 
-package com.cyberpeace.space.service.impl;
-
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.space.constant.SpaceKTypeEnum;
-import com.cyberpeace.space.dao.entity.SpaceViolationJudgeRule;
-import com.cyberpeace.space.dao.mapper.SpaceViolationJudgeRuleMapper;
-import com.cyberpeace.space.service.SpaceViolationJudgeRuleService;
-import com.cyberpeace.space.service.context.index.KnowledgeChart;
-import com.cyberpeace.space.service.context.index.KnowledgeChartItem;
-
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 空间违反法官统治Service实现
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see ServiceImpl
- * @see SpaceViolationJudgeRuleService
- * @since 1.0.0
- */
 @Service
 @Slf4j
 public class SpaceViolationJudgeRuleServiceImpl extends ServiceImpl<SpaceViolationJudgeRuleMapper, SpaceViolationJudgeRule> implements SpaceViolationJudgeRuleService

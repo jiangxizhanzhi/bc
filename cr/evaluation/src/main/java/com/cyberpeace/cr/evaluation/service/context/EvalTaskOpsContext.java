@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.service.context;
+
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * eval task ops 上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTaskOpsContext` 的 Java 类，位于 `com.cyberpeace.cr.evaluation.service.context` 包中。这个类的主要目的是封装与评估任务操作相关的上下文信息。以下是详细的分析： 
  * ### 类定义 
@@ -18,20 +32,6 @@
  * - 通过使用 Lombok 的 `@Getter` 和 `@Setter` 注解，减少了样板代码，使代码更加简洁。 
  * - 这个类可以被其他组件或服务用来传递和管理评估任务相关的数据。 
 **/
-package com.cyberpeace.cr.evaluation.service.context;
-
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * eval task ops 上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalTaskOpsContext {
@@ -47,3 +47,4 @@ public class EvalTaskOpsContext {
 	private EvalTask evalTask;
 
 }
+

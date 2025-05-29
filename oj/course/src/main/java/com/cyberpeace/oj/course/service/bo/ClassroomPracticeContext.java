@@ -1,3 +1,19 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课堂练习环境
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomPracticeContext` 的 Java 类，用于表示课堂练习环境。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -21,22 +37,6 @@
  * `ClassroomPracticeContext` 类主要用于封装课堂练习环境的相关信息，包括课堂 ID、课 ID、组织 ID、是否提交、是否标记以及用户名等属性。通过 Lombok 注解简化了代码量，并实现了 `Serializable` 接口，使得该对象可以被序列化。 
  * 这个类的设计简洁明了，适用于存储和传输课堂练习相关的上下文信息。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import java.io.Serializable;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课堂练习环境
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class ClassroomPracticeContext implements Serializable {
@@ -84,3 +84,4 @@ public class ClassroomPracticeContext implements Serializable {
     private String username;
 
 }
+

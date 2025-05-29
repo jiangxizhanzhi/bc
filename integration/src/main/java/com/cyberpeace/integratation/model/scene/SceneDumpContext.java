@@ -1,3 +1,16 @@
+package com.cyberpeace.integratation.model.scene;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 场景转 储上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SceneDumpContext` 的 Java 类，该类位于 `com.cyberpeace.integratation.model.scene` 包中。以下是详细的分析： 
  * ### 类定义 
@@ -49,19 +62,6 @@
  * - 类实现了 `Serializable` 接口，使其可以被序列化。 
  * - 类中的属性涵盖了场景的基本信息，包括唯一标识符、路径信息、场景数量以及是否禁用图像导出等。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 场景转 储上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class SceneDumpContext implements Serializable {

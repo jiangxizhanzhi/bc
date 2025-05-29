@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.tool.controller.res;
+
+import com.cyberpeace.cr.tool.dao.entity.ToolFile;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 工具响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolRsp` 的 Java 类，用于表示工具库的信息。该类使用了 Lombok 库来简化 getter 和 setter 方法的生成，并且使用了 Swagger 注解来描述 API 模型。以下是对该类的简要分析： 
  * ### 主要特性 
@@ -43,23 +60,6 @@
  * ### 总结 
  * `ToolRsp` 类是一个用于表示工具库信息的数据传输对象（DTO）。它包含了工具的基本信息、附加属性以及一些状态信息。通过 Swagger 注解，可以方便地生成 API 文档，便于开发者理解和使用。此外，通过 Lombok 注解，简化了代码编写，减少了重复工作。 
 **/
-package com.cyberpeace.cr.tool.controller.res;
-
-import com.cyberpeace.cr.tool.dao.entity.ToolFile;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 工具响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @ApiModel("工具库信息")
 @Getter
 @Setter
@@ -238,3 +238,4 @@ public class ToolRsp implements Serializable {
 	@ApiModelProperty("是否内置")
 	private Boolean builtin;
 }
+

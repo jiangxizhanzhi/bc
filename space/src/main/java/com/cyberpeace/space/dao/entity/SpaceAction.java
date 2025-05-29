@@ -1,3 +1,28 @@
+package com.cyberpeace.space.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.space.model.IdAndName;
+import com.cyberpeace.space.model.SpaceFrameBaseTable;
+import com.cyberpeace.space.service.context.frame.SpaceActionBo;
+import com.cyberpeace.space.service.context.frame.SpaceActionOfflineTool;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 空间作
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceFrameBaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceAction` 的实体类，用于表示与数据库表 `space_action` 对应的数据模型。以下是代码的主要分析和总结： 
  * --- 
@@ -45,31 +70,6 @@
  * - 需要注意的是，`analyze` 字段使用反引号包裹，避免与 SQL 关键字冲突。 
  * 如果需要进一步优化或扩展功能，可以根据具体需求调整字段、方法或关联类的设计。 
 **/
-package com.cyberpeace.space.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.space.model.IdAndName;
-import com.cyberpeace.space.model.SpaceFrameBaseTable;
-import com.cyberpeace.space.service.context.frame.SpaceActionBo;
-import com.cyberpeace.space.service.context.frame.SpaceActionOfflineTool;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-import java.util.Map;
-
-/**
- * 空间作
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceFrameBaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("space_action")

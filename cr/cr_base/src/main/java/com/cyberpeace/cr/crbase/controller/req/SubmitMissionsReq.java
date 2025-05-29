@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.crbase.controller.req;
+
+import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 提交任务请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SubmitMissionsReq` 的 Java 类，用于表示提交任务请求的请求体。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -22,21 +37,6 @@
  * - 结合 Swagger 注解，便于生成 API 文档。 
  * 总结：这是一个简洁且功能明确的请求体类，适合用于接收提交任务的请求数据。 
 **/
-package com.cyberpeace.cr.crbase.controller.req;
-
-import javax.validation.constraints.NotNull;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 提交任务请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class SubmitMissionsReq {
@@ -68,3 +68,4 @@ public class SubmitMissionsReq {
 	private String remark;
 
 }
+

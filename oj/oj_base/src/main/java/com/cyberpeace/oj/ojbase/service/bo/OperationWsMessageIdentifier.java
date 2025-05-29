@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.ojbase.service.bo;
+
+import com.cyberpeace.common.model.ws.WsMessageIdentifier;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+/**
+ * 实操WS消息标识符
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see WsMessageIdentifier
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `OperationWsMessageIdentifier` 的类，该类继承自 `WsMessageIdentifier`。以下是对这段代码的简要分析： 
  * ### 类定义 
@@ -20,24 +38,6 @@
  * ### 总结 
  * 这个类主要用于封装与操作相关的 WebSocket 消息标识符信息。通过 Lombok 注解简化了代码，减少了样板代码的编写。 
 **/
-package com.cyberpeace.oj.ojbase.service.bo;
-
-import com.cyberpeace.common.model.ws.WsMessageIdentifier;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-
-/**
- * 实操WS消息标识符
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see WsMessageIdentifier
- * @since 1.0.0
- */
 @Getter
 @Setter
 @AllArgsConstructor
@@ -67,3 +67,4 @@ public class OperationWsMessageIdentifier extends WsMessageIdentifier {
 	private Integer shared;
 
 }
+

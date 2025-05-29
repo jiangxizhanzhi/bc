@@ -1,3 +1,31 @@
+package com.cyberpeace.space.controller;
+
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.space.service.SpaceTacticDefenseService;
+import com.cyberpeace.space.service.context.IdListReq;
+import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
+import com.cyberpeace.space.service.context.tactic.*;
+import com.google.common.collect.Lists;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 /**
  * 这段代码是一个基于Spring Boot的单元测试类 `SpaceTacticDefenseControllerTest`，用于测试 `SpaceTacticDefenseController` 控制器的功能。以下是对代码的简要分析： 
  * ### 主要功能 
@@ -27,34 +55,6 @@
  * ### 总结 
  * 这段代码展示了如何使用 Spring Boot 的测试工具（如 `MockMvc` 和 `MockBean`）来全面测试一个 RESTful API 控制器的功能。每个测试方法都模拟了不同的业务场景，并验证了控制器的响应是否符合预期。 
 **/
-package com.cyberpeace.space.controller;
-
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.space.service.SpaceTacticDefenseService;
-import com.cyberpeace.space.service.context.IdListReq;
-import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
-import com.cyberpeace.space.service.context.tactic.*;
-import com.google.common.collect.Lists;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @WebMvcTest(SpaceTacticDefenseController.class)
 class SpaceTacticDefenseControllerTest {
 
@@ -316,3 +316,4 @@ class SpaceTacticDefenseControllerTest {
                 .andExpect(content().json("{\"data\":[],\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 }
+

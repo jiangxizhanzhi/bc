@@ -1,3 +1,16 @@
+package com.cyberpeace.cr.tool.service;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.cr.tool.dao.entity.ToolShellCode;
+import com.cyberpeace.cr.tool.controller.res.ToolShellCodeRsp;
+
+/**
+ * 工具壳代号Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolShellCodeService` 的接口，该接口继承自 `IService<ToolShellCode>`。这个接口主要包含一个方法 `selectPage` 用于查询分页数据。下面是对这段代码的详细分析： 
  * ### 包声明 
@@ -45,19 +58,6 @@
  * ### 总结 
  * `ToolShellCodeService` 接口定义了一个用于查询工具壳代码分页数据的方法 `selectPage`。通过该接口，可以实现对工具壳代码的分页查询操作。此外，由于继承了 `IService<ToolShellCode>`，还可以使用 MyBatis-Plus 提供的其他基本 CRUD 操作。 
 **/
-package com.cyberpeace.cr.tool.service;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.cr.tool.dao.entity.ToolShellCode;
-import com.cyberpeace.cr.tool.controller.res.ToolShellCodeRsp;
-
-/**
- * 工具壳代号Service
- *
- * @author SN
- * @date 2024/11/08
- */
 public interface ToolShellCodeService extends IService<ToolShellCode> {
 
 	/**
@@ -70,3 +70,4 @@ public interface ToolShellCodeService extends IService<ToolShellCode> {
 	ListRsp<ToolShellCode> selectPage(PageReqBase pageReqBase,
 			ToolShellCodeRsp toolShellCodeRsp);
 }
+

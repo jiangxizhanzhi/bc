@@ -1,3 +1,36 @@
+package com.cyberpeace.space.controller;
+
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.space.dao.entity.SpaceActionFrame;
+import com.cyberpeace.space.model.IdAndName;
+import com.cyberpeace.space.model.controller.SpaceActionFrameBaseController;
+import com.cyberpeace.space.service.SpaceActionFrameEventTypeService;
+import com.cyberpeace.space.service.SpaceActionFrameService;
+import com.cyberpeace.space.service.SpaceActionFrameTargetTypeService;
+import com.cyberpeace.space.service.context.frame.ActionFrameArrangeBo;
+import com.cyberpeace.space.service.context.frame.SpaceActionFrameBo;
+import com.cyberpeace.space.service.context.frame.SpaceActionFramePageReq;
+import com.cyberpeace.space.service.context.frame.SpaceActionFrameRecBo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * 空间动作帧控制器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/05
+ * @see SpaceActionFrameBaseController
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 1. **功能概述** 
@@ -68,39 +101,6 @@
  * #### 7. **总结** 
  * 该代码实现了与“空间动作帧”相关的多种业务逻辑，功能全面且结构清晰。通过继承和依赖注入，减少了冗余代码，提高了可维护性。同时，借助 Swagger 注解增强了接口的可读性和易用性。 
 **/
-package com.cyberpeace.space.controller;
-
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.space.dao.entity.SpaceActionFrame;
-import com.cyberpeace.space.model.IdAndName;
-import com.cyberpeace.space.model.controller.SpaceActionFrameBaseController;
-import com.cyberpeace.space.service.SpaceActionFrameEventTypeService;
-import com.cyberpeace.space.service.SpaceActionFrameService;
-import com.cyberpeace.space.service.SpaceActionFrameTargetTypeService;
-import com.cyberpeace.space.service.context.frame.ActionFrameArrangeBo;
-import com.cyberpeace.space.service.context.frame.SpaceActionFrameBo;
-import com.cyberpeace.space.service.context.frame.SpaceActionFramePageReq;
-import com.cyberpeace.space.service.context.frame.SpaceActionFrameRecBo;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-/**
- * 空间动作帧控制器
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/05
- * @see SpaceActionFrameBaseController
- * @since 1.0.0
- */
 @Api(tags = "防御行动框架-行动框架管理")
 @RestController
 @RequestMapping("/space/action_frame/action_frame")
@@ -216,3 +216,4 @@ public class SpaceActionFrameController extends SpaceActionFrameBaseController<S
     }
 
 }
+

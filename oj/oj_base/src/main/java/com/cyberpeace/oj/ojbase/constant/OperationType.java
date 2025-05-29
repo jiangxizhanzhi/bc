@@ -1,3 +1,9 @@
+package com.cyberpeace.oj.ojbase.constant;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+
+import lombok.Getter;
+
 /**
  * 这段代码定义了一个名为 `OperationType` 的枚举类，它实现了 `GenericEnum` 接口。这个枚举类用于表示不同类型的操作，例如攻击、防御和其他类型的操作。 
  * ### 主要特性： 
@@ -21,12 +27,6 @@
  * - 在游戏开发中，可以用来表示不同的游戏事件或动作类型。 
  * 总的来说，这是一个简洁而有效的枚举类设计，适用于需要明确区分几种固定类型的操作的场景。 
 **/
-package com.cyberpeace.oj.ojbase.constant;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-
-import lombok.Getter;
-
 public enum OperationType implements GenericEnum {
 
     /**
@@ -69,3 +69,4 @@ public enum OperationType implements GenericEnum {
         this.desc = desc;
     }
 }
+

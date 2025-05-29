@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.space.dao.entity.SpaceAlgorithmTeam;
+
+/**
+ * 空间算法团队Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个服务接口 `SpaceAlgorithmTeamService`，它继承自 MyBatis-Plus 提供的通用服务接口 `IService`。以下是简要分析： 
  * 1. **包名与命名空间**： 
@@ -13,20 +27,6 @@
  * 该代码是一个基于 MyBatis-Plus 的服务接口，用于管理 `SpaceAlgorithmTeam` 实体对象，具备通用的 CRUD 功能。 
 **/
 
-package com.cyberpeace.space.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.space.dao.entity.SpaceAlgorithmTeam;
-
-/**
- * 空间算法团队Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see IService
- * @since 1.0.0
- */
 public interface SpaceAlgorithmTeamService extends IService<SpaceAlgorithmTeam>{
 }
     

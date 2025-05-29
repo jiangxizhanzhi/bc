@@ -1,3 +1,25 @@
+package com.cyberpeace.oj.course.dao.mapper;
+
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.oj.course.service.bo.PersonalStatsDetail4CourseBo;
+import com.cyberpeace.oj.course.service.bo.UserStatsBo;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.Date;
+import java.util.List;
+
+/**
+ * 学习统计Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LearnStatsMapper` 的接口，它继承自 MyBatis-Plus 的 `Mapper` 接口。这个接口主要用于处理与学习统计数据相关的数据库操作。以下是对该代码的简要分析： 
  * ### 主要功能 
@@ -22,28 +44,6 @@
  * ### 总结 
  * `LearnStatsMapper` 是一个用于处理学习统计数据的接口，提供了多种查询和统计的方法，涵盖了用户、课程、报告和实践等多个方面的统计数据。这些方法通过 MyBatis 框架与数据库进行交互，实现了对学习数据的高效管理和查询。 
 **/
-package com.cyberpeace.oj.course.dao.mapper;
-
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.oj.course.service.bo.PersonalStatsDetail4CourseBo;
-import com.cyberpeace.oj.course.service.bo.UserStatsBo;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-import java.util.Date;
-import java.util.List;
-
-/**
- * 学习统计Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 @Mapper
 @Repository
 public interface LearnStatsMapper {
@@ -196,3 +196,4 @@ public interface LearnStatsMapper {
      */
     List<JSONObject> lessonIntegral(@Param("user_ids") List<String> users, @Param("start_time") Date startTime, @Param("end_time") Date endTime);
 }
+

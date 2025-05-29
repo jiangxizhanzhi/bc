@@ -1,3 +1,16 @@
+package com.cyberpeace.common.component;
+
+import java.util.Map;
+
+/**
+ * 自定义ws连接校验器。
+ * 红蓝对抗等业务模式中，需要根据用户的角色、判断是否允许用户建立连接。
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个抽象类 `SelfDefinedWsChecker`，用于自定义 WebSocket 连接的校验逻辑。以下是简要分析： 
  * ### 功能描述： 
@@ -14,19 +27,6 @@
  * ### 总结： 
  * 该代码提供了一个基础框架，用于实现复杂的 WebSocket 权限校验逻辑。通过继承此抽象类并实现 `doSelfDefinedCheck` 方法，开发者可以灵活地定制校验规则，适用于多样的业务需求。 
 **/
-package com.cyberpeace.common.component;
-
-import java.util.Map;
-
-/**
- * 自定义ws连接校验器。
- * 红蓝对抗等业务模式中，需要根据用户的角色、判断是否允许用户建立连接。
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public abstract class SelfDefinedWsChecker {
 
 	/**
@@ -40,3 +40,4 @@ public abstract class SelfDefinedWsChecker {
 	public abstract boolean doSelfDefinedCheck(Map<String, String> requestParams, String wsPath,
 			String userId);
 }
+

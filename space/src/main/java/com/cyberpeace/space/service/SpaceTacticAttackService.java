@@ -1,3 +1,23 @@
+package com.cyberpeace.space.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
+import com.cyberpeace.space.service.context.index.KnowledgeChart;
+import com.cyberpeace.space.service.context.tactic.*;
+
+import java.util.List;
+
+/**
+ * 空间战法攻击Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceTacticAttackService` 的接口，它继承自 `IService<SpaceTacticAttack>`。这个接口主要用于处理与空间战法攻击相关的业务逻辑。以下是对代码的主要分析： 
  * 1. **继承关系**： 
@@ -21,26 +41,6 @@
  * - 还引用了一些自定义的响应类如 `ListRsp`, `PageReqBase` 等，用于封装返回结果。 
  * 总体来说，这个接口提供了一套完整的API来管理空间战法攻击及其相关类别，并且通过良好的注释使得接口易于理解和扩展。 
 **/
-package com.cyberpeace.space.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
-import com.cyberpeace.space.service.context.index.KnowledgeChart;
-import com.cyberpeace.space.service.context.tactic.*;
-
-import java.util.List;
-
-/**
- * 空间战法攻击Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see IService
- * @since 1.0.0
- */
 public interface SpaceTacticAttackService extends IService<SpaceTacticAttack> {
     /**
      * 分页攻击
@@ -149,3 +149,4 @@ public interface SpaceTacticAttackService extends IService<SpaceTacticAttack> {
      */
     List<String> listByCategoryids(List<String> ids);
 }
+

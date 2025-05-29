@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.crbase.controller.rsp;
+
+import com.cyberpeace.cr.crbase.service.context.UserData;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * 靶场通知响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `CrNoticeRsp` 的 Java 类，用于表示靶场通知的响应数据模型。以下是对其的简要分析： 
  * ### 主要功能 
@@ -22,23 +39,6 @@
  * ### 总结 
  * `CrNoticeRsp` 是一个简洁且功能明确的数据传输类，适合用于靶场系统中通知模块的响应数据封装。通过 Lombok 和 Swagger 注解提升了开发效率和文档友好性。 
 **/
-package com.cyberpeace.cr.crbase.controller.rsp;
-
-import com.cyberpeace.cr.crbase.service.context.UserData;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Date;
-
-/**
- * 靶场通知响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class CrNoticeRsp implements Serializable {
@@ -82,3 +82,4 @@ public class CrNoticeRsp implements Serializable {
      */
     private String resourceId;
 }
+

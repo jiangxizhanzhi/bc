@@ -1,3 +1,11 @@
+package com.cyberpeace.common.util;
+
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.user.UserInfo;
+
+/**
+ * 权限获取
+ */
 /**
  * 这段代码定义了一个工具类 `AuthContextUtils`，用于根据用户信息和上下文参数构造 `AuthContext` 对象。以下是代码的主要分析： 
  * 1. **类与方法功能**： 
@@ -19,14 +27,6 @@
  * - 将用户信息和上下文参数抽象为统一的 `AuthContext` 对象，便于后续权限验证或操作。 
  * 总结：该工具类简化了权限上下文的构建过程，提高了代码复用性和可维护性。 
 **/
-package com.cyberpeace.common.util;
-
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.user.UserInfo;
-
-/**
- * 权限获取
- */
 public class AuthContextUtils {
 
 	/**
@@ -47,3 +47,4 @@ public class AuthContextUtils {
 	}
 
 }
+

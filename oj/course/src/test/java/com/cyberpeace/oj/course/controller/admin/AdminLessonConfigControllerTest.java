@@ -1,4 +1,3 @@
-
 package com.cyberpeace.oj.course.controller.admin;
 
 import com.cyberpeace.common.model.AuthContext;
@@ -24,6 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @WebMvcTest(AdminLessonConfigController.class)
 class AdminLessonConfigControllerTest {
@@ -112,3 +112,4 @@ class AdminLessonConfigControllerTest {
 				.andExpect(status().isOk()).andExpect(content().json("{\"data\":{\"courseId\":\"courseId1\",\"index\":0,\"compulsory\":0,\"lessonId\":null,\"type\":null,\"name\":null,\"nodeType\":null,\"parentId\":null,\"resourceId\":null,\"chapterName\":null,\"children\":[{\"courseId\":\"courseId1\",\"index\":0,\"compulsory\":0,\"lessonId\":\"lessonId1\",\"type\":null,\"name\":null,\"nodeType\":null,\"parentId\":null,\"resourceId\":null,\"chapterName\":null,\"children\":null,\"typeIndex\":null,\"learn\":false},{\"courseId\":\"courseId1\",\"index\":0,\"compulsory\":0,\"lessonId\":\"lessonId2\",\"type\":null,\"name\":null,\"nodeType\":null,\"parentId\":null,\"resourceId\":null,\"chapterName\":null,\"children\":null,\"typeIndex\":null,\"learn\":false}],\"typeIndex\":null,\"learn\":false},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
 	}
 }
+

@@ -1,3 +1,22 @@
+package com.cyberpeace.cr.tool.controller.req;
+
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 工具新增请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolAddReq` 的 Java 类，用于表示向系统中添加新工具时的请求体。以下是对该代码的简要分析： 
  * ### 包声明和导入 
@@ -34,25 +53,6 @@
  * - 该类通过 Lombok 注解简化了代码，减少了样板代码。 
  * - 使用 Swagger 注解便于生成 API 文档。 
 **/
-package com.cyberpeace.cr.tool.controller.req;
-
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.validator.constraints.Length;
-
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 工具新增请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @ApiModel
@@ -149,3 +149,4 @@ public class ToolAddReq implements Serializable {
 
 	private Boolean visible = true;
 }
+

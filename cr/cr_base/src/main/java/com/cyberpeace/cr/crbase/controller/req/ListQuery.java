@@ -1,3 +1,25 @@
+package com.cyberpeace.cr.crbase.controller.req;
+
+import java.util.List;
+
+import com.cyberpeace.common.model.PageReqBase;
+
+import com.cyberpeace.common.util.LocalStringUtil;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
+/**
+ * 列表查询
+ *
+ * @author SN
+ * @date 2024/11/08
+ *//*
+ * 前台使用的查询类
+ */
 /**
  * 该代码定义了一个名为 `ListQuery` 的 Java 类，用于处理列表查询请求。以下是对其功能和结构的简要分析： 
  * ### 主要功能： 
@@ -23,28 +45,6 @@
  * - 该类是一个典型的业务查询请求类，结合了分页功能和多条件查询。 
  * - 具有良好的可读性和扩展性，适合用于前后端交互场景中。 
 **/
-package com.cyberpeace.cr.crbase.controller.req;
-
-import java.util.List;
-
-import com.cyberpeace.common.model.PageReqBase;
-
-import com.cyberpeace.common.util.LocalStringUtil;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
-
-/**
- * 列表查询
- *
- * @author SN
- * @date 2024/11/08
- *//*
- * 前台使用的查询类
- */
 @ApiModel
 @Getter
 @Setter

@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.crbase.service.context;
+
+import java.io.Serializable;
+import java.util.List;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 任务编排中间模型
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个泛型类 `ColorMission<T>`，用于表示任务编排的中间模型。以下是代码的主要分析和总结： 
  * ### 分析： 
@@ -17,21 +32,6 @@
  * - 它包含颜色、任务编排方案和模板三个主要字段，并支持序列化。 
  * - 使用了 Lombok 和 Swagger 注解，简化了代码开发和文档生成的工作。 
 **/
-package com.cyberpeace.cr.crbase.service.context;
-
-import java.io.Serializable;
-import java.util.List;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 任务编排中间模型
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class ColorMission<T> implements Serializable {
@@ -55,3 +55,4 @@ public class ColorMission<T> implements Serializable {
 	private Integer template;
 
 }
+

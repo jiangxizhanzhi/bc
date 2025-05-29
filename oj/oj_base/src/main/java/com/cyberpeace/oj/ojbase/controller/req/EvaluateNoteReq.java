@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+
+/**
+ * 评估注意请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `EvaluateNoteReq` 的 Java 类，用于表示评估笔记请求体。以下是对其主要特性和功能的简要分析： 
  * ### 类定义与继承 
@@ -20,26 +40,6 @@
  * ### 总结 
  * 该类是一个典型的请求体类，用于封装前端传来的评估请求数据。通过 Lombok 注解简化了代码，使得类更加简洁且易于维护。Swagger 注解则帮助文档生成工具更好地理解并展示这个类的结构和用途。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-
-/**
- * 评估注意请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -82,3 +82,4 @@ public class EvaluateNoteReq implements Serializable {
 	private Double score;
 
 }
+

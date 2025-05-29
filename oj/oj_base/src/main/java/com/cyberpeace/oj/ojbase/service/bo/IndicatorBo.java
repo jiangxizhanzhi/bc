@@ -1,3 +1,11 @@
+package com.cyberpeace.oj.ojbase.service.bo;
+
+import com.google.common.collect.Lists;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
 /**
  * 这段代码定义了一个名为 `IndicatorBo` 的 Java 类，该类位于包 `com.cyberpeace.oj.ojbase.service.bo` 中。下面是对其主要特性和功能的简要分析： 
  * 1. **包声明**： 
@@ -13,14 +21,6 @@
  * - `IndicatorBo` 类的设计使得它可以用于表示一个具有层次结构的数据模型，其中每个 `IndicatorBo` 实例可以包含多个子实例，形成树形结构。 
  * 总结来说，这段代码定义了一个简单的、带有嵌套关系的指标对象模型。通过使用 Lombok 的注解，减少了手动编写 getter 和 setter 方法的工作量，并且通过定义 `children` 字段，支持了指标之间的父子关系，适合用于实现具有层级结构的数据处理场景。 
 **/
-package com.cyberpeace.oj.ojbase.service.bo;
-
-import com.google.common.collect.Lists;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
 @Setter
 @Getter
 public class IndicatorBo {
@@ -32,3 +32,4 @@ public class IndicatorBo {
 	private List<IndicatorBo> children = Lists.newArrayList();
 
 }
+

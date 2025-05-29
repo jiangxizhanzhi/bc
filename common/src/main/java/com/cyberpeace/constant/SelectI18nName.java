@@ -1,3 +1,12 @@
+package com.cyberpeace.constant;
+
+import com.cyberpeace.common.model.CommonContext;
+
+/**
+ * 适用于数据库中保存中英文名称(cnName, enName)再根据上下文取国际化名称的情形
+ *
+ * @author shazhichuan
+ */
 /**
  * 该代码定义了一个 Java 接口 `SelectI18nName`，用于处理基于上下文（`CommonContext`）获取国际化名称的功能。以下是简要分析： 
  * 1. **功能描述**： 
@@ -11,15 +20,6 @@
  * - 适合需要多语言支持且数据存储为中英文的场景，通过上下文动态切换语言。 
  * 总结：这是一个简洁的接口设计，利用默认方法简化了多语言名称的选择逻辑，提高了代码复用性和可维护性。 
 **/
-package com.cyberpeace.constant;
-
-import com.cyberpeace.common.model.CommonContext;
-
-/**
- * 适用于数据库中保存中英文名称(cnName, enName)再根据上下文取国际化名称的情形
- *
- * @author shazhichuan
- */
 public interface SelectI18nName {
 	/**
 	 * 返回中文名称
@@ -44,3 +44,4 @@ public interface SelectI18nName {
 		return CommonContext.isChinese() ? getCnName() : getEnName();
 	}
 }
+

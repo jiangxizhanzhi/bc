@@ -1,3 +1,16 @@
+package com.cyberpeace.integratation.model.scene;
+
+import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 场景元数据
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SceneMetaData` 的 Java 类，该类实现了 `Serializable` 接口。这个类用于表示场景的元数据，并且使用了 Lombok 库来自动生成 getter 和 setter 方法。 
  * ### 主要特点： 
@@ -14,19 +27,6 @@
  * - 使用 Lombok 可以减少样板代码，提高开发效率。 
  * - 实现 `Serializable` 接口意味着该类的对象可以被序列化，便于在网络上传输或保存到文件中。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import java.io.Serializable;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 场景元数据
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class SceneMetaData implements Serializable {
@@ -42,3 +42,4 @@ public class SceneMetaData implements Serializable {
 	private String sceneName;
 
 }
+

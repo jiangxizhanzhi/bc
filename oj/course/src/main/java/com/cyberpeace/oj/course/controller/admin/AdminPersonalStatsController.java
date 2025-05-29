@@ -1,37 +1,3 @@
-/**
- * 这段代码定义了一个名为 `AdminPersonalStatsController` 的 Spring Boot 控制器类，用于处理与学习统计相关的管理操作。以下是对该代码的简要分析： 
- * ### 类概述 
- * - **包名**: `com.cyberpeace.oj.course.controller.admin` 
- * - **类名**: `AdminPersonalStatsController` 
- * - **功能**: 提供后台管理接口，用于获取和导出个人及组织的学习统计信息。 
- * ### 主要组件 
- * 1. **依赖注入** 
- * - `LearnStatsService`: 通过 `@Autowired` 注入，用于处理具体的统计逻辑。 
- * 2. **API 文档注解** 
- * - 使用了 Swagger 注解 (`@Api`, `@ApiOperation`) 来生成 API 文档。 
- * 3. **权限控制** 
- * - 使用了 Apache Shiro 的注解 (`@RequiresAuthentication`, `@RequiresPermissions`) 来控制访问权限。 
- * ### 方法列表 
- * 1. **个人统计数据** 
- * - `personalStats`: 根据请求参数获取个人统计数据。 
- * - `personalStatsRank`: 获取个人学习排名。 
- * - `personalStatsDetail4Count`: 获取个人课程学习数量统计。 
- * - `personalStatsDetail4Course`: 获取个人课程学习统计详情。 
- * 2. **组织统计数据** 
- * - `classIntegralTopTen`: 获取组织积分排名前十。 
- * - `personalIntegralTopTen`: 获取个人积分排名前十。 
- * - `orgStatsRank`: 获取组织学习排名。 
- * - `orgStatsData`: 获取组织统计数据。 
- * - `orgStatsDataExport`: 导出组织统计数据到 Excel 文件。 
- * 3. **用户统计数据导出** 
- * - `userStatsDataExport`: 导出用户统计数据到 Excel 文件。 
- * ### 主要特点 
- * - **分页支持**: 多个方法使用了分页参数 (`PageReqBase`) 进行数据分页处理。 
- * - **Excel 导出**: 提供了将统计数据导出为 Excel 文件的功能。 
- * - **权限控制**: 所有方法都要求用户具有特定权限（如 `MenuConstant.CMS_COURSE_STATISTICS`）才能访问。 
- * ### 总结 
- * 这个控制器类提供了一系列关于学习统计的管理接口，包括个人和组织的数据查询和导出功能。通过依赖注入、权限控制和 Swagger 文档注解，确保了接口的安全性和易用性。 
-**/
 package com.cyberpeace.oj.course.controller.admin;
 
 import com.cyberpeace.common.component.ExcelDataHandler;
@@ -76,6 +42,40 @@ import java.util.List;
  * @date 2024/11/08
  * @since 1.0.0
  */
+/**
+ * 这段代码定义了一个名为 `AdminPersonalStatsController` 的 Spring Boot 控制器类，用于处理与学习统计相关的管理操作。以下是对该代码的简要分析： 
+ * ### 类概述 
+ * - **包名**: `com.cyberpeace.oj.course.controller.admin` 
+ * - **类名**: `AdminPersonalStatsController` 
+ * - **功能**: 提供后台管理接口，用于获取和导出个人及组织的学习统计信息。 
+ * ### 主要组件 
+ * 1. **依赖注入** 
+ * - `LearnStatsService`: 通过 `@Autowired` 注入，用于处理具体的统计逻辑。 
+ * 2. **API 文档注解** 
+ * - 使用了 Swagger 注解 (`@Api`, `@ApiOperation`) 来生成 API 文档。 
+ * 3. **权限控制** 
+ * - 使用了 Apache Shiro 的注解 (`@RequiresAuthentication`, `@RequiresPermissions`) 来控制访问权限。 
+ * ### 方法列表 
+ * 1. **个人统计数据** 
+ * - `personalStats`: 根据请求参数获取个人统计数据。 
+ * - `personalStatsRank`: 获取个人学习排名。 
+ * - `personalStatsDetail4Count`: 获取个人课程学习数量统计。 
+ * - `personalStatsDetail4Course`: 获取个人课程学习统计详情。 
+ * 2. **组织统计数据** 
+ * - `classIntegralTopTen`: 获取组织积分排名前十。 
+ * - `personalIntegralTopTen`: 获取个人积分排名前十。 
+ * - `orgStatsRank`: 获取组织学习排名。 
+ * - `orgStatsData`: 获取组织统计数据。 
+ * - `orgStatsDataExport`: 导出组织统计数据到 Excel 文件。 
+ * 3. **用户统计数据导出** 
+ * - `userStatsDataExport`: 导出用户统计数据到 Excel 文件。 
+ * ### 主要特点 
+ * - **分页支持**: 多个方法使用了分页参数 (`PageReqBase`) 进行数据分页处理。 
+ * - **Excel 导出**: 提供了将统计数据导出为 Excel 文件的功能。 
+ * - **权限控制**: 所有方法都要求用户具有特定权限（如 `MenuConstant.CMS_COURSE_STATISTICS`）才能访问。 
+ * ### 总结 
+ * 这个控制器类提供了一系列关于学习统计的管理接口，包括个人和组织的数据查询和导出功能。通过依赖注入、权限控制和 Swagger 文档注解，确保了接口的安全性和易用性。 
+**/
 @Api(tags = "后台-学习统计-个人统计")
 @RestController
 @RequiresAuthentication
@@ -274,3 +274,4 @@ public class AdminPersonalStatsController {
 
 
 }
+

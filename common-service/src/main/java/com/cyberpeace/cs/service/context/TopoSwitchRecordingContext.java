@@ -1,3 +1,17 @@
+package com.cyberpeace.cs.service.context;
+
+import java.io.Serializable;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 用于设置中台拓扑的录屏选项
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `TopoSwitchRecordingContext` 的 Java 类，主要用于设置中台拓扑的录屏选项。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -14,20 +28,6 @@
  * - 该类可以作为参数在服务层或控制器层传递，用于配置录屏功能。 
  * 总结：这是一个简单的数据传输对象（DTO），用于封装录屏选项的上下文信息，并支持序列化。 
 **/
-package com.cyberpeace.cs.service.context;
-
-import java.io.Serializable;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 用于设置中台拓扑的录屏选项
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class TopoSwitchRecordingContext implements Serializable {
@@ -48,3 +48,4 @@ public class TopoSwitchRecordingContext implements Serializable {
 	}
 
 }
+

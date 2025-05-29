@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.course.dao.entity.ClassroomGroupArchive;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * 课堂群档案Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ClassroomGroupArchiveMapper` 的接口，它继承自 `BaseMapper<ClassroomGroupArchive>`。这个接口使用了 MyBatis-Plus 框架来简化数据库操作，并且被标注为一个 MyBatis 的 `@Mapper`。 
  * ### 主要组成部分： 
@@ -55,24 +73,6 @@
  * - 接口中有两个自定义的方法，分别用于根据教室ID和名称查询单个记录以及根据教室ID查询多个记录。 
  * - 使用 `@Param` 注解来指定方法参数的名称，以便在 MyBatis 的 XML 配置文件或注解中引用这些参数。 
 **/
-package com.cyberpeace.oj.course.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.course.dao.entity.ClassroomGroupArchive;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
-
-/**
- * 课堂群档案Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 public interface ClassroomGroupArchiveMapper extends BaseMapper<ClassroomGroupArchive> {
 
@@ -101,3 +101,4 @@ public interface ClassroomGroupArchiveMapper extends BaseMapper<ClassroomGroupAr
 	 */
 	List<ClassroomGroupArchive> selectByRoom(@Param("roomId") String classroomId);
 }
+

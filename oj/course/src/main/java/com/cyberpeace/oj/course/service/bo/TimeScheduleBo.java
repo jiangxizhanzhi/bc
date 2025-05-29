@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import java.io.Serializable;
+import java.util.List;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 时间安排 bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `TimeScheduleBo` 的 Java 类，它实现了 `Serializable` 接口。这个类主要用于表示时间安排的信息。下面是该类的详细分析： 
  * ### 类定义 
@@ -24,25 +43,6 @@
  * ### 总结 
  * `TimeScheduleBo` 类是一个数据传输对象（DTO），用于在系统内部或外部传递关于课程时间安排的信息。它包含两个主要属性：一个教室列表和一个日期字符串。这些属性通过 Lombok 的注解自动生成了 getter 和 setter 方法，并且通过 Swagger 注解来描述这些属性的意义，方便文档生成工具使用。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import java.io.Serializable;
-import java.util.List;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 时间安排 bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -65,3 +65,4 @@ public class TimeScheduleBo implements Serializable {
 	private String date;
 
 }
+

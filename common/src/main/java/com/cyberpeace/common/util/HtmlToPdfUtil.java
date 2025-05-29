@@ -1,3 +1,21 @@
+package com.cyberpeace.common.util;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.file.FileAlreadyExistsException;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.cyberpeace.common.constant.HtmlTemplateEnum;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateExceptionHandler;
+
 /**
  * 这段代码是一个用于将HTML转换为PDF以及生成HTML模板实例的工具类。以下是代码的主要功能和结构分析： 
  * 1. **类与日志**： 
@@ -34,24 +52,6 @@
  * - 在`convert`和`getHtmlTemplateInstance`方法中捕获并记录异常，确保程序不会因异常崩溃。 
  * 总结来说，该类提供了两个主要功能：HTML到PDF的转换和基于模板生成HTML实例。代码结构清晰，功能模块化，便于维护和扩展。 
 **/
-package com.cyberpeace.common.util;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.file.FileAlreadyExistsException;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.cyberpeace.common.constant.HtmlTemplateEnum;
-
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateExceptionHandler;
-
 public class HtmlToPdfUtil {
 
 	private static final Logger log = LoggerFactory.getLogger(HtmlToPdfUtil.class);
@@ -170,3 +170,4 @@ public class HtmlToPdfUtil {
 		}
 	}
 }
+

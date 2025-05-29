@@ -1,3 +1,20 @@
+package com.cyberpeace.cr.tool.dao.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.cr.tool.dao.entity.ToolGhdb;
+
+/**
+ * 工具GHDB 数据库Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolGhdbMapper` 的接口，该接口继承自 `BaseMapper<ToolGhdb>`。这个接口用于操作与 `ToolGhdb` 实体类相关的数据库操作。下面是详细的分析： 
  * ### 1. 包声明 
@@ -52,23 +69,6 @@
  * - 继承了 `BaseMapper<ToolGhdb>`，从而具备了基本的 CRUD 操作。 
  * - 提供了一个自定义的方法 `list`，可以根据分页、作者和标题进行查询，并返回分页结果。 
 **/
-package com.cyberpeace.cr.tool.dao.mapper;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.cr.tool.dao.entity.ToolGhdb;
-
-/**
- * 工具GHDB 数据库Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 @Repository
 public interface ToolGhdbMapper extends BaseMapper<ToolGhdb> {
@@ -83,3 +83,4 @@ public interface ToolGhdbMapper extends BaseMapper<ToolGhdb> {
 	 */
 	IPage<ToolGhdb> list(Page page, @Param("author") String author, @Param("title") String title);
 }
+

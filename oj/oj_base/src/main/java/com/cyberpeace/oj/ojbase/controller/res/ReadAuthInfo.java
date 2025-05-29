@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.ojbase.controller.res;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 读取身份验证信息
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ReadAuthInfo` 的 Java 类，用于表示读取身份验证信息。以下是该类的详细分析： 
  * ### 类定义 
@@ -29,24 +47,6 @@
  * - 实现了 `Serializable` 接口，支持对象的序列化。 
  * 这个类的设计简洁明了，符合现代 Java 开发的最佳实践，如使用 Lombok 减少样板代码、使用 Swagger 注解增强文档可读性等。 
 **/
-package com.cyberpeace.oj.ojbase.controller.res;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * 读取身份验证信息
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class ReadAuthInfo implements Serializable {
@@ -68,3 +68,4 @@ public class ReadAuthInfo implements Serializable {
 	private List<String> readAuthIds;
 
 }
+

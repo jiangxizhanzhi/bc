@@ -1,3 +1,14 @@
+package com.cyberpeace.common.util;
+
+import java.util.List;
+
+import ma.glasnost.orika.MapperFacade;
+import ma.glasnost.orika.impl.DefaultMapperFactory;
+
+/**
+ * 对象拷贝工具类
+ * @author yinqingrong
+ */
 /**
  * 这段代码是一个工具类 `BeanUtils`，用于对象之间的属性拷贝。以下是代码的主要功能和特点： 
  * 1. **浅拷贝**： 
@@ -13,17 +24,6 @@
  * - 依赖于 `Spring` 的 `BeanUtils` 和 `Orika` 的 `MapperFacade`。 
  * 总结：该工具类提供了对象属性的浅拷贝和深拷贝功能，支持泛型，适用于不同类型的对象拷贝需求。 
 **/
-package com.cyberpeace.common.util;
-
-import java.util.List;
-
-import ma.glasnost.orika.MapperFacade;
-import ma.glasnost.orika.impl.DefaultMapperFactory;
-
-/**
- * 对象拷贝工具类
- * @author yinqingrong
- */
 public class BeanUtils {
 
 	public static MapperFacade mapper = new DefaultMapperFactory.Builder().build().getMapperFacade();

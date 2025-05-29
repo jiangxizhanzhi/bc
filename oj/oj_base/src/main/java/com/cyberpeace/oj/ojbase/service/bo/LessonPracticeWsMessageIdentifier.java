@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.ojbase.service.bo;
+
+import com.cyberpeace.common.model.ws.WsMessageIdentifier;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+/**
+ * 课程练习 WS 消息标识符
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see WsMessageIdentifier
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `LessonPracticeWsMessageIdentifier` 的 Java 类，该类继承自 `WsMessageIdentifier`。这个类主要用于表示与课程练习相关的 WebSocket 消息标识符。以下是详细的分析： 
  * ### 类定义 
@@ -25,24 +43,6 @@
  * - **特性**：使用 Lombok 注解简化了代码，减少了样板代码。 
  * 这个类的设计简洁且功能明确，适用于需要处理与课程练习相关的 WebSocket 消息场景。 
 **/
-package com.cyberpeace.oj.ojbase.service.bo;
-
-import com.cyberpeace.common.model.ws.WsMessageIdentifier;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-
-/**
- * 课程练习 WS 消息标识符
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see WsMessageIdentifier
- * @since 1.0.0
- */
 @Getter
 @Setter
 @Builder
@@ -79,3 +79,4 @@ public class LessonPracticeWsMessageIdentifier extends WsMessageIdentifier {
     private Integer shared;
 
 }
+

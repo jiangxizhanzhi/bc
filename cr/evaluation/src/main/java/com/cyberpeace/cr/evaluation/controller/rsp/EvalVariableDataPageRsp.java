@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 评估变量数据分页响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalVariableDataPageRsp` 的 Java 类，用于表示评估变量数据分页响应。以下是对该类的简要分析： 
  * ### 类定义 
@@ -26,20 +40,6 @@
  * - **继承关系**：实现了 `Serializable` 接口，支持对象的序列化。 
  * 这段代码简洁明了，适合用于 RESTful API 的响应模型。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 评估变量数据分页响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalVariableDataPageRsp implements Serializable {
@@ -61,3 +61,4 @@ public class EvalVariableDataPageRsp implements Serializable {
     @ApiModelProperty("探针采集数据")
     private String content;
 }
+

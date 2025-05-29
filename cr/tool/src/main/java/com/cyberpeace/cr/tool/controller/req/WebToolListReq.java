@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.tool.controller.req;
+
+import com.cyberpeace.common.model.PageReqBase;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Web工具列表请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `WebToolListReq` 的 Java 类，该类用于表示获取 Web 工具列表的请求参数。以下是对该代码的简要分析： 
  * ### 类定义 
@@ -19,20 +33,6 @@
  * - 类中的属性用于描述工具的不同方面，如分类、平台、授权状态等。 
  * 这个类的主要目的是封装前端传递过来的查询条件，并提供给后端进行数据检索。 
 **/
-package com.cyberpeace.cr.tool.controller.req;
-
-import com.cyberpeace.common.model.PageReqBase;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * Web工具列表请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @ApiModel
@@ -63,3 +63,4 @@ public class WebToolListReq extends PageReqBase {
     @ApiModelProperty("标签")
     private String tag;
 }
+

@@ -1,3 +1,19 @@
+package com.cyberpeace.cr.tool.dao.context;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+
+/**
+ * ToolMessage
+ *
+ * @author Jerry(姜源)
+ * @since 2025/03/25 3:15
+ */
+
 /**
  * 这段代码定义了一个名为 `ToolMessage` 的 Java 类，该类实现了 `Serializable` 接口。以下是对代码的详细分析： 
  * ### 包声明和导入 
@@ -45,22 +61,6 @@
  * - **用途**：可能用于工具管理和日志记录等场景。 
  * 这段代码简洁且高效地实现了所需的功能，并通过 Lombok 减少了冗余代码。 
 **/
-package com.cyberpeace.cr.tool.dao.context;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
-
-/**
- * ToolMessage
- *
- * @author Jerry(姜源)
- * @since 2025/03/25 3:15
- */
-
 @Data
 @Builder
 @AllArgsConstructor
@@ -75,3 +75,4 @@ public class ToolMessage implements Serializable {
     private String title;
     private String message;
 }
+

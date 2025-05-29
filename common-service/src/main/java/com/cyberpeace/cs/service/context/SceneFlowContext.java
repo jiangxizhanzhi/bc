@@ -1,3 +1,21 @@
+package com.cyberpeace.cs.service.context;
+
+import java.io.Serializable;
+import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.compress.utils.Lists;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+/**
+ * 场景流上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SceneFlowContext` 的 Java 类，用于表示场景流上下文。以下是对其简要分析： 
  * ### 功能描述： 
@@ -23,24 +41,6 @@
  * ### 总结： 
  * 该类是一个典型的 DTO，封装了与场景流相关的上下文信息，并提供了必要的字段和方法。代码结构清晰，注解丰富，便于后续扩展和维护。 
 **/
-package com.cyberpeace.cs.service.context;
-
-import java.io.Serializable;
-import java.util.List;
-
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.compress.utils.Lists;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-/**
- * 场景流上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class SceneFlowContext implements Serializable {
@@ -71,3 +71,4 @@ public class SceneFlowContext implements Serializable {
 	public SceneFlowContext() {}
 
 }
+

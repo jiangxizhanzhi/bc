@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.evaluation.controller.rsp;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估模板id响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTemplateIdRsp` 的 Java 类，用于表示评估模板ID的响应。以下是该类的主要特性和功能： 
  * 1. **包声明**：该类位于 `com.cyberpeace.cr.evaluation.controller.rsp` 包下。 
@@ -21,20 +35,6 @@
  * - 使用 Lombok 的 `@Getter` 和 `@Setter` 注解简化了代码，避免了手动编写 getter 和 setter 方法。 
  * 这个类主要用于封装评估模板ID的响应信息，并且可以通过序列化进行传输。 
 **/
-package com.cyberpeace.cr.evaluation.controller.rsp;
-
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估模板id响应
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalTemplateIdRsp implements Serializable {
@@ -50,3 +50,4 @@ public class EvalTemplateIdRsp implements Serializable {
 	}
 
 }
+

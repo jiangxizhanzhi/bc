@@ -1,3 +1,28 @@
+package com.cyberpeace.oj.course.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.BaseTable;
+import com.google.common.collect.Lists;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Getter;
+
+import java.util.List;
+
+/**
+ * 课程课程
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see BaseTable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseLesson` 的实体类，用于表示一个在线课程中的课时。以下是该代码的详细分析： 
  * ### 包和导入 
@@ -47,31 +72,6 @@
  * ### 总结 
  * 这个类是一个典型的ORM（对象关系映射）实体类，用于表示在线课程中的课时信息。它包含了各种属性来描述课时的各个方面，并且通过枚举类型来限定某些属性的取值范围。此外，该类还使用了Lombok库来简化代码，减少了样板代码的编写。 
 **/
-package com.cyberpeace.oj.course.dao.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.BaseTable;
-import com.google.common.collect.Lists;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Getter;
-
-import java.util.List;
-
-/**
- * 课程课程
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see BaseTable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @TableName("oj_course_lesson")
@@ -324,3 +324,4 @@ public class CourseLesson extends BaseTable {
 	}
 
 }
+

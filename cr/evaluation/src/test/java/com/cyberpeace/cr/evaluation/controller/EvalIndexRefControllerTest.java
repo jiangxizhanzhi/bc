@@ -1,3 +1,24 @@
+package com.cyberpeace.cr.evaluation.controller;
+
+import com.cyberpeace.cr.evaluation.dao.entity.EvalIndexRef;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefMapper;
+import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 /**
  * 这段代码是一个Spring Boot应用中的单元测试类，用于测试`EvalIndexRefController`控制器。以下是对代码的简要分析： 
  * ### 类概述 
@@ -27,27 +48,6 @@
  * - 通过`@MockBean`注解创建了模拟对象来模拟数据访问层和业务服务层的行为。 
  * - 每个测试方法都包含了详细的配置步骤和期望的结果验证。 
 **/
-package com.cyberpeace.cr.evaluation.controller;
-
-import com.cyberpeace.cr.evaluation.dao.entity.EvalIndexRef;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefMapper;
-import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @WebMvcTest(EvalIndexRefController.class)
 class EvalIndexRefControllerTest {
 
@@ -117,3 +117,4 @@ class EvalIndexRefControllerTest {
     }
 
 }
+

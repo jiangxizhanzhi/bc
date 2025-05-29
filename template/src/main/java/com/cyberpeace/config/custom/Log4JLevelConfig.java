@@ -1,3 +1,24 @@
+package com.cyberpeace.config.custom;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
+
+import com.cyberpeace.common.util.SystemPropUtil;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * log4 jlevel 配置
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `Log4JLevelConfig` 的 Spring Bean，用于动态设置日志级别。以下是代码的主要功能和结构分析： 
  * ### 功能分析： 
@@ -22,27 +43,6 @@
  * ### 总结： 
  * 该类的核心作用是根据系统配置动态调整日志级别，适用于需要灵活控制日志输出场景的应用程序。代码结构清晰，结合了 Spring 框架和第三方库的功能，提高了开发效率和代码可维护性。 
 **/
-package com.cyberpeace.config.custom;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Component;
-
-import com.cyberpeace.common.util.SystemPropUtil;
-
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * log4 jlevel 配置
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Slf4j
 @Component
 public class Log4JLevelConfig {
@@ -77,3 +77,4 @@ public class Log4JLevelConfig {
 	}
 
 }
+

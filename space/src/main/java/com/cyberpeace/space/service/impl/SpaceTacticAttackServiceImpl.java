@@ -1,3 +1,49 @@
+package com.cyberpeace.space.service.impl;
+
+import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.tool.service.ToolService;
+import com.cyberpeace.space.constant.SpaceKTypeEnum;
+import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
+import com.cyberpeace.space.dao.entity.SpaceTacticAttackCategory;
+import com.cyberpeace.space.dao.entity.SpaceTacticDefenseSystem;
+import com.cyberpeace.space.dao.mapper.SpaceTacticAttackCategoryMapper;
+import com.cyberpeace.space.dao.mapper.SpaceTacticAttackMapper;
+import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseSystemMapper;
+import com.cyberpeace.space.service.SpaceStrategyService;
+import com.cyberpeace.space.service.SpaceTacticAttackService;
+import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
+import com.cyberpeace.space.service.context.index.KnowledgeChart;
+import com.cyberpeace.space.service.context.index.KnowledgeChartCategory;
+import com.cyberpeace.space.service.context.index.KnowledgeChartItem;
+import com.cyberpeace.space.service.context.index.KnowledgeChartLink;
+import com.cyberpeace.space.service.context.tactic.*;
+import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 空间战法攻击Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see ServiceImpl
+ * @see SpaceTacticAttackService
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 项目背景 
@@ -84,52 +130,6 @@
  * #### 总结 
  * 该代码实现了空间战法攻击的全生命周期管理，包括增删改查以及图表生成等功能。代码结构清晰，功能模块划分合理，使用了 MyBatis-Plus 和 Spring 的依赖注入机制，具有良好的可扩展性和维护性。 
 **/
-package com.cyberpeace.space.service.impl;
-
-import com.alibaba.fastjson.JSONArray;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.tool.service.ToolService;
-import com.cyberpeace.space.constant.SpaceKTypeEnum;
-import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
-import com.cyberpeace.space.dao.entity.SpaceTacticAttackCategory;
-import com.cyberpeace.space.dao.entity.SpaceTacticDefenseSystem;
-import com.cyberpeace.space.dao.mapper.SpaceTacticAttackCategoryMapper;
-import com.cyberpeace.space.dao.mapper.SpaceTacticAttackMapper;
-import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseSystemMapper;
-import com.cyberpeace.space.service.SpaceStrategyService;
-import com.cyberpeace.space.service.SpaceTacticAttackService;
-import com.cyberpeace.space.service.context.frame.SpaceActionStrategy;
-import com.cyberpeace.space.service.context.index.KnowledgeChart;
-import com.cyberpeace.space.service.context.index.KnowledgeChartCategory;
-import com.cyberpeace.space.service.context.index.KnowledgeChartItem;
-import com.cyberpeace.space.service.context.index.KnowledgeChartLink;
-import com.cyberpeace.space.service.context.tactic.*;
-import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Map;
-
-/**
- * 空间战法攻击Service实现
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see ServiceImpl
- * @see SpaceTacticAttackService
- * @since 1.0.0
- */
 @Service
 @Slf4j
 public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackMapper, SpaceTacticAttack> implements SpaceTacticAttackService {
@@ -455,3 +455,4 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 		return attack;
 	}
 }
+

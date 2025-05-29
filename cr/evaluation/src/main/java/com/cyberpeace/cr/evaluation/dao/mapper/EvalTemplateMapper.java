@@ -1,3 +1,21 @@
+package com.cyberpeace.cr.evaluation.dao.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
+import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
+
+/**
+ * 评估模板Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalTemplateMapper` 的接口，该接口继承了 `BaseMapper<EvalTemplate>`，并扩展了一些自定义的方法。以下是详细的分析： 
  * ### 包声明和导入 
@@ -37,24 +55,6 @@
  * - **特点**：通过继承 `BaseMapper`，简化了基本的 CRUD 操作，并提供了自定义的查询方法（如分页查询和模板名称校验）。 
  * 这段代码展示了如何通过 MyBatis 和 MyBatis-Plus 来实现一个简单的数据访问层，并且通过自定义方法增强了功能。 
 **/
-package com.cyberpeace.cr.evaluation.dao.mapper;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
-import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
-
-/**
- * 评估模板Mapper
- *
- * @author SN
- * @date 2024/11/08
- */
 @Mapper
 @Repository
 public interface EvalTemplateMapper extends BaseMapper<EvalTemplate> {
@@ -82,3 +82,4 @@ public interface EvalTemplateMapper extends BaseMapper<EvalTemplate> {
 			@Param("createUserId") String userId, @Param("templateId") String templateId);
 
 }
+

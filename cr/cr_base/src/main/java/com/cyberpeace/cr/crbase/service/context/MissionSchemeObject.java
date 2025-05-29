@@ -1,3 +1,18 @@
+package com.cyberpeace.cr.crbase.service.context;
+
+import java.io.Serializable;
+import java.util.List;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 任务编排中间模型
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个泛型类 `MissionSchemeObject`，用于表示任务编排的中间模型。以下是简要分析： 
  * 1. **类的功能**： 
@@ -15,21 +30,6 @@
  * - 实现了 `Serializable` 接口，表明该类的对象可以被序列化。 
  * 总结：这是一个通用的任务编排模型类，支持动态任务和多种任务类型的定义，并且具备良好的可扩展性和文档支持。 
 **/
-package com.cyberpeace.cr.crbase.service.context;
-
-import java.io.Serializable;
-import java.util.List;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 任务编排中间模型
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class MissionSchemeObject<T> implements Serializable {
@@ -52,3 +52,4 @@ public class MissionSchemeObject<T> implements Serializable {
 	@ApiModelProperty(value = "动态任务列表")
 	private List<String> dynamic;
 }
+

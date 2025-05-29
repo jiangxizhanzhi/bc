@@ -1,3 +1,36 @@
+package com.cyberpeace.space.controller;
+
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.space.dao.entity.SpaceLoadedFileThreatRule;
+import com.cyberpeace.space.dao.entity.SpaceTrafficDetectRule;
+import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.SpaceLoadedFileThreatRuleService;
+import com.cyberpeace.space.service.context.IdListReq;
+import com.cyberpeace.space.service.context.rule.SpaceWarningDictionaryBo;
+import com.google.common.collect.Lists;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Arrays;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 /**
  * ### 代码分析 
  * #### 项目背景 
@@ -32,39 +65,6 @@
  * 3. **异常处理**：可以补充异常场景的测试，例如服务层抛出异常时的响应情况。 
  * 总体来看，这段代码结构清晰，测试覆盖全面，是一个高质量的单元测试示例。 
 **/
-package com.cyberpeace.space.controller;
-
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.space.dao.entity.SpaceLoadedFileThreatRule;
-import com.cyberpeace.space.dao.entity.SpaceTrafficDetectRule;
-import com.cyberpeace.space.model.SpaceBaseTable;
-import com.cyberpeace.space.service.SpaceLoadedFileThreatRuleService;
-import com.cyberpeace.space.service.context.IdListReq;
-import com.cyberpeace.space.service.context.rule.SpaceWarningDictionaryBo;
-import com.google.common.collect.Lists;
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Arrays;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @WebMvcTest(SpaceLoadedFileThreatRuleController.class)
 class SpaceLoadedFileThreatRuleControllerTest {
 
@@ -167,3 +167,4 @@ class SpaceLoadedFileThreatRuleControllerTest {
                 .andExpect(content().json("{\"data\":{\"resourceId\":null,\"name\":null,\"type\":null,\"description\":null,\"content\":null,\"tool\":null,\"executeType\":null},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 }
+

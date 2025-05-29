@@ -1,3 +1,24 @@
+package com.cyberpeace.common.util;
+
+import com.alibaba.fastjson.JSON;
+import com.cyberpeace.common.model.BaseTable;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.IntStream;
+
+/**
+ * 列出实用程序
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * ### 代码分析与总结 
  * #### 功能概述： 
@@ -52,27 +73,6 @@
  * 3. **多线程安全**：如果方法可能被多线程调用，需注意线程安全性（如使用 `Collections.synchronizedList` 包装列表）。 
  * 总体而言，这是一个高效且实用的工具类，适合在项目中广泛使用。 
 **/
-package com.cyberpeace.common.util;
-
-import com.alibaba.fastjson.JSON;
-import com.cyberpeace.common.model.BaseTable;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.IntStream;
-
-/**
- * 列出实用程序
- *
- * @author SN
- * @date 2024/11/08
- */
 public class ListUtil {
 
 	/**
@@ -313,3 +313,4 @@ public class ListUtil {
 		return list;
 	}
 }
+

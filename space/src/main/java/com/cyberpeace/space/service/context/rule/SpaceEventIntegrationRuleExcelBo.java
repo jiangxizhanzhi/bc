@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service.context.rule;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 空间事件集成统治胜过Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceEventIntegrationRuleExcelBo` 的 Java 类，属于 `com.cyberpeace.space.service.context.rule` 包。以下是代码的主要分析和总结： 
  * ### 主要功能： 
@@ -19,20 +33,6 @@
  * ### 总结： 
  * 这是一个简单的数据传输对象类，主要用于封装与空间事件集成规则相关的信息。通过 Lombok 和 Swagger 注解，提高了代码的简洁性和可维护性。 
 **/
-package com.cyberpeace.space.service.context.rule;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 空间事件集成统治胜过Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceEventIntegrationRuleExcelBo {
@@ -69,3 +69,4 @@ public class SpaceEventIntegrationRuleExcelBo {
 	@ApiModelProperty(value = "应用工具")
 	private String tool;
 }
+

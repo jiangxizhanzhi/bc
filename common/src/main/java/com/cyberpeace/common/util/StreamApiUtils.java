@@ -1,3 +1,26 @@
+package com.cyberpeace.common.util;
+
+import java.util.*;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.ToDoubleFunction;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+
+import com.cyberpeace.common.constant.CommonConstant;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+/**
+ * 流Apiutils
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * ### 代码分析 
  * #### 1. **类概述** 
@@ -92,29 +115,6 @@
  * - **并发支持**：若需在高并发场景下使用，可考虑引入线程安全的集合操作。 
  * 总结来说，`StreamApiUtils` 是一个功能强大且灵活的工具类，能够显著提高集合操作的开发效率。 
 **/
-package com.cyberpeace.common.util;
-
-import java.util.*;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.ToDoubleFunction;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
-
-import com.cyberpeace.common.constant.CommonConstant;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-/**
- * 流Apiutils
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 public class StreamApiUtils {
 
 	/**
@@ -312,3 +312,4 @@ public class StreamApiUtils {
 		return collection.stream().collect(Collectors.toMap(keyMapper, valueMapper,mergeFunction));
 	}
 }
+

@@ -1,3 +1,19 @@
+package com.cyberpeace.space.service.context.strategy;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Date;
+
+/**
+ * 空间策略Bo
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 该代码定义了一个名为 `SpaceStrategyBo` 的 Java 类，属于 `com.cyberpeace.space.service.context.strategy` 包。以下是代码的简要分析： 
  * 1. **类功能**： 
@@ -15,22 +31,6 @@
  * - 使用了 Lombok 和 Swagger 注解，提高了开发效率并增强了代码的可读性。 
  * 总体而言，这是一个典型的 Java Bean 类，专注于数据的封装和传输。 
 **/
-package com.cyberpeace.space.service.context.strategy;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Date;
-
-/**
- * 空间策略Bo
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class SpaceStrategyBo {
@@ -178,3 +178,4 @@ public class SpaceStrategyBo {
 	 */
 	private Boolean builtin;
 }
+

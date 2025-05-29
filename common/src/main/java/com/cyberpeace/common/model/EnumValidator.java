@@ -1,3 +1,17 @@
+package com.cyberpeace.common.model;
+
+
+import com.cyberpeace.common.baseinterface.EnumValid;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+/**
+ * 枚举验证器
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * ### 代码分析 
  * #### 功能描述 
@@ -29,20 +43,6 @@
  * #### 总结 
  * 该代码实现了一个简单但功能完善的枚举验证器，能够满足常见的枚举值验证需求。通过灵活的注解配置和清晰的逻辑结构，提升了代码的可维护性和扩展性。 
 **/
-package com.cyberpeace.common.model;
-
-
-import com.cyberpeace.common.baseinterface.EnumValid;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
-/**
- * 枚举验证器
- *
- * @author SN
- * @date 2024/11/08
- */
 public class EnumValidator implements ConstraintValidator<EnumValid, Integer> {
 
     /**

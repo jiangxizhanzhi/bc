@@ -1,3 +1,19 @@
+package com.cyberpeace.space.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.space.dao.entity.SpaceActionRelation;
+
+import java.util.List;
+
+/**
+ * 空间行动关系Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see IService
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceActionRelationService` 的接口，它扩展了 `IService<SpaceActionRelation>` 接口。这个接口主要用于处理与空间行动关系（`SpaceActionRelation`）相关的业务逻辑。以下是对其功能的简要分析： 
  * 1. **继承自 MyBatis-Plus 的 IService**： 
@@ -20,22 +36,6 @@
  * - 方法注释清晰地描述了每个方法的目的、参数以及返回值类型，便于理解和维护。 
  * 总体来说，这个接口为管理空间行动关系提供了全面的支持，并且通过良好的命名和文档化使得代码易于理解。 
 **/
-package com.cyberpeace.space.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.space.dao.entity.SpaceActionRelation;
-
-import java.util.List;
-
-/**
- * 空间行动关系Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see IService
- * @since 1.0.0
- */
 public interface SpaceActionRelationService extends IService<SpaceActionRelation> {
     /**
      * 创建关系
@@ -134,3 +134,4 @@ public interface SpaceActionRelationService extends IService<SpaceActionRelation
      */
     SpaceActionRelation createEntity(String upperId, String lowerId);
 }
+

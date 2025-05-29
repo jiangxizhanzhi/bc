@@ -1,22 +1,3 @@
-/**
- * 这段代码定义了一个名为 `SpaceAptFeaturePageReq` 的类，它继承自 `SpacePageReqBase`，并用于生成针对 `SpaceAptFeature` 实体的查询包装器。以下是代码的主要功能和结构分析： 
- * 1. **类和注解**： 
- * - 类 `SpaceAptFeaturePageReq` 使用了 `@ApiModel` 注解，表明这是一个与 API 相关的模型类。 
- * - 类的作用是实现从请求到查询条件的转换。 
- * 2. **方法 `req2QueryWrapper`**： 
- * - 方法的功能是将当前请求转换为一个 `LambdaQueryWrapper` 对象。 
- * - 首先，创建一个 `LambdaQueryWrapper` 实例用于构建查询条件。 
- * - 设置查询结果按 `updateTime` 字段降序排列。 
- * - 如果请求中包含非空的 `pattern` 参数，则在 `name` 字段上添加模糊查询条件。 
- * - 最后返回配置好的 `LambdaQueryWrapper` 对象。 
- * 3. **依赖的类和方法**： 
- * - 使用了 `com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper` 进行查询条件的构建。 
- * - 使用了 `com.baomidou.mybatisplus.core.toolkit.StringUtils.isNotBlank` 来检查 `pattern` 是否为空。 
- * - 继承的父类 `SpacePageReqBase` 提供了 `getPattern()` 方法来获取请求中的模式字符串。 
- * 4. **用途**： 
- * - 该类主要用于处理分页请求，并根据请求参数动态生成查询条件，适用于 MyBatis-Plus 的查询操作。 
- * 总结来说，这段代码的核心是一个方法 `req2QueryWrapper`，它能够根据请求参数动态生成查询条件，并且支持按更新时间排序以及名称模糊查询的功能。 
-**/
 package com.cyberpeace.space.controller.req;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -37,6 +18,25 @@ import io.swagger.annotations.ApiModel;
  * @date 2021/9/28
  * comemnt
  */
+/**
+ * 这段代码定义了一个名为 `SpaceAptFeaturePageReq` 的类，它继承自 `SpacePageReqBase`，并用于生成针对 `SpaceAptFeature` 实体的查询包装器。以下是代码的主要功能和结构分析： 
+ * 1. **类和注解**： 
+ * - 类 `SpaceAptFeaturePageReq` 使用了 `@ApiModel` 注解，表明这是一个与 API 相关的模型类。 
+ * - 类的作用是实现从请求到查询条件的转换。 
+ * 2. **方法 `req2QueryWrapper`**： 
+ * - 方法的功能是将当前请求转换为一个 `LambdaQueryWrapper` 对象。 
+ * - 首先，创建一个 `LambdaQueryWrapper` 实例用于构建查询条件。 
+ * - 设置查询结果按 `updateTime` 字段降序排列。 
+ * - 如果请求中包含非空的 `pattern` 参数，则在 `name` 字段上添加模糊查询条件。 
+ * - 最后返回配置好的 `LambdaQueryWrapper` 对象。 
+ * 3. **依赖的类和方法**： 
+ * - 使用了 `com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper` 进行查询条件的构建。 
+ * - 使用了 `com.baomidou.mybatisplus.core.toolkit.StringUtils.isNotBlank` 来检查 `pattern` 是否为空。 
+ * - 继承的父类 `SpacePageReqBase` 提供了 `getPattern()` 方法来获取请求中的模式字符串。 
+ * 4. **用途**： 
+ * - 该类主要用于处理分页请求，并根据请求参数动态生成查询条件，适用于 MyBatis-Plus 的查询操作。 
+ * 总结来说，这段代码的核心是一个方法 `req2QueryWrapper`，它能够根据请求参数动态生成查询条件，并且支持按更新时间排序以及名称模糊查询的功能。 
+**/
 @ApiModel
 public class SpaceAptFeaturePageReq extends SpacePageReqBase {
     /**
@@ -64,3 +64,4 @@ public class SpaceAptFeaturePageReq extends SpacePageReqBase {
         return wrapper;
     }
 }
+

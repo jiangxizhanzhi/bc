@@ -1,3 +1,19 @@
+package com.cyberpeace.space.service.context.index;
+
+import com.cyberpeace.space.constant.SpaceKTypeEnum;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 知识点图表项目
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `KnowledgeChartItem` 的 Java 类，用于表示知识图谱中的图表项目。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -22,22 +38,6 @@
  * - 该类适用于需要动态生成知识图谱图表的场景，特别是基于层级结构的数据展示。 
  * 总体而言，这个类的设计简洁明了，适合用于知识图谱的可视化需求。 
 **/
-package com.cyberpeace.space.service.context.index;
-
-import com.cyberpeace.space.constant.SpaceKTypeEnum;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 知识点图表项目
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class KnowledgeChartItem {
@@ -129,3 +129,4 @@ public class KnowledgeChartItem {
 		return (64 >> level) + 4;
 	}
 }
+

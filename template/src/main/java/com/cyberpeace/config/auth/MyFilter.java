@@ -1,3 +1,28 @@
+package com.cyberpeace.config.auth;
+
+import java.io.IOException;
+import java.util.UUID;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.impl.TraceIdContext;
+
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.model.CommonContext;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 我的过滤器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see Filter
+ * @since 1.0.0
+ */
 /**
  * ### 分析与总结 
  * #### 代码功能概述： 
@@ -51,31 +76,6 @@
  * #### 总结： 
  * 该代码实现了基本的请求拦截和上下文管理功能，适用于需要记录请求耗时、分配唯一标识符以及管理语言和 IP 的场景。如果需要更复杂的逻辑（如异常处理、动态语言支持等），可以在现有基础上进一步完善。 
 **/
-package com.cyberpeace.config.auth;
-
-import java.io.IOException;
-import java.util.UUID;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.impl.TraceIdContext;
-
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.model.CommonContext;
-
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 我的过滤器
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see Filter
- * @since 1.0.0
- */
 @Slf4j
 public class MyFilter implements Filter {
 
@@ -171,3 +171,4 @@ public class MyFilter implements Filter {
 	}
 
 }
+

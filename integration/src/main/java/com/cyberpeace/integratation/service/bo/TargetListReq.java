@@ -1,3 +1,8 @@
+package com.cyberpeace.integratation.service.bo;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 这段代码定义了一个名为 `TargetListReq` 的 Java 类，该类用于表示一个请求对象，通常用于从某个服务或API中获取目标列表。以下是对此代码的详细分析： 
  * 1. **包声明**： 
@@ -31,11 +36,6 @@
  * - 使用 Lombok 提供的注解简化了 getter 和 setter 方法的编写。 
  * 这种设计使得类易于扩展和维护，同时提供了一种简单的方式来生成查询字符串。 
 **/
-package com.cyberpeace.integratation.service.bo;
-
-import lombok.Getter;
-import lombok.Setter;
-
 @Getter
 @Setter
 public class TargetListReq {
@@ -76,3 +76,4 @@ public class TargetListReq {
         return builder.toString();
     }
 }
+

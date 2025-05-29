@@ -1,3 +1,11 @@
+package com.cyberpeace.cr.evaluation.service;;
+
+/**
+ * single Train Branch
+ * this is branch method
+ * for the branch method
+ * is the fun toy for little bob
+ */
 /**
  * 这段代码定义了一个名为 `EvalVariableRefServiceBranch` 的 Java 类，该类包含一个名为 `getBranch` 的方法。这个方法接收一个字符串参数 `input` 并根据输入返回一个布尔值。具体来说： 
  * 1. **类与方法**： 
@@ -24,14 +32,6 @@
  * - 当前实现通过大量冗余的 `case` 语句来实现。 
  * - 改进方案是使用集合来存储预定义字符串，并使用集合的 `contains` 方法进行检查。 
 **/
-package com.cyberpeace.cr.evaluation.service;;
-
-/**
- * single Train Branch
- * this is branch method
- * for the branch method
- * is the fun toy for little bob
- */
 public class EvalVariableRefServiceBranch {
 
     /**
@@ -548,3 +548,4 @@ public class EvalVariableRefServiceBranch {
         return false;
     }
 }
+

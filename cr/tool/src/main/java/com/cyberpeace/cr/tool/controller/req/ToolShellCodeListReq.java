@@ -1,3 +1,17 @@
+package com.cyberpeace.cr.tool.controller.req;
+
+import com.cyberpeace.common.model.PageReqBase;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 工具壳代号列表请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `ToolShellCodeListReq` 的 Java 类，该类用于处理工具壳代号列表的请求。以下是详细的分析： 
  * ### 类定义 
@@ -29,20 +43,6 @@
  * ``` 
  * 这样可以提高代码的一致性和可维护性。 
 **/
-package com.cyberpeace.cr.tool.controller.req;
-
-import com.cyberpeace.common.model.PageReqBase;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 工具壳代号列表请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 @ApiModel
@@ -70,3 +70,4 @@ public class ToolShellCodeListReq extends PageReqBase {
 		this.edbVerified = edbVerified;
 	}
 }
+

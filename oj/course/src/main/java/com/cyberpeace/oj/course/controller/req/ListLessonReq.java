@@ -1,3 +1,21 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import com.cyberpeace.common.model.PageReqBase;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 列表课请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see PageReqBase
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `ListLessonReq` 的 Java 类，该类用于处理课时列表查询的请求参数。以下是对代码的简要分析： 
  * ### 类定义 
@@ -25,24 +43,6 @@
  * - 通过 Swagger 注解提供了文档化的说明，方便 API 使用者理解各个字段的用途。 
  * - 继承自 `PageReqBase` 类，可能包含了分页相关的逻辑。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import com.cyberpeace.common.model.PageReqBase;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 列表课请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see PageReqBase
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel("课时列表查询")
@@ -92,3 +92,4 @@ public class ListLessonReq extends PageReqBase {
 		this.categoryId = categoryId;
 	}
 }
+

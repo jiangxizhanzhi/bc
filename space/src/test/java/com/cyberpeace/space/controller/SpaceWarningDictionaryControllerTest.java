@@ -1,3 +1,36 @@
+package com.cyberpeace.space.controller;
+
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.space.dao.entity.SpaceAlgorithmEquipment;
+import com.cyberpeace.space.dao.entity.SpaceWarningDictionary;
+import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.SpaceWarningDictionaryService;
+import com.cyberpeace.space.service.context.IdListReq;
+import com.cyberpeace.space.service.context.rule.SpaceWarningDictionaryBo;
+import com.google.common.collect.Lists;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Arrays;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 /**
  * 这段代码是一个针对 `SpaceWarningDictionaryController` 的单元测试类，使用了 JUnit 5 和 Spring Boot 提供的测试工具。以下是代码的主要内容和功能分析： 
  * --- 
@@ -54,39 +87,6 @@
  * - **优点**：使用了 Spring 提供的测试工具，减少了对外部依赖的耦合；通过模拟服务和控制器的方法，确保测试独立性。 
  * - **改进建议**：可以增加更多边界条件的测试，例如异常情况处理、错误响应的验证等。 
 **/
-package com.cyberpeace.space.controller;
-
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.space.dao.entity.SpaceAlgorithmEquipment;
-import com.cyberpeace.space.dao.entity.SpaceWarningDictionary;
-import com.cyberpeace.space.model.SpaceBaseTable;
-import com.cyberpeace.space.service.SpaceWarningDictionaryService;
-import com.cyberpeace.space.service.context.IdListReq;
-import com.cyberpeace.space.service.context.rule.SpaceWarningDictionaryBo;
-import com.google.common.collect.Lists;
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Arrays;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @WebMvcTest(SpaceWarningDictionaryController.class)
 class SpaceWarningDictionaryControllerTest {
 
@@ -187,3 +187,4 @@ class SpaceWarningDictionaryControllerTest {
                 .andExpect(content().json("{\"data\":{\"resourceId\":null,\"name\":null,\"toolType\":null,\"toolLevel\":null,\"level\":null,\"description\":null,\"updateTime\":null},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
     }
 }
+

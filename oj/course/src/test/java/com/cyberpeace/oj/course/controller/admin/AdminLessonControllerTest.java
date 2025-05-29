@@ -1,4 +1,3 @@
-
 package com.cyberpeace.oj.course.controller.admin;
 
 import com.alibaba.fastjson.JSONObject;
@@ -53,6 +52,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @Disabled
 @WebMvcTest(AdminLessonController.class)
@@ -397,3 +397,4 @@ class AdminLessonControllerTest {
 				.andExpect(content().json("{\"data\":{\"sceneConfigData\":{},\"sceneData\":{}},\"code\":\"OJ-000000\",\"message\":null,\"detail\":null}", true));
 	}
 }
+

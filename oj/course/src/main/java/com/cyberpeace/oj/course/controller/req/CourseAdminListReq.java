@@ -1,3 +1,19 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 课程管理列表请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see CourseListReq
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `CourseAdminListReq` 的类，它是 `CourseListReq` 类的一个子类。这个类用于处理课程管理列表的请求，并且使用了 Lombok 注解来简化 getter 和 setter 方法的编写。下面是详细的分析： 
  * ### 类定义 
@@ -22,22 +38,6 @@
  * - 可以考虑将属性名改为驼峰命名法（例如 `myCourse` 而不是 `my_course`），以保持一致性和更好的可读性。 
  * - 如果不需要手动实现 setter 方法，可以直接删除这些方法，因为 Lombok 已经提供了自动化的 getter 和 setter。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 课程管理列表请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see CourseListReq
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel("后台参数接收")
@@ -79,3 +79,4 @@ public class CourseAdminListReq extends CourseListReq {
 		this.shareCourse = shareCourse;
 	}
 }
+

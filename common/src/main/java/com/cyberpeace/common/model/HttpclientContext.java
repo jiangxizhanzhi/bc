@@ -1,3 +1,11 @@
+package com.cyberpeace.common.model;
+
+/**
+ * httpclient调用时需要的上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个线程安全的上下文类 `HttpclientContext`，用于在 HTTP 客户端调用中存储和管理上下文信息。以下是代码的简要分析： 
  * 1. **功能概述**： 
@@ -15,14 +23,6 @@
  * - 如果 `HttpclientModel` 的引用过大或持有外部资源，可能影响性能。 
  * 总结：这是一个简单且实用的线程上下文管理工具类，适合在多线程 HTTP 调用中使用。 
 **/
-package com.cyberpeace.common.model;
-
-/**
- * httpclient调用时需要的上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 public class HttpclientContext {
 
 	/**

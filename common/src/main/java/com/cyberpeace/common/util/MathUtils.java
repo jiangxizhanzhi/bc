@@ -1,3 +1,17 @@
+package com.cyberpeace.common.util;
+
+import com.cyberpeace.common.constant.CommonConstant;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Random;
+
+/**
+ * math utils
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * ### 分析与总结 
  * #### 模块功能 
@@ -52,20 +66,6 @@
  * #### 总结 
  * 该工具类覆盖了常见的数学运算需求，代码逻辑清晰，功能丰富且实用性强。通过结合 `BigDecimal` 和 `Random`，实现了高精度计算和随机数生成，适合作为项目中的通用数学工具类。 
 **/
-package com.cyberpeace.common.util;
-
-import com.cyberpeace.common.constant.CommonConstant;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Random;
-
-/**
- * math utils
- *
- * @author SN
- * @date 2024/11/08
- */
 public class MathUtils {
 
 	/**
@@ -300,3 +300,4 @@ public class MathUtils {
 	}
 
 }
+

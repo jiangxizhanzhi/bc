@@ -1,3 +1,23 @@
+package com.cyberpeace.oj.ojbase.controller.req;
+
+import javax.validation.constraints.NotBlank;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 注意更新请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see Serializable
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `NoteUpdateReq` 的 Java 类，用于表示更新笔记请求的请求体。以下是该类的主要特点和功能的简要分析： 
  * ### 包和导入 
@@ -27,26 +47,6 @@
  * - 部分字段被标记为隐藏，可能是因为它们在 API 文档中不需要展示。 
  * 整体而言，这是一个简单的数据传输对象（DTO），用于从客户端接收更新笔记所需的数据。 
 **/
-package com.cyberpeace.oj.ojbase.controller.req;
-
-import javax.validation.constraints.NotBlank;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 注意更新请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see Serializable
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -102,3 +102,4 @@ public class NoteUpdateReq implements Serializable {
 	private String readAuthIds;
 
 }
+

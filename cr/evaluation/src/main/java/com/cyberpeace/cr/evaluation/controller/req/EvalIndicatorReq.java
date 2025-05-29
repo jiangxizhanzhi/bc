@@ -1,3 +1,23 @@
+package com.cyberpeace.cr.evaluation.controller.req;
+
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
+import com.cyberpeace.cr.evaluation.service.context.EvalAggregationContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalCollectionContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalIndicatorContext;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 评估指示器请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `EvalIndicatorReq` 的 Java 类，该类用于表示评估指示器的请求体。以下是对此代码的简要分析： 
  * ### 包声明和导入 
@@ -31,26 +51,6 @@
  * - 该类主要用于接收前端或其他系统的请求，并传递给后端进行处理。 
  * 此代码结构清晰，使用了现代 Java 开发的最佳实践，如 Lombok 和 Swagger 注解。 
 **/
-package com.cyberpeace.cr.evaluation.controller.req;
-
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import com.cyberpeace.cr.evaluation.service.context.EvalAggregationContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalCollectionContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalIndicatorContext;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 评估指示器请求体
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class EvalIndicatorReq {
@@ -123,3 +123,4 @@ public class EvalIndicatorReq {
 	@NotNull
 	private List<EvalIndicatorContext> evalIndicators;
 }
+

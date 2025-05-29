@@ -1,3 +1,20 @@
+package com.cyberpeace.space.controller.req;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.space.dao.entity.SpaceTrafficExtractionRule;
+import com.cyberpeace.space.model.req.SpaceToolPageReq;
+import io.swagger.annotations.ApiModel;
+import org.apache.commons.lang3.StringUtils;
+
+/**
+ * 空间流量萃取统治分页请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see SpaceToolPageReq
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceTrafficExtractionRulePageReq` 的类，它是 `SpaceToolPageReq` 的子类。该类的主要功能是将请求参数转换为数据库查询所需的 `LambdaQueryWrapper` 对象，用于从数据库中筛选和排序数据。 
  * ### 主要功能： 
@@ -16,23 +33,6 @@
  * - **工具类集成**：使用 Apache Commons Lang 提供的 `StringUtils` 检查字符串是否为空。 
  * 此代码体现了面向对象设计中的继承与封装思想，同时结合 MyBatis-Plus 的查询能力，实现了灵活且可扩展的分页查询功能。 
 **/
-package com.cyberpeace.space.controller.req;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.cyberpeace.space.dao.entity.SpaceTrafficExtractionRule;
-import com.cyberpeace.space.model.req.SpaceToolPageReq;
-import io.swagger.annotations.ApiModel;
-import org.apache.commons.lang3.StringUtils;
-
-/**
- * 空间流量萃取统治分页请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see SpaceToolPageReq
- * @since 1.0.0
- */
 @ApiModel
 public class SpaceTrafficExtractionRulePageReq extends SpaceToolPageReq {
     /**
@@ -61,3 +61,4 @@ public class SpaceTrafficExtractionRulePageReq extends SpaceToolPageReq {
     }
 
 }
+

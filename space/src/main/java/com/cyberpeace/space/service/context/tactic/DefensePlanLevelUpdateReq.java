@@ -1,3 +1,19 @@
+package com.cyberpeace.space.service.context.tactic;
+
+import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 防御计划层级更新请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `DefensePlanLevelUpdateReq` 的 Java 类，用于表示防御计划层级更新的请求体。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -15,22 +31,6 @@
  * 这是一个典型的 DTO（数据传输对象）类，用于在服务层或接口层传递数据。 
  * 总结：这是一个简洁且功能明确的类，用于支持防御计划层级更新的请求参数封装。 
 **/
-package com.cyberpeace.space.service.context.tactic;
-
-import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 防御计划层级更新请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 @Getter
 @Setter
 public class DefensePlanLevelUpdateReq {
@@ -51,3 +51,4 @@ public class DefensePlanLevelUpdateReq {
 	@ApiModelProperty(value = "加入的id")
 	private String resourceId;
 }
+

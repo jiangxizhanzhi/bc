@@ -1,3 +1,14 @@
+package com.cyberpeace.integratation.model.scene;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 流记录上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `FlowRecordContext` 的类，该类继承自 `NodeOpsContext`。这个类主要用于存储与流记录相关的上下文信息。以下是对代码的简要分析： 
  * ### 类定义 
@@ -20,17 +31,6 @@
  * - 类中的字段和方法提供了对流记录的基本操作，如设置和获取流 ID 以及是否为批量处理。 
  * - 使用 Lombok 注解减少了样板代码，使类更简洁易读。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 流记录上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class FlowRecordContext extends NodeOpsContext {
@@ -62,3 +62,4 @@ public class FlowRecordContext extends NodeOpsContext {
 	public FlowRecordContext() {}
 
 }
+

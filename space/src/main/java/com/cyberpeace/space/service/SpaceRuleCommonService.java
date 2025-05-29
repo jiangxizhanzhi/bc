@@ -1,3 +1,17 @@
+package com.cyberpeace.space.service;
+
+import com.cyberpeace.space.service.context.rule.BaseDataRuleStatistics;
+import com.cyberpeace.space.service.context.rule.RaceStatistics;
+import com.cyberpeace.space.service.context.rule.ThreatDetectStatistics;
+
+/**
+ * 空间统治常用Service
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `SpaceRuleCommonService` 的接口，位于 `com.cyberpeace.space.service` 包中。以下是对其的简要分析： 
  * 1. **功能描述**： 
@@ -13,20 +27,6 @@
  * - 该接口可能是为了统一管理与空间统治相关的统计学操作，便于后续扩展和维护。 
  * 总体而言，这是一个清晰且结构良好的接口设计，专注于提供统计数据的服务功能。 
 **/
-package com.cyberpeace.space.service;
-
-import com.cyberpeace.space.service.context.rule.BaseDataRuleStatistics;
-import com.cyberpeace.space.service.context.rule.RaceStatistics;
-import com.cyberpeace.space.service.context.rule.ThreatDetectStatistics;
-
-/**
- * 空间统治常用Service
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @since 1.0.0
- */
 public interface SpaceRuleCommonService {
     /**
      * 获取比赛统计学
@@ -55,3 +55,4 @@ public interface SpaceRuleCommonService {
      */
     BaseDataRuleStatistics getBaseDataStatistics();
 }
+

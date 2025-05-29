@@ -1,3 +1,11 @@
+package com.cyberpeace.common.model.user;
+
+/**
+ * 用户信息上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个用于管理用户信息上下文的工具类 `UserInfoContext`，以下是简要分析： 
  * ### 功能概述： 
@@ -18,14 +26,6 @@
  * ### 总结： 
  * 该类是一个典型的线程本地存储实现，适用于需要在线程范围内传递用户信息的场景。但需要注意合理管理生命周期，及时清理不再使用的上下文。 
 **/
-package com.cyberpeace.common.model.user;
-
-/**
- * 用户信息上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 public class UserInfoContext {
 
 	/**
@@ -63,3 +63,4 @@ public class UserInfoContext {
 		userContext.remove();
 	}
 }
+

@@ -1,3 +1,16 @@
+package com.cyberpeace.integratation.model.scene;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.util.JsonUtil;
+
+import lombok.Getter;
+
+/**
+ * 场景开始上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `SceneStartContext` 的类，该类继承自 `SceneOpsContext`。以下是对其主要特性和功能的简要分析： 
  * ### 类定义 
@@ -30,19 +43,6 @@
  * ### 总结 
  * `SceneStartContext` 类主要用于存储和管理场景启动时所需的上下文信息，包括引用元数据、场景属性、场景存活时间和场景的大 JSON 对象。通过枚举类 `SceneAttrEnum` 定义了场景属性的不同状态，并且提供了相应的方法来设置和获取这些属性。 
 **/
-package com.cyberpeace.integratation.model.scene;
-
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.util.JsonUtil;
-
-import lombok.Getter;
-
-/**
- * 场景开始上下文
- *
- * @author SN
- * @date 2024/11/08
- */
 public class SceneStartContext extends SceneOpsContext {
 
 	/**
@@ -120,3 +120,4 @@ public class SceneStartContext extends SceneOpsContext {
 	}
 
 }
+

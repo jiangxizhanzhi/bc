@@ -1,3 +1,22 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import com.cyberpeace.common.baseinterface.Update;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+
+/**
+ * 更新类别请求体
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @see SaveCourseCategoryReq
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `UpdateCategoryReq` 的 Java 类，该类用于处理更新课程类别的请求。以下是对其主要特性和功能的简要分析： 
  * 1. **包声明**：代码位于 `com.cyberpeace.oj.course.controller.req` 包中，表明这是一个请求对象，用于课程管理模块中的控制器层。 
@@ -18,25 +37,6 @@
  * - `@ApiModelProperty` 注解提供了关于 `resourceId` 字段的元数据，有助于 API 文档的生成。 
  * 总结来说，`UpdateCategoryReq` 是一个用于更新课程类别的请求对象，继承了保存课程类别所需的一些属性，并且包含了必要的验证逻辑以确保更新操作的有效性。 
 **/
-package com.cyberpeace.oj.course.controller.req;
-
-import com.cyberpeace.common.baseinterface.Update;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-
-/**
- * 更新类别请求体
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @see SaveCourseCategoryReq
- * @since 1.0.0
- */
 @Getter
 @Setter
 @ApiModel
@@ -52,3 +52,4 @@ public class UpdateCategoryReq extends SaveCourseCategoryReq {
 	private String resourceId;
 
 }
+

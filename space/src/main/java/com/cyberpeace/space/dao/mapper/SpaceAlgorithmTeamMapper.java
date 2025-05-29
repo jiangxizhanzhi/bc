@@ -1,3 +1,19 @@
+package com.cyberpeace.space.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.space.dao.entity.SpaceAlgorithmTeam;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+
+/**
+ * 空间算法团队Mapper
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see BaseMapper
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个基于 MyBatis-Plus 的 Mapper 接口 `SpaceAlgorithmTeamMapper`，用于操作数据库中与 `SpaceAlgorithmTeam` 实体类相关的数据。以下是代码的简要分析： 
  * 1. **包名**：代码位于 `com.cyberpeace.space.dao.mapper` 包下，表明这是一个数据访问层（DAO）中的 Mapper 文件。 
@@ -16,22 +32,6 @@
  * 总结：这是一个典型的 MyBatis-Plus Mapper 接口，用于简化对 `SpaceAlgorithmTeam` 数据表的 CRUD 操作，体现了 MyBatis-Plus 的高效性和简洁性。 
 **/
 
-package com.cyberpeace.space.dao.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.space.dao.entity.SpaceAlgorithmTeam;
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
-
-/**
- * 空间算法团队Mapper
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see BaseMapper
- * @since 1.0.0
- */
 @Mapper
 @Repository
 public interface SpaceAlgorithmTeamMapper extends BaseMapper<SpaceAlgorithmTeam> {

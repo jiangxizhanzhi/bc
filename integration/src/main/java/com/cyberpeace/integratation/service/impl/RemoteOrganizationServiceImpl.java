@@ -1,3 +1,33 @@
+package com.cyberpeace.integratation.service.impl;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.integratation.service.RemoteOrganizationService;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+/**
+ * 远程组织Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码是一个Spring服务类 `RemoteOrganizationServiceImpl`，实现了 `RemoteOrganizationService` 接口。该类主要用于从远程系统获取组织结构相关的信息。以下是对代码的简要分析： 
  * ### 类定义和注解 
@@ -29,36 +59,6 @@
  * ### 总结 
  * 该类主要负责与远程系统交互以获取组织结构信息，并提供了一系列方法来处理这些信息。代码结构清晰，逻辑明确，使用了Spring框架的特性来管理依赖和服务。 
 **/
-package com.cyberpeace.integratation.service.impl;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.JsonKeyConstant;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.integratation.service.RemoteOrganizationService;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-/**
- * 远程组织Service实现
- *
- * @author SN
- * @date 2024/11/08
- */
 @Service
 public class RemoteOrganizationServiceImpl implements RemoteOrganizationService {
 
@@ -340,3 +340,4 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 		return HttpClientUtil.rawGet(MP_ORG_INFO + orgId, JSONObject.class);
 	}
 }
+

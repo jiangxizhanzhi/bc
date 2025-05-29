@@ -1,3 +1,13 @@
+package com.cyberpeace.common.constant;
+
+/**
+ * 菜单对应值，由前端指定, 不能轻易变更
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/08
+ * @since 1.0.0
+ */
 /**
  * 这段代码定义了一个名为 `MenuConstant` 的 Java 接口，主要用于存储系统中菜单项的常量值。这些常量值在前后端交互中作为菜单标识符使用，具有固定的含义且不易更改。以下是简要分析： 
  * ### 主要特点： 
@@ -18,16 +28,6 @@
  * ### 总结： 
  * 该接口的设计目的是提供一个统一的菜单项常量集合，确保前后端开发的一致性，并减少硬编码的风险。通过这种方式，可以提高代码的可维护性和可读性。 
 **/
-package com.cyberpeace.common.constant;
-
-/**
- * 菜单对应值，由前端指定, 不能轻易变更
- *
- * @author SN
- * @version 1.0.0
- * @date 2024/11/08
- * @since 1.0.0
- */
 public interface MenuConstant {
 
     /**
@@ -438,3 +438,4 @@ public interface MenuConstant {
      */ //红蓝对抗统计
     String CMS_CR_RB_TRAIN_STATISTICS = "red-vs-blue-statistics";
 }
+

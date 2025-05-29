@@ -1,3 +1,16 @@
+package com.cyberpeace.cs.service.context.scene;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+/**
+ * 拓扑数据
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 该代码定义了一个名为 `TopoData` 的类，用于表示拓扑数据。以下是简要分析： 
  * 1. **类的功能**： 
@@ -12,19 +25,6 @@
  * - 该类可能是某个系统中用于管理拓扑数据和相关插件的核心数据结构，可能与场景相关的业务逻辑紧密关联。 
  * 总结：`TopoData` 是一个简单的数据传输对象（DTO），用于封装拓扑学和插件相关的信息，并支持序列化操作。 
 **/
-package com.cyberpeace.cs.service.context.scene;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-/**
- * 拓扑数据
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class TopoData implements Serializable {
@@ -40,3 +40,4 @@ public class TopoData implements Serializable {
 	private ScenePlugins plugins;
 
 }
+

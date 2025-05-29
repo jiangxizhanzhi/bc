@@ -1,3 +1,14 @@
+package com.cyberpeace.oj.course.service.bo;
+
+import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.entity.LessonConfig;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheoryRef;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
 /**
  * 这段代码定义了一个名为 `CourseSlimDumpBo` 的 Java 类，该类位于 `com.cyberpeace.oj.course.service.bo` 包中。这个类的主要功能是作为数据传输对象（DTO），用于封装课程相关的数据。以下是详细的分析： 
  * ### 1. 类定义 
@@ -32,17 +43,6 @@
  * ### 总结 
  * `CourseSlimDumpBo` 类是一个数据传输对象（DTO），用于在不同层之间传递课程及其相关实体的数据。它通过列表形式存储多个课程、课时、配置以及参考信息，并且使用 Lombok 注解简化了代码，减少了样板代码。 
 **/
-package com.cyberpeace.oj.course.service.bo;
-
-import com.cyberpeace.oj.course.dao.entity.Course;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.dao.entity.LessonConfig;
-import com.cyberpeace.oj.practice.dao.entity.PracticeTheoryRef;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
 @Setter
 @Getter
 public class CourseSlimDumpBo {
@@ -56,3 +56,4 @@ public class CourseSlimDumpBo {
 	private List<PracticeTheoryRef> refList;
 
 }
+

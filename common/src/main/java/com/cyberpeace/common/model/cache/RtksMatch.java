@@ -1,3 +1,18 @@
+package com.cyberpeace.common.model.cache;
+
+import com.cyberpeace.common.model.user.UserInfo;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * rtks 匹配度缓存
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 /**
  * 这段代码定义了一个名为 `RtksMatch` 的 Java 类，用于表示 RTKS 匹配度缓存。以下是代码的简要分析： 
  * 1. **类的功能**： 
@@ -14,21 +29,6 @@
  * - 类和方法都有详细的注释，说明了其用途和参数含义，有助于代码的理解和维护。 
  * 总结来说，这个类主要用于封装和管理用户在 RTKS 系统中的匹配度相关信息，并提供了便捷的方法来初始化和获取数据。 
 **/
-package com.cyberpeace.common.model.cache;
-
-import com.cyberpeace.common.model.user.UserInfo;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * rtks 匹配度缓存
- *
- * @author SN
- * @date 2024/11/08
- */
 @Getter
 @Setter
 public class RtksMatch implements Serializable {
@@ -71,3 +71,4 @@ public class RtksMatch implements Serializable {
 	}
 
 }
+

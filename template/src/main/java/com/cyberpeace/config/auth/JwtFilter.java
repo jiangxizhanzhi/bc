@@ -1,3 +1,26 @@
+package com.cyberpeace.config.auth;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
+import org.springframework.http.HttpStatus;
+
+import com.cyberpeace.common.constant.WebConstant;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * JWT过滤器
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2025/05/28
+ * @see BasicHttpAuthenticationFilter
+ * @since 1.0.0
+ */
 /**
  * ### 分析 
  * #### 类概述 
@@ -37,29 +60,6 @@
  * - 当前实现中，`executeLogin`总是返回`true`，可能需要根据实际业务需求调整。 
  * - JWT解码和验证逻辑可以进一步增强，例如添加更多的校验规则。 
 **/
-package com.cyberpeace.config.auth;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
-import org.springframework.http.HttpStatus;
-
-import com.cyberpeace.common.constant.WebConstant;
-
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * JWT过滤器
- *
- * @author SN
- * @version 1.0.0
- * @date 2025/05/28
- * @see BasicHttpAuthenticationFilter
- * @since 1.0.0
- */
 @Slf4j
 public class JwtFilter extends BasicHttpAuthenticationFilter {
 

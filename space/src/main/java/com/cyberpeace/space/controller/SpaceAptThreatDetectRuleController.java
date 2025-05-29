@@ -77,8 +77,8 @@ public class SpaceAptThreatDetectRuleController extends SpaceControllerBase<Spac
 	public BaseRsp<Boolean> exportExcel(HttpServletResponse response,
 	        SpaceAptThreatDetectRulePageReq req) {
 	    // 生成Excel文件的路径和名称
-	    String filePath = "特定APT威胁检测规则"
-	            + CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
+		String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
+				+ CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
 
 	    // 创建查询条件包装器
 	    LambdaQueryWrapper<SpaceAptThreatDetectRule> wrapper = new LambdaQueryWrapper<>();
@@ -98,7 +98,9 @@ public class SpaceAptThreatDetectRuleController extends SpaceControllerBase<Spac
 	    // 数据导出
 	    ExcelDataHandler.exportExcel(exportBoList, filePath, ExcelHeader.APT_THREAT_DETECT_RULE);
 	    // 设置HTTP响应，将Excel文件作为附件提供
-	    FileUtil.setResponse(new File(filePath), true, response);
+		String targetFileName = "特定APT威胁检测规则" + CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
+
+		FileUtil.setResponse(new File(filePath), true, response, targetFileName);
 
 	    // 返回成功响应
 	    return new BaseRsp<>(Boolean.TRUE);

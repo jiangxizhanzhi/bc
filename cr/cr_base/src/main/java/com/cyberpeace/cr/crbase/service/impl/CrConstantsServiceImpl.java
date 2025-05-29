@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
@@ -43,6 +44,7 @@ public class CrConstantsServiceImpl implements CrConstantsService {
 	 * @return {@code List<CrConstantsConfig> }
 	 */
 	@Override
+	@Cacheable(value = "getByType", unless = "#result.isEmpty()")
 	public List<CrConstantsConfig> getByType(Integer type) {
 		if (cache.isEmpty()) {
 			init();

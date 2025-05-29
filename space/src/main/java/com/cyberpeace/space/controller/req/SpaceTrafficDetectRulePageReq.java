@@ -8,6 +8,8 @@ import com.cyberpeace.space.model.req.SpaceToolPageReq;
 
 import io.swagger.annotations.ApiModel;
 
+import java.util.Objects;
+
 /**
  * 空间流量检测统治分页请求体
  *
@@ -41,6 +43,18 @@ import io.swagger.annotations.ApiModel;
 @ApiModel
 public class SpaceTrafficDetectRulePageReq extends SpaceToolPageReq {
 
+	private Integer attackType;
+
+	public void setAttack_type(Integer attackType) {
+		this.attackType = attackType;
+	}
+
+	public void setAttackType(Integer attackType) {
+		this.attackType = attackType;
+	}
+
+
+
 	/**
 	 * 将请求转换为查询包装器
 	 *
@@ -65,6 +79,10 @@ public class SpaceTrafficDetectRulePageReq extends SpaceToolPageReq {
 	    if (null != this.getStage()) {
 	        wrapper.eq(SpaceTrafficDetectRule::getStage, this.getStage());
 	    }
+
+		if (Objects.nonNull(this.attackType)) {
+			wrapper.eq(SpaceTrafficDetectRule::getAttackType, this.attackType);
+		}
 	    // 设置实体类，指定查询的实体类型
 	    wrapper.setEntityClass(SpaceTrafficDetectRule.class);
 	    // 返回构建好的查询包装器对象

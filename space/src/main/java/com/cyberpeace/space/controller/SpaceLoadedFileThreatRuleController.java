@@ -114,8 +114,8 @@ public class SpaceLoadedFileThreatRuleController extends SpaceControllerBase<Spa
 	public BaseRsp<Boolean> exportExcel(HttpServletResponse response,
 	                                    SpaceLoadedFileThreatRulePageReq req) {
 	    // 生成Excel文件的路径和名称
-	    String filePath = "病毒防御威胁规则"
-	            + CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
+		String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
+				+ CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
 
 	    // 创建查询条件构造器
 	    LambdaQueryWrapper<SpaceLoadedFileThreatRule> wrapper = new LambdaQueryWrapper<>();
@@ -144,7 +144,8 @@ public class SpaceLoadedFileThreatRuleController extends SpaceControllerBase<Spa
 	    // 数据导出
 	    ExcelDataHandler.exportExcel(exportBoList, filePath, ExcelHeader.LOADED_FILE_THREAT_RULE);
 	    // 设置HTTP响应，以附件形式返回Excel文件
-	    FileUtil.setResponse(new File(filePath), true, response);
+		String targetFileName = "病毒防御威胁规则" + CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
+	    FileUtil.setResponse(new File(filePath), true, response, targetFileName);
 
 	    // 返回成功响应
 	    return new BaseRsp<>(Boolean.TRUE);

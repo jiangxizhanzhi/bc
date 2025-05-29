@@ -114,7 +114,7 @@ public class SpaceEventIntegrationRuleController extends SpaceControllerBase<Spa
     public BaseRsp<Boolean> exportExcel(HttpServletResponse response,
                                         SpaceEventIntegrationRulePageReq req) {
         // 生成Excel文件的路径和名称
-        String filePath = "主机攻击防御规则"
+        String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
                 + CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
 
         // 创建查询条件
@@ -136,7 +136,9 @@ public class SpaceEventIntegrationRuleController extends SpaceControllerBase<Spa
         // 数据导出
         ExcelDataHandler.exportExcel(exportBoList, filePath, ExcelHeader.EVENT_INTEGRATION_RULE);
         // 设置响应头，使客户端可以下载生成的Excel文件
-        FileUtil.setResponse(new File(filePath), true, response);
+        String targetFileName = "主机攻击防御规则" + CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
+
+        FileUtil.setResponse(new File(filePath), true, response, targetFileName);
 
         // 返回导出成功的信息
         return new BaseRsp<>(Boolean.TRUE);

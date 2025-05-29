@@ -7,12 +7,14 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.ContentDisposition;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -323,14 +325,7 @@ public class FileUtil {
 		}
 	}
 
-	/**
-	 * @Author 陈卓
-	 * 生成文件响应
-	 * @param file 返回的文件
-	 * @param delete 是否删除本地文件
-	 * @param response 响应
-	 */
-	public static void setResponse(File file, Boolean delete, HttpServletResponse response) {
+	public static void setResponse(File file, Boolean delete, HttpServletResponse response, String targetFileName) {
 		// 以流的形式下载文件。
 		InputStream fis = null;
 		OutputStream outputStream = null;
@@ -344,7 +339,10 @@ public class FileUtil {
 
 			// 设置返回
 			response.setContentType("application/octet-stream;charset=UTF-8");
-			response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(file.getName(),"UTF-8").replaceAll("\\+","%20"));
+			if (StringUtils.isEmpty(targetFileName)) {
+				targetFileName = file.getName();
+			}
+			response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(targetFileName,"UTF-8").replaceAll("\\+","%20"));
 			outputStream = response.getOutputStream();
 			outputStream.write(buffer);
 			outputStream.flush();
@@ -365,6 +363,22 @@ public class FileUtil {
 			if (delete && null != file && file.exists()) {
 				file.delete();
 			}
+		}
+	}
+
+	/**
+	 * @Author 陈卓
+	 * 生成文件响应
+	 * @param file 返回的文件
+	 * @param delete 是否删除本地文件
+	 * @param response 响应
+	 */
+	public static void setResponse(File file, Boolean delete, HttpServletResponse response) {
+		try {
+			setResponse(file, delete, response, "");
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new BusinessException(ErrorCode.DIRECT_MSG_EXCEPTION, "导出文件失败");
 		}
 	}
 

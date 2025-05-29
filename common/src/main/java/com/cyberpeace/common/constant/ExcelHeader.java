@@ -63,16 +63,16 @@ public enum ExcelHeader {
 					"Number of exercises completed after class", "Number of completed experiments","Number of examinations taken"},
 			new String[] {"desc"}),
 
-	APT_THREAT_DETECT_RULE(new String[] { "APT代号", "检测类型", "内容简介", "内容详情", "应用工具" },
+	APT_THREAT_DETECT_RULE(new String[] { "APT代号/组织", "检测类型", "内容简介", "内容详情", "应用工具" },
 			new String[] {}, new String[] { "desc" }),
 
-	EVENT_INTEGRATION_RULE(new String[] { "检测类型", "内容简介", "内容详情", "应用工具" }, new String[] {},
+	EVENT_INTEGRATION_RULE(new String[] { "防御类型", "内容简介", "内容详情", "应用工具" }, new String[] {},
 			new String[] { "desc" }),
 
-	LOADED_FILE_THREAT_RULE(new String[] { "检测类型", "内容简介", "内容详情", "应用工具", "执行方式" },
+	LOADED_FILE_THREAT_RULE(new String[] { "病毒类型", "内容简介", "内容详情", "应用工具", "执行方式" },
 			new String[] {}, new String[] { "desc" }),
 
-	TRAFFIC_DETECT_RULE(new String[] { "规则内容", "规则编号", "规则信息", "威胁等级", "工具" }, new String[] {},
+	TRAFFIC_DETECT_RULE(new String[] { "规则内容", "规则编号", "规则信息", "威胁等级", "工具" , "攻击类型"}, new String[] {},
 			new String[] { "desc" }),
 
 	WARNING_DICTIONARY(new String[] { "告警名称", "工具类型", "工具告警等级", "告警等级", "等级描述", "更新时间" },

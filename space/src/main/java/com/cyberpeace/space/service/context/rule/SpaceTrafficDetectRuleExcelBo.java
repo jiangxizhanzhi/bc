@@ -74,5 +74,8 @@ public class SpaceTrafficDetectRuleExcelBo {
      */
     @ApiModelProperty(value = "工具")
     private String tool;
+
+    @ApiModelProperty(value = "攻击类型")
+    private String attackType;
 }
 

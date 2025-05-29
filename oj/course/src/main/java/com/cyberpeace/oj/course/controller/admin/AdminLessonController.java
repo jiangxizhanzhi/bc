@@ -36,6 +36,7 @@
 package com.cyberpeace.oj.course.controller.admin;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
@@ -93,7 +94,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 管理课Controller
@@ -196,6 +200,31 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		LessonContext context = BeanUtils.copy(lessonReq, LessonContext.class);
 		context.setCourseIds(Lists.newArrayList(lessonReq.getCourseId()));
+
+		// 导入课程小节
+		if (StringUtils.isNotEmpty(lessonReq.getExceptCourse())) {
+
+			if (StringUtils.isNotEmpty(lessonReq.getCourseId())) {
+				if (lessonReq.getCourseId().equals(lessonReq.getExceptCourse())) {
+					throw new BusinessException(ErrorCode.DIRECT_MSG_EXCEPTION, "导入课程小节时，请勿选择当前课程");
+				}
+			} else {
+				LambdaQueryWrapper<Course> courseQuery = new LambdaQueryWrapper<Course>()
+						.select(Course::getResourceId);
+				if (StringUtils.isNotEmpty(lessonReq.getCategoryId())) {
+					courseQuery.eq(Course::getCategoryId, lessonReq.getCategoryId());
+				}
+				List<Course> courses = courseMapper.selectList(courseQuery);
+				if (CollectionUtils.isEmpty(courses)) {
+					return new BaseRsp<>();
+				} else {
+					Set<String> courseIds = courses.stream().map(Course::getResourceId).collect(Collectors.toSet());
+					courseIds.remove(lessonReq.getExceptCourse());
+					context.setCourseIds(new ArrayList<>(courseIds));
+				}
+			}
+
+		}
 
 		// 数据查询
 		IPage<AdminLessonListBo> iPage = courseLessonService.pageByContext(page, context, false);

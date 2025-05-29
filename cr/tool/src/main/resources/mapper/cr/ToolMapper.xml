@@ -72,6 +72,6 @@
     </select>
     <select id="listTypeAndPlatform" resultType="com.cyberpeace.cr.tool.dao.entity.Tool">
         select `type`, platforms
-        from cr_tool_tool
+        from cr_tool_tool where `visible` = 1
     </select>
 </mapper>

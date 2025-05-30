@@ -13,6 +13,7 @@ import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.integratation.service.impl.MpEnvService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,6 +155,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	@Autowired
 	@Qualifier("taskExecutor")
 	private Executor executor;
+
+	@Autowired
+	private MpEnvService mpEnvService;
 
 	/**
 	 * 新增模板
@@ -480,7 +484,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 				String topoId = businessTemplate.getTopoId();
 
-				String url = "http://223.107.170.58:7788/#/step/index?simulationId=" + topoId + "&token=" + token;
+				String url = mpEnvService.getJUMP_URL() + "?simulationId=" + topoId + "&token=" + token;
 				businessTemplate.setUrl(url);
 			}
 		}

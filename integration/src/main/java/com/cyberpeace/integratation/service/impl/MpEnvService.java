@@ -27,6 +27,9 @@ public class MpEnvService {
 	 */
 	private String MP_URL;
 
+	// 往电力靶场跳转的地址
+	private String JUMP_URL;
+
 	/**
 	 * 获取中台主机
 	 *
@@ -36,6 +39,10 @@ public class MpEnvService {
 	 */
 	public String getMpHost() {
 		return MP_URL;
+	}
+
+	public String getJUMP_URL() {
+		return JUMP_URL;
 	}
 
 	/**
@@ -53,7 +60,9 @@ public class MpEnvService {
 		}
 		// 5.5+ 版本修改和drm变量共用
 		MP_URL = MP_HOST;
+		JUMP_URL = SystemPropUtil.getProp("JUMP_URL");
 
 		log.info("mp url=[{}]", MP_URL);
+		log.info("jump url=[{}]", JUMP_URL);
 	}
 }

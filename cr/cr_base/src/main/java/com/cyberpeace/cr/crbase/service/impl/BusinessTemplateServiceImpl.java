@@ -480,7 +480,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 				String topoId = businessTemplate.getTopoId();
 
-				String url = "http://1010101/asdf/asdf?topo_id=" + topoId + "&token=" + token;
+				String url = "http://223.107.170.58:7788/#/step/index?simulationId=" + topoId + "&token=" + token;
 				businessTemplate.setUrl(url);
 			}
 		}

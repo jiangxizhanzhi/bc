@@ -7,7 +7,7 @@ import lombok.Data;
 public class VehicleTrafficAddReq {
 
 	@ApiModelProperty(value = "车型")
-	private String model;
+	private Integer model;
 
 	@ApiModelProperty(value = "名称")
 	private String name;

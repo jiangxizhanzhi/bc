@@ -9,7 +9,7 @@
     <select id="page" resultType="com.cyberpeace.iov.service.bo.dut.DutListBo">
         select d.*, t.name as model_name
         from iov_dut as d
-        left join iov_vehicle_type as t on d.model = t.resource_id
+        left join iov_vehicle_type as t on d.model = t.id
         <where>
             <if test="model != null and model != ''">
                 d.model = #{model}
@@ -25,7 +25,7 @@
     <select id="listByModelAndArea" resultType="com.cyberpeace.iov.service.bo.dut.DutListBo">
         select d.*, t.name as model_name
         from iov_dut as d
-                 left join iov_vehicle_type as t on d.model = t.resource_id
+                 left join iov_vehicle_type as t on d.model = t.id
         where model = #{model}
           and area = #{area}
           and status = 1;

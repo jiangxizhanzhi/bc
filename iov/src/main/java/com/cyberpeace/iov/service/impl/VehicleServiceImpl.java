@@ -15,6 +15,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.iov.dao.entity.VehicleType;
 import com.cyberpeace.iov.dao.mapper.VehicleTypeMapper;
 import com.cyberpeace.iov.service.VehicleTypeService;
@@ -37,7 +38,7 @@ public class VehicleServiceImpl extends ServiceImpl<VehicleTypeMapper, VehicleTy
 		IPage<VehicleType> iPage = this.getBaseMapper().selectPage(page, wrapper);
 		iPage.convert(item -> {
 			VehicleTypeBo bo = new VehicleTypeBo();
-			bo.setResourceId(item.getResourceId());
+			bo.setResourceId(item.getId());
 			bo.setName(item.getName());
 			return bo;
 		});
@@ -46,36 +47,44 @@ public class VehicleServiceImpl extends ServiceImpl<VehicleTypeMapper, VehicleTy
 
 	@Override
 	public void create(VehicleTypeBo req) {
-		VehicleType e = req.bo2Entity();
+		VehicleType e = new VehicleType();
+		e.setName(req.getName());
 		this.save(e);
 	}
 
 	@Override
 	public void modify(VehicleTypeBo req) {
 		VehicleType e = req.bo2Entity();
+		e.setId(req.getResourceId());
 		this.updateById(e);
 	}
 
 	@Override
-	public void deleteByIds(List<String> ids) {
+	public void deleteByIds(List<Integer> ids) {
 		this.removeByIds(ids);
 	}
 
 	@Override
-	public VehicleTypeBo getDetail(String resourceId) {
+	public VehicleTypeBo getDetail(Integer resourceId) {
 		VehicleType e = this.getById(resourceId);
 		if (e == null) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		VehicleTypeBo bo = BeanUtils.copy(e, VehicleTypeBo.class);
+		bo.setResourceId(e.getId());
 		return bo;
 	}
 
-    @Override
-    public List<VehicleTypeBo> listBos() {
+	@Override
+	public List<VehicleTypeBo> listBos() {
 		LambdaQueryWrapper<VehicleType> wrapper = new LambdaQueryWrapper<>();
 		wrapper.orderByDesc(VehicleType::getUpdateTime);
 		List<VehicleType> list = this.list(wrapper);
+		List<VehicleTypeBo> res = StreamApiUtils.map(list, e -> {
+			VehicleTypeBo bo = BeanUtils.copy(e, VehicleTypeBo.class);
+			bo.setResourceId(e.getId());
+			return bo;
+		});
 		return BeanUtils.deepCopyList(list, VehicleTypeBo.class);
-    }
+	}
 }

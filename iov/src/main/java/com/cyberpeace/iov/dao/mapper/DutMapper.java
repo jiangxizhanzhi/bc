@@ -17,9 +17,9 @@ import com.cyberpeace.iov.service.bo.dut.DutListBo;
 @Repository
 public interface DutMapper extends BaseMapper<Dut> {
 
-	List<DutListBo> listByModelAndArea(@Param("model") String model, @Param("area") Integer area);
+	List<DutListBo> listByModelAndArea(@Param("model") Integer model, @Param("area") Integer area);
 
-	IPage<DutListBo> page(@Param("page") Page page, @Param("model") String model,
+	IPage<DutListBo> page(@Param("page") Page page, @Param("model") Integer model,
 			@Param("area") Integer area, @Param("status") Integer status);
 
 	void enable(@Param("resourceId") String resourceId, @Param("code") Integer code);

@@ -1,5 +1,6 @@
 package com.cyberpeace.iov.controller;
 
+import com.cyberpeace.iov.service.bo.IdsReq;
 import com.cyberpeace.iov.service.bo.frame.*;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -50,7 +51,7 @@ public class VehicleTypeController {
 
 	@ApiOperation("删除车型")
 	@DeleteMapping("")
-	public BaseRsp deleteBatch(@RequestBody IdListReq req) {
+	public BaseRsp deleteBatch(@RequestBody IdsReq req) {
 		service.deleteByIds(req.getIds());
 		return new BaseRsp();
 	}
@@ -58,7 +59,7 @@ public class VehicleTypeController {
 	@ApiOperation("车型详情")
 	@GetMapping("")
 	public BaseRsp<VehicleTypeBo>
-			getDetail(@ApiParam(value = "车型id", name = "resource_id") String resource_id) {
+			getDetail(@ApiParam(value = "车型id", name = "resource_id") Integer resource_id) {
         VehicleTypeBo bo = service.getDetail(resource_id);
 		return new BaseRsp<>(bo);
 	}

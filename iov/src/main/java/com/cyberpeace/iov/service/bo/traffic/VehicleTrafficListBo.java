@@ -12,7 +12,7 @@ public class VehicleTrafficListBo {
 	private String resourceId;
 
 	@ApiModelProperty(value = "车型")
-	private String model;
+	private Integer model;
 
 	@ApiModelProperty(value = "车型名称")
 	private String modelName;

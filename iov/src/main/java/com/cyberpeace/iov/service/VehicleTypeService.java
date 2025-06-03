@@ -15,9 +15,9 @@ public interface VehicleTypeService extends IService<VehicleType> {
 
     void modify(VehicleTypeBo req);
 
-    void deleteByIds(List<String> ids);
+    void deleteByIds(List<Integer> ids);
 
-    VehicleTypeBo getDetail(String resourceId);
+    VehicleTypeBo getDetail(Integer resourceId);
 
     List<VehicleTypeBo> listBos();
 

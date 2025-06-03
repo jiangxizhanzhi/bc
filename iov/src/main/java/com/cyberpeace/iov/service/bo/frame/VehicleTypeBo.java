@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 public class VehicleTypeBo {
 
-	private String resourceId;
+	private Integer resourceId;
 
 	private String name;
 

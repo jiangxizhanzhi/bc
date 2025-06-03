@@ -92,11 +92,11 @@ public class VehicleTrafficServiceImpl extends ServiceImpl<VehicleTrafficMapper,
 		List<VehicleTrafficDetailBo> res = BeanUtils.deepCopyList(trafficList,
 				VehicleTrafficDetailBo.class);
 
-		List<String> modelIds = StreamApiUtils.map(trafficList, VehicleTraffic::getModel);
+		List<Integer> modelIds = StreamApiUtils.map(trafficList, VehicleTraffic::getModel);
 		List<VehicleType> modelList = modelIds.isEmpty() ? Lists.newArrayList()
 				: vehicleTypeService.listByIds(modelIds);
-		Map<String, String> modelNameMap = StreamApiUtils.toMap(modelList,
-				VehicleType::getResourceId, VehicleType::getName);
+		Map<Integer, String> modelNameMap = StreamApiUtils.toMap(modelList,
+				VehicleType::getId, VehicleType::getName);
 
 		List<String> attachmentIds = trafficList.stream().map(VehicleTraffic::getBlfFile)
 				.filter(Objects::nonNull).collect(Collectors.toList());

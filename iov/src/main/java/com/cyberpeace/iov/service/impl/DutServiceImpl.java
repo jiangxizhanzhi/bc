@@ -38,8 +38,8 @@ public class DutServiceImpl extends ServiceImpl<DutMapper, Dut> implements DutSe
 	private VehicleTypeMapper vehicleTypeMapper;
 
 	@Override
-	public ListRsp<DutListBo> pageDuts(PageReqBase req, String model, Integer area,
-			Integer status) {
+	public ListRsp<DutListBo> pageDuts(PageReqBase req, Integer model, Integer area,
+									   Integer status) {
 		Page page = req.toPageParam();
 		IPage<DutListBo> iPage = dutMapper.page(page, model, area, status);
 		return PageUtil.getListResult(iPage);
@@ -58,7 +58,7 @@ public class DutServiceImpl extends ServiceImpl<DutMapper, Dut> implements DutSe
 	}
 
 	@Override
-	public List<DutListBo> listDuts(String model, Integer area) {
+	public List<DutListBo> listDuts(Integer model, Integer area) {
 		List<DutListBo> res = this.getBaseMapper().listByModelAndArea(model, area);
 		return res;
 	}

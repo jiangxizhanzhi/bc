@@ -17,7 +17,7 @@ public class VehicleFrame extends BaseTable {
 	/**
 	 * 车型
 	 */
-	private String model;
+	private Integer model;
 
 	/**
 	 * 名称

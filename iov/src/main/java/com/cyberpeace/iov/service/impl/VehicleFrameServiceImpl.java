@@ -55,7 +55,7 @@ public class VehicleFrameServiceImpl extends ServiceImpl<VehicleFrameMapper, Veh
 				.collect(Collectors.toList());
 		Map<String, String> userNameMap = remoteUserService.getIdNameMap(userIds);
 		List<VehicleTypeBo> types = vehicleTypeService.listBos();
-		Map<String, String> typeMap = StreamApiUtils.toMap(types, VehicleTypeBo::getResourceId,
+		Map<Integer, String> typeMap = StreamApiUtils.toMap(types, VehicleTypeBo::getResourceId,
 				VehicleTypeBo::getName);
 		iPage.getRecords()
 				.forEach(r -> {

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,8 +14,9 @@ import lombok.Setter;
 @TableName("iov_vehicle_type")
 public class VehicleType extends BaseTable {
 
-	@TableId(type = IdType.ASSIGN_UUID, value = "resource_id")
-	private String resourceId;
+	@ApiModelProperty("自增ID")
+	@TableId(type = IdType.AUTO)
+	private Integer id;
 
 	/**
 	 * 名称

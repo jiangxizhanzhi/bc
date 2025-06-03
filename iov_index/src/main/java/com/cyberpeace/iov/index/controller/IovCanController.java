@@ -115,6 +115,8 @@ public class IovCanController {
 		req.setMsgInterval("1000");
 		CanMsg msg = new CanMsg();
 		msg.setMsgId(id);
+		// todo 默认通道1
+		msg.setMsgChn("1");
 		msg.setMsgData(data);
 		req.setMsgs(Lists.newArrayList(msg));
 

@@ -48,6 +48,7 @@ public class DutServiceImpl extends ServiceImpl<DutMapper, Dut> implements DutSe
 	@Override
 	public void create(DutAddReq req) {
 		Dut dut = this.req2Entity(req);
+		dut.setStatus(DutStatus.ONLINE);
 		this.save(dut);
 	}
 
@@ -88,7 +89,6 @@ public class DutServiceImpl extends ServiceImpl<DutMapper, Dut> implements DutSe
 
 	private Dut req2Entity(DutAddReq req) {
 		Dut dut = BeanUtils.copy(req, Dut.class);
-		dut.setStatus(DutStatus.ONLINE);
 		return dut;
 	}
 

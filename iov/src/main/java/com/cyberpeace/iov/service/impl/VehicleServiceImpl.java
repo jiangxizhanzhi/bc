@@ -85,6 +85,6 @@ public class VehicleServiceImpl extends ServiceImpl<VehicleTypeMapper, VehicleTy
 			bo.setResourceId(e.getId());
 			return bo;
 		});
-		return BeanUtils.deepCopyList(list, VehicleTypeBo.class);
+		return res;
 	}
 }

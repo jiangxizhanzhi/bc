@@ -3,6 +3,7 @@ package com.cyberpeace.config.auth;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -351,7 +352,7 @@ public class ExceptionFilter implements Filter {
 	 * @see HttpServletResponse
 	 */
 	private void dealDefaultError(HttpServletResponse httpServletResponse) {
-		flushErrorInfo(httpServletResponse, ErrorCode.INTERNAL_ERROR,
+		flushErrorInfoWith500Code(httpServletResponse, ErrorCode.INTERNAL_ERROR,
 				BusinessException.getMessageByLanguage(ErrorCode.INTERNAL_ERROR));
 	}
 
@@ -387,13 +388,26 @@ public class ExceptionFilter implements Filter {
 	 */
 	private void flushErrorInfo(HttpServletResponse httpServletResponse, String code,
 			String message) {
+		flushErrorInfo(httpServletResponse, code, message);
+	}
+
+	private void flushErrorInfoWith500Code(HttpServletResponse httpServletResponse, String code, String message) {
+		flushErrorInfo(httpServletResponse, code, message, 500);
+	}
+
+
+	private void flushErrorInfo(HttpServletResponse httpServletResponse, String code, String message, Integer httpCode) {
 		BaseRsp<String> errorInfo = new BaseRsp<>();
 
 		errorInfo.setMessage(message);
 		errorInfo.setCode(getErrorCode(code));
 
 		httpServletResponse.setContentType(WebConstant.CONTENT_TYPE);
-		httpServletResponse.setStatus(WebConstant.HTTP_200);
+		if (Objects.isNull(httpCode)) {
+			httpServletResponse.setStatus(WebConstant.HTTP_200);
+		} else {
+			httpServletResponse.setStatus(httpCode);
+		}
 
 		try {
 			httpServletResponse.getWriter().write(JsonUtil.toJsonString(errorInfo));

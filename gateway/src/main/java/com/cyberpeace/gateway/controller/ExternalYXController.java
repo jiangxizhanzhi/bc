@@ -670,7 +670,7 @@ public class ExternalYXController {
 	@GetMapping("/use/action/frame/{type}")
 	public BaseRsp<Boolean> useActionFrame(@ApiParam(name = "type",
 			value = "框架类型，process or target", required = true) @PathVariable String type) {
-		spaceActionFrameService.recordUsage(type);
+		spaceActionFrameService.recordUsage(type, 1);
 		return new BaseRsp<>(true);
 	}
 	@ApiOperation("导出策略")

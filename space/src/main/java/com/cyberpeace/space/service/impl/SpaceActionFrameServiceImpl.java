@@ -7,10 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CallType;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
@@ -46,37 +43,37 @@ import java.util.Set;
  * @since 1.0.0
  */
 /**
- * 这段代码是一个Spring Boot服务类`SpaceActionFrameServiceImpl`的实现，主要负责管理与“空间行动框架”相关的业务逻辑。以下是对其核心功能和结构的简要分析： 
- * ### 核心功能模块： 
- * 1. **框架计数**： 
- * - `countByType`：根据类型统计框架数量。 
- * 2. **框架层级获取**： 
- * - `getFrameLevels`：从数据库中获取框架数据，并解析其层级结构（包括目标、方法和动作），并填充名称信息。 
- * 3. **框架保存与更新**： 
- * - `saveFrame`：将指定的`SpaceFrameLevel`对象序列化后保存到数据库。 
- * - `saveFrame`（重载）：处理战法步骤的变化，并记录调用次数。 
- * - `difference`：计算旧战法步骤与新战法步骤之间的差异。 
- * 4. **框架使用记录**： 
- * - `recordUsage`：记录某种类型的框架使用情况。 
- * 5. **框架查询**： 
- * - `getFrame`：根据资源ID获取框架详细信息，并加载相关战法名称。 
- * - `searchFrame`：基于关键词搜索框架。 
- * - `getTuiyanRecFrame`：推荐相关框架。 
- * 6. **框架添加**： 
- * - `add`：新增框架，确保名称唯一性，并通过事务模板插入关联关系。 
- * 7. **辅助方法**： 
- * - `entity2RecBo`：将实体转换为推荐业务对象。 
- * - `createRel`：创建上下级关系。 
- * - `getOrException`：获取框架或抛出异常。 
- * - `getTacticNameMap`：获取战法名称映射。 
- * ### 技术特点： 
- * - 使用了MyBatis Plus进行数据库操作。 
- * - 利用了Guava库中的`Maps`和`Sets`来处理集合操作。 
- * - JSON序列化/反序列化使用了`fastjson`。 
- * - 日志记录通过`slf4j`实现。 
- * - 事务管理依赖于Spring的`TransactionTemplate`。 
- * ### 总结： 
- * 该类实现了复杂的业务逻辑，涉及框架数据的多层次管理和动态调整，同时具备良好的扩展性和可维护性。 
+ * 这段代码是一个Spring Boot服务类`SpaceActionFrameServiceImpl`的实现，主要负责管理与“空间行动框架”相关的业务逻辑。以下是对其核心功能和结构的简要分析：
+ * ### 核心功能模块：
+ * 1. **框架计数**：
+ * - `countByType`：根据类型统计框架数量。
+ * 2. **框架层级获取**：
+ * - `getFrameLevels`：从数据库中获取框架数据，并解析其层级结构（包括目标、方法和动作），并填充名称信息。
+ * 3. **框架保存与更新**：
+ * - `saveFrame`：将指定的`SpaceFrameLevel`对象序列化后保存到数据库。
+ * - `saveFrame`（重载）：处理战法步骤的变化，并记录调用次数。
+ * - `difference`：计算旧战法步骤与新战法步骤之间的差异。
+ * 4. **框架使用记录**：
+ * - `recordUsage`：记录某种类型的框架使用情况。
+ * 5. **框架查询**：
+ * - `getFrame`：根据资源ID获取框架详细信息，并加载相关战法名称。
+ * - `searchFrame`：基于关键词搜索框架。
+ * - `getTuiyanRecFrame`：推荐相关框架。
+ * 6. **框架添加**：
+ * - `add`：新增框架，确保名称唯一性，并通过事务模板插入关联关系。
+ * 7. **辅助方法**：
+ * - `entity2RecBo`：将实体转换为推荐业务对象。
+ * - `createRel`：创建上下级关系。
+ * - `getOrException`：获取框架或抛出异常。
+ * - `getTacticNameMap`：获取战法名称映射。
+ * ### 技术特点：
+ * - 使用了MyBatis Plus进行数据库操作。
+ * - 利用了Guava库中的`Maps`和`Sets`来处理集合操作。
+ * - JSON序列化/反序列化使用了`fastjson`。
+ * - 日志记录通过`slf4j`实现。
+ * - 事务管理依赖于Spring的`TransactionTemplate`。
+ * ### 总结：
+ * 该类实现了复杂的业务逻辑，涉及框架数据的多层次管理和动态调整，同时具备良好的扩展性和可维护性。
 **/
 @Service
 @Slf4j
@@ -312,7 +309,7 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 	 * @see String
 	 */
 	@Override
-	public void recordUsage(String type) {
+	public void recordUsage(String type, int n) {
 		if (!SpaceActionFrame.Type.TARGET.getName().equals(type)
 				&& !SpaceActionFrame.Type.PROCESS.getName().equals(type)) {
 			return;
@@ -326,12 +323,52 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 			use = new SpaceActionFrameUse();
 			use.setType(type);
 			use.setDate(date);
-			use.setCount(1);
+			use.setCount(n);
 			useMapper.insert(use);
 		} else {
-			use.setCount(use.getCount() + 1);
+			use.setCount(use.getCount() + n);
 			useMapper.updateById(use);
 		}
+	}
+
+	@Override
+	public void recordUsage(Integer type, int n) {
+		SpaceActionFrame.Type typeEnum = EnumUtils.getEnumByCode(type, SpaceActionFrame.Type.class);
+		if (null == typeEnum) {
+			return;
+		}
+		String typeName = typeEnum.getName();
+
+		String date = TimeUtil.format6(new Date());
+		LambdaQueryWrapper<SpaceActionFrameUse> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(SpaceActionFrameUse::getType, typeName);
+		queryWrapper.eq(SpaceActionFrameUse::getDate, date);
+		SpaceActionFrameUse use = useMapper.selectOne(queryWrapper);
+		if (null == use) {
+			use = new SpaceActionFrameUse();
+			use.setType(typeName);
+			use.setDate(date);
+			use.setCount(n);
+			useMapper.insert(use);
+		} else {
+			use.setCount(use.getCount() + n);
+			useMapper.updateById(use);
+		}
+	}
+
+	@Override
+	public void recordUsage(List<SpaceActionFrame> frameList) {
+		if (frameList.isEmpty()) {
+			return;
+		}
+		int targetCount = StreamApiUtils
+				.filter(frameList, f -> SpaceActionFrame.Type.TARGET.getCode().equals(f.getType()))
+				.size();
+		int processCount = StreamApiUtils
+				.filter(frameList, f -> SpaceActionFrame.Type.PROCESS.getCode().equals(f.getType()))
+				.size();
+		this.recordUsage(SpaceActionFrame.Type.TARGET.getName(), targetCount);
+		this.recordUsage(SpaceActionFrame.Type.PROCESS.getName(), processCount);
 	}
 
 	/**
@@ -468,6 +505,8 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 			}
 		}
 		List<SpaceActionFrame> frames = StreamApiUtils.map(res, frameMap::get);
+		// record usage
+		this.recordUsage(frames);
 		List<SpaceActionFrameBo> boList = StreamApiUtils.map(frames,
 				frame -> frame.entity2Bo(null));
 		return boList;
@@ -481,6 +520,8 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 			wrapper.and(wrapperKeyWord -> getKeyWordWrapper(keyWord, wrapperKeyWord));
 		}
 		List<SpaceActionFrame> frameList = this.list(wrapper);
+		// record usage
+		this.recordUsage(frameList);
 
 		List<SpaceActionFrameRecBo> res = StreamApiUtils.map(frameList, this::entity2RecBo);
 		return res;

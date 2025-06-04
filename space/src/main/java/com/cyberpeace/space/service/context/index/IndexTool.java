@@ -1,10 +1,10 @@
 package com.cyberpeace.space.service.context.index;
 
-import java.util.Map;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Map;
 
 /**
  * 编号工具
@@ -82,7 +82,7 @@ public class IndexTool {
 	 * @see Integer
 	 */
 	@ApiModelProperty(value = "总数")
-	private Integer sum = 0;
+	private Long sum = 0L;
 
 	/**
 	 * 平台
@@ -91,5 +91,9 @@ public class IndexTool {
 	 */
 	@ApiModelProperty(value = "平台统计")
 	private Map<String, Integer> platform;
+
+	public void calSum() {
+		this.sum = this.probe + this.attack + this.control + this.defense + this.other;
+	}
 }
 

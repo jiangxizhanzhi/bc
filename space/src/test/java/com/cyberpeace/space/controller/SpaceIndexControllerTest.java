@@ -82,7 +82,7 @@ class SpaceIndexControllerTest {
 		tool.setAttack(0L);
 		tool.setControl(0L);
 		tool.setDefense(0L);
-		tool.setSum(0);
+		tool.setSum(0L);
 		when(mockIndexService.getToolStatistics()).thenReturn(tool);
 
 		// Run the test and verify the results

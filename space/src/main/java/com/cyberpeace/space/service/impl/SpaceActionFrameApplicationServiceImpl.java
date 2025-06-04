@@ -133,6 +133,8 @@ public class SpaceActionFrameApplicationServiceImpl extends ServiceImpl<SpaceAct
 
 	    // Retrieve frame information based on the frame ID.
 	    SpaceActionFrame frame  = frameService.getById(req.getFrameId());
+		// record usage
+		frameService.recordUsage(frame.getType(), 1);
 
 	    // Copy the request parameters into a SpaceActionFrameApplication object and generate a unique resource ID.
 	    SpaceActionFrameApplication application = BeanUtils.copy(req, SpaceActionFrameApplication.class);

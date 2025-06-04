@@ -20,21 +20,21 @@ import java.util.Map;
  * @since 1.0.0
  */
 /**
- * 这段代码定义了一个名为 `SpaceActionFrameService` 的接口，它扩展了 `IService<SpaceActionFrame>` 接口。这个接口用于管理与 `SpaceActionFrame` 相关的操作和服务。以下是代码的主要组成部分和功能分析： 
- * 1. **继承关系**：`SpaceActionFrameService` 继承自 `IService<SpaceActionFrame>`，这意味着它包含了 MyBatis-Plus 提供的基本 CRUD 操作方法。 
- * 2. **方法定义**： 
- * - `countByType(Integer code)`：根据指定的类型代码返回记录的数量。 
- * - `getFrameLevels(String resourceId)`：获取某个资源ID对应的框架级别信息。 
- * - `saveFrame(SpaceFrameLevel req)` 和 `saveFrame(ActionFrameArrangeBo req)`：两种不同的保存框架的方法，分别接收不同类型的请求参数。 
- * - `recordUsage(String type)`：记录某种类型的使用情况。 
- * - `getFrame(String resourceId)`：根据资源ID获取行动框架的安排信息。 
- * - `searchFrame(String req)`：搜索框架，返回符合条件的空间行动框架列表。 
- * - `getTacticNameMap(ActionFrameArrangeBo bo)`：获取战法名称映射，返回一个字符串到字符串的映射表。 
- * - `getTuiyanRecFrame(String categoryId, String keyWord)`：根据类别ID和关键词获取推荐的框架列表。 
- * - `add(SpaceActionFrame entity)`：新增一条空间行动框架记录。 
- * 3. **注释说明**：每个方法都有详细的注释，描述了其功能、输入参数以及可能的输出类型，这有助于其他开发者理解接口的具体用途。 
- * 4. **泛型使用**：接口中使用了多个泛型类（如 `ActionFrameArrangeBo`, `SpaceActionFrameBo`, `SpaceActionFrameRecBo`），这些类可能是为了封装特定业务逻辑的数据结构。 
- * 总体来说，这个接口提供了一套完整的关于 `SpaceActionFrame` 对象的操作方法，涵盖了从数据检索到存储再到业务处理等多个方面，适用于复杂的业务场景。 
+ * 这段代码定义了一个名为 `SpaceActionFrameService` 的接口，它扩展了 `IService<SpaceActionFrame>` 接口。这个接口用于管理与 `SpaceActionFrame` 相关的操作和服务。以下是代码的主要组成部分和功能分析：
+ * 1. **继承关系**：`SpaceActionFrameService` 继承自 `IService<SpaceActionFrame>`，这意味着它包含了 MyBatis-Plus 提供的基本 CRUD 操作方法。
+ * 2. **方法定义**：
+ * - `countByType(Integer code)`：根据指定的类型代码返回记录的数量。
+ * - `getFrameLevels(String resourceId)`：获取某个资源ID对应的框架级别信息。
+ * - `saveFrame(SpaceFrameLevel req)` 和 `saveFrame(ActionFrameArrangeBo req)`：两种不同的保存框架的方法，分别接收不同类型的请求参数。
+ * - `recordUsage(String type)`：记录某种类型的使用情况。
+ * - `getFrame(String resourceId)`：根据资源ID获取行动框架的安排信息。
+ * - `searchFrame(String req)`：搜索框架，返回符合条件的空间行动框架列表。
+ * - `getTacticNameMap(ActionFrameArrangeBo bo)`：获取战法名称映射，返回一个字符串到字符串的映射表。
+ * - `getTuiyanRecFrame(String categoryId, String keyWord)`：根据类别ID和关键词获取推荐的框架列表。
+ * - `add(SpaceActionFrame entity)`：新增一条空间行动框架记录。
+ * 3. **注释说明**：每个方法都有详细的注释，描述了其功能、输入参数以及可能的输出类型，这有助于其他开发者理解接口的具体用途。
+ * 4. **泛型使用**：接口中使用了多个泛型类（如 `ActionFrameArrangeBo`, `SpaceActionFrameBo`, `SpaceActionFrameRecBo`），这些类可能是为了封装特定业务逻辑的数据结构。
+ * 总体来说，这个接口提供了一套完整的关于 `SpaceActionFrame` 对象的操作方法，涵盖了从数据检索到存储再到业务处理等多个方面，适用于复杂的业务场景。
 **/
 public interface SpaceActionFrameService extends IService<SpaceActionFrame> {
 
@@ -69,7 +69,6 @@ public interface SpaceActionFrameService extends IService<SpaceActionFrame> {
      * @see ActionFrameArrangeBo
      */
     void saveFrame(ActionFrameArrangeBo req);
-
     /**
      * 记录使用情况
      *
@@ -77,8 +76,11 @@ public interface SpaceActionFrameService extends IService<SpaceActionFrame> {
      * @throws
      * @see String
      */
-    void recordUsage(String type);
+    void recordUsage(String type, int n);
 
+    void recordUsage(Integer type, int n);
+
+    void recordUsage(List<SpaceActionFrame> frameList);
     /**
      * 获取框架
      *

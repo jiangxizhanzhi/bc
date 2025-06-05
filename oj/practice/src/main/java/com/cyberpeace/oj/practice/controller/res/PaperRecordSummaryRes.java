@@ -61,4 +61,7 @@ public class PaperRecordSummaryRes implements Serializable {
      */
     @ApiModelProperty("正确率")
 	private Integer accuracyRate;
+
+    @ApiModelProperty("是否大模型系统组卷")
+    private Boolean aiCreateFlag;
 }

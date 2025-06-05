@@ -50,4 +50,8 @@ public class PracticePaperCreateReq implements Serializable {
 	@ApiModelProperty("方向选择")
 	@Size(min = 1, message = OjBusinessErrorCode.QUESTION_DIRECTION_NOT_SELECTED)
 	private List<String> direction;
+
+
+	@ApiModelProperty("是否智能体创建的题目")
+	private Boolean aiCreateFlag;
 }

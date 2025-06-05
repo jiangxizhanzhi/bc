@@ -164,6 +164,8 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 		practicePaper.setPracticeStatus(JsonUtil.toJsonString(practicePaperCreateReq.getStatus()));
 		practicePaper.setType(JsonUtil.toJsonString(practicePaperCreateReq.getType()));
 		practicePaper.setUserId(UserInfoContext.getUserContext().getUserId());
+		// 是否是由大模型服务调用生成的卷子
+		practicePaper.setAiCreateFlag(practicePaperCreateReq.getAiCreateFlag());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

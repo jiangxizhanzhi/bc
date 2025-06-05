@@ -33,7 +33,8 @@
         select paper.resource_id as paper_id,  paper.create_time as paper_time, `count`, is_finish,
                (select count(*) from oj_paper_practice_theory where paper_id = paper.resource_id and solved = ${TRIED}) as wrong,
                (select count(*) from oj_paper_practice_theory where paper_id = paper.resource_id and solved = ${SOLVED}) as `right`,
-               (select count(*) from oj_paper_practice_theory where paper_id = paper.resource_id and solved = ${NOT_START}) as not_start
+               (select count(*) from oj_paper_practice_theory where paper_id = paper.resource_id and solved = ${NOT_START}) as not_start,
+               paper.ai_create_flag as ai_create_flag
         from oj_practice_paper as paper
         <where>
             <if test="userId != null and userId != ''">

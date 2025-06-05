@@ -57,4 +57,6 @@ public class PracticePaper extends BaseTable {
 	 *///组卷人
 	private String userId;
 
+	private Boolean aiCreateFlag = false;
+
 }

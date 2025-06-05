@@ -1,0 +1,1 @@
+alter table oj_practice_paper add column `ai_create_flag` tinyint(1) not null default 0 comment '是否是大模型服务创建的卷子，0-否 1-是';

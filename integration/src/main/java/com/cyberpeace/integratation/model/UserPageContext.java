@@ -1,6 +1,7 @@
 package com.cyberpeace.integratation.model;
 
 import java.io.Serializable;
+import java.sql.DatabaseMetaData;
 
 import com.cyberpeace.common.constant.CommonConstant;
 

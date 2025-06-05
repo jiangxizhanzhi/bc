@@ -94,4 +94,8 @@ public interface LessonRecordMapper extends BaseMapper<LessonRecord> {
 	 */
 	int updateLearnedTime(@Param("lessonId") String lessonId, @Param("courseId") String courseId,@Param("userId") String userId,
 						  @Param("learnedType") Integer learnedType, @Param("roomId") String roomId);
+
+
+
+	List<LessonRecord> selectRecentCoursesByUser(@Param("userId") String userId, @Param("count") int count);
 }

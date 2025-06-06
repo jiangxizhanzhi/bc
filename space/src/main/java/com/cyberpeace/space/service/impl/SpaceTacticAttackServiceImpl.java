@@ -10,6 +10,8 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.tool.service.ToolService;
 import com.cyberpeace.space.constant.SpaceKTypeEnum;
 import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
@@ -210,6 +212,7 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 	public void addAttack(AttackAddReq req) {
 		SpaceTacticAttack attack = this.req2Entity(req);
 		attack.setResourceId(IDGeneratorUtil.getID());
+		CrCommonValidator.validateNameLen(attack.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		mapper.insert(attack);
 	}
 
@@ -225,6 +228,7 @@ public class SpaceTacticAttackServiceImpl extends ServiceImpl<SpaceTacticAttackM
 		// todo id name
 		SpaceTacticAttack attack = this.req2Entity(req);
 		attack.setResourceId(req.getResourceId());
+		CrCommonValidator.validateNameLen(attack.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		mapper.updateById(attack);
 
 	}

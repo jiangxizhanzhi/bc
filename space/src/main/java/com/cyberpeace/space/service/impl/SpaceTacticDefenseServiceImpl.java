@@ -10,6 +10,8 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.tool.service.ToolService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
@@ -189,6 +191,7 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	public void add(DefenseAddReq req) {
 		SpaceTacticDefense defense = this.req2Entity(req);
 		defense.setResourceId(IDGeneratorUtil.getID());
+		CrCommonValidator.validateNameLen(defense.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		mapper.insert(defense);
 	}
 
@@ -204,6 +207,7 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 		// todo id name
 		SpaceTacticDefense defense = this.req2Entity(req);
 		defense.setResourceId(req.getResourceId());
+		CrCommonValidator.validateNameLen(defense.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		mapper.updateById(defense);
 	}
 

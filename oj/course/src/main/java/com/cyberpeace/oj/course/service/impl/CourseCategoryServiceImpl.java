@@ -172,9 +172,6 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	public CourseCategory saveOrUpdate(CategoryAddBo categoryAddBo) {
 
 		CourseCategory courseCategory = BeanUtils.copy(categoryAddBo, CourseCategory.class);
-		if(courseCategory.getBuiltin()==true){
-			throw new BusinessException(ErrorCode.BUILT_IN);
-		}
 		if (StringUtils.isNotBlank(categoryAddBo.getResourceId())) {
 			CourseCategory old = this.getById(categoryAddBo.getResourceId());
 			if (old.getBuiltin()){

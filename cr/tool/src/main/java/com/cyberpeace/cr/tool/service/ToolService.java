@@ -82,6 +82,8 @@ public interface ToolService extends IService<Tool> {
 	 */
 	void validateEditToolNameExist(Tool tool);
 
+	void validateToolTagLength(Tool tool);
+
 	/**
 	 * 统计工具数量
 	 *

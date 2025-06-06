@@ -168,6 +168,7 @@ public class ToolController {
 		tool.setBuiltin(false);
 		tool.setCover(utilService.replaceFileUrl(tool.getCover()));
 		tool.setTag(JsonUtil.arrayToString(toolReq.getTag()));
+		toolService.validateToolTagLength(tool);
 		toolService.validateToolNameExist(tool);
 		toolService.save(tool);
 
@@ -190,6 +191,7 @@ public class ToolController {
 		toolService.checkBuiltin(toolupdateReq.getResourceId());
 		Tool tool = BeanUtils.copy(toolupdateReq, Tool.class);
 		tool.setTag(JsonUtil.arrayToString(toolupdateReq.getTag()));
+		toolService.validateToolTagLength(tool);
 		toolService.validateEditToolNameExist(tool);
 		toolService.updateById(tool);
 

@@ -8,6 +8,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.scene.DeviceInfo;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.tool.controller.res.ToolRsp;
 import com.cyberpeace.cr.tool.controller.res.ToolTypeCount;
 import com.cyberpeace.cr.tool.dao.context.MonthCount;
@@ -293,6 +294,14 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 			log.error("toolObject is  null,tool =[{}]", JsonUtil.toJsonString(tool));
 			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_TOOL_NAME);
 		}
+	}
+
+	@Override
+	public void validateToolTagLength(Tool tool) {
+		if (tool.getTag() == null) {
+			return;
+		}
+		CrCommonValidator.validateNameLen(tool.getTag(), CrBusinessErrorCode.ILLEGAL_TAG_LEN);
 	}
 
 	/**

@@ -1,12 +1,13 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.oj.course.controller.res.CourseStatisticsRes;
+import com.cyberpeace.oj.course.controller.res.LessonRecordRes;
+import com.cyberpeace.oj.course.service.*;
 import com.cyberpeace.oj.practice.entity.Paper;
 import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import org.apache.commons.collections.CollectionUtils;
@@ -271,22 +272,30 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	@Autowired
 	private SystemPropertyService systemPropertyService;
 
-	/**
-	 * 查询由id
-	 *
-	 * @param courseId    课程id
-	 * @param authContext auth 上下文
-	 * @return {@code CourseInfoBo }
-	 * @throws
-	 * @see String
-	 * @see AuthContext
-	 * @see CourseInfoBo
-	 */
-	@Override
-	public CourseInfoBo selectById(String courseId, AuthContext authContext) {
-		// 基本数据校验
-		Course course = courseValidateHandler.validateCourseExist(courseId);
-		courseValidateHandler.validateCoursePermission(courseId, authContext);
+    /**
+     * 课程统计学Service
+     *
+     * @see CourseStatisticsService
+     */
+    @Autowired
+    private CourseStatisticsService courseStatisticsService;
+
+    /**
+     * 查询由id
+     *
+     * @param courseId    课程id
+     * @param authContext auth 上下文
+     * @return {@code CourseInfoBo }
+     * @throws
+     * @see String
+     * @see AuthContext
+     * @see CourseInfoBo
+     */
+    @Override
+    public CourseInfoBo selectById(String courseId, AuthContext authContext) {
+        // 基本数据校验
+        Course course = courseValidateHandler.validateCourseExist(courseId);
+        courseValidateHandler.validateCoursePermission(courseId, authContext);
 
 		CourseInfoBo courseInfoBo = courseToBo(course, true);
 		courseInfoBo.setLogo(utilService.handlerFileUrl(course.getLogo()));
@@ -439,65 +448,72 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			}
 		}
 
-		if(isWeb){
-			// 常规条件过滤
-			Page<Course> pageTmp = BeanUtils.copy(page, Page.class);
-			pageTmp.setSize(courseIds.size());
-			pageTmp.setCurrent(1);
-			IPage<Course> iPage = courseMapper.listByPage(pageTmp, courseContext, courseIds,
-					authContext.getIsWeb());
-			//该用户可见的课程列表
-			List<Course> allCourseList = iPage.getRecords();
-			//学习历史
-			List<CourseStudyHistory> courseStudyHistoryList = courseStudyHistoryMapper.selectByUserId(authContext.getUserId());
-			//将学习历史中的课程顺序提前
-			List<Course> studyCourseList = new ArrayList<>();
-			for(CourseStudyHistory courseStudyHistory: courseStudyHistoryList){
-				for (Course course: allCourseList){
-					if(courseStudyHistory.getCourseId().equals(course.getCourseNum())){
-						studyCourseList.add(course);
-					}
-				}
-			}
-			allCourseList.removeAll(studyCourseList);
-			studyCourseList.addAll(allCourseList);
+//		进度
+        List<CourseStudyProcessBo> processBos = courseStatisticsService.statisticByIds(courseIds,
+                authContext.getUserId());
+        Map<String, CourseStudyProcessBo> processBoMap = processBos.stream()
+                .collect(Collectors.toMap(CourseStudyProcessBo::getCourseId, bo -> bo));
 
-			// 提取用户名映射
-			Map<String, String> userNameMap = remoteUserService.getIdNameMap(studyCourseList,
-					Course::getCreateUserId);
-			List<CourseWebBo> courseWebBoList = studyCourseList.stream()
-					.map(course -> transferToBo(course, authContext, userNameMap))
-					.collect(Collectors.toList());
-			return PageUtil.getListResult(courseWebBoList, page, studyCourseList.size());
-		}
-		// 常规条件过滤
-		IPage<Course> iPage = courseMapper.listByPage(page, courseContext, courseIds,
-				authContext.getIsWeb());
+        if (isWeb) {
+            // 常规条件过滤
+            Page<Course> pageTmp = BeanUtils.copy(page, Page.class);
+            pageTmp.setSize(courseIds.size());
+            pageTmp.setCurrent(1);
+            IPage<Course> iPage = courseMapper.listByPage(pageTmp, courseContext, courseIds,
+                    authContext.getIsWeb());
+            //该用户可见的课程列表
+            List<Course> allCourseList = iPage.getRecords();
+            //学习历史
+            List<CourseStudyHistory> courseStudyHistoryList = courseStudyHistoryMapper.selectByUserId(authContext.getUserId());
+            //将学习历史中的课程顺序提前
+            List<Course> studyCourseList = new ArrayList<>();
+            for (CourseStudyHistory courseStudyHistory : courseStudyHistoryList) {
+                for (Course course : allCourseList) {
+                    if (courseStudyHistory.getCourseId().equals(course.getCourseNum())) {
+                        studyCourseList.add(course);
+                    }
+                }
+            }
+            allCourseList.removeAll(studyCourseList);
+            studyCourseList.addAll(allCourseList);
+
+            // 提取用户名映射
+            Map<String, String> userNameMap = remoteUserService.getIdNameMap(studyCourseList,
+                    Course::getCreateUserId);
+            List<CourseWebBo> courseWebBoList = studyCourseList.stream()
+                    .map(course -> transferToBo(course, authContext, userNameMap, processBoMap))
+                    .collect(Collectors.toList());
+            return PageUtil.getListResult(courseWebBoList, page, studyCourseList.size());
+        }
+        // 常规条件过滤
+        IPage<Course> iPage = courseMapper.listByPage(page, courseContext, courseIds,
+                authContext.getIsWeb());
 
 		// 提取用户名映射
 		Map<String, String> userNameMap = remoteUserService.getIdNameMap(iPage.getRecords(),
 				Course::getCreateUserId);
 
-		IPage<CourseWebBo> webBoIPage = iPage
-				.convert(course -> transferToBo(course, authContext, userNameMap));
-		return PageUtil.getListResult(webBoIPage);
-	}
+        IPage<CourseWebBo> webBoIPage = iPage
+                .convert(course -> transferToBo(course, authContext, userNameMap, processBoMap));
+        return PageUtil.getListResult(webBoIPage);
+    }
 
-	/**
-	 * 数据格式转换
-	 *
-	 * @param course
-	 * @param authContext
-	 * @param userNameMap 用户名称映射
-	 * @return
-	 * @throws
-	 * @see Course
-	 * @see AuthContext
-	 * @see Map<String, String>
-	 * @see CourseWebBo
-	 */
-	private CourseWebBo transferToBo(Course course, AuthContext authContext,
-			Map<String, String> userNameMap) {
+    /**
+     * 数据格式转换
+     *
+     * @param course
+     * @param authContext
+     * @param userNameMap  用户名称映射
+     * @param processBoMap
+     * @return
+     * @throws
+     * @see Course
+     * @see AuthContext
+     * @see Map<String, String>
+     * @see CourseWebBo
+     */
+    private CourseWebBo transferToBo(Course course, AuthContext authContext,
+                                     Map<String, String> userNameMap, Map<String, CourseStudyProcessBo> processBoMap) {
 
 		if (null != authContext && !authContext.getIsWeb()) {
 			CourseInfoBo courseInfoBo = courseToBo(course, authContext.getIsWeb());
@@ -518,15 +534,29 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 				courseAdminBo.setShareCount(shares.size());
 			}
 
-			courseAdminBo.setCreateUserName(userNameMap.getOrDefault(course.getCreateUserId(), ""));
-			return courseAdminBo;
+            courseAdminBo.setCreateUserName(userNameMap.getOrDefault(course.getCreateUserId(), ""));
 
-		} else {
-			CourseInfoBo courseInfoBo = courseToBo(course, true);
-			CourseWebBo courseWebBo = BeanUtils.copy(courseInfoBo, CourseWebBo.class);
-			courseWebBo.setEbook(course.getCourseType());
-			return courseWebBo;
-		}
+//			进度
+            if (processBoMap != null && processBoMap.get(course.getResourceId()) != null) {
+                CourseStudyProcessBo bo = processBoMap.get(course.getResourceId());
+                courseAdminBo.setProcess(MathUtils.ceil(bo.getProcess()));
+            }
+
+            return courseAdminBo;
+
+        } else {
+            CourseInfoBo courseInfoBo = courseToBo(course, true);
+            CourseWebBo courseWebBo = BeanUtils.copy(courseInfoBo, CourseWebBo.class);
+            courseWebBo.setEbook(course.getCourseType());
+
+            //			进度
+            if (processBoMap != null && processBoMap.get(course.getResourceId()) != null) {
+                CourseStudyProcessBo bo = processBoMap.get(course.getResourceId());
+                courseWebBo.setProcess(MathUtils.ceil(bo.getProcess()));
+            }
+
+            return courseWebBo;
+        }
 
 	}
 
@@ -945,22 +975,116 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		updateBatchById(courseList);
 	}
 
-	/**
-	 * 实操习题绑定试卷
-	 *
-	 * @param paperId    试卷id
-	 * @param operations 操作
-	 * @param refList    参考列表
-	 * @throws
-	 * @see String
-	 * @see List<PracticeOperation>
-	 * @see List<PracticeOperationRef>
-	 */
-	private void operationBindPaper(String paperId, List<PracticeOperation> operations,
-			List<PracticeOperationRef> refList) {
-		List<PracticeOperationRef> operationRefs = operationEntityToRef(paperId, operations);
-		refList.addAll(operationRefs);
-	}
+    /**
+     * 课时记录Mapper
+     *
+     * @see LessonRecordMapper
+     */
+    @Autowired
+    private LessonRecordMapper lessonRecordMapper;
+
+    @Override
+    public CourseStatisticsRes statistics(ListRsp<CourseWebBo> boListRsp, AuthContext authContext) {
+        long count = boListRsp.getList().stream().filter(bo -> bo.getProcess() == 100).count();
+        long courseCount = boListRsp.getList().size();
+        CourseStatisticsRes courseStatisticsRes = new CourseStatisticsRes();
+        courseStatisticsRes.setCompletedCourseCount((int) count);
+        courseStatisticsRes.setCourseCount((int) courseCount);
+//		最近在学
+//			假设看视频时也会存一次课程进度暂不查询视频学习记录
+
+//		原数据
+        LambdaQueryWrapper<LessonRecord> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(LessonRecord::getUserId, authContext.getUserId())
+                .orderByDesc(LessonRecord::getUpdateTime)
+                .last("limit 10");
+        List<LessonRecord> lessonRecords = lessonRecordMapper.selectList(queryWrapper);
+        List<String> courseIds = lessonRecords.stream().map(LessonRecord::getCourseId).collect(Collectors.toList());
+        List<Course> courses = courseMapper.selectBatchIds(courseIds);
+        LambdaQueryWrapper<LessonConfig> lessonConfigQueryWrapper = new LambdaQueryWrapper<>();
+        lessonConfigQueryWrapper.in(LessonConfig::getCourseId, courseIds);
+        List<LessonConfig> lessonConfigsByCourseIds = lessonConfigMapper.selectList(lessonConfigQueryWrapper);
+
+        Map<String, Course> courseMap = courses
+                .stream()
+                .collect(Collectors.toMap(Course::getResourceId,
+                        course -> course,
+                        (existing, replacement) -> existing));
+        Map<String, List<LessonConfig>> lessonConfigsByCourseId = lessonConfigsByCourseIds.stream().collect(Collectors.groupingBy(LessonConfig::getCourseId));
+//		计算目录
+        List<LessonRecordRes> collect = lessonRecords.stream().map(lessonRecord -> {
+            String lessonId = lessonRecord.getLessonId();
+            Course course = courseMap.get(lessonRecord.getCourseId());
+            List<LessonConfig> lessonConfigs = lessonConfigsByCourseId.get(lessonRecord.getCourseId());
+            LessonConfig firstLessonConfigs = lessonConfigs.stream().filter(lessonConfig -> lessonConfig.getParentId() == null).findFirst().get();
+            Map<String, List<LessonConfig>> lessonConfigsByParentId =
+                    lessonConfigs.stream()
+                    .filter(lessonConfig -> lessonConfig.getParentId() != null)
+                    .collect(Collectors.groupingBy(LessonConfig::getParentId));
+            LessonRecordRes lessonRecordRes = new LessonRecordRes();
+            lessonRecordRes.setCourseName(course.getName());
+            lessonRecordRes.setLessonRecordDate(lessonRecord.getUpdateTime());
+            lessonRecordRes.setLessonId(lessonId);
+            lessonRecordRes.setFlag(false);
+            String lessonIndex = paperBindLesson(null, lessonId, firstLessonConfigs, lessonConfigsByParentId, lessonRecordRes);
+            lessonRecordRes.setLessonIndex(lessonIndex);
+            return lessonRecordRes;
+        }).collect(Collectors.toList());
+        courseStatisticsRes.setLessonRecords(collect);
+
+
+        return courseStatisticsRes;
+    }
+
+    private String paperBindLesson(String lessonIndex,String  lessonRecordId, LessonConfig lessonConfig, Map<String, List<LessonConfig>> lessonConfigsByParentId, LessonRecordRes lessonRecordRes) {
+        if (lessonRecordRes.getFlag()) {
+            return lessonIndex;
+        }
+        Integer lessonTypeIndex = 1;
+        Integer chapterTypeIndex = 1;
+        String  childLessonIndex = lessonIndex == null  ? chapterTypeIndex.toString() : lessonIndex;
+        for (LessonConfig nodeChild : lessonConfigsByParentId.get(lessonConfig.getResourceId())) {
+            if(nodeChild.getParentId().equals(lessonConfig.getResourceId())) {
+                if (nodeChild.getNodeType().intValue() == LessonConfig.NodeType.NODE_LESSON
+                        .getCode().intValue()) {
+                    if (lessonRecordId.equals(nodeChild.getLessonId())) {
+                        lessonIndex = lessonIndex == null ? lessonTypeIndex.toString() : childLessonIndex + CommonConstant.PERIOD + lessonTypeIndex;
+                        lessonRecordRes.setLessonName(nodeChild.getName());
+                        lessonRecordRes.setLessonIndex(lessonIndex);
+                        lessonRecordRes.setFlag(true);
+                        return lessonIndex;
+                    }
+                    lessonTypeIndex++;
+                }
+                if (nodeChild.getNodeType().intValue() == LessonConfig.NodeType.NODE_CHAPTER
+                        .getCode().intValue()) {
+                    if (!lessonRecordRes.getFlag()) {
+                        childLessonIndex = paperBindLesson(lessonIndex == null ? chapterTypeIndex.toString() : lessonIndex + CommonConstant.PERIOD + chapterTypeIndex,
+                                lessonRecordId, nodeChild, lessonConfigsByParentId, lessonRecordRes);
+                    }
+                    chapterTypeIndex++;
+                }
+            }
+        }
+        return childLessonIndex;
+    }
+
+    /**
+     * 实操习题绑定试卷
+     *
+     * @param paperId    试卷id
+     * @param operations 操作
+     * @param refList    参考列表
+     * @throws
+     * @see String
+     * @see List<PracticeOperation>
+     * @see List<PracticeOperationRef>
+     */
+    private void operationBindPaper(String paperId, List<PracticeOperation> operations,
+                                    List<PracticeOperationRef> refList) {
+        List<PracticeOperationRef> operationRefs = operationEntityToRef(paperId, operations);
+        refList.addAll(operationRefs);
+    }
 
 	/**
 	 * 理论习题绑定试卷

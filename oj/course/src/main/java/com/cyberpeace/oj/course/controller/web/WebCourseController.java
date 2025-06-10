@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.controller.web;
 
 import java.util.List;
 
+import com.cyberpeace.oj.course.controller.res.CourseStatisticsRes;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -129,6 +130,32 @@ public class WebCourseController {
 
 		WebCourseRes courseRes = BeanUtils.copy(course, WebCourseRes.class);
         return new BaseRsp<>(courseRes);
+	}
+
+	/**
+	 * 获取课程
+	 *
+	 * @return {@code BaseRsp<CourseStatisticsRes> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<CourseStatisticsRes>
+	 */
+	@GetMapping("/statistics")
+	@ApiOperation("统计")
+	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
+	@BehaviorRecord(module = BehaviorModuleEnum.COURSE, action = BehaviorTypeEnum.ACCESS)
+	public BaseRsp<CourseStatisticsRes> statistics() {
+
+		CourseQueryBo context = new CourseQueryBo();
+		context.setUserId(UserInfoContext.getUserContext().getUserId());
+		Page<Course> page = new Page<>(1,9999);
+		// 权限数据获取
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				true);
+		// 数据查询
+		ListRsp<CourseWebBo> boListRsp = courseService.selectPage(page, context, authContext, true);
+		CourseStatisticsRes courseRes = courseService.statistics(boListRsp, authContext);
+		return new BaseRsp<>(courseRes);
 	}
 
 }

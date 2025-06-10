@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.oj.course.controller.res.CourseStatisticsRes;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
@@ -192,4 +193,7 @@ public interface CourseService extends IService<Course> {
 	 * @see String
 	 */
 	void clearOrgAuth(String org);
+
+    CourseStatisticsRes statistics(ListRsp<CourseWebBo> boListRsp, AuthContext authContext);
+
 }

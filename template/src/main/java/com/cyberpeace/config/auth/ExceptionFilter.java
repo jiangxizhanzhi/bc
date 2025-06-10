@@ -3,7 +3,6 @@ package com.cyberpeace.config.auth;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -98,7 +97,7 @@ public class ExceptionFilter implements Filter {
 	 */
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
-			FilterChain filterChain) throws IOException, ServletException {
+						 FilterChain filterChain) throws IOException, ServletException {
 		try {
 			filterChain.doFilter(servletRequest, servletResponse);
 		} catch (Exception e) {
@@ -174,7 +173,7 @@ public class ExceptionFilter implements Filter {
 	 * @see BusinessException
 	 */
 	private void parseBusinessException(HttpServletResponse httpServletResponse,
-			BusinessException e) {
+										BusinessException e) {
 		BaseRsp<String> errorInfo = new BaseRsp<>();
 		errorInfo.setCode(getErrorCode(e.getMessage()));
 		errorInfo.setMessage(e.getErrorMessage());
@@ -191,7 +190,7 @@ public class ExceptionFilter implements Filter {
 	 * @see RemoteServiceException
 	 */
 	private void parseRemoteServiceException(HttpServletResponse httpServletResponse,
-			RemoteServiceException e) {
+											 RemoteServiceException e) {
 		// mp返回msg则采用mp的msg，否则使用默认的msg
 		BusinessException businessException;
 		if (StringUtils.isBlank(e.getMessage())) {
@@ -213,7 +212,7 @@ public class ExceptionFilter implements Filter {
 	 * @see DuplicateKeyException
 	 */
 	private void parseDuplicateKeyException(HttpServletResponse httpServletResponse,
-			DuplicateKeyException e) {
+											DuplicateKeyException e) {
 		String errorMsg = e.getCause().getMessage();
 		String duplicateKey = getDuplicateKey(errorMsg);
 
@@ -280,7 +279,7 @@ public class ExceptionFilter implements Filter {
 	 * @see ResourceNotFoundException
 	 */
 	private void parseResourceNotFoundException(HttpServletResponse httpServletResponse,
-			ResourceNotFoundException e) {
+												ResourceNotFoundException e) {
 		flushErrorInfo(httpServletResponse, ErrorCode.RESOURCE_NOT_FOUND, e.getMessage());
 	}
 
@@ -294,7 +293,7 @@ public class ExceptionFilter implements Filter {
 	 * @see InvalidParamException
 	 */
 	private void parseInvalidParamException(HttpServletResponse httpServletResponse,
-			InvalidParamException e) {
+											InvalidParamException e) {
 		flushErrorInfo(httpServletResponse, ErrorCode.METHOD_ARG_NOT_VALID, e.getMessage());
 	}
 
@@ -322,7 +321,7 @@ public class ExceptionFilter implements Filter {
 	 * @see BindException
 	 */
 	private void parseArgumentNotValidException(HttpServletResponse httpServletResponse,
-			BindException e) {
+												BindException e) {
 		BindingResult br = e.getBindingResult();
 		List<FieldError> errorList = br.getFieldErrors();
 
@@ -352,7 +351,7 @@ public class ExceptionFilter implements Filter {
 	 * @see HttpServletResponse
 	 */
 	private void dealDefaultError(HttpServletResponse httpServletResponse) {
-		flushErrorInfoWith500Code(httpServletResponse, ErrorCode.INTERNAL_ERROR,
+		flushErrorInfo(httpServletResponse, ErrorCode.INTERNAL_ERROR,
 				BusinessException.getMessageByLanguage(ErrorCode.INTERNAL_ERROR));
 	}
 
@@ -387,27 +386,14 @@ public class ExceptionFilter implements Filter {
 	 * @see String
 	 */
 	private void flushErrorInfo(HttpServletResponse httpServletResponse, String code,
-			String message) {
-		flushErrorInfo(httpServletResponse, code, message);
-	}
-
-	private void flushErrorInfoWith500Code(HttpServletResponse httpServletResponse, String code, String message) {
-		flushErrorInfo(httpServletResponse, code, message, 500);
-	}
-
-
-	private void flushErrorInfo(HttpServletResponse httpServletResponse, String code, String message, Integer httpCode) {
+								String message) {
 		BaseRsp<String> errorInfo = new BaseRsp<>();
 
 		errorInfo.setMessage(message);
 		errorInfo.setCode(getErrorCode(code));
 
 		httpServletResponse.setContentType(WebConstant.CONTENT_TYPE);
-		if (Objects.isNull(httpCode)) {
-			httpServletResponse.setStatus(WebConstant.HTTP_200);
-		} else {
-			httpServletResponse.setStatus(httpCode);
-		}
+		httpServletResponse.setStatus(WebConstant.HTTP_200);
 
 		try {
 			httpServletResponse.getWriter().write(JsonUtil.toJsonString(errorInfo));

@@ -219,4 +219,9 @@ public final class ErrorCode {
 	 * 分片丢失，请重新上传
 	 */
 	public static final String CHUNK_MISSING = "100065";
+
+	/**
+	 * 缺少请求参数
+	 */
+	public static final String MISSING_METHOD_ARG = "100066";
 }

@@ -36,6 +36,7 @@ import com.cyberpeace.common.util.LocalStringUtil;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 
 /**
  * 例外过滤器
@@ -147,6 +148,8 @@ public class ExceptionFilter implements Filter {
 			parseResourceNotFoundException(servletResponse, (ResourceNotFoundException) e);
 		} else if (e instanceof InvalidParamException) {
 			parseInvalidParamException(servletResponse, (InvalidParamException) e);
+		} else if (e instanceof MissingServletRequestParameterException) {
+			parseInvalidParamException(servletResponse, (MissingServletRequestParameterException) e);
 		} else if (e instanceof AuthenticationException || e instanceof UnauthenticatedException) {
 			parseAuthenticationException(servletResponse);
 		} else if (e instanceof DuplicateKeyException) {
@@ -295,6 +298,20 @@ public class ExceptionFilter implements Filter {
 	private void parseInvalidParamException(HttpServletResponse httpServletResponse,
 											InvalidParamException e) {
 		flushErrorInfo(httpServletResponse, ErrorCode.METHOD_ARG_NOT_VALID, e.getMessage());
+	}
+
+	/**
+	 * 缺少参数异常
+	 *
+	 * @param httpServletResponse HTTP Servlet 响应
+	 * @param e                   e
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see InvalidParamException
+	 */
+	private void parseInvalidParamException(HttpServletResponse httpServletResponse,
+			MissingServletRequestParameterException e) {
+		flushErrorInfo(httpServletResponse, ErrorCode.MISSING_METHOD_ARG, e.getMessage());
 	}
 
 	/**

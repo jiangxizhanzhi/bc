@@ -334,6 +334,9 @@ public class TrainingPlanController {
 		// get all training from training path
 		res.setRelated(getAllRelatedTraining(trainingBoList));
 		res.setPath(trainingBoList);
+//		进度
+		res.setCompletedCourseCount((int)trainingBoList.stream().filter(MissionPathBo::getCompletionStatus).count());
+		res.setCourseCount(trainingBoList.size());
 		return new BaseRsp<>(res);
 	}
 

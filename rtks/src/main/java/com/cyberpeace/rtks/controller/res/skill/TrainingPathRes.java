@@ -35,4 +35,21 @@ public class TrainingPathRes implements Serializable {
 	 */
 	@ApiModelProperty(value = "全部训练")
 	private List<RelatedTrainingRes> related;
+
+	/**
+	 * 已完成课程数
+	 *
+	 * @see Integer
+	 */
+	@ApiModelProperty("已完成课程数")
+	private Integer completedCourseCount;
+
+	/**
+	 * 课程数
+	 *
+	 * @see Integer
+	 */
+	@ApiModelProperty("课程数")
+	private Integer courseCount;
+
 }

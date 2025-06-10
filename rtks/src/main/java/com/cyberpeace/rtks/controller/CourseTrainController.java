@@ -118,6 +118,12 @@ public class CourseTrainController {
 		courseRes.setCoursePercent(
 				MathUtils.ceilDivide((completeCount * (double)100), (double) count));
 
+//		个人进度
+		long processCount = courseKnowledges.stream().filter(bo -> bo.getProcess() == 100).count();
+		long courseCount = courseKnowledges.size();
+		courseRes.setCompletedCourseCount((int) processCount);
+		courseRes.setCourseCount((int) courseCount);
+
 		courseRes.setKnowledgeBos(courseKnowledges);
 		return courseRes;
 	}

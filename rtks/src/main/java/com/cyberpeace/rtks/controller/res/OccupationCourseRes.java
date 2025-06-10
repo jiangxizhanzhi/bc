@@ -54,4 +54,20 @@ public class OccupationCourseRes implements Serializable {
 	@ApiModelProperty("课程知识点信息")
 	private List<CourseKnowledgeSkillBo> knowledgeBos;
 
+	/**
+	 * 已完成课程数
+	 *
+	 * @see Integer
+	 */
+	@ApiModelProperty("已完成课程数")
+	private Integer completedCourseCount;
+
+	/**
+	 * 课程数
+	 *
+	 * @see Integer
+	 */
+	@ApiModelProperty("课程数")
+	private Integer courseCount;
+
 }

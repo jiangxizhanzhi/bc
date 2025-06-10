@@ -19,7 +19,7 @@ import lombok.Data;
  */
 @Data
 @ApiModel
-public class ClassroomBo implements Serializable {
+public class ClassroomBo extends BaseClassTimeBo implements Serializable {
 
 	/**
 	 * 资源编号
@@ -28,22 +28,6 @@ public class ClassroomBo implements Serializable {
 	 */
 	@ApiModelProperty("资源编号")
 	private String resourceId;
-
-	/**
-	 * 开始时间
-	 *
-	 * @see Date
-	 */
-	@ApiModelProperty("开始时间")
-	private Date startTime;
-
-	/**
-	 * 结束时间
-	 *
-	 * @see Date
-	 */
-	@ApiModelProperty("结束时间")
-	private Date endTime;
 
 	/**
 	 * 课程编号
@@ -63,7 +47,7 @@ public class ClassroomBo implements Serializable {
 
 	/**
 	 * 课程类型
-	 *
+	 * BASE(0, "基础"), ATTACK(2, "攻击"), DEFENSE(3, "防御");  未使用到
 	 * @see Integer
 	 */
 	@ApiModelProperty("课程类型")
@@ -153,6 +137,7 @@ public class ClassroomBo implements Serializable {
 	 * 日程类型
 	 *
 	 * @see Integer
+	 * @see com.cyberpeace.oj.ojbase.constant.ClassroomType
 	 */
 	@ApiModelProperty("日程类型")
 	private Integer classify;

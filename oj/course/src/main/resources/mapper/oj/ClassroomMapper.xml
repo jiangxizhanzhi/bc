@@ -208,4 +208,20 @@
             </if>
         </where>
     </select>
+    <select id="selectListLesson" resultType="com.cyberpeace.oj.course.dao.entity.Classroom">
+        select * from oj_classroom
+        <where>
+            <if test="listQuery != null">
+                <if test="listQuery.startTime != null and listQuery.endTime != null">
+                    and ((start_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.endTime})
+                    or (end_time &gt; #{listQuery.startTime} and end_time &lt; #{listQuery.endTime})
+                    or (start_time &lt; #{listQuery.startTime} and end_time &gt; #{listQuery.endTime}))
+                </if>
+                <if test="listQuery.orgId != null and listQuery.orgId != ''">
+                    <bind name="likeOrg" value="'%' + listQuery.orgId + '%'"/>
+                    and organization_ids like #{likeOrg}
+                </if>
+            </if>
+        </where>
+    </select>
 </mapper>

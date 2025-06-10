@@ -73,6 +73,17 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 			@Param("listQuery") ClassRoomListQuery roomListQuery);
 
 	/**
+	 * 课程表数据查询 用户课程表
+	 *
+	 * @param roomListQuery
+	 * @return
+	 * @throws
+	 * @see ClassRoomListQuery
+	 * @see List<Classroom>
+	 */
+	List<Classroom> selectListLesson(@Param("listQuery") ClassRoomListQuery roomListQuery);
+
+	/**
 	 * 课程表删除
 	 *
 	 * @param lessonIds 课时id列表

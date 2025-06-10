@@ -53,6 +53,20 @@ public interface ClassroomService extends IService<Classroom> {
 	List<TimeScheduleBo> selectTimeList(ClassRoomListQuery roomListQuery, AuthContext authContext);
 
 	/**
+	 * 前台课程表数据查询- 仅课程数据
+	 *
+	 * @param roomListQuery
+	 * @param authContext
+	 * @return
+	 * @throws
+	 * @see ClassRoomListQuery
+	 * @see AuthContext
+	 * @see List<ClassRoomWebBo>
+	 */
+    List<ClassRoomWebBo> selectTimeListOnlyCourse(ClassRoomListQuery roomListQuery,
+                                                  AuthContext authContext);
+
+    /**
 	 * 分页查询课时表信息
 	 *
 	 * @param roomListQuery

@@ -116,7 +116,7 @@ public class Course extends AuthTable {
 
 	/**
 	 * 课程类型
-	 *
+	 * BASE(0, "基础"), ATTACK(2, "攻击"), DEFENSE(3, "防御");  未使用到
 	 * @see Integer
 	 */
 	@ApiModelProperty("课程类型")

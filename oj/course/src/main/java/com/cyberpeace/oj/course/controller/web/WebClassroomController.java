@@ -13,11 +13,13 @@ import com.cyberpeace.oj.course.controller.req.RemoteHelpReq;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
+import com.cyberpeace.oj.course.service.bo.ClassRoomWebBo;
 import com.cyberpeace.oj.course.service.bo.HelpStatusBo;
 import com.cyberpeace.oj.course.service.bo.TimeScheduleBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.Logical;
@@ -42,6 +44,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/oj/course/class/room")
 @RequiresAuthentication
+@Slf4j
 public class WebClassroomController {
 
 	/**
@@ -98,6 +101,41 @@ public class WebClassroomController {
 		List<TimeScheduleBo> boList = classroomService.selectTimeList(roomListQuery, authContext);
 
 		return new BaseRsp<>(boList);
+	}
+
+	/**
+	 * 列表课程附表-教学课程
+	 * @param startTime 课程开始时间
+	 * @param endTime 课程结束时间
+	 * @return
+	 */
+	@ApiOperation("前台课程表信息查询")
+	@GetMapping("/course/list")
+	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE }, logical = Logical.OR)
+	public BaseRsp<List<ClassRoomWebBo>> listCourseSchedule(
+			@ApiParam(name = "start_time", value = "开始时间 格式为xxxx-xx-xx") @RequestParam("start_time") String startTime,
+			@ApiParam(name = "end_time", value = "结束时间 格式为xxxx-xx-xx") @RequestParam("end_time") String endTime) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				true);
+		Date startOfDay = TimeUtil.getStartOfDay(
+				TimeUtil.toDate2(startTime));
+		Date endOfDay = TimeUtil.getEndOfDay(
+				TimeUtil.toDate2(endTime));
+
+		if (!authContext.getSuperAdmin() && StringUtils.isBlank(authContext.getOrganization())) {
+			log.warn("not super admin and not user organization");
+			return new BaseRsp<>();
+		}
+
+		// 设置查询条件
+		ClassRoomListQuery roomListQuery = new ClassRoomListQuery();
+		roomListQuery.setStartTime(startOfDay);
+		roomListQuery.setEndTime(endOfDay);
+
+		roomListQuery.setOrgId(authContext.getOrganization());
+		final List<ClassRoomWebBo> timeScheduleBos = classroomService.selectTimeListOnlyCourse(roomListQuery, authContext);
+		return new BaseRsp<>(timeScheduleBos);
 	}
 
 	/**

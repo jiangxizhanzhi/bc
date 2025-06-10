@@ -1,19 +1,7 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -32,6 +20,7 @@ import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import static com.cyberpeace.common.util.BeanUtils.copy;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.redvsblue.entity.RbRoom;
@@ -71,8 +60,19 @@ import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
 import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 课堂Service实现
@@ -570,7 +570,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
         // 根据开始时间转换为map
         List<ClassroomBo> splitTimeBos = StreamApiUtils.flatMap(classroomBos,
-                this::splitTimeByDay);
+                classroomBo -> splitTimeByDay(classroomBo, ClassroomBo.class));
         Map<String, List<ClassroomBo>> startTimeMap = StreamApiUtils.groupBy(splitTimeBos,
                 classroomBo -> TimeUtil.format6(classroomBo.getStartTime()));
 
@@ -587,17 +587,89 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
     }
 
     /**
+     * 获取时间列表-仅课程
+     *
+     * @param roomListQuery 课程列表查询
+     * @param authContext   auth 上下文
+     * @return {@code List<TimeScheduleBo> }
+     * @throws
+     * @see ClassRoomListQuery
+     * @see AuthContext
+     * @see List<TimeScheduleBo>
+     */
+    @Override
+    public List<ClassRoomWebBo> selectTimeListOnlyCourse(ClassRoomListQuery roomListQuery,
+                                                         AuthContext authContext) {
+
+        List<ClassRoomWebBo> classroomBos = new ArrayList<>();
+
+        final List<Classroom> classrooms = classroomMapper.selectListLesson(roomListQuery);
+
+        final List<String> classroomIds = StreamApiUtils.map(classrooms, Classroom::getResourceId);
+        final List<String> courseIds = StreamApiUtils.map(classrooms, Classroom::getCourseId);
+        final List<String> lessonIds = StreamApiUtils.map(classrooms, Classroom::getLessonId);
+        QueryWrapper<Course> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .in(Course::getResourceId, courseIds)
+                .eq(Course::getIsPublic, Boolean.TRUE)
+                .and(q -> q
+                        .eq(Course::getReadAuthType, AuthTable.AuthType.ALL_SHARE_MODE.getCode())
+                        .or(subQ -> subQ
+                                .eq(Course::getReadAuthType, AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode())
+                                .like(Course::getReadAuthIds, roomListQuery.getOrgId())
+                        )
+                );
+        QueryWrapper<CourseLesson> lessonQuery = new QueryWrapper<>();
+        lessonQuery.lambda().in(CourseLesson::getResourceId, lessonIds);
+        List<CourseLesson> lessons = courseLessonMapper.selectList(lessonQuery);
+        final List<Course> courses = courseMapper.selectList(queryWrapper);
+        final Map<String, String> courseMap = StreamApiUtils.toMap(courses, Course::getResourceId, Course::getName);
+        final Map<String, String> lessonMap = StreamApiUtils.toMap(lessons, CourseLesson::getResourceId, CourseLesson::getName);
+        List<String> authCourseIds = StreamApiUtils.map(courses, Course::getResourceId);
+        final List<Classroom> filteredClassroom = classrooms.stream().filter(classroom ->
+                authCourseIds.contains(classroom.getCourseId())).collect(Collectors.toList());
+
+        QueryWrapper<ClassroomSign> signQueryWrapper = new QueryWrapper<>();
+        signQueryWrapper.lambda().eq(ClassroomSign::getUserId, authContext.getUserId())
+                .in(ClassroomSign::getClassroomId, classroomIds);
+
+        List<ClassroomSign> classroomSigns = classroomSignMapper.selectList(signQueryWrapper);
+        final Map<String, Boolean> classroomSignMap = StreamApiUtils.toMap(classroomSigns,
+                ClassroomSign::getClassroomId, ClassroomSign::getSignIn);
+
+        for (Classroom classroom : filteredClassroom) {
+            final ClassRoomWebBo classRoomWebBo = new ClassRoomWebBo();
+            classRoomWebBo.setRoomId(classroom.getResourceId());
+            classRoomWebBo.setStartTime(classroom.getStartTime());
+            classRoomWebBo.setEndTime(classroom.getEndTime());
+            classRoomWebBo.setCourseId(classroom.getCourseId());
+            classRoomWebBo.setCourseName(courseMap.getOrDefault(classroom.getCourseId(), "not found"));
+            classRoomWebBo.setLessonId(classroom.getLessonId());
+            classRoomWebBo.setLessonName(lessonMap.getOrDefault(classroom.getLessonId(), "not found"));
+            classRoomWebBo.setCreateUserId(classroom.getCreateUserId());
+            UserInfo userInfo = remoteUserService.getById(classroom.getCreateUserId());
+            classRoomWebBo.setCreateUserName(userInfo == null ? "" : userInfo.getUserName());
+            classRoomWebBo.setIsSignIn(classroomSignMap.getOrDefault(classroom.getResourceId(), false));
+            classroomBos.add(classRoomWebBo);
+        }
+
+
+        return StreamApiUtils.flatMap(classroomBos, classroom ->
+                splitTimeByDay(classroom, ClassRoomWebBo.class));
+    }
+
+
+    /**
      * 数据拆分，数据不能跨天，跨几天则为几条
      *
-     * @param classroomBo 课堂Bo
      * @return {@code List<ClassroomBo> }
      * @throws
      * @see ClassroomBo
      * @see List<ClassroomBo>
      */
-    private List<ClassroomBo> splitTimeByDay(ClassroomBo classroomBo) {
+    private <T extends BaseClassTimeBo> List<T> splitTimeByDay(T classroomBo, Class<T> clazz) {
 
-        List<ClassroomBo> classroomBos = Lists.newArrayList(classroomBo);
+        List<T> classroomBos = Lists.newArrayList(classroomBo);
 
         // 不跨天则直接返回
         long intervalDay = TimeUtil.getIntervalDay(classroomBo.getStartTime(),
@@ -609,7 +681,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         // 跨天
         for (long i = 1; i <= intervalDay; i++) {
 
-            ClassroomBo preBo = classroomBos.get((int) (i - CommonConstant.ONE));
+            T preBo = classroomBos.get((int) (i - CommonConstant.ONE));
             Date addDate = TimeUtil.addDates(classroomBo.getStartTime(), (int) i);
             Date endOfDay = TimeUtil.getEndOfDay(addDate);
             Date startOfDay = TimeUtil.getStartOfDay(addDate);
@@ -621,7 +693,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
                 break;
             }
 
-            ClassroomBo copy = BeanUtils.copy(classroomBo, ClassroomBo.class);
+            T copy = BeanUtils.copy(classroomBo, clazz);
             copy.setStartTime(startOfDay);
             copy.setEndTime(endOfDay);
             classroomBos.add(copy);

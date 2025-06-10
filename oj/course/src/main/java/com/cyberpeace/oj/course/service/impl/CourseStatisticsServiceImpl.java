@@ -1,27 +1,32 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cyberpeace.common.util.MathUtils;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cs.service.HandoutVideoService;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper;
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
+import com.cyberpeace.oj.course.service.LessonConfigService;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 课程统计学Service实现
@@ -102,6 +107,17 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 
 		Map<String, List<LessonRecord>> recordMap = lessonRecords.stream().collect(Collectors.groupingBy(LessonRecord::getLessonId));
 
+//		进度-增加视频进度
+
+
+		Map<String, String> lessonVideoMap = StreamApiUtils.toMap(
+				StreamApiUtils.filter(courseLessons,
+						l -> StringUtils.isNotBlank(l.getVideoUrl())
+								&& StringUtils.isNotBlank(l.getVideoCheckPoint())),
+				CourseLesson::getResourceId, l -> utilService.handlerFileUrl(l.getVideoUrl()));
+		Map<String, Set<Integer>> progressMap = handoutVideoService
+				.getProgressBatch(lessonVideoMap.values(), authContext.getUserId());
+
 		List<CourseStudyProcessBo> studyProcessBos = courses.stream().map(course -> {
 
 			CourseStudyProcessBo studyProcessBo = new CourseStudyProcessBo();
@@ -115,10 +131,26 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 			if (lessonList == null) {
 				lessonList = Lists.newArrayList();
 			}
+			Map<String, CourseLesson> lessonMapByResourceId = lessonList.stream().collect(
+					Collectors.toMap(CourseLesson::getResourceId, courseLesson -> courseLesson));
 			studyProcessBo.setLessonCount(lessonList.size());
 			List<CourseLesson> study = lessonList.stream().filter(lesson -> {
 				if (recordMap.get(lesson.getResourceId()) != null && recordMap.get(lesson.getResourceId()).size() > 0) {
-					return studyRecord.add(recordMap.get(lesson.getResourceId()).get(0));
+					LessonRecord lessonRecord = recordMap.get(lesson.getResourceId()).get(0);
+					studyRecord.add(lessonRecord);
+					Integer process = 0;
+					if (lessonVideoMap.containsKey(lessonRecord.getLessonId())) {
+						String path = lessonVideoMap.get(lessonRecord.getLessonId());
+						if (progressMap.containsKey(path)) {
+							process = lessonConfigService.calVideoProgress(
+									lessonMapByResourceId.get(lessonRecord.getLessonId()).getVideoCheckPoint(),
+									progressMap.get(path));
+							if (process < 100) return false;
+						}else if(StringUtils.isNotBlank(lesson.getVideoUrl()) && StringUtils.isNotBlank(lesson.getVideoCheckPoint())){
+							return false;
+						}
+					}
+					return true;
 				}
 				return false;
 			}).collect(Collectors.toList());
@@ -168,7 +200,7 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 
 			// 计算进度
 			studyProcessBo.setProcess(
-					MathUtils.divide(Double.valueOf(studyProcessBo.getCompleteCount() * (double) 100),
+					MathUtils.divide(Double.valueOf(study.size() * (double) 100),
 							 Double.valueOf(studyProcessBo.getLessonCount())));
 
 			return studyProcessBo;
@@ -176,4 +208,23 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 
 		return studyProcessBos;
 	}
+
+	/**
+	 * utilService
+	 *
+	 * @see UtilService
+	 */
+	@Autowired
+	private UtilService utilService;
+
+	/**
+	 * 讲义视频Service
+	 *
+	 * @see HandoutVideoService
+	 */
+	@Autowired
+	private HandoutVideoService handoutVideoService;
+
+	@Autowired
+	private LessonConfigService lessonConfigService;
 }

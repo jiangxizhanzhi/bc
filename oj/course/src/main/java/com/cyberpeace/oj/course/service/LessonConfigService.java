@@ -9,6 +9,7 @@ import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
 import com.cyberpeace.oj.course.service.bo.LessonConfigDumpBo;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 课时配置Service
@@ -102,4 +103,6 @@ public interface LessonConfigService extends IService<LessonConfig> {
 	 * @see String
 	 */
 	void validLessonAndChapter(String courseId);
+
+	Integer calVideoProgress(String videoCheckPoint, Set<Integer> integers);
 }

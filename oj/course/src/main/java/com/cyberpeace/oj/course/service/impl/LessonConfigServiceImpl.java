@@ -581,7 +581,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 * @see Set<Integer>
 	 * @see Integer
 	 */
-	private Integer calVideoProgress(String configJson, Set<Integer> watchedPoints) {
+	public Integer calVideoProgress(String configJson, Set<Integer> watchedPoints) {
 		if (StringUtils.isBlank(configJson)) {
 			// not configured
 			return 0;

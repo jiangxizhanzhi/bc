@@ -224,4 +224,22 @@
             </if>
         </where>
     </select>
+    <select id="selectListByIds" resultType="com.cyberpeace.oj.course.controller.res.TrainPlanLessonRsp">
+        select a.course_id as course_id, a.lesson_id as lesson_id,
+               b.name as lesson_name, a.start_time as start_time, a.end_time as end_time,
+               b.`type` as lesson_type
+        from oj_classroom as a
+        left join oj_course_lesson as b on a.lesson_id = b.resource_id
+        <where>
+            <if test="roomIds != null and roomIds.size() != 0">
+                a.resource_id in
+                <foreach collection="roomIds" item="roomId" open="(" close=")" separator=",">
+                    #{roomId}
+                </foreach>
+            </if>
+
+
+        </where>
+
+    </select>
 </mapper>

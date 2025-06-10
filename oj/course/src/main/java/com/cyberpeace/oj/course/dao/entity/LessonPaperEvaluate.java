@@ -3,8 +3,13 @@ package com.cyberpeace.oj.course.dao.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
+import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 课时试卷评估
@@ -82,5 +87,29 @@ public class LessonPaperEvaluate extends BaseTable {
 	 * @see String
 	 */
 	private String corrector;
+
+	public enum LevelType implements GenericEnum {
+		// 1-优， 2-良， 3-中， 4-差
+		LEVEL_1(1, "优"),
+		LEVEL_2(2, "良"),
+		LEVEL_3(3, "中"),
+		LEVEL_4(4, "差");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		LevelType(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+
+		public static Boolean isPass(Integer level) {
+            return level <= LevelType.LEVEL_2.getCode();
+        }
+
+	}
 
 }

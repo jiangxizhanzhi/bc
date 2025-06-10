@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.dao.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.oj.course.controller.res.TrainPlanLessonRsp;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import org.apache.ibatis.annotations.Mapper;
@@ -182,4 +183,7 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 * @see List<String>
 	 */
 	List<String> selectTempTaskIdsByUser(String userId, boolean isSuperUser);
+
+
+	List<TrainPlanLessonRsp> selectListByIds(List<String> roomIds);
 }

@@ -1,11 +1,23 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
-import com.cyberpeace.common.model.user.UserInfoContext;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
+import com.cyberpeace.oj.course.controller.req.TrainPlanWebReq;
+import com.cyberpeace.oj.course.controller.res.TrainPlanLessonRsp;
+import com.cyberpeace.oj.course.controller.res.TrainPlanWebRsp;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.entity.LessonPaperEvaluate;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.course.dao.mapper.LessonPaperEvaluateMapper;
+import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
+import com.cyberpeace.oj.ojbase.service.bo.ClassroomNoteEvalBo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +30,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -67,6 +78,15 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 	@Autowired
 	private CourseMapper courseMapper;
 
+	@Autowired
+	private ClassroomMapper classroomMapper;
+
+	@Autowired
+	private LessonPaperEvaluateMapper lessonPaperEvaluateMapper;
+
+	@Autowired
+	private NoteMapper noteMapper;
+
 	/**
 	 * 训练计划列表
 	 *
@@ -108,6 +128,98 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 			if (null != user) {
 				trainPlanRsp.setCreateUser( user.getName() );
 			}
+		}
+		return result;
+	}
+
+
+	/**
+	 * 我的教学课程-分页，包含子集分页
+	 *
+	 * @param trainPlanReq 训练计划请求体
+	 * @param userInfo     用户信息
+	 * @return {@code IPage<TrainPlanRsp> }
+	 * @throws
+	 * @see TrainPlanReq
+	 * @see UserInfo
+	 * @see IPage<TrainPlanRsp>
+	 */
+	@Override
+	public IPage<TrainPlanWebRsp> page(TrainPlanWebReq trainPlanReq, UserInfo userInfo) {
+
+		Page<TrainPlanWebRsp> page = trainPlanReq.toPageParam();
+		List<String> courseIds = courseMapper.selectByAuth(AuthContextUtils.constructAuth(userInfo,
+				true));
+		IPage<TrainPlanWebRsp> result = trainPlanMapper.listTrainWebPlan(page, trainPlanReq.getPattern(), userInfo.getOrganizationId(),
+				courseIds);
+
+		for (TrainPlanWebRsp trainPlanRsp : result.getRecords()) {
+			final String roomIds = trainPlanRsp.getRoomIds();
+			if (StringUtils.isBlank(roomIds)) {
+				continue;
+			}
+
+			final List<String> roomIdsList = StreamApiUtils.map(Arrays.asList(roomIds.split(CommonConstant.CODE_COMMA)), String::trim);
+
+			List<TrainPlanLessonRsp> lessons = classroomMapper.selectListByIds(roomIdsList);
+			final List<String> lessonIds = StreamApiUtils.map(lessons, TrainPlanLessonRsp::getLessonId);
+			QueryWrapper<LessonPaperEvaluate> queryWrapper = new QueryWrapper<>();
+			queryWrapper.lambda().eq(LessonPaperEvaluate::getSubmitUserId, userInfo.getUserId())
+					.in(LessonPaperEvaluate::getLessonId, lessonIds);
+			final List<LessonPaperEvaluate> lessonPaperEvaluates = lessonPaperEvaluateMapper.selectList(queryWrapper);
+			Map<String, LessonPaperEvaluate> lessonPaperEvaluatesMap = StreamApiUtils.toMap(lessonPaperEvaluates,
+					LessonPaperEvaluate::getLessonId,
+					lessonPaperEvaluate -> lessonPaperEvaluate);
+
+			// 实验报告查询
+			List<ClassroomNoteEvalBo> noteEvalBos = noteMapper.selectByLesson(lessonIds, userInfo.getUserId());
+			final Map<String, ClassroomNoteEvalBo> noteEvalBoMap = StreamApiUtils.toMap(noteEvalBos, ClassroomNoteEvalBo::getBusinessId, noteEvalBo -> noteEvalBo);
+
+
+			int experimentReportCountTotal = 0;
+			int experimentReportCount = 0;
+			int coursePracticeCount = 0;
+			int coursePracticeCountTotal = 0;
+
+			for (TrainPlanLessonRsp trainPlanLessonRsp : lessons) {
+				if (trainPlanLessonRsp.getPaperId() != null) {
+					// todo 课后练习数统计
+					// 课后练习 未提交、已提交，具体等级
+					final LessonPaperEvaluate lessonPaperEvaluate = lessonPaperEvaluatesMap.get(trainPlanLessonRsp.getLessonId());
+					if (null != lessonPaperEvaluate) {
+						trainPlanLessonRsp.setLevelStatus(true);
+						trainPlanLessonRsp.setLevel(lessonPaperEvaluate.getLevel());
+						// 判断字符是否在数组里1 是否在 【1， 2】
+						if (LessonPaperEvaluate.LevelType.isPass(lessonPaperEvaluate.getLevel())) {
+							coursePracticeCount += 1;
+						}
+					}else {
+						trainPlanLessonRsp.setLevelStatus(false);
+					}
+				}
+
+				if (Objects.equals(trainPlanLessonRsp.getLessonType(), CourseLesson.LessonType.EXPERIMENT.getCode())) {
+					// 实验报告 未提交、已提交，具体分数
+					final ClassroomNoteEvalBo classroomNoteEvalBo = noteEvalBoMap.get(trainPlanLessonRsp.getLessonId());
+					if (null != classroomNoteEvalBo && classroomNoteEvalBo.getIsSubmit()) {
+						trainPlanLessonRsp.setExerciseStatus(true);
+						trainPlanLessonRsp.setExerciseScore(classroomNoteEvalBo.getScore());
+						trainPlanLessonRsp.setExercisePassedStatus(classroomNoteEvalBo.getPassed());
+						experimentReportCount += 1;
+					}else {
+						trainPlanLessonRsp.setExerciseStatus(false);
+					}
+					experimentReportCountTotal += 1;
+				}
+			}
+
+			trainPlanRsp.setExperimentReportCount(experimentReportCount);
+			trainPlanRsp.setExperimentReportCountTotal(experimentReportCountTotal);
+
+			trainPlanRsp.setCoursePracticeCount(coursePracticeCount);
+			trainPlanRsp.setCoursePracticeCountTotal(coursePracticeCountTotal);
+
+			trainPlanRsp.setLessons(lessons);
 		}
 		return result;
 	}

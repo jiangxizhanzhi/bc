@@ -78,4 +78,27 @@
         and `name` like #{pattern}
         </if>
     </select>
+    <select id="listTrainWebPlan" resultType="com.cyberpeace.oj.course.controller.res.TrainPlanWebRsp">
+        select b.resource_id, b.name, c.paper_id, a.update_time,
+               group_concat(a.resource_id SEPARATOR ',') as room_ids,
+               count(a.lesson_id) as mission_count_total,
+                              count(c.paper_id) as course_practice_count_total,
+        SUM(CASE WHEN c.`type` = 1 THEN 1 ELSE 0 END) AS experiment_report_count_total,
+        min(a.start_time) as start_time, max(a.end_time) as end_time  from oj_classroom as a
+        left join oj_train_plan  as b on a.train_plan_id = b.resource_id
+        left join oj_course_lesson  as c on a.lesson_id = c.resource_id
+        where 1=1
+        <if test="courseIds != null and courseIds.size() != 0">
+            and a.course_id in
+            <foreach collection="courseIds" open="(" close=")" separator="," item="courseId">
+                #{courseId}
+            </foreach>
+        </if>
+        <if test="null != pattern and pattern != ''">
+            <bind name="pattern" value="'%' + pattern + '%'"/>
+            and b.`name` like #{pattern}
+        </if>
+        AND INSTR(a.organization_ids, CONCAT('\"', #{organizationId}, '\"')) > 0
+        group by a.train_plan_id
+    </select>
 </mapper>

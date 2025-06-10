@@ -4,10 +4,11 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
+import com.cyberpeace.oj.course.controller.req.TrainPlanWebReq;
 import com.cyberpeace.oj.course.controller.res.TrainPlanRsp;
+import com.cyberpeace.oj.course.controller.res.TrainPlanWebRsp;
 import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import com.cyberpeace.oj.course.service.bo.TrainPlanBo;
 
@@ -47,6 +48,14 @@ public interface TrainPlanService extends IService<TrainPlan> {
 	IPage<TrainPlanRsp> page(TrainPlanReq trainPlanReq, UserInfo userInfo);
 
 	/**
+	 * 前台分页展示计划
+	 * @param trainPlanReq
+	 * @param userInfo
+	 * @return
+	 */
+    IPage<TrainPlanWebRsp> page(TrainPlanWebReq trainPlanReq, UserInfo userInfo);
+
+    /**
 	 * 检查名称重复
 	 *
 	 * @param name   名称

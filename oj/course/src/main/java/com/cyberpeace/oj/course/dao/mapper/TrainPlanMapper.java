@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.course.controller.res.TrainPlanRsp;
+import com.cyberpeace.oj.course.controller.res.TrainPlanWebRsp;
 import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -77,4 +78,6 @@ public interface TrainPlanMapper extends BaseMapper<TrainPlan> {
 	 * @see IPage<TrainPlanRsp>
 	 */
 	IPage<TrainPlanRsp> listTrainPlan(Page<TrainPlanRsp> page, String pattern, String organizationId, String userId, boolean isSuperUser, boolean isAdmin, List<String> courseIds);
+
+	IPage<TrainPlanWebRsp> listTrainWebPlan(Page<TrainPlanWebRsp> page, String pattern, String organizationId, List<String> courseIds);
 }

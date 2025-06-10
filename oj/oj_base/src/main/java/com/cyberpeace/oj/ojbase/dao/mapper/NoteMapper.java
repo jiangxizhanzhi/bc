@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.ojbase.dao.mapper;
 
+import com.cyberpeace.oj.ojbase.service.bo.ClassroomNoteEvalBo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -126,4 +127,6 @@ public interface NoteMapper extends BaseMapper<Note> {
 	 * @return int
 	 */
 	int countByUserId(@Param("userId") String userId, @Param("noteType") Integer noteType, @Param("resourceIds") List<String> resourceIds);
+
+	List<ClassroomNoteEvalBo> selectByLesson(List<String> lessonIds, String userId);
 }

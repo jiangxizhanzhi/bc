@@ -202,4 +202,17 @@
             </if>
         </where>
     </select>
+    <select id="selectByLesson" resultType="com.cyberpeace.oj.ojbase.service.bo.ClassroomNoteEvalBo">
+        select a.business_id, a.user_id, a.is_submit, a.resource_id, b.score, b.passed  from oj_note as a
+        left join oj_note_evaluate as b on a.resource_id = b.note_id
+        <where>
+            a.business_id in
+            <foreach collection="lessonIds" item="lessonId" open="(" close=")" separator=",">
+                #{lessonId}
+            </foreach>
+            and a.business_type = 2
+            and a.note_type = 2
+            and a.user_id = #{userId}
+        </where>
+    </select>
 </mapper>

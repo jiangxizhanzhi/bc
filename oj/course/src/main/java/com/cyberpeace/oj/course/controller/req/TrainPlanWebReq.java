@@ -20,8 +20,8 @@ public class TrainPlanWebReq extends PageReqBase {
 
 	/**
 	 * 训练计划状态
-	 *
-	 * @see String
+	 * 1- 未开始， 2- 进行中， 3- 已结束
+	 * @see com.cyberpeace.oj.ojbase.constant.TrainPlanStatusEnum
 	 */
 	@ApiModelProperty(name = "plan_status", value = "训练计划状态")
 	private Integer planStatus;

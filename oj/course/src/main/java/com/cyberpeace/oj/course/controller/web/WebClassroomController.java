@@ -1,18 +1,23 @@
 package com.cyberpeace.oj.course.controller.web;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.oj.course.controller.req.ClassroomSignInReq;
 import com.cyberpeace.oj.course.controller.req.RemoteHelpReq;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
+import com.cyberpeace.oj.course.service.bo.ClassRoomExperimentReportBo;
 import com.cyberpeace.oj.course.service.bo.ClassRoomWebBo;
 import com.cyberpeace.oj.course.service.bo.HelpStatusBo;
 import com.cyberpeace.oj.course.service.bo.TimeScheduleBo;
@@ -159,6 +164,17 @@ public class WebClassroomController {
 		Boolean result = classroomSignService.signIn(signInReq.getResourceId(), authContext);
 
 		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("我的实验报告")
+	@GetMapping("/report/list")
+	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
+			logical = Logical.OR)
+	public BaseRsp<ListRsp<ClassRoomExperimentReportBo>> classroomReportPage(@Validated PageReqBase pageReqBase) {
+
+		final IPage<ClassRoomExperimentReportBo> classRoomExperimentReportBoIPage = classroomService.classroomReportPage(pageReqBase, UserInfoContext.getUserContext());
+		ListRsp<ClassRoomExperimentReportBo> listResult = PageUtil.getListResult(classRoomExperimentReportBoIPage);
+		return new BaseRsp<>(listResult);
 	}
 
 	/**

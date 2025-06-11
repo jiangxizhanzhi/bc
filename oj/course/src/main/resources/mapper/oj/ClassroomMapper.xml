@@ -242,4 +242,39 @@
         </where>
 
     </select>
+    <select id="selectPageReports"
+            resultType="com.cyberpeace.oj.course.service.bo.ClassRoomExperimentReportBo">
+        SELECT
+        a.resource_id AS room_id,
+        a.train_plan_id,
+        a.start_time,
+        a.end_time,
+        a.course_id,
+        a.lesson_id,
+        cl.name AS lesson_name,
+        n.resource_id AS note_id,
+        n.is_submit,
+        e.passed,
+        e.score,
+        CASE
+        WHEN e.passed IS NOT NULL THEN 3
+        WHEN n.is_submit = 1 THEN 2
+        WHEN n.resource_id IS NULL OR n.is_submit = 0 THEN 1
+        END AS submit_status
+        FROM oj_classroom a
+        LEFT JOIN oj_course_lesson cl ON a.lesson_id = cl.resource_id
+        LEFT JOIN oj_note n
+        ON n.business_id = a.lesson_id
+        AND n.business_type = 2
+        AND n.note_type = 2
+        AND n.user_id = #{userInfo.userId}
+        LEFT JOIN oj_note_evaluate e ON n.resource_id = e.note_id
+        WHERE cl.`type` = 1
+        <if test="userInfo.organizationId != null">
+            <bind name="likeOrg" value="'%' + userInfo.organizationId + '%'"/>
+            and a.organization_ids like #{likeOrg}
+        </if>
+        ORDER BY submit_status asc,   a.start_time ASC
+
+    </select>
 </mapper>

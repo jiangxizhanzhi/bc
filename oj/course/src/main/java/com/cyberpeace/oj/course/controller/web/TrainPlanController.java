@@ -6,15 +6,14 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
 import com.cyberpeace.oj.course.controller.req.TrainPlanWebReq;
-import com.cyberpeace.oj.course.controller.res.TrainPlanRsp;
 import com.cyberpeace.oj.course.controller.res.TrainPlanWebRsp;
 import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import com.cyberpeace.oj.course.service.TrainPlanService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,8 @@ public class TrainPlanController {
 
     @ApiOperation("训练计划列表分页查询")
     @GetMapping("/list/page")
-    @RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+    @RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
+            logical = Logical.OR)
     public BaseRsp<ListRsp<TrainPlanWebRsp>> page(@Validated TrainPlanWebReq trainPlanReq) {
 
         // 默认时间排序

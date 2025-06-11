@@ -1,9 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyberpeace.common.util.AuthContextUtils;
@@ -172,7 +169,12 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 					lessonPaperEvaluate -> lessonPaperEvaluate);
 
 			// 实验报告查询
-			List<ClassroomNoteEvalBo> noteEvalBos = noteMapper.selectByLesson(lessonIds, userInfo.getUserId());
+			List<ClassroomNoteEvalBo> noteEvalBos;
+			if (!lessonIds.isEmpty()){
+				noteEvalBos = noteMapper.selectByLesson(lessonIds, userInfo.getUserId());
+			}else {
+				noteEvalBos = new ArrayList<>();
+			}
 			final Map<String, ClassroomNoteEvalBo> noteEvalBoMap = StreamApiUtils.toMap(noteEvalBos, ClassroomNoteEvalBo::getBusinessId, noteEvalBo -> noteEvalBo);
 
 

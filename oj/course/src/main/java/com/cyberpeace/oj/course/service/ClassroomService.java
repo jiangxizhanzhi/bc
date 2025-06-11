@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -66,7 +67,9 @@ public interface ClassroomService extends IService<Classroom> {
     List<ClassRoomWebBo> selectTimeListOnlyCourse(ClassRoomListQuery roomListQuery,
                                                   AuthContext authContext);
 
-    /**
+	IPage<ClassRoomExperimentReportBo> classroomReportPage(PageReqBase pageReqBase, UserInfo userInfo);
+
+	/**
 	 * 分页查询课时表信息
 	 *
 	 * @param roomListQuery

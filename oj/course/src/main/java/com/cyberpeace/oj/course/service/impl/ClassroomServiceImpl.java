@@ -13,6 +13,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.room.DashboardFriend;
 import com.cyberpeace.common.model.room.DashboardGroup;
 import com.cyberpeace.common.model.room.DashboardInfo;
@@ -20,7 +21,6 @@ import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
-import static com.cyberpeace.common.util.BeanUtils.copy;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.redvsblue.entity.RbRoom;
@@ -603,6 +603,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
         List<ClassRoomWebBo> classroomBos = new ArrayList<>();
 
+        // 查询服务日期和组织的课堂数据；
         final List<Classroom> classrooms = classroomMapper.selectListLesson(roomListQuery);
 
         final List<String> classroomIds = StreamApiUtils.map(classrooms, Classroom::getResourceId);
@@ -621,11 +622,14 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
                 );
         QueryWrapper<CourseLesson> lessonQuery = new QueryWrapper<>();
         lessonQuery.lambda().in(CourseLesson::getResourceId, lessonIds);
+        // 查询有权限看到的课堂下的课程；
         List<CourseLesson> lessons = courseLessonMapper.selectList(lessonQuery);
         final List<Course> courses = courseMapper.selectList(queryWrapper);
         final Map<String, String> courseMap = StreamApiUtils.toMap(courses, Course::getResourceId, Course::getName);
         final Map<String, String> lessonMap = StreamApiUtils.toMap(lessons, CourseLesson::getResourceId, CourseLesson::getName);
         List<String> authCourseIds = StreamApiUtils.map(courses, Course::getResourceId);
+
+        // 根据有权限的课程，反过滤课堂数据；
         final List<Classroom> filteredClassroom = classrooms.stream().filter(classroom ->
                 authCourseIds.contains(classroom.getCourseId())).collect(Collectors.toList());
 
@@ -637,6 +641,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         final Map<String, Boolean> classroomSignMap = StreamApiUtils.toMap(classroomSigns,
                 ClassroomSign::getClassroomId, ClassroomSign::getSignIn);
 
+        // 给课堂数据添加基础数据
         for (Classroom classroom : filteredClassroom) {
             final ClassRoomWebBo classRoomWebBo = new ClassRoomWebBo();
             classRoomWebBo.setRoomId(classroom.getResourceId());
@@ -658,6 +663,35 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
                 splitTimeByDay(classroom, ClassRoomWebBo.class));
     }
 
+
+    /**
+     * 实验报告列表
+     * @param userInfo
+     * @return
+     */
+    @Override
+    public IPage<ClassRoomExperimentReportBo> classroomReportPage(PageReqBase pageReqBase, UserInfo userInfo) {
+        final Page<ClassRoomExperimentReportBo> pageParam = pageReqBase.toPageParam();
+        // 查询出所有实验报告相关的实验
+        final IPage<ClassRoomExperimentReportBo> page = classroomMapper.selectPageReports(pageParam, userInfo);
+        final List<String> trainPlanIds = StreamApiUtils.map(page.getRecords(), ClassRoomExperimentReportBo::getTrainPlanId);
+        // 批量查询trainplan
+        final List<TrainPlan> trainPlans = trainPlanMapper.selectBatchIds(trainPlanIds);
+        final Map<String, TrainPlan> trainPlanMap = StreamApiUtils.toMap(trainPlans, TrainPlan::getResourceId, trainPlan -> trainPlan);
+
+
+        for (ClassRoomExperimentReportBo reportBo : page.getRecords()) {
+            // 获取计划名称
+            if (StringUtils.isEmpty(reportBo.getTrainPlanId())) {
+                // 默认的计划
+                reportBo.setPlanName(TrainPlan.TASK_SET);
+                reportBo.setTrainPlanId(TrainPlan.TASK_SET_ID);
+            } else {
+                reportBo.setPlanName(trainPlanMap.get(reportBo.getTrainPlanId()).getName());
+            }
+        }
+        return page;
+    }
 
     /**
      * 数据拆分，数据不能跨天，跨几天则为几条

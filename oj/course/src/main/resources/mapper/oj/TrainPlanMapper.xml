@@ -103,7 +103,8 @@
         </if>
         <if test="null != pattern and pattern != ''">
             <bind name="pattern" value="'%' + pattern + '%'"/>
-            and (tp.`name` like #{pattern} or cl.name like #{pattern})
+            and (LOWER(COALESCE(NULLIF(tp.name, ''), 'task set')) like #{pattern}
+                     or LOWER(cl.name) like #{pattern})
         </if>
         GROUP BY c.train_plan_id
         HAVING 1=1

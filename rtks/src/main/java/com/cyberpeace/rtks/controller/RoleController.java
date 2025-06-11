@@ -306,6 +306,9 @@ public class RoleController {
 		role.setCategory("");
 		role.setSkillIdWeights("[]");
 		role.setSkillIds("[]");
+//		TODO 增加默认头像 默认值需修改
+		role.setAvatar("/cpms/rtks_role/h.png");
+
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -853,6 +856,7 @@ public class RoleController {
 		output.setResourceId(role.getResourceId());
 		output.setName(role.getName());
 		output.setDescription(role.getDescription());
+		output.setAvatar(role.getAvatar());
 
 		String levelId = role.getLevelId();
 		String fullPath = levelService.getFullPathById(levelId);

@@ -152,4 +152,11 @@ public class RoleOutput {
 	@ApiModelProperty(value = "岗位知识点课程数量")
 	private Integer knowledgeCourseCount;
 
+	/**
+	 * 头像
+	 *
+	 * @see String
+	 */
+	@ApiModelProperty(value = "头像")
+	private String avatar;
 }

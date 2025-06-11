@@ -128,4 +128,11 @@ public class Role extends BaseTable {
 	 */
 	private String skillMissions;
 
+	/**
+	 * 头像
+	 *
+	 * @see String
+	 */
+	private String avatar;
+
 }

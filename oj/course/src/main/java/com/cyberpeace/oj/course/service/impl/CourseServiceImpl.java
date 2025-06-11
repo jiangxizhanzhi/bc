@@ -280,7 +280,17 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     @Autowired
     private CourseStatisticsService courseStatisticsService;
 
-    /**
+
+	/**
+	 * 课时记录Mapper
+	 *
+	 * @see LessonRecordMapper
+	 */
+	@Autowired
+	private LessonRecordMapper lessonRecordMapper;
+
+
+	/**
      * 查询由id
      *
      * @param courseId    课程id
@@ -974,14 +984,6 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		updateBatchById(courseList);
 	}
-
-    /**
-     * 课时记录Mapper
-     *
-     * @see LessonRecordMapper
-     */
-    @Autowired
-    private LessonRecordMapper lessonRecordMapper;
 
     @Override
     public CourseStatisticsRes statistics(ListRsp<CourseWebBo> boListRsp, AuthContext authContext) {

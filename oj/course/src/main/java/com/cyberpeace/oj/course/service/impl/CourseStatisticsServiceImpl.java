@@ -65,6 +65,25 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 	private LessonRecordMapper lessonRecordMapper;
 
 	/**
+	 * utilService
+	 *
+	 * @see UtilService
+	 */
+	@Autowired
+	private UtilService utilService;
+
+	/**
+	 * 讲义视频Service
+	 *
+	 * @see HandoutVideoService
+	 */
+	@Autowired
+	private HandoutVideoService handoutVideoService;
+
+	@Autowired
+	private LessonConfigService lessonConfigService;
+
+	/**
 	 * 统计由id列表
 	 *
 	 * @param courseIds 课程id列表
@@ -208,23 +227,4 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 
 		return studyProcessBos;
 	}
-
-	/**
-	 * utilService
-	 *
-	 * @see UtilService
-	 */
-	@Autowired
-	private UtilService utilService;
-
-	/**
-	 * 讲义视频Service
-	 *
-	 * @see HandoutVideoService
-	 */
-	@Autowired
-	private HandoutVideoService handoutVideoService;
-
-	@Autowired
-	private LessonConfigService lessonConfigService;
 }

@@ -8,6 +8,7 @@ import com.cyberpeace.oj.course.controller.res.TrainPlanLessonRsp;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.service.bo.ClassRoomExperimentReportBo;
+import com.cyberpeace.oj.course.service.bo.ClassroomPracticeWebBo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -190,4 +191,6 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	List<TrainPlanLessonRsp> selectListByIds(List<String> roomIds);
 
 	IPage<ClassRoomExperimentReportBo> selectPageReports(Page<ClassRoomExperimentReportBo> pageReqBase, UserInfo userInfo);
+
+	IPage<ClassroomPracticeWebBo> classroomPracticeWebIPage(Page<ClassroomPracticeWebBo> pageParam, UserInfo userInfo);
 }

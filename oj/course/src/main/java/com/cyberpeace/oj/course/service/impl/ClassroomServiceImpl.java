@@ -693,6 +693,29 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         return page;
     }
 
+    @Override
+    public IPage<ClassroomPracticeWebBo> classroomPracticeWebIPage(PageReqBase pageReqBase, UserInfo userInfo) {
+        Page<ClassroomPracticeWebBo> pageParam = pageReqBase.toPageParam();
+        // 查询出所有课后练习相关的课堂
+        IPage<ClassroomPracticeWebBo> page = classroomMapper.classroomPracticeWebIPage(pageParam, userInfo);
+        // 查询出相关联的计划id
+        final List<String> trainPlanIds = StreamApiUtils.map(page.getRecords(), ClassroomPracticeWebBo::getTrainPlanId);
+        final List<TrainPlan> trainPlans = trainPlanMapper.selectBatchIds(trainPlanIds);
+        final Map<String, TrainPlan> trainPlanMap = StreamApiUtils.toMap(trainPlans, TrainPlan::getResourceId, trainPlan -> trainPlan);
+
+        for (ClassroomPracticeWebBo reportBo : page.getRecords()) {
+            // 获取计划名称
+            if (StringUtils.isEmpty(reportBo.getTrainPlanId())) {
+                // 默认的计划
+                reportBo.setPlanName(TrainPlan.TASK_SET);
+                reportBo.setTrainPlanId(TrainPlan.TASK_SET_ID);
+            } else {
+                reportBo.setPlanName(trainPlanMap.get(reportBo.getTrainPlanId()).getName());
+            }
+        }
+        return page;
+    }
+
     /**
      * 数据拆分，数据不能跨天，跨几天则为几条
      *

@@ -17,10 +17,7 @@ import com.cyberpeace.oj.course.controller.req.RemoteHelpReq;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
-import com.cyberpeace.oj.course.service.bo.ClassRoomExperimentReportBo;
-import com.cyberpeace.oj.course.service.bo.ClassRoomWebBo;
-import com.cyberpeace.oj.course.service.bo.HelpStatusBo;
-import com.cyberpeace.oj.course.service.bo.TimeScheduleBo;
+import com.cyberpeace.oj.course.service.bo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -175,6 +172,18 @@ public class WebClassroomController {
 		final IPage<ClassRoomExperimentReportBo> classRoomExperimentReportBoIPage = classroomService.classroomReportPage(pageReqBase, UserInfoContext.getUserContext());
 		ListRsp<ClassRoomExperimentReportBo> listResult = PageUtil.getListResult(classRoomExperimentReportBoIPage);
 		return new BaseRsp<>(listResult);
+	}
+
+	@ApiOperation("我的课后练习")
+	@GetMapping("/practice/list")
+	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
+			logical = Logical.OR)
+	public BaseRsp<ListRsp<ClassroomPracticeWebBo>> classroomPracticePage(@Validated PageReqBase pageReqBase) {
+
+		final IPage<ClassroomPracticeWebBo> classroomPracticeWebtBoIPage = classroomService.classroomPracticeWebIPage(pageReqBase, UserInfoContext.getUserContext());
+		ListRsp<ClassroomPracticeWebBo> listResult = PageUtil.getListResult(classroomPracticeWebtBoIPage);
+		return new BaseRsp<>(listResult);
+
 	}
 
 	/**

@@ -277,4 +277,40 @@
         ORDER BY submit_status asc,   a.start_time ASC
 
     </select>
+    <select id="classroomPracticeWebIPage"
+            resultType="com.cyberpeace.oj.course.service.bo.ClassroomPracticeWebBo">
+        SELECT
+            c.resource_id AS room_id,
+            c.train_plan_id,
+            c.start_time,
+            c.end_time,
+            c.course_id,
+            c.lesson_id,
+            l.name AS lesson_name,
+            p.resource_id AS paper_id,
+            p.name AS paper_name,
+            e.level,
+            e.corrector,
+            CASE
+                WHEN e.resource_id IS NOT NULL AND e.level IS NOT NULL THEN 3
+                WHEN e.resource_id IS NOT NULL THEN 2
+                ELSE 1
+                END AS submit_status
+        FROM oj_classroom c
+                 LEFT JOIN oj_course_lesson l ON c.lesson_id = l.resource_id
+                 LEFT JOIN oj_paper p ON l.paper_id = p.resource_id
+            and p.practice_count > 0
+                 LEFT JOIN oj_lesson_paper_evaluate e
+                           ON e.lesson_id = l.resource_id
+                           AND e.submit_user_id = #{userInfo.userId}
+        WHERE l.paper_id IS NOT NULL
+        <if test="userInfo.organizationId != null">
+            <bind name="likeOrg" value="'%' + userInfo.organizationId + '%'"/>
+            and c.organization_ids like #{likeOrg}
+            and p.read_auth_ids like #{likeOrg}
+        </if>
+        ORDER BY
+            submit_status asc,
+            c.start_time ASC
+    </select>
 </mapper>

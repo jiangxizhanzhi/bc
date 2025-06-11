@@ -79,5 +79,5 @@ public interface TrainPlanMapper extends BaseMapper<TrainPlan> {
 	 */
 	IPage<TrainPlanRsp> listTrainPlan(Page<TrainPlanRsp> page, String pattern, String organizationId, String userId, boolean isSuperUser, boolean isAdmin, List<String> courseIds);
 
-	IPage<TrainPlanWebRsp> listTrainWebPlan(Page<TrainPlanWebRsp> page, String pattern, String organizationId, List<String> courseIds);
+	IPage<TrainPlanWebRsp> listTrainWebPlan(Page<TrainPlanWebRsp> page, String pattern, String organizationId, List<String> courseIds, Integer planStatus);
 }

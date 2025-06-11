@@ -24,10 +24,10 @@ public class TrainPlanWebReq extends PageReqBase {
 	 * @see String
 	 */
 	@ApiModelProperty(name = "plan_status", value = "训练计划状态")
-	private String planStatus;
+	private Integer planStatus;
 
 
-	public void setPlan_status(String planStatus) {
+	public void setPlan_status(Integer planStatus) {
 		this.planStatus = planStatus;
 	}
 }

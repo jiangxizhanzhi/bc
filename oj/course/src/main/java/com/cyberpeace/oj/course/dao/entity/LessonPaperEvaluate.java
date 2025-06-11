@@ -106,7 +106,15 @@ public class LessonPaperEvaluate extends BaseTable {
 			this.desc = desc;
 		}
 
+		/**
+		 * 优和良才判断为通过
+		 * @param level
+		 * @return
+		 */
 		public static Boolean isPass(Integer level) {
+			if(null == level) {
+				return false;
+			}
             return level <= LevelType.LEVEL_2.getCode();
         }
 

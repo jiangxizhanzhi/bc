@@ -242,6 +242,67 @@
         </where>
 
     </select>
+    <select id="selectLessonExerciseStatus"
+            resultType="com.cyberpeace.oj.course.controller.res.TrainPlanLessonExerciseStatusRsp">
+        SELECT
+        l.resource_id AS lesson_id,
+        e.level,
+        e.score,
+        CASE
+        WHEN e.lesson_id IS NOT NULL AND e.level IS NOT NULL THEN 3  -- 已评估
+        WHEN e.lesson_id IS NOT NULL THEN 2                          -- 已提交
+        ELSE 1                                                      -- 未提交
+        END AS levelStatus
+        FROM oj_course_lesson l
+        LEFT JOIN oj_lesson_paper_evaluate e
+        ON l.resource_id = e.lesson_id
+        AND e.submit_user_id = #{userId}
+        <where>
+            <if test="lessonIds != null and lessonIds.size() > 0">
+                l.resource_id IN
+                <foreach collection="lessonIds" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="lessonIds == null or lessonIds.size() == 0">
+                1 = 0
+            </if>
+        </where>
+    </select>
+
+    <select id="selectLessonReportStatus"
+            resultType="com.cyberpeace.oj.course.controller.res.TrainPlanLessonReportStatusRsp">
+        SELECT
+        cl.resource_id AS lesson_id,
+        n.is_submit,
+        e.score as report_score,
+        CASE
+        WHEN e.passed IS NOT NULL THEN 3   -- 已批改
+        WHEN n.is_submit = 1 THEN 2        -- 已提交
+        ELSE 1                             -- 未提交
+        END AS report_status,
+        e.passed AS report_passed_status
+        FROM oj_course_lesson cl
+        LEFT JOIN oj_note n
+        ON n.business_id = cl.resource_id
+        AND n.business_type = 2
+        AND n.note_type = 2
+        AND n.user_id = #{userId}
+        LEFT JOIN oj_note_evaluate e ON n.resource_id = e.note_id
+        <where>
+            <if test="lessonIds != null and lessonIds.size() > 0">
+                cl.resource_id IN
+                <foreach collection="lessonIds" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="lessonIds == null or lessonIds.size() == 0">
+                1 = 0
+            </if>
+        </where>
+    </select>
+
+
     <select id="selectPageReports"
             resultType="com.cyberpeace.oj.course.service.bo.ClassRoomExperimentReportBo">
         SELECT

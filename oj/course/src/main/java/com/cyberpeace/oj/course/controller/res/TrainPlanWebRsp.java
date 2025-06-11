@@ -28,13 +28,6 @@ public class TrainPlanWebRsp implements Serializable {
 	@ApiModelProperty("训练计划编号")
 	private String resourceId;
 
-	/**
-	 * 课堂id
-	 *
-	 * @see String
-	 */
-	@ApiModelProperty("课堂id")
-	private String roomIds;
 
 	/**
 	 * 训练计划名称
@@ -45,20 +38,28 @@ public class TrainPlanWebRsp implements Serializable {
 	private String name;
 
 	/**
+	 * 训练计划状态
+	 * 1- 未开始， 2- 进行中， 3- 已结束
+	 * @see com.cyberpeace.oj.ojbase.constant.TrainPlanStatusEnum
+	 */
+	@ApiModelProperty("训练计划状态")
+	private Integer planStatus;
+
+	/**
 	 * 开始时间
 	 *
 	 * @see Date
 	 */
-	@ApiModelProperty("开始时间")
-	private Date startTime;
+	@ApiModelProperty("最早开始时间")
+	private Date firstStartTime;
 
 	/**
 	 * 结束时间
 	 *
 	 * @see Date
 	 */
-	@ApiModelProperty("结束时间")
-	private Date endTime;
+	@ApiModelProperty("最晚结束时间")
+	private Date lastEndTime;
 
 	/**
 	 * 更新时间
@@ -127,12 +128,12 @@ public class TrainPlanWebRsp implements Serializable {
 	private Integer missionCountTotal;
 
 	/**
-	 * 任务完成数
-	 *
+	 * 课堂ids
+	 * 存在一个计划里面课时是重复的，所以这里保存的是课堂id的集合
 	 * @see String
 	 */
-	@ApiModelProperty("任务完成数")
-	private Integer missionCount;
+	@ApiModelProperty("课堂的ids")
+	private String roomIds;
 
 	/**
 	 * 任务列表

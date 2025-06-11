@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.oj.course.controller.res.TrainPlanLessonExerciseStatusRsp;
+import com.cyberpeace.oj.course.controller.res.TrainPlanLessonReportStatusRsp;
 import com.cyberpeace.oj.course.controller.res.TrainPlanLessonRsp;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
@@ -189,6 +191,21 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 
 
 	List<TrainPlanLessonRsp> selectListByIds(List<String> roomIds);
+
+	/**
+	 * 课后练习 状态统计
+	 * @param lessonIds
+	 * @return
+	 */
+	List<TrainPlanLessonExerciseStatusRsp> selectLessonExerciseStatus(List<String> lessonIds, String userId);
+
+	/**
+	 * 实验课报告 状态统计
+	 * @param lessonIds
+	 * @return
+	 */
+	List<TrainPlanLessonReportStatusRsp> selectLessonReportStatus(List<String> lessonIds, String userId);
+
 
 	IPage<ClassRoomExperimentReportBo> selectPageReports(Page<ClassRoomExperimentReportBo> pageReqBase, UserInfo userInfo);
 

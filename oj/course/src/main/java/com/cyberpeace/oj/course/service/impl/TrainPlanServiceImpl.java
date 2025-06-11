@@ -6,8 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
 import com.cyberpeace.oj.course.controller.req.TrainPlanWebReq;
-import com.cyberpeace.oj.course.controller.res.TrainPlanLessonRsp;
-import com.cyberpeace.oj.course.controller.res.TrainPlanWebRsp;
+import com.cyberpeace.oj.course.controller.res.*;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonPaperEvaluate;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
@@ -31,7 +30,6 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.course.controller.res.TrainPlanRsp;
 import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import com.cyberpeace.oj.course.dao.mapper.TrainPlanMapper;
 import com.cyberpeace.oj.course.service.TrainPlanService;
@@ -147,10 +145,16 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 		Page<TrainPlanWebRsp> page = trainPlanReq.toPageParam();
 		List<String> courseIds = courseMapper.selectByAuth(AuthContextUtils.constructAuth(userInfo,
 				true));
+		// 查询已授权的课程，计划状态和当前时间进行比较，未开始、进行中、已开始的计划
 		IPage<TrainPlanWebRsp> result = trainPlanMapper.listTrainWebPlan(page, trainPlanReq.getPattern(), userInfo.getOrganizationId(),
-				courseIds);
+				courseIds, trainPlanReq.getPlanStatus());
 
 		for (TrainPlanWebRsp trainPlanRsp : result.getRecords()) {
+			// 给空的计划设置默认计划和名称
+			if (StringUtils.isEmpty(trainPlanRsp.getName())) {
+				trainPlanRsp.setName(TrainPlan.TASK_SET);
+				trainPlanRsp.setResourceId(TrainPlan.TASK_SET_ID);
+			}
 			final String roomIds = trainPlanRsp.getRoomIds();
 			if (StringUtils.isBlank(roomIds)) {
 				continue;
@@ -160,59 +164,52 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 
 			List<TrainPlanLessonRsp> lessons = classroomMapper.selectListByIds(roomIdsList);
 			final List<String> lessonIds = StreamApiUtils.map(lessons, TrainPlanLessonRsp::getLessonId);
-			QueryWrapper<LessonPaperEvaluate> queryWrapper = new QueryWrapper<>();
-			queryWrapper.lambda().eq(LessonPaperEvaluate::getSubmitUserId, userInfo.getUserId())
-					.in(LessonPaperEvaluate::getLessonId, lessonIds);
-			final List<LessonPaperEvaluate> lessonPaperEvaluates = lessonPaperEvaluateMapper.selectList(queryWrapper);
-			Map<String, LessonPaperEvaluate> lessonPaperEvaluatesMap = StreamApiUtils.toMap(lessonPaperEvaluates,
-					LessonPaperEvaluate::getLessonId,
-					lessonPaperEvaluate -> lessonPaperEvaluate);
 
-			// 实验报告查询
-			List<ClassroomNoteEvalBo> noteEvalBos;
-			if (!lessonIds.isEmpty()){
-				noteEvalBos = noteMapper.selectByLesson(lessonIds, userInfo.getUserId());
-			}else {
-				noteEvalBos = new ArrayList<>();
-			}
-			final Map<String, ClassroomNoteEvalBo> noteEvalBoMap = StreamApiUtils.toMap(noteEvalBos, ClassroomNoteEvalBo::getBusinessId, noteEvalBo -> noteEvalBo);
+			// 设置任务数
+			trainPlanRsp.setMissionCountTotal(roomIdsList.size());
+
+			// 查询课后练习数据， 按 lessonId 映射
+			final List<TrainPlanLessonExerciseStatusRsp> trainPlanLessonExerciseStatusRsps = classroomMapper.selectLessonExerciseStatus(lessonIds, userInfo.getUserId());
+			final Map<String, TrainPlanLessonExerciseStatusRsp> lessonExerciseStatusRspMap =
+					StreamApiUtils.toMap(trainPlanLessonExerciseStatusRsps, TrainPlanLessonExerciseStatusRsp::getLessonId,
+					trainPlanLessonExerciseStatusRsp -> trainPlanLessonExerciseStatusRsp);
+
+			// 获取实验报告状态，按 lessonId 映射
+			final List<TrainPlanLessonReportStatusRsp> trainPlanLessonReportStatusRsps = classroomMapper.selectLessonReportStatus(lessonIds, userInfo.getUserId());
+			final Map<String, TrainPlanLessonReportStatusRsp> stringTrainPlanLessonReportStatusRspMap =
+					StreamApiUtils.toMap(trainPlanLessonReportStatusRsps, TrainPlanLessonReportStatusRsp::getLessonId,
+					trainPlanLessonReportStatusRsp -> trainPlanLessonReportStatusRsp);
 
 
 			int experimentReportCountTotal = 0;
 			int experimentReportCount = 0;
+
 			int coursePracticeCount = 0;
 			int coursePracticeCountTotal = 0;
 
 			for (TrainPlanLessonRsp trainPlanLessonRsp : lessons) {
-				if (trainPlanLessonRsp.getPaperId() != null) {
-					// todo 课后练习数统计
-					// 课后练习 未提交、已提交，具体等级
-					final LessonPaperEvaluate lessonPaperEvaluate = lessonPaperEvaluatesMap.get(trainPlanLessonRsp.getLessonId());
-					if (null != lessonPaperEvaluate) {
-						trainPlanLessonRsp.setLevelStatus(true);
-						trainPlanLessonRsp.setLevel(lessonPaperEvaluate.getLevel());
-						// 判断字符是否在数组里1 是否在 【1， 2】
-						if (LessonPaperEvaluate.LevelType.isPass(lessonPaperEvaluate.getLevel())) {
-							coursePracticeCount += 1;
-						}
-					}else {
-						trainPlanLessonRsp.setLevelStatus(false);
+				final TrainPlanLessonExerciseStatusRsp trainPlanLessonExerciseStatusRsp = lessonExerciseStatusRspMap.get(trainPlanLessonRsp.getLessonId());
+				if (trainPlanLessonExerciseStatusRsp != null) {
+					trainPlanLessonRsp.setLevelStatus(trainPlanLessonExerciseStatusRsp.getLevelStatus());
+					trainPlanLessonRsp.setLevel(trainPlanLessonExerciseStatusRsp.getLevel());
+					// 优良级别的判断为完成
+					if (LessonPaperEvaluate.LevelType.isPass(trainPlanLessonExerciseStatusRsp.getLevel())) {
+						coursePracticeCount += 1;
 					}
+					coursePracticeCountTotal += 1;
 				}
 
-				if (Objects.equals(trainPlanLessonRsp.getLessonType(), CourseLesson.LessonType.EXPERIMENT.getCode())) {
-					// 实验报告 未提交、已提交，具体分数
-					final ClassroomNoteEvalBo classroomNoteEvalBo = noteEvalBoMap.get(trainPlanLessonRsp.getLessonId());
-					if (null != classroomNoteEvalBo && classroomNoteEvalBo.getIsSubmit()) {
-						trainPlanLessonRsp.setExerciseStatus(true);
-						trainPlanLessonRsp.setExerciseScore(classroomNoteEvalBo.getScore());
-						trainPlanLessonRsp.setExercisePassedStatus(classroomNoteEvalBo.getPassed());
-						experimentReportCount += 1;
-					}else {
-						trainPlanLessonRsp.setExerciseStatus(false);
+				final TrainPlanLessonReportStatusRsp trainPlanLessonReportStatusRsp = stringTrainPlanLessonReportStatusRspMap.get(trainPlanLessonRsp.getLessonId());
+				if (trainPlanLessonReportStatusRsp != null) {
+					trainPlanLessonRsp.setReportPassedStatus(trainPlanLessonReportStatusRsp.getReportPassedStatus());
+					trainPlanLessonRsp.setReportScore(trainPlanLessonReportStatusRsp.getReportScore());
+					trainPlanLessonRsp.setReportStatus(trainPlanLessonReportStatusRsp.getReportStatus());
+					if (trainPlanLessonReportStatusRsp.getReportPassedStatus() !=null && trainPlanLessonReportStatusRsp.getReportPassedStatus()) {
+						coursePracticeCount += 1;
 					}
 					experimentReportCountTotal += 1;
 				}
+
 			}
 
 			trainPlanRsp.setExperimentReportCount(experimentReportCount);

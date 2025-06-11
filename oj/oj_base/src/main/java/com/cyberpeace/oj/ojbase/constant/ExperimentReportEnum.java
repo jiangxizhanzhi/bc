@@ -1,4 +1,4 @@
-package com.cyberpeace.common.enums;
+package com.cyberpeace.oj.ojbase.constant;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import lombok.Getter;

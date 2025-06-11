@@ -43,21 +43,10 @@ public class TrainPlanController {
             logical = Logical.OR)
     public BaseRsp<ListRsp<TrainPlanWebRsp>> page(@Validated TrainPlanWebReq trainPlanReq) {
 
-        // 默认时间排序
-        trainPlanReq.setSort("-update_time");
-
         IPage<TrainPlanWebRsp> data = trainPlanService.page(trainPlanReq,
                 UserInfoContext.getUserContext());
 
         ListRsp<TrainPlanWebRsp> listResult = PageUtil.getListResult(data);
-        for (TrainPlanWebRsp trainPlanRsp : listResult.getList()) {
-            if (StringUtils.isEmpty(trainPlanRsp.getName())) {
-                // 默认的计划
-                trainPlanRsp.setName(TrainPlan.TASK_SET);
-                trainPlanRsp.setResourceId(TrainPlan.TASK_SET_ID);
-            }
-        }
-
         return new BaseRsp<>(listResult);
     }
 }

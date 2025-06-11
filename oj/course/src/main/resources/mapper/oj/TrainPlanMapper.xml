@@ -79,26 +79,44 @@
         </if>
     </select>
     <select id="listTrainWebPlan" resultType="com.cyberpeace.oj.course.controller.res.TrainPlanWebRsp">
-        select b.resource_id, b.name, c.paper_id, a.update_time,
-               group_concat(a.resource_id SEPARATOR ',') as room_ids,
-               count(a.lesson_id) as mission_count_total,
-                              count(c.paper_id) as course_practice_count_total,
-        SUM(CASE WHEN c.`type` = 1 THEN 1 ELSE 0 END) AS experiment_report_count_total,
-        min(a.start_time) as start_time, max(a.end_time) as end_time  from oj_classroom as a
-        left join oj_train_plan  as b on a.train_plan_id = b.resource_id
-        left join oj_course_lesson  as c on a.lesson_id = c.resource_id
+
+        SELECT
+            c.train_plan_id as resource_id,
+            tp.name,
+            group_concat(c.resource_id SEPARATOR ',') as room_ids,
+            MIN(c.start_time) AS first_start_time,
+            MAX(c.end_time) AS last_end_time,
+            CASE
+                WHEN NOW() BETWEEN MIN(c.start_time) AND MAX(c.end_time) THEN 2
+                WHEN NOW() <![CDATA[ < ]]> MIN(c.start_time) THEN 1
+                ELSE 3
+            END AS plan_status
+        FROM oj_classroom c
+        LEFT JOIN oj_train_plan tp ON c.train_plan_id = tp.resource_id
+        LEFT JOIN oj_course_lesson cl ON c.lesson_id = cl.resource_id
         where 1=1
         <if test="courseIds != null and courseIds.size() != 0">
-            and a.course_id in
+            and c.course_id in
             <foreach collection="courseIds" open="(" close=")" separator="," item="courseId">
                 #{courseId}
             </foreach>
         </if>
         <if test="null != pattern and pattern != ''">
             <bind name="pattern" value="'%' + pattern + '%'"/>
-            and b.`name` like #{pattern}
+            and (tp.`name` like #{pattern} or cl.name like #{pattern})
         </if>
-        AND INSTR(a.organization_ids, CONCAT('\"', #{organizationId}, '\"')) > 0
-        group by a.train_plan_id
+        GROUP BY c.train_plan_id
+        HAVING 1=1
+        <if test="planStatus != null">
+            AND (
+            (#{planStatus} = 2 AND NOW() BETWEEN first_start_time AND last_end_time)
+            OR (#{planStatus} = 1 AND NOW() <![CDATA[ < ]]> first_start_time)
+            OR (#{planStatus} = 3 AND NOW() > last_end_time)
+            )
+        </if>
+        ORDER BY
+            plan_status asc,
+            first_start_time ASC
+
     </select>
 </mapper>

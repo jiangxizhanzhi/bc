@@ -31,21 +31,30 @@ public class TrainPlanLessonRsp implements Serializable {
     @ApiModelProperty("课时类型 0 理论， 1 实验")
     private Integer lessonType;
 
+    /**
+     * 课后练习等级， 1- 优、2 -良、 3-中、4-差
+     * @see com.cyberpeace.oj.course.dao.entity.LessonPaperEvaluate.LevelType
+     */
     @ApiModelProperty("课后练习等级， 1- 优、2 -良、 3-中、4-差")
     private Integer level;
 
-    @ApiModelProperty("课后练习状态 0- 未提交， 1 - 已提交")
+    /**
+     * 课后练习状态 1- 待提交， 2- 已提交 ， 3-已批改, 无状态表示没有课后练习或者未下发
+     * @see com.cyberpeace.oj.ojbase.constant.ExperimentReportEnum
+     */
+    @ApiModelProperty("课后练习状态 1- 待提交， 2- 已提交 ， 3-已批改")
     private Boolean levelStatus;
 
-    @ApiModelProperty("课后练习id，用于判断是存在课后练习")
-    private String paperId;
-
     @ApiModelProperty("实验报告分数")
-    private Integer exerciseScore;
+    private Integer reportScore;
 
-    @ApiModelProperty("实验报告状态 0- 未提交， 1-  已提交")
-    private Boolean exerciseStatus;
+    /**
+     * 实验报告状态 1- 待提交， 2- 已提交 ， 3-已批改, 无状态表示没有课后练习或者未下发
+     * @see com.cyberpeace.oj.ojbase.constant.ExperimentReportEnum
+     */
+    @ApiModelProperty("实验报告状态 1- 待提交， 2- 已提交 ， 3-已批改")
+    private Boolean reportStatus;
 
     @ApiModelProperty("实验报告通过状态 0- 未通过， 1-  已通过")
-    private Boolean exercisePassedStatus;
+    private Boolean reportPassedStatus;
 }

@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service.bo;
 
+import com.cyberpeace.oj.ojbase.constant.ExperimentReportEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -22,7 +23,7 @@ public class ClassroomPracticeWebBo implements Serializable {
 
     /**
      * 提交状态 0 待提交 1 待批改 2 已批改
-     * @see com.cyberpeace.common.enums.ExperimentReportEnum
+     * @see ExperimentReportEnum
      */
     @ApiModelProperty("状态 待提交、 待批改、 已批改")
     private Integer submitStatus;

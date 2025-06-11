@@ -76,6 +76,22 @@
         limit #{count}
 
     </select>
+    <select id="selectLatestByUserId" resultType="com.cyberpeace.oj.course.dao.entity.LessonRecord">
+        SELECT *
+        FROM (
+                 SELECT
+                     olr.*,
+                     ROW_NUMBER() OVER (PARTITION BY olr.course_id ORDER BY olr.update_time DESC) AS rn
+                 FROM oj_lesson_record olr
+                          INNER JOIN oj_course_lesson ocl ON olr.lesson_id = ocl.resource_id
+                          INNER JOIN oj_lesson_config olc ON olr.lesson_id = olc.lesson_id
+                 WHERE ocl.public = 1
+                   AND olr.user_id = #{userId}
+             ) t
+        WHERE rn = 1
+        ORDER BY update_time DESC
+            LIMIT 4;
+    </select>
 
 
 </mapper>

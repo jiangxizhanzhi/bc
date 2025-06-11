@@ -10,6 +10,14 @@ import java.util.Date;
 public class LessonRecordRes implements Serializable {
 
     /**
+     * 课程id
+     *
+     * @See String
+     */
+    @ApiModelProperty("课程id")
+    private String courseId;
+
+    /**
      * 课程名称
      *
      * @See String

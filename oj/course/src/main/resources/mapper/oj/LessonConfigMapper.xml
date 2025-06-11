@@ -98,4 +98,14 @@
         SELECT * from oj_lesson_config WHERE resource_id in (
         SELECT parent_id from oj_lesson_config WHERE course_id = #{courseId} GROUP BY parent_id HAVING count( DISTINCT node_type) > 1);
     </select>
+    <select id="selectPublicLessonsByCourseIds" resultType="com.cyberpeace.oj.course.dao.entity.LessonConfig">
+        SELECT olc.*
+        FROM oj_lesson_config olc
+        LEFT JOIN oj_course_lesson ocl ON olc.lesson_id = ocl.resource_id
+        WHERE olc.course_id IN
+        <foreach item="courseId" collection="courseIds" separator="," open="(" close=")" index="">
+            #{courseId}
+        </foreach>
+        AND (ocl.public = 1 OR (olc.lesson_id IS NULL AND olc.node_type IN (0, 1)));
+    </select>
 </mapper>

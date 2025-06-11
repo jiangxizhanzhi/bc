@@ -993,19 +993,16 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         courseStatisticsRes.setCompletedCourseCount((int) count);
         courseStatisticsRes.setCourseCount((int) courseCount);
 //		最近在学
-//			假设看视频时也会存一次课程进度暂不查询视频学习记录
 
 //		原数据
         LambdaQueryWrapper<LessonRecord> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(LessonRecord::getUserId, authContext.getUserId())
                 .orderByDesc(LessonRecord::getUpdateTime)
                 .last("limit 10");
-        List<LessonRecord> lessonRecords = lessonRecordMapper.selectList(queryWrapper);
+        List<LessonRecord> lessonRecords = lessonRecordMapper.selectLatestByUserId(authContext.getUserId());
         List<String> courseIds = lessonRecords.stream().map(LessonRecord::getCourseId).collect(Collectors.toList());
         List<Course> courses = courseMapper.selectBatchIds(courseIds);
-        LambdaQueryWrapper<LessonConfig> lessonConfigQueryWrapper = new LambdaQueryWrapper<>();
-        lessonConfigQueryWrapper.in(LessonConfig::getCourseId, courseIds);
-        List<LessonConfig> lessonConfigsByCourseIds = lessonConfigMapper.selectList(lessonConfigQueryWrapper);
+        List<LessonConfig> lessonConfigsByCourseIds = lessonConfigMapper.selectPublicLessonsByCourseIds(courseIds);
 
         Map<String, Course> courseMap = courses
                 .stream()
@@ -1024,11 +1021,12 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
                     .filter(lessonConfig -> lessonConfig.getParentId() != null)
                     .collect(Collectors.groupingBy(LessonConfig::getParentId));
             LessonRecordRes lessonRecordRes = new LessonRecordRes();
+			lessonRecordRes.setCourseId(course.getResourceId());
             lessonRecordRes.setCourseName(course.getName());
             lessonRecordRes.setLessonRecordDate(lessonRecord.getUpdateTime());
             lessonRecordRes.setLessonId(lessonId);
             lessonRecordRes.setFlag(false);
-            String lessonIndex = paperBindLesson(null, lessonId, firstLessonConfigs, lessonConfigsByParentId, lessonRecordRes);
+            String lessonIndex = findLessonIndexAndSetInfo(null, lessonId, firstLessonConfigs, lessonConfigsByParentId, lessonRecordRes);
             lessonRecordRes.setLessonIndex(lessonIndex);
             return lessonRecordRes;
         }).collect(Collectors.toList());
@@ -1038,38 +1036,53 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         return courseStatisticsRes;
     }
 
-    private String paperBindLesson(String lessonIndex,String  lessonRecordId, LessonConfig lessonConfig, Map<String, List<LessonConfig>> lessonConfigsByParentId, LessonRecordRes lessonRecordRes) {
-        if (lessonRecordRes.getFlag()) {
-            return lessonIndex;
-        }
-        Integer lessonTypeIndex = 1;
-        Integer chapterTypeIndex = 1;
-        String  childLessonIndex = lessonIndex == null  ? chapterTypeIndex.toString() : lessonIndex;
-        for (LessonConfig nodeChild : lessonConfigsByParentId.get(lessonConfig.getResourceId())) {
-            if(nodeChild.getParentId().equals(lessonConfig.getResourceId())) {
-                if (nodeChild.getNodeType().intValue() == LessonConfig.NodeType.NODE_LESSON
-                        .getCode().intValue()) {
-                    if (lessonRecordId.equals(nodeChild.getLessonId())) {
-                        lessonIndex = lessonIndex == null ? lessonTypeIndex.toString() : childLessonIndex + CommonConstant.PERIOD + lessonTypeIndex;
-                        lessonRecordRes.setLessonName(nodeChild.getName());
-                        lessonRecordRes.setLessonIndex(lessonIndex);
-                        lessonRecordRes.setFlag(true);
-                        return lessonIndex;
-                    }
-                    lessonTypeIndex++;
-                }
-                if (nodeChild.getNodeType().intValue() == LessonConfig.NodeType.NODE_CHAPTER
-                        .getCode().intValue()) {
-                    if (!lessonRecordRes.getFlag()) {
-                        childLessonIndex = paperBindLesson(lessonIndex == null ? chapterTypeIndex.toString() : lessonIndex + CommonConstant.PERIOD + chapterTypeIndex,
-                                lessonRecordId, nodeChild, lessonConfigsByParentId, lessonRecordRes);
-                    }
-                    chapterTypeIndex++;
-                }
-            }
-        }
-        return childLessonIndex;
-    }
+
+	/**
+	 * 递归查找指定课时记录在课程目录结构中的索引路径，并设置相关信息。
+	 *
+	 * @param currentPath       当前递归路径（例如："1.2.3"），为空时从根开始
+	 * @param lessonRecordId    要查找的课时ID
+	 * @param node              当前处理的目录节点（章节或课时）
+	 * @param childrenMap       父节点ID到子节点列表的映射，用于递归查找
+	 * @param recordRes         用于保存查找到的信息（如课时名、路径、是否找到等）
+	 * @return                  返回最终匹配到的索引路径（如："1.2.3"）
+	 */
+	private String findLessonIndexAndSetInfo(String currentPath, String lessonRecordId, LessonConfig node,
+											 Map<String, List<LessonConfig>> childrenMap,
+											 LessonRecordRes recordRes) {
+		if (recordRes.getFlag()) {
+			return currentPath;
+		}
+		int lessonTypeIndex = 1;
+		int chapterTypeIndex = 1;
+		String currentPathUpdated = currentPath == null ? chapterTypeIndex + "" : currentPath;
+
+		for (LessonConfig child : childrenMap.getOrDefault(node.getResourceId(), Collections.emptyList())) {
+			if (!child.getParentId().equals(node.getResourceId())) {
+				continue;
+			}
+			if (child.getNodeType().intValue() == LessonConfig.NodeType.NODE_LESSON.getCode().intValue()) {
+				if (lessonRecordId.equals(child.getLessonId())) {
+					String resultPath = currentPath == null ? lessonTypeIndex + "" : currentPathUpdated + CommonConstant.PERIOD + lessonTypeIndex;
+					recordRes.setLessonName(child.getName());
+					recordRes.setLessonIndex(resultPath);
+					recordRes.setFlag(true);
+					return resultPath;
+				}
+				lessonTypeIndex++;
+			} else if (child.getNodeType().intValue() == LessonConfig.NodeType.NODE_CHAPTER.getCode().intValue()) {
+				if (!recordRes.getFlag()) {
+					currentPathUpdated = findLessonIndexAndSetInfo(
+							currentPath == null ? chapterTypeIndex + "" : currentPath + CommonConstant.PERIOD + chapterTypeIndex,
+							lessonRecordId, child, childrenMap, recordRes
+					);
+				}
+				chapterTypeIndex++;
+			}
+		}
+
+		return currentPathUpdated;
+	}
 
     /**
      * 实操习题绑定试卷

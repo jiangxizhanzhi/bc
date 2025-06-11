@@ -127,8 +127,6 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 		Map<String, List<LessonRecord>> recordMap = lessonRecords.stream().collect(Collectors.groupingBy(LessonRecord::getLessonId));
 
 //		进度-增加视频进度
-
-
 		Map<String, String> lessonVideoMap = StreamApiUtils.toMap(
 				StreamApiUtils.filter(courseLessons,
 						l -> StringUtils.isNotBlank(l.getVideoUrl())

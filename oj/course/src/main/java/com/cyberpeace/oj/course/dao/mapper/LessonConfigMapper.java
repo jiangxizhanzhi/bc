@@ -153,4 +153,6 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 	 * @see List<LessonConfig>
 	 */
 	List<LessonConfig> selectIncludeLessonAndChapter(@Param("courseId") String courseId);
+
+    List<LessonConfig> selectPublicLessonsByCourseIds(List<String> courseIds);
 }

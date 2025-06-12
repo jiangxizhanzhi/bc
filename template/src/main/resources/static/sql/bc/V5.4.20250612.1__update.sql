@@ -1,0 +1,1 @@
+INSERT INTO `space_strategy_frame`(`resource_id`, `name`, `builtin`, `parent`, `create_time`, `update_time`) VALUES ('ab6efb4d930b438badc1649f098eb967', '安全标准规范策略', 1, 'default', '2024-10-22 13:48:08', '2024-10-22 13:48:08');

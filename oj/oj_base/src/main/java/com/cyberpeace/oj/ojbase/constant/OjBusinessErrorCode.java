@@ -589,4 +589,19 @@ public final class OjBusinessErrorCode {
 	 */
 	public static final String CLASSROOM_USER_NOT_IN = "102134";
 
+	/**
+	 * 未到签到时间
+	 */
+	public static final String CLASSROOM_NOT_START_SIGN_IN_TIME = "102135";
+
+	/**
+	 * 签到时间已结束
+	 */
+	public static final String CLASSROOM_ENDED_SIGN_IN_TIME = "102136";
+
+	/**
+	 * 课堂正在运行, 有正在运行的场景，禁止切换座次
+	 */
+	public static final String CLASSROOM_RUNNING_SCENE = "102137";
+
 }

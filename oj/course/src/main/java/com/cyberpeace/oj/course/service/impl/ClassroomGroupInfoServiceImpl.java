@@ -720,10 +720,10 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
         List<OjLocalScene> ojLocalScene = ojLocalSceneMapper
                 .selectByGroupIds(groupIds);
-        if (ojLocalScene.size() > 0) {
+        if (!ojLocalScene.isEmpty()) {
             log.error("Group scene is running! ojLocalScene=[{}]",
-                    ojLocalScene.toString());
-            throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+                    ojLocalScene);
+            throw new BusinessException(OjBusinessErrorCode.CLASSROOM_RUNNING_SCENE);
         }
 
     }

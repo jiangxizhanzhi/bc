@@ -155,6 +155,18 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 					authContext.getOrganization());
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
+		// 在课堂时间内才可以签到
+		Date currentDate = new Date();
+		if (currentDate.before(classroom.getStartTime())) {
+			log.error("Current time {} is not in classroom time {}! classroom_id=[{}]",
+					currentDate, classroom.getStartTime(), classroomId);
+			throw new BusinessException(OjBusinessErrorCode.CLASSROOM_NOT_START_SIGN_IN_TIME);
+		}
+		if (currentDate.after(classroom.getEndTime())) {
+			log.error("Current time {} is not in classroom time {}! classroom_id=[{}]",
+					currentDate, classroom.getEndTime(), classroomId);
+			throw new BusinessException(OjBusinessErrorCode.CLASSROOM_ENDED_SIGN_IN_TIME);
+		}
 
 		// 仅存储该课堂组织下的用户签到信息
 		if (classroom.getOrganizationIds().contains(authContext.getOrganization())) {
@@ -164,6 +176,7 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 			try {
 				return classroomSignMapper.insert(sign) > 0;
 			} catch (DuplicateKeyException e) {
+				log.info("课堂 {} 中的用户 {} 重复签到", classroomId, authContext.getUserId());
 				return true;
 			}
 		}

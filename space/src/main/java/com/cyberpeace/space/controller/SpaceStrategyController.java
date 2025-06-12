@@ -8,6 +8,8 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.space.dao.entity.SpaceStrategy;
 import com.cyberpeace.space.model.req.IdReq;
 import com.cyberpeace.space.service.SpaceStrategyService;
@@ -102,6 +104,7 @@ public class SpaceStrategyController {
 	@ApiOperation("增加下一级")
 	@PostMapping("/frame")
 	public BaseRsp addFrame(@RequestBody SpaceStrategyFrameAddReq req) {
+		this.validate(req.getName());
 		spaceStrategyService.addFrame(req);
 		return new BaseRsp();
 	}
@@ -118,8 +121,20 @@ public class SpaceStrategyController {
 	@ApiOperation("编辑框架")
 	@PatchMapping("/frame")
 	public BaseRsp modifyFrame(@RequestBody SpaceStrategyFrameModifyReq req) {
+		this.validate(req.getName());
 		spaceStrategyService.modify(req);
 		return new BaseRsp();
+	}
+
+	/**
+	 * 校验策略添加的长度
+	 * @param name
+	 */
+	public void validate(String name) {
+		if (!StringUtils.isEmpty(name)){
+			CrCommonValidator.validateLength(name, 1, 40,
+					CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		}
 	}
 
 	/**
@@ -194,6 +209,7 @@ public class SpaceStrategyController {
 	@ApiOperation("新建策略")
 	@PostMapping("")
 	public BaseRsp addStrategy(@RequestBody SpaceStrategyAddReq req) {
+		req.validate();
 		spaceStrategyService.addStrategy(req);
 		return new BaseRsp();
 	}
@@ -210,6 +226,7 @@ public class SpaceStrategyController {
 	@ApiOperation("修改策略")
 	@PatchMapping("")
 	public BaseRsp updateStrategy(@RequestBody SpaceStrategyModifyReq req) {
+		req.validate();
 		SpaceStrategy old = spaceStrategyService.getOrException(req.getResourceId());
 		if(Boolean.TRUE.equals(old.getBuiltin())){
 			throw new BusinessException(ErrorCode.BUILT_IN);

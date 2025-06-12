@@ -10,9 +10,12 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.space.controller.req.SpaceEventIntegrationRulePageReq;
 import com.cyberpeace.space.dao.entity.SpaceEventIntegrationRule;
+import com.cyberpeace.space.dao.entity.SpaceLoadedFileThreatRule;
 import com.cyberpeace.space.model.controller.SpaceControllerBase;
 import com.cyberpeace.space.service.SpaceEventIntegrationRuleService;
 import com.cyberpeace.space.service.context.rule.SpaceEventIntegrationRuleBo;
@@ -147,5 +150,24 @@ public class SpaceEventIntegrationRuleController extends SpaceControllerBase<Spa
     @Override
     public boolean checkNameDuplication(SpaceEventIntegrationRule entity) {
         return true;
+    }
+
+    /**
+     * 检查值 是否合法
+     *
+     * @param entity 实体对象
+     */
+    @Override
+    public void checkValue(SpaceEventIntegrationRule entity){
+        String[] fields = {
+                entity.getTool(),
+                entity.getType(),
+                entity.getDescription(),
+        };
+        for (String field : fields) {
+            if (!org.apache.commons.lang3.StringUtils.isEmpty(field)) {
+                CrCommonValidator.validateNameLen(field, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+            }
+        }
     }
 }

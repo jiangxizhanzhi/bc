@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.space.dao.entity.SpaceActionFrame;
+import com.cyberpeace.space.dao.entity.SpaceRoundMechanismRule;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.controller.SpaceActionFrameBaseController;
 import com.cyberpeace.space.service.SpaceActionFrameEventTypeService;
@@ -213,6 +216,22 @@ public class SpaceActionFrameController extends SpaceActionFrameBaseController<S
             @ApiParam(value = "关键字", name = "key_word") String key_word) {
         List<SpaceActionFrameRecBo> res = service.getTuiyanRecFrame(category_id, key_word);
         return new BaseRsp<>(res);
+    }
+
+    @Override
+    public void checkValue(SpaceActionFrame entity) {
+        if (!org.apache.commons.lang3.StringUtils.isEmpty(entity.getAnalyze())) {
+            CrCommonValidator.validateLength(entity.getAnalyze(), 1, 960,
+                    CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+        }
+        if (!org.apache.commons.lang3.StringUtils.isEmpty(entity.getDescription())) {
+            CrCommonValidator.validateLength(entity.getDescription(), 1, 960,
+                    CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+        }
+
+        if (!org.apache.commons.lang3.StringUtils.isEmpty(entity.getTag())) {
+            CrCommonValidator.validateNameLen(entity.getTag(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+        }
     }
 
 }

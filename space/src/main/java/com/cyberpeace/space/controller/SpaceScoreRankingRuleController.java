@@ -1,17 +1,18 @@
 package com.cyberpeace.space.controller;
 
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.space.dao.entity.SpaceScoreRankingRule;
 import com.cyberpeace.space.model.controller.SpaceControllerBase;
 import com.cyberpeace.space.model.req.SpacePageReqBase;
+import com.cyberpeace.space.service.SpaceScoreRankingRuleService;
 import com.cyberpeace.space.service.context.rule.SpaceScoreRankingRuleBo;
+import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.cyberpeace.space.dao.entity.SpaceScoreRankingRule;
-import com.cyberpeace.space.service.SpaceScoreRankingRuleService;
-
-import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 空间得分排名统治Controller
@@ -53,6 +54,17 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_score_ranking_rule")
 @RequiresAuthentication
 @Slf4j
-public class SpaceScoreRankingRuleController extends SpaceControllerBase<SpaceScoreRankingRuleService, SpaceScoreRankingRule, SpaceScoreRankingRuleBo, SpacePageReqBase>
-    
-{}
+public class SpaceScoreRankingRuleController extends SpaceControllerBase<SpaceScoreRankingRuleService, SpaceScoreRankingRule, SpaceScoreRankingRuleBo, SpacePageReqBase> {
+
+    /**
+     * 检查值
+     *
+     * @param entity 实体
+     */
+    @Override
+    public void checkValue(SpaceScoreRankingRule entity) {
+        if (!StringUtils.isEmpty(entity.getDescription())) {
+            CrCommonValidator.validateNameLen(entity.getDescription(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+        }
+    }
+}

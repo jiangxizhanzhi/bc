@@ -6,6 +6,8 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import io.swagger.annotations.ApiModel;
@@ -310,5 +312,10 @@ public class OperationAddReq implements Serializable, CustomValidate {
 		}
 		validateLength(title, CommonConstant.ONE, CommonConstant.TWO_HUNDRED_AND_FIFTY_FIVE,
 				OjBusinessErrorCode.ANSWER_TOO_LONG);
+
+		if (!StringUtils.isEmpty(vuln)) {
+			CrCommonValidator.validateDescLen(this.vuln,
+					CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+		}
 	}
 }

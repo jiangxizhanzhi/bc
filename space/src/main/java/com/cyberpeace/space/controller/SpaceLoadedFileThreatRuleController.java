@@ -11,6 +11,8 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.space.controller.req.SpaceLoadedFileThreatRulePageReq;
 import com.cyberpeace.space.dao.entity.SpaceLoadedFileThreatRule;
@@ -154,6 +156,20 @@ public class SpaceLoadedFileThreatRuleController extends SpaceControllerBase<Spa
 	@Override
 	public boolean checkNameDuplication(SpaceLoadedFileThreatRule entity) {
 		return true;
+	}
+
+	@Override
+	public void checkValue(SpaceLoadedFileThreatRule entity){
+		String[] fields = {
+				entity.getTool(),
+				entity.getType(),
+				entity.getDescription(),
+		};
+		for (String field : fields) {
+			if (!org.apache.commons.lang3.StringUtils.isEmpty(field)) {
+				CrCommonValidator.validateNameLen(field, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+			}
+		}
 	}
 
 }

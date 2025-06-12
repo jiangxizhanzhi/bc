@@ -141,6 +141,7 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 		}
 		E entity = (E) req.bo2Entity();
 		this.checkNameDuplication(entity);
+		this.checkValue(entity);
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
@@ -160,6 +161,7 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 		}
 		E entity = (E) req.bo2Entity();
 		this.checkNameDuplication(entity);
+		this.checkValue(entity);
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
@@ -207,6 +209,9 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 		return true;
+	}
+
+	public void checkValue(E entity){
 	}
 
 	protected Map<String, List<IdAndName>> getRelatedMap(List<E> eList){

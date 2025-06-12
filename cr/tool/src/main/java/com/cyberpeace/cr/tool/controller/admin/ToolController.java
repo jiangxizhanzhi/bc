@@ -163,6 +163,7 @@ public class ToolController {
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<ToolRsp> create(@RequestBody @Validated ToolAddReq toolReq) {
+		toolReq.validate();
 		Tool tool = BeanUtils.copy(toolReq, Tool.class);
 
 		tool.setBuiltin(false);
@@ -188,6 +189,7 @@ public class ToolController {
 	@PatchMapping()
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<String> update(@RequestBody @Validated ToolUpdateReq toolupdateReq) {
+		toolupdateReq.validate();
 		toolService.checkBuiltin(toolupdateReq.getResourceId());
 		Tool tool = BeanUtils.copy(toolupdateReq, Tool.class);
 		tool.setTag(JsonUtil.arrayToString(toolupdateReq.getTag()));

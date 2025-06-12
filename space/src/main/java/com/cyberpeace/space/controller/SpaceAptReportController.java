@@ -3,6 +3,8 @@ package com.cyberpeace.space.controller;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
@@ -17,6 +19,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -142,7 +145,14 @@ public class SpaceAptReportController extends SpaceControllerBase<SpaceAptReport
         return new BaseRsp(result);
 
     }
-
-
+    @Override
+    public void checkValue(SpaceAptReport entity){
+        if (!StringUtils.isEmpty(entity.getAptOrg())){
+            CrCommonValidator.validateNameLen(entity.getAptOrg(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+        }
+        if (!StringUtils.isEmpty(entity.getPublicCompany())) {
+            CrCommonValidator.validateNameLen(entity.getPublicCompany(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+        }
+    }
 }
 

@@ -1,5 +1,9 @@
 package com.cyberpeace.space.controller;
 
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.space.dao.entity.SpaceAptReport;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,5 +57,25 @@ import lombok.extern.slf4j.Slf4j;
 @RequiresAuthentication
 @Slf4j
 public class SpaceAptFeatureController extends SpaceControllerBase<SpaceAptFeatureService, SpaceAptFeature, SpaceAptFeatureBo, SpaceAptFeaturePageReq> {
-    
+
+    @Override
+    public void checkValue(SpaceAptFeature entity){
+
+        String[] fields = {
+                entity.getAlias(),
+                entity.getSource(),
+                entity.getFirstTime(),
+                entity.getLatestTime(),
+                entity.getEffected(),
+                entity.getIndustry(),
+                entity.getMethod(),
+                entity.getLanguage()
+        };
+
+        for (String field : fields) {
+            if (!StringUtils.isEmpty(field)) {
+                CrCommonValidator.validateNameLen(field, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+            }
+        }
+    }
 }

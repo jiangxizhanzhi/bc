@@ -1,8 +1,11 @@
 package com.cyberpeace.space.service.context.strategy;
 
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 空间策略框架新增请求体
@@ -45,5 +48,13 @@ public class SpaceStrategyFrameAddReq {
 	 * @see String
 	 */
 	private String parent;
+
+
+	public void validate() {
+		if (!StringUtils.isEmpty(this.name)){
+			CrCommonValidator.validateLength(this.name, 4, 40,
+					CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		}
+	}
 }
 

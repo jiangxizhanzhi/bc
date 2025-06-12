@@ -1,10 +1,12 @@
 package com.cyberpeace.cr.tool.controller.req;
 
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
@@ -148,5 +150,11 @@ public class ToolAddReq implements Serializable {
 	private Boolean toolPublic = true;
 
 	private Boolean visible = true;
+
+	public void validate() {
+		if (!StringUtils.isEmpty(this.name)){
+			CrCommonValidator.validateNameLen(this.name,  CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		}
+	}
 }
 

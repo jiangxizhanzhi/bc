@@ -1,8 +1,11 @@
 package com.cyberpeace.space.service.context.strategy;
 
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 空间策略新增请求体
@@ -117,5 +120,11 @@ public class SpaceStrategyAddReq {
 	 */
 	@ApiModelProperty("策略依据")
 	private String gauge;
+
+	public void validate() {
+		if (!StringUtils.isEmpty(this.name)){
+			CrCommonValidator.validateNameLen(this.name,  CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		}
+	}
 }
 

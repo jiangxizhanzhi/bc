@@ -11,10 +11,13 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.space.controller.req.SpaceTrafficDetectRulePageReq;
+import com.cyberpeace.space.dao.entity.SpaceEventIntegrationRule;
 import com.cyberpeace.space.dao.entity.SpaceTrafficDetectRule;
 import com.cyberpeace.space.dao.entity.SpaceTrafficDetectRuleExcelVO;
 import com.cyberpeace.space.model.controller.SpaceControllerBase;
@@ -125,5 +128,24 @@ public class SpaceTrafficDetectRuleController extends SpaceControllerBase<SpaceT
 	public boolean checkNameDuplication(SpaceTrafficDetectRule entity) {
         return true;
 
+    }
+
+    /**
+     * 检查值 是否合法
+     *
+     * @param entity 实体对象
+     */
+    @Override
+    public void checkValue(SpaceTrafficDetectRule entity){
+        String[] fields = {
+                entity.getTool(),
+                entity.getRuleContent(),
+                entity.getRuleId(),
+        };
+        for (String field : fields) {
+            if (!org.apache.commons.lang3.StringUtils.isEmpty(field)) {
+                CrCommonValidator.validateNameLen(field, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+            }
+        }
     }
 }

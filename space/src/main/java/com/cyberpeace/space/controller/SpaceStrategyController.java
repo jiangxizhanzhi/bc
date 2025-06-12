@@ -177,6 +177,7 @@ public class SpaceStrategyController {
 			PageReqBase req,
 			@ApiParam(value = "框架id", name = "frame_id") String frame_id,
 			@ApiParam(value = "名称", name = "name") String name) {
+		req.setSort("-update_time");
 		ListRsp<SpaceStrategyBo> res = spaceStrategyService.pageStrategiesByFrame(req, frame_id, name);
 		return new BaseRsp<>(res);
 	}

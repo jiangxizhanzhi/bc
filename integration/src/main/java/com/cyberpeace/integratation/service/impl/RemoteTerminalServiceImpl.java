@@ -1,5 +1,6 @@
 package com.cyberpeace.integratation.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.scene.DeviceInfo;
 import com.cyberpeace.common.util.ConfigUtil;
@@ -175,7 +176,22 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 	@Override
 	public JSONObject pageImages(ClusterImagePageReq req) {
 		String targetUrl = IMAGE_LIST + req.toQuery();
-		return HttpClientUtil.rawSpecialGet(targetUrl, JSONObject.class);
+		JSONObject jsonObject =  HttpClientUtil.rawSpecialGet(targetUrl, JSONObject.class);
+		// 修改jsonObject里面的数据， 数据结构{list: [{name: xxxx}, logo: xxxx], total}
+		// 需要判断logo是否存在/api/mp/file/前缀，没有的话，进行添加
+		if (jsonObject.containsKey("list")) {
+			JSONArray jsonArray = jsonObject.getJSONArray("list");
+			for (int i = 0; i < jsonArray.size(); i++) {
+				JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+				if (jsonObject1.containsKey("logo")) {
+					String logo = jsonObject1.getString("logo");
+					if (!logo.startsWith("/api/mp/file/")) {
+						jsonObject1.put("logo", "/api/mp/file/" + logo);
+					}
+				}
+			}
+		}
+		return jsonObject;
 	}
 
 	/**

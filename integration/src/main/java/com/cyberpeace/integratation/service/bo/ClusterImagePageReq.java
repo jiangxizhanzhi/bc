@@ -88,6 +88,9 @@ public class ClusterImagePageReq {
 		StringBuilder builder = new StringBuilder();
 		builder.append("?per_page=").append(this.per_page);
 		builder.append("&page=").append(this.page);
+		// 30所定义了其他分页参数
+		builder.append("&page_size=").append(this.per_page);
+		builder.append("&page_no=").append(this.page);
 		if (StringUtils.isNotBlank(this.image_type)) {
 			builder.append("&image_type=").append(this.image_type);
 		}

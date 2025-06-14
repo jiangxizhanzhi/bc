@@ -7,6 +7,10 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.*;
 import com.google.common.collect.Lists;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -17,6 +21,8 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
@@ -36,6 +42,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
@@ -506,8 +514,27 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	private static HttpClient getClient() {
+		try {
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+			sslContext.init(null, new TrustManager[] { new X509TrustManager() {
+				public void checkClientTrusted(X509Certificate[] chain, String authType) {}
+				public void checkServerTrusted(X509Certificate[] chain, String authType) {}
+				public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
+			} }, new SecureRandom());
 
-		return HttpClients.custom().setDefaultHeaders(defaultHeader()).build();
+			// 忽略主机名校验
+			HostnameVerifier allowAllHosts = new NoopHostnameVerifier();
+			// 创建支持自定义 SSL 的连接套件
+			SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(sslContext, allowAllHosts);
+			// 构建 HttpClient，保留原有默认请求头设置
+			return HttpClients.custom()
+					.setSSLSocketFactory(sslSocketFactory)
+					.setDefaultHeaders(defaultHeader())
+					.build();
+		} catch (Exception e) {
+			LOG.error("Failed to create SSL ignoring HttpClient", e);
+			throw new RuntimeException("Failed to create SSL ignoring HttpClient", e);
+		}
 	}
 
 	/**

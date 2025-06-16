@@ -62,8 +62,8 @@ public class CrCommonValidator {
 			if (minLen == 0) {
 				return;
 			} else {
-				log.error("target = null and minLen != 0");
-				throw new BusinessException(errorCode, minLen, maxLen);
+				log.warn("target = null and minLen != 0");
+				return;
 			}
 		}
 		try {

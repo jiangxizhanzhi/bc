@@ -28,7 +28,7 @@ public class TrainPlanLessonExerciseStatusRsp implements Serializable {
      * @see com.cyberpeace.oj.ojbase.constant.ExperimentReportEnum
      */
     @ApiModelProperty("课后练习状态 1- 待提交， 2- 已提交 ， 3-已批改")
-    private Boolean levelStatus;
+    private Integer levelStatus;
 
 
 }

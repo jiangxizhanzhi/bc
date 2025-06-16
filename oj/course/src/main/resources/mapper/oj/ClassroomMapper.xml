@@ -252,7 +252,7 @@
         WHEN e.lesson_id IS NOT NULL AND e.level IS NOT NULL THEN 3  -- 已评估
         WHEN e.lesson_id IS NOT NULL THEN 2                          -- 已提交
         ELSE 1                                                      -- 未提交
-        END AS levelStatus
+        END AS level_status
         FROM oj_course_lesson l
         LEFT JOIN oj_lesson_paper_evaluate e
         ON l.resource_id = e.lesson_id

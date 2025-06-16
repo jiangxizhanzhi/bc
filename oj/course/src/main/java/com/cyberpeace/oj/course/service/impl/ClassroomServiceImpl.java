@@ -609,6 +609,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         final List<String> classroomIds = StreamApiUtils.map(classrooms, Classroom::getResourceId);
         final List<String> courseIds = StreamApiUtils.map(classrooms, Classroom::getCourseId);
         final List<String> lessonIds = StreamApiUtils.map(classrooms, Classroom::getLessonId);
+
+        // 课堂为空则返回空
+        if (CollectionUtils.isEmpty(classroomIds)) {
+            return classroomBos;
+        }
+
         QueryWrapper<Course> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
                 .in(Course::getResourceId, courseIds)

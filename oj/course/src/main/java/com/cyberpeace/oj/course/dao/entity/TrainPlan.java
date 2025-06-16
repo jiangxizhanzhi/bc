@@ -55,4 +55,8 @@ public class TrainPlan extends BaseTable {
 	 * @see String
 	 */
 	public static String TASK_SET_ID = "task_set_id";
+
+	private String organizationId;
+
+	private String organizationIds;
 }

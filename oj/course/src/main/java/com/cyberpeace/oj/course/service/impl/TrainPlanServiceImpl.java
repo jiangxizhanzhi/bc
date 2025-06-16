@@ -1,23 +1,15 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
-import com.cyberpeace.oj.course.controller.req.TrainPlanWebReq;
-import com.cyberpeace.oj.course.controller.res.*;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.dao.entity.LessonPaperEvaluate;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import com.cyberpeace.oj.course.dao.mapper.LessonPaperEvaluateMapper;
-import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
-import com.cyberpeace.oj.ojbase.service.bo.ClassroomNoteEvalBo;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -27,13 +19,30 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
+import com.cyberpeace.oj.course.controller.req.TrainPlanUpdateReq;
+import com.cyberpeace.oj.course.controller.req.TrainPlanWebReq;
+import com.cyberpeace.oj.course.controller.res.*;
+import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.dao.entity.LessonPaperEvaluate;
 import com.cyberpeace.oj.course.dao.entity.TrainPlan;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.course.dao.mapper.LessonPaperEvaluateMapper;
 import com.cyberpeace.oj.course.dao.mapper.TrainPlanMapper;
+import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.TrainPlanService;
 import com.cyberpeace.oj.course.service.bo.TrainPlanBo;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 训练计划Service实现
@@ -81,6 +90,12 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 
 	@Autowired
 	private NoteMapper noteMapper;
+
+	@Autowired
+	private ClassroomService classroomService;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 训练计划列表
@@ -248,6 +263,55 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 			log.error("[{}] name repeat", StreamApiUtils.getColumn(assessModel, TrainPlan::getName).toString());
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
+	}
+
+	/**
+	 * 再使用
+	 *
+	 * @param reuseReq 再使用请求体
+	 * @throws
+	 * @see TrainPlanUpdateReq
+	 */
+	@Override
+	public void reuse(TrainPlanUpdateReq reuseReq) {
+		// 校验name是否已存在
+		this.checkNameRepeat(reuseReq.getName(), null,
+				UserInfoContext.getUserContext().getUserId());
+		TrainPlan trainPlan = BeanUtils.copy(reuseReq, TrainPlan.class);
+		trainPlan.setResourceId(IDGeneratorUtil.getID());
+		trainPlan.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+		// classrooms
+		List<Classroom> classroomList = classroomMapper.selectByPlan(reuseReq.getResourceId());
+		String userId = UserInfoContext.getUserContext().getUserId();
+		for (Classroom classroom : classroomList) {
+			classroom.setCreateUserId(userId);
+			classroom.setId(null);
+			classroom.setCreateTime(null);
+			classroom.setUpdateTime(null);
+			classroom.setResourceId(IDGeneratorUtil.getID());
+			classroom.setTrainPlanId(trainPlan.getResourceId());
+		}
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				save(trainPlan);
+				classroomService.saveBatch(classroomList);
+			}
+		});
+
+	}
+
+	@Override
+	public TrainPlan getPlanById(String trainPlanId) {
+		TrainPlan plan = this.getById(trainPlanId);
+		if (null == plan) {
+			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_NOT_FOUND);
+		}
+		if (StringUtils.isBlank(plan.getOrganizationId())) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_ORG_IS_NULL);
+		}
+		return plan;
 	}
 
 	/**

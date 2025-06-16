@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.oj.course.dao.entity.TrainPlan;
+import com.cyberpeace.oj.course.service.TrainPlanService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -119,6 +120,9 @@ public class AdminClassroomController {
 	 */
 	@Autowired
 	private UtilService utilService;
+
+	@Autowired
+	private TrainPlanService trainPlanService;
 
 	/**
 	 * 列表
@@ -252,6 +256,12 @@ public class AdminClassroomController {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 
+		if (StringUtils.isNotBlank(classroomReq.getTrainPlanId())) {
+			TrainPlan plan = trainPlanService.getPlanById(classroom.getTrainPlanId());
+			classroom.setOrganizationId(plan.getOrganizationId());
+			classroom.setOrganizationIds(plan.getOrganizationIds());
+		}
+
 		Classroom insertResult = classroomService.create(classroom, authContext);
 
 		return new BaseRsp<>(insertResult);
@@ -276,6 +286,11 @@ public class AdminClassroomController {
 		Classroom classroom = BeanUtils.copy(classroomReq, Classroom.class);
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
+		if (StringUtils.isNotBlank(classroomReq.getTrainPlanId())) {
+			TrainPlan plan = trainPlanService.getPlanById(classroom.getTrainPlanId());
+			classroom.setOrganizationId(plan.getOrganizationId());
+			classroom.setOrganizationIds(plan.getOrganizationIds());
+		}
 		Boolean result = classroomService.updateClassroom(classroom, authContext);
 		return new BaseRsp<>(result);
 	}

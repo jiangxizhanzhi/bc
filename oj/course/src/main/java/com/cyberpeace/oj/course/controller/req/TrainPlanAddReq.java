@@ -24,4 +24,7 @@ public class TrainPlanAddReq implements Serializable {
 	 */
 	@ApiModelProperty("资源名称")
 	private String name;
+
+	@ApiModelProperty("组织编号")
+	private String organizationId;
 }

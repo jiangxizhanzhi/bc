@@ -711,7 +711,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         IPage<ClassroomPracticeWebBo> page = classroomMapper.classroomPracticeWebIPage(pageParam, userInfo);
         // 查询出相关联的计划id
         final List<String> trainPlanIds = StreamApiUtils.map(page.getRecords(), ClassroomPracticeWebBo::getTrainPlanId);
-        final List<TrainPlan> trainPlans = trainPlanMapper.selectBatchIds(trainPlanIds);
+        List<TrainPlan> trainPlans = Lists.newArrayList();
+        if (!trainPlanIds.isEmpty()) {
+            trainPlans = trainPlanMapper.selectBatchIds(trainPlanIds);
+        }
+
         final Map<String, TrainPlan> trainPlanMap = StreamApiUtils.toMap(trainPlans, TrainPlan::getResourceId, trainPlan -> trainPlan);
 
         for (ClassroomPracticeWebBo reportBo : page.getRecords()) {

@@ -1001,8 +1001,15 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
                 .last("limit 10");
         List<LessonRecord> lessonRecords = lessonRecordMapper.selectLatestByUserId(authContext.getUserId());
         List<String> courseIds = lessonRecords.stream().map(LessonRecord::getCourseId).collect(Collectors.toList());
-        List<Course> courses = courseMapper.selectBatchIds(courseIds);
-        List<LessonConfig> lessonConfigsByCourseIds = lessonConfigMapper.selectPublicLessonsByCourseIds(courseIds);
+        List<Course> courses = Lists.newArrayList();
+		if (CollectionUtils.isNotEmpty(courseIds)) {
+			courses = courseMapper.selectBatchIds(courseIds);
+		}
+
+        List<LessonConfig> lessonConfigsByCourseIds = Lists.newArrayList();
+		if (CollectionUtils.isNotEmpty(courseIds)) {
+			lessonConfigsByCourseIds = lessonConfigMapper.selectPublicLessonsByCourseIds(courseIds);
+		}
 
         Map<String, Course> courseMap = courses
                 .stream()

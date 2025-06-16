@@ -1,5 +1,6 @@
 package com.cyberpeace.space.controller;
 
+import com.cyberpeace.common.constant.CallType;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.FileUtil;
@@ -12,8 +13,10 @@ import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.oj.course.controller.req.LoadCourseReq;
 import com.cyberpeace.space.controller.req.SpaceAptReportPageReq;
 import com.cyberpeace.space.dao.entity.SpaceAptReport;
+import com.cyberpeace.space.dao.entity.SpaceCallCount;
 import com.cyberpeace.space.model.controller.SpaceControllerBase;
 import com.cyberpeace.space.service.SpaceAptReportService;
+import com.cyberpeace.space.service.SpaceCallCountService;
 import com.cyberpeace.space.service.context.rule.SpaceAptReportBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -102,6 +105,8 @@ public class SpaceAptReportController extends SpaceControllerBase<SpaceAptReport
     @Autowired
     private UtilService utilService;
 
+    private SpaceCallCountService spaceCallCountService;
+
     /**
      * 导出报告
      *
@@ -153,6 +158,11 @@ public class SpaceAptReportController extends SpaceControllerBase<SpaceAptReport
         if (!StringUtils.isEmpty(entity.getPublicCompany())) {
             CrCommonValidator.validateNameLen(entity.getPublicCompany(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
         }
+    }
+
+    @Override
+    public void detailAddCallTypeNum(){
+        spaceCallCountService.addCount(CallType.THEORY);
     }
 }
 

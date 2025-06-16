@@ -2,6 +2,8 @@ package com.cyberpeace.cr.evaluation.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.annoations.CallCount;
+import com.cyberpeace.common.constant.CallType;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -292,6 +294,7 @@ public class EvalAlgorithmAdminController {
 	 */
 	@ApiOperation("查询算法")
 	@GetMapping("")
+	@CallCount(CallType.ALGORITHM)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)
 	public BaseRsp<EvalAlgorithmRsp> getEvalAlgorithmRsp(
 			@ApiParam(name = "resource_id", value = "id", required = true) String resource_id) {

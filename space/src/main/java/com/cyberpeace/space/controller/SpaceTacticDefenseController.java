@@ -1,5 +1,7 @@
 package com.cyberpeace.space.controller;
 
+import com.cyberpeace.common.annoations.CallCount;
+import com.cyberpeace.common.constant.CallType;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -160,6 +162,7 @@ public class SpaceTacticDefenseController {
 	 */
 	@ApiOperation("获取防御战法详情")
 	@GetMapping("")
+	@CallCount(CallType.TACTIC)
 	public BaseRsp<DefenseDetail>
 			getADetail(@ApiParam(value = "resource_id", name = "resource_id") String resource_id) {
 		DefenseDetail detail = defenseService.getDetail(resource_id);

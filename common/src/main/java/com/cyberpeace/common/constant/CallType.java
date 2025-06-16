@@ -59,6 +59,11 @@ public class CallType {
 	 */
 	public static final String ALGORITHM = "algorithm";
 
+	/**
+	 * 规则
+	 *
+	 * @see String
+	 */
 	public static final String RULE = "rule";
 }
 

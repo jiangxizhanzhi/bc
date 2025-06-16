@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.controller.admin;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.annoations.CallCount;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.*;
@@ -142,6 +143,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	 */
 	@ApiOperation("详细信息查询")
 	@GetMapping("")
+	@CallCount(CallType.THEORY)
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp<OperationBo> get(@ApiParam(name = "resource_id",
 			value = "资源编号") @RequestParam("resource_id") String resourceId) {

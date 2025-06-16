@@ -1,13 +1,16 @@
 package com.cyberpeace.space.controller;
 
+import com.cyberpeace.common.constant.CallType;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.space.dao.entity.SpaceScoreRankingRule;
 import com.cyberpeace.space.model.controller.SpaceControllerBase;
 import com.cyberpeace.space.model.req.SpacePageReqBase;
+import com.cyberpeace.space.service.SpaceCallCountService;
 import com.cyberpeace.space.service.context.rule.SpaceRoundMechanismRuleBo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -71,6 +74,10 @@ import lombok.extern.slf4j.Slf4j;
 public class SpaceRoundMechanismRuleController extends SpaceControllerBase<SpaceRoundMechanismRuleService, SpaceRoundMechanismRule, SpaceRoundMechanismRuleBo, SpacePageReqBase>
     
 {
+
+    @Autowired
+    private SpaceCallCountService spaceCallCountService;
+
     /**
      * 检查值
      *
@@ -82,4 +89,10 @@ public class SpaceRoundMechanismRuleController extends SpaceControllerBase<Space
             CrCommonValidator.validateNameLen(entity.getDescription(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
         }
     }
+
+    @Override
+    public void detailAddCallTypeNum(){
+        spaceCallCountService.addCount(CallType.RULE);
+    }
+
 }

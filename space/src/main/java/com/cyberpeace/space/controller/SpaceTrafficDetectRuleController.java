@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.cyberpeace.common.component.ExcelDataHandler;
+import com.cyberpeace.common.constant.CallType;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ExcelHeader;
 import com.cyberpeace.common.constant.FileSunffixConstant;
@@ -21,6 +22,7 @@ import com.cyberpeace.space.dao.entity.SpaceEventIntegrationRule;
 import com.cyberpeace.space.dao.entity.SpaceTrafficDetectRule;
 import com.cyberpeace.space.dao.entity.SpaceTrafficDetectRuleExcelVO;
 import com.cyberpeace.space.model.controller.SpaceControllerBase;
+import com.cyberpeace.space.service.SpaceCallCountService;
 import com.cyberpeace.space.service.SpaceTrafficDetectRuleService;
 import com.cyberpeace.space.service.context.rule.SpaceTrafficDetectRuleBo;
 import com.cyberpeace.space.service.context.rule.SpaceTrafficDetectRuleExcelBo;
@@ -78,6 +80,9 @@ import java.util.stream.Collectors;
 @RequiresAuthentication
 @Slf4j
 public class SpaceTrafficDetectRuleController extends SpaceControllerBase<SpaceTrafficDetectRuleService, SpaceTrafficDetectRule, SpaceTrafficDetectRuleBo, SpaceTrafficDetectRulePageReq> {
+
+    @Autowired
+    private SpaceCallCountService spaceCallCountService;
 
     @Autowired
     private CrConstantsService crConstantsService;
@@ -148,4 +153,10 @@ public class SpaceTrafficDetectRuleController extends SpaceControllerBase<SpaceT
             }
         }
     }
+
+    @Override
+    public void detailAddCallTypeNum(){
+        spaceCallCountService.addCount(CallType.RULE);
+    }
+
 }

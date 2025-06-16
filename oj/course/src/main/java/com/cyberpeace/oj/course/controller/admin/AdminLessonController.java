@@ -4,12 +4,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.annoations.CallCount;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.constant.OrderNameConstant;
+import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
@@ -246,6 +244,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 */
 	@ApiOperation("后台课时详情查询接口")
 	@GetMapping("")
+	@CallCount(CallType.THEORY)
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "lesson_id", value = "课时编号", dataTypeClass = String.class),

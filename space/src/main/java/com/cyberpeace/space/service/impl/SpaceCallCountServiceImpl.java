@@ -76,6 +76,7 @@ public class SpaceCallCountServiceImpl extends ServiceImpl<SpaceCallCountMapper,
 	 */
 	@Override
 	public void addCount(String name) {
+		log.info("使用次数+1 addCount: {} ", name);
 		SpaceCallCount count = this.selectByName(name);
 		if (count == null) {
 			count = new SpaceCallCount();

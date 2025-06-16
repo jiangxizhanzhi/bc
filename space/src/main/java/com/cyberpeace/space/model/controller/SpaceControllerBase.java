@@ -136,6 +136,8 @@ public abstract class SpaceControllerBase<S extends IService<E>, E extends Space
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		B bo = (B) res.entity2Bo(getRelatedMap(Lists.newArrayList(res)));
+		this.detailAddCallTypeNum();
+
 		return new BaseRsp<>(bo);
 	}
 
@@ -164,6 +166,8 @@ public abstract class SpaceControllerBase<S extends IService<E>, E extends Space
 		return true;
 	}
 
+	public void detailAddCallTypeNum(){
+	}
 	public void checkValue(E entity){
 	}
 

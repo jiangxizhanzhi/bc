@@ -3,6 +3,7 @@ package com.cyberpeace.space.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.cyberpeace.common.component.ExcelDataHandler;
+import com.cyberpeace.common.constant.CallType;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ExcelHeader;
 import com.cyberpeace.common.constant.FileSunffixConstant;
@@ -17,6 +18,7 @@ import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.space.controller.req.SpaceLoadedFileThreatRulePageReq;
 import com.cyberpeace.space.dao.entity.SpaceLoadedFileThreatRule;
 import com.cyberpeace.space.model.controller.SpaceControllerBase;
+import com.cyberpeace.space.service.SpaceCallCountService;
 import com.cyberpeace.space.service.SpaceLoadedFileThreatRuleService;
 import com.cyberpeace.space.service.context.rule.SpaceLoadedFileThreatRuleBo;
 import com.cyberpeace.space.service.context.rule.SpaceLoadedFileThreatRuleExcelBo;
@@ -25,6 +27,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -98,6 +101,9 @@ import java.util.Map;
 @Slf4j
 public class SpaceLoadedFileThreatRuleController extends SpaceControllerBase<SpaceLoadedFileThreatRuleService, SpaceLoadedFileThreatRule, SpaceLoadedFileThreatRuleBo, SpaceLoadedFileThreatRulePageReq> {
 
+	@Autowired
+	private SpaceCallCountService spaceCallCountService;
+
 	private static final Map<Integer, String> EXECUTE_TYPE_MAP = Maps.newHashMap();
 
 	static {
@@ -170,6 +176,11 @@ public class SpaceLoadedFileThreatRuleController extends SpaceControllerBase<Spa
 				CrCommonValidator.validateNameLen(field, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 			}
 		}
+	}
+
+	@Override
+	public void detailAddCallTypeNum(){
+		spaceCallCountService.addCount(CallType.RULE);
 	}
 
 }

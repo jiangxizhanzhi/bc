@@ -2,6 +2,7 @@ package com.cyberpeace.oj.practice.controller.admin;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.annoations.CallCount;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.*;
@@ -212,6 +213,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 	 */
 	@ApiOperation("获取理论基础习题详情")
 	@GetMapping("")
+	@CallCount(CallType.THEORY)
 	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
 	public BaseRsp<AdminTheoryBo> get(@RequestParam("resource_id") String resourceId) {
 

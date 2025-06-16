@@ -105,6 +105,7 @@ public class SpaceAptReportController extends SpaceControllerBase<SpaceAptReport
     @Autowired
     private UtilService utilService;
 
+    @Autowired
     private SpaceCallCountService spaceCallCountService;
 
     /**

@@ -652,6 +652,7 @@ public class ExternalYXController {
 		return new BaseRsp<>(true);
 	}
 
+	// 漏洞库服务详情访问后，也会调用统计次数加+1
 	@ApiOperation("规则库使用次数+1")
 	@GetMapping("/use/rule")
 	@CallCount(CallType.RULE)

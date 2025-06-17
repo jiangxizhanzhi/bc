@@ -104,11 +104,6 @@
             <version>${gateway.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.cyberpeace.ai</groupId>
-            <artifactId>ai</artifactId>
-            <version>${ai.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
             <exclusions>

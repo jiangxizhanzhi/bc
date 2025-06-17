@@ -224,4 +224,22 @@ public class AdminTrainPlanController {
 
 		return new BaseRsp<>();
 	}
+
+	/**
+	 * 复用训练计划
+	 *
+	 * @param reuseReq 再使用请求体
+	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see TrainPlanUpdateReq
+	 * @see BaseRsp<String>
+	 */
+	@ApiOperation("复用训练计划")
+	@PostMapping("/train_plan/reuse")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	public BaseRsp<String> reuseTrainPlan(@RequestBody @Validated TrainPlanUpdateReq reuseReq) {
+
+		trainPlanService.reuse(reuseReq);
+		return new BaseRsp<>();
+	}
 }

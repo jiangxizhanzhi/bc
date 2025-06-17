@@ -121,7 +121,7 @@ public class AdminClassroomController {
 	private UtilService utilService;
 
 	/**
-	 * 列表
+	 * 日历视图
 	 *
 	 * @param classroomListReq 课堂列表请求体
 	 * @return {@code BaseRsp<List<ClassroomBo>> }
@@ -186,7 +186,7 @@ public class AdminClassroomController {
 
 	/**
 	 * 分页
-	 *
+	 * 教学课程视图查看分页列表
 	 * @param classroomPageReq 课堂分页请求体
 	 * @return {@code BaseRsp<ListRsp<ClassroomBo>> }
 	 * @throws

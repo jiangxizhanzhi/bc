@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
+import com.cyberpeace.oj.course.controller.req.TrainPlanUpdateReq;
 import com.cyberpeace.oj.course.controller.req.TrainPlanWebReq;
 import com.cyberpeace.oj.course.controller.res.TrainPlanRsp;
 import com.cyberpeace.oj.course.controller.res.TrainPlanWebRsp;
@@ -67,4 +68,13 @@ public interface TrainPlanService extends IService<TrainPlan> {
 	 * @see String
 	 */
 	void checkNameRepeat(String name, String id, String userId);
+
+	/**
+	 * 复用训练计划
+	 *
+	 * @param reuseReq 再使用请求体
+	 * @throws
+	 * @see TrainPlanUpdateReq
+	 */
+	void reuse(TrainPlanUpdateReq reuseReq);
 }

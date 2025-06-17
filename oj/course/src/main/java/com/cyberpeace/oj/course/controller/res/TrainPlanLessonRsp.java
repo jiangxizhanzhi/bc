@@ -1,10 +1,10 @@
 package com.cyberpeace.oj.course.controller.res;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 @Data
 public class TrainPlanLessonRsp implements Serializable {
@@ -57,4 +57,7 @@ public class TrainPlanLessonRsp implements Serializable {
 
     @ApiModelProperty("实验报告通过状态 0- 未通过， 1-  已通过")
     private Boolean reportPassedStatus;
+
+	@ApiModelProperty("课堂id")
+	private String classroomId;
 }

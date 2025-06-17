@@ -229,7 +229,7 @@
     <select id="selectListByIds" resultType="com.cyberpeace.oj.course.controller.res.TrainPlanLessonRsp">
         select a.course_id as course_id, a.lesson_id as lesson_id,
                b.name as lesson_name, a.start_time as start_time, a.end_time as end_time,
-               b.`type` as lesson_type
+               b.`type` as lesson_type, a.resource_id as classroom_id
         from oj_classroom as a
         left join oj_course_lesson as b on a.lesson_id = b.resource_id
         <where>

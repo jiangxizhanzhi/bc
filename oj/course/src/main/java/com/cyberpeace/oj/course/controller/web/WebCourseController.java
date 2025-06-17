@@ -143,7 +143,6 @@ public class WebCourseController {
 	@GetMapping("/statistics")
 	@ApiOperation("统计")
 	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
-	@BehaviorRecord(module = BehaviorModuleEnum.COURSE, action = BehaviorTypeEnum.ACCESS)
 	public BaseRsp<CourseStatisticsRes> statistics() {
 
 		CourseQueryBo context = new CourseQueryBo();

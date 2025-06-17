@@ -15,7 +15,7 @@ import lombok.Data;
  * @since 1.0.0
  */
 @Data
-public class TrainPlanUpdateReq extends TrainPlanAddReq {
+public class TrainPlanUpdateReq implements Serializable {
 
 	/**
 	 * 资源Id
@@ -25,4 +25,11 @@ public class TrainPlanUpdateReq extends TrainPlanAddReq {
 	@ApiModelProperty("资源Id")
 	private String resourceId;
 
+	/**
+	 * 资源名称
+	 *
+	 * @see String
+	 */
+	@ApiModelProperty("资源名称")
+	private String name;
 }

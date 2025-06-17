@@ -2,12 +2,6 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import java.util.List;
 
-import com.cyberpeace.common.model.*;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.integratation.service.RemoteOrganizationService;
-import com.cyberpeace.oj.course.service.bo.TrainPlanContext;
-import com.cyberpeace.oj.course.service.bo.classroom.PlanProgressBo;
-import com.cyberpeace.oj.course.service.impl.ClassroomValidateHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -20,7 +14,14 @@ import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.DeleteReq;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.AuthContextUtils;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.course.controller.req.TrainPlanAddReq;
 import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
 import com.cyberpeace.oj.course.controller.req.TrainPlanUpdateReq;
@@ -71,12 +72,6 @@ public class AdminTrainPlanController {
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
-
-	@Autowired
-	private ClassroomValidateHandler classroomValidateHandler;
-
-	@Autowired
-	private RemoteOrganizationService remoteOrganizationService;
 
 	/**
 	 * 列表
@@ -144,10 +139,6 @@ public class AdminTrainPlanController {
 				UserInfoContext.getUserContext().getUserId());
 
 		trainPlan.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-		// 课堂基本数据获取
-		List<String> orgIds = classroomValidateHandler
-				.validateClassroomOrgHasUser(trainPlan.getOrganizationId());
-		trainPlan.setOrganizationIds(JsonUtil.arrayToString(orgIds));
 
 		trainPlanService.save(trainPlan);
 
@@ -174,11 +165,6 @@ public class AdminTrainPlanController {
 		trainPlanService.checkNameRepeat(trainPlanUpdateReq.getName(),
 				trainPlanUpdateReq.getResourceId(), UserInfoContext.getUserContext().getUserId());
 
-		// 课堂基本数据获取
-		List<String> orgIds = classroomValidateHandler
-				.validateClassroomOrgHasUser(trainPlan.getOrganizationId());
-		trainPlan.setOrganizationIds(JsonUtil.arrayToString(orgIds));
-
 		trainPlanService.updateById(trainPlan);
 
 		return new BaseRsp<>();
@@ -196,22 +182,11 @@ public class AdminTrainPlanController {
 	@ApiOperation("查询单条训练计划")
 	@GetMapping("/train_plan")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
-	public BaseRsp<TrainPlanContext> getAssessModel(
+	public BaseRsp<TrainPlan> getAssessModel(
 			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
 		TrainPlan assessModel = trainPlanService.getById(resource_id);
-		TrainPlanContext context = BeanUtils.copy(assessModel, TrainPlanContext.class);
-		// 组织信息
-		String orgName = remoteOrganizationService.orgNameById(assessModel.getOrganizationId());
-		context.setOrganizationName(orgName);
 
-		String orgPath = remoteOrganizationService.getOrgPath(assessModel.getOrganizationId());
-		context.setOrgPath(orgPath);
-
-		List<String> parentIds = remoteOrganizationService
-				.getParentIds(assessModel.getOrganizationId());
-		context.setParentOrgIds(parentIds);
-
-		return new BaseRsp<>(context);
+		return new BaseRsp<>(assessModel);
 	}
 
 	/**
@@ -247,15 +222,6 @@ public class AdminTrainPlanController {
 			}
 		});
 
-		return new BaseRsp<>();
-	}
-
-	@ApiOperation("复用训练计划")
-	@PostMapping("/train_plan/reuse")
-	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
-	public BaseRsp<String> reuseTrainPlan(@RequestBody @Validated TrainPlanUpdateReq reuseReq) {
-
-		trainPlanService.reuse(reuseReq);
 		return new BaseRsp<>();
 	}
 }

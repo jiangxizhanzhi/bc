@@ -144,6 +144,20 @@ public class SwaggerConfig {
 	}
 
 	/**
+	 * AI智能体
+	 *
+	 * @return {@code Docket }
+	 * @throws
+	 * @see Docket
+	 */
+	@Bean
+	public Docket apiAi() {
+		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.ai"))
+				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+				.groupName("ai");
+	}
+
+	/**
 	 * 获取案卷
 	 *
 	 * @return {@code ApiSelectorBuilder }

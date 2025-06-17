@@ -71,6 +71,7 @@
         <oj.practice.version>0.0.1-SNAPSHOT</oj.practice.version>
         <oj.course.version>0.0.1-SNAPSHOT</oj.course.version>
         <oj.person.version>0.0.1-SNAPSHOT</oj.person.version>
+        <ai.version>0.0.1-SNAPSHOT</ai.version>
     </properties>
 
     <modules>
@@ -83,6 +84,7 @@
         <module>oj</module>
         <module>common-service</module>
         <module>situation</module>
+        <module>ai</module>
     </modules>
 
     <dependencyManagement>

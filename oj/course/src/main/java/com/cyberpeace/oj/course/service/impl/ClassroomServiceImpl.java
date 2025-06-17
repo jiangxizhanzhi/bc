@@ -14,6 +14,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -649,6 +650,17 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         final Map<String, Boolean> classroomSignMap = StreamApiUtils.toMap(classroomSigns,
                 ClassroomSign::getClassroomId, ClassroomSign::getSignIn);
 
+		// plan
+		List<String> planIds = StreamApiUtils.filter(
+				StreamApiUtils.map(filteredClassroom, Classroom::getTrainPlanId),
+				StringUtils::isNotBlank);
+		List<TrainPlan> trainPlans = trainPlanMapper.selectBatchIds(planIds);
+		Map<String, String> planMap = StreamApiUtils.toMap(trainPlans, TrainPlan::getResourceId,
+				TrainPlan::getName);
+		// create users
+		List<String> userIds = StreamApiUtils.map(filteredClassroom, Classroom::getCreateUserId);
+		Map<String, String> userNameMap = remoteUserService.getIdNameMap(userIds);
+
         // 给课堂数据添加基础数据
         for (Classroom classroom : filteredClassroom) {
             final ClassRoomWebBo classRoomWebBo = new ClassRoomWebBo();
@@ -660,9 +672,14 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
             classRoomWebBo.setLessonId(classroom.getLessonId());
             classRoomWebBo.setLessonName(lessonMap.getOrDefault(classroom.getLessonId(), "not found"));
             classRoomWebBo.setCreateUserId(classroom.getCreateUserId());
-            UserInfo userInfo = remoteUserService.getById(classroom.getCreateUserId());
-            classRoomWebBo.setCreateUserName(userInfo == null ? "" : userInfo.getUserName());
+			classRoomWebBo
+					.setCreateUserName(userNameMap.getOrDefault(classroom.getCreateUserId(), ""));
             classRoomWebBo.setIsSignIn(classroomSignMap.getOrDefault(classroom.getResourceId(), false));
+
+			classRoomWebBo.setPlanName(
+					StringUtils.isBlank(classroom.getTrainPlanId()) ? TrainPlan.TASK_SET
+							: planMap.get(classroom.getTrainPlanId()));
+
             classroomBos.add(classRoomWebBo);
         }
 
@@ -670,6 +687,67 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         return StreamApiUtils.flatMap(classroomBos, classroom ->
                 splitTimeByDay(classroom, ClassRoomWebBo.class));
     }
+
+	@Override
+	public List<TimeScheduleBo> selectMyCourseSchedule(Date startTime, Date endTime) {
+		List<Classroom> classrooms = this.selectMyClassroom(startTime, endTime);
+		List<ClassRoomWebBo> classRoomWebBos = StreamApiUtils.map(classrooms, classroom -> {
+			ClassRoomWebBo classRoomWebBo = new ClassRoomWebBo();
+			classRoomWebBo.setRoomId(classroom.getResourceId());
+			classRoomWebBo.setStartTime(classroom.getStartTime());
+			classRoomWebBo.setEndTime(classroom.getEndTime());
+			return classRoomWebBo;
+		});
+		List<ClassRoomWebBo> splitTimeBos = StreamApiUtils.flatMap(classRoomWebBos,
+				classroomBo -> splitTimeByDay(classroomBo, ClassRoomWebBo.class));
+		Map<String, List<ClassRoomWebBo>> startTimeMap = StreamApiUtils.groupBy(splitTimeBos,
+				classroomBo -> TimeUtil.format6(classroomBo.getStartTime()));
+
+		// 对key进行排序
+		List<String> sortKeys = startTimeMap.keySet().stream().sorted()
+				.collect(Collectors.toList());
+
+		return StreamApiUtils.map(sortKeys, key -> {
+			TimeScheduleBo scheduleBo = new TimeScheduleBo();
+			scheduleBo.setDate(key);
+			scheduleBo.setClassrooms(startTimeMap.get(key));
+			return scheduleBo;
+		});
+
+	}
+
+	private List<Classroom> selectMyClassroom(Date startTime, Date endTime) {
+		List<Classroom> res = Lists.newArrayList();
+		UserInfo userInfo = UserInfoContext.getUserContext();
+		if (StringUtils.isBlank(userInfo.getOrganizationId())) {
+			return res;
+		}
+		// auth course
+		LambdaQueryWrapper<Course> courseWrapper = new LambdaQueryWrapper<>();
+		courseWrapper.eq(Course::getIsPublic, Boolean.TRUE)
+				.and(q -> q
+						.eq(Course::getReadAuthType,
+								AuthTable.AuthType.ALL_SHARE_MODE.getCode())
+						.or(subQ -> subQ
+								.eq(Course::getReadAuthType,
+										AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode())
+								.like(Course::getReadAuthIds, userInfo.getOrganizationId())));
+		List<Course> authCourses = courseMapper.selectList(courseWrapper);
+		if (authCourses.isEmpty()) {
+			return res;
+		}
+		List<String> courseIds = StreamApiUtils.map(authCourses, Course::getResourceId);
+		// classrooms
+		LambdaQueryWrapper<Classroom> wrapper = new LambdaQueryWrapper<>();
+		wrapper.like(Classroom::getOrganizationIds, userInfo.getOrganizationId());
+		wrapper.and(q -> q.between(Classroom::getStartTime, startTime, endTime).or()
+				.between(Classroom::getEndTime, startTime, endTime));
+		wrapper.in(Classroom::getCourseId, courseIds);
+
+		res = classroomMapper.selectList(wrapper);
+
+		return res;
+	}
 
 
     /**
@@ -907,7 +985,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
     @Override
     public List<ClassroomBo> selectList(ClassRoomListQuery roomListQuery, AuthContext authContext) {
 
-        List<Classroom> classrooms = classroomMapper.selectList(roomListQuery);
+		List<Classroom> classrooms = classroomMapper.selectListByListQuery(roomListQuery);
         Set<String> existClassroom = classrooms.stream().map(Classroom::getResourceId).collect(Collectors.toSet());
         //管理员用户增加admin用户在自己创建的计划中的创建的计划
         if (Boolean.TRUE.equals(authContext.getIsAdmin())) {

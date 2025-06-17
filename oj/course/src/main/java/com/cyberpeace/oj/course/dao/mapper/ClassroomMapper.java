@@ -1,5 +1,10 @@
 package com.cyberpeace.oj.course.dao.mapper;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -11,10 +16,6 @@ import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.service.bo.ClassRoomExperimentReportBo;
 import com.cyberpeace.oj.course.service.bo.ClassroomPracticeWebBo;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
 
 /**
  * 课堂Mapper
@@ -51,7 +52,7 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 * @see ClassRoomListQuery
 	 * @see List<Classroom>
 	 */
-	List<Classroom> selectList(@Param("listQuery") ClassRoomListQuery listQuery);
+	List<Classroom> selectListByListQuery(@Param("listQuery") ClassRoomListQuery listQuery);
 
 	/**
 	 * 查询课程表数据

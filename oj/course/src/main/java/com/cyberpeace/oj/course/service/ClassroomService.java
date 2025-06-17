@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -66,6 +67,8 @@ public interface ClassroomService extends IService<Classroom> {
 	 */
     List<ClassRoomWebBo> selectTimeListOnlyCourse(ClassRoomListQuery roomListQuery,
                                                   AuthContext authContext);
+
+	List<TimeScheduleBo> selectMyCourseSchedule(Date startTime, Date endTime);
 
 	/**
 	 * 前台课程表数据查询- 课程报告数据

@@ -1,10 +1,10 @@
 package com.cyberpeace.oj.course.service.bo;
 
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.io.Serializable;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -71,4 +71,13 @@ public class ClassRoomWebBo extends BaseClassTimeBo implements Serializable {
      */
     @ApiModelProperty("是否签到")
     private Boolean isSignIn;
+
+	/**
+	 * 教学课程名称
+	 *
+	 * @see String
+	 */
+	@ApiModelProperty("教学课程名称")
+	private String planName;
+
 }

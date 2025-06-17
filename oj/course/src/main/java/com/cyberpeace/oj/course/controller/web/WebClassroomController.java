@@ -1,5 +1,17 @@
 package com.cyberpeace.oj.course.controller.web;
 
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Param;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.AuthContext;
@@ -18,21 +30,11 @@ import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.bo.*;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Param;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * Web课堂Controller
@@ -102,6 +104,22 @@ public class WebClassroomController {
 
 		List<TimeScheduleBo> boList = classroomService.selectTimeList(roomListQuery, authContext);
 
+		return new BaseRsp<>(boList);
+	}
+
+	@ApiOperation("前台教学课程日历")
+	@GetMapping("/calendar")
+	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
+			logical = Logical.OR)
+	public BaseRsp<List<TimeScheduleBo>> listCourseCalendar(
+			@ApiParam(name = "month", value = "月份 格式xxxx-xx") @RequestParam("month") String month) {
+
+		Date startOfDay = TimeUtil.getStartOfDay(
+				TimeUtil.toDate2(TimeUtil.getHeadOrTailDayOfSepecificMonth(month, true)));
+		Date endOfDay = TimeUtil.getEndOfDay(
+				TimeUtil.toDate2(TimeUtil.getHeadOrTailDayOfSepecificMonth(month, false)));
+
+		List<TimeScheduleBo> boList = classroomService.selectMyCourseSchedule(startOfDay, endOfDay);
 		return new BaseRsp<>(boList);
 	}
 

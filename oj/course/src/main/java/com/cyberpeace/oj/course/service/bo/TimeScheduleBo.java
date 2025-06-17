@@ -26,7 +26,7 @@ public class TimeScheduleBo implements Serializable {
 	 * @see List<ClassroomBo>
 	 */
 	@ApiModelProperty("课堂信息")
-	private List<ClassroomBo> classrooms;
+	private List<? extends BaseClassTimeBo> classrooms;
 
 	/**
 	 * 时间

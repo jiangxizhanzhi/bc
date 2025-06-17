@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.compress.utils.Lists;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.ai.model.vo.*;
@@ -14,7 +13,6 @@ import com.cyberpeace.ai.model.vo.practice.PracticeDataVO;
 import com.cyberpeace.ai.model.vo.practice.PracticeTheoryDataVO;
 import com.cyberpeace.ai.model.vo.train.TrainListDataVO;
 import com.cyberpeace.ai.model.vo.train.TrainStatisticsDataVO;
-import com.cyberpeace.ai.service.UserProfileReportService;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
@@ -27,9 +25,6 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/ai/user_profile")
 public class UserProfileController {
-
-	@Autowired
-	private UserProfileReportService userProfileReportService;
 
 	@ApiOperation("根据维度获取用户画像报告数据")
 	@GetMapping("/info")
@@ -50,8 +45,7 @@ public class UserProfileController {
 
 	@ApiOperation("获取用户画像报告列表")
 	@GetMapping("/report/list")
-	public BaseRsp<List<UserProfileReportListVO>>
-			getUserProfileReportList() {
+	public BaseRsp<List<UserProfileReportListVO>> getUserProfileReportList() {
 		List<UserProfileReportListVO> list = Lists.newArrayList();
 		list.add(new UserProfileReportListVO() {
 

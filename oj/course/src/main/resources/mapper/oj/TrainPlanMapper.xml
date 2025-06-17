@@ -72,10 +72,21 @@
             and organization_id = #{organizationId}
         </if>
         group by train_plan_id
-        ) a where 1=1
+        ) as aboc where 1=1
         <if test="null != pattern and pattern != ''">
         <bind name="pattern" value="'%' + pattern + '%'"/>
         and `name` like #{pattern}
+        </if>
+        <if test="status != null">
+            <if test="status == 1">
+                and aboc.`start_time` is not null and aboc.`start_time` &gt; now()
+            </if>
+            <if test="status == 3">
+                and aboc.`end_time` is not null and aboc.`end_time` &lt; now()
+            </if>
+            <if test="status == 2">
+                and aboc.`start_time` is not null and aboc.start_time &lt; now() and aboc.end_time &gt; now()
+            </if>
         </if>
     </select>
     <select id="listTrainWebPlan" resultType="com.cyberpeace.oj.course.controller.res.TrainPlanWebRsp">

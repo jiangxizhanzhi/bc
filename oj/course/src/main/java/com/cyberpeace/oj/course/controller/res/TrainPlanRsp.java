@@ -1,11 +1,10 @@
 package com.cyberpeace.oj.course.controller.res;
 
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.models.auth.In;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 /**
  * 训练计划响应
@@ -82,4 +81,7 @@ public class TrainPlanRsp implements Serializable {
 	 */
 	@ApiModelProperty("创建人名称")
     private String createUser;
+
+	@ApiModelProperty("状态, 1=未开始，2=进行中，3=已结束")
+	private Integer status;
 }

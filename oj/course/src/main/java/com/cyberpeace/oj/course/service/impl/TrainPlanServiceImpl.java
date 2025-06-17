@@ -1,10 +1,10 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.oj.course.service.ClassroomService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,8 +36,10 @@ import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.dao.mapper.TrainPlanMapper;
+import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.TrainPlanService;
 import com.cyberpeace.oj.course.service.bo.TrainPlanBo;
+import com.cyberpeace.oj.ojbase.constant.TrainPlanStatusEnum;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -122,7 +124,26 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 		List<String> courseIds = courseMapper.selectByAuth(AuthContextUtils.constructAuth(userInfo,
 				false));
 		IPage<TrainPlanRsp> result = trainPlanMapper.listTrainPlan(page, trainPlanReq.getPattern(), trainPlanReq.getOrganizationId(),
-				userInfo.getUserId(), userInfo.isSuperuser(), userInfo.isAdmin(), courseIds);
+				userInfo.getUserId(), userInfo.isSuperuser(), userInfo.isAdmin(), courseIds,
+				trainPlanReq.getStatus());
+
+		// set status
+		if (trainPlanReq.getStatus() != null) {
+			result.getRecords().forEach(r -> r.setStatus(trainPlanReq.getStatus()));
+		} else {
+			for (TrainPlanRsp record : result.getRecords()) {
+				Date now = new Date();
+				if (record.getStartTime() == null) {
+					record.setStatus(null);
+				} else if (now.before(record.getStartTime())) {
+					record.setStatus(TrainPlanStatusEnum.NOT_START.getCode());
+				} else if (now.after(record.getEndTime())) {
+					record.setStatus(TrainPlanStatusEnum.FINISHED.getCode());
+				} else {
+					record.setStatus(TrainPlanStatusEnum.IN_PROGRESS.getCode());
+				}
+			}
+		}
 
 		for (TrainPlanRsp trainPlanRsp : result.getRecords()) {
 			UserInfo user = remoteUserService.getById(trainPlanRsp.getCreateUserId());

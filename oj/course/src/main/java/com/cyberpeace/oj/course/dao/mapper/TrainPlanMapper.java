@@ -1,15 +1,16 @@
 package com.cyberpeace.oj.course.dao.mapper;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.course.controller.res.TrainPlanRsp;
 import com.cyberpeace.oj.course.controller.res.TrainPlanWebRsp;
 import com.cyberpeace.oj.course.dao.entity.TrainPlan;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
 
 /**
  * 训练计划Mapper
@@ -66,6 +67,7 @@ public interface TrainPlanMapper extends BaseMapper<TrainPlan> {
 	 * @param isSuperUser    是否超用户
 	 * @param isAdmin        是否管理
 	 * @param courseIds      课程id列表
+	 * @param status
 	 * @return {@code IPage<TrainPlanRsp> }
 	 * @throws
 	 * @see Page<TrainPlanRsp>
@@ -77,7 +79,9 @@ public interface TrainPlanMapper extends BaseMapper<TrainPlan> {
 	 * @see List<String>
 	 * @see IPage<TrainPlanRsp>
 	 */
-	IPage<TrainPlanRsp> listTrainPlan(Page<TrainPlanRsp> page, String pattern, String organizationId, String userId, boolean isSuperUser, boolean isAdmin, List<String> courseIds);
+	IPage<TrainPlanRsp> listTrainPlan(Page<TrainPlanRsp> page, String pattern,
+			String organizationId, String userId, boolean isSuperUser, boolean isAdmin,
+			List<String> courseIds, Integer status);
 
 	IPage<TrainPlanWebRsp> listTrainWebPlan(Page<TrainPlanWebRsp> page, String pattern, String organizationId, List<String> courseIds, Integer planStatus);
 }

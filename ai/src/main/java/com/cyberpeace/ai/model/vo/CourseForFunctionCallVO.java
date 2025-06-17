@@ -1,4 +1,4 @@
-package com.cyberpeace.ext.vo;
+package com.cyberpeace.ai.model.vo;
 
 import lombok.Data;
 

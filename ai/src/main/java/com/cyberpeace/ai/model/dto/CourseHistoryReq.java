@@ -1,4 +1,4 @@
-package com.cyberpeace.ext.req;
+package com.cyberpeace.ai.model.dto;
 
 import lombok.Data;
 

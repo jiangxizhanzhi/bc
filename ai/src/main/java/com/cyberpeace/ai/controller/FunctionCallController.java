@@ -1,27 +1,4 @@
-package com.cyberpeace.ext;
-
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.ext.req.CourseHistoryReq;
-import com.cyberpeace.ext.vo.CourseForFunctionCallVO;
-import com.cyberpeace.oj.course.dao.entity.Course;
-import com.cyberpeace.oj.course.dao.entity.CourseCategory;
-import com.cyberpeace.oj.course.dao.entity.LessonRecord;
-import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseStudyHistoryMapper;
-import com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
-import org.springframework.web.bind.annotation.*;
+package com.cyberpeace.ai.controller;
 
 import java.util.Comparator;
 import java.util.List;
@@ -29,9 +6,36 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.ai.model.dto.CourseHistoryReq;
+import com.cyberpeace.ai.model.vo.CourseForFunctionCallVO;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.entity.CourseCategory;
+import com.cyberpeace.oj.course.dao.entity.LessonRecord;
+import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 @Api(tags = "oj-提供给llm 方法调用的接口")
 @RestController
-@RequestMapping("/oj/function_call")
+@RequiresAuthentication
+@RequestMapping("/ai/function_call")
 public class FunctionCallController {
 
     @Autowired

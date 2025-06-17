@@ -642,6 +642,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         final List<Classroom> filteredClassroom = classrooms.stream().filter(classroom ->
                 authCourseIds.contains(classroom.getCourseId())).collect(Collectors.toList());
 
+        // 课堂为空则返回空
+        if (CollectionUtils.isEmpty(filteredClassroom)) {
+            return classroomBos;
+        }
+
         QueryWrapper<ClassroomSign> signQueryWrapper = new QueryWrapper<>();
         signQueryWrapper.lambda().eq(ClassroomSign::getUserId, authContext.getUserId())
                 .in(ClassroomSign::getClassroomId, classroomIds);
@@ -654,7 +659,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		List<String> planIds = StreamApiUtils.filter(
 				StreamApiUtils.map(filteredClassroom, Classroom::getTrainPlanId),
 				StringUtils::isNotBlank);
-		List<TrainPlan> trainPlans = trainPlanMapper.selectBatchIds(planIds);
+		List<TrainPlan> trainPlans = planIds.isEmpty() ? Lists.newArrayList()
+				: trainPlanMapper.selectBatchIds(planIds);
 		Map<String, String> planMap = StreamApiUtils.toMap(trainPlans, TrainPlan::getResourceId,
 				TrainPlan::getName);
 		// create users

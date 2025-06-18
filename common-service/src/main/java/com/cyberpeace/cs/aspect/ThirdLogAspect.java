@@ -104,12 +104,11 @@ public class ThirdLogAspect {
                 //        UserInfoContext.getUserContext().getUserName(),
                 //        UserInfoContext.getUserContext().getName(),
                 //        UserInfoContext.getUserContext().getUserId());
-                log.info("upload yx, requestUrl={}, httpMethod={}", requestUrl, httpMethod);
                 YXLogRequest yxLogRequest = generateYXLogRequestByURL(requestUrl, httpMethod);
                 if (null == yxLogRequest){
                     return null;
                 }
-                log.info("upload yx, requestUrl={}, httpMethod={}, yxLogRequest={}", requestUrl, httpMethod,
+                log.info("prepare log for yx, requestUrl={}, httpMethod={}, yxLogRequest={}", requestUrl, httpMethod,
                         yxLogRequest.getType() +"--" + yxLogRequest.getAction()+"--"+yxLogRequest.getContent());
                 yxLogRequest.setIp(clientIp);
                 yxLogRequest.setTime("" + System.currentTimeMillis()/1000);
@@ -134,9 +133,9 @@ public class ThirdLogAspect {
         if (null == logInfo || null == logInfo.getContent()){
             return null;
         }
-        request.setType(logInfo.getType().getValue());
+        request.setType(logInfo.getType());
         request.setContent(logInfo.getContent());
-        request.setAction(logInfo.getAction().getValue());
+        request.setAction(logInfo.getAction());
         return request;
     }
 

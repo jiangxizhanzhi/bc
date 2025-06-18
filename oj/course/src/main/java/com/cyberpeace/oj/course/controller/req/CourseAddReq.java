@@ -5,6 +5,7 @@ import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import javax.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
@@ -125,11 +126,9 @@ public class CourseAddReq implements Serializable {
 	@ApiModelProperty("等级,type=9")
 	private Integer rank;
 
-	@ApiModelProperty("攻击知识点")
-	private List<List<Integer>> attackTag;
-
-	@ApiModelProperty("防御知识点")
-	private List<List<Integer>> defenseTag;
+	@ApiModelProperty("攻击知识点 改为知识点")
+	@NotEmpty(message = "知识点必填", groups = { Create.class })
+	private List<Integer> attackTag;
 
 	/**
 	 * 是否公开

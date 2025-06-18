@@ -142,7 +142,6 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 		PracticeTheory practiceTheory = BeanUtils.copy(theoryAddReq, PracticeTheory.class);
 		practiceTheory.setTitle(theoryAddReq.getContent());
 		practiceTheory.setAttack(JsonUtil.arrayToString(theoryAddReq.getAttackTag()));
-		practiceTheory.setDefense(JsonUtil.arrayToString(theoryAddReq.getDefenseTag()));
 
 		practiceTheory.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -191,7 +190,6 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 				CommonConstant.FALSE);
 		PracticeTheory practiceTheory = BeanUtils.copy(theoryUpdateReq, PracticeTheory.class);
 		practiceTheory.setAttack(JsonUtil.arrayToString(theoryUpdateReq.getAttackTag()));
-		practiceTheory.setDefense(JsonUtil.arrayToString(theoryUpdateReq.getDefenseTag()));
 
 		int result = practiceTheoryService.updateTheory(practiceTheory, authContext);
 

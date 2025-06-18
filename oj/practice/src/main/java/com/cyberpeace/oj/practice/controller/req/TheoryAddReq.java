@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.controller.req;
 import com.cyberpeace.common.baseinterface.Create;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import javax.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -88,11 +89,9 @@ public class TheoryAddReq implements Serializable {
 	@ApiModelProperty("知识点")
 	private String knowledge;
 
-	@ApiModelProperty("攻击知识点")
-	private List<List<Integer>> attackTag;
-
-	@ApiModelProperty("防御知识点")
-	private List<List<Integer>> defenseTag;
+	@ApiModelProperty("攻击知识点 改为知识点")
+	@NotEmpty(message = "请选择攻击知识点", groups = { Create.class })
+	private List<Integer> attackTag;
 
 	/**
 	 * 选择

@@ -79,10 +79,8 @@ public class OperationAddReq implements Serializable, CustomValidate {
 	private String knowledge;
 
 	@ApiModelProperty(name = "attack_tag", value = "攻击知识点")
+	@NotBlank(message = "请选择攻击知识点", groups = { Create.class })
 	private String attackTag;
-
-	@ApiModelProperty(name = "defense_tag", value = "防御知识点")
-	private String defenseTag;
 
 	/**
 	 * 难度
@@ -285,10 +283,6 @@ public class OperationAddReq implements Serializable, CustomValidate {
 	public void setAttack_tag(String attackTag) {
 		this.attackTag = attackTag;
 	}
-	public void setDefense_tag(String defenseTag) {
-		this.defenseTag = defenseTag;
-	}
-
 
 	@Override
 	public void validate() {

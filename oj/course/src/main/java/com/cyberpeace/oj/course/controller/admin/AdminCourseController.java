@@ -273,7 +273,6 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		course.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
 		course.setCourseType(CommonConstant.ZERO);
 		course.setAttack(JsonUtil.arrayToString(addReq.getAttackTag()));
-		course.setDefense(JsonUtil.arrayToString(addReq.getDefenseTag()));
 
 
 		CourseCategory courseCategory = courseCategoryMapper.selectById(addReq.getCategoryId());
@@ -315,8 +314,9 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		Course course = BeanUtils.copy(updateReq, Course.class);
-		course.setAttack(JsonUtil.arrayToString(updateReq.getAttackTag()));
-		course.setDefense(JsonUtil.arrayToString(updateReq.getDefenseTag()));
+		if (updateReq.getAttackTag() != null) {
+			course.setAttack(JsonUtil.arrayToString(updateReq.getAttackTag()));
+		}
 
 		Course courseRsp = courseService.updateCourse(userId, course);
 

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.ai.dao.mapper.UserProfileReportMapper">
+
+    <!-- 根据报告ID获取报告详情 -->
+    <select id="selectByReportId" resultType="com.cyberpeace.ai.dao.entity.UserProfileReport">
+        select *
+        from ai_user_profile_report
+        where resource_id = #{reportId}
+    </select>
+
+    <!-- 根据用户ID和维度获取报告列表 -->
+    <select id="selectByUserAndDimension" resultType="com.cyberpeace.ai.model.vo.UserProfileReportListVO">
+        select
+        resource_id as report_id,
+        name as report_name,
+        create_time
+        from ai_user_profile_report
+        <where>
+            <if test="userId != null and userId != ''">
+                user_id = #{userId}
+            </if>
+            <if test="dimension != null">
+                and dimension = #{dimension}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+</mapper> 

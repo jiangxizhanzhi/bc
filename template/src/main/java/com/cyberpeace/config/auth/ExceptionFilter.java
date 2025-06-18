@@ -361,9 +361,19 @@ public class ExceptionFilter implements Filter {
 				String desc = CommonContext.isChinese()
 						? ConfigUtil.getContextProperty(error.getDefaultMessage() + ".cn")
 						: ConfigUtil.getContextProperty(error.getDefaultMessage() + ".en");
-				flushErrorInfo(httpServletResponse, ErrorCode.METHOD_ARG_NOT_VALID,
-						StringUtils.isNotBlank(desc) ? desc : field);
 
+				String errorMessage;
+				if (StringUtils.isBlank(desc)) {
+					if (StringUtils.isNotBlank(error.getDefaultMessage())) {
+						errorMessage = error.getDefaultMessage();
+					} else {
+						errorMessage = field;
+					}
+				} else {
+					errorMessage = desc;
+				}
+				flushErrorInfo(httpServletResponse, ErrorCode.METHOD_ARG_NOT_VALID,
+						errorMessage);
 				return;
 			}
 		}

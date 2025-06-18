@@ -129,9 +129,6 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	@Autowired
 	private RemoteTerminalService remoteTerminalService;
 
-	@Autowired
-	private UtilService utilService;
-
 	/**
 	 * 获取
 	 *
@@ -229,7 +226,6 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		updateReq.validate();
 		PracticeOperation updateOperation = BeanUtils.copy(updateReq, PracticeOperation.class);
 		updateOperation.setAttack(updateReq.getAttackTag());
-		updateOperation.setDefense(updateReq.getDefenseTag());
 
 		Integer result = practiceOperationService.updateOperation(updateOperation,
 				updateReq.getTarget());

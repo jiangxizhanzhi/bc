@@ -381,12 +381,12 @@ public class HttpClientUtil {
 		} catch (Exception e) {
 			try {
 				HttpclientContext.getContext().doRemoteException(e);
-				throw new RemoteServiceException();
 			} catch (Exception e1) {
 				LOG.error("remote error logging Exception", e1);
 			} finally {
 				HttpclientContext.removeContext();
 			}
+			throw new RemoteServiceException(e.getMessage());
 		}
 
 		if (StringUtils.isBlank(httpResponse)) {

@@ -71,7 +71,10 @@ public class YXLogServiceImpl implements YXLogService {
         body.put("username", result.getUsername());
         body.put("role_id", result.getRoleId());
         body.put("system_id", SYSTEM_ID_ZSKJ);
-        return HttpClientUtil.post(url, body);
+        log.info("uploadLog 2 yx, url={}, request={}", url, body.toJSONString());
+        String yxResult = HttpClientUtil.post(url, body);
+        log.info("uploadLog 2 yx, url={}, request={}, response={}", url, body.toJSONString(), yxResult);
+        return yxResult;
     }
 }
 

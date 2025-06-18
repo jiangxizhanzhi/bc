@@ -97,15 +97,15 @@ public class ThirdLogAspect {
             // 根据URL获取一些操作信息
             // 存在用户信息才进行下一步
             if (null != UserInfoContext.getUserContext()){
-                log.info("user online, userName={}, name={}, userId={}",
-                        UserInfoContext.getUserContext().getUserName(),
-                        UserInfoContext.getUserContext().getName(),
-                        UserInfoContext.getUserContext().getUserId());
+                //log.info("user online, userName={}, name={}, userId={}",
+                //        UserInfoContext.getUserContext().getUserName(),
+                //        UserInfoContext.getUserContext().getName(),
+                //        UserInfoContext.getUserContext().getUserId());
                 YXLogRequest yxLogRequest = generateYXLogRequestByURL(requestUrl, httpMethod);
                 yxLogRequest.setIp(clientIp);
                 yxLogRequest.setTime("" + System.currentTimeMillis()/1000);
                 yxLogRequest.setResult(isSuccess? "1":"0");
-                yxLogRequest.setUsername(UserInfoContext.getUserContext().getUserName());
+                yxLogRequest.setUsername(UserInfoContext.getUserContext().getName());
                 yxLogRequest.setRoleId(UserInfoContext.getUserContext().getRoleId());
 
                 return yxLogRequest;

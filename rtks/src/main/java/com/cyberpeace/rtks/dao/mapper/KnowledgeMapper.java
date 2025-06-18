@@ -10,8 +10,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.rtks.controller.req.KnowledgeListReq;
 import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
-import com.cyberpeace.rtks.res.KnowledgeRes;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
+import com.cyberpeace.rtks.res.KnowledgeRes;
 
 /**
  * 知识点Mapper
@@ -73,4 +73,13 @@ public interface KnowledgeMapper extends BaseMapper<Knowledge> {
 	 * @see List<CourseRelatedRes>
 	 */
 	List<CourseRelatedRes> getKnowledgeByCourseId(List<String> ids);
+
+	/**
+	 * 查询全部
+	 *
+	 * @return {@code List<KnowledgeRes> }
+	 * @throws
+	 * @see List<KnowledgeRes>
+	 */
+	List<KnowledgeRes> selectAll();
 }

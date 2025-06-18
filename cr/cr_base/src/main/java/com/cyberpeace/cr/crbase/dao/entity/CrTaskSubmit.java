@@ -129,6 +129,12 @@ public class CrTaskSubmit extends BaseTable {
 		}
 	}
 
+	public boolean evaluated() {
+		return EvaluateStatus.SUCCESS.getCode().equals(this.evaluateStatus)
+				|| EvaluateStatus.FAIL.getCode().equals(this.evaluateStatus)
+				|| EvaluateStatus.REJECT.getCode().equals(this.evaluateStatus);
+	}
+
 	/**
 	 * 评估类型
 	 *

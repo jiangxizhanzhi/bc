@@ -3,6 +3,7 @@ package com.cyberpeace.rtks.service;
 import java.util.Date;
 import java.util.List;
 
+import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.service.bo.KnowledgeStudyPercentBo;
 import com.cyberpeace.rtks.service.bo.RoleStudyBo;
 import com.cyberpeace.rtks.service.bo.RtksRadarBo;
@@ -119,4 +120,15 @@ public interface RtksStatisticService {
 	 */
 	SkillTrainingRecordBo calculateTrainingRecord(String userId, String roleId, Date toDate1,
 			Date toDate11);
+
+	/**
+	 * 根据课程进度列表计算岗位学习进度
+	 *
+	 * @param processBoList
+	 * @return
+	 * @throws
+	 * @see List<CourseStudyProcessBo>
+	 * @see RoleStudyBo
+	 */
+	RoleStudyBo getStudyBo(List<CourseStudyProcessBo> processBoList);
 }

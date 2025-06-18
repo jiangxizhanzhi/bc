@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.compress.utils.Lists;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.ai.model.vo.*;
@@ -13,6 +15,7 @@ import com.cyberpeace.ai.model.vo.practice.PracticeDataVO;
 import com.cyberpeace.ai.model.vo.practice.PracticeTheoryDataVO;
 import com.cyberpeace.ai.model.vo.train.TrainListDataVO;
 import com.cyberpeace.ai.model.vo.train.TrainStatisticsDataVO;
+import com.cyberpeace.ai.service.UserProfileService;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
@@ -26,12 +29,16 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/ai/user_profile")
 public class UserProfileController {
 
+	@Autowired
+	private UserProfileService userProfileService;
+
 	@ApiOperation("根据维度获取用户画像报告数据")
 	@GetMapping("/info")
+	@RequiresAuthentication
 	public BaseRsp<UserProfileReportVO> getUserProfileReport(
 			@ApiParam(value = "维度", required = true) @RequestParam String dimension) {
 
-		UserProfileReportVO vo = getUserProfileData(dimension);
+		UserProfileReportVO vo = userProfileService.getUserProfileData(dimension);
 
 		return new BaseRsp<>(vo);
 	}

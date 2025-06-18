@@ -29,6 +29,6 @@ public class TrainStatisticsDataVO {
 	 * 训练类型分布
 	 */
 	@ApiModelProperty(value = "训练类型分布")
-	private Map<String, Integer> trainingTypeMap;
+	private Map<Integer, Integer> trainingTypeMap;
 
 }

@@ -11,6 +11,8 @@ public class PracticeTheoryDataVO {
 	@ApiModelProperty("题目方向")
 	private String direction;
 
+	private String categoryId;
+
 	@ApiModelProperty("题目数量")
 	private Integer count;
 
@@ -19,5 +21,7 @@ public class PracticeTheoryDataVO {
 
 	@ApiModelProperty("错题数量")
 	private Integer errorCount;
+
+	private Integer solvedCount;
 
 }

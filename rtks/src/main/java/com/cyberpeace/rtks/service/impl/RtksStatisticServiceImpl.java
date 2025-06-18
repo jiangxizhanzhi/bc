@@ -3,12 +3,12 @@ package com.cyberpeace.rtks.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.enums.BusinessType;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
@@ -20,7 +20,10 @@ import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.LessonRecordService;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
-import com.cyberpeace.rtks.dao.entity.*;
+import com.cyberpeace.rtks.dao.entity.Knowledge;
+import com.cyberpeace.rtks.dao.entity.Level;
+import com.cyberpeace.rtks.dao.entity.Role;
+import com.cyberpeace.rtks.dao.entity.SkillAndKnowledgeBase;
 import com.cyberpeace.rtks.dao.mapper.*;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.SkillService;
@@ -683,7 +686,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 * @see List<CourseStudyProcessBo>
 	 * @see RoleStudyBo
 	 */
-	private RoleStudyBo getStudyBo(List<CourseStudyProcessBo> processBoList) {
+	@Override
+	public RoleStudyBo getStudyBo(List<CourseStudyProcessBo> processBoList) {
 		// 计算总体进度
 		RoleStudyBo studyBo = new RoleStudyBo();
 		studyBo.setTotalCourses(processBoList.size());

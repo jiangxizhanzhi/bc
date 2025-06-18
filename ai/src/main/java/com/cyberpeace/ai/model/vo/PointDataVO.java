@@ -12,6 +12,6 @@ public class PointDataVO {
 	private String content;
 
 	@ApiModelProperty("掌握度")
-	private String mastery;
+	private Integer mastery;
 
 }

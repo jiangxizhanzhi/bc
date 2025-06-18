@@ -23,13 +23,13 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
-import com.cyberpeace.rtks.res.KnowledgeRes;
-import com.cyberpeace.rtks.res.KnowledgeTreeRes;
-import com.cyberpeace.rtks.res.RoleDetailRes;
 import com.cyberpeace.rtks.controller.res.skill.RelatedTrainingRes;
 import com.cyberpeace.rtks.controller.res.skill.TrainingPathRes;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.entity.Role;
+import com.cyberpeace.rtks.res.KnowledgeRes;
+import com.cyberpeace.rtks.res.KnowledgeTreeRes;
+import com.cyberpeace.rtks.res.RoleDetailRes;
 import com.cyberpeace.rtks.service.*;
 import com.cyberpeace.rtks.service.bo.skill.MissionPathBo;
 import com.cyberpeace.rtks.service.bo.skill.SkillPagePath;
@@ -223,6 +223,7 @@ public class TrainingPlanController {
 
 	/**
 	 * 分页
+	 * 个人中心-岗位评估-知识体系清单
 	 *
 	 * @param pageReqBase 分页请求体基础
 	 * @return {@code BaseRsp<ListRsp<KnowledgeRes>> }

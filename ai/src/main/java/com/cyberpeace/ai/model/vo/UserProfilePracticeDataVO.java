@@ -2,6 +2,8 @@ package com.cyberpeace.ai.model.vo;
 
 import java.util.List;
 
+import org.apache.commons.compress.utils.Lists;
+
 import com.cyberpeace.ai.model.vo.practice.PracticeDataVO;
 import com.cyberpeace.ai.model.vo.practice.PracticeTheoryDataVO;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
@@ -19,11 +21,11 @@ public class UserProfilePracticeDataVO {
 	private ProgressStatisticsRes theoryOverallStats;
 
 	@ApiModelProperty("理论题各方向题目练习情况")
-	private List<PracticeTheoryDataVO> theoryDirectionStats;
+	private List<PracticeTheoryDataVO> theoryDirectionStats = Lists.newArrayList();
 
 	@ApiModelProperty("实操题总体练习情况")
-	private List<CategoryProgressRes> practicalOverallStats;
+	private List<CategoryProgressRes> practicalOverallStats = Lists.newArrayList();
 
 	@ApiModelProperty("实操题各方向题目练习情况")
-	private List<PracticeDataVO> practicalDirectionStats;
+	private List<PracticeDataVO> practicalDirectionStats = Lists.newArrayList();
 }

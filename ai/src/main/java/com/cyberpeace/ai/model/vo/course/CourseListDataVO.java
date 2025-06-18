@@ -17,6 +17,9 @@ public class CourseListDataVO {
 	@ApiModelProperty("状态")
 	private String status;
 
+	@ApiModelProperty("完成状态")
+	private Boolean finished;
+
 	@ApiModelProperty("课程时长（小时）")
 	private Integer duration;
 

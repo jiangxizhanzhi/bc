@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.ai.model.mapper.UserProfileMapper">
+    <select id="statisticTheoryByType" resultType="com.cyberpeace.ai.model.vo.practice.PracticeTheoryDataVO">
+        select category_id, count(1) count, count(s.id) as practice_count, sum(s.solved) as solved_count
+        from oj_practice_theory t left join oj_practice_solved s on t.resource_id = s.practice_id
+        where t.practice_set_id in
+        <foreach item="setId" collection="practiceIds" separator="," open="(" close=")">
+            #{setId}
+        </foreach>
+        and t.public = 1 and s.submit_user_id = #{userId}
+        group by t.category_id
+    </select>
+</mapper>

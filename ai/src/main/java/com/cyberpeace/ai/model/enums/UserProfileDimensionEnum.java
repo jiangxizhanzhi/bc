@@ -26,6 +26,10 @@ public enum UserProfileDimensionEnum {
 		return value;
 	}
 
+	public String getValueStr() {
+		return String.valueOf(value);
+	}
+
 	public String getLabel() {
 		return label;
 	}

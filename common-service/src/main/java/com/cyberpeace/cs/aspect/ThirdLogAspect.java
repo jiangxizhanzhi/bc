@@ -6,6 +6,7 @@ import com.cyberpeace.integratation.service.YXUserService;
 import com.cyberpeace.integratation.service.bo.mp.YXLogRequest;
 import com.cyberpeace.integratation.service.bo.mp.YXLogUrlEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -70,7 +71,9 @@ public class ThirdLogAspect {
 
             // 执行日志上报操作
             YXLogRequest request = getYXLogRequest(isSuccess);
-            yxLogService.uploadLog(request);
+            if (null != request){
+                yxLogService.uploadLog(request);
+            }
         }catch (Exception e){
             // 不处理
         }
@@ -101,7 +104,13 @@ public class ThirdLogAspect {
                 //        UserInfoContext.getUserContext().getUserName(),
                 //        UserInfoContext.getUserContext().getName(),
                 //        UserInfoContext.getUserContext().getUserId());
+                log.info("upload yx, requestUrl={}, httpMethod={}", requestUrl, httpMethod);
                 YXLogRequest yxLogRequest = generateYXLogRequestByURL(requestUrl, httpMethod);
+                if (null == yxLogRequest){
+                    return null;
+                }
+                log.info("upload yx, requestUrl={}, httpMethod={}, yxLogRequest={}", requestUrl, httpMethod,
+                        yxLogRequest.getType() +"--" + yxLogRequest.getAction()+"--"+yxLogRequest.getContent());
                 yxLogRequest.setIp(clientIp);
                 yxLogRequest.setTime("" + System.currentTimeMillis()/1000);
                 yxLogRequest.setResult(isSuccess? "1":"0");
@@ -122,6 +131,9 @@ public class ThirdLogAspect {
         YXLogRequest request = new YXLogRequest();
         // 根据请求url获取对应的操作信息及操作类型信息
         YXLogUrlEnum.YXLogInfo logInfo= YXLogUrlEnum.getLogInfo(requestUrl, method);
+        if (null == logInfo || null == logInfo.getContent()){
+            return null;
+        }
         request.setType(logInfo.getType().getValue());
         request.setContent(logInfo.getContent());
         request.setAction(logInfo.getAction().getValue());

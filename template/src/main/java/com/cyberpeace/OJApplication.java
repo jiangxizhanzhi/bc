@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * ojapplication
@@ -29,6 +30,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
  * - 该类是应用程序的入口点，用于启动 Spring Boot 应用。 
 **/
 @ServletComponentScan
+@EnableAspectJAutoProxy
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class },
 		scanBasePackages = { "com.cyberpeace" })
 public class OJApplication {

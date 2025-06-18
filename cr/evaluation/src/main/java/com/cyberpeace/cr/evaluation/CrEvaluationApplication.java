@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * 这段代码是一个Spring Boot应用程序的入口类。以下是对代码的简要分析：
@@ -26,6 +27,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
  * 这是一个Spring Boot应用的启动类，通过排除`DataSourceAutoConfiguration`来避免默认的数据源配置，并且扫描`com.cyberpeace`包下的所有组件。
 **/
 @ServletComponentScan
+@EnableAspectJAutoProxy
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class },
         scanBasePackages = { "com.cyberpeace" })
 public class CrEvaluationApplication {

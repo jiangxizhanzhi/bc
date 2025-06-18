@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * 空间行为依赖
@@ -26,6 +27,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
  * - 该类用于启动基于 Spring Boot 的空间行为依赖项目，适用于不使用默认数据库配置的场景。 
 **/
 @ServletComponentScan
+@EnableAspectJAutoProxy
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class },
 		scanBasePackages = { "com.cyberpeace" })
 public class SpaceApplication {

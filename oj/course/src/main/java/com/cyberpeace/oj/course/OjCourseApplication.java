@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * 这段代码定义了一个Spring Boot应用程序，名为`OjCourseApplication`。以下是详细分析： 
@@ -37,6 +38,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
  * 总结：这段代码是一个配置好的Spring Boot应用，用于扫描并运行位于`com.cyberpeace`包及其子包下的组件，并且不使用默认的数据库配置。 
 **/
 @ServletComponentScan
+@EnableAspectJAutoProxy
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class },
         scanBasePackages = { "com.cyberpeace" })
 public class OjCourseApplication {

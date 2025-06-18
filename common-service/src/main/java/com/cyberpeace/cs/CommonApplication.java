@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * 该代码是一个 Spring Boot 应用程序的主类，以下是简要分析： 
@@ -20,6 +21,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
  * - 指定的包路径确保了 Spring 扫描范围仅限于 `com.cyberpeace` 及其子包。 
 **/
 @ServletComponentScan
+@EnableAspectJAutoProxy
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class },
 		scanBasePackages = { "com.cyberpeace" })
 public class CommonApplication {

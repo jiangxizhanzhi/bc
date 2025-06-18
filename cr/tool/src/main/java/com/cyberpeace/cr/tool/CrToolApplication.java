@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * 这段代码是一个Spring Boot应用的主类。以下是简要分析： 
@@ -22,6 +23,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
  * 总结：这是一个配置好并可运行的Spring Boot应用，主要用于启动应用并扫描指定的包路径下的Servlet组件。 
 **/
 @ServletComponentScan
+@EnableAspectJAutoProxy
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class },
 		scanBasePackages = { "com.cyberpeace" })
 public class CrToolApplication {

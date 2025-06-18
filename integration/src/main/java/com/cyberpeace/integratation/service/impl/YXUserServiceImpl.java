@@ -1,16 +1,26 @@
 package com.cyberpeace.integratation.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.service.YXUserService;
+import com.cyberpeace.integratation.service.bo.YxIndicatorBo;
 import com.cyberpeace.integratation.service.bo.YxRvbUserColl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 这段代码是一个Spring服务类 `YXUserServiceImpl`，实现了 `YXUserService` 接口。该类的主要功能是通过调用外部API获取用户信息，并将这些信息封装到 `YxRvbUserColl` 对象中返回。 
@@ -44,13 +54,20 @@ public class YXUserServiceImpl implements YXUserService {
 
     private String YX_HOST;
 
-    private String RVB_URL = "/api/v1/openapi/get_match_user";
+    private String RVB_URL;
+
+    // 永信知识点url
+    private String INDICATOR_URL;
+
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     @PostConstruct
     public void init() {
         YX_HOST = SystemPropUtil.getProp("YX_HOST");
         log.info("yx host=[{}]", YX_HOST);
         RVB_URL = ConfigUtil.getContextProperty("yx.rvb.user");
+        INDICATOR_URL = ConfigUtil.getContextProperty("yx.indicator");
     }
 
     @Override
@@ -62,6 +79,55 @@ public class YXUserServiceImpl implements YXUserService {
         JSONObject body = new JSONObject();
         body.put("rvb_id", rvbId);
         return HttpClientUtil.post(url, body, YxRvbUserColl.class);
+    }
+
+    /**
+     * 获取永信知识点
+     * @return
+     */
+    @Override
+    public List<YxIndicatorBo> getYxIndicator() {
+        final ArrayList<YxIndicatorBo> yxIndicatorBos = new ArrayList<>();
+        if (StringUtils.isBlank(YX_HOST)){
+            log.warn("yx host not set");
+            return readJsonFile();
+        }
+        String url = YX_HOST + INDICATOR_URL;
+        log.info("post url is {}", url);
+        JSONObject body = new JSONObject();
+        final JSONArray jsonArray = HttpClientUtil.post(url, body, JSONArray.class);
+        for (Object json : jsonArray) {
+            JSONObject jsonObject = (JSONObject) json;
+            YxIndicatorBo yxIndicatorBo = new YxIndicatorBo();
+            yxIndicatorBo.setId(jsonObject.getString("id"));
+            yxIndicatorBo.setName(jsonObject.getString("name"));
+            yxIndicatorBos.add(yxIndicatorBo);
+        }
+
+        return yxIndicatorBos;
+    }
+
+    /**
+     * 获取永信知识点原始数据
+     * @return
+     */
+    public List<YxIndicatorBo>  readJsonFile() {
+        StringBuilder json = new StringBuilder();
+        try {
+            Resource resource = resourceLoader.getResource("classpath:static/demonstration/yxIndicator.json");
+            InputStream inputStream = resource.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                json.append(line);
+            }
+            reader.close();
+        } catch (Exception e) {
+            log.error("readJsonFile filed", e);
+            throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
+        }
+
+        return JsonUtil.toJsonObjectArray(json.toString(), YxIndicatorBo.class);
     }
 }
 

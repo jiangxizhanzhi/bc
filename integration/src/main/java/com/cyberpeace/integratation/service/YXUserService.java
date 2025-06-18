@@ -1,6 +1,9 @@
 package com.cyberpeace.integratation.service;
 
+import com.cyberpeace.integratation.service.bo.YxIndicatorBo;
 import com.cyberpeace.integratation.service.bo.YxRvbUserColl;
+
+import java.util.List;
 
 /**
  * 这段代码定义了一个名为 `YXUserService` 的接口，该接口位于 `com.cyberpeace.integratation.service` 包中。下面是对这段代码的详细分析： 
@@ -33,5 +36,7 @@ import com.cyberpeace.integratation.service.bo.YxRvbUserColl;
 public interface YXUserService {
 
 	YxRvbUserColl getYxRvbUsers(Integer rvbId);
+
+	List<YxIndicatorBo> getYxIndicator();
 }
 

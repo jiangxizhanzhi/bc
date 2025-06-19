@@ -25,7 +25,7 @@ public class ClassroomPracticeWebBo implements Serializable {
      * 提交状态 1 待提交 2 待批改 3 已批改
      * @see ExperimentReportEnum
      */
-    @ApiModelProperty("状态  1 待提交 2 待批改 3 已批改")
+    @ApiModelProperty("状态  1 待提交 2 待批改 3 已批改, type=46")
     private Integer submitStatus;
 
     @ApiModelProperty("课堂id")
@@ -59,6 +59,6 @@ public class ClassroomPracticeWebBo implements Serializable {
      * 课后练习级别
      * @see com.cyberpeace.oj.course.dao.entity.LessonPaperEvaluate.LevelType
      */
-    @ApiModelProperty("课后练习级别 1-优， 2-良， 3-中， 4-差")
+    @ApiModelProperty("课后练习级别 1-优， 2-良， 3-中， 4-差，type=47")
     private Integer level;
 }

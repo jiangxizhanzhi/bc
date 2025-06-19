@@ -23,7 +23,7 @@ public class TrainPlanLessonReportStatusRsp implements Serializable {
      * 实验报告状态 1- 待提交， 2- 已提交 ， 3-已批改, 无状态表示没有课后练习或者未下发
      * @see com.cyberpeace.oj.ojbase.constant.ExperimentReportEnum
      */
-    @ApiModelProperty("实验报告状态 1- 待提交， 2- 已提交 ， 3-已批改")
+    @ApiModelProperty("实验报告状态 1- 待提交， 2- 已提交 ， 3-已批改，type=46")
     private Integer reportStatus;
 
     @ApiModelProperty("实验报告通过状态 0- 未通过， 1-  已通过")

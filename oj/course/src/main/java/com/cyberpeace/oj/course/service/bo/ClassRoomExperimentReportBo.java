@@ -22,10 +22,10 @@ public class ClassRoomExperimentReportBo implements Serializable {
     private String lessonName;
 
     /**
-     * 提交状态 0 待提交 1 待批改 2 已批改
+     * 提交状态 1 待提交 2 待批改 3 已批改
      * @see ExperimentReportEnum
      */
-    @ApiModelProperty("状态 待提交、 待批改、 已批改")
+    @ApiModelProperty("状态 待提交、 待批改、 已批改, type=46")
     private Integer submitStatus;
 
     @ApiModelProperty("得分")

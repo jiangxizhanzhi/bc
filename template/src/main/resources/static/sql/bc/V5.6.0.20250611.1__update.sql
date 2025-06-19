@@ -1,1 +1,0 @@
-alter table rtks_role add column avatar varchar(2048) not null comment '头像';

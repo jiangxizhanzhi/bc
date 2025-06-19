@@ -294,6 +294,8 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 			classroom.setId(null);
 			classroom.setCreateTime(null);
 			classroom.setUpdateTime(null);
+			classroom.setStartTime(null);
+			classroom.setEndTime(null);
 			classroom.setResourceId(IDGeneratorUtil.getID());
 			classroom.setTrainPlanId(trainPlan.getResourceId());
 			// 组织为空

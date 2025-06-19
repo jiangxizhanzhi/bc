@@ -6,10 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel("用户画像维度枚举")
 public enum UserProfileDimensionEnum {
 
-	COURSE_LEARNING(1, "课程学习"), 
-	PRACTICE(2, "题目练习"), 
-	EVALUATION(3, "综合训练"), 
-	TRAINING(4, "岗位评估");
+	COURSE_LEARNING(1, "课程学习"), PRACTICE(2, "题目练习"), EVALUATION(3, "综合训练"), TRAINING(4, "岗位评估");
 
 	@ApiModelProperty("维度int值")
 	private final Integer value;
@@ -37,6 +34,14 @@ public enum UserProfileDimensionEnum {
 	public static UserProfileDimensionEnum fromValue(Integer value) {
 		for (UserProfileDimensionEnum e : values()) {
 			if (e.value.equals(value))
+				return e;
+		}
+		return null;
+	}
+
+	public static UserProfileDimensionEnum fromLabel(String label) {
+		for (UserProfileDimensionEnum e : values()) {
+			if (e.label.equals(label))
 				return e;
 		}
 		return null;

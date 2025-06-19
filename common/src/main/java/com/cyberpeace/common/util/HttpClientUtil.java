@@ -6,6 +6,7 @@ import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.*;
+import com.cyberpeace.common.util.http.CustomPostRedirectStrategy;
 import com.google.common.collect.Lists;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -529,6 +530,7 @@ public class HttpClientUtil {
 			// 构建 HttpClient，保留原有默认请求头设置
 			return HttpClients.custom()
 					.setSSLSocketFactory(sslSocketFactory)
+					.setRedirectStrategy(new CustomPostRedirectStrategy())
 					.setDefaultHeaders(defaultHeader())
 					.build();
 		} catch (Exception e) {

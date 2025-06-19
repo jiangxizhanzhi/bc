@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
@@ -232,6 +233,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 				}
 			}
 			vo.setCompleted(finish);
+			vo.setCompletionRate(MathUtils.roundDivide(100 * finish, vo.getTotal()));
 		}
 		res.sort(Comparator.comparing(TrainListDataVO::getStartTime).reversed());
 		return res;

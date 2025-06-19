@@ -13,6 +13,12 @@ public class UserProfileEvaluationDataVO {
 	@ApiModelProperty("岗位层级")
 	private String level;
 
+	@ApiModelProperty("头像")
+	private String avatar;
+
+	@ApiModelProperty("岗位")
+	private String roleName;
+
 	@ApiModelProperty("知识点清单")
 	private List<PointDataVO> knowledgePoints;
 

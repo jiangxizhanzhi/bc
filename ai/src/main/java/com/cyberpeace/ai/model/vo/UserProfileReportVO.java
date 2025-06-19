@@ -17,7 +17,7 @@ public class UserProfileReportVO {
 	@ApiModelProperty("用户姓名")
 	private String userName;
 
-	@ApiModelProperty(value = "维度", allowableValues = "1,2,3,4", notes = "1-课程学习, 2-题目练习, 3-岗位评估, 4-综合训练")
+	@ApiModelProperty(value = "维度", allowableValues = "1,2,3,4", notes = "1-课程学习, 2-题目练习,3-综合训练,4-岗位评估")
 	private String dimension;
 
 	@ApiModelProperty("课程学习数据")

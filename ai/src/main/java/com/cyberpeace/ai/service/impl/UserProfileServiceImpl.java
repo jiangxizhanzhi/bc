@@ -5,7 +5,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.rtks.dao.entity.Role;
+import com.cyberpeace.rtks.dao.mapper.RoleMapper;
+import com.cyberpeace.rtks.service.*;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,9 +58,8 @@ import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.rtks.dao.mapper.KnowledgeMapper;
 import com.cyberpeace.rtks.res.KnowledgeRes;
 import com.cyberpeace.rtks.res.RoleDetailRes;
-import com.cyberpeace.rtks.service.KnowledgeService;
-import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.bo.RoleStudyBo;
+import com.cyberpeace.rtks.service.bo.skill.SkillProcessRes;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -108,10 +112,26 @@ public class UserProfileServiceImpl implements UserProfileService {
 	@Autowired
 	private CrTaskSubmitMapper crTaskSubmitMapper;
 
+	@Autowired
+	private SkillService skillService;
+	
+	@Autowired
+	private TrainingPlanService trainingPlanService;
+
+	@Autowired
+	private RoleService roleService;
+
+	@Autowired
+	private LevelService levelService;
+
+	@Autowired
+	private UtilService utilService;
+
 	@Override
 	public UserProfileReportVO getUserProfileData(String dimension) {
 		UserProfileReportVO vo = new UserProfileReportVO();
 		vo.setUserName(UserInfoContext.getUserContext().getUserName());
+		vo.setDimension(dimension);
 		if (dimension.contains(UserProfileDimensionEnum.COURSE_LEARNING.getValueStr())) {
 			UserProfileCourseDataVO courseDataVO = this.getCourseData();
 			vo.setCourseData(courseDataVO);
@@ -120,13 +140,13 @@ public class UserProfileServiceImpl implements UserProfileService {
 			UserProfilePracticeDataVO practiceData = this.getPracticeData();
 			vo.setPracticeData(practiceData);
 		}
-		if (dimension.contains(UserProfileDimensionEnum.EVALUATION.getValueStr())) {
-			UserProfileEvaluationDataVO evaluationData = this.getEvaluationData();
-			vo.setEvaluationData(evaluationData);
-		}
 		if (dimension.contains(UserProfileDimensionEnum.TRAINING.getValueStr())) {
 			UserProfileTrainDataVO trainData = this.getTrainData();
 			vo.setTrainingData(trainData);
+		}
+		if (dimension.contains(UserProfileDimensionEnum.EVALUATION.getValueStr())) {
+			UserProfileEvaluationDataVO evaluationData = this.getEvaluationData();
+			vo.setEvaluationData(evaluationData);
 		}
 
 		return vo;
@@ -218,7 +238,47 @@ public class UserProfileServiceImpl implements UserProfileService {
 	}
 
 	private UserProfileEvaluationDataVO getEvaluationData() {
-		return null;
+		UserProfileEvaluationDataVO dataVO = new UserProfileEvaluationDataVO();
+		String roleId = UserInfoContext.getUserContext().getRoleId();
+		// role & level
+		Role role = roleService.getOr404(roleId);
+		dataVO.setRoleName(role.getName());
+		dataVO.setAvatar(utilService.handlerFileUrl(role.getAvatar()));
+		String levelId = role.getLevelId();
+		String fullPath = levelService.getFullPathById(levelId);
+		dataVO.setLevel(fullPath);
+
+		PageReqBase pageReqBase = new PageReqBase();
+		pageReqBase.setPerPage(99999);
+		// skill point
+		List<SkillProcessRes> skillProcessRes = Lists.newArrayList();
+
+		if (StringUtils.isNotBlank(roleId)) {
+			skillProcessRes = skillService.pageSkillListByRoleId(pageReqBase, roleId).getList();
+		}
+		List<PointDataVO> skillPoints = StreamApiUtils.map(skillProcessRes, skill -> {
+			PointDataVO vo = new PointDataVO();
+			vo.setContent(skill.getContent());
+			vo.setMastery(skill.getProcess());
+			return vo;
+		});
+		dataVO.setSkillPoints(skillPoints);
+		// knowledge point
+		List<KnowledgeRes> knowledgeResList = Lists.newArrayList();
+		if (StringUtils.isNotBlank(roleId)) {
+			knowledgeResList = trainingPlanService.getKnowledgeCourseList(pageReqBase, roleId)
+					.getList();
+
+		}
+		List<PointDataVO> knowledgePoints = StreamApiUtils.map(knowledgeResList, knowledge -> {
+			PointDataVO vo = new PointDataVO();
+			vo.setContent(knowledge.getContent());
+			vo.setMastery(knowledge.getProcess());
+			return vo;
+		});
+		dataVO.setKnowledgePoints(knowledgePoints);
+
+		return dataVO;
 	}
 
 	private UserProfilePracticeDataVO getPracticeData() {
@@ -287,7 +347,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 		for (CourseStudyProcessBo bo : processBoList) {
 			CourseListDataVO vo = new CourseListDataVO();
 			vo.setName(bo.getCourseName());
-			vo.setDuration(vo.getDuration());
+			vo.setDuration(bo.getCompleteDuration());
 			Course course = courseMap.get(bo.getCourseId());
 			vo.setModuleName(null == course ? "" : categoryMap.get(course.getCategoryId()));
 			if (bo.getProcess() == 100.0) {

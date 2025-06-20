@@ -95,7 +95,13 @@ public class YXUserServiceImpl implements YXUserService {
         String url = YX_HOST + INDICATOR_URL;
         log.info("post url is {}", url);
         JSONObject body = new JSONObject();
-        final JSONArray jsonArray = HttpClientUtil.post(url, body, JSONArray.class);
+        final JSONArray jsonArray;
+        try {
+            jsonArray = HttpClientUtil.post(url, body, JSONArray.class);
+        } catch (Exception e) {
+            log.error("永信接口不一定在房山更新，所以这里读取本地文件 getYxIndicator error", e);
+            return readJsonFile();
+        }
         for (Object json : jsonArray) {
             JSONObject jsonObject = (JSONObject) json;
             YxIndicatorBo yxIndicatorBo = new YxIndicatorBo();

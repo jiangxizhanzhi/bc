@@ -282,7 +282,7 @@
         CASE
         WHEN e.passed IS NOT NULL THEN 3   -- 已批改
         WHEN n.is_submit = 1 THEN 2        -- 已提交
-        ELSE 1                             -- 未提交
+        WHEN cl.type = 1 THEN 1            -- 未提交
         END AS report_status,
         e.passed AS report_passed_status
         FROM oj_course_lesson cl

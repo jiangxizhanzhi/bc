@@ -200,7 +200,10 @@ public class OjCourseServiceBoTest {
                 Object value = field.get(obj); // 获取属性值
                 String fieldName = field.getName();
                 invokeSetter(obj, fieldName, value);
-                invokeGetter(obj, fieldName);
+                Object o = invokeGetter(obj, fieldName);
+                if (null  == o){
+                    throw new RuntimeException("invokeGetter return null");
+                }
             } catch (Exception e) {
             }
         }

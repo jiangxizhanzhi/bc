@@ -43,6 +43,8 @@ import lombok.*;
 @NoArgsConstructor
 public class LocalSceneMeta implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * json格式。
 	 * 目前保存appResourceId

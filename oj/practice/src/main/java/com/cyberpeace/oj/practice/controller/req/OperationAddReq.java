@@ -41,6 +41,9 @@ import static com.cyberpeace.cr.crbase.utils.CrCommonValidator.validateLength;
 @ApiModel
 public class OperationAddReq implements Serializable, CustomValidate {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * 标题
 	 *

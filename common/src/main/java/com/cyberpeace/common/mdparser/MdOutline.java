@@ -30,7 +30,9 @@ import java.io.Serializable;
 **/
 @Data
 public class MdOutline implements Serializable {
-
+		
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
     @MdHeadLine(level = 2, name = "课时大纲")
     private String outline;
 

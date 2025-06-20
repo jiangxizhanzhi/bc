@@ -34,7 +34,9 @@ import java.util.List;
 @Getter
 @Setter
 public class OrgInfo implements Serializable {
-
+		
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
     /**
      * 组织id，不要使用自增数字编号（必须）
      */

@@ -47,7 +47,9 @@ import java.util.Date;
 @Setter
 @ApiModel("评估列表数据")
 public class EvalRecordListRsp implements Serializable {
-    /**
+
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;    /**
      * 资源id
      */
     @ApiModelProperty("ID")

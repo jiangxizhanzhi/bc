@@ -31,6 +31,8 @@ import lombok.Setter;
 @Setter
 public class SceneCollection implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 启用 Flow collect
 	 */

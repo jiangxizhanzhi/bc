@@ -45,6 +45,8 @@ import java.io.Serializable;
 @ApiModel("资管数据导入基础请求类")
 public class RMImportReq implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
     /**
      * 路径
      *

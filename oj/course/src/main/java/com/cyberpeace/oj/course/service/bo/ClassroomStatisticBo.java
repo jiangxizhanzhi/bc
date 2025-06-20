@@ -55,6 +55,8 @@ import java.util.List;
 @NoArgsConstructor
 public class ClassroomStatisticBo implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 等级分布
 	 *

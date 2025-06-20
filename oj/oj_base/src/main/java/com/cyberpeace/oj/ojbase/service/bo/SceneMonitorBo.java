@@ -20,6 +20,8 @@ import lombok.Setter;
 @Setter
 public class SceneMonitorBo implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 用户id
 	 *

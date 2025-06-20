@@ -71,7 +71,9 @@ import java.util.List;
 @Getter
 @Setter
 public class EvalRecordNodeProbeReq implements Serializable {
-    /**
+
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;    /**
      * id
      */
     @ApiModelProperty("场景节点ID")

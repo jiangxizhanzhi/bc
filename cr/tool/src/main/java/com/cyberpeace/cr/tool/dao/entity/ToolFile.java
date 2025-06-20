@@ -53,7 +53,9 @@ import java.io.Serializable;
 @Setter
 @TableName("cr_tool_toolfile")
 public class ToolFile implements Serializable {
-
+		
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * id
 	 */

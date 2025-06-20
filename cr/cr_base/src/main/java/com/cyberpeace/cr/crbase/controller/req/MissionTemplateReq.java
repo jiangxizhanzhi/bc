@@ -87,6 +87,8 @@ import java.util.List;
 @Slf4j
 public class MissionTemplateReq implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 标题
 	 */

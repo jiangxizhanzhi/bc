@@ -75,7 +75,9 @@ import java.util.List;
 @Setter
 @ApiModel("进度数据")
 public class HistogramRes implements Serializable {
-
+		
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
     /**
      * x 个名称
      *

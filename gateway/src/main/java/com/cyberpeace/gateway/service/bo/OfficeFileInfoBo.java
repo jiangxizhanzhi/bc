@@ -39,6 +39,8 @@ import java.io.Serializable;
 @ApiModel("office文件信息")
 public class OfficeFileInfoBo implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 基础文件名称
 	 */

@@ -35,6 +35,8 @@ import lombok.*;
 @NoArgsConstructor
 public class WebSocketMessageContext<I extends WsMessageIdentifier, M> implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 消息标识符
 	 */

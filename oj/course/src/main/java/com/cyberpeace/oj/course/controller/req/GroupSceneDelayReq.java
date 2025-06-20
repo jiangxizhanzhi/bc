@@ -52,6 +52,8 @@ import java.io.Serializable;
 @ApiModel
 public class GroupSceneDelayReq implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 课堂id
 	 *

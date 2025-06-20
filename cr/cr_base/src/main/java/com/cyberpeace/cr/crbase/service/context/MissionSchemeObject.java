@@ -34,6 +34,8 @@ import lombok.Setter;
 @Setter
 public class MissionSchemeObject<T> implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 阶段
 	 */

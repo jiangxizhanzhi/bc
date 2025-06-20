@@ -59,7 +59,9 @@ import java.util.Date;
 @Getter
 @Setter
 public class MpCollectionEvent implements Serializable {
-    /**
+		
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;    /**
      * 内容
      */
     private String content;

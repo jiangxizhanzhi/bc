@@ -47,7 +47,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class AddLessonConfigContext implements Serializable {
-
+		
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
     /**
      * 节点类型
      *

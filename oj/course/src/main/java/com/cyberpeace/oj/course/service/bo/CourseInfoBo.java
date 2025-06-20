@@ -40,6 +40,8 @@ import java.io.Serializable;
 @ApiModel("课程基本信息")
 public class CourseInfoBo implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 默认权重
 	 *

@@ -52,7 +52,9 @@ import java.util.Date;
 @Getter
 @Setter
 public class EvalVariableRefProbeDataContext implements Serializable {
-    /**
+
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;    /**
      * 格式 化值
      */
     private String formattedValue;

@@ -70,7 +70,9 @@ import org.apache.commons.collections.CollectionUtils;
 @Setter
 @ApiModel("课程目录配置信息")
 public class LessonConfigBo implements Serializable {
-
+		
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 课程id
 	 *

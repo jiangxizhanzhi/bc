@@ -40,7 +40,9 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class EvalRecordSpecialistContext implements Serializable {
-    /**
+
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;    /**
      * 类型
      */
     @ApiModelProperty("数据类型 3级指标时 value不为空 百分比:1,周期:2,延时:3")

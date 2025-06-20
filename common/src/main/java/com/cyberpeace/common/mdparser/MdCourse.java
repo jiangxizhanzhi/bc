@@ -41,6 +41,8 @@ import java.util.List;
 @Data
 public class MdCourse implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
     @MdHeadLine(level = 2, name = "课程名称")
     private String courseName;
 

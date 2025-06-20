@@ -41,6 +41,8 @@ import lombok.Setter;
 @ApiModel
 public class NodeSnapshotDeleteReq implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 场景id
 	 */

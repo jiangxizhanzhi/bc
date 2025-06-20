@@ -24,7 +24,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ExternalTheoryCountBo implements Serializable {
-    
+
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
     public ExternalTheoryCountBo() {
         this.single = 0;
         this.multiple = 0;

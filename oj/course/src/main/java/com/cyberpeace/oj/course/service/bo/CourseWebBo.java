@@ -56,6 +56,8 @@ import java.io.Serializable;
 @ApiModel("前端课程基本信息")
 public class CourseWebBo implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
     /**
      * 资源id
      *

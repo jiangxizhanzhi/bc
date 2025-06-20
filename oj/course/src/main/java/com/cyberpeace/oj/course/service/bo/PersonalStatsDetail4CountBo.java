@@ -42,7 +42,9 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class PersonalStatsDetail4CountBo implements Serializable {
-    /**
+		
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;    /**
      * 课程总计数
      *
      * @see Integer

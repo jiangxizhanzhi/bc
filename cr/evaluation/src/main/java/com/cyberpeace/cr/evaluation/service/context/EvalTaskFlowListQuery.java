@@ -40,7 +40,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EvalTaskFlowListQuery extends PageReqBase implements Serializable {
-
+		
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 交互式类型
 	 */

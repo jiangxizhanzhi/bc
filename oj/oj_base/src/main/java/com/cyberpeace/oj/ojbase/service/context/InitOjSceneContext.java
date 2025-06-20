@@ -23,7 +23,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 public class InitOjSceneContext implements Serializable {
-
+		
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 业务编号 一般指 资源编号
 	 *

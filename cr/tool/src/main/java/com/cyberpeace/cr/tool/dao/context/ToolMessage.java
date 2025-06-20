@@ -66,7 +66,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ToolMessage implements Serializable {
-    private String toolName;
+
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;    private String toolName;
     private String version;
     private String type;
     private String subType;

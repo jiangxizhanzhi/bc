@@ -628,7 +628,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		}
 
 		String group = matcher.group(1);
-		String replace = group.replace("/", File.separator).replaceFirst(".", "");
+		String replace = group.replace("/", File.separator).replaceFirst("\\.", "");
 		String filePath = mdFile.getParentFile().getPath() + replace;
 
 		return toolFileService.saveFile(filePath, transferName);
@@ -653,9 +653,9 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		}
 		StringBuilder result = new StringBuilder("[");
 		for (String s : stringList){
-			result.append("\"").append(s).append("\"").append(",");
+			result.append("\"").append(s).append("\"").append(',');
 		}
-		result.append("]");
+		result.append(']');
 		return result.toString().replace(",]", "]");
 	}
 

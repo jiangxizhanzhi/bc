@@ -16,6 +16,8 @@ import lombok.Setter;
 @Setter
 public class MonitorSession implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/** 帮助 URL */
 	@ApiModelProperty(value = "协助url")
 	private String assistanceUrl;

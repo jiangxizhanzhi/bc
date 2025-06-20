@@ -43,7 +43,9 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class EvalVariableDataPageRsp implements Serializable {
-    /**
+
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;    /**
      * 节点ip地址
      */
     @ApiModelProperty("场景节点IP")

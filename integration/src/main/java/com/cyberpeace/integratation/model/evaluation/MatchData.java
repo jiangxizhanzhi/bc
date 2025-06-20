@@ -37,6 +37,8 @@ import lombok.Setter;
 @Setter
 public class MatchData implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 基准时间
 	 */

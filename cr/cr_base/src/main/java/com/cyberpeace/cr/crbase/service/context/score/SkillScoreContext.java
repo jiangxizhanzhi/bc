@@ -19,6 +19,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class SkillScoreContext implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
     /**
      * 技能名称
      */

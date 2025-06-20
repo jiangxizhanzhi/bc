@@ -1044,7 +1044,9 @@ public class MDParser {
 @Getter
 @Setter
 class OptionMessage implements Serializable {
-
+		
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 选项标签
 	 */

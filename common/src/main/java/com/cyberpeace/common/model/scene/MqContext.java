@@ -28,7 +28,9 @@ import java.io.Serializable;
  * 总结：这是一个简单的数据传输对象（DTO），但命名风格不符合常规，建议改进以提高代码可读性和维护性。 
 **/
 public class MqContext implements Serializable {
-
+		
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 用户id
 	 */

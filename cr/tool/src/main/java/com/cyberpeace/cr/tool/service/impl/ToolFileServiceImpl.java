@@ -91,7 +91,7 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 	 */
 	@Override
 	public ToolFile saveFile(String filePath, boolean transferName) {
-		String fileSuffix = filePath.substring(filePath.lastIndexOf("."));
+		String fileSuffix = filePath.substring(filePath.lastIndexOf('.'));
 		String fileName = UUID.randomUUID() + fileSuffix;
 		// 工具库的附件，使用原始的附件名
 		if (!transferName) {

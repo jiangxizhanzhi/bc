@@ -19,7 +19,9 @@ import java.util.List;
 @Getter
 @Setter
 public class MdTheoryPractice implements Serializable {
-
+		
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	@MdHeadLine(level = 1, name = "课后习题")
 	private String title;
 

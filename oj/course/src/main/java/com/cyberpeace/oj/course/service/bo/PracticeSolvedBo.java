@@ -69,6 +69,8 @@ import java.io.Serializable;
 @ApiModel
 public class PracticeSolvedBo implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 用户答案
 	 *

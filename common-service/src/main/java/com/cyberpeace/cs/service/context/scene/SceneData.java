@@ -37,6 +37,8 @@ import static com.cyberpeace.common.constant.MpSceneStatusConstant.*;
 @Setter
 public class SceneData implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 拓扑学
 	 */

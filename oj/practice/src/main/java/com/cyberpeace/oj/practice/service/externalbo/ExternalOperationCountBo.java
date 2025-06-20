@@ -23,6 +23,8 @@ import lombok.Setter;
 @Setter
 public class ExternalOperationCountBo implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	public ExternalOperationCountBo(Map<Integer, List<PracticeOperation>> typeMap) {
 		initStatic(typeMap);
 		initDynamic(typeMap);

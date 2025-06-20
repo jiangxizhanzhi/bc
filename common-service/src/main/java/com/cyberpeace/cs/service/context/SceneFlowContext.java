@@ -44,7 +44,9 @@ import lombok.Data;
 @Getter
 @Setter
 public class SceneFlowContext implements Serializable {
-
+		
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 流id
 	 */

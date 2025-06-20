@@ -271,7 +271,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	 * @return
 	 */
 	public String reFileName(String fileName) {
-		String afterFix = fileName.substring(fileName.lastIndexOf(".") + 1);
+		String afterFix = fileName.substring(fileName.lastIndexOf('.') + 1);
 		return IDGeneratorUtil.getID() + CommonConstant.PERIOD + afterFix;
 	}
 

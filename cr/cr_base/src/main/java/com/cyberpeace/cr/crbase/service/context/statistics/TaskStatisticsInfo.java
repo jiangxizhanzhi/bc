@@ -16,6 +16,8 @@ import lombok.Setter;
 @Setter
 public class TaskStatisticsInfo implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 成功任务计数
 	 */

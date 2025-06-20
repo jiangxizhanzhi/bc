@@ -25,6 +25,8 @@ import lombok.Data;
 @Data
 public class ModelA implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	private String name;
 
 	private Integer num;

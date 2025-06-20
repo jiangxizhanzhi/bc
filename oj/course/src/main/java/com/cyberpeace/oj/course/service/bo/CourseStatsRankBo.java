@@ -45,7 +45,9 @@ import java.io.Serializable;
 @Setter
 @ApiModel("课程学习排名")
 public class CourseStatsRankBo implements Serializable {
-    /**
+
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;    /**
      * 订购数据人员
      *
      * @see JSONObject

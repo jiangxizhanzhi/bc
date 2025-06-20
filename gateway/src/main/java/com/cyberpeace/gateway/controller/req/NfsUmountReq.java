@@ -63,6 +63,8 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class NfsUmountReq implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 路径
 	 */

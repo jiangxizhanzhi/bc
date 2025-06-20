@@ -37,6 +37,8 @@ import com.google.common.collect.Maps;
 **/
 public class WsMessageIdentifier implements Serializable {
 
+	// 明确指定版本UID
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 需要发送消息的用户id
 	 */

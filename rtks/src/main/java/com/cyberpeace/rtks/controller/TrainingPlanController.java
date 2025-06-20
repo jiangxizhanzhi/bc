@@ -22,6 +22,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.controller.res.skill.RelatedTrainingRes;
 import com.cyberpeace.rtks.controller.res.skill.TrainingPathRes;
@@ -338,6 +339,8 @@ public class TrainingPlanController {
 //		进度
 		res.setCompletedCourseCount((int)trainingBoList.stream().filter(MissionPathBo::getCompletionStatus).count());
 		res.setCourseCount(trainingBoList.size());
+		res.setProgress(
+				MathUtils.roundDivide(res.getCompletedCourseCount() * 100, res.getCourseCount()));
 		return new BaseRsp<>(res);
 	}
 

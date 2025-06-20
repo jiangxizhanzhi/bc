@@ -52,4 +52,7 @@ public class TrainingPathRes implements Serializable {
 	@ApiModelProperty("课程数")
 	private Integer courseCount;
 
+	@ApiModelProperty("训练进度")
+	private Integer progress;
+
 }

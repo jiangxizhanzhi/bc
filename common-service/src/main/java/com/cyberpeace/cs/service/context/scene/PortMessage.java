@@ -2,7 +2,6 @@ package com.cyberpeace.cs.service.context.scene;
 
 import java.io.Serializable;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,7 +27,7 @@ import lombok.Setter;
 **/
 @Getter
 @Setter
-public class Port implements Serializable {
+public class PortMessage implements Serializable {
 
 	/**
 	 * ip地址

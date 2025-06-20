@@ -130,11 +130,15 @@ public class OjCourseServiceBoTest {
                     // 调用方法
                     method.invoke(obj, defaultValues);
                 } catch (Exception e) {
+                    // 将异常信息打印出来就行，控制台展示
+                    System.out.println("Test Exception"+ e.getMessage());
                 }
             } else {
                 try {
                     method.invoke(obj);
                 } catch (Exception e) {
+                    // 将异常信息打印出来就行，控制台展示
+                    System.out.println("Test Exception"+ e.getMessage());
                 }
             }
         }
@@ -168,6 +172,8 @@ public class OjCourseServiceBoTest {
                             // 调用方法
                             method.invoke(aa[0]);
                         } catch (Exception e) {
+                            // 将异常信息打印出来就行，控制台展示
+                            System.out.println("Test Exception"+ e.getMessage());
                         }
                     }
                 }
@@ -205,6 +211,8 @@ public class OjCourseServiceBoTest {
                     throw new RuntimeException("invokeGetter return null");
                 }
             } catch (Exception e) {
+                // 将异常信息打印出来就行，控制台展示
+                System.out.println("Test Exception"+ e.getMessage());
             }
         }
     }
@@ -234,6 +242,8 @@ public class OjCourseServiceBoTest {
             Method setterMethod = obj.getClass().getMethod(setterMethodName, value.getClass());
             setterMethod.invoke(obj, value);
         } catch (Exception e) {
+            // 将异常信息打印出来就行，控制台展示
+            System.out.println("Test Exception"+ e.getMessage());
         }
     }
 

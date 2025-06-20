@@ -37,16 +37,22 @@ public class TaskParser implements MdContentParser<List<RoleBo>, String> {
 	 */
 	@Override
 	public String write(List<RoleBo> roleBos) {
-		String str = "";
+		StringBuilder str = new StringBuilder();
 		int i = 1;
 		for (RoleBo stage : roleBos) {
-			str = str + "## 阶段" + i++ + System.lineSeparator();
-			str = str + stage.getTeamName() + System.lineSeparator();
-			str = str + "### 任务" + System.lineSeparator();
-			for(String task : stage.getRoleName()){
-				str = str + "- " + task + System.lineSeparator();
+			// 检查整数溢出
+			if (i == Integer.MAX_VALUE) {
+				throw new IllegalStateException("Stage count exceeds maximum integer value");
+			}
+
+			str.append("## 阶段").append(i++).append(System.lineSeparator())
+					.append(stage.getTeamName()).append(System.lineSeparator())
+					.append("### 任务").append(System.lineSeparator());
+
+			for (String task : stage.getRoleName()) {
+				str.append("- ").append(task).append(System.lineSeparator());
 			}
 		}
-		return LocalStringUtil.frontBackLine(str);
+		return LocalStringUtil.frontBackLine(str.toString());
 	}
 }

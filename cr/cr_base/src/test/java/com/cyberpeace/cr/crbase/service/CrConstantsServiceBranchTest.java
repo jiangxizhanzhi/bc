@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
  * not the practice
  * tos
  */
+@Slf4j
 public class CrConstantsServiceBranchTest {
 
     /**

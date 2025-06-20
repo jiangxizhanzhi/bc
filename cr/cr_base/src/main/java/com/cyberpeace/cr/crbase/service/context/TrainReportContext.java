@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.time.DateUtils;
 
+import java.math.BigInteger;
 import java.time.Year;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -173,8 +174,20 @@ public class TrainReportContext {
 		// boolean isSameYear = DateUtil.isSameYear(scoreTrendReq.getStartTime(),
 		// scoreTrendReq.getEndTime());
 		boolean isSameYear = false;
+
 		// 间隔
-		long interval = (end - start) / scoreTrendReq.getScoreCount();
+		long interval;
+		try {
+			BigInteger diff = BigInteger.valueOf(end).subtract(BigInteger.valueOf(start));
+			BigInteger count = BigInteger.valueOf(scoreTrendReq.getScoreCount());
+			if (count.compareTo(BigInteger.ZERO) <= 0) {
+				throw new IllegalArgumentException("Score count must be positive");
+			}
+			interval = diff.divide(count).longValueExact();
+		} catch (ArithmeticException e) {
+			throw new IllegalArgumentException("Calculation overflow or invalid parameters", e);
+		}
+
 		timeList.add(scoreTrendReq.getStartTime());
 		if (isSameYear) {
 			timeStringList

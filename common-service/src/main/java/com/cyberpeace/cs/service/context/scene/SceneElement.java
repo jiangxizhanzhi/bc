@@ -3,7 +3,6 @@ package com.cyberpeace.cs.service.context.scene;
 import java.io.Serializable;
 import java.util.List;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -45,6 +44,6 @@ public class SceneElement implements Serializable {
 	/**
 	 * 港口
 	 */
-	private List<Port> ports;
+	private List<PortMessage> ports;
 }
 

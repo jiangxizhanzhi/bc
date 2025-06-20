@@ -112,6 +112,10 @@
                 #{courseId}
             </foreach>
         </if>
+        <if test="organizationId !=null and organizationId != ''">
+            <bind name="orgSearch" value="'%' + organizationId + '%'"/>
+            and c.organization_ids like #{orgSearch}
+        </if>
         <if test="null != pattern and pattern != ''">
             <bind name="pattern" value="'%' + pattern + '%'"/>
             and (LOWER(COALESCE(NULLIF(tp.name, ''), 'task set')) like #{pattern}

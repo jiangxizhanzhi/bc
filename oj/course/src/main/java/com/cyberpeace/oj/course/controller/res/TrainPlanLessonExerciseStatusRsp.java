@@ -30,5 +30,6 @@ public class TrainPlanLessonExerciseStatusRsp implements Serializable {
     @ApiModelProperty("课后练习状态 1- 待提交， 2- 已提交 ， 3-已批改")
     private Integer levelStatus;
 
+    private String paperId;
 
 }

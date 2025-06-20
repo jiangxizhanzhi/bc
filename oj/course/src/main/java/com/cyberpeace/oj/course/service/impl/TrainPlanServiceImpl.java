@@ -1,10 +1,8 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +38,9 @@ import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.TrainPlanService;
 import com.cyberpeace.oj.course.service.bo.TrainPlanBo;
 import com.cyberpeace.oj.ojbase.constant.TrainPlanStatusEnum;
+import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
+import com.cyberpeace.oj.practice.entity.Paper;
+import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -89,6 +90,9 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private PaperMapper paperMapper;
 
 	/**
 	 * 训练计划列表
@@ -196,10 +200,31 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 			trainPlanRsp.setMissionCountTotal(roomIdsList.size());
 
 			// 查询课后练习数据， 按 lessonId 映射
-			final List<TrainPlanLessonExerciseStatusRsp> trainPlanLessonExerciseStatusRsps = classroomMapper.selectLessonExerciseStatus(lessonIds, userInfo.getUserId());
-			final Map<String, TrainPlanLessonExerciseStatusRsp> lessonExerciseStatusRspMap =
-					StreamApiUtils.toMap(trainPlanLessonExerciseStatusRsps, TrainPlanLessonExerciseStatusRsp::getLessonId,
-					trainPlanLessonExerciseStatusRsp -> trainPlanLessonExerciseStatusRsp);
+			final List<TrainPlanLessonExerciseStatusRsp> trainPlanLessonExerciseStatusRsps = classroomMapper
+					.selectLessonExerciseStatus(lessonIds, userInfo.getUserId());
+			// 处理练习未下发
+			List<String> paperIds = StreamApiUtils.map(trainPlanLessonExerciseStatusRsps, TrainPlanLessonExerciseStatusRsp::getPaperId);
+			paperIds = StreamApiUtils.filter(paperIds, StringUtils::isNotBlank);
+			List<Paper> papers = paperIds.isEmpty()? Lists.newArrayList() : paperMapper.selectBatchIds(paperIds);
+			Set<String> releaseSet = Sets.newHashSet();
+			if (StringUtils.isNotBlank(userInfo.getOrganizationId())) {
+				for (Paper paper : papers) {
+					if (StringUtils.isNotBlank(paper.getReadAuthIds())
+							&& paper.getReadAuthIds().contains(userInfo.getOrganizationId())) {
+						releaseSet.add(paper.getResourceId());
+					}
+				}
+			}
+			for (TrainPlanLessonExerciseStatusRsp rsp : trainPlanLessonExerciseStatusRsps) {
+				if (rsp.getLevelStatus() == 1 && !releaseSet.contains(rsp.getPaperId())) {
+					rsp.setLevelStatus(null);
+				}
+			}
+			
+			final Map<String, TrainPlanLessonExerciseStatusRsp> lessonExerciseStatusRspMap = StreamApiUtils
+					.toMap(trainPlanLessonExerciseStatusRsps,
+							TrainPlanLessonExerciseStatusRsp::getLessonId,
+							trainPlanLessonExerciseStatusRsp -> trainPlanLessonExerciseStatusRsp);
 
 			// 获取实验报告状态，按 lessonId 映射
 			final List<TrainPlanLessonReportStatusRsp> trainPlanLessonReportStatusRsps = classroomMapper.selectLessonReportStatus(lessonIds, userInfo.getUserId());

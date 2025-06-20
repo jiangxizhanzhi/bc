@@ -250,6 +250,7 @@
         l.resource_id AS lesson_id,
         e.level,
         e.score,
+        l.paper_id AS paper_id,
         CASE
         WHEN e.lesson_id IS NOT NULL AND e.level IS NOT NULL THEN 3  -- 已评估
         WHEN e.lesson_id IS NOT NULL THEN 2                          -- 已提交

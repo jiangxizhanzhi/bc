@@ -768,9 +768,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         final IPage<ClassRoomExperimentReportBo> page = classroomMapper.selectPageReports(pageParam, userInfo);
         final List<String> trainPlanIds = StreamApiUtils.map(page.getRecords(), ClassRoomExperimentReportBo::getTrainPlanId);
         // 批量查询trainplan
-        final List<TrainPlan> trainPlans = trainPlanMapper.selectBatchIds(trainPlanIds);
-        final Map<String, TrainPlan> trainPlanMap = StreamApiUtils.toMap(trainPlans, TrainPlan::getResourceId, trainPlan -> trainPlan);
-
+		final List<TrainPlan> trainPlans = trainPlanIds.isEmpty() ? Lists.newArrayList()
+				: trainPlanMapper.selectBatchIds(trainPlanIds);
+		final Map<String, TrainPlan> trainPlanMap = StreamApiUtils.toMap(trainPlans,
+				TrainPlan::getResourceId, trainPlan -> trainPlan);
 
         for (ClassRoomExperimentReportBo reportBo : page.getRecords()) {
             // 获取计划名称
@@ -779,7 +780,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
                 reportBo.setPlanName(TrainPlan.TASK_SET);
                 reportBo.setTrainPlanId(TrainPlan.TASK_SET_ID);
             } else {
-                reportBo.setPlanName(trainPlanMap.get(reportBo.getTrainPlanId()).getName());
+                reportBo.setPlanName(trainPlanMap.getOrDefault(reportBo.getTrainPlanId(), new TrainPlan()).getName());
             }
         }
         return page;

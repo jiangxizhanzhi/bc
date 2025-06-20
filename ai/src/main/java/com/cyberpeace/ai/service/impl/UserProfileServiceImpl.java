@@ -5,11 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.common.util.MathUtils;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.rtks.dao.entity.Role;
-import com.cyberpeace.rtks.dao.mapper.RoleMapper;
-import com.cyberpeace.rtks.service.*;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +27,7 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
+import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
@@ -44,6 +40,7 @@ import com.cyberpeace.cr.crbase.service.CrBaseService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsRsp;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
@@ -56,9 +53,11 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
+import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.dao.mapper.KnowledgeMapper;
 import com.cyberpeace.rtks.res.KnowledgeRes;
 import com.cyberpeace.rtks.res.RoleDetailRes;
+import com.cyberpeace.rtks.service.*;
 import com.cyberpeace.rtks.service.bo.RoleStudyBo;
 import com.cyberpeace.rtks.service.bo.skill.SkillProcessRes;
 
@@ -211,7 +210,8 @@ public class UserProfileServiceImpl implements UserProfileService {
 				.in(CrTask::getRoomId, allRoomIds).eq(CrTask::getUserId, userId));
 		List<String> taskIds = StreamApiUtils.map(taskList, CrTask::getResourceId);
 
-		List<CrTaskSubmit> submitList = crTaskSubmitMapper.selectList(
+		List<CrTaskSubmit> submitList = taskIds.isEmpty() ? Lists.newArrayList()
+				: crTaskSubmitMapper.selectList(
 				new LambdaQueryWrapper<CrTaskSubmit>().in(CrTaskSubmit::getTaskId, taskIds));
 		Map<String, List<CrTask>> roomTaskMap = StreamApiUtils.groupBy(taskList, CrTask::getRoomId);
 		Map<String, List<CrTaskSubmit>> submitMap = StreamApiUtils.groupBy(submitList,

@@ -4,21 +4,15 @@ import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.cyberpeace.oj.course.controller.res.CourseStatisticsRes;
-import com.cyberpeace.oj.course.controller.res.LessonRecordRes;
-import com.cyberpeace.oj.course.service.*;
-import com.cyberpeace.oj.practice.entity.Paper;
-import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -33,13 +27,12 @@ import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.SystemPropertyService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.course.controller.res.CourseStatisticsRes;
+import com.cyberpeace.oj.course.controller.res.LessonRecordRes;
 import com.cyberpeace.oj.course.dao.context.SpecialCourseContext;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
-import com.cyberpeace.oj.course.service.CourseCategoryService;
-import com.cyberpeace.oj.course.service.CourseLessonService;
-import com.cyberpeace.oj.course.service.CourseService;
-import com.cyberpeace.oj.course.service.LessonConfigService;
+import com.cyberpeace.oj.course.service.*;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
@@ -48,10 +41,14 @@ import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.ResourceCollectionMapper;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
-import com.cyberpeace.oj.practice.dao.entity.*;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperationRef;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheoryRef;
 import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
+import com.cyberpeace.oj.practice.entity.Paper;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.*;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -1042,6 +1039,18 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
         return courseStatisticsRes;
     }
+
+	@Override
+	public List<String> getWebCourseIds() {
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				true);
+		List<String> webCourseIds = courseMapper.selectByAuth(authContext);
+		if (CollectionUtils.isEmpty(webCourseIds)) {
+			return webCourseIds;
+		}
+		webCourseIds = courseMapper.selectWebCourseIds(webCourseIds);
+		return webCourseIds;
+	}
 
 
 	/**

@@ -162,4 +162,6 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 * @see String
 	 */
 	void updateCourseHeat(@Param("heat") Integer heat,@Param("resourceId") String resourceId);
+
+	List<String> selectWebCourseIds(@Param("courseIds") List<String> courseIds);
 }

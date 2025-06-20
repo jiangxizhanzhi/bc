@@ -196,4 +196,12 @@ public interface CourseService extends IService<Course> {
 
     CourseStatisticsRes statistics(ListRsp<CourseWebBo> boListRsp, AuthContext authContext);
 
+	/**
+	 * 获取当前用户在前台课程训练页面可以看到的课程id
+	 *
+	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 */
+	List<String> getWebCourseIds();
 }

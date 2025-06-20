@@ -179,4 +179,15 @@
             read_auth_ids like #{likeOrganization}
         </where>
     </select>
+    <select id="selectWebCourseIds" resultType="java.lang.String">
+        select distinct l.course_id
+        from oj_course_lesson l
+        inner join oj_course c on l.course_id = c.resource_id
+        where l.public = 1
+        and c.public = 1
+        and l.course_id in
+        <foreach item="courseId" collection="courseIds" separator="," open="(" close=")">
+            #{courseId}
+        </foreach>
+    </select>
 </mapper>

@@ -1,5 +1,13 @@
 package com.cyberpeace.rtks.service.impl;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.course.service.CourseService;
@@ -16,13 +24,6 @@ import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.bo.CourseKnowledgeSkillBo;
 import com.cyberpeace.rtks.service.bo.RoleCourseBo;
 import com.google.common.collect.Lists;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 课程训练Service实现
@@ -99,6 +100,9 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 				String.class);
 		// get course ids
 		List<String> courseIds = knowledgeService.getCourseByIds(knowledgeIds);
+		// filter available course
+		List<String> availableCourseIds = courseService.getWebCourseIds();
+		courseIds.retainAll(availableCourseIds);
 
 		List<CourseStudyProcessBo> processBos = courseStatisticsService.statisticByIds(courseIds,
 				userId);

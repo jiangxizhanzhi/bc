@@ -577,7 +577,7 @@ public class MDParser {
 		}
 		// team training
 		if (businessTemplate.getBusinessType().equals(ZiguanConstants.TEAM_TRAIN)) {
-			List<RoleMessage> roles = parseRoles(data.get(ZiguanConstants.ROLE_INFO)).getStudent();
+			List<Role> roles = parseRoles(data.get(ZiguanConstants.ROLE_INFO)).getStudent();
 			templateContext.setRoleConfig(
 					JsonUtil.arrayToString(team(roles), PropertyNamingStrategy.SnakeCase));
 		}
@@ -613,7 +613,7 @@ public class MDParser {
 	 *
 	 * @return {@code RoleInfo }
 	 */
-	private RoleInfoMessage single() {
+	private RoleInfo single() {
 		return parseRoleMd(DEFAULT_ROLE);
 	}
 
@@ -623,8 +623,8 @@ public class MDParser {
 	 * @param roles 角色
 	 * @return {@code List<RoleInfo> }
 	 */
-	private List<RoleInfoMessage> team(List<RoleMessage> roles) {
-		List<RoleInfoMessage> infos = Lists.newArrayList();
+	private List<RoleInfo> team(List<Role> roles) {
+		List<RoleInfo> infos = Lists.newArrayList();
 		roles.forEach(role -> infos.add(parseRoleMd(role.getName())));
 		return infos;
 	}
@@ -668,7 +668,7 @@ public class MDParser {
 				line = iter.next();
 				while (!line.startsWith(ENTRY_HEAD)) {
 					// 读取并分类
-					RoleMessage role = new RoleMessage(line.substring(4), iter.next().substring(6));
+					Role role = new Role(line.substring(4), iter.next().substring(6));
 					if (groupName.equals(RoleGroupNames.STUDENT)) {
 						groupRoles.getStudent().add(role);
 					}
@@ -698,10 +698,10 @@ public class MDParser {
 	 * @param roleName
 	 * @return
 	 */
-	private RoleInfoMessage parseRoleMd(String roleName) {
+	private RoleInfo parseRoleMd(String roleName) {
 		String mdFile = dirPath + SEP + TASK_DIR + SEP + roleName + MD_SUFFIX;
 		String nodeText = "";
-		RoleInfoMessage roleInfo = new RoleInfoMessage();
+		RoleInfo roleInfo = new RoleInfo();
 		roleInfo.setName(roleName);
 		if (!new File(mdFile).isFile()) {
 			log.warn(String.format("%s does not exist.", mdFile));
@@ -728,7 +728,7 @@ public class MDParser {
 	 * @param roleInfo
 	 * @param nodeText 节点文本
 	 */
-	private void parseRoleNodes(RoleInfoMessage roleInfo, String nodeText) {
+	private void parseRoleNodes(RoleInfo roleInfo, String nodeText) {
 		if (StringUtils.isNotBlank(nodeText)) {
 			Map<String, String> nodeDict = parseText(nodeText, LINE_SEP + H2,
 					ZiguanConstants.ROLE_NODES_CATEGORY);
@@ -836,12 +836,12 @@ public class MDParser {
 		if (template.getType().equals(ZiguanConstants.SINGLE_CHOICE_TYPE)
 				|| template.getType().equals(ZiguanConstants.MULTI_CHOICE_TYPE)) {
 			String rawOption = missionData.get(ZiguanConstants.OPTION).substring(2);
-			List<OptionMessage> options = Lists.newArrayList();
+			List<Option> options = Lists.newArrayList();
 			char[] a = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 			String[] rawOptions = rawOption.split(LIST_SEP);
 			int len = rawOptions.length;
 			for (int i = 0; i < len; i++) {
-				options.add(new OptionMessage(a[i], rawOptions[i]));
+				options.add(new Option(a[i], rawOptions[i]));
 			}
 			template.setOption(JsonUtil.arrayToString(options));
 		} else {
@@ -1043,7 +1043,7 @@ public class MDParser {
  */
 @Getter
 @Setter
-class OptionMessage implements Serializable {
+class Option implements Serializable {
 		
 	// 明确指定版本UID
 	private static final long serialVersionUID = 1L;
@@ -1057,7 +1057,7 @@ class OptionMessage implements Serializable {
 	 */
 	private String optionValue;
 
-	public OptionMessage(Character optionLabel, String optionValue) {
+	public Option(Character optionLabel, String optionValue) {
 		this.optionLabel = optionLabel;
 		this.optionValue = optionValue;
 	}
@@ -1076,12 +1076,12 @@ class RbRoleInfo {
 	/**
 	 * RED 角色
 	 */
-	private List<RoleInfoMessage> redRoles;
+	private List<RoleInfo> redRoles;
 
 	/**
 	 * 蓝色角色
 	 */
-	private List<RoleInfoMessage> blueRoles;
+	private List<RoleInfo> blueRoles;
 }
 
 /**
@@ -1092,7 +1092,7 @@ class RbRoleInfo {
  */
 @Getter
 @Setter
-class RoleInfoMessage {
+class RoleInfo {
 
 	/**
 	 * 资产节点
@@ -1237,7 +1237,7 @@ class Node {
  */
 @Getter
 @Setter
-class RoleMessage {
+class Role {
 
 	/**
 	 * 名称
@@ -1249,7 +1249,7 @@ class RoleMessage {
 	 */
 	private String desc;
 
-	public RoleMessage(String name, String desc) {
+	public Role(String name, String desc) {
 		this.name = name;
 		this.desc = desc;
 	}
@@ -1268,17 +1268,17 @@ class GroupRoles {
 	/**
 	 * 学员
 	 */
-	private List<RoleMessage> student = Lists.newArrayList();
+	private List<Role> student = Lists.newArrayList();
 
 	/**
 	 * 红
 	 */
-	private List<RoleMessage> red = Lists.newArrayList();
+	private List<Role> red = Lists.newArrayList();
 
 	/**
 	 * 蓝
 	 */
-	private List<RoleMessage> blue = Lists.newArrayList();
+	private List<Role> blue = Lists.newArrayList();
 }
 
 /**

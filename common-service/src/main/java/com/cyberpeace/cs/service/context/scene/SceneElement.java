@@ -46,6 +46,6 @@ public class SceneElement implements Serializable {
 	/**
 	 * 港口
 	 */
-	private List<PortMessage> ports;
+	private List<Port> ports;
 }
 

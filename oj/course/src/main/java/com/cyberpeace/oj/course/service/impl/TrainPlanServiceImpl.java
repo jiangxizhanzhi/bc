@@ -129,7 +129,7 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 				false));
 		IPage<TrainPlanRsp> result = trainPlanMapper.listTrainPlan(page, trainPlanReq.getPattern(), trainPlanReq.getOrganizationId(),
 				userInfo.getUserId(), userInfo.isSuperuser(), userInfo.isAdmin(), courseIds,
-				trainPlanReq.getStatus());
+				trainPlanReq.getStatus(), TrainPlan.defaultTaskSetName());
 
 		// set status
 		if (trainPlanReq.getStatus() != null) {
@@ -178,12 +178,12 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 				true));
 		// 查询已授权的课程，计划状态和当前时间进行比较，未开始、进行中、已开始的计划
 		IPage<TrainPlanWebRsp> result = trainPlanMapper.listTrainWebPlan(page, trainPlanReq.getPattern(), userInfo.getOrganizationId(),
-				courseIds, trainPlanReq.getPlanStatus());
+				courseIds, trainPlanReq.getPlanStatus(), TrainPlan.defaultTaskSetName());
 
 		for (TrainPlanWebRsp trainPlanRsp : result.getRecords()) {
 			// 给空的计划设置默认计划和名称
 			if (StringUtils.isEmpty(trainPlanRsp.getName())) {
-				trainPlanRsp.setName(TrainPlan.TASK_SET);
+				trainPlanRsp.setName(TrainPlan.defaultTaskSetName());
 				trainPlanRsp.setResourceId(TrainPlan.TASK_SET_ID);
 			}
 			final String roomIds = trainPlanRsp.getRoomIds();

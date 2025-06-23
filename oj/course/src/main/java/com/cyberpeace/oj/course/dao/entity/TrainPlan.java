@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.common.model.CommonContext;
+
 import lombok.Data;
 
 
@@ -43,16 +45,13 @@ public class TrainPlan extends BaseTable {
 	private String createUserId;
 
 	/**
-	 * 任务设置
-	 *
-	 * @see String
-	 */
-	public static String TASK_SET = "Task Set";
-
-	/**
 	 * 任务设置id
 	 *
 	 * @see String
 	 */
 	public static String TASK_SET_ID = "task_set_id";
+
+	public static String defaultTaskSetName() {
+		return CommonContext.isChinese() ? "默认任务集" : "Task Set";
+	}
 }

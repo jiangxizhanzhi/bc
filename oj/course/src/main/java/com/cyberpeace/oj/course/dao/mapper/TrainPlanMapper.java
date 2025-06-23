@@ -68,6 +68,7 @@ public interface TrainPlanMapper extends BaseMapper<TrainPlan> {
 	 * @param isAdmin        是否管理
 	 * @param courseIds      课程id列表
 	 * @param status
+	 * @param defaultTaskSetName
 	 * @return {@code IPage<TrainPlanRsp> }
 	 * @throws
 	 * @see Page<TrainPlanRsp>
@@ -79,9 +80,15 @@ public interface TrainPlanMapper extends BaseMapper<TrainPlan> {
 	 * @see List<String>
 	 * @see IPage<TrainPlanRsp>
 	 */
-	IPage<TrainPlanRsp> listTrainPlan(Page<TrainPlanRsp> page, String pattern,
-			String organizationId, String userId, boolean isSuperUser, boolean isAdmin,
-			List<String> courseIds, Integer status);
+	IPage<TrainPlanRsp> listTrainPlan(@Param("page") Page<TrainPlanRsp> page,
+			@Param("pattern") String pattern, @Param("organizationId") String organizationId,
+			@Param("userId") String userId, @Param("isSuperUser") boolean isSuperUser,
+			@Param("isAdmin") boolean isAdmin, @Param("courseIds") List<String> courseIds,
+			@Param("status") Integer status,
+			@Param("defaultTaskSetName") String defaultTaskSetName);
 
-	IPage<TrainPlanWebRsp> listTrainWebPlan(Page<TrainPlanWebRsp> page, String pattern, String organizationId, List<String> courseIds, Integer planStatus);
+	IPage<TrainPlanWebRsp> listTrainWebPlan(@Param("page") Page<TrainPlanWebRsp> page,
+			@Param("pattern") String pattern, @Param("organizationId") String organizationId,
+			@Param("courseIds") List<String> courseIds, @Param("planStatus") Integer planStatus,
+			@Param("defaultTaskSetName") String defaultTaskSetName);
 }

@@ -683,7 +683,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
             classRoomWebBo.setIsSignIn(classroomSignMap.getOrDefault(classroom.getResourceId(), false));
 
 			classRoomWebBo.setPlanName(
-					StringUtils.isBlank(classroom.getTrainPlanId()) ? TrainPlan.TASK_SET
+					StringUtils.isBlank(classroom.getTrainPlanId()) ? TrainPlan.defaultTaskSetName()
 							: planMap.get(classroom.getTrainPlanId()));
 
             classroomBos.add(classRoomWebBo);
@@ -777,7 +777,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
             // 获取计划名称
             if (StringUtils.isEmpty(reportBo.getTrainPlanId())) {
                 // 默认的计划
-                reportBo.setPlanName(TrainPlan.TASK_SET);
+				reportBo.setPlanName(TrainPlan.defaultTaskSetName());
                 reportBo.setTrainPlanId(TrainPlan.TASK_SET_ID);
             } else {
                 reportBo.setPlanName(trainPlanMap.getOrDefault(reportBo.getTrainPlanId(), new TrainPlan()).getName());
@@ -804,7 +804,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
             // 获取计划名称
             if (StringUtils.isEmpty(reportBo.getTrainPlanId())) {
                 // 默认的计划
-                reportBo.setPlanName(TrainPlan.TASK_SET);
+				reportBo.setPlanName(TrainPlan.defaultTaskSetName());
                 reportBo.setTrainPlanId(TrainPlan.TASK_SET_ID);
             } else {
                 reportBo.setPlanName(trainPlanMap.get(reportBo.getTrainPlanId()).getName());

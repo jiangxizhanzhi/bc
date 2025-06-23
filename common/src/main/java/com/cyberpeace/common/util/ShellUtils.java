@@ -1,8 +1,10 @@
 package com.cyberpeace.common.util;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -65,13 +67,16 @@ public class ShellUtils {
 	public static List<String> execShell(String shell) {
 		log.info("Start exec shell! command=[{}]", shell);
 
-		Process process;
+		Process process = null;
+		BufferedReader input = null;
+		InputStreamReader isr = null;
+
 		List<String> processResult = Lists.newArrayList();
 
 		try {
 			process = Runtime.getRuntime().exec(shell);
-			BufferedReader input = new BufferedReader(
-					new InputStreamReader(process.getInputStream()));
+			isr = new InputStreamReader(process.getInputStream());
+			input = new BufferedReader(isr);
 
 			String line;
 			while ((line = input.readLine()) != null) {
@@ -79,10 +84,50 @@ public class ShellUtils {
 				processResult.add(line);
 			}
 
-		} catch (Exception e) {
+			// 等待进程执行完成并获取退出值
+			int exitCode = process.waitFor();
+			if (exitCode != 0) {
+				log.error("Shell命令执行失败，退出码: {}", exitCode);
+				throw new BusinessException(ErrorCode.LOCAL_SHELL_EXEC_FAILED);
+			}
+
+		} catch (IOException e) { // 显式捕获IOException (修改点1)
+			log.error("执行shell命令时发生IO异常! command=[{}], error: {}", shell, e.getMessage(), e);
+			throw new BusinessException(ErrorCode.LOCAL_SHELL_EXEC_FAILED);
+		} catch (InterruptedException e) { // 处理线程中断异常 (修改点2)
+			Thread.currentThread().interrupt(); // 恢复中断状态
+			log.error("执行shell命令时线程被中断! command=[{}], error: {}", shell, e.getMessage());
+			throw new BusinessException(ErrorCode.LOCAL_SHELL_EXEC_FAILED);
+		} catch (Exception e) { // 保留原有通用异常处理
 			log.error("Exec shell error! command=[{}], catch error:", shell, e);
 			throw new BusinessException(ErrorCode.LOCAL_SHELL_EXEC_FAILED);
 		} finally {
+			// 确保所有资源都被关闭
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e) {
+					log.warn("关闭BufferedReader失败", e);
+				}
+			}
+			if (isr != null) {
+				try {
+					isr.close();
+				} catch (IOException e) {
+					log.warn("关闭InputStreamReader失败", e);
+				}
+			}
+			if (process != null) {
+				try {
+					// 确保进程已销毁
+					process.destroy();
+					// 等待进程终止 (修改点3)
+					process.waitFor(1, TimeUnit.SECONDS);
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					log.warn("等待进程销毁时被中断", e);
+				}
+			}
 			log.info("End exec shell!");
 		}
 
@@ -95,33 +140,33 @@ public class ShellUtils {
 	 * @param shell 需要运行的shell脚本
 	 * @return {@code String }
 	 */
-	public static String execErrorShell(String shell) {
-		log.info("Start exec shell! command=[{}]", shell);
-
-		Process process;
-		StringBuilder builder = new StringBuilder();
-
-		try {
-			process = Runtime.getRuntime().exec(shell);
-			BufferedReader input = new BufferedReader(
-					new InputStreamReader(process.getErrorStream()));
-
-			String line;
-			while ((line = input.readLine()) != null) {
-				log.error(line);
-				builder.append(line).append(System.lineSeparator());
-			}
-
-		} catch (Exception e) {
-			log.error("Exec local shell failed! command=[{}]", shell, e);
-			throw new BusinessException(ErrorCode.LOCAL_SHELL_EXEC_FAILED);
-		} finally {
-			log.info("End exec shell!");
-		}
-
-		return builder.toString().trim();
-
-	}
+//	public static String execErrorShell(String shell) {
+//		log.info("Start exec shell! command=[{}]", shell);
+//
+//		Process process;
+//		StringBuilder builder = new StringBuilder();
+//
+//		try {
+//			process = Runtime.getRuntime().exec(shell);
+//			BufferedReader input = new BufferedReader(
+//					new InputStreamReader(process.getErrorStream()));
+//
+//			String line;
+//			while ((line = input.readLine()) != null) {
+//				log.error(line);
+//				builder.append(line).append(System.lineSeparator());
+//			}
+//
+//		} catch (Exception e) {
+//			log.error("Exec local shell failed! command=[{}]", shell, e);
+//			throw new BusinessException(ErrorCode.LOCAL_SHELL_EXEC_FAILED);
+//		} finally {
+//			log.info("End exec shell!");
+//		}
+//
+//		return builder.toString().trim();
+//
+//	}
 
 }
 

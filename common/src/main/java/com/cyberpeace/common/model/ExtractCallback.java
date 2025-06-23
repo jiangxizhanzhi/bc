@@ -101,7 +101,7 @@ public class ExtractCallback implements IArchiveExtractCallback {
                 parentFile.mkdirs();
             }
             if (!file1.isFile()) {
-                file1.mkdir();
+                file1.mkdirs();
             }
         }
         return data -> {

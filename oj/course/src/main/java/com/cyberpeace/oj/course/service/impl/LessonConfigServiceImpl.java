@@ -176,7 +176,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				lessonConfigMapper.deleteByCourse(configBo.getCourseId());
+				int i = lessonConfigMapper.deleteByCourse(configBo.getCourseId());
 				saveOrUpdateBatch(configs);
 			}
 		});

@@ -329,9 +329,9 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	@Override
 	public String getAiUrl() {
 		String ip = SystemPropUtil.getProp("AI_HOST");
-		if (StringUtils.isBlank(ip)) {
-			ip = "10.4.2.3";
-		}
+		//if (StringUtils.isBlank(ip)) {
+		//	ip = "10.4.2.3";
+		//}
 		return ip;
 	}
 

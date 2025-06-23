@@ -286,7 +286,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		// 课程存在性校验
 		log.info("Start validate course number....");
-		courseValidateHandler.validateCourseName2NumExist(course, markdownFile.getAbsolutePath());
+		Course courseNew = courseValidateHandler.validateCourseName2NumExist(course, markdownFile.getAbsolutePath());
 
 		if (LocalStringUtil.getMatchStrBool(course.getResourceId(), PatternConstant.LOWER_CASE_LETTER)) {
 			log.warn("course num not lower [{}], must set uppercase", course.getResourceId());
@@ -829,7 +829,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 				// 课时和课时目录数据存储
 				courseLessonService.saveOrUpdateBatch(lessons);
-				lessonConfigMapper.deleteByCourse(course.getResourceId());
+				int i = lessonConfigMapper.deleteByCourse(course.getResourceId());
 				lessonConfigService.saveBatch(lessonConfigs);
 
 				// 课后练习
@@ -948,7 +948,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		try {
 			if (CollectionUtils.isNotEmpty(topoIds)) {
-				remoteTopoService.batchDeleteTopo(topoIds);
+				Boolean success = remoteTopoService.batchDeleteTopo(topoIds);
 			}
 		} catch (Exception e) {
 			log.error(
@@ -1380,12 +1380,12 @@ public class CourseImportServiceImpl implements CourseImportService {
 					}
 
 					// 试卷数据初始化存储
-					StreamApiUtils.map(lessons, courseLesson -> initPaper(courseLesson));
+					List result = StreamApiUtils.map(lessons, courseLesson -> initPaper(courseLesson));
 					// 课时和课时目录数据存储
 					courseLessonService.saveBatch(lessons);
 				}
 
-				lessonConfigMapper.deleteByCourse(course.getResourceId());
+				int i = lessonConfigMapper.deleteByCourse(course.getResourceId());
 				lessonConfigService.saveBatch(lessonConfigs);
 
 			}
@@ -1420,7 +1420,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 		}
 
 		if (CollectionUtils.isNotEmpty(topoIds)) {
-			remoteTopoService.batchDeleteTopo(topoIds);
+			Boolean success = remoteTopoService.batchDeleteTopo(topoIds);
 		}
 	}
 }

@@ -140,14 +140,20 @@ public class AdminCourseImportController {
 	@PostMapping("/rm/import")
 	public BaseRsp<Boolean> RMCourseImport(@RequestBody RMCourseImportReq courseImportReq) {
 
+		// 创建防御性副本
+		RMCourseImportReq importReq = new RMCourseImportReq();
+		importReq.setEnvReqs(courseImportReq.getEnvReqs());
+		importReq.setPath(courseImportReq.getPath());
+		importReq.setOperationEnvReqs(courseImportReq.getOperationEnvReqs());
+
 		try {
-			log.info("Resource management course import start! info=[{}]", JsonUtil.toJsonString(courseImportReq));
+			log.info("Resource management course import start! info=[{}]", JsonUtil.toJsonString(importReq));
 
 			// 路径是否存在校验
-			File file = new File(courseImportReq.getPath());
+			File file = new File(importReq.getPath());
 			if (!file.exists()) {
-				log.error("RMCourseImport：File path not exist! path=[{}]", courseImportReq.getPath());
-				throw new BusinessException(ErrorCode.FILE_NOT_EXIST, courseImportReq.getPath());
+				log.error("RMCourseImport：File path not exist! path=[{}]", importReq.getPath());
+				throw new BusinessException(ErrorCode.FILE_NOT_EXIST, importReq.getPath());
 			}
 
 			UserInfo userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
@@ -155,12 +161,12 @@ public class AdminCourseImportController {
 			UserInfoContext.setUserContext(userInfo);
 
 			// 执行课程数据导入
-			Boolean result = courseImportService.rMCourseImport(courseImportReq.getPath(),
-					courseImportReq.getEnvReqs(),courseImportReq.getOperationEnvReqs(), authContext);
+			Boolean result = courseImportService.rMCourseImport(importReq.getPath(),
+					importReq.getEnvReqs(),importReq.getOperationEnvReqs(), authContext);
 			return new BaseRsp<>(result);
 		} catch (Exception e) {
-			log.error("Course import failed! course_path=[{}] catch error:", courseImportReq.getPath(), e);
-			courseImportService.destroyFailedTopo(courseImportReq.getEnvReqs(), courseImportReq.getOperationEnvReqs());
+			log.error("Course import failed! course_path=[{}] catch error:", importReq.getPath(), e);
+			courseImportService.destroyFailedTopo(importReq.getEnvReqs(), importReq.getOperationEnvReqs());
 			throw e;
 		}
 
@@ -208,12 +214,16 @@ public class AdminCourseImportController {
 	public BaseRsp<Boolean>
 			RMCombinedCourseImport(@RequestBody RMCombinedCourseImportReq courseImportReq) {
 
+		// 创建防御性副本
+		RMCombinedCourseImportReq req = new RMCombinedCourseImportReq();
+		req.setCourseInfos(courseImportReq.getCourseInfos());
+
 		UserInfo userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
 		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
 
 		// 执行课程数据导入
 		Boolean result = courseImportService
-				.rMCombinedCourseImport(courseImportReq.getCourseInfos(), authContext);
+				.rMCombinedCourseImport(req.getCourseInfos(), authContext);
 
 		return new BaseRsp<>(result);
 	}

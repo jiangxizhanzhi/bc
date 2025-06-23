@@ -280,7 +280,7 @@ public class EvalAlgorithmAdminController {
 				}
 			});
 		} else {
-			evalAlgorithmService.delete(deleteReq.getIds());
+			Boolean b = evalAlgorithmService.delete(deleteReq.getIds());
 		}
 
 		return new BaseRsp();

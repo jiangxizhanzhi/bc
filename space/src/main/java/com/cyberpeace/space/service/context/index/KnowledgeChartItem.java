@@ -126,6 +126,10 @@ public class KnowledgeChartItem {
 	 * @see int
 	 */
 	private int calSymbolSize(int level) {
+		// 确保level在合理范围内
+		if (level < 0 || level > 6) {
+			throw new IllegalArgumentException("Level must be between 0 and 6");
+		}
 		return (64 >> level) + 4;
 	}
 }

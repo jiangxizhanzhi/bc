@@ -46,6 +46,7 @@ public class CrEventListenerHelper {
 				roleOld = (CrRole) CrRoleCache.cache.get(role.getResourceId() + nodeId);
 			} catch (Exception e) {
 				// 异常不处理
+				log.error("exception run", e);
 			}
 			CrRoleNodesData nodesDataOld = roleOld == null ? new CrRoleNodesData()
 					: roleOld.getNodeData();

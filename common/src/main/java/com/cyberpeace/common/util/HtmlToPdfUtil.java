@@ -78,9 +78,9 @@ public class HtmlToPdfUtil {
 		command.append(" --javascript-delay 2000");
 		command.append(" --margin-right  5");
 		command.append(" --dpi 300");
-		command.append(" ");
+		command.append(' ');
 		command.append(htmlFilePath);
-		command.append(" ");
+		command.append(' ');
 		command.append(pdfFilePath);
 
 		try {
@@ -157,7 +157,9 @@ public class HtmlToPdfUtil {
 		} finally {
 			try {
 				writer.close();
-			} catch (IOException e) {}
+			} catch (IOException e) {
+				log.error("exception run", e);
+			}
 		}
 
 	}

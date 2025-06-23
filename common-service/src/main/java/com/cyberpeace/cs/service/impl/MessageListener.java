@@ -135,7 +135,7 @@ public class MessageListener implements ChannelAwareMessageListener {
 		}
 
 		try {
-			dispatch(realMessage);
+			boolean b = dispatch(realMessage);
 		} catch (Exception e) {
 			log.error("MessageListener: dispatch error ", e);
 		} finally {
@@ -268,7 +268,7 @@ public class MessageListener implements ChannelAwareMessageListener {
 								businessId, sceneId, localScene.getMpSceneId());
 						break;
 					}
-					realListener.onSceneDelete(sceneId, businessId, context);
+					Boolean b = realListener.onSceneDelete(sceneId, businessId, context);
 					break;
 				case SCENE:
 					// 判断是否是已删除场景的推送消息
@@ -281,7 +281,7 @@ public class MessageListener implements ChannelAwareMessageListener {
 					WsSceneReportBO sceneReportBO = new WsSceneReportBO("", type,
 							object.getJSONObject("data"));
 					String sceneContent = JsonUtil.toJsonString(sceneReportBO);
-					realListener.onSceneStartProcess(sceneContent, businessId, context);
+					Boolean process = realListener.onSceneStartProcess(sceneContent, businessId, context);
 					break;
 				case SCENE_ELEMENT:
 					// 判断是否是已删除场景的推送消息
@@ -294,7 +294,7 @@ public class MessageListener implements ChannelAwareMessageListener {
 					WsSceneReportBO reportBO = new WsSceneReportBO("", type,
 							replaceAccessIp(object.getJSONObject("data")));
 					String content = JsonUtil.toJsonString(reportBO);
-					realListener.onSceneElement(content, businessId, context);
+					Boolean bb = realListener.onSceneElement(content, businessId, context);
 					break;
 				default:
 					break;

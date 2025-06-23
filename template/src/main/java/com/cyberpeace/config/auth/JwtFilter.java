@@ -131,7 +131,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 			Object mappedValue) {
 		if (isLoginAttempt(request, response)) {
 			try {
-				executeLogin(request, response);
+				boolean b = executeLogin(request, response);
 			} catch (Exception e) {
 				log.error("user login failed, token={}",
 						((HttpServletRequest) request).getHeader(WebConstant.AUTHORIZATION_HEADER));

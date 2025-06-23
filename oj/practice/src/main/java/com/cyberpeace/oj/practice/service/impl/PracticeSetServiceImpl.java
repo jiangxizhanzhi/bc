@@ -436,7 +436,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				});
 
 		String dataPath = destDir + File.separatorChar + ResourceImportConstant.DATA_JSON;
-		FileUtil.mkdirs(destDir);
+		File dirs = FileUtil.mkdirs(destDir);
 		FileUtil.writeToDestFile(JsonUtil.arrayToString(setDumpLoadBos), dataPath);
 
 		// 压缩当前文件夹
@@ -459,7 +459,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	@Override
 	public Boolean loadPracticeSet(String realPath, String userId) {
 		String destPath = realPath.substring(0, realPath.lastIndexOf(CommonConstant.PERIOD));
-		ZipUtil.unzipToDest(realPath, destPath);
+		Boolean success = ZipUtil.unzipToDest(realPath, destPath);
 
 		// 解析数据
 		String filePath = destPath + File.separatorChar
@@ -961,7 +961,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			String destFilePath = logoStorePath + IDGeneratorUtil.getID() + CommonConstant.PERIOD
 					+ fileSuffix;
 			// 拷贝文件
-			FileUtil.copyFile(logoPath, destFilePath, false);
+			String s = FileUtil.copyFile(logoPath, destFilePath, false);
 			String fileUrl = utilService.replaceFileUrl(destFilePath);
 			practiceSet.setLogo(fileUrl);
 		}
@@ -992,7 +992,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			String fileName = FileUtil.getFileName(realPath, true);
 			String newName = FileUtil.getNewName(fileName);
 			String destLogoPath = fileStorePath + CommonConstant.LEFT_OBLIQUE_LINE + newName;
-			FileUtil.copyFile(realPath, destLogoPath, false);
+			String s = FileUtil.copyFile(realPath, destLogoPath, false);
 
 			String logoRelativePath = destLogoPath.replace(fileStorePath,
 					CommonConstant.EMPTY_STRING);

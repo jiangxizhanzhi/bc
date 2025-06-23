@@ -72,13 +72,13 @@ public class TrainPlan extends BaseTable {
 	 *
 	 * @see String
 	 */
-	public static String TASK_SET = "Task Set";
+	public static final String TASK_SET = "Task Set";
 
 	/**
 	 * 任务设置id
 	 *
 	 * @see String
 	 */
-	public static String TASK_SET_ID = "task_set_id";
+	public static final String TASK_SET_ID = "task_set_id";
 }
 

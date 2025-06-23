@@ -264,7 +264,7 @@ public class CustomLogAppender extends FileAppender {
         File target = new File(scheduledFilename);
         if (target.exists()) {
             try {
-                target.delete();
+                boolean success = target.delete();
             } catch (SecurityException e) {
                 e.printStackTrace();
             }
@@ -323,7 +323,7 @@ public class CustomLogAppender extends FileAppender {
      */
     public static String getFileName(String filePath) {
         File file = new File(filePath);
-        return file.getName().substring(0, file.getName().lastIndexOf("."));
+        return file.getName().substring(0, file.getName().lastIndexOf('.'));
     }
 
     /**
@@ -337,10 +337,13 @@ public class CustomLogAppender extends FileAppender {
         boolean renameSucceeded = true;
         if (this.maxBackupIndex > 0) {
             File file = new File(this.fileName);
-            String realFileName = file.getName().substring(0, file.getName().indexOf("."));
+            String realFileName = file.getName().substring(0, file.getName().indexOf('.'));
             file = new File(file.getParent() + File.separator + realFileName + "_" + sdf.format(now) + '.' + this.maxBackupIndex + ".log");
             if (file.exists()) {
                 renameSucceeded = file.delete();
+                if (!renameSucceeded) {
+                    log.warn("Failed to delete file: {}", file.getAbsolutePath());
+                }
             }
 
             File target;
@@ -404,7 +407,7 @@ public class CustomLogAppender extends FileAppender {
             now.setTime(n);
             Calendar calendar = Calendar.getInstance();
             if (type < 0) {
-                computeCheckPeriod();
+                int i = computeCheckPeriod();
             }
             nextCheck = getNextCheckDate(calendar, now, 1).getTimeInMillis();
             try {
@@ -438,7 +441,7 @@ public class CustomLogAppender extends FileAppender {
         if (maxDaysIndex > 0) {
             for (int i = 1; i <= maxDaysIndex; i++) {
                 Calendar calendar = Calendar.getInstance();
-                getNextCheckDate(calendar, now, -i);
+                calendar = getNextCheckDate(calendar, now, -i);
                 result.add(sdf.format(calendar.getTime()));
             }
         }
@@ -550,7 +553,7 @@ public class CustomLogAppender extends FileAppender {
      * @see String
      */
     String getFileNameTime(File file) {
-        String fileName = file.getName().substring(0, file.getName().indexOf("."));
+        String fileName = file.getName().substring(0, file.getName().indexOf('.'));
         String[] str = fileName.split("_");
         if (str.length < 2) {
             return null;

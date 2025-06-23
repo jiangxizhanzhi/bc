@@ -107,7 +107,7 @@ public class ZipUtil {
 		try {
 			ZipFile zipFile = new ZipFile(zipPath);
 			zipFile.setFileNameCharset("GBK");
-			FileUtil.mkdirs(destPath);
+			File f = FileUtil.mkdirs(destPath);
 			zipFile.extractAll(destPath);
 
 			return CommonConstant.TRUE;
@@ -143,7 +143,9 @@ public class ZipUtil {
 		try {
 			zos = new ZipOutputStream(new FileOutputStream(zipPath));
 			File[] listFiles = new File(srcDir).listFiles();
-			assert listFiles != null;
+			if (listFiles == null) {
+				throw new IllegalArgumentException("listFiles cannot be null");
+			}
 			for (File file : listFiles) {
 				// 跳过生成的zip文件本身
 				if (file.getName().equals(src.getName() + SUFFIX)) {
@@ -177,7 +179,7 @@ public class ZipUtil {
 	public static String toZipDest(String srcDir, String destDir) {
 
 		// 创建文件夹
-		FileUtil.mkdirs(destDir);
+		File f = FileUtil.mkdirs(destDir);
 
 		ZipOutputStream zos = null;
 		File src = new File(srcDir);
@@ -198,6 +200,7 @@ public class ZipUtil {
 				zos.close();
 			} catch (IOException e) {
 				// io流关闭失败 不做任何操作
+				log.error("exception run", e);
 			}
 		}
 

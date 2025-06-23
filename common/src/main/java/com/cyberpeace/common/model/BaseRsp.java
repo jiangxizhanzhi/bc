@@ -36,22 +36,22 @@ public class BaseRsp<T> {
 	/**
 	 * 数据
 	 */
-	public T data;
+	private T data;
 
 	/**
 	 * 代号
 	 */
-	public String code = "OJ-000000";
+	private  String code = "OJ-000000";
 
 	/**
 	 * 消息
 	 */
-	public String message;
+	private String message;
 
 	/**
 	 * 保留字段
 	 */
-	public String detail;
+	private String detail;
 
 	/**
 	 * 时间戳

@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class VideoUtil {
 
-    public static Cache<String, Long> videoCache = GuavaCacheUtil.newInstance(CommonConstant.TEN,
+    public static final Cache<String, Long> videoCache = GuavaCacheUtil.newInstance(CommonConstant.TEN,
             TimeUnit.MINUTES, String.class, Long.class);
 
     /**

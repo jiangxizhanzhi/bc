@@ -28,6 +28,8 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -263,7 +265,7 @@ public class CommonController {
 		// 计算要解压的文件地址
 		String unzipPath = mdPath + FileUtil.getFileName(realPath, false);
 		String mdFilePath = null;
-		ZipUtil.unzipToDest(realPath, unzipPath);
+		Boolean b = ZipUtil.unzipToDest(realPath, unzipPath);
 		// 获取解压的文件
 		mdFilePath = FileUtil.getOneFile(unzipPath, FileSunffixConstant.MD.getDesc());
 		if (StringUtils.isBlank(mdFilePath)) {
@@ -271,7 +273,16 @@ public class CommonController {
 			throw new BusinessException(ErrorCode.CANT_FIND_MD_FILE);
 		}
 		// md文件内容
-		File mdFile = new File(mdFilePath);
+		// 安全验证路径
+		Path safeBasePath = Paths.get(unzipPath).normalize().toAbsolutePath();
+		Path resolvedPath = safeBasePath.resolve(mdFilePath).normalize();
+		// 验证解析后的路径是否仍在安全目录内
+		if (!resolvedPath.startsWith(safeBasePath)) {
+			log.error("潜在路径遍历攻击: 原始路径={}, 尝试访问={}", unzipPath, mdFilePath);
+			throw new BusinessException(ErrorCode.INVALID_FILE_PATH);
+		}
+		// 使用安全路径访问文件
+		File mdFile = resolvedPath.toFile();
 		if (mdFile.length() > Long.parseLong(ConfigUtil.getContextProperty("md.max.size"))) {
 			log.error("The markdown file in the archive cannot be larger than [{}] m! mdFile.length = [{}]",ConfigUtil.getContextProperty("md.max.size"), mdFile.length());
 			throw new BusinessException(ErrorCode.MD_SIZE_TOO_LARGE, Long.parseLong(ConfigUtil.getContextProperty("md.max.size"))/1048576);

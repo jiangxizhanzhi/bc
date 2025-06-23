@@ -154,7 +154,7 @@ public class MdUtil {
 	 */
 	public static String dumpMarkdownImages(File mdFile, String content) {
         String img = new File(mdFile.getParentFile().getAbsolutePath(), "img").getAbsolutePath();
-        FileUtil.mkdirs(img);
+		File file= FileUtil.mkdirs(img);
 
 		// 匹配文件路径
 		String withOutCode = filterCodeContent(content);
@@ -181,7 +181,7 @@ public class MdUtil {
 
             File dist = new File(img, source.getName());
             if (!dist.exists()) {
-                FileUtil.copyFile(source.getAbsolutePath(), dist.getAbsolutePath(), false);
+				String s = FileUtil.copyFile(source.getAbsolutePath(), dist.getAbsolutePath(), false);
             }
 
             content = content.replace(imagePath, "img/" + dist.getName());
@@ -269,7 +269,7 @@ public class MdUtil {
 			List<String> matchPathList = LocalStringUtil.getMatchStr(content,
 					PatternConstant.MARKDOWN_ZIP_RAR_URL, 2);
 			for(String matchPath : matchPathList) {
-				matchZipRarPath(matchPath);
+				List<String> result = matchZipRarPath(matchPath);
 			}
 		} else {
 			List<String> matchPathList = new ArrayList<>();

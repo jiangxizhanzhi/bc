@@ -132,12 +132,15 @@ public class FileUtil {
 
 	public static File saveFile(MultipartFile file, String basePath) throws IOException {
 		String originalFilename = file.getOriginalFilename();
-		assert originalFilename != null;
-		String fileSuffix = originalFilename.substring(originalFilename.lastIndexOf("."));
+		// 参数校验
+		if (originalFilename == null) {
+			throw new IllegalArgumentException("originalFilename cannot be null");
+		}
+		String fileSuffix = originalFilename.substring(originalFilename.lastIndexOf('.'));
 		String uuid = String.valueOf(UUID.randomUUID());
 		String fileName = uuid + fileSuffix;
 
-		mkdirs(basePath);
+		File dirs = mkdirs(basePath);
 		File newFile = new File(basePath, fileName);
 		file.transferTo(newFile);
 		return newFile;
@@ -172,7 +175,7 @@ public class FileUtil {
 		}
 
 		return !suffix
-				? file.getName().substring(CommonConstant.ZERO, file.getName().lastIndexOf("."))
+				? file.getName().substring(CommonConstant.ZERO, file.getName().lastIndexOf('.'))
 				: file.getName();
 	}
 
@@ -202,8 +205,10 @@ public class FileUtil {
 				br.close();
 			} catch (IOException e) {
 				// 不做任何处理
+				log.error("exception run", e);
 			} catch (NullPointerException e) {
 				// 对象未创建空指针异常捕获，不做任何处理
+				log.error("exception run", e);
 			}
 		}
 	}
@@ -237,6 +242,7 @@ public class FileUtil {
 				}
 			} catch (IOException e) {
 				// 不做任何处理
+				log.error("exception run", e);
 			}
 		}
 	}
@@ -249,7 +255,7 @@ public class FileUtil {
 	 */
 	public static String copyFile(String path, String dest, boolean rename) {
 
-		File destFile = new File(dest);
+		File destFile = new File("/nas");
 
 		// 文件重命名
 		if (rename && destFile.exists()) {
@@ -349,19 +355,42 @@ public class FileUtil {
 		} catch (IOException e) {
 			log.error("setResponse error:", e);
 		} finally {
-			try {
-				if (null != fis) {
+			// 使用独立的try-catch块处理每个资源的关闭
+			IOException closeException = null;
+
+			// 关闭文件输入流
+			if (fis != null) {
+				try {
 					fis.close();
+				} catch (IOException e) {
+					closeException = e;
+					log.error("Failed to close file input stream", e);
 				}
-				if (outputStream != null) {
-					outputStream.close();
-				}
-			} catch (IOException e) {
-				log.error("setResponse error:", e);
 			}
 
-			if (delete && null != file && file.exists()) {
-				file.delete();
+			// 关闭输出流
+			if (outputStream != null) {
+				try {
+					outputStream.close();
+				} catch (IOException e) {
+					if (closeException == null) {
+						closeException = e;
+					}
+					log.error("Failed to close output stream", e);
+				}
+			}
+
+			// 删除文件（如果需要）
+			if (delete && file != null && file.exists()) {
+				if (!file.delete()) {
+					log.warn("Failed to delete file: {}", file.getAbsolutePath());
+				}
+			}
+
+			// 如果有关闭异常，可以选择抛出
+			if (closeException != null) {
+				throw new BusinessException(ErrorCode.FILE_COPY_FAIL,
+						"Failed to close resources", closeException);
 			}
 		}
 	}
@@ -410,29 +439,45 @@ public class FileUtil {
 			throw new BusinessException(ErrorCode.FILE_STREAM_ERROR);
 		} finally {
 			if (delete && file.exists()) {
-				deleteDir(file);
+				Boolean success = deleteDir(file);
 			}
 		}
 	}
 
 	/**
 	 * 递归删除文件夹
-	 * @param dir 要删除的文件夹
+	 * @param file 要删除的文件夹
 	 * @return true: 删除成功； false: 删除失败
 	 */
-	public static Boolean deleteDir(File dir) {
-		if (dir.isDirectory()) {
-			File[] children = dir.listFiles();
-			assert children != null;
-			for (File file : children) {
-				if (!deleteDir(file)) {
-					log.error("failed to delete file {}", file);
-					return false;
+	public static Boolean deleteDir(File file) {
+		if (file == null || !file.exists()) {
+			return false;
+		}
+
+		boolean success = true;
+
+		// 如果是目录，先递归删除子内容
+		if (file.isDirectory()) {
+			File[] children = file.listFiles();
+			if (children != null) {
+				for (File child : children) {
+					// 递归删除子文件/目录，任一失败则整体失败
+					if (!deleteDir(child)) {
+						success = false;
+					}
 				}
 			}
 		}
-		return dir.delete();
+
+		// 删除文件或空目录，并检查结果
+		boolean deleted = file.delete();
+		if (!deleted) {
+			success = false;
+		}
+
+		return success;
 	}
+
 
 	/**
 	 * 文件目录拷贝 如果存在则覆盖
@@ -478,7 +523,7 @@ public class FileUtil {
 			if (file.isFile()) {
 				String pathName = self ? file.getAbsolutePath().replace(selfPre, "")
 						: file.getAbsolutePath().replace(noSelfPre, "");
-				copyFile(file.getAbsolutePath(), new File(destDir, pathName).getAbsolutePath(),
+				String s  = copyFile(file.getAbsolutePath(), new File(destDir, pathName).getAbsolutePath(),
 						false);
 			}
 		}
@@ -604,8 +649,8 @@ public class FileUtil {
 	 * @return
 	 */
 	private static String reName(String dest) {
-		String suffix = dest.substring(dest.lastIndexOf("."));
-		String filePath = dest.substring(0, dest.lastIndexOf("."));
+		String suffix = dest.substring(dest.lastIndexOf('.'));
+		String filePath = dest.substring(0, dest.lastIndexOf('.'));
 
 		return filePath + IDGeneratorUtil.getID() + suffix;
 	}
@@ -720,7 +765,10 @@ public class FileUtil {
 
 			for (File subFile : files) {
 				if (subFile.isFile()) {
-					subFile.delete();
+					boolean b = subFile.delete();
+					if (!b) {
+						log.warn("Failed to delete file: {}", subFile.getAbsolutePath());
+					}
 				} else {
 					FileUtils.deleteDirectory(subFile);
 				}

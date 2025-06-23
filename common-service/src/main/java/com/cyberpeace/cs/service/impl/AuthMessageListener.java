@@ -126,7 +126,7 @@ public class AuthMessageListener implements ChannelAwareMessageListener {
 		}
 
 		try {
-			dispatch(realMessage);
+			boolean b = dispatch(realMessage);
 		} catch (Exception e) {
 			log.error("MessageListener: dispatch error ", e);
 		} finally {
@@ -220,7 +220,7 @@ public class AuthMessageListener implements ChannelAwareMessageListener {
 			try {
 				switch (type) {
 					case USER:
-						realListener.onUserDelete(ids);
+						Boolean success = realListener.onUserDelete(ids);
 						break;
 					case ROLE:
 
@@ -234,7 +234,7 @@ public class AuthMessageListener implements ChannelAwareMessageListener {
 						remoteUserService.clearCache();
 					break;
 					case ORG:
-						realListener.onOrgDelete(ids);
+						Boolean success2 = realListener.onOrgDelete(ids);
 						break;
 					default:
 						break;

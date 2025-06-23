@@ -59,7 +59,7 @@ public class BusinessException extends RuntimeException {
 		super();
 	}
 
-	public static String getMessageByLanguage(String code) {
+	public static final String getMessageByLanguage(String code) {
 		String ret;
 		if (CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN)) {
 			ret = ConfigUtil.getContextProperty(code + ".en");

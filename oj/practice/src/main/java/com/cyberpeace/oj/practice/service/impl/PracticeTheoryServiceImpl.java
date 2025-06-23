@@ -396,7 +396,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		String destDir = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID();
 		String destFilePath = destDir + File.separatorChar
 				+ ResourceImportConstant.DUMP_LOAD_FILE_STORE_PATH;
-		FileUtil.mkdirs(destFilePath);
+		File dirs = FileUtil.mkdirs(destFilePath);
 
 		List<PracticeTheoryDumpLoadBo> boList = this.dumpTheory(ids);
 
@@ -415,7 +415,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				String fileName = FileUtil.getFileName(realPath, true);
 				String newName = FileUtil.getNewName(fileName);
 				String destPath = destFilePath + CommonConstant.LEFT_OBLIQUE_LINE + newName;
-				FileUtil.copyFile(realPath, destPath, false);
+				String s = FileUtil.copyFile(realPath, destPath, false);
 
 				fileMap.put(newName, realPath);
 			}
@@ -453,7 +453,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	@Override
 	public Boolean loadBatch(String realPath, String userId) {
 		String destPath = realPath.substring(0, realPath.lastIndexOf(CommonConstant.PERIOD));
-		ZipUtil.unzipToDest(realPath, destPath);
+		Boolean b = ZipUtil.unzipToDest(realPath, destPath);
 
 		// 解析数据
 		String filePath = destPath + File.separatorChar
@@ -481,7 +481,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	@Override
 	public Boolean loadBatchSlim(String realPath, String userId) {
 		String destPath = realPath.substring(0, realPath.lastIndexOf(CommonConstant.PERIOD));
-		ZipUtil.unzipToDest(realPath, destPath);
+		Boolean result = ZipUtil.unzipToDest(realPath, destPath);
 		String dataPath = destPath + File.separatorChar + ResourceImportConstant.DATA_JSON;
 		String data = FileUtil.getContent(new File(dataPath));
 		
@@ -650,7 +650,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				try {
 					practiceSolvedMapper.insert(practiceSolved);
 				} catch (DuplicateKeyException e) {
-					practiceSolvedMapper.updateSolved(practiceSolved);
+					int i = practiceSolvedMapper.updateSolved(practiceSolved);
 				}
 			}
 		});

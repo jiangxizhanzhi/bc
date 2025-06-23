@@ -1561,7 +1561,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.EVAL, destHtmlPath);
             destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))
                     + "pdf";
-            HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
+            boolean b = HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

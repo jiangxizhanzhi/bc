@@ -266,7 +266,7 @@ public class JwtHandShake implements HandshakeInterceptor {
 	private String mapToString(Map<String, String> params) {
 		StringBuilder stringBuilder = new StringBuilder();
 		for (Map.Entry<String, String> item : params.entrySet()) {
-			stringBuilder.append(item.getKey()).append("=").append(item.getValue()).append("&");
+			stringBuilder.append(item.getKey()).append('=').append(item.getValue()).append('&');
 		}
 
 		return stringBuilder.toString();

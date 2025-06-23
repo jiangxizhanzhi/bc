@@ -72,10 +72,11 @@ public class ThirdLogAspect {
             // 执行日志上报操作
             YXLogRequest request = getYXLogRequest(isSuccess);
             if (null != request){
-                yxLogService.uploadLog(request);
+                String s = yxLogService.uploadLog(request);
             }
         }catch (Exception e){
             // 不处理
+            log.error("exception run", e);
         }
 
         return result;
@@ -120,6 +121,7 @@ public class ThirdLogAspect {
             }
         }catch (Exception e){
             // 不处理
+            log.error("exception run", e);
         }
 
         return null;

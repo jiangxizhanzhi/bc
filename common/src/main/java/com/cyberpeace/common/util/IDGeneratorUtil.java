@@ -33,7 +33,7 @@ public class IDGeneratorUtil {
      * @return {@code String }
      */
     public static String getID() {
-        return UUID.randomUUID().toString().replaceAll("-", "");
+        return UUID.randomUUID().toString().replaceAll("\\-", "");
     }
 }
 

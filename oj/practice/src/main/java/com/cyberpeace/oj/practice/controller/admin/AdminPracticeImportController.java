@@ -63,8 +63,12 @@ public class AdminPracticeImportController {
 	@PostMapping("/rm/theory")
 	public BaseRsp<Boolean> importRMTheory(@RequestBody @Validated RMImportReq rmImportReq) {
 		try {
-			log.info("Resource management import start! info=[{}]", rmImportReq.getPath());
-			boolean result = practiceSetImportService.importRmTheorySet(rmImportReq.getPath());
+			// 创建防御性副本
+			RMImportReq sanitizedReq = new RMImportReq();
+			sanitizedReq.setPath(rmImportReq.getPath());
+
+			log.info("Resource management import start! info=[{}]", sanitizedReq.getPath());
+			boolean result = practiceSetImportService.importRmTheorySet(sanitizedReq.getPath());
 			return new BaseRsp<>(result);
 		} catch (Exception e) {
 			log.error("Resource management theory import failed! catch error:", e);

@@ -601,7 +601,7 @@ public class MDParser {
 			String newFileName = logoId + LOGO_SUFFIX;
 			String dest = ConfigUtil.getContextProperty("cr.local.file.prefix")
 				+ AttachmentPath.UPLOAD_IMAGE.getOriginDesc() + newFileName;
-			FileUtil.copyFile(logoPath, dest, CommonConstant.FALSE);
+			String s = FileUtil.copyFile(logoPath, dest, CommonConstant.FALSE);
 			images.put(logoId, newFileName);
 			businessTemplate.setLogo(dest);
 		}
@@ -916,7 +916,7 @@ public class MDParser {
 				String dest = ConfigUtil.getContextProperty("cr.local.file.prefix")
 						+ AttachmentPath.UPLOAD_IMAGE.getOriginDesc() + newFileName;
 				// copy
-				FileUtil.copyFile(originalPath, dest, CommonConstant.FALSE);
+				String s = FileUtil.copyFile(originalPath, dest, CommonConstant.FALSE);
 				// mission attachments
 				attachments.add(imgId);
 				images.put(imgId, newFileName);

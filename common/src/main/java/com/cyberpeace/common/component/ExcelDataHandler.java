@@ -19,10 +19,7 @@ import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.List;
@@ -36,53 +33,53 @@ import java.util.List;
  * @since 1.0.0
  */
 /**
- * ### 代码分析 
- * #### 概述 
- * 该代码实现了一个通用的 `ExcelDataHandler` 类，用于处理 Excel 文件的读取和写入操作。它基于 Apache POI 库实现了对 `.xls` 和 `.xlsx` 格式文件的支持，并提供了灵活的方法来处理不同场景下的 Excel 数据。 
- * --- 
- * #### 主要功能模块 
- * 1. **构造函数** 
- * - 提供两种构造方法： 
- * - 按照文件路径和 Sheet 索引初始化。 
- * - 按照文件路径和 Sheet 名称初始化。 
- * - 在构造过程中会尝试打开文件并加载对应的 Sheet，如果失败则抛出自定义异常 `BusinessException`。 
- * 2. **Excel 数据读取** 
- * - `getSheetData(int startRow)`：从指定行开始读取整张 Sheet 的数据。 
- * - `getSheetData(int startRow, int endRow)`：支持从指定行到结束行的范围读取。 
- * - `getExcelDateByIndex(int row, int column)`：根据行和列索引获取单元格内容，支持日期格式化。 
- * 3. **Excel 数据写入** 
- * - `doExportExcel(List<T> dataList, ...)`：内部方法，用于将 Java 对象列表导出为 Excel 文件。 
- * - `exportExcel(List<T> data, String filePath, ExcelHeader excelHeader)`：公共方法，直接调用 `doExportExcel` 完成导出。 
- * - 支持自定义忽略字段、设置表头、多 Sheet 等功能。 
- * 4. **资源管理** 
- * - `closeIO()`：关闭文件流和工作簿，避免资源泄漏。 
- * - 在读取或写入过程中，对异常进行捕获并记录日志，确保程序的健壮性。 
- * 5. **工具方法** 
- * - `createWorkbook(String filePath)`：根据文件后缀动态创建合适的 `Workbook` 对象（`.xls` 或 `.xlsx`）。 
- * - 辅助类如 `ObjUtil`、`JsonUtil`、`TimeUtil` 等用于处理反射、JSON 转换和时间格式化等操作。 
- * --- 
- * #### 特点与优点 
- * - **灵活性**：支持多种初始化方式、读取范围、写入格式以及字段过滤。 
- * - **扩展性**：通过泛型 `<T>` 实现对任意 Java 对象的支持。 
- * - **健壮性**：对异常进行了全面处理，并提供详细的错误日志。 
- * - **兼容性**：支持 `.xls` 和 `.xlsx` 格式的 Excel 文件。 
- * --- 
- * #### 缺点与改进建议 
- * 1. **性能问题**： 
- * - 在写入大量数据时，频繁调用 `sheet.createRow()` 和 `row.createCell()` 可能会影响性能。 
- * - 建议使用 `Row` 和 `Cell` 的缓存机制以优化性能。 
- * 2. **日志记录**： 
- * - 日志信息较为冗长且重复，可以简化部分日志内容，避免过多堆栈信息干扰开发人员。 
- * 3. **代码重复**： 
- * - `exportExcel` 方法中存在较多重复逻辑，可以将其抽取为通用方法以减少冗余。 
- * 4. **异常处理**： 
- * - 在某些情况下（如文件关闭失败），异常处理仅记录日志而未采取进一步措施，可能需要更明确的处理策略。 
- * --- 
- * #### 总结 
- * 该代码是一个功能完善的 Excel 处理工具类，适用于大多数 Excel 文件的操作场景。通过引入泛型、动态文件格式解析以及灵活的配置选项，它能够满足大部分业务需求。未来可以针对性能瓶颈和代码复用性进一步优化，提升代码质量和可维护性。 
-**/
+ * ### 代码分析
+ * #### 概述
+ * 该代码实现了一个通用的 `ExcelDataHandler` 类，用于处理 Excel 文件的读取和写入操作。它基于 Apache POI 库实现了对 `.xls` 和 `.xlsx` 格式文件的支持，并提供了灵活的方法来处理不同场景下的 Excel 数据。
+ * ---
+ * #### 主要功能模块
+ * 1. **构造函数**
+ * - 提供两种构造方法：
+ * - 按照文件路径和 Sheet 索引初始化。
+ * - 按照文件路径和 Sheet 名称初始化。
+ * - 在构造过程中会尝试打开文件并加载对应的 Sheet，如果失败则抛出自定义异常 `BusinessException`。
+ * 2. **Excel 数据读取**
+ * - `getSheetData(int startRow)`：从指定行开始读取整张 Sheet 的数据。
+ * - `getSheetData(int startRow, int endRow)`：支持从指定行到结束行的范围读取。
+ * - `getExcelDateByIndex(int row, int column)`：根据行和列索引获取单元格内容，支持日期格式化。
+ * 3. **Excel 数据写入**
+ * - `doExportExcel(List<T> dataList, ...)`：内部方法，用于将 Java 对象列表导出为 Excel 文件。
+ * - `exportExcel(List<T> data, String filePath, ExcelHeader excelHeader)`：公共方法，直接调用 `doExportExcel` 完成导出。
+ * - 支持自定义忽略字段、设置表头、多 Sheet 等功能。
+ * 4. **资源管理**
+ * - `closeIO()`：关闭文件流和工作簿，避免资源泄漏。
+ * - 在读取或写入过程中，对异常进行捕获并记录日志，确保程序的健壮性。
+ * 5. **工具方法**
+ * - `createWorkbook(String filePath)`：根据文件后缀动态创建合适的 `Workbook` 对象（`.xls` 或 `.xlsx`）。
+ * - 辅助类如 `ObjUtil`、`JsonUtil`、`TimeUtil` 等用于处理反射、JSON 转换和时间格式化等操作。
+ * ---
+ * #### 特点与优点
+ * - **灵活性**：支持多种初始化方式、读取范围、写入格式以及字段过滤。
+ * - **扩展性**：通过泛型 `<T>` 实现对任意 Java 对象的支持。
+ * - **健壮性**：对异常进行了全面处理，并提供详细的错误日志。
+ * - **兼容性**：支持 `.xls` 和 `.xlsx` 格式的 Excel 文件。
+ * ---
+ * #### 缺点与改进建议
+ * 1. **性能问题**：
+ * - 在写入大量数据时，频繁调用 `sheet.createRow()` 和 `row.createCell()` 可能会影响性能。
+ * - 建议使用 `Row` 和 `Cell` 的缓存机制以优化性能。
+ * 2. **日志记录**：
+ * - 日志信息较为冗长且重复，可以简化部分日志内容，避免过多堆栈信息干扰开发人员。
+ * 3. **代码重复**：
+ * - `exportExcel` 方法中存在较多重复逻辑，可以将其抽取为通用方法以减少冗余。
+ * 4. **异常处理**：
+ * - 在某些情况下（如文件关闭失败），异常处理仅记录日志而未采取进一步措施，可能需要更明确的处理策略。
+ * ---
+ * #### 总结
+ * 该代码是一个功能完善的 Excel 处理工具类，适用于大多数 Excel 文件的操作场景。通过引入泛型、动态文件格式解析以及灵活的配置选项，它能够满足大部分业务需求。未来可以针对性能瓶颈和代码复用性进一步优化，提升代码质量和可维护性。
+ **/
 @Slf4j
-public class ExcelDataHandler {
+public class ExcelDataHandler implements Closeable {
 
 	/**
 	 * 表
@@ -108,60 +105,102 @@ public class ExcelDataHandler {
 	/**
 	 * 构造参数 初始化excel数据
 	 *
-	 * @param filePath   文件路径
-	 * @param sheetIndex sheet表名
+	 * @param filePath    文件路径
+	 * @param sheetIndex  sheet索引
+	 * @throws BusinessException 当文件读取失败时抛出
 	 */
 	public ExcelDataHandler(String filePath, int sheetIndex) {
+		FileInputStream tempFis = null;
+		Workbook tempWorkbook = null;
+
 		try {
-			// 创建文件流
-			fileInputStream = new FileInputStream(filePath);
+			// 使用临时变量先创建资源
+			tempFis = new FileInputStream(filePath);
+			tempWorkbook = WorkbookFactory.create(tempFis);
 
-			workbook = WorkbookFactory.create(fileInputStream);
-
-			// 获取sheet
-			sheet = workbook.getSheetAt(sheetIndex);
-		} catch (Exception e) {
-			log.error(
-					"Construct XSSFSheet object failed! file_path=[{}], sheet_index=[{}], catch error:",
-					filePath, sheetIndex, e);
-			try {
-				fileInputStream.close();
-				workbook.close();
-			} catch (Exception e2) {
-				// 关不掉算了
-				log.error("excel fileInputStream close failed!  catch error:", e2);
+			// 验证sheet索引有效性
+			if (sheetIndex < 0 || sheetIndex >= tempWorkbook.getNumberOfSheets()) {
+				throw new IllegalArgumentException("Invalid sheet index: " + sheetIndex);
 			}
-			throw new BusinessException(ErrorCode.FILE_READ_FAIL, filePath);
+
+			// 只有全部成功才赋值给成员变量
+			this.fileInputStream = tempFis;
+			this.workbook = tempWorkbook;
+			this.sheet = tempWorkbook.getSheetAt(sheetIndex);
+
+		} catch (Exception e) {
+			// 先关闭临时资源
+			closeQuietly(tempWorkbook);
+			closeQuietly(tempFis);
+
+			log.error("Construct XSSFSheet object failed! file_path=[{}], sheet_index=[{}]",
+					filePath, sheetIndex, e);
+
+			// 根据异常类型抛出不同的业务异常
+			if (e instanceof IllegalArgumentException) {
+				throw new BusinessException(ErrorCode.FILE_READ_FAIL,
+						"Invalid sheet index: " + sheetIndex);
+			} else {
+				throw new BusinessException(ErrorCode.FILE_READ_FAIL, filePath);
+			}
 		}
 	}
 
 	/**
 	 * 构造函数，初始化excel数据
-	 *
-	 * @param filePath  excel路径
+	 * @param filePath excel路径
 	 * @param sheetName sheet表名
+	 * @throws BusinessException 当文件读取失败时抛出
 	 */
 	public ExcelDataHandler(String filePath, String sheetName) {
+		FileInputStream tempFis = null;
+		Workbook tempWorkbook = null;
+
 		try {
-			fileInputStream = new FileInputStream(filePath);
+			tempFis = new FileInputStream(filePath);
+			tempWorkbook = WorkbookFactory.create(tempFis);
 
-			workbook = WorkbookFactory.create(fileInputStream);
+			// 只有全部成功才赋值给成员变量
+			this.fileInputStream = tempFis;
+			this.workbook = tempWorkbook;
+			this.sheet = tempWorkbook.getSheet(sheetName);
 
-			// 获取sheet
-			sheet = workbook.getSheet(sheetName);
 		} catch (Exception e) {
-			log.error(
-					"Construct XSSFSheet object failed! file_path=[{}], sheet_name=[{}], catch error:",
-					filePath, sheetName, e);
+			// 先关闭临时资源
+			closeQuietly(tempWorkbook);
+			closeQuietly(tempFis);
 
-			try {
-				workbook.close();
-				fileInputStream.close();
-			} catch (IOException ioException) {
-				// 关不掉这个没办法了
-			}
-			log.error("excel fileInputStream close failed!  filePath =[{}],sheetName=[{}]",filePath,sheetName);
+			log.error("Construct XSSFSheet object failed! file_path=[{}], sheet_name=[{}]",
+					filePath, sheetName, e);
 			throw new BusinessException(ErrorCode.FILE_READ_FAIL, filePath);
+		}
+	}
+
+	/**
+	 * 安静关闭资源
+	 */
+	private static void closeQuietly(Closeable closeable) {
+		if (closeable != null) {
+			try {
+				closeable.close();
+			} catch (IOException e) {
+				// 忽略关闭异常
+				log.error("exception run", e);
+			}
+		}
+	}
+
+	@Override
+	public void close() throws IOException {
+		// 实现Closeable接口，提供显式关闭方法
+		try {
+			if (workbook != null) {
+				workbook.close();
+			}
+		} finally {
+			if (fileInputStream != null) {
+				fileInputStream.close();
+			}
 		}
 	}
 
@@ -288,7 +327,7 @@ public class ExcelDataHandler {
 	 * @param passFields  pass 字段
 	 */
 	private static <T> void doExportExcel(List<T> dataList, String filePath, String sheetName,
-			ExcelHeader excelHeader, Workbook workbook, List<String> passFields) {
+										  ExcelHeader excelHeader, Workbook workbook, List<String> passFields) {
 
 		// 先创建父级目录
 		FileUtil.createParentPath(filePath);
@@ -359,6 +398,7 @@ public class ExcelDataHandler {
 				workbook.close();
 			} catch (IOException ioException) {
 				// .....
+				log.error("exception run", e);
 			}
 			throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
 		}
@@ -375,18 +415,31 @@ public class ExcelDataHandler {
 	public static <T> void exportExcel(List<T> data, String filePath, ExcelHeader excelHeader) {
 
 		Workbook workbook = null;
+		Exception mainException = null;
 		try {
 			FileUtil.createParentPath(filePath);
 			workbook = createWorkbook(filePath);
 			doExportExcel(data, filePath, CommonConstant.ONE.toString(), excelHeader, workbook,
 					null);
+		}catch (Exception e) {
+			mainException = e;
+			throw e; // 抛出主异常
 		} finally {
-			try {
-				if (null != workbook) {
+			if (workbook != null) {
+				try {
 					workbook.close();
+				} catch (IOException closeException) {
+					if (mainException != null) {
+						// 主异常优先，将关闭异常附加为Suppressed
+						mainException.addSuppressed(closeException);
+						log.warn("关闭工作簿时发生次要异常", closeException);
+					} else {
+						// 如果主流程无异常，则抛出关闭异常
+						throw new BusinessException("WORKBOOK_CLOSE_FAILED",
+								"工作簿关闭失败", closeException);
+					}
+
 				}
-			} catch (IOException e) {
-				// 关闭
 			}
 		}
 	}
@@ -402,7 +455,7 @@ public class ExcelDataHandler {
 	 * @return 文件流
 	 */
 	public static <T> File exportExcel(List<T> list, String filePath, String sheetName,
-			List<String> passFields, ExcelHeader excelHeader) {
+									   List<String> passFields, ExcelHeader excelHeader) {
 
 		File file = new File(filePath);
 		// 校验文件是否存在 不存在则新建
@@ -470,12 +523,15 @@ public class ExcelDataHandler {
 				wb.close();
 			} catch (IOException ioException) {
 				// .....
+				log.error("exception run", e);
 			}
 			throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
 		} finally {
 			try {
 				wb.close();
-			} catch (IOException ignored) {}
+			} catch (IOException ignored) {
+				log.error("exception run", ignored);
+			}
 		}
 
 		return file;

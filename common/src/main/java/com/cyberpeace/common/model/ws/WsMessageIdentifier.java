@@ -68,7 +68,7 @@ public class WsMessageIdentifier implements Serializable {
 
 		StringBuilder stringBuilder = new StringBuilder();
 		for (Map.Entry<String, Object> item : internal.entrySet()) {
-			stringBuilder.append(item.getValue()).append("&");
+			stringBuilder.append(item.getValue()).append('&');
 		}
 
 		return stringBuilder.toString();

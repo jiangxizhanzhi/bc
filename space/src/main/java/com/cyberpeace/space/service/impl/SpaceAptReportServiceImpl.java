@@ -118,7 +118,7 @@ public class SpaceAptReportServiceImpl extends ServiceImpl<SpaceAptReportMapper,
 	public Boolean loadReport(String realPath) {
 		// 文件解压
 		String destFilePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID();
-		ZipUtil.unzipToDest(realPath, destFilePath);
+		Boolean success = ZipUtil.unzipToDest(realPath, destFilePath);
 		String filePath = destFilePath + File.separatorChar
 				+ ResourceImportConstant.DUMP_LOAD_FILE_STORE_PATH;
 
@@ -135,7 +135,7 @@ public class SpaceAptReportServiceImpl extends ServiceImpl<SpaceAptReportMapper,
 				String fileSuffix = FileUtil.getFileSuffix(report.getReportPath());
 				String path = filePath + File.separatorChar + report.getResourceId()
 						+ CommonConstant.PERIOD + fileSuffix;
-				FileUtil.copyFile(path, utilService.getRealPath(report.getReportPath()), false);
+				String s = FileUtil.copyFile(path, utilService.getRealPath(report.getReportPath()), false);
 			}
             report.setUpdateTime(null);
             report.setCreateTime(null);
@@ -160,7 +160,7 @@ public class SpaceAptReportServiceImpl extends ServiceImpl<SpaceAptReportMapper,
 		String fileName = resourceId + CommonConstant.PERIOD + fileSuffix;
 		String destPath = destFilePath + File.separatorChar + fileName;
 
-		FileUtil.copyFile(realPath, destPath, false);
+		String path = FileUtil.copyFile(realPath, destPath, false);
 	}
 }
 

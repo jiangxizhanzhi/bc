@@ -489,7 +489,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	 */
 	@Override
 	public void deleteTopo(String topoId) {
-		remoteTopoService.deleteById(topoId);
+		Boolean b = remoteTopoService.deleteById(topoId);
 	}
 
 	/**
@@ -622,7 +622,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	public void deleteRemoteScene(LocalScene localScene) {
 		checkDemonstration();
 		SceneOpsContext sceneOpsContext = getSceneOpsContext(localScene);
-		remoteSceneService.stopScene(sceneOpsContext);
+		Boolean b = remoteSceneService.stopScene(sceneOpsContext);
 	}
 
 	/**

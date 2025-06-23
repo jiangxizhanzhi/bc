@@ -41,7 +41,7 @@ public class WebSocketConnectionContext extends WsMessageIdentifier {
 	public String getIdentifierId() {
 		StringBuilder stringBuilder = new StringBuilder();
 		for (Map.Entry<String, String> item : originParams.entrySet()) {
-			stringBuilder.append(item.getValue()).append("&");
+			stringBuilder.append(item.getValue()).append('&');
 		}
 
 		return stringBuilder.toString();

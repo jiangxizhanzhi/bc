@@ -240,13 +240,13 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			List<String> evalTaskList = evalTaskMapper.selectIdsByTemplateIdAndStatus(templateId,
 					null);
 			for (String taskId : evalTaskList) {
-				evalTaskService.deleteTask(evalTaskService.getEvalTaskOpsContext(taskId, true));
+				Boolean deleteResult = evalTaskService.deleteTask(evalTaskService.getEvalTaskOpsContext(taskId, true));
 			}
 
 			EvalTemplate evalTemplate = evalTemplateMapper.selectById(templateId);
 			if (StringUtils.isNotBlank(evalTemplate.getTopoId())) {
 				try {
-					remoteTopoService.deleteById(evalTemplate.getTopoId());
+					Boolean deleteResult = remoteTopoService.deleteById(evalTemplate.getTopoId());
 				} catch (Exception e) {
 					log.error(
 							"Evaluate template delete topo failed! template_id=[{}], topo_id=[{}], catch error:",

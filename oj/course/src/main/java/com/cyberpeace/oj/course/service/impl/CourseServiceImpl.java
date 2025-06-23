@@ -897,7 +897,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		// 文件解压
 		String destFilePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID();
-		ZipUtil.unzipToDest(realPath, destFilePath);
+		Boolean b = ZipUtil.unzipToDest(realPath, destFilePath);
 		String filePath = destFilePath + File.separatorChar
 				+ ResourceImportConstant.DUMP_LOAD_FILE_STORE_PATH;
 
@@ -986,7 +986,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	public Boolean loadCourseSlim(String realPath, AuthContext authContext) {
 		// 文件解压
 		String destFilePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID();
-		ZipUtil.unzipToDest(realPath, destFilePath);
+		Boolean b = ZipUtil.unzipToDest(realPath, destFilePath);
 
 		// 文件数据读取
 		String dataPath = destFilePath + File.separatorChar + ResourceImportConstant.DATA_JSON;
@@ -1320,7 +1320,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 					+ CommonConstant.PERIOD + fileSuffix;
 			String realPath = filePath + File.separatorChar + relativePath;
 
-			FileUtil.copyFile(realPath, logoPath, false);
+			String s = FileUtil.copyFile(realPath, logoPath, false);
 			String fileUrl = utilService.replaceFileUrl(logoPath);
 			course.setLogo(fileUrl);
 		}
@@ -1384,7 +1384,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			String fileName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
 			String destLogoPath = fileStorePath + File.separatorChar + fileName;
 
-			FileUtil.copyFile(realPath, destLogoPath, false);
+			String path = FileUtil.copyFile(realPath, destLogoPath, false);
 			filePathMap.put(course.getLogo(), fileName);
 		}
 

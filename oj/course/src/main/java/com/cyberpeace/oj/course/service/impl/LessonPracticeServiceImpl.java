@@ -268,7 +268,7 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 		String businessId = getBusinessId(courseLesson, operation);
 		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(businessId,
 				operation.getSceneShareMode(), authContext);
-		ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
+		Boolean b = ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
 		pushMessageHandler.pushLessonPracticeMessage(pushMessageHandler.getDeleteMessage(),
 				ojLocalScene);
 

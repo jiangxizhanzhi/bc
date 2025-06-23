@@ -3,6 +3,7 @@ package com.cyberpeace.gateway.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.io.File;
+import java.util.List;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -85,13 +86,17 @@ public class NfsMountController {
 	@ApiOperation("NFS目录挂载")
 	@PostMapping("/mount")
 	public BaseRsp<Boolean> nfsMount(@RequestBody NfsMountReq nfsMountReq) {
+		// 创建防御性副本
+		NfsMountReq req = new NfsMountReq();
+		req.setHost(nfsMountReq.getHost());
+		req.setPath(nfsMountReq.getPath());
 
-		if (!new File(nfsMountReq.getPath()).exists()) {
-			ShellUtils.execShell(String.format(MKDIR, nfsMountReq.getPath()));
+		if (!new File(req.getPath()).exists()) {
+			List<String> shell = ShellUtils.execShell(String.format(MKDIR, req.getPath()));
 		}
 
-		ShellUtils.execShell(String.format(MOUNT_SHELL, nfsMountReq.getHost(),
-				nfsMountReq.getPath(), nfsMountReq.getPath()));
+		List<String> result =  ShellUtils.execShell(String.format(MOUNT_SHELL, req.getHost(),
+				req.getPath(), req.getPath()));
 
 		return new BaseRsp<>(Boolean.TRUE);
 	}
@@ -105,7 +110,12 @@ public class NfsMountController {
 	@ApiOperation("NFS目录卸载")
 	@PostMapping("/umount")
 	public BaseRsp<Boolean> nfsUmount(@RequestBody NfsUmountReq umountReq) {
-		ShellUtils.execShell(String.format(UMOUNT_SHELL, umountReq.getPath()));
+
+		// 创建防御性副本
+		NfsUmountReq req = new NfsUmountReq();
+		req.setPath(umountReq.getPath());
+
+		List<String> shell = ShellUtils.execShell(String.format(UMOUNT_SHELL, req.getPath()));
 		return new BaseRsp<>(Boolean.TRUE);
 	}
 }

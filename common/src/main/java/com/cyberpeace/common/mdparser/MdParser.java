@@ -153,9 +153,12 @@ public class MdParser {
      * @param file 文件
      */
     private void doWrite(Object obj, File file) {
-        FileUtil.mkdirs(file.getParentFile().getAbsolutePath());
+        File dirs = FileUtil.mkdirs(file.getParentFile().getAbsolutePath());
         if (file.exists()) {
-            file.delete();
+            boolean b = file.delete();
+            if (!b) {
+                log.warn("Failed to delete file: {}", file.getAbsolutePath());
+            }
         }
 
         Field[] fields = ObjUtil.getFields(obj);
@@ -204,22 +207,50 @@ public class MdParser {
             bw.flush();
         } catch (Exception e) {
             log.error("Markdown content write failed！file_path=[{}], catch error:", file.getAbsolutePath(), e);
-            file.delete();
+            boolean success = file.delete();
+            if (!success) {
+                log.warn("Failed to delete file: {}", file.getAbsolutePath());
+            }
             throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
         } finally {
+            IOException suppressedException = null;
+
+            // 按创建顺序的逆序关闭资源
             try {
-                if (null != fw) {
-                    fw.close();
-                }
-                if (null != bw) {
+                if (bw != null) {
                     bw.close();
                 }
+            } catch (IOException e) {
+                suppressedException = e;
+                log.error("Failed to close BufferedWriter", e);
+            }
+
+            try {
                 if (osw != null) {
                     osw.close();
                 }
             } catch (IOException e) {
+                if (suppressedException == null) {
+                    suppressedException = e;
+                }
+                log.error("Failed to close OutputStreamWriter", e);
             }
 
+            try {
+                if (fw != null) {
+                    fw.close();
+                }
+            } catch (IOException e) {
+                if (suppressedException == null) {
+                    suppressedException = e;
+                }
+                log.error("Failed to close FileWriter", e);
+            }
+
+            // 可以选择记录或处理最终异常
+            if (suppressedException != null) {
+                log.warn("One or more resources failed to close properly");
+            }
         }
     }
 

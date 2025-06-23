@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.controller;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -72,7 +73,7 @@ public class CrNoAuthController {
 	@GetMapping("/auth")
 	public BaseRsp auth(@ApiParam(name = "token", value = "jwt token") String token) {
 		try {
-			remoteUserService.doAuthentication(token);
+			UserInfo userInfo = remoteUserService.doAuthentication(token);
 		} catch (Exception e) {
 			log.error("authentication failed, token={}", token, e);
 			throw new AuthenticationException();

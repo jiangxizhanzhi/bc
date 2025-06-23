@@ -33,7 +33,13 @@ public class SystemPropUtil {
 
 		// 2、取不到，再从环境变量获取
 		if (StringUtils.isBlank(value)) {
-			value = System.getenv(key);
+			String envMessage = System.getenv(key);
+			if (StringUtils.isBlank(envMessage) ||
+					StringUtils.isBlank(envMessage.replaceAll("\\s", ""))){
+				value = "";
+			}else {
+				value = envMessage;
+			}
 		}
 
 		return value;

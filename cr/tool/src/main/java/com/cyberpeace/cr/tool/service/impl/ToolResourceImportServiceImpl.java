@@ -136,7 +136,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 
 			try {
 				log.info("tool=[{}] start import", subFile.getName());
-				importTool(subFile, type);
+				Tool tool = importTool(subFile, type);
 				log.info("tool=[{}] import success", subFile.getName());
 			} catch (Exception e) {
 				log.error("tool=[{}] import error,", subFile.getName(), e);
@@ -170,7 +170,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 			ToolMessage toolMessage = data2ToolMessage(data);
 			try {
 				log.info("tool=[{}] start import", toolMessage.getToolName());
-				importTool2(toolMessage, toolsPath, publicPhotoPath);
+				Tool t = importTool2(toolMessage, toolsPath, publicPhotoPath);
 				log.info("tool=[{}] import success", toolMessage.getToolName());
 			} catch (Exception e) {
 				log.error("tool=[{}] import error,", toolMessage.getToolName(), e);

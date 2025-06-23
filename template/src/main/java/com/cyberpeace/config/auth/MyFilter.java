@@ -79,6 +79,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MyFilter implements Filter {
 
+	private final static String LOCAL =  "127.0.0.1";
+
 	/**
 	 * 初始化
 	 *
@@ -165,7 +167,7 @@ public class MyFilter implements Filter {
 		}
 
 		if (StringUtils.isBlank(ip)) {
-			ip = "127.0.0.1";
+			ip = LOCAL;
 		}
 		return ip;
 	}

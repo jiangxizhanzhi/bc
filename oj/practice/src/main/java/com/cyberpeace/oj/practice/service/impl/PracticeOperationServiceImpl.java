@@ -356,7 +356,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 数据校验
 //		PracticeSet practiceSet = validatePracticeSet(practiceOperation.getPracticeSetId(),
 //				authContext);
-		validateCategory(practiceOperation.getCategoryId());
+		PracticeCategory practiceCategory = validateCategory(practiceOperation.getCategoryId());
 		practiceValidateHandler.validateOperationTitleExist("",
 				practiceOperation.getTitle());
 
@@ -1320,7 +1320,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		try {
 			practiceSolvedMapper.insert(practiceSolved);
 		} catch (DuplicateKeyException e) {
-			practiceSolvedMapper.updateSolved(practiceSolved);
+			int i = practiceSolvedMapper.updateSolved(practiceSolved);
 		}
 
 		return evaluateResult;
@@ -1447,7 +1447,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
 				operation.getResourceId(), operation.getSceneShareMode(), authContext);
 
-		ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
+		Boolean success = ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
 		pushMessageHandler.pushOperationMessage(pushMessageHandler.getDeleteMessage(),
 				ojLocalScene);
 
@@ -1755,7 +1755,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				String fileName = FileUtil.getFileName(realPath, true);
 				String destFilePath = fileStorePath + File.separatorChar
 						+ FileUtil.getNewName(fileName);
-				FileUtil.copyFile(realPath, destFilePath, false);
+				String s = FileUtil.copyFile(realPath, destFilePath, false);
 
 				String relativePath = destFilePath.replace(fileStorePath,
 						CommonConstant.EMPTY_STRING);
@@ -2349,7 +2349,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		String destDir = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID();
 		String destFilePath = destDir + File.separatorChar
 				+ ResourceImportConstant.DUMP_LOAD_FILE_STORE_PATH;
-		FileUtil.mkdirs(destFilePath);
+		File f = FileUtil.mkdirs(destFilePath);
 
 		Map<String, String> filePathMap = Maps.newHashMap();
 		List<PracticeOperationDumpLoadBo> boList = this.dumpOperation(ids, destFilePath,
@@ -2393,7 +2393,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Override
 	public Boolean loadBatch(String realPath, String userId) {
 		String destPath = realPath.substring(0, realPath.lastIndexOf(CommonConstant.PERIOD));
-		ZipUtil.unzipToDest(realPath, destPath);
+		Boolean success = ZipUtil.unzipToDest(realPath, destPath);
 
 		// 解析数据
 		String filePath = destPath + File.separatorChar
@@ -2420,7 +2420,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Override
 	public Boolean loadBatchSlim(String realPath, String userId) {
 		String destPath = realPath.substring(0, realPath.lastIndexOf(CommonConstant.PERIOD));
-		ZipUtil.unzipToDest(realPath, destPath);
+		Boolean b = ZipUtil.unzipToDest(realPath, destPath);
 
 		String dataPath = destPath + File.separatorChar + ResourceImportConstant.DATA_JSON;
 		String data = FileUtil.getContent(new File(dataPath));

@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.service.md;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -145,9 +146,11 @@ public class MdTheoryParser {
 	 * @see File
 	 */
 	private void doWrite(Object obj, File file) {
-		FileUtil.mkdirs(file.getParentFile().getAbsolutePath());
+		File f= FileUtil.mkdirs(file.getParentFile().getAbsolutePath());
 		if (file.exists()) {
-			file.delete();
+			if (!file.delete()) {
+				log.warn("Failed to delete file");
+			}
 		}
 
 		Field[] fields = ObjUtil.getFields(obj);
@@ -198,21 +201,48 @@ public class MdTheoryParser {
 		} catch (Exception e) {
 			log.error("Markdown content write failed！file_path=[{}], catch error:",
 					file.getAbsolutePath(), e);
-			file.delete();
+			if (!file.delete()) {
+				log.warn("Failed to delete file");
+				// 可以选择抛出异常或进行其他处理
+			}
 			throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
 		} finally {
-			try {
-				if (null != fw) {
-					fw.close();
-				}
-				if (null != bw) {
-					bw.close();
-				}
-				if (osw != null) {
-					osw.close();
-				}
-			} catch (IOException e) {}
+			// 按创建顺序的逆序关闭资源
+			List<IOException> closeExceptions = new ArrayList<>();
 
+			if (bw != null) {
+				try {
+					bw.close();
+				} catch (IOException e) {
+					closeExceptions.add(e);
+					log.error("Failed to close BufferedWriter", e);
+				}
+			}
+
+			if (osw != null) {
+				try {
+					osw.close();
+				} catch (IOException e) {
+					closeExceptions.add(e);
+					log.error("Failed to close OutputStreamWriter", e);
+				}
+			}
+
+			if (fw != null) {
+				try {
+					fw.close();
+				} catch (IOException e) {
+					closeExceptions.add(e);
+					log.error("Failed to close FileWriter", e);
+				}
+			}
+
+			// 处理收集到的异常
+			if (!closeExceptions.isEmpty()) {
+				if (closeExceptions.size() > 1) {
+					log.warn("Multiple resources failed to close properly");
+				}
+			}
 		}
 	}
 
@@ -358,7 +388,7 @@ public class MdTheoryParser {
 		// match img like ![](./img/1.png) ---> ./img/1.png
 		File imgFile = new File(newPath + File.separator + "img");
 		if (!imgFile.exists()) {
-			imgFile.mkdir();
+			imgFile.mkdirs();
 		}
 
 		List<String> imgs = LocalStringUtil.getAllMatchStr(line,
@@ -369,7 +399,7 @@ public class MdTheoryParser {
 
 				String newImg = "./img/" + (j + 1) + "." + FileUtil.getFileSuffix(img);
 				line = line.replace(img, newImg);
-				FileUtil.copyFile(img,
+				String s = FileUtil.copyFile(img,
 						imgFile + File.separator + (j + 1) + "." + FileUtil.getFileSuffix(img),
 						false);
 				j++;
@@ -409,7 +439,7 @@ public class MdTheoryParser {
 				String dest = ConfigUtil.getContextProperty("cr.local.file.prefix")
 						+ AttachmentPath.UPLOAD_IMAGE.getOriginDesc() + newFileName;// todo
 				// copy
-				FileUtil.copyFile(originalPath, dest, CommonConstant.FALSE);
+				String s = FileUtil.copyFile(originalPath, dest, CommonConstant.FALSE);
 
 				line = line.replace(img, dest);
 			}

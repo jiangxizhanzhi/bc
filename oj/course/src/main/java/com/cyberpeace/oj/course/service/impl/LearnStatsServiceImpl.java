@@ -325,7 +325,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 			}
 			try {
 				countDownLatch.countDown();
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				log.error("exception run", e);
+			}
 		});
 
 		// 完成报告排行
@@ -345,7 +347,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 			}
 			try {
 				countDownLatch.countDown();
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				log.error("exception run", e);
+			}
 		});
 
 		// 完成课后练习排行
@@ -364,7 +368,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 			}
 			try {
 				countDownLatch.countDown();
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				log.error("exception run", e);
+			}
 		});
 
 		// 获取竞赛的考试排行

@@ -104,7 +104,7 @@ public class ParseMarkdown {
 	 * 处理markdown流程
 	 */
 	public void handler(){
-		loadFile();
+		List<String> l = loadFile();
 		parse();
 	}
 

@@ -464,7 +464,7 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		try {
 			HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.Strategy, destHtmlPath);
 			destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html")) + "pdf";
-			HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
+			boolean convertResult = HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;

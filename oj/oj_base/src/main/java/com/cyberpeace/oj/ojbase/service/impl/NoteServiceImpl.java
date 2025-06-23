@@ -110,7 +110,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		try {
 			noteMapper.insert(note);
 		} catch (DuplicateKeyException e) {
-			noteMapper.updateNote(note);
+			int id = noteMapper.updateNote(note);
 		}
 
 		return note;
@@ -216,7 +216,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 			}
 			note.setIsSubmit(reportAddReq.getOperate());
 			note.setResourceId(report.getResourceId());
-			noteMapper.updateReportByID(note);
+			int i = noteMapper.updateReportByID(note);
 		}
 		return note;
 	}

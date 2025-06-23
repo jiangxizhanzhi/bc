@@ -26,7 +26,7 @@ import ma.glasnost.orika.impl.DefaultMapperFactory;
 **/
 public class BeanUtils {
 
-	public static MapperFacade mapper = new DefaultMapperFactory.Builder().build().getMapperFacade();
+	public static final MapperFacade mapper = new DefaultMapperFactory.Builder().build().getMapperFacade();
 
 	private BeanUtils() {}
 

@@ -277,7 +277,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 
 		} catch (Exception e) {
 			// 本地保存数据错误，删除已启动的远程场景
-			localSceneService.stopScene(localScene);
+			Boolean b = localSceneService.stopScene(localScene);
 			log.error("Failed to save local data:", e);
 			throw new BusinessException(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE);
 		}
@@ -321,7 +321,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	public Boolean stopTask(EvalTaskOpsContext evalTaskOpsContext) {
 
 		// 关闭场景
-		evalSceneService.stopScene(evalTaskOpsContext.getLocalScene());
+		Boolean b = evalSceneService.stopScene(evalTaskOpsContext.getLocalScene());
 
 		// 处理数据库数据
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -350,7 +350,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		if (evalTaskOpsContext.getLocalScene() != null) {
 
 			// 关闭场景
-			evalSceneService.stopScene(evalTaskOpsContext.getLocalScene());
+			Boolean b = evalSceneService.stopScene(evalTaskOpsContext.getLocalScene());
 
 			// 清除任务及其场景数据
 			clearTaskAndScene(evalTaskOpsContext);
@@ -365,13 +365,13 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				clearTask(taskId);
-				evalRecordService.deleteRecord(Lists.newArrayList(taskId));
+				Boolean success = evalRecordService.deleteRecord(Lists.newArrayList(taskId));
 			}
 		});
 
 		if (StringUtils.isNotBlank(evalTaskOpsContext.getEvalTask().getCopyedTopoId())) {
 			try {
-				remoteTopoService.deleteById(evalTaskOpsContext.getEvalTask().getCopyedTopoId());
+				Boolean deleteSuccess = remoteTopoService.deleteById(evalTaskOpsContext.getEvalTask().getCopyedTopoId());
 			} catch (Exception e) {
 				log.error(
 						"Evaluation delete topo failed! eval_task_id=[{}], topo_id=[{}], catch error:",
@@ -407,7 +407,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	 * @param taskId 任务id
 	 */
 	private void clearTask(String taskId) {
-		evalTaskStepService.removeByTaskId(taskId);
+		Boolean b = evalTaskStepService.removeByTaskId(taskId);
 		removeById(taskId);
 	}
 

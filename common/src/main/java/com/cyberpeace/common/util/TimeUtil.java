@@ -96,7 +96,7 @@ public class TimeUtil {
 	 * @return yyyy-MM-dd，"2018-04-30"
 	 */
 	public static String getHeadOrTailDayOfSepecificMonth(String month, boolean head) {
-		String[] ss = month.split("-");
+		String[] ss = month.split("\\-");
 		int yyyy = Integer.parseInt(ss[0]);
 		int mm = Integer.parseInt(ss[1]);
 		Calendar calendar = Calendar.getInstance();

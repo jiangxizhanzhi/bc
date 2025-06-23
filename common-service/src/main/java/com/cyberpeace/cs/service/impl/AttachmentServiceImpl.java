@@ -234,7 +234,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	@Override
 	public AttachmentBo uploadDest(String destDir, boolean insert, MultipartFile file) {
 
-		FileUtil.mkdirs(destDir);
+		File f = FileUtil.mkdirs(destDir);
 		String reName = reFileName(file.getOriginalFilename());
 		//获取文件名称
 		String fileSuffix = FileUtil.getFileSuffix(reName);
@@ -311,10 +311,10 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		// 复制图片
 		String originalPath = imageDir + File.separator + fileName;
 		// 仅复制图片
-		copyFile(originalPath, AttachmentPath.UPLOAD_IMAGE.getCode(), CommonConstant.FALSE,
+		AttachmentBo bo= copyFile(originalPath, AttachmentPath.UPLOAD_IMAGE.getCode(), CommonConstant.FALSE,
 				CommonConstant.FALSE);
 		// 插入数据库
-		create(fileName, AttachmentPath.UPLOAD_IMAGE.getDesc() + fileName, true);
+		AttachmentBo attachmentBo = create(fileName, AttachmentPath.UPLOAD_IMAGE.getDesc() + fileName, true);
 		return true;
 	}
 

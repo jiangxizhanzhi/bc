@@ -285,7 +285,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 
 		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(lessonId,
 				courseLesson.getSceneShareMode(), authContext);
-		ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
+		Boolean b = ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
 		pushMessageHandler.pushLessonMessage(pushMessageHandler.getDeleteMessage(), ojLocalScene);
 
 		return CommonConstant.TRUE;
@@ -309,7 +309,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	@Override
 	public Boolean restartNode(String lessonId, String nodeId, String roomId, AuthContext authContext) {
 		OjLocalScene ojLocalScene = nodeOperationCheck(lessonId, roomId, authContext);
-		localSceneService.restartNode(ojLocalScene.getLocalSceneId(), nodeId);
+		Boolean b = localSceneService.restartNode(ojLocalScene.getLocalSceneId(), nodeId);
 
 		// 清理远程协助信息
 		clearAssistance(ojLocalScene);
@@ -334,7 +334,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	@Override
 	public Boolean recreateNode(String lessonId, String nodeId, String roomId,  AuthContext authContext) {
 		OjLocalScene ojLocalScene = nodeOperationCheck(lessonId, roomId, authContext);
-		localSceneService.recreateNode(ojLocalScene.getLocalSceneId(), nodeId);
+		Boolean success = localSceneService.recreateNode(ojLocalScene.getLocalSceneId(), nodeId);
 
 		// 清理远程协助信息
 		clearAssistance(ojLocalScene);
@@ -364,7 +364,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		if (status.intValue() == LocalScene.SceneStatusEnum.PAUSE.getCode().intValue()) {
 
 			// 场景暂停
-			localSceneService.pauseScene(ojLocalScene.getLocalSceneId());
+			Boolean b =localSceneService.pauseScene(ojLocalScene.getLocalSceneId());
 			clearAssistance(ojLocalScene);
 
 			return CommonConstant.TRUE;

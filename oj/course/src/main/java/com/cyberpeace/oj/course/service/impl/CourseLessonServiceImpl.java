@@ -623,7 +623,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 					.userId(authContext.getUserId()).build();
 			lessonRecordMapper.insert(lessonRecord);
 		} catch (DuplicateKeyException e) {
-			lessonRecordMapper.updateLearnedTime(lessonId, courseId, authContext.getUserId(), learnedType, StringUtils.isBlank(roomId) ? "" : roomId);
+			int id = lessonRecordMapper.updateLearnedTime(lessonId, courseId, authContext.getUserId(), learnedType, StringUtils.isBlank(roomId) ? "" : roomId);
 			// 代表数据库已存在学习记录 不做任何处理
 		}
 
@@ -804,7 +804,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		int lessonType = courseLesson.getType().intValue();
 		if (lessonType == CourseLesson.LessonType.THEORY.getCode()) {
 			if (StringUtils.isNotBlank(lessonExist.getTopoId())) {
-				remoteTopoService.deleteById(lessonExist.getTopoId());
+				Boolean b = remoteTopoService.deleteById(lessonExist.getTopoId());
 				courseLesson.setTopoId(CommonConstant.EMPTY_STRING);
 			}
 		} else {
@@ -847,7 +847,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				if (StringUtils.isBlank(courseLesson.getPaperId())) {
-					paperService.update(paperContext);
+					Paper p = paperService.update(paperContext);
 				}
 				if (updateFlag) {
 					lessonConfigMapper.updateByCourseAndLesson(lessonConfig);
@@ -1326,7 +1326,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		int objectCount = 0, subjectCount = 0, totalCount = 0;
 		for (Map.Entry entry : handlerPractice.entrySet()) {
 			LessonPracticeListBo val = (LessonPracticeListBo) entry.getValue();
-			if (entry.getKey() == "fill_blank" || entry.getKey() == "short_answer") {
+			if ("fill_blank".equals(entry.getKey()) || "short_answer".equals(entry.getKey())) {
 				subjectCount += val.getCount();
 			} else {
 				objectCount += val.getCount();
@@ -1514,7 +1514,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			// 计算要解压的文件地址
 			String unzipPath = handoutPath + FileUtil.getFileName(realPath, false);
-			ZipUtil.unzipToDest(handout, unzipPath);
+			Boolean b = ZipUtil.unzipToDest(handout, unzipPath);
 
 			// 获取解压的讲义文件
 			String mdFilePath = FileUtil.getOneFile(unzipPath, FileSunffixConstant.MD.getDesc());
@@ -1594,7 +1594,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Override
 	public Integer batchDelete(String courseId, List<String> resourceIds, AuthContext authContext) {
 
-		courseValidateHandler.validateCourseExist(courseId);
+		Course course = courseValidateHandler.validateCourseExist(courseId);
 
 		List<Classroom> classrooms = classroomMapper.selectByLesson(resourceIds);
 		List<String> classroomIds = StreamApiUtils.map(classrooms, Classroom::getResourceId);
@@ -1634,7 +1634,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				});
 
 				// 目录和场景
-				lessonConfigMapper.deleteByLessonIds(resourceIds);
+				int id = lessonConfigMapper.deleteByLessonIds(resourceIds);
 				return courseLessonMapper.deleteBatchIds(resourceIds);
 			}
 		});
@@ -1716,7 +1716,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		try {
 			File toDelete = new File(url);
 			if (toDelete.exists()) {
-				FileUtil.deleteDir(toDelete);
+				Boolean success = FileUtil.deleteDir(toDelete);
 			}
 		} catch (Exception e) {
 			log.error("failed to delete [{}]", url, e);
@@ -1746,7 +1746,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		scenes.forEach(ojLocalScene -> ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene));
 
 		for (String classroomId : classroomIds) {
-			classroomService.deleteClassroom(classroomId, authContext);
+			Integer i = classroomService.deleteClassroom(classroomId, authContext);
 		}
 	}
 
@@ -1815,7 +1815,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			for (OjLocalScene scene : scenes) {
 				try {
 					// 删不掉算了
-					ojLocalSceneService.deleteLocalAndRemoteScene(scene);
+					Boolean b = ojLocalSceneService.deleteLocalAndRemoteScene(scene);
 				} catch (Exception e) {
 					log.error(
 							"Lesson scene delete failed! oj_local_scene_id=[{}], lesson_id=[{}], catch error:",
@@ -1829,7 +1829,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		if (CollectionUtils.isNotEmpty(topos)) {
 			for (String topo : topos) {
 				try {
-					remoteTopoService.deleteById(topo);
+					Boolean success = remoteTopoService.deleteById(topo);
 				} catch (Exception e) {
 					log.error("Lesson topo delete failed! topo_id=[{}], catch error:", topo, e);
 				}
@@ -2249,7 +2249,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		String fileName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
 		String destFile = storePath + fileName;
 
-		FileUtil.copyFile(realPath, destFile, false);
+		String s = FileUtil.copyFile(realPath, destFile, false);
 		return utilService.replaceFileUrl(destFile);
 	}
 
@@ -2270,7 +2270,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		String fileName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
 		String destPath = destFilePath + File.separatorChar + fileName;
 
-		FileUtil.copyFile(realPath, destPath, false);
+		String s = FileUtil.copyFile(realPath, destPath, false);
 
 		return fileName;
 	}

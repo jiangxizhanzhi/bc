@@ -140,8 +140,12 @@ public class JsonUtil {
 			log.error("InputStream parse failed!", e);
 			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
 		} finally {
-			bR.close();
-		}
+            try {
+                bR.close();
+            } catch (IOException e) {
+                log.error("Failed to close BufferedReader", e);
+            }
+        }
 		return JSONObject.parseObject(responseStrBuilder.toString(), clazz);
 	}
 

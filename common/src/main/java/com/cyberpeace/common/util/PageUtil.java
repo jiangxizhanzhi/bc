@@ -126,7 +126,7 @@ public class PageUtil {
 
 			// 判断是否存在该字段
 			try {
-				ObjUtil.getCertainFieldValue(k, column);
+				String s = ObjUtil.getCertainFieldValue(k, column);
 			} catch (RuntimeException e) {
 				continue;
 			}

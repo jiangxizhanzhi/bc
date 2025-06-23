@@ -93,7 +93,7 @@ public class ListUtil {
 
 		StringBuilder stringBuilder = new StringBuilder();
 		for (String item : list) {
-			stringBuilder.append(item.trim()).append(",");
+			stringBuilder.append(item.trim()).append(',');
 		}
 
 		return stringBuilder.toString();

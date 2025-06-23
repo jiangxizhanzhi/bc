@@ -960,7 +960,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public JSONObject mergeSnapshot(MergeSnapshotContext mergeSnapshotContext) {
 
-		HttpClientUtil.post(SNAPSHOT_MERGE_URL,
+		String p = HttpClientUtil.post(SNAPSHOT_MERGE_URL,
 				JsonUtil.toJsonString(mergeSnapshotContext, PropertyNamingStrategy.SnakeCase),
 				String.class);
 		return null;

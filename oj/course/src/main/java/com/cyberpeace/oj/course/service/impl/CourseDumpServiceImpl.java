@@ -206,11 +206,11 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		Map<String, List<LessonConfig>> lessonConfigCol = lessonConfigs.stream()
 				.collect(Collectors.groupingBy(LessonConfig::getCourseId));
 		String oj = DUMP_ALL_FILE_STORE_PATH;
-		FileUtil.mkdirs(oj);
+		File dirs = FileUtil.mkdirs(oj);
 		String coursePath = oj + ResourceDumpConstant.DUMP_ALL_COURSE_FILE_STORE_PATH;
 
 		destFilePath = coursePath + File.separatorChar + course.getName();
-		FileUtil.mkdirs(destFilePath);
+		dirs = FileUtil.mkdirs(destFilePath);
 
 		String courseId = course.getResourceId();
 		List<LessonConfig> currentLessonConfigs = lessonConfigCol.get(courseId);
@@ -296,7 +296,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 				index += 1;
 			}
 		} else {
-			StreamApiUtils.map(chapterFirsts,
+			List list = StreamApiUtils.map(chapterFirsts,
 					chapterFirst -> combineChapterFirst(destFilePath,
 							chapterFirsts.indexOf(chapterFirst) + 1, chapterFirst,
 							currentLessonConfigs, lessonCols, isDumpTopo, sceneNumber, disableImageExport));
@@ -335,7 +335,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		Integer currentChapter = chapterOne.getIndex();
 		String chapterFileName = destFilePath + File.separator + chapterIndex + "_"
 				+ chapterOne.getName();
-		FileUtil.mkdirs(chapterFileName);
+		File f = FileUtil.mkdirs(chapterFileName);
 		int index = 1;
 		List<LessonConfig> chapterSeconds = lessonConfigs.stream().filter(
 				s -> null != s.getParentId() && s.getParentId().equals(chapterOne.getResourceId()))
@@ -385,7 +385,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		String pathname = chapterFileName + File.separator + lastChapter + "-" + index + "_"
 				+ lesson.getName();
 
-		FileUtil.mkdirs(pathname);
+		File f = FileUtil.mkdirs(pathname);
 		// 课时内容基础保存
 		generateLessonBase(pathname, lesson, disableImageExport);
 		// TODO文件是否均
@@ -454,14 +454,14 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	private void combineOperationLesson(String destFilePath, String pathname, CourseLesson lesson, String sceneNumber, Boolean disableImageExport) {
 		// doc 指导文档doc/pdf/md 包含img文件夹 指导书md
 		String docFile = pathname + File.separator + "doc";
-		FileUtil.mkdirs(docFile);
+		File f = FileUtil.mkdirs(docFile);
 
 		generateHandout(lesson, docFile);
 
 		// env 文件夹包含topo.yml
 		log.info("start dump lesson [{}] env & images!", lesson.getName());
 		String envFile = pathname + File.separator + "env";
-		FileUtil.mkdirs(envFile);
+		f = FileUtil.mkdirs(envFile);
 		SceneDumpContext sceneDumpContext = new SceneDumpContext();
 		sceneDumpContext.setId(lesson.getTopoId());
 		sceneDumpContext.setEnv_path(envFile);
@@ -485,7 +485,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		// handout 讲义
 
 		String handoutFile = pathname + File.separator + "handout";
-		FileUtil.mkdirs(handoutFile);
+		File f =FileUtil.mkdirs(handoutFile);
 		generateHandout(lesson, handoutFile);
 
 	}
@@ -514,7 +514,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 				String[] split = handoutUrl.split("\\.");
 				String fileSuffix = split[split.length - 1];
 				String handoutFileName =  lesson.getType().equals(CourseLesson.LessonType.THEORY.getCode()) ? HANDOUT_OTHER_FILE_NAME + "." + fileSuffix : DOC_OTHER_FILE_NAME  + "." + fileSuffix;
-				FileUtil.copyFile(handoutUrl, handoutFile + File.separator + handoutFileName,
+				String s = FileUtil.copyFile(handoutUrl, handoutFile + File.separator + handoutFileName,
 						false);
 			} else {
 				File file = new File(handoutFile,
@@ -522,7 +522,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 								? HANDOUT_FILE_NAME
 								: DOC_FILE_NAME);
 				String markdown = MdUtil.dumpMarkdownImages(file, handoutUrl);
-				saveAsFileWriter(markdown, file.getAbsolutePath());
+				File f = saveAsFileWriter(markdown, file.getAbsolutePath());
 			}
 			log.info("dump lesson [{}] handout successfully!", lesson.getName());
 		}
@@ -543,7 +543,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		// 存储附件
 		log.info("start dump lesson [{}] attachFile!", lesson.getName());
 		String attachFile = pathname + File.separator + "attachments";
-		FileUtil.mkdirs(attachFile);
+		File dirs = FileUtil.mkdirs(attachFile);
 		String attachmentIds = lesson.getAttachmentIds();
 		List<AttachmentBo> attachmentBos = attachmentService.selectByIds(attachmentIds, false);
 		if (!attachmentBos.isEmpty()) {
@@ -558,15 +558,15 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		// 存储video
 		log.info("start dump lesson [{}] video!", lesson.getName());
 		String videoPath = pathname + File.separator + "video";
-		FileUtil.mkdirs(videoPath);
+		dirs = FileUtil.mkdirs(videoPath);
 		String videoUrl = lesson.getVideoUrl();
 		if (null != videoUrl && !videoUrl.isEmpty()) {
-			String[] split = videoUrl.split("/");
+			String[] split = videoUrl.split("\\/");
 			String videoName = split[split.length - 1];
 			if (!videoUrl.startsWith("/cpms")) {
 				videoUrl = "/cpms" + File.separator + videoUrl;
 			}
-			FileUtil.copyFile(videoUrl, videoPath + File.separator + videoName, false);
+			String path = FileUtil.copyFile(videoUrl, videoPath + File.separator + videoName, false);
 			log.info("dump lesson [{}] video successfully!", lesson.getName());
 		}
 
@@ -592,9 +592,9 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	 * @see String
 	 */
 	private void saveAttachFile(String attachFile, String pathname) {
-		String[] split = attachFile.split("/");
+		String[] split = attachFile.split("\\/");
 		String fileName = split[split.length - 1];
-		FileUtil.copyFile(attachFile, pathname + File.separator + fileName, false);
+		String s = FileUtil.copyFile(attachFile, pathname + File.separator + fileName, false);
 	}
 
 	/**
@@ -625,13 +625,13 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 				throw new BusinessException(OjBusinessErrorCode.NO_DEFAULT_COURSE_LOGO,
 						course.getName());
 			}
-			FileUtil.copyFile(DUMP_COURSE_DEFAULT_LOGO_STORE_PATH, destFilePath + File.separator + "logo.png", false);
+			String path = FileUtil.copyFile(DUMP_COURSE_DEFAULT_LOGO_STORE_PATH, destFilePath + File.separator + "logo.png", false);
 			course.setLogo(DUMP_COURSE_DEFAULT_LOGO_STORE_PATH);
 		} else {
 			String realPath = utilService.getRealPath(logo);
 			fileSuffix = FileUtil.getFileSuffix(realPath);
 			logoUrl = destFilePath + File.separator + "logo." + fileSuffix;
-			FileUtil.copyFile(realPath, logoUrl, false);
+			String path = FileUtil.copyFile(realPath, logoUrl, false);
 		}
 		log.info("dump course [{}] logo successfully!", course.getName());
 		// 3.生成READEME.md
@@ -652,7 +652,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		generateOutlineMD(destFilePath, course.getOutline());
 		log.info("dump course [{}] outline.md successfully!", course.getName());
 
-		FileUtil.mkdirs(destFilePath + File.separator + IMAGE_NAME);
+		File dirs = FileUtil.mkdirs(destFilePath + File.separator + IMAGE_NAME);
 	}
 
 	/**
@@ -666,7 +666,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	 */
 	private void generateOutlineMD(String destFilePath, String outline) {
 		File file = new File(destFilePath, OUTLINE_NAME);
-		saveAsFileWriter(outline, file.getAbsolutePath());
+		File f = saveAsFileWriter(outline, file.getAbsolutePath());
 	}
 
 	/**

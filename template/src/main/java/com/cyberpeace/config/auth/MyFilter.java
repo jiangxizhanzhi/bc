@@ -13,6 +13,9 @@ import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.CommonContext;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * 我的过滤器
@@ -77,9 +80,15 @@ import lombok.extern.slf4j.Slf4j;
  * 该代码实现了基本的请求拦截和上下文管理功能，适用于需要记录请求耗时、分配唯一标识符以及管理语言和 IP 的场景。如果需要更复杂的逻辑（如异常处理、动态语言支持等），可以在现有基础上进一步完善。 
 **/
 @Slf4j
+@Component
 public class MyFilter implements Filter {
 
-	private final static String LOCAL =  "127.0.0.1";
+	private final  String LOCAL ;
+
+	@Autowired
+	public MyFilter(@Value("${local.server.ip}") String localIp) {
+		this.LOCAL = localIp;
+	}
 
 	/**
 	 * 初始化

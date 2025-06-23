@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.course.controller.admin;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -139,37 +140,39 @@ public class AdminCourseImportController {
 	@ApiOperation("资管课程数据导入")
 	@PostMapping("/rm/import")
 	public BaseRsp<Boolean> RMCourseImport(@RequestBody RMCourseImportReq courseImportReq) {
+		// 创建防御性副本 (新增代码块)
+		RMCourseImportReq copiedReq = new RMCourseImportReq();
 
-		// 创建防御性副本
-		RMCourseImportReq importReq = new RMCourseImportReq();
-		importReq.setEnvReqs(courseImportReq.getEnvReqs());
-		importReq.setPath(courseImportReq.getPath());
-		importReq.setOperationEnvReqs(courseImportReq.getOperationEnvReqs());
+		// 立即复制所有敏感属性 (修改点1)
+		copiedReq.setEnvReqs(courseImportReq.getEnvReqs() != null ? new HashMap<>(courseImportReq.getEnvReqs()) : null);
+		copiedReq.setPath(courseImportReq.getPath());
+		copiedReq.setOperationEnvReqs(courseImportReq.getOperationEnvReqs() != null ? new HashMap<>(courseImportReq.getOperationEnvReqs()) : null);
 
 		try {
-			log.info("Resource management course import start! info=[{}]", JsonUtil.toJsonString(importReq));
+			// 使用防御性副本进行日志和路径校验 (修改点2)
+			log.info("Resource management course import start! info=[{}]", JsonUtil.toJsonString(copiedReq));
 
 			// 路径是否存在校验
-			File file = new File(importReq.getPath());
+			File file = new File(copiedReq.getPath());
 			if (!file.exists()) {
-				log.error("RMCourseImport：File path not exist! path=[{}]", importReq.getPath());
-				throw new BusinessException(ErrorCode.FILE_NOT_EXIST, importReq.getPath());
+				log.error("RMCourseImport：File path not exist! path=[{}]", copiedReq.getPath());
+				throw new BusinessException(ErrorCode.FILE_NOT_EXIST, copiedReq.getPath());
 			}
 
 			UserInfo userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
 			AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
 			UserInfoContext.setUserContext(userInfo);
 
-			// 执行课程数据导入
-			Boolean result = courseImportService.rMCourseImport(importReq.getPath(),
-					importReq.getEnvReqs(),importReq.getOperationEnvReqs(), authContext);
+			// 执行课程数据导入 (修改点3)
+			Boolean result = courseImportService.rMCourseImport(copiedReq.getPath(),
+					copiedReq.getEnvReqs(), copiedReq.getOperationEnvReqs(), authContext);
 			return new BaseRsp<>(result);
 		} catch (Exception e) {
-			log.error("Course import failed! course_path=[{}] catch error:", importReq.getPath(), e);
-			courseImportService.destroyFailedTopo(importReq.getEnvReqs(), importReq.getOperationEnvReqs());
+			// 使用防御性副本记录错误和清理 (修改点4)
+			log.error("Course import failed! course_path=[{}] catch error:", copiedReq.getPath(), e);
+			courseImportService.destroyFailedTopo(copiedReq.getEnvReqs(), copiedReq.getOperationEnvReqs());
 			throw e;
 		}
-
 	}
 
 	/**

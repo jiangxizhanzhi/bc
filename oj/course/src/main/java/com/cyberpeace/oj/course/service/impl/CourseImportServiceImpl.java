@@ -630,7 +630,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 			markdown = utilService.replaceMarkdownFile(markdown);
 			courseLesson.setHandoutUrl(markdown);
 		} else {
-			FileUtil.copyFile(wordOrPptFile, destWordOrPptFile, false);
+			String s = FileUtil.copyFile(wordOrPptFile, destWordOrPptFile, false);
+			log.info("调用 copyFile 方法返回值: {}"+s);
 			String fileUrl = utilService.replaceFileUrl(destWordOrPptFile);
 			courseLesson.setHandoutUrl(fileUrl);
 		}

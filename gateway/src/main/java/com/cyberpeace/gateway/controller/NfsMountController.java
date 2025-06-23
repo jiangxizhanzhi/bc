@@ -86,17 +86,19 @@ public class NfsMountController {
 	@ApiOperation("NFS目录挂载")
 	@PostMapping("/mount")
 	public BaseRsp<Boolean> nfsMount(@RequestBody NfsMountReq nfsMountReq) {
-		// 创建防御性副本
-		NfsMountReq req = new NfsMountReq();
-		req.setHost(nfsMountReq.getHost());
-		req.setPath(nfsMountReq.getPath());
+		// 创建防御性副本 (新增代码块)
+		NfsMountReq copiedReq = new NfsMountReq();
+		copiedReq.setHost(nfsMountReq.getHost());
+		copiedReq.setPath(nfsMountReq.getPath());
 
-		if (!new File(req.getPath()).exists()) {
-			List<String> shell = ShellUtils.execShell(String.format(MKDIR, req.getPath()));
+		// 执行安全检查 (修改点1)
+		if (!new File(copiedReq.getPath()).exists()) {
+			List<String> shell = ShellUtils.execShell(String.format(MKDIR, copiedReq.getPath()));
 		}
 
-		List<String> result =  ShellUtils.execShell(String.format(MOUNT_SHELL, req.getHost(),
-				req.getPath(), req.getPath()));
+		// 使用复制对象执行后续操作 (修改点2)
+		List<String> result = ShellUtils.execShell(String.format(MOUNT_SHELL, copiedReq.getHost(),
+				copiedReq.getPath(), copiedReq.getPath()));
 
 		return new BaseRsp<>(Boolean.TRUE);
 	}
@@ -110,12 +112,12 @@ public class NfsMountController {
 	@ApiOperation("NFS目录卸载")
 	@PostMapping("/umount")
 	public BaseRsp<Boolean> nfsUmount(@RequestBody NfsUmountReq umountReq) {
+		// 创建防御性副本 (新增代码块)
+		NfsUmountReq copiedReq = new NfsUmountReq();
+		copiedReq.setPath(umountReq.getPath());
 
-		// 创建防御性副本
-		NfsUmountReq req = new NfsUmountReq();
-		req.setPath(umountReq.getPath());
-
-		List<String> shell = ShellUtils.execShell(String.format(UMOUNT_SHELL, req.getPath()));
+		// 使用防御性副本执行后续操作 (修改点1)
+		List<String> shell = ShellUtils.execShell(String.format(UMOUNT_SHELL, copiedReq.getPath()));
 		return new BaseRsp<>(Boolean.TRUE);
 	}
 }

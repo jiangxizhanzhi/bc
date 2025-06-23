@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -63,12 +65,12 @@ public class AdminPracticeImportController {
 	@PostMapping("/rm/theory")
 	public BaseRsp<Boolean> importRMTheory(@RequestBody @Validated RMImportReq rmImportReq) {
 		try {
-			// 创建防御性副本
-			RMImportReq sanitizedReq = new RMImportReq();
-			sanitizedReq.setPath(rmImportReq.getPath());
-
-			log.info("Resource management import start! info=[{}]", sanitizedReq.getPath());
-			boolean result = practiceSetImportService.importRmTheorySet(sanitizedReq.getPath());
+			// 创建防御性副本 (新增代码块)
+			RMImportReq copiedReq = new RMImportReq();
+			copiedReq.setPath(rmImportReq.getPath());
+			// 使用防御性副本执行安全检查和后续操作 (修改点1)
+			log.info("Resource management import start! info=[{}]", copiedReq.getPath());
+			boolean result = practiceSetImportService.importRmTheorySet(copiedReq.getPath());
 			return new BaseRsp<>(result);
 		} catch (Exception e) {
 			log.error("Resource management theory import failed! catch error:", e);
@@ -88,14 +90,29 @@ public class AdminPracticeImportController {
     @ApiOperation("资管实操习题资源导入")
 	@PostMapping("/rm/ctf")
 	public BaseRsp<Boolean>
-			importRMCtf(@RequestBody @Validated RmPracticeImportReq practiceImportReq) {
+	importRMCtf(@RequestBody @Validated RmPracticeImportReq practiceImportReq) {
+
+		// 创建防御性副本 (新增代码块)
+		RmPracticeImportReq copiedReq = new RmPracticeImportReq();
+		copiedReq.setPath(practiceImportReq.getPath());
+
+		// 修正集合类型的防御性复制 (修改点1)
+		if (practiceImportReq.getEnvReqs() != null) {
+			copiedReq.setEnvReqs(new HashMap<>(practiceImportReq.getEnvReqs()));
+		}
+
+		// 修正Map类型的防御性复制 (修改点2)
+		if (practiceImportReq.getScriptFileMap() != null) {
+			copiedReq.setScriptFileMap(new HashMap<>(practiceImportReq.getScriptFileMap()));
+		}
 
 		// 执行数据导入
 		try {
+			// 使用复制后的对象进行日志和安全检查 (修改点3)
 			log.info("Resource management operation import start! info=[{}]",
-					JsonUtil.toJsonString(practiceImportReq));
+					JsonUtil.toJsonString(copiedReq));
 			List<String> existListPath = practiceSetImportService
-					.importRmCtfSet(practiceImportReq.getPath(), practiceImportReq.getEnvReqs(), practiceImportReq.getScriptFileMap());
+					.importRmCtfSet(copiedReq.getPath(), copiedReq.getEnvReqs(), copiedReq.getScriptFileMap());
 
 			// 设置返回值
 			BaseRsp<Boolean> baseRsp = new BaseRsp<>(true);

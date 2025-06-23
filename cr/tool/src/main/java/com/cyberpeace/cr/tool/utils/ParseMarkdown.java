@@ -1,7 +1,7 @@
 package com.cyberpeace.cr.tool.utils;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
-
+import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +39,7 @@ import java.util.List;
  * - 该类通过读取文件并逐行解析，根据行的前缀来确定内容类型并进行存储。 
  * 这个工具类能够有效地从Markdown文件中提取出标题和正文内容，并将其组织成易于访问的数据结构。 
 **/
+@Slf4j
 public class ParseMarkdown {
 
 
@@ -124,13 +125,13 @@ public class ParseMarkdown {
 				lines.add(tempStr);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Failed to read file: {}", file.getAbsolutePath(), e);
 		} finally {
 			if (reader != null) {
 				try {
 					reader.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					log.error("读取文件失败: {}", file.getAbsolutePath(), e);
 				}
 			}
 		}

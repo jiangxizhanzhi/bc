@@ -402,7 +402,6 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 			countDownLatch.await(300, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 			log.error("task interrupted", e);
-			e.printStackTrace();
 		}
 
 		return userStatsRankBo;

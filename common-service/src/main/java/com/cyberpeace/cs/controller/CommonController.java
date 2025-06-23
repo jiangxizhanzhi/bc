@@ -325,7 +325,7 @@ public class CommonController {
 			}
 			properties.load(input);
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			log.error("读取git.properties文件失败", ex);
 			throw new BusinessException("Sorry, unable to find git.properties ");
 		}
 		Map<String, String> gitMap = new HashMap<>();

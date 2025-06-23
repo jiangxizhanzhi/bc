@@ -81,11 +81,15 @@ public class ImgUtil {
 	 * @return {@code String }
 	 */
 	public static String bytes2Hex(byte[] bytes) {
-		StringBuilder sb = new StringBuilder();
+		if (bytes == null) return null;
+
+		StringBuilder sb = new StringBuilder(bytes.length * 2);
+
+		// 使用String.format确保每个字节正确转换为两位十六进制 (修改点)
 		for (byte b : bytes) {
-			String hex = Integer.toHexString(b & 0xff);
-			sb.append(hex.length() == 2 ? hex : ("0"+hex));
+			sb.append(String.format("%02x", b)); // 确保每个字节被格式化为两位十六进制
 		}
+
 		return sb.toString();
 	}
 

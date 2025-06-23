@@ -74,7 +74,7 @@ public class CrCommonValidator {
 				throw new BusinessException(errorCode, minLen, maxLen);
 			}
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			log.error("字符编码不支持，这在标准JRE中不应发生", e);
 		}
 	}
 

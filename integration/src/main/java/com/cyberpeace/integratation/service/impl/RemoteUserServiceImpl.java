@@ -241,7 +241,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 			try {
 				pattern = java.net.URLEncoder.encode(pattern, "utf-8");
 			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
+				log.error("获取用户列表失败，URL: {}", USERINFO_LIST_URL, e);
 			}
 			queryParams.add(String.format("username=%s", pattern));
 		}

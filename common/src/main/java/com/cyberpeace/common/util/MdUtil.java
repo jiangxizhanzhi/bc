@@ -484,7 +484,8 @@ public class MdUtil {
 			}
 			fwriter.write(content);
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			// 替换printStackTrace为日志记录 (修改点4)
+			log.error("保存文件失败: {}", file.getAbsolutePath(), ex);
 		}
 		return file;
 	}

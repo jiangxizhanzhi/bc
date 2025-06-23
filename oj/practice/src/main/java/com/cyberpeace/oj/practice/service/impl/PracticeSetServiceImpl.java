@@ -725,7 +725,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		try {
 			return ImgUtil.addTextToImage(practiceSetLogo.get(i), font, setName, AttachmentPath.LOGO.getDesc() + id + ".png").replace("/cpms/", "");
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Failed to create image for setName: {}, generated ID: {}", setName, id, e);
 		}
 		return "";
 	}

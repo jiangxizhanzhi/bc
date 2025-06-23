@@ -129,7 +129,7 @@ public class DebounceFilter implements Filter {
 			messageDigest.update(body);
 			return Hex.encodeHexString(messageDigest.digest(), true);
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			log.error("SHA-256 algorithm not available, this should not happen in standard JRE", e);
 			throw new BusinessException(ErrorCode.INTERNAL_ERROR);
 		}
 	}

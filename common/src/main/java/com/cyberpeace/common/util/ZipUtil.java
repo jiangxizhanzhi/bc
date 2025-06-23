@@ -155,14 +155,12 @@ public class ZipUtil {
 			}
 		} catch (Exception e) {
 			log.error("failed to Zip Directory {}", srcDir);
-			e.printStackTrace();
 		} finally {
 			if (zos != null) {
 				try {
 					zos.close();
 				} catch (IOException e) {
 					log.error("failed to close ZipOutputStream");
-					e.printStackTrace();
 				}
 			}
 		}

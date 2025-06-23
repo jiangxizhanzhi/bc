@@ -1,5 +1,6 @@
 package com.cyberpeace.common.model;
 
+import lombok.extern.slf4j.Slf4j;
 import net.sf.sevenzipjbinding.*;
 
 import java.io.*;
@@ -32,6 +33,7 @@ import java.io.*;
  * ### 总结： 
  * 该类主要用于处理压缩文件的提取操作，能够自动创建必要的目录结构并将文件内容正确写入磁盘。代码逻辑清晰，但部分方法（如 `setCompleted` 和 `setTotal`）未被实现，可能需要根据具体需求进一步完善。 
 **/
+@Slf4j
 public class ExtractCallback implements IArchiveExtractCallback {
 
 
@@ -112,7 +114,7 @@ public class ExtractCallback implements IArchiveExtractCallback {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
+               log.error("失败");
             }
             return data.length;
         };
@@ -147,11 +149,12 @@ public class ExtractCallback implements IArchiveExtractCallback {
      * @return boolean
      * @throws FileNotFoundException 文件未找到异常
      */
-    public static boolean save2File(File file, byte[] msg) throws FileNotFoundException {
+    public static boolean save2File(File file, byte[] msg) {
         OutputStream fos = null;
         try {
             File parent = file.getParentFile();
             if ((!parent.exists()) && (!parent.mkdirs())) {
+                log.error("Failed to create parent directories for file: {}", file.getAbsolutePath());
                 return false;
             }
             fos = new FileOutputStream(file, true);
@@ -159,19 +162,23 @@ public class ExtractCallback implements IArchiveExtractCallback {
             fos.flush();
             return true;
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            // 替换printStackTrace为日志记录 (修改点1)
+            log.error("File not found while trying to save: {}", file.getAbsolutePath(), e);
             return false;
         } catch (IOException e) {
-            e.printStackTrace();
+            // 替换printStackTrace为日志记录 (修改点2)
+            log.error("IO error while saving to file: {}", file.getAbsolutePath(), e);
             return false;
         } finally {
-            try {
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            // 使用try-with-resources改进资源关闭 (修改点3)
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    log.warn("Error closing file output stream: {}", file.getAbsolutePath(), e);
+                }
             }
         }
     }
-
 }
 

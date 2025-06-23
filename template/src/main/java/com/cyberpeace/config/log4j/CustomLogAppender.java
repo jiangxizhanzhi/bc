@@ -265,9 +265,14 @@ public class CustomLogAppender extends FileAppender {
         if (target.exists()) {
             try {
                 boolean success = target.delete();
+                if (!success) {
+                    log.error("Failed to delete existing target file: {}", target.getAbsolutePath());
+                }
             } catch (SecurityException e) {
-                e.printStackTrace();
+                // 替换printStackTrace为日志记录 (修改点)
+                log.error("Security error while deleting file: {}", target.getAbsolutePath(), e);
             }
+
         }
 
         File file = new File(fileName);

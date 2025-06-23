@@ -466,8 +466,7 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 			destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html")) + "pdf";
 			boolean convertResult = HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
+			log.error("生成PDF过程中发生异常", e);
 		} finally {
 			log.info("生成的 HTML 文件路径: {}", destHtmlPath);
 			if (!new File(destHtmlPath).delete()) {

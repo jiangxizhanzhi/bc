@@ -1563,7 +1563,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     + "pdf";
             boolean b = HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("导出失败");
             throw e;
         } finally {
             if(!new File(destHtmlPath).delete()){

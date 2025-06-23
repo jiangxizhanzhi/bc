@@ -1,5 +1,6 @@
 package com.cyberpeace.common.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -17,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
  * - 可复用性高：通过工具类封装了常用的属性读取逻辑。 
  * 总结：这是一个简单而实用的工具类，用于统一管理系统属性和环境变量的读取逻辑。 
 **/
+@Slf4j
 public class SystemPropUtil {
 
 	private SystemPropUtil() {}
@@ -28,17 +30,33 @@ public class SystemPropUtil {
 	 * @return
 	 */
 	public static String getProp(String key) {
-		// 1、先从jvm获取变量
+		// 输入验证：检查key是否合法，防止恶意属性名 (修改点1)
+		if (key == null || !key.matches("[a-zA-Z0-9._-]+")) {
+			log.error("非法的属性名: {}", key);
+			return "";
+		}
+
+		// 1、先从JVM系统属性获取
 		String value = System.getProperty(key);
 
 		// 2、取不到，再从环境变量获取
 		if (StringUtils.isBlank(value)) {
-			String envMessage = System.getenv(key);
-			if (StringUtils.isBlank(envMessage) ||
-					StringUtils.isBlank(envMessage.replaceAll("\\s", ""))){
+			String envValue = System.getenv(key);
+
+			// 环境变量非空处理 (修改点2)
+			if (!StringUtils.isBlank(envValue)) {
+				// 去除首尾空格和潜在危险字符 (修改点3)
+				value = envValue.trim()
+						.replaceAll("[\\p{Cntrl}]", "") // 移除控制字符
+						.replaceAll("['\";&|]", "");     // 移除潜在危险的元字符
+
+				// 检查净化后是否为空
+				if (value.isEmpty()) {
+					log.warn("环境变量净化后为空: {}", key);
+					value = "";
+				}
+			} else {
 				value = "";
-			}else {
-				value = envMessage;
 			}
 		}
 

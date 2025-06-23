@@ -326,6 +326,7 @@ public class FileUtil {
 				out.close();
 			} catch (Exception e) {
 				// 关不掉算了
+				log.error("错误",e);
 			}
 
 		}

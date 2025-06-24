@@ -37,6 +37,16 @@ public class TrainPlanController {
     private TrainPlanService trainPlanService;
 
 
+    /**
+     * 我的学习
+     * 我的教学课程
+     *
+     * @param trainPlanReq 训练计划请求体
+     * @return {@code BaseRsp<ListRsp<TrainPlanWebRsp>> }
+     * @throws
+     * @see TrainPlanWebReq
+     * @see BaseRsp<ListRsp<TrainPlanWebRsp>>
+     */
     @ApiOperation("训练计划列表分页查询")
     @GetMapping("/list/page")
     @RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },

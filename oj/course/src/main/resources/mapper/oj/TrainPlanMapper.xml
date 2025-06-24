@@ -129,8 +129,10 @@
             )
         </if>
         ORDER BY
-            plan_status asc,
-            first_start_time ASC
-
+            CASE
+                WHEN NOW() BETWEEN MIN(c.start_time) AND MAX(c.end_time) THEN 1
+                WHEN NOW() <![CDATA[ < ]]> MIN(c.start_time) THEN 2
+                ELSE 3
+            END asc, first_start_time ASC
     </select>
 </mapper>

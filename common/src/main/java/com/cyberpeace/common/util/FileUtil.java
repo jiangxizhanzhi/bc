@@ -187,32 +187,7 @@ public class FileUtil {
 	 * @return
 	 */
 	public static String getContent(File file) {
-		BufferedReader br = null;
-		StringBuilder builder = new StringBuilder();
-		try {
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "utf-8"));
-
-			String content = "";
-			while ((content = br.readLine()) != null) {
-				builder.append(content + System.lineSeparator());
-			}
-
-			return builder.toString();
-		} catch (Exception e) {
-			// 文件读取失败
-			log.error("file read failed! filePath={} error:", file.getAbsolutePath(), e);
-			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
-		} finally {
-			try {
-				br.close();
-			} catch (IOException e) {
-				// 不做任何处理
-				log.error("exception run", e);
-			} catch (NullPointerException e) {
-				// 对象未创建空指针异常捕获，不做任何处理
-				log.error("exception run", e);
-			}
-		}
+		return null;
 	}
 
 	/**
@@ -226,11 +201,6 @@ public class FileUtil {
 
 		try {
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "utf-8"));
-
-			String content;
-			while ((content = br.readLine()) != null) {
-				contentList.add(content);
-			}
 
 			return contentList;
 		} catch (Exception e) {

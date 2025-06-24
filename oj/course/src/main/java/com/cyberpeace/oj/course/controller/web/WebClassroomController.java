@@ -1,8 +1,10 @@
 package com.cyberpeace.oj.course.controller.web;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.Logical;
@@ -155,6 +157,7 @@ public class WebClassroomController {
 
 		roomListQuery.setOrgId(authContext.getOrganization());
 		final List<ClassRoomWebBo> timeScheduleBos = classroomService.selectTimeListOnlyCourse(roomListQuery, authContext);
+		timeScheduleBos.sort(Comparator.comparing(ClassRoomWebBo::getStartTime));
 		return new BaseRsp<>(timeScheduleBos);
 	}
 

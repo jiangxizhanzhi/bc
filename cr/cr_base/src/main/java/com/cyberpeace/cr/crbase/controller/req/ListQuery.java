@@ -51,6 +51,11 @@ public class ListQuery extends PageReqBase {
 	 */
 	private List<String> ids;
 
+	/**
+	 * 联合训练
+	 */
+	private Boolean isUniteTrain = false;
+
 	public void setSearch(String search) {
 		String newPattern = search;
 		if (!StringUtils.isBlank(search)) {

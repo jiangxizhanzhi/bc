@@ -106,16 +106,23 @@
         left join cr_rb_template on cr_rb_room.template_id = cr_rb_template.resource_id
         left join local_scene on cr_rb_room.resource_id = local_scene.business_instance_id
         <where>
-
-            cr_rb_room.resource_id in
-            <if test="listQuery.ids != null and listQuery.ids.size() != 0">
-                <foreach collection="listQuery.ids" item="roomId" separator="," close=")" open="(">
-                    #{roomId}
-                </foreach>
-            </if>
-            <if test="listQuery.ids.size() == 0">
-                ('')
-            </if>
+            <choose>
+                <when test="listQuery.isUniteTrain">
+                    cr_rb_room.business_type = 8
+                </when>
+                <otherwise>
+                    cr_rb_room.resource_id in
+                    <if test="listQuery.ids != null and listQuery.ids.size() != 0">
+                        <foreach collection="listQuery.ids" item="roomId" separator="," close=")" open="(">
+                            #{roomId}
+                        </foreach>
+                    </if>
+                    <if test="listQuery.ids.size() == 0">
+                        ('')
+                    </if>
+                    and cr_rb_room.business_type != 8
+                </otherwise>
+            </choose>
             <if test="listQuery.search != null and listQuery.search != ''">
                 <bind name="search" value="'%' + listQuery.search + '%'"/>
                 and cr_rb_room.name like #{search}

@@ -51,6 +51,8 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
     private CrUniteBusinessNodeService crUniteBusinessNodeService;
     @Autowired
     private CrUniteBusinessLinkService crUniteBusinessLinkService;
+    @Autowired
+    private RbRoomService rbRoomService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -89,13 +91,18 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         rbTemplate.setDurationTime(4);
         rbTemplateMapper.insert(rbTemplate);
 //        判断是否已有该任务的设备信息下发 已下发转到生成拓扑方法生成拓扑
-        NetworkTopoVO networkTopoVO = extracted(businessTemplate.getUniteTaskId());
+        NetworkTopoVO networkTopoVO = retrieveNetworkTopologyByTaskId(businessTemplate.getUniteTaskId());
 
         sceneRelease(networkTopoVO);
     }
 
-//    TODO 改名
-    private NetworkTopoVO extracted(String taskId) {
+
+    /**
+     * （CrUniteBusinessNode）和链接（CrUniteBusinessLink），并将它们封装到 NetworkTopoVO 对象中返回
+     * @param taskId
+     * @return
+     */
+    private NetworkTopoVO retrieveNetworkTopologyByTaskId(String taskId) {
         NetworkTopoVO networkTopoVO = new NetworkTopoVO();
         networkTopoVO.setTask_id(taskId);
         QueryWrapper<CrUniteBusinessNode> nodeQueryWrapper = new QueryWrapper<>();
@@ -147,39 +154,41 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         return crUniteBusinessTaskVO;
     }
 
-    @Autowired
-    private RbRoomService rbRoomService;
     @Override
-    public NetworkTopoVO saveUniteBusinessT(NetworkTopoVO networkTopoVO) {
+    public NetworkTopoVO reportBuildResult(NetworkTopoVO networkTopoVO) {
 //        创建拓扑
         LambdaQueryWrapper<BusinessTemplate> queryWrapper = new QueryWrapper<BusinessTemplate>().lambda()
                 .eq(BusinessTemplate::getUniteTaskId,networkTopoVO.getTask_id());
         List<BusinessTemplate> businessTemplates = businessTemplateMapper.selectList(queryWrapper);
         if(businessTemplates.size()>0){
-//            TODO 判断是否已上报
             BusinessTemplate businessTemplate = businessTemplates.get(0);
-            RbRoomContext rbRoomContext = new RbRoomContext();
-            LambdaQueryWrapper<RbTemplate> rbTemplateQueryWrapper = new QueryWrapper<RbTemplate>().lambda().eq(RbTemplate::getBusinessTemplateId, businessTemplate.getResourceId());
-            List<RbTemplate> rbTemplates = rbTemplateMapper.selectList(rbTemplateQueryWrapper);
-            if(rbTemplates.size()>0){
-                String resourceId = rbTemplates.get(0).getResourceId();
-                rbRoomContext.setTemplate(resourceId);
-                rbRoomContext.setName(businessTemplate.getName());
-                rbRoomContext.setDescription(businessTemplate.getDescription());
-                rbRoomContext.setBusinessType(businessTemplate.getBusinessType());
-                rbRoomContext.setStartTime(businessTemplate.getStartTime());
-                rbRoomContext.setEndTime(businessTemplate.getStartTime());
-                rbRoomContext.setEnableRecording(false);
-                rbRoomContext.setSupportPartialStart(false);
-                rbRoomContext.setCategory(1);
-                rbRoomContext.setDifficult(1);
-                rbRoomContext.setPreSkill(new ArrayList<>());
-                rbRoomContext.setTrainSkill(new ArrayList<>());
-                rbRoomService.create(rbRoomContext);
+//            判断是否已上报
+            if(!businessTemplate.getReportStatus()) {
+                RbRoomContext rbRoomContext = new RbRoomContext();
+                LambdaQueryWrapper<RbTemplate> rbTemplateQueryWrapper = new QueryWrapper<RbTemplate>().lambda().eq(RbTemplate::getBusinessTemplateId, businessTemplate.getResourceId());
+                List<RbTemplate> rbTemplates = rbTemplateMapper.selectList(rbTemplateQueryWrapper);
+                if (rbTemplates.size() > 0) {
+                    String resourceId = rbTemplates.get(0).getResourceId();
+                    rbRoomContext.setTemplate(resourceId);
+                    rbRoomContext.setName(businessTemplate.getName());
+                    rbRoomContext.setDescription(businessTemplate.getDescription());
+                    rbRoomContext.setBusinessType(businessTemplate.getBusinessType());
+                    rbRoomContext.setStartTime(businessTemplate.getStartTime());
+                    rbRoomContext.setEndTime(businessTemplate.getStartTime());
+                    rbRoomContext.setEnableRecording(false);
+                    rbRoomContext.setSupportPartialStart(false);
+                    rbRoomContext.setCategory(1);
+                    rbRoomContext.setDifficult(1);
+                    rbRoomContext.setPreSkill(new ArrayList<>());
+                    rbRoomContext.setTrainSkill(new ArrayList<>());
+                    rbRoomService.create(rbRoomContext);
+                }
+            //        上报内容
+                networkTopoVO = extracted(networkTopoVO.getTask_id());
+                businessTemplate.setReportStatus(true);
+                businessTemplateMapper.updateById(businessTemplate);
+                return networkTopoVO;
             }
-//        上报内容
-            networkTopoVO = extracted(networkTopoVO.getTask_id());
-            return networkTopoVO;
         }
         return null;
     }

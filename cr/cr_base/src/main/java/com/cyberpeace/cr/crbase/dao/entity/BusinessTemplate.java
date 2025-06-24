@@ -74,5 +74,7 @@ public class BusinessTemplate extends AuthTable {
 	private Date endTime;
 
 	private String trainTarget;
+//	是否上报
+	private Boolean reportStatus;
 
 }

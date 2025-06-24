@@ -46,6 +46,8 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+import static com.cyberpeace.common.enums.BusinessType.UNITE_TRAIN;
+
 /**
  * 红蓝对抗场景Service实现
  *
@@ -235,11 +237,14 @@ public class RbSceneServiceImpl implements RbSceneService {
         String userId = UserInfoContext.getUserContext().getUserId();
         List<CrRole> roleList = crRoleService.getRolesByRoomId(roomId);
         CrRole selfRole = CrRole.findRoleByUserId(roleList, userId);
-        if (null == selfRole) {
+        if (null == selfRole && !UNITE_TRAIN.getCode().equals(room.getBusinessType())) {
             log.error("user [{}] has no permission to access rvb training [{}]", userId, roomId);
             throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
         }
-        CrRoleNodesData nodes = getNodes(selfRole, roleList, roleId);
+        CrRoleNodesData nodes = null;
+        if(!UNITE_TRAIN.getCode().equals(room.getBusinessType())) {
+            nodes = getNodes(selfRole, roleList, roleId);
+        }
 
         // 2、尝试获取启动的远程场景
         JSONObject sceneData = getMpSceneData(room);
@@ -250,7 +255,7 @@ public class RbSceneServiceImpl implements RbSceneService {
             ret.setMpSceneId(sceneData.getString(CrCommonConstants.MP_SCENE_ID_KEY));
 
             // 4. 场景角色资产配置，用于动态编辑,只有教员有权限
-            if (selfRole.isRvbStaff()) {
+            if (selfRole.isRvbStaff() && !UNITE_TRAIN.getCode().equals(room.getBusinessType())) {
 				crSceneService.setRbNodeConfig(ret, roleList);
             }
             return ret;

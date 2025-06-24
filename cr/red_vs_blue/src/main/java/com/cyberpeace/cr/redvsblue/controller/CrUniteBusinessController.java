@@ -32,26 +32,23 @@ public class CrUniteBusinessController {
 
     @ApiOperation("新增联合设备信息")
     @PostMapping("/business_topo")
-//    TODO 改名
-    public BaseRsp<Boolean> saveUniteBusinessTak(@RequestBody NetworkTopoVO networkTopoVO) {
+    public BaseRsp<Boolean> saveUniteBusinessTopo(@RequestBody NetworkTopoVO networkTopoVO) {
         crUniteBusinessTaskService.saveUniteBusinessTopo(networkTopoVO);
         return new BaseRsp<>();
     }
 
-    @ApiOperation("新增联合设备信息")
-    @GetMapping()
-    //    TODO 改名
-    public BaseRsp<CrUniteBusinessTaskVO> saveUniteBusinessTa(@ApiParam(name = "task_id", value = "任务id", required = true)
+    @ApiOperation("获取任务信息")
+    @GetMapping("/task_info")
+    public BaseRsp<CrUniteBusinessTaskVO> getTaskInfoById(@ApiParam(name = "task_id", value = "任务id", required = true)
                                                               @RequestParam(value = "task_id", required = true) String taskId) {
         CrUniteBusinessTaskVO crUniteBusinessTaskVO = crUniteBusinessTaskService.getTaskById(taskId);
         return new BaseRsp<>(crUniteBusinessTaskVO);
     }
 
     @ApiOperation("构建结果上报")
-    @PostMapping("/business")
-    //    TODO 改名
+    @PostMapping("/business/report_build_result")
     public BaseRsp<NetworkTopoVO> saveUniteBusinessT(@RequestBody NetworkTopoVO networkTopoVO) {
-        networkTopoVO = crUniteBusinessTaskService.saveUniteBusinessT(networkTopoVO);
+        networkTopoVO = crUniteBusinessTaskService.reportBuildResult(networkTopoVO);
         return new BaseRsp<>(networkTopoVO);
     }
 

@@ -14,5 +14,5 @@ public interface CrUniteBusinessTaskService extends IService<CrUniteBusinessTask
 
     CrUniteBusinessTaskVO getTaskById(String taskId);
 
-    NetworkTopoVO saveUniteBusinessT(NetworkTopoVO networkTopoVO);
+    NetworkTopoVO reportBuildResult(NetworkTopoVO networkTopoVO);
 }

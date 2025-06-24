@@ -27,6 +27,8 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+import static com.cyberpeace.common.enums.BusinessType.UNITE_TRAIN;
+
 /**
  * 红蓝对抗裁判Service实现
  *
@@ -37,153 +39,155 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RbRefereeServiceImpl implements RbRefereeService {
 
-	/**
-	 * 靶场任务Service
-	 */
-	@Autowired
-	private CrTaskService crTaskService;
+    /**
+     * 靶场任务Service
+     */
+    @Autowired
+    private CrTaskService crTaskService;
 
-	/**
-	 * 红蓝对抗房间Service
-	 */
-	@Autowired
-	private RbRoomService rbRoomService;
+    /**
+     * 红蓝对抗房间Service
+     */
+    @Autowired
+    private RbRoomService rbRoomService;
 
-	/**
-	 * 靶场得分Service
-	 */
-	@Autowired
-	private CrScoreService crScoreService;
+    /**
+     * 靶场得分Service
+     */
+    @Autowired
+    private CrScoreService crScoreService;
 
-	/**
-	 * 靶场岗位Service
-	 */
-	@Autowired
-	private CrRoleService crRoleService;
+    /**
+     * 靶场岗位Service
+     */
+    @Autowired
+    private CrRoleService crRoleService;
 
-	/**
-	 * 任务Service
-	 */
-	@Autowired
-	private MissionService missionService;
+    /**
+     * 任务Service
+     */
+    @Autowired
+    private MissionService missionService;
 
-	/**
-	 * 靶场徽章Service
-	 */
-	@Autowired
-	private CrBadgeService crBadgeService;
+    /**
+     * 靶场徽章Service
+     */
+    @Autowired
+    private CrBadgeService crBadgeService;
 
-	/**
-	 * 靶场常用Service
-	 */
-	@Autowired
-	private CrCommonService crCommonService;
+    /**
+     * 靶场常用Service
+     */
+    @Autowired
+    private CrCommonService crCommonService;
 
-	/**
-	 * 获取评估列表
-	 *
-	 * @param req 请求体
-	 * @return {@code List<EvaluationListRsp> }
-	 */
-	@Override
-	public List<EvaluationListRsp> getEvaluationList(EvaluationListReq req) {
-		return crTaskService.getEvaluationList(req);
-	}
+    /**
+     * 获取评估列表
+     *
+     * @param req 请求体
+     * @return {@code List<EvaluationListRsp> }
+     */
+    @Override
+    public List<EvaluationListRsp> getEvaluationList(EvaluationListReq req) {
+        return crTaskService.getEvaluationList(req);
+    }
 
-	/**
-	 * 获取得分列表
-	 *
-	 * @param roomId 房间id
-	 * @return {@code List<StudentScoreListRsp> }
-	 */
-	@Override
-	public List<StudentScoreListRsp> getScoreList(String roomId) {
-		// get roles
-		List<CrRole> roleList = rbRoomService.getStudentsRoles(roomId);
+    /**
+     * 获取得分列表
+     *
+     * @param roomId 房间id
+     * @return {@code List<StudentScoreListRsp> }
+     */
+    @Override
+    public List<StudentScoreListRsp> getScoreList(String roomId) {
+        // get roles
+        List<CrRole> roleList = rbRoomService.getStudentsRoles(roomId);
 
-		return crScoreService.getScoreListRsp(roomId, roleList);
-	}
+        return crScoreService.getScoreListRsp(roomId, roleList);
+    }
 
-	/**
-	 * 获取岗位列表
-	 *
-	 * @param roomId 房间id
-	 * @return {@code List<RbRoleIdNameType> }
-	 */
-	@Override
-	public List<RbRoleIdNameType> getRoleList(String roomId) {
-		// 获取学员角色
-		List<CrRole> roles = rbRoomService.getStudentsRoles(roomId);
-		List<RbRoleIdNameType> res = Lists.newArrayList();
-		for (CrRole role : roles) {
-			RbRoleIdNameType rbRole = new RbRoleIdNameType();
-			rbRole.setId(role.getResourceId());
-			rbRole.setName(role.getName());
-			rbRole.setType(role.getRoleGroup());
-			rbRole.setPrefix();
+    /**
+     * 获取岗位列表
+     *
+     * @param roomId 房间id
+     * @return {@code List<RbRoleIdNameType> }
+     */
+    @Override
+    public List<RbRoleIdNameType> getRoleList(String roomId) {
+        // 获取学员角色
+        List<CrRole> roles = rbRoomService.getStudentsRoles(roomId);
+        List<RbRoleIdNameType> res = Lists.newArrayList();
+        for (CrRole role : roles) {
+            RbRoleIdNameType rbRole = new RbRoleIdNameType();
+            rbRole.setId(role.getResourceId());
+            rbRole.setName(role.getName());
+            rbRole.setType(role.getRoleGroup());
+            rbRole.setPrefix();
 
-			res.add(rbRole);
-		}
-		// 红方角色放在前面
-		res.sort(Comparator.comparing(RbRoleIdNameType::getType));
-		return res;
-	}
+            res.add(rbRole);
+        }
+        // 红方角色放在前面
+        res.sort(Comparator.comparing(RbRoleIdNameType::getType));
+        return res;
+    }
 
-	/**
-	 * 通知提交
-	 *
-	 * @param missionId 任务id
-	 */
-	@Override
-	public void notifySubmission(String missionId) {
-		// get mission
-		Mission mission = missionService.getById(missionId);
-		// get roomId
-		String roomId = mission.getRoomId();
-		// get teacher
-		List<String> refereeIds = this.getRefereeIdsByRoomId(roomId);
-		crBadgeService.createBatch(roomId, CrBadge.BadgeType.NEW_SUBMIT.getCode(), refereeIds);
-		crTaskService.pushMissionWsToUsers(roomId, refereeIds, MissionWsCode.MISSION_SUBMISSION);
-	}
+    /**
+     * 通知提交
+     *
+     * @param missionId 任务id
+     */
+    @Override
+    public void notifySubmission(String missionId) {
+        // get mission
+        Mission mission = missionService.getById(missionId);
+        // get roomId
+        String roomId = mission.getRoomId();
+        // get teacher
+        List<String> refereeIds = this.getRefereeIdsByRoomId(roomId);
+        crBadgeService.createBatch(roomId, CrBadge.BadgeType.NEW_SUBMIT.getCode(), refereeIds);
+        crTaskService.pushMissionWsToUsers(roomId, refereeIds, MissionWsCode.MISSION_SUBMISSION);
+    }
 
-	/**
-	 * 获取监控会话
-	 *
-	 * @param roomId 房间id
-	 * @return {@code List<MonitorSession> }
-	 */
-	@Override
-	public List<MonitorSession> getMonitorSessions(String roomId) {
-		RbRoom room = rbRoomService.getById(roomId);
-		rbRoomService.checkTeacherPermission(roomId, UserInfoContext.getUserContext().getUserId());
-		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
-			return Lists.newArrayList();
-		}
-		List<MonitorSession> sessionList = crCommonService
-				.getMonitorSessions(room.getLocalSceneId(), null);
-		// set role group, red or blue
-		Map<String, CrRole> userRoleMap = crRoleService.getUserRoleMapByRoomId(roomId);
-		for (MonitorSession session : sessionList) {
-			CrRole role = userRoleMap.get(session.getUser());
-			if (null != role) {
-				session.setRoleGroup(role.getRoleGroup());
-			}
-		}
-		return sessionList;
-	}
+    /**
+     * 获取监控会话
+     *
+     * @param roomId 房间id
+     * @return {@code List<MonitorSession> }
+     */
+    @Override
+    public List<MonitorSession> getMonitorSessions(String roomId) {
+        RbRoom room = rbRoomService.getById(roomId);
+        if (!UNITE_TRAIN.getCode().equals(room.getBusinessType())) {
+            rbRoomService.checkTeacherPermission(roomId, UserInfoContext.getUserContext().getUserId());
+        }
+        if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
+            return Lists.newArrayList();
+        }
+        List<MonitorSession> sessionList = crCommonService
+                .getMonitorSessions(room.getLocalSceneId(), null);
+        // set role group, red or blue
+        Map<String, CrRole> userRoleMap = crRoleService.getUserRoleMapByRoomId(roomId);
+        for (MonitorSession session : sessionList) {
+            CrRole role = userRoleMap.get(session.getUser());
+            if (null != role) {
+                session.setRoleGroup(role.getRoleGroup());
+            }
+        }
+        return sessionList;
+    }
 
-	/**
-	 * 获取裁判id列表由房间id
-	 *
-	 * @param roomId 房间id
-	 * @return {@code List<String> }
-	 */
-	private List<String> getRefereeIdsByRoomId(String roomId) {
-		List<CrRole> roles = crRoleService.getRolesByRoomAndGroups(roomId,
-				Lists.newArrayList(RbRoleGroup.REFEREE.getCode()));
-		if (roles.isEmpty()) {
-			return Lists.newArrayList();
-		}
-		return roles.get(0).getUserIdList();
-	}
+    /**
+     * 获取裁判id列表由房间id
+     *
+     * @param roomId 房间id
+     * @return {@code List<String> }
+     */
+    private List<String> getRefereeIdsByRoomId(String roomId) {
+        List<CrRole> roles = crRoleService.getRolesByRoomAndGroups(roomId,
+                Lists.newArrayList(RbRoleGroup.REFEREE.getCode()));
+        if (roles.isEmpty()) {
+            return Lists.newArrayList();
+        }
+        return roles.get(0).getUserIdList();
+    }
 }

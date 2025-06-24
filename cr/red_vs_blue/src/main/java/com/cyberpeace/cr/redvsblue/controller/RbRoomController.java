@@ -87,6 +87,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.cyberpeace.common.enums.BusinessType.UNITE_TRAIN;
+
 /**
  * 红蓝对抗房间Controller
  *
@@ -224,7 +226,10 @@ public class RbRoomController {
     public BaseRsp<RbRoomRsp> getRbRoom(
             @ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
                     value = "resource_id", required = true) String resourceId) {
-        crRoleService.checkPermission(resourceId, UserInfoContext.getUserContext().getUserId());
+        RbRoom room = rbRoomService.getById(resourceId);
+        if (!UNITE_TRAIN.getCode().equals(room.getBusinessType())) {
+            crRoleService.checkPermission(resourceId, UserInfoContext.getUserContext().getUserId());
+        }
         RbRoomRsp rsp = rbRoomService.getRoomRsp(resourceId);
         return new BaseRsp<>(rsp);
     }
@@ -293,6 +298,9 @@ public class RbRoomController {
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public BaseRsp<ListRsp<RbRoomRsp>> list(@Validated RbTemplateListReq listReq) {
         ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
+        if(null != listReq.getUnite()){
+            listQuery.setIsUniteTrain(listReq.getUnite());
+        }
         listQuery.setPer_page(listReq.getPerPage());
         ListRsp<RbRoomRsp> rsp = rbRoomService.listRoom(listQuery);
         return new BaseRsp<>(rsp);

@@ -308,6 +308,14 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.dameng</groupId>
+            <artifactId>Dm8JdbcDriver18</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.mengweijin</groupId>
+            <artifactId>db-migration</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

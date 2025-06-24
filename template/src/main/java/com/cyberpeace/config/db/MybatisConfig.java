@@ -91,7 +91,7 @@ public class MybatisConfig {
 	public MybatisPlusInterceptor paginationInterceptor() {
 		MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
 		// 指定数据库方言为 MYSQL
-		PaginationInnerInterceptor pageInterceptor = new PaginationInnerInterceptor(DbType.MYSQL);
+		PaginationInnerInterceptor pageInterceptor = new PaginationInnerInterceptor(DbType.DM);
 		// 单页分页条数限制
 		pageInterceptor.setMaxLimit(10000L);
 		interceptor.addInnerInterceptor(pageInterceptor);

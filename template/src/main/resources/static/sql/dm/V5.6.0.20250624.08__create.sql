@@ -1,0 +1,409 @@
+
+COMMENT ON COLUMN "SITUATION_CONFIG"."resource_id" IS '资源id';
+
+COMMENT ON COLUMN "SITUATION_CONFIG"."scope" IS '作用域';
+
+COMMENT ON TABLE "SITUATION_SCENE_CONFIG" IS '态势场景配置表';
+
+COMMENT ON COLUMN "SITUATION_SCENE_CONFIG"."create_time" IS '创建时间';
+
+COMMENT ON COLUMN "SITUATION_SCENE_CONFIG"."flow_analysis" IS '是否分析流量采集数据';
+
+COMMENT ON COLUMN "SITUATION_SCENE_CONFIG"."flow_auto_run" IS '是否自动运行仿真流量';
+
+COMMENT ON COLUMN "SITUATION_SCENE_CONFIG"."id" IS '自增id';
+
+COMMENT ON COLUMN "SITUATION_SCENE_CONFIG"."resource_id" IS '资源id';
+
+COMMENT ON COLUMN "SITUATION_SCENE_CONFIG"."scene_id" IS '场景id';
+
+COMMENT ON COLUMN "SITUATION_SCENE_CONFIG"."update_time" IS '更新时间';
+
+COMMENT ON COLUMN "SYSTEM_PROPERTY"."content" IS '配置值';
+
+COMMENT ON COLUMN "SYSTEM_PROPERTY"."desc" IS '配置描述';
+
+COMMENT ON COLUMN "SYSTEM_PROPERTY"."name" IS '配置名称';
+
+COMMENT ON TABLE "SYSTEM_USE_STATUS" IS '系统使用状态表';
+
+COMMENT ON COLUMN "SYSTEM_USE_STATUS"."alter_time" IS '修改时间';
+
+COMMENT ON COLUMN "SYSTEM_USE_STATUS"."cpu" IS 'cpu使用率';
+
+COMMENT ON COLUMN "SYSTEM_USE_STATUS"."disk" IS '磁盘使用率';
+
+COMMENT ON COLUMN "SYSTEM_USE_STATUS"."id" IS '自增id';
+
+COMMENT ON COLUMN "SYSTEM_USE_STATUS"."ram" IS '内存使用率';
+
+COMMENT ON COLUMN "SYSTEM_USE_STATUS"."update_time" IS '更新时间';
+
+COMMENT ON COLUMN "VIDEO_PROGRESS"."business_id" IS '业务id';
+
+COMMENT ON COLUMN "VIDEO_PROGRESS"."create_time" IS '创建时间';
+
+COMMENT ON COLUMN "VIDEO_PROGRESS"."path" IS '视频路径';
+
+COMMENT ON COLUMN "VIDEO_PROGRESS"."time" IS '进度时间';
+
+COMMENT ON COLUMN "VIDEO_PROGRESS"."update_time" IS '更新时间';
+
+COMMENT ON COLUMN "VIDEO_PROGRESS"."user_id" IS '用户id';
+
+COMMENT ON COLUMN "VIDEO_PROGRESS"."watched_point" IS '观看过的检查点';
+
+COMMENT ON TABLE "AI_USER_PROFILE_REPORT" IS '智能体-用户画像报告';
+
+COMMENT ON COLUMN "AI_USER_PROFILE_REPORT"."CONTENT" IS '报告内容';
+
+COMMENT ON COLUMN "AI_USER_PROFILE_REPORT"."CREATE_TIME" IS '创建时间';
+
+COMMENT ON COLUMN "AI_USER_PROFILE_REPORT"."DIMENSION" IS '1=课程学习 2=题目练习 3=综合训练 4=岗位评估';
+
+COMMENT ON COLUMN "AI_USER_PROFILE_REPORT"."NAME" IS '报告名称';
+
+COMMENT ON COLUMN "AI_USER_PROFILE_REPORT"."UPDATE_TIME" IS '更新时间';
+
+COMMENT ON COLUMN "AI_USER_PROFILE_REPORT"."USER_ID" IS '用户编号';
+
+COMMENT ON TABLE "ATTACHMENT" IS '附件表';
+
+COMMENT ON COLUMN "ATTACHMENT"."business_id" IS '业务id';
+
+COMMENT ON COLUMN "ATTACHMENT"."create_time" IS '创建时间';
+
+COMMENT ON COLUMN "ATTACHMENT"."file_name" IS '文件名称';
+
+COMMENT ON COLUMN "ATTACHMENT"."file_path" IS '文件路径';
+
+COMMENT ON COLUMN "ATTACHMENT"."id" IS '自增id';
+
+COMMENT ON COLUMN "ATTACHMENT"."public" IS '是否公开';
+
+COMMENT ON COLUMN "ATTACHMENT"."resource_id" IS '资源id';
+
+COMMENT ON COLUMN "ATTACHMENT"."update_time" IS '更新时间';
+
+COMMENT ON COLUMN "BEHAVIOR_RECORD"."action" IS '用户动作类型';
+
+COMMENT ON COLUMN "BEHAVIOR_RECORD"."description" IS '描述';
+
+COMMENT ON COLUMN "BEHAVIOR_RECORD"."link" IS '链接';
+
+COMMENT ON COLUMN "BEHAVIOR_RECORD"."module" IS '模块';
+
+COMMENT ON COLUMN "BEHAVIOR_RECORD"."result" IS '结果';
+
+COMMENT ON COLUMN "BEHAVIOR_RECORD"."target" IS '动作目标';
+
+COMMENT ON COLUMN "BEHAVIOR_RECORD"."time" IS '时间';
+
+COMMENT ON COLUMN "BEHAVIOR_RECORD"."user_id" IS '用户id';
+
+COMMENT ON TABLE "CR_BADGE" IS '业务红点提示';
+
+COMMENT ON COLUMN "CR_BADGE"."business_id" IS '业务id';
+
+COMMENT ON COLUMN "CR_BADGE"."create_time" IS '创建时间';
+
+COMMENT ON COLUMN "CR_BADGE"."extra" IS '记录业务相关信息';
+
+COMMENT ON COLUMN "CR_BADGE"."id" IS '自增id';
+
+COMMENT ON COLUMN "CR_BADGE"."type" IS '类型';
+
+COMMENT ON COLUMN "CR_BADGE"."update_time" IS '更新时间';
+
+COMMENT ON COLUMN "CR_BADGE"."user_id" IS '用户id';
+
+COMMENT ON TABLE "CR_BUSINESS_TEMPLATE" IS '训练模板';
+
+COMMENT ON COLUMN "CR_BUSINESS_TEMPLATE"."business_type" IS '所属训练类型';
+
+COMMENT ON COLUMN "CR_BUSINESS_TEMPLATE"."create_time" IS '创建时间';
+
+COMMENT ON COLUMN "CR_BUSINESS_TEMPLATE"."create_user_id" IS '创建人uuid';
+
+COMMENT ON COLUMN "CR_BUSINESS_TEMPLATE"."description" IS '描述';
+
+COMMENT ON COLUMN "CR_BUSINESS_TEMPLATE"."difficulty" IS '训练难度';
+
+COMMENT ON COLUMN "CR_BUSINESS_TEMPLATE"."local_scene_id" IS '后台测试场景id';
+
+COMMENT ON COLUMN "CR_BUSINESS_TEMPLATE"."logo" IS '封面url';
+
+COMMENT ON COLUMN "CR_BUSINESS_TEMPLATE"."name" IS '训练模板名称';
+
+COMMENT ON COLUMN "CR_BUSINESS_TEMPLATE"."operation_auth_ids" IS '拥有后台操作权限的用户id';
+
+COMMENT ON COLUMN "CR_BUSINESS_TEMPLATE"."operation_auth_type" IS '权限状态';
+
+COMMENT ON COLUMN "CR_BUSINESS_TEMPLATE"."read_auth_ids" IS '拥有前台预览权限的组织id';
+
+COMMENT ON COLUMN "CR_BUSINESS_TEMPLATE"."read_auth_type" IS '浏览权限';
+
+COMMENT ON COLUMN "CR_BUSINESS_TEMPLATE"."resource_id" IS 'uuid';
+
+COMMENT ON COLUMN "CR_BUSINESS_TEMPLATE"."topo_id" IS '关联topo uuid';
+
+COMMENT ON COLUMN "CR_BUSINESS_TEMPLATE"."update_time" IS '更新时间';
+
+COMMENT ON TABLE "CR_CONSTANTS_CONFIG" IS '常量配置';
+
+COMMENT ON COLUMN "CR_CONSTANTS_CONFIG"."cn_name" IS '中文名';
+
+COMMENT ON COLUMN "CR_CONSTANTS_CONFIG"."code" IS '状态码';
+
+COMMENT ON COLUMN "CR_CONSTANTS_CONFIG"."en_name" IS '英文名';
+
+COMMENT ON COLUMN "CR_CONSTANTS_CONFIG"."resource_id" IS 'uuid';
+
+COMMENT ON COLUMN "CR_CONSTANTS_CONFIG"."type" IS '类别码';
+
+COMMENT ON TABLE "CR_EVAL_ALGORITHM" IS '测评算法';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM"."algorithm_language" IS '算法语言
+0：python';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM"."builtin" IS '0为内置算法，1为用户自定义算法';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM"."code" IS '算法内容';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM"."create_time" IS '创建时间';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM"."create_user_id" IS '创建人uuid';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM"."description" IS '描述';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM"."mode" IS '0为其他算法，1为层次分析法';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM"."name" IS '名称';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM"."params" IS '参数列表';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM"."params_num" IS '参数个数';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM"."resource_id" IS 'uuid';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM"."state" IS ' 0：代表正常，1：代表编辑过，页面看不到';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM"."type" IS '格式化算法：1，匹配算法：2，评分算法：3，聚合算法：4';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM"."update_time" IS '更新时间';
+
+COMMENT ON TABLE "CR_EVAL_ALGORITHM_REF" IS '算法关联';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM_REF"."algorithm_language" IS '算法语言';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM_REF"."code" IS '算法内容';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM_REF"."create_time" IS '创建时间';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM_REF"."description" IS '描述';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM_REF"."matrix_data" IS '层次分析法矩阵参数';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM_REF"."mode" IS '0为其他算法，1为层次分析法';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM_REF"."name" IS '名称';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM_REF"."resource_id" IS 'uuid';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM_REF"."type" IS '格式化算法：1，匹配算法：2，评分算法：3，聚合算法：4';
+
+COMMENT ON COLUMN "CR_EVAL_ALGORITHM_REF"."update_time" IS '更新时间';
+
+COMMENT ON TABLE "CR_EVAL_PROBE_DATA" IS '探针数据';
+
+COMMENT ON COLUMN "CR_EVAL_PROBE_DATA"."collection_time" IS '收集时间';
+
+COMMENT ON COLUMN "CR_EVAL_PROBE_DATA"."content" IS '虚拟机信息';
+
+COMMENT ON COLUMN "CR_EVAL_PROBE_DATA"."create_time" IS '创建时间';
+
+COMMENT ON COLUMN "CR_EVAL_PROBE_DATA"."device_id" IS '虚拟机uuid';
+
+COMMENT ON COLUMN "CR_EVAL_PROBE_DATA"."device_ip" IS '虚拟机ip';
+
+COMMENT ON COLUMN "CR_EVAL_PROBE_DATA"."probe_id" IS '探针id';
+
+COMMENT ON COLUMN "CR_EVAL_PROBE_DATA"."scene_id" IS '场景uuid';
+
+COMMENT ON COLUMN "CR_EVAL_PROBE_DATA"."update_time" IS '更新时间';
+
+COMMENT ON COLUMN "CR_EVAL_RESULT"."exe_cycle" IS '执行轮次';
+
+COMMENT ON COLUMN "CR_EVAL_RESULT"."fifth_index_res" IS '五级指标得分';
+
+COMMENT ON COLUMN "CR_EVAL_RESULT"."first_index_res" IS '一级指标得分';
+
+COMMENT ON COLUMN "CR_EVAL_RESULT"."fourth_index_res" IS '四级指标得分';
+
+COMMENT ON COLUMN "CR_EVAL_RESULT"."record" IS '关联评估运行实例id';
+
+COMMENT ON COLUMN "CR_EVAL_RESULT"."resource_id" IS '资源id';
+
+COMMENT ON COLUMN "CR_EVAL_RESULT"."second_index_res" IS '二级指标得分';
+
+COMMENT ON COLUMN "CR_EVAL_RESULT"."third_index_res" IS '三级指标得分';
+
+COMMENT ON TABLE "CR_EVAL_SYSTEM" IS '测评指标体系详情';
+
+COMMENT ON COLUMN "CR_EVAL_SYSTEM"."connlist" IS '连接线';
+
+COMMENT ON COLUMN "CR_EVAL_SYSTEM"."create_time" IS '创建时间';
+
+COMMENT ON COLUMN "CR_EVAL_SYSTEM"."create_user_id" IS '创建人uuid';
+
+COMMENT ON COLUMN "CR_EVAL_SYSTEM"."description" IS '描述';
+
+COMMENT ON COLUMN "CR_EVAL_SYSTEM"."first_index_num" IS '一级指标数';
+
+COMMENT ON COLUMN "CR_EVAL_SYSTEM"."name" IS '名称';
+
+COMMENT ON COLUMN "CR_EVAL_SYSTEM"."second_index_num" IS '二级指标数';
+
+COMMENT ON COLUMN "CR_EVAL_SYSTEM"."third_index_num" IS '三级指标数';
+
+COMMENT ON COLUMN "CR_EVAL_SYSTEM"."update_time" IS '更新时间';
+
+COMMENT ON TABLE "CR_EVAL_TASK" IS '测评任务详情';
+
+COMMENT ON COLUMN "CR_EVAL_TASK"."copyed_topo_id" IS '拓扑id';
+
+COMMENT ON COLUMN "CR_EVAL_TASK"."create_time" IS '开始时间';
+
+COMMENT ON COLUMN "CR_EVAL_TASK"."create_user_id" IS '创建人id';
+
+COMMENT ON COLUMN "CR_EVAL_TASK"."enable_recording" IS '是否录屏';
+
+COMMENT ON COLUMN "CR_EVAL_TASK"."end_time" IS '结束时间';
+
+COMMENT ON COLUMN "CR_EVAL_TASK"."local_scene_id" IS '启动场景id';
+
+COMMENT ON COLUMN "CR_EVAL_TASK"."mp_scene_id" IS '中台场景id';
+
+COMMENT ON COLUMN "CR_EVAL_TASK"."resource_id" IS 'uuid';
+
+COMMENT ON COLUMN "CR_EVAL_TASK"."start_time" IS '开始时间';
+
+COMMENT ON COLUMN "CR_EVAL_TASK"."task_name" IS '测评实例名称';
+
+COMMENT ON COLUMN "CR_EVAL_TASK"."template_id" IS '测评模板id';
+
+COMMENT ON COLUMN "CR_EVAL_TASK"."template_name" IS '模板名称';
+
+COMMENT ON COLUMN "CR_EVAL_TASK"."update_time" IS '结束时间';
+
+COMMENT ON TABLE "CR_EVAL_TASK_STEP" IS '测评任务步骤详情';
+
+COMMENT ON COLUMN "CR_EVAL_TASK_STEP"."create_time" IS '创建时间';
+
+COMMENT ON COLUMN "CR_EVAL_TASK_STEP"."end_time" IS '结束时间';
+
+COMMENT ON COLUMN "CR_EVAL_TASK_STEP"."process" IS '步骤内容';
+
+COMMENT ON COLUMN "CR_EVAL_TASK_STEP"."resource_id" IS 'uuid';
+
+COMMENT ON COLUMN "CR_EVAL_TASK_STEP"."stage" IS '任务步骤';
+
+COMMENT ON COLUMN "CR_EVAL_TASK_STEP"."start_time" IS '开始时间';
+
+COMMENT ON COLUMN "CR_EVAL_TASK_STEP"."task_id" IS '测评任务id';
+
+COMMENT ON COLUMN "CR_EVAL_TASK_STEP"."title" IS '步骤标题';
+
+COMMENT ON COLUMN "CR_EVAL_TASK_STEP"."type" IS '问题类型';
+
+COMMENT ON COLUMN "CR_EVAL_TASK_STEP"."update_time" IS '更新时间';
+
+COMMENT ON TABLE "CR_EVAL_TEMPLATE" IS '测评模板';
+
+COMMENT ON COLUMN "CR_EVAL_TEMPLATE"."category_code" IS '测评类型';
+
+COMMENT ON COLUMN "CR_EVAL_TEMPLATE"."create_time" IS '创建时间';
+
+COMMENT ON COLUMN "CR_EVAL_TEMPLATE"."create_user_id" IS '创建人uuid';
+
+COMMENT ON COLUMN "CR_EVAL_TEMPLATE"."current_task_id" IS '当前执行任务uuid';
+
+COMMENT ON COLUMN "CR_EVAL_TEMPLATE"."description" IS '描述';
+
+COMMENT ON COLUMN "CR_EVAL_TEMPLATE"."enable_recording" IS '是否录屏';
+
+COMMENT ON COLUMN "CR_EVAL_TEMPLATE"."logo" IS '封面url';
+
+COMMENT ON COLUMN "CR_EVAL_TEMPLATE"."name" IS '测评名称';
+
+COMMENT ON COLUMN "CR_EVAL_TEMPLATE"."operation_auth_ids" IS '拥有后台操作权限的用户id';
+
+COMMENT ON COLUMN "CR_EVAL_TEMPLATE"."operation_auth_type" IS '授权类型';
+
+COMMENT ON COLUMN "CR_EVAL_TEMPLATE"."read_auth_ids" IS '拥有前台预览权限的组织id';
+
+COMMENT ON COLUMN "CR_EVAL_TEMPLATE"."read_auth_type" IS '授权可见类型';
+
+COMMENT ON COLUMN "CR_EVAL_TEMPLATE"."resource_id" IS 'uuid';
+
+COMMENT ON COLUMN "CR_EVAL_TEMPLATE"."step_config" IS '测评步骤';
+
+COMMENT ON COLUMN "CR_EVAL_TEMPLATE"."topo_id" IS '关联拓扑uuid';
+
+COMMENT ON COLUMN "CR_EVAL_TEMPLATE"."update_time" IS '更新时间';
+
+COMMENT ON TABLE "CR_EVAL_VARIABLE_REF_PROBE_DATA" IS '评估结果数据';
+
+COMMENT ON COLUMN "CR_EVAL_VARIABLE_REF_PROBE_DATA"."create_time" IS '创建时间';
+
+COMMENT ON COLUMN "CR_EVAL_VARIABLE_REF_PROBE_DATA"."formatted_value" IS '获取数据';
+
+COMMENT ON COLUMN "CR_EVAL_VARIABLE_REF_PROBE_DATA"."probe_data_id" IS '探针数据id';
+
+COMMENT ON COLUMN "CR_EVAL_VARIABLE_REF_PROBE_DATA"."status" IS '数据状态';
+
+COMMENT ON COLUMN "CR_EVAL_VARIABLE_REF_PROBE_DATA"."time" IS '数据获取时间';
+
+COMMENT ON COLUMN "CR_EVAL_VARIABLE_REF_PROBE_DATA"."update_time" IS '更新时间';
+
+COMMENT ON COLUMN "CR_EVAL_VARIABLE_REF_PROBE_DATA"."variable_id" IS '评估结果id';
+
+CREATE TABLE "CR_MISSION"
+(
+ "id" INT IDENTITY(1,1) NOT NULL,
+ "resource_id" VARCHAR(32) NOT NULL,
+ "create_user_id" VARCHAR(32) NULL,
+ "title" VARCHAR(255) NULL,
+ "description" TEXT NULL,
+ "score" SMALLINT NULL,
+ "skill_points" VARCHAR(40) NULL,
+ "answer" VARCHAR(4096) NULL,
+ "option" TEXT NULL,
+ "type" TINYINT NULL,
+ "category_id" VARCHAR(32) NULL,
+ "write_up" CLOB NULL,
+ "create_time" TIMESTAMP(0) NULL,
+ "update_time" TIMESTAMP(0) NULL,
+ "show_writeup" TINYINT NULL,
+ "room_id" VARCHAR(32) NULL,
+ "mission_template_id" VARCHAR(32) NULL
+);
+CREATE TABLE "CR_MISSION_CATEGORY"
+(
+ "id" INT IDENTITY(1,1) NOT NULL,
+ "resource_id" VARCHAR(64) NULL,
+ "name" VARCHAR(255) NULL,
+ "key" VARCHAR(255) NULL
+);
+CREATE TABLE "CR_MISSION_SCHEME_TEMPLATE"
+(
+ "id" INT IDENTITY(1,1) NOT NULL,
+ "resource_id" VARCHAR(32) NOT NULL,
+ "create_user_id" VARCHAR(32) NULL,
+ "title" VARCHAR(255) NULL,
+ "description" VARCHAR(2048) NULL,
+ "template_data" TEXT NULL,
+ "template_config" VARCHAR(255) NULL,
+ "create_time" TIMESTAMP(0) NULL,
+ "update_time" TIMESTAMP(0) NULL
+);

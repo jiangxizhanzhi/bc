@@ -1,0 +1,400 @@
+
+COMMENT ON COLUMN "OJ_COURSE_LESSON"."heat" IS '热度';
+
+COMMENT ON COLUMN "OJ_COURSE_LESSON"."knowledge" IS '知识点';
+
+COMMENT ON COLUMN "OJ_COURSE_LESSON"."name" IS '课时名称';
+
+COMMENT ON COLUMN "OJ_COURSE_LESSON"."origin_markdown_file" IS '上传markdown讲义原文件地址';
+
+COMMENT ON COLUMN "OJ_COURSE_LESSON"."paper_id" IS '关联课后练习id';
+
+COMMENT ON COLUMN "OJ_COURSE_LESSON"."paper_public" IS '课后练习是否公开';
+
+COMMENT ON COLUMN "OJ_COURSE_LESSON"."public" IS '是否公开';
+
+COMMENT ON COLUMN "OJ_COURSE_LESSON"."scene_share_mode" IS '场景是否共享标识';
+
+COMMENT ON COLUMN "OJ_COURSE_LESSON"."topo_id" IS '关联拓扑id（实验课使用）';
+
+COMMENT ON COLUMN "OJ_COURSE_LESSON"."type" IS '课时类型';
+
+COMMENT ON COLUMN "OJ_COURSE_LESSON"."video_check_point" IS '视频检查点配置';
+
+COMMENT ON COLUMN "OJ_COURSE_LESSON"."video_url" IS '视频课件地址';
+
+COMMENT ON TABLE "OJ_LESSON_CONFIG" IS '实训课时目录';
+
+COMMENT ON COLUMN "OJ_LESSON_CONFIG"."course_id" IS '关联课程id';
+
+COMMENT ON COLUMN "OJ_LESSON_CONFIG"."index" IS '此节点在父节点下顺序索引';
+
+COMMENT ON COLUMN "OJ_LESSON_CONFIG"."lesson_id" IS '关联课时id';
+
+COMMENT ON COLUMN "OJ_LESSON_CONFIG"."name" IS '目录节点名称';
+
+COMMENT ON COLUMN "OJ_LESSON_CONFIG"."node_type" IS '节点类型';
+
+COMMENT ON COLUMN "OJ_LESSON_CONFIG"."parent_id" IS '父节点id';
+
+COMMENT ON TABLE "OJ_LESSON_PAPER_EVALUATE" IS '实训课后练习评估';
+
+COMMENT ON COLUMN "OJ_LESSON_PAPER_EVALUATE"."accuracy" IS '正确率';
+
+COMMENT ON COLUMN "OJ_LESSON_PAPER_EVALUATE"."corrector" IS '评卷用户id';
+
+COMMENT ON COLUMN "OJ_LESSON_PAPER_EVALUATE"."lesson_id" IS '关联课时id';
+
+COMMENT ON COLUMN "OJ_LESSON_PAPER_EVALUATE"."level" IS '课后练习完成评级';
+
+COMMENT ON COLUMN "OJ_LESSON_PAPER_EVALUATE"."record" IS '课后联系提交记录';
+
+COMMENT ON COLUMN "OJ_LESSON_PAPER_EVALUATE"."score" IS '得分';
+
+COMMENT ON COLUMN "OJ_LESSON_PAPER_EVALUATE"."submit_user_id" IS '提交用户id';
+
+COMMENT ON COLUMN "OJ_LESSON_PAPER_EVALUATE"."total_score" IS '课后练习总分';
+
+COMMENT ON TABLE "OJ_LESSON_RECORD" IS '实训课时学习记录';
+
+COMMENT ON COLUMN "OJ_LESSON_RECORD"."course_id" IS '学习课程id';
+
+COMMENT ON COLUMN "OJ_LESSON_RECORD"."learned_type" IS '课程学习类型0=课程 1=课程表';
+
+COMMENT ON COLUMN "OJ_LESSON_RECORD"."lesson_id" IS '学习课时id';
+
+COMMENT ON COLUMN "OJ_LESSON_RECORD"."room_id" IS '课堂ID';
+
+COMMENT ON COLUMN "OJ_LESSON_RECORD"."user_id" IS '学习用户id';
+
+COMMENT ON TABLE "OJ_LOCAL_SCENE" IS '实训场景关联表';
+
+COMMENT ON COLUMN "OJ_LOCAL_SCENE"."business_id" IS '关联场景的业务（资源）id';
+
+COMMENT ON COLUMN "OJ_LOCAL_SCENE"."business_type" IS '关联场景的业务类型';
+
+COMMENT ON COLUMN "OJ_LOCAL_SCENE"."flags" IS '环境FLAG（实践操作习题使用）';
+
+COMMENT ON COLUMN "OJ_LOCAL_SCENE"."from_web" IS '是否为前台场景';
+
+COMMENT ON COLUMN "OJ_LOCAL_SCENE"."local_scene_id" IS '关联的local_scene.resource_id';
+
+COMMENT ON COLUMN "OJ_LOCAL_SCENE"."shared" IS '是否为共享场景';
+
+COMMENT ON COLUMN "OJ_LOCAL_SCENE"."user_id" IS '创建场景用户id';
+
+COMMENT ON TABLE "OJ_NOTE" IS '实训我的笔记/实验报告';
+
+COMMENT ON COLUMN "OJ_NOTE"."business_id" IS '资源编号';
+
+COMMENT ON COLUMN "OJ_NOTE"."business_type" IS '1=课程 2=课时 3=练习 4=课后练习';
+
+COMMENT ON COLUMN "OJ_NOTE"."content" IS '笔记内容';
+
+COMMENT ON COLUMN "OJ_NOTE"."is_submit" IS '实验报告是否提交';
+
+COMMENT ON COLUMN "OJ_NOTE"."note_type" IS '1=笔记 2=实验报告';
+
+COMMENT ON COLUMN "OJ_NOTE"."operation_auth_ids" IS '拥有后台操作权限的用户id';
+
+COMMENT ON COLUMN "OJ_NOTE"."operation_auth_type" IS '授权操作类类型 1=共享 2=自定义';
+
+COMMENT ON COLUMN "OJ_NOTE"."public" IS '是否公开';
+
+COMMENT ON COLUMN "OJ_NOTE"."read_auth_ids" IS '拥有前台预览权限的组织id';
+
+COMMENT ON COLUMN "OJ_NOTE"."read_auth_type" IS '同上';
+
+COMMENT ON COLUMN "OJ_NOTE"."user_id" IS '用户编号';
+
+COMMENT ON TABLE "OJ_NOTE_EVALUATE" IS '实训实验报告评估';
+
+COMMENT ON COLUMN "OJ_NOTE_EVALUATE"."evaluate_comment" IS '评语';
+
+COMMENT ON COLUMN "OJ_NOTE_EVALUATE"."evaluate_time" IS '评估时间';
+
+COMMENT ON COLUMN "OJ_NOTE_EVALUATE"."evaluator_id" IS '评估用户id';
+
+COMMENT ON COLUMN "OJ_NOTE_EVALUATE"."note_id" IS '评估实验报告id';
+
+COMMENT ON COLUMN "OJ_NOTE_EVALUATE"."passed" IS '是否通过';
+
+COMMENT ON COLUMN "OJ_NOTE_EVALUATE"."score" IS '得分';
+
+COMMENT ON TABLE "OJ_PAPER" IS '实训试卷/课后练习';
+
+COMMENT ON COLUMN "OJ_PAPER"."description" IS '试卷描述';
+
+COMMENT ON COLUMN "OJ_PAPER"."logo" IS '试卷封面id';
+
+COMMENT ON COLUMN "OJ_PAPER"."name" IS '试卷名称';
+
+COMMENT ON COLUMN "OJ_PAPER"."operation_auth_ids" IS '拥有后台操作权限的用户id';
+
+COMMENT ON COLUMN "OJ_PAPER"."practice_count" IS '试卷下习题总数';
+
+COMMENT ON COLUMN "OJ_PAPER"."public" IS '是否公开';
+
+COMMENT ON COLUMN "OJ_PAPER"."read_auth_ids" IS '拥有前台预览权限的组织id';
+
+COMMENT ON COLUMN "OJ_PAPER"."total_score" IS '试卷总分';
+
+COMMENT ON COLUMN "OJ_PAPER"."type" IS '试卷类型';
+
+COMMENT ON TABLE "OJ_PAPER_PRACTICE_THEORY" IS '组卷习题详情表';
+
+COMMENT ON COLUMN "OJ_PAPER_PRACTICE_THEORY"."origin_id" IS '原理论题id';
+
+COMMENT ON COLUMN "OJ_PAPER_PRACTICE_THEORY"."paper_id" IS '关联试卷id';
+
+COMMENT ON COLUMN "OJ_PAPER_PRACTICE_THEORY"."snapshot" IS '理论基础信息快照';
+
+COMMENT ON COLUMN "OJ_PAPER_PRACTICE_THEORY"."solved" IS '个人组卷练习解题状态';
+
+COMMENT ON COLUMN "OJ_PAPER_PRACTICE_THEORY"."submit_answer" IS '个人组卷练习提交的答案';
+
+COMMENT ON TABLE "OJ_PRACTICE_CATEGORY" IS '实训习题方向/分类';
+
+COMMENT ON COLUMN "OJ_PRACTICE_CATEGORY"."code" IS '节点编号';
+
+COMMENT ON COLUMN "OJ_PRACTICE_CATEGORY"."create_user_id" IS '创建人';
+
+COMMENT ON COLUMN "OJ_PRACTICE_CATEGORY"."name" IS '分类名称';
+
+COMMENT ON COLUMN "OJ_PRACTICE_CATEGORY"."parent_id" IS '编号';
+
+COMMENT ON COLUMN "OJ_PRACTICE_CATEGORY"."practice_type" IS '习题类型';
+
+COMMENT ON TABLE "OJ_PRACTICE_MISTAKE" IS '错题集表';
+
+COMMENT ON COLUMN "OJ_PRACTICE_MISTAKE"."correct" IS '做对次数';
+
+COMMENT ON COLUMN "OJ_PRACTICE_MISTAKE"."incorrect" IS '做错次数';
+
+COMMENT ON COLUMN "OJ_PRACTICE_MISTAKE"."practice_id" IS '题目id';
+
+COMMENT ON COLUMN "OJ_PRACTICE_MISTAKE"."practice_type" IS '题目类型';
+
+COMMENT ON COLUMN "OJ_PRACTICE_MISTAKE"."user_id" IS '用户id';
+
+COMMENT ON TABLE "OJ_PRACTICE_OPERATION" IS '实训实践操作';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION"."answer" IS '答案';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION"."attachment_id" IS '关联附件id';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION"."builtin" IS '是否为内置资源';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION"."category_id" IS '关联方向id';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION"."content" IS '内容';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION"."create_user_id" IS '创建用户id';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION"."destroy_delay" IS '场景销毁时限（单位：h，动态环境下拥有）';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION"."difficulty" IS '难度';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION"."dynamic_env" IS '是否为动态环境';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION"."dynamic_flag" IS '是否为动态FLAG';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION"."knowledge" IS '知识点';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION"."practice_set_id" IS '关联习题集id';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION"."public" IS '是否公开';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION"."scene_share_mode" IS '场景分享标识（动态环境下拥有）';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION"."score" IS '得分';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION"."topo_id" IS '关联拓扑id（动态环境下拥有）';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION"."writeup" IS '题解';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION"."writeup_public" IS '题解是否公开';
+
+COMMENT ON TABLE "OJ_PRACTICE_OPERATION_REF" IS '实训实践操作引用表';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION_REF"."origin_id" IS '原实践操作id';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION_REF"."paper_id" IS '关联试卷id';
+
+COMMENT ON COLUMN "OJ_PRACTICE_OPERATION_REF"."snapshot" IS '实践操作基础信息快照';
+
+COMMENT ON TABLE "OJ_PRACTICE_PAPER" IS '组卷信息表';
+
+COMMENT ON COLUMN "OJ_PRACTICE_PAPER"."ai_create_flag" IS '是否是大模型服务创建的卷子，0-否 1-是';
+
+COMMENT ON COLUMN "OJ_PRACTICE_PAPER"."count" IS '出题数量';
+
+COMMENT ON COLUMN "OJ_PRACTICE_PAPER"."difficulty" IS '题目难度';
+
+COMMENT ON COLUMN "OJ_PRACTICE_PAPER"."is_finish" IS '是否完成';
+
+COMMENT ON COLUMN "OJ_PRACTICE_PAPER"."practice_status" IS '题目状态';
+
+COMMENT ON COLUMN "OJ_PRACTICE_PAPER"."type" IS '题目类型';
+
+COMMENT ON COLUMN "OJ_PRACTICE_PAPER"."user_id" IS '组卷人';
+
+COMMENT ON TABLE "OJ_PRACTICE_RANDOM_FLAG" IS '实训实践操作随机FLAG记录';
+
+COMMENT ON COLUMN "OJ_PRACTICE_RANDOM_FLAG"."attachment_id" IS '关联附件id';
+
+COMMENT ON COLUMN "OJ_PRACTICE_RANDOM_FLAG"."flag" IS 'FLAG';
+
+COMMENT ON COLUMN "OJ_PRACTICE_RANDOM_FLAG"."practice_id" IS '关联实践操作id';
+
+COMMENT ON COLUMN "OJ_PRACTICE_RANDOM_FLAG"."type" IS '区别使用业务（习题、课后练习...）';
+
+COMMENT ON COLUMN "OJ_PRACTICE_RANDOM_FLAG"."user_id" IS '答题用户id';
+
+COMMENT ON TABLE "OJ_PRACTICE_SET" IS '实训习题集';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SET"."builtin" IS '是否为内置数据';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SET"."create_user_id" IS '创建用户id';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SET"."logo" IS '习题集封面id';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SET"."name" IS '习题集名称';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SET"."operation_auth_ids" IS '拥有后台操作权限的用户id';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SET"."operation_auth_type" IS '后台操作权限类型';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SET"."practice_count" IS '习题数量';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SET"."practice_type" IS '习题集类型';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SET"."public" IS '是否公开';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SET"."read_auth_ids" IS '拥有前台预览权限的组织id';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SET"."read_auth_type" IS '前台预览权限类型';
+
+COMMENT ON TABLE "OJ_PRACTICE_SOLVED" IS '实训习题答题记录';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SOLVED"."collection" IS '是否收藏';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SOLVED"."is_paper" IS '是否是自由组卷产生的记录';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SOLVED"."practice_id" IS '习题编号';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SOLVED"."practice_type" IS '习题类型';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SOLVED"."score" IS '得分';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SOLVED"."solved" IS '是否解出';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SOLVED"."submit_answer" IS '提交的答案';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SOLVED"."submit_user_id" IS '提交人';
+
+COMMENT ON COLUMN "OJ_PRACTICE_SOLVED"."total_score" IS '习题分值';
+
+COMMENT ON TABLE "OJ_PRACTICE_THEORY" IS '实训理论基础';
+
+COMMENT ON COLUMN "OJ_PRACTICE_THEORY"."answer" IS '答案';
+
+COMMENT ON COLUMN "OJ_PRACTICE_THEORY"."blank" IS '填空题填空内容';
+
+COMMENT ON COLUMN "OJ_PRACTICE_THEORY"."builtin" IS '是否为内置数据';
+
+COMMENT ON COLUMN "OJ_PRACTICE_THEORY"."category_id" IS '关联方向id';
+
+COMMENT ON COLUMN "OJ_PRACTICE_THEORY"."content" IS '内容';
+
+COMMENT ON COLUMN "OJ_PRACTICE_THEORY"."create_user_id" IS '创建用户id';
+
+COMMENT ON COLUMN "OJ_PRACTICE_THEORY"."difficulty" IS '难度';
+
+COMMENT ON COLUMN "OJ_PRACTICE_THEORY"."keyword" IS '简答题参考关键字';
+
+COMMENT ON COLUMN "OJ_PRACTICE_THEORY"."knowledge" IS '知识点';
+
+COMMENT ON COLUMN "OJ_PRACTICE_THEORY"."option" IS '选择题选项';
+
+COMMENT ON COLUMN "OJ_PRACTICE_THEORY"."practice_set_id" IS '关联习题集id';
+
+COMMENT ON COLUMN "OJ_PRACTICE_THEORY"."public" IS '是否公开';
+
+COMMENT ON COLUMN "OJ_PRACTICE_THEORY"."score" IS '得分';
+
+COMMENT ON COLUMN "OJ_PRACTICE_THEORY"."theory_type" IS '理论基础题型';
+
+COMMENT ON COLUMN "OJ_PRACTICE_THEORY"."title" IS '标题（暂未使用）';
+
+COMMENT ON TABLE "OJ_PRACTICE_THEORY_REF" IS '实训理论基础引用表';
+
+COMMENT ON COLUMN "OJ_PRACTICE_THEORY_REF"."option_random" IS '选择题选项是否打乱顺序';
+
+COMMENT ON COLUMN "OJ_PRACTICE_THEORY_REF"."origin_id" IS '原理论基础id';
+
+COMMENT ON COLUMN "OJ_PRACTICE_THEORY_REF"."paper_id" IS '关联试卷id';
+
+COMMENT ON COLUMN "OJ_PRACTICE_THEORY_REF"."snapshot" IS '理论基础基础信息快照';
+
+COMMENT ON TABLE "OJ_RESOURCE_COLLECTION" IS '实训资源收藏记录';
+
+COMMENT ON COLUMN "OJ_RESOURCE_COLLECTION"."business_id" IS '收藏业务（资源）id';
+
+COMMENT ON COLUMN "OJ_RESOURCE_COLLECTION"."business_type" IS '收藏业务类型';
+
+COMMENT ON COLUMN "OJ_RESOURCE_COLLECTION"."user_id" IS '收藏用户id';
+
+COMMENT ON TABLE "OJ_TRAIN_PLAN" IS '训练计划';
+
+COMMENT ON COLUMN "OJ_TRAIN_PLAN"."create_user_id" IS '创建用户id';
+
+COMMENT ON COLUMN "OJ_TRAIN_PLAN"."name" IS '计划名称';
+
+COMMENT ON TABLE "RTKS_ABILITY" IS 'rtks能力表';
+
+COMMENT ON COLUMN "RTKS_ABILITY"."content" IS '内容';
+
+COMMENT ON COLUMN "RTKS_ABILITY"."create_time" IS '创建时间';
+
+COMMENT ON COLUMN "RTKS_ABILITY"."id" IS '自增id';
+
+COMMENT ON COLUMN "RTKS_ABILITY"."resource_id" IS '资源id';
+
+COMMENT ON COLUMN "RTKS_ABILITY"."update_time" IS '更新时间';
+
+COMMENT ON TABLE "RTKS_ATTACK" IS 'att&ck框架表';
+
+COMMENT ON COLUMN "RTKS_ATTACK"."category_id" IS '类别id';
+
+COMMENT ON COLUMN "RTKS_ATTACK"."id" IS '自增id';
+
+COMMENT ON COLUMN "RTKS_ATTACK"."name_en" IS '英文内容';
+
+COMMENT ON COLUMN "RTKS_ATTACK"."name_zh" IS '中文内容';
+
+COMMENT ON COLUMN "RTKS_ATTACK"."resource_id" IS '资源id';
+
+COMMENT ON TABLE "RTKS_ATTACK_CATEGORY" IS 'att&ck框架类别表';
+
+COMMENT ON COLUMN "RTKS_ATTACK_CATEGORY"."id" IS '自增id';
+
+COMMENT ON COLUMN "RTKS_ATTACK_CATEGORY"."name_en" IS '英文内容';
+
+COMMENT ON COLUMN "RTKS_ATTACK_CATEGORY"."name_zh" IS '中文内容';
+
+COMMENT ON COLUMN "RTKS_ATTACK_CATEGORY"."resource_id" IS '资源id';
+
+COMMENT ON COLUMN "RTKS_ATTACK_ICS"."category_id" IS 'ics类型id';
+
+COMMENT ON COLUMN "RTKS_ATTACK_ICS"."name_en" IS '英文名称';
+
+COMMENT ON COLUMN "RTKS_ATTACK_ICS"."name_zh" IS '中文名称';
+
+COMMENT ON COLUMN "RTKS_ATTACK_ICS"."resource_id" IS 'ics id';
+
+COMMENT ON COLUMN "RTKS_ATTACK_ICS_CATEGORY"."name_en" IS '英文名称';
+
+COMMENT ON COLUMN "RTKS_ATTACK_ICS_CATEGORY"."name_zh" IS '中文名称';
+
+COMMENT ON COLUMN "RTKS_ATTACK_ICS_CATEGORY"."resource_id" IS 'ics类型id';

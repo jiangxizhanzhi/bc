@@ -99,5 +99,5 @@ public interface LessonRecordMapper extends BaseMapper<LessonRecord> {
 
 	List<LessonRecord> selectRecentCoursesByUser(@Param("userId") String userId, @Param("count") int count);
 
-    List<LessonRecord> selectLatestByUserId(String userId);
+    List<LessonRecord> selectLatestByUserId(@Param("userId") String userId, @Param("webCourseIds") List<String> webCourseIds);
 }

@@ -87,6 +87,10 @@
                           INNER JOIN oj_lesson_config olc ON olr.lesson_id = olc.lesson_id
                  WHERE ocl.public = 1
                    AND olr.user_id = #{userId}
+                   AND ocl.course_id IN
+                       <foreach item="item" collection="webCourseIds" separator="," open="(" close=")">
+                            #{item}
+                       </foreach>
              ) t
         WHERE rn = 1
         ORDER BY update_time DESC

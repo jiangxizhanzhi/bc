@@ -12,7 +12,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -990,13 +989,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         courseStatisticsRes.setCompletedCourseCount((int) count);
         courseStatisticsRes.setCourseCount((int) courseCount);
 //		最近在学
-
 //		原数据
-        LambdaQueryWrapper<LessonRecord> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(LessonRecord::getUserId, authContext.getUserId())
-                .orderByDesc(LessonRecord::getUpdateTime)
-                .last("limit 10");
-        List<LessonRecord> lessonRecords = lessonRecordMapper.selectLatestByUserId(authContext.getUserId());
+		List<String> webCourseIds = StreamApiUtils.map(boListRsp.getList(), CourseWebBo::getResourceId);
+		List<LessonRecord> lessonRecords = webCourseIds.isEmpty() ? Lists.newArrayList()
+				: lessonRecordMapper.selectLatestByUserId(authContext.getUserId(), webCourseIds);
         List<String> courseIds = lessonRecords.stream().map(LessonRecord::getCourseId).collect(Collectors.toList());
         List<Course> courses = Lists.newArrayList();
 		if (CollectionUtils.isNotEmpty(courseIds)) {

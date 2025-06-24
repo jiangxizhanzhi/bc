@@ -109,4 +109,6 @@ public class RbRoomContext {
 	 * 图标
 	 */
 	private String logo;
+
+	private Integer businessType;
 }

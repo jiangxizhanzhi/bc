@@ -600,4 +600,6 @@ public interface RemoteSceneService {
 	 * @see JSONObject
 	 */
 	JSONObject getByArea(String sceneId, String areaId);
+
+	JSONObject sceneRelease(String jsonString);
 }

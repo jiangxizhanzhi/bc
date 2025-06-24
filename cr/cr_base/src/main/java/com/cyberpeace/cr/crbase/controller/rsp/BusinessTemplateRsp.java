@@ -1,11 +1,11 @@
 package com.cyberpeace.cr.crbase.controller.rsp;
 
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 /**
  * 靶场模板公共信息类
@@ -87,5 +87,14 @@ public class BusinessTemplateRsp implements Serializable {
 	 */
 	@ApiModelProperty(value = "场景编排")
 	private SceneConfigRsp sceneConfigInfo;
+
+	//	联合模式
+	private String uniteTaskId;
+
+	private Date startTime;
+
+	private Date endTime;
+
+	private String trainTarget;
 
 }

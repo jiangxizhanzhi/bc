@@ -1,0 +1,58 @@
+package com.cyberpeace.cr.redvsblue.controller;
+
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.cr.redvsblue.service.CrUniteBusinessTaskService;
+import com.cyberpeace.cr.redvsblue.vo.CrUniteBusinessTaskVO;
+import com.cyberpeace.cr.redvsblue.vo.NetworkTaskVO;
+import com.cyberpeace.cr.redvsblue.vo.NetworkTopoVO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+@Api(tags = "联合演训相关接口")
+@RestController
+@RequestMapping("/cr/unite")
+@RequiresAuthentication
+@Slf4j
+public class CrUniteBusinessController {
+
+    @Autowired
+    private CrUniteBusinessTaskService crUniteBusinessTaskService;
+
+    @ApiOperation("新增联合任务")
+    @PostMapping("/business_task")
+    public BaseRsp<Boolean> saveUniteBusinessTask(@RequestBody NetworkTaskVO networkTaskVO) {
+        crUniteBusinessTaskService.saveUniteBusinessTask(networkTaskVO);
+        return new BaseRsp<>();
+    }
+
+    @ApiOperation("新增联合设备信息")
+    @PostMapping("/business_topo")
+//    TODO 改名
+    public BaseRsp<Boolean> saveUniteBusinessTak(@RequestBody NetworkTopoVO networkTopoVO) {
+        crUniteBusinessTaskService.saveUniteBusinessTopo(networkTopoVO);
+        return new BaseRsp<>();
+    }
+
+    @ApiOperation("新增联合设备信息")
+    @GetMapping()
+    //    TODO 改名
+    public BaseRsp<CrUniteBusinessTaskVO> saveUniteBusinessTa(@ApiParam(name = "task_id", value = "任务id", required = true)
+                                                              @RequestParam(value = "task_id", required = true) String taskId) {
+        CrUniteBusinessTaskVO crUniteBusinessTaskVO = crUniteBusinessTaskService.getTaskById(taskId);
+        return new BaseRsp<>(crUniteBusinessTaskVO);
+    }
+
+    @ApiOperation("构建结果上报")
+    @PostMapping("/business")
+    //    TODO 改名
+    public BaseRsp<NetworkTopoVO> saveUniteBusinessT(@RequestBody NetworkTopoVO networkTopoVO) {
+        networkTopoVO = crUniteBusinessTaskService.saveUniteBusinessT(networkTopoVO);
+        return new BaseRsp<>(networkTopoVO);
+    }
+
+}

@@ -1,13 +1,11 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -47,6 +45,7 @@ import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateModifyReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.BaseInfoRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbTemplateRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbTemplateMapper;
 import com.cyberpeace.cr.redvsblue.service.RbTemplateService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -121,6 +120,8 @@ public class RbTemplateAdminController {
     @Autowired
 	private BusinessTemplateMapper businessTemplateMapper;
 
+	@Autowired
+	private RbTemplateMapper rbTemplateMapper;
     /**
      * 创建
      *
@@ -232,21 +233,41 @@ public class RbTemplateAdminController {
 
 		businessTemplateService.checkPermission(resourceId,
 				UserInfoContext.getUserContext().getUserId());
-		RbTemplate template = rbTemplateService.getRbTemplateByBusinessId(resourceId);
+
 
 		BusinessTemplate businessTemplate = businessTemplateService
-				.getById(template.getBusinessTemplateId());
+				.getById(resourceId);
+		extracted(resourceId, businessTemplate);
 
-		// 获取红蓝角色
-		String roleString = template.getRoleConfig();
-		JSONObject roleObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
+		RbTemplate template = rbTemplateMapper.selectByBusinessTemplateId(resourceId);
+		if (Objects.equals(businessTemplate.getBusinessType(), BusinessType.UNITE_TRAIN.getCode())) {
+			if(template == null){
+				BaseInfoRsp baseInfoRsp = new BaseInfoRsp(businessTemplate);
+				// 获取返回对象
+				RbTemplateRsp teamTrainTemplateRsp = new RbTemplateRsp();
+				teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
+				return new BaseRsp<>(teamTrainTemplateRsp);
+			}
+		} else {
+			extracted(resourceId, template);
+		}
 
-		Map<String, MissionTemplate> mapping = missionTemplateService
-				.getMappingBySchemeJson(roleString);
-		List<JSONObject> redRoleRsps = getRoles(roleObject.getJSONArray("red_roles"), mapping);
-		List<JSONObject> blueRoleRsps = getRoles(roleObject.getJSONArray("blue_roles"), mapping);
-		dealAssetNodesMap(redRoleRsps);
-		dealAssetNodesMap(blueRoleRsps);
+		List<JSONObject> redRoleRsps = null;
+		List<JSONObject> blueRoleRsps  = null;
+
+		if (businessTemplate.getBusinessType() != BusinessType.UNITE_TRAIN.getCode()
+				&& StringUtils.isBlank(businessTemplate.getUniteTaskId())) {
+			// 获取红蓝角色
+			String roleString = template.getRoleConfig();
+			JSONObject roleObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
+
+			Map<String, MissionTemplate> mapping = missionTemplateService
+					.getMappingBySchemeJson(roleString);
+			redRoleRsps = getRoles(roleObject.getJSONArray("red_roles"), mapping);
+			blueRoleRsps = getRoles(roleObject.getJSONArray("blue_roles"), mapping);
+			dealAssetNodesMap(redRoleRsps);
+			dealAssetNodesMap(blueRoleRsps);
+		}
 		// 获取基本信息
 		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(template, businessTemplate);
 
@@ -275,12 +296,19 @@ public class RbTemplateAdminController {
 		return new BaseRsp<>(teamTrainTemplateRsp);
 	}
 
-    /**
-     * 交易资产节点映射
-     *
-     * @param roleRsps 岗位RSP
-     */
-    public void dealAssetNodesMap(List<JSONObject> roleRsps ) {
+	private static void extracted(String resourceId, Object object) {
+		if (object == null) {
+			log.error("business template not found, businessId:{}", resourceId);
+			throw new ResourceNotFoundException(resourceId);
+		}
+	}
+
+	/**
+	 * 交易资产节点映射
+	 *
+	 * @param roleRsps 岗位RSP
+	 */
+	public void dealAssetNodesMap(List<JSONObject> roleRsps ) {
 		for (JSONObject roleRsp : roleRsps) {
 			List<Object> assetNodes = roleRsp.getObject("asset_nodes", ArrayList.class);
 			Map<String,Integer>  assetMap = new HashMap<>();
@@ -297,14 +325,14 @@ public class RbTemplateAdminController {
 		}
 	}
 
-    /**
-     * 获取角色
-     *
-     * @param roleArray 岗位数组
-     * @param mapping   映射
-     * @return {@code List<JSONObject> }
-     */
-    private List<JSONObject> getRoles(JSONArray roleArray, Map<String, MissionTemplate> mapping) {
+	/**
+	 * 获取角色
+	 *
+	 * @param roleArray 岗位数组
+	 * @param mapping   映射
+	 * @return {@code List<JSONObject> }
+	 */
+	private List<JSONObject> getRoles(JSONArray roleArray, Map<String, MissionTemplate> mapping) {
 		List<JSONObject> result = Lists.newArrayList();
 		// 逐角色逐阶段读取任务信息
 		roleArray.forEach(role -> {
@@ -322,14 +350,14 @@ public class RbTemplateAdminController {
 		return result;
 	}
 
-    /**
-     * 请求体自红蓝对抗模板
-     *
-     * @param req        请求体
-     * @param rbTemplate 红蓝对抗模板
-     * @return {@code RbTemplate }
-     */
-    private RbTemplate reqToRbTemplate(RbTemplateAddReq req, RbTemplate rbTemplate) {
+	/**
+	 * 请求体自红蓝对抗模板
+	 *
+	 * @param req        请求体
+	 * @param rbTemplate 红蓝对抗模板
+	 * @return {@code RbTemplate }
+	 */
+	private RbTemplate reqToRbTemplate(RbTemplateAddReq req, RbTemplate rbTemplate) {
 
 		CrRoleConfigRb roleConfigRb = BeanUtils.copy(req, CrRoleConfigRb.class);
 		BaseInfo baseInfo = req.getBaseInfo();

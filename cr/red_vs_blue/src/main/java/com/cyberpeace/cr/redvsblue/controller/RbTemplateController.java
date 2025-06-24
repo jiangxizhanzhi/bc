@@ -37,6 +37,8 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+import static com.cyberpeace.common.enums.BusinessType.UNITE_TRAIN;
+
 /**
  * 红蓝对抗模板Controller
  *
@@ -157,33 +159,35 @@ public class RbTemplateController {
 
 		rbTemplateRoleRsps.add(new RbTemplateRoleRsp(RbRoleGroup.REFEREE));
 
-		RbTemplateRoleRsp rbTemplateRoleRsp3 = new RbTemplateRoleRsp(RbRoleGroup.RED);
+		if(rbTemplateData.getBusinessType().equals(UNITE_TRAIN.getCode())) {
+			RbTemplateRoleRsp rbTemplateRoleRsp3 = new RbTemplateRoleRsp(RbRoleGroup.RED);
 
-		JSONArray redRoles = (JSONArray) rolejsonObject.get("red_roles");
-		List<RbTemplateRoleRsp> redTemplateRoleRsps = Lists.newArrayList();
-		for (int i = 0; i < redRoles.size(); i++) {
+			JSONArray redRoles = (JSONArray) rolejsonObject.get("red_roles");
+			List<RbTemplateRoleRsp> redTemplateRoleRsps = Lists.newArrayList();
+			for (int i = 0; i < redRoles.size(); i++) {
 
-			RbTemplateRoleRsp redTemplateRole = new RbTemplateRoleRsp(RbRoleGroup.RED,
-					redRoles.getJSONObject(i).get("name").toString());
-			redTemplateRoleRsps.add(redTemplateRole);
+				RbTemplateRoleRsp redTemplateRole = new RbTemplateRoleRsp(RbRoleGroup.RED,
+						redRoles.getJSONObject(i).get("name").toString());
+				redTemplateRoleRsps.add(redTemplateRole);
+			}
+			rbTemplateRoleRsp3.setChildren(redTemplateRoleRsps);
+			rbTemplateRoleRsps.add(rbTemplateRoleRsp3);
+
+			RbTemplateRoleRsp rbTemplateRoleRsp4 = new RbTemplateRoleRsp(RbRoleGroup.BLUE);
+
+			JSONArray blueRoles = (JSONArray) rolejsonObject.get("blue_roles");
+			List<RbTemplateRoleRsp> blueTemplateRoleRsps = Lists.newArrayList();
+			for (int i = 0; i < blueRoles.size(); i++) {
+
+				RbTemplateRoleRsp blueTemplateRole = new RbTemplateRoleRsp(RbRoleGroup.BLUE,
+						blueRoles.getJSONObject(i).get("name").toString());
+				blueTemplateRoleRsps.add(blueTemplateRole);
+			}
+			rbTemplateRoleRsp4.setChildren(blueTemplateRoleRsps);
+			rbTemplateRoleRsps.add(rbTemplateRoleRsp4);
+
+			rbTemplateListRsp.setRoleInfo(rbTemplateRoleRsps);
 		}
-		rbTemplateRoleRsp3.setChildren(redTemplateRoleRsps);
-		rbTemplateRoleRsps.add(rbTemplateRoleRsp3);
-
-		RbTemplateRoleRsp rbTemplateRoleRsp4 = new RbTemplateRoleRsp(RbRoleGroup.BLUE);
-
-		JSONArray blueRoles = (JSONArray) rolejsonObject.get("blue_roles");
-		List<RbTemplateRoleRsp> blueTemplateRoleRsps = Lists.newArrayList();
-		for (int i = 0; i < blueRoles.size(); i++) {
-
-			RbTemplateRoleRsp blueTemplateRole = new RbTemplateRoleRsp(RbRoleGroup.BLUE,
-					blueRoles.getJSONObject(i).get("name").toString());
-			blueTemplateRoleRsps.add(blueTemplateRole);
-		}
-		rbTemplateRoleRsp4.setChildren(blueTemplateRoleRsps);
-		rbTemplateRoleRsps.add(rbTemplateRoleRsp4);
-
-		rbTemplateListRsp.setRoleInfo(rbTemplateRoleRsps);
 
 		return rbTemplateListRsp;
 	}

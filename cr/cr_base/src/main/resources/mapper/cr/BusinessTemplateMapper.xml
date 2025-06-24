@@ -15,7 +15,8 @@
         </if>
         select
         resource_id ,topo_id,`name`, description,business_type,difficulty,local_scene_id,
-        create_user_id,operation_auth_type,operation_auth_ids, read_auth_type, read_auth_ids,create_time
+        create_user_id,operation_auth_type,operation_auth_ids, read_auth_type, read_auth_ids,create_time,
+        unite_task_id,start_time,end_time,train_target
         from
         cr_business_template
         <where>

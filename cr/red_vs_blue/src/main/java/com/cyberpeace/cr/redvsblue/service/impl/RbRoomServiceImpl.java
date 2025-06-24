@@ -71,6 +71,8 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+import static com.cyberpeace.common.enums.BusinessType.UNITE_TRAIN;
+
 /**
  * 红蓝对抗房间Service实现
  *
@@ -261,28 +263,30 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 
 				save(rbRoom);
-				List<CrRole> crRoles = getCrRoleByRbTemplate(template, rbRoom.getResourceId());
+				if(!rbRoomContext.getBusinessType().equals(UNITE_TRAIN.getCode())) {
+					List<CrRole> crRoles = getCrRoleByRbTemplate(template, rbRoom.getResourceId());
 
-				List<RoomRole> users = rbRoomContext.getRoleConfig();
-				int index = 0;
+					List<RoomRole> users = rbRoomContext.getRoleConfig();
+					int index = 0;
 
-				for (CrRole crRole : crRoles) {
-					if (index >= users.size()) {
-						log.error("role users cannot be empty！rbRoomName=[{}]", rbRoom.getName());
-						throw new BusinessException(CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);
+					for (CrRole crRole : crRoles) {
+						if (index >= users.size()) {
+							log.error("role users cannot be empty！rbRoomName=[{}]", rbRoom.getName());
+							throw new BusinessException(CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);
+						}
+						// 前端传的数据的问题
+						if (users.get(index).getUsers().isEmpty()) {
+							index += 2;
+						}
+
+						crRole.setUserIdList(users.get(index++).getUsers());
+						crRole.setRoomId(rbRoom.getResourceId());
+						crRole.setBusinessType(BusinessType.RED_VS_BLUE.getCode());
+						// 创建房间时保存原始节点配置快照，用于动态更新场景后恢复
+						crRole.setNodesSnapshot(crRole.getNodes());
 					}
-					// 前端传的数据的问题
-					if (users.get(index).getUsers().isEmpty()) {
-						index += 2;
-					}
-
-					crRole.setUserIdList(users.get(index++).getUsers());
-					crRole.setRoomId(rbRoom.getResourceId());
-					crRole.setBusinessType(BusinessType.RED_VS_BLUE.getCode());
-					// 创建房间时保存原始节点配置快照，用于动态更新场景后恢复
-					crRole.setNodesSnapshot(crRole.getNodes());
+					crRoleService.saveBatch(crRoles);
 				}
-				crRoleService.saveBatch(crRoles);
 
 			}
 
@@ -564,12 +568,6 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		return filePath;
 	}
 
-	/**
-	 * 获取满岗位名称
-	 *
-	 * @param crRole 靶场岗位
-	 * @return {@code String }
-	 */
 	private String getFullRoleName(CrRole crRole) {
 		String roleName = EnumUtils.getEnumDescByCode(crRole.getRoleGroup(),
 				RbRoleGroup.class);

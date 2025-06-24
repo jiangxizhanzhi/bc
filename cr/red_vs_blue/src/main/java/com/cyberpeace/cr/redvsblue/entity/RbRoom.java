@@ -11,7 +11,6 @@ import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
-
 import lombok.Data;
 import lombok.Getter;
 
@@ -131,6 +130,8 @@ public class RbRoom extends BaseTable {
 	 */
 	private String timeSetting;
 
+	private Integer businessType;
+
 	public RbRoom() {
 
 	}
@@ -149,6 +150,7 @@ public class RbRoom extends BaseTable {
 		this.createUserId = createUserId;
 		this.localSceneId = localSceneId;
 		this.logo = input.getLogo();
+		this.businessType = input.getBusinessType();
 	}
 
 	public boolean isUnopened() {

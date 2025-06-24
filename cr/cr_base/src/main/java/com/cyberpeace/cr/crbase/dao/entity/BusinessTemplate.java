@@ -4,8 +4,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.AuthTable;
-
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * 靶场模板公共信息模型
@@ -64,5 +65,14 @@ public class BusinessTemplate extends AuthTable {
 	 * 用于关联后台测试场景
 	 */
 	private String localSceneId;
+
+//	联合模式
+	private String uniteTaskId;
+
+	private Date startTime;
+
+	private Date endTime;
+
+	private String trainTarget;
 
 }

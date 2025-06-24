@@ -1,27 +1,21 @@
 package com.cyberpeace.cr.redvsblue.controller.rsp;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import javax.validation.constraints.NotBlank;
-
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.service.context.RbTemplateData;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-/**
- * 基础信息响应
- *
- * @author SN
- * @date 2024/11/14
- */
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
 @Data
+@NoArgsConstructor
 public class BaseInfoRsp implements Serializable {
 
 	/**
@@ -102,6 +96,15 @@ public class BaseInfoRsp implements Serializable {
 	 */
 	private String topo;
 
+	//	联合模式
+	private String uniteTaskId;
+
+	private Date startTime;
+
+	private Date endTime;
+
+	private String trainTarget;
+
 	public BaseInfoRsp(RbTemplate template, BusinessTemplate businessTemplate) {
 		this.name = businessTemplate.getName();
 		this.category = template.getSubType();
@@ -127,5 +130,18 @@ public class BaseInfoRsp implements Serializable {
 		this.preSkill = JsonUtil.toJsonObjectArray(rbTemplateData.getPreSkill(), String.class);
 		this.trainSkill = JsonUtil.toJsonObjectArray(rbTemplateData.getTrainSkill(), String.class);
 		this.logo = rbTemplateData.getLogo();
+	}
+
+	public BaseInfoRsp(BusinessTemplate businessTemplate) {
+		this.name = businessTemplate.getName();
+		this.description = businessTemplate.getDescription();
+		this.createUser = businessTemplate.getCreateUserId();
+		this.createTime = businessTemplate.getCreateTime();
+		this.difficult = businessTemplate.getDifficulty();
+		this.logo = businessTemplate.getLogo();
+		this.uniteTaskId = businessTemplate.getUniteTaskId();
+		this.startTime = businessTemplate.getStartTime();
+		this.endTime = businessTemplate.getEndTime();
+		this.trainTarget = businessTemplate.getTrainTarget();
 	}
 }

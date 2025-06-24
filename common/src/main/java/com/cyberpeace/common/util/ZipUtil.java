@@ -6,11 +6,10 @@ import com.cyberpeace.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
+import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.lang.reflect.Field;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -89,9 +88,34 @@ public class ZipUtil {
 	 * @throws ZipException zip 异常
 	 */
 	public static String unZipToTmpPath(String zipPath) throws ZipException {
-		ZipFile zipFile = new ZipFile(zipPath);
+		ZipFile zipFile = null;
 		String tmpPath = generatePath();
-		zipFile.extractAll(tmpPath);
+
+		try {
+			zipFile = new ZipFile(zipPath);
+			zipFile.extractAll(tmpPath);
+		} catch (ZipException e) {
+			FileUtils.deleteQuietly(new File(tmpPath));
+			throw e;
+		} finally {
+			// 手动释放底层RandomAccessFile资源
+			if (zipFile != null) {
+				try {
+					// 获取底层RandomAccessFile并关闭
+					Field fileField = zipFile.getClass().getDeclaredField("file");
+					fileField.setAccessible(true);
+					RandomAccessFile raf = (RandomAccessFile) fileField.get(zipFile);
+
+					if (raf != null) {
+						raf.close();
+						log.debug("手动关闭ZipFile底层RandomAccessFile成功");
+					}
+				} catch (Exception e) {
+					log.error("手动释放ZipFile资源失败: {}", zipPath, e);
+				}
+			}
+		}
+
 		return tmpPath;
 	}
 

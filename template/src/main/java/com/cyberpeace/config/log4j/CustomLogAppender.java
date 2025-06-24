@@ -344,10 +344,12 @@ public class CustomLogAppender extends FileAppender {
             File file = new File(this.fileName);
             String realFileName = file.getName().substring(0, file.getName().indexOf('.'));
             file = new File(file.getParent() + File.separator + realFileName + "_" + sdf.format(now) + '.' + this.maxBackupIndex + ".log");
+
+            // 修改点1：增强文件删除失败处理
             if (file.exists()) {
-                renameSucceeded = file.delete();
-                if (!renameSucceeded) {
-                    log.warn("Failed to delete file: {}", file.getAbsolutePath());
+                if (!file.delete()) {
+                    log.error("删除文件失败，路径：{}，可能原因：文件被占用或权限不足", file.getAbsolutePath());
+                    renameSucceeded = false;
                 }
             }
 
@@ -356,8 +358,14 @@ public class CustomLogAppender extends FileAppender {
                 file = new File(file.getParent() + File.separator + realFileName + "_" + sdf.format(now) + '.' + i + ".log");
                 if (file.exists()) {
                     target = new File(file.getParent() + File.separator + realFileName + "_" + sdf.format(now) + '.' + (i + 1) + ".log");
-                    log.debug("Renaming file " + file + " to " + target);
-                    renameSucceeded = file.renameTo(target);
+                    log.debug("重命名文件 {} 到 {}", file, target);
+
+                    // 修改点2：增强文件重命名失败处理
+                    if (!file.renameTo(target)) {
+                        log.error("重命名文件失败，源路径：{}，目标路径：{}，可能原因：跨分区操作或权限不足",
+                                file.getAbsolutePath(), target.getAbsolutePath());
+                        renameSucceeded = false;
+                    }
                 }
             }
 
@@ -365,16 +373,22 @@ public class CustomLogAppender extends FileAppender {
                 target = new File(file.getParent() + File.separator + realFileName + "_" + sdf.format(now) + '.' + 1 + ".log");
                 this.closeFile();
                 file = new File(this.fileName);
-                log.debug("Renaming file " + file + " to " + target);
-                renameSucceeded = file.renameTo(target);
-                if (!renameSucceeded) {
+                log.debug("重命名文件 {} 到 {}", file, target);
+
+                // 修改点3：增强主文件重命名失败处理
+                if (!file.renameTo(target)) {
+                    log.error("主日志文件重命名失败，源路径：{}，目标路径：{}，可能原因：文件被占用或权限不足",
+                            file.getAbsolutePath(), target.getAbsolutePath());
+                    renameSucceeded = false;
+
+                    // 尝试恢复文件状态
                     try {
                         this.setFile(this.fileName, true, this.bufferedIO, this.bufferSize);
                     } catch (IOException var6) {
                         if (var6 instanceof InterruptedIOException) {
                             Thread.currentThread().interrupt();
                         }
-                        log.error("setFile(" + this.fileName + ", true) call failed.", var6);
+                        log.error("恢复文件状态失败，路径：{}", this.fileName, var6);
                     }
                 }
             }
@@ -387,8 +401,11 @@ public class CustomLogAppender extends FileAppender {
                 if (var5 instanceof InterruptedIOException) {
                     Thread.currentThread().interrupt();
                 }
-                log.error("setFile(" + this.fileName + ", false) call failed.", var5);
+                log.error("打开新日志文件失败，路径：{}", this.fileName, var5);
             }
+        } else {
+            // 修改点4：添加重命名失败的处理逻辑
+            log.error("日志滚动操作失败，当前日志文件可能未正确归档");
         }
     }
 

@@ -84,10 +84,10 @@ public class ShiroConfig {
 	 */
 	@Bean("shiroFilter")
 	public ShiroFilterFactoryBean factory(DefaultWebSecurityManager securityManager) {
-		ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
+
+		FinalShiroFilterFactoryBean factoryBean = new FinalShiroFilterFactoryBean();
 
 		Map<String, Filter> filterMap = new HashMap<>();
-		// filterMap.put("anon", new AnonymousFilter());
 		filterMap.put("jwt", new JwtFilter());
 		factoryBean.setFilters(filterMap);
 
@@ -95,12 +95,14 @@ public class ShiroConfig {
 		factoryBean.setUnauthorizedUrl("/401");
 
 		Map<String, String> filterRuleMap = new HashMap<>();
-		// 不需要校验登陆态的接口在这边配置
-		// filterRuleMap.put("/swagger-ui", "anon");
 		filterRuleMap.put("/**", "jwt");
 
 		factoryBean.setFilterChainDefinitionMap(filterRuleMap);
 		return factoryBean;
+	}
+
+	final class FinalShiroFilterFactoryBean extends ShiroFilterFactoryBean {
+
 	}
 
 	/**
@@ -143,9 +145,12 @@ public class ShiroConfig {
 	@Bean
 	public AuthorizationAttributeSourceAdvisor
 			authorizationAttributeSourceAdvisor(DefaultWebSecurityManager securityManager) {
-		AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
+		FinalAuthorizationAttributeSourceAdvisor advisor = new FinalAuthorizationAttributeSourceAdvisor();
 		advisor.setSecurityManager(securityManager);
 		return advisor;
+	}
+	final class FinalAuthorizationAttributeSourceAdvisor extends AuthorizationAttributeSourceAdvisor {
+
 	}
 }
 

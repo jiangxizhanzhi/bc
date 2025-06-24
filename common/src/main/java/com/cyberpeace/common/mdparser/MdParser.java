@@ -154,10 +154,11 @@ public class MdParser {
      */
     private void doWrite(Object obj, File file) {
         File dirs = FileUtil.mkdirs(file.getParentFile().getAbsolutePath());
+
+        // 修改点1：增强文件删除失败处理
         if (file.exists()) {
-            boolean b = file.delete();
-            if (!b) {
-                log.warn("Failed to delete file: {}", file.getAbsolutePath());
+            if (!file.delete()) {
+                log.error("删除文件失败，路径：{}，可能原因：文件被占用或权限不足", file.getAbsolutePath());
             }
         }
 
@@ -207,9 +208,11 @@ public class MdParser {
             bw.flush();
         } catch (Exception e) {
             log.error("Markdown content write failed！file_path=[{}], catch error:", file.getAbsolutePath(), e);
-            boolean success = file.delete();
-            if (!success) {
-                log.warn("Failed to delete file: {}", file.getAbsolutePath());
+
+            // 修改点2：增强异常处理中的文件删除失败处理
+            if (!file.delete()) {
+                log.error("写入失败后尝试删除文件失败，路径：{}，可能导致临时文件残留", file.getAbsolutePath());
+                // 此处可选择抛出更具体的异常或记录警告
             }
             throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
         } finally {

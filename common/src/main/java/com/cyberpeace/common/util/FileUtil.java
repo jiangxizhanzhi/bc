@@ -5,6 +5,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ContentDisposition;
@@ -17,6 +18,7 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -110,25 +112,25 @@ public class FileUtil {
 		throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
 	}
 
-	/**
-	 * 校验不允许的类型
-	 * @param file
-	 * @param fileSuffix
-	 */
-	public static void validateNotAccessFile(MultipartFile file, String... fileSuffix) {
-		if (null == file) {
-			log.error("file is null! fileSuffix=[{}]",fileSuffix);
-			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
-		}
-
-		String filename = file.getOriginalFilename();
-		for (String suffix : fileSuffix) {
-			if (filename.endsWith(CommonConstant.PERIOD + suffix)) {
-				log.error("filename is illegal! filename=[{}]",filename);
-				throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
-			}
-		}
-	}
+//	/**
+//	 * 校验不允许的类型
+//	 * @param file
+//	 * @param fileSuffix
+//	 */
+//	public static void validateNotAccessFile(MultipartFile file, String... fileSuffix) {
+//		if (null == file) {
+//			log.error("file is null! fileSuffix=[{}]",fileSuffix);
+//			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
+//		}
+//
+//		String filename = file.getOriginalFilename();
+//		for (String suffix : fileSuffix) {
+//			if (filename.endsWith(CommonConstant.PERIOD + suffix)) {
+//				log.error("filename is illegal! filename=[{}]",filename);
+//				throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+//			}
+//		}
+//	}
 
 	public static File saveFile(MultipartFile file, String basePath) throws IOException {
 		String originalFilename = file.getOriginalFilename();
@@ -452,6 +454,7 @@ public class FileUtil {
 	 */
 	public static Boolean deleteDir(File file) {
 		if (file == null || !file.exists()) {
+			log.debug("删除的文件或目录不存在: {}", file != null ? file.getAbsolutePath() : "null");
 			return false;
 		}
 
@@ -462,9 +465,10 @@ public class FileUtil {
 			File[] children = file.listFiles();
 			if (children != null) {
 				for (File child : children) {
-					// 递归删除子文件/目录，任一失败则整体失败
+					// 递归删除子文件/目录，记录详细失败信息
 					if (!deleteDir(child)) {
 						success = false;
+						log.error("删除子文件/目录失败: {}", child.getAbsolutePath());
 					}
 				}
 			}
@@ -474,11 +478,13 @@ public class FileUtil {
 		boolean deleted = file.delete();
 		if (!deleted) {
 			success = false;
+			// 记录删除失败的详细信息，包括可能的原因
+			log.error("删除文件/目录失败: {}, 可能原因: 文件被占用、没有删除权限或为只读文件",
+					file.getAbsolutePath());
 		}
 
 		return success;
 	}
-
 
 	/**
 	 * 文件目录拷贝 如果存在则覆盖
@@ -783,11 +789,22 @@ public class FileUtil {
 
 	public static String getHash256(File file) throws IOException, NoSuchAlgorithmException {
 		String value = "";
+
+		// 生成并保存盐值 (修改点1)
+		SecureRandom random = SecureRandom.getInstanceStrong();
+		byte[] salt = new byte[16];
+		random.nextBytes(salt);
+
 		try (InputStream fis = new FileInputStream(file)) {
 			byte[] buffer = new byte[1024];
 			int numRead;
+
 			// 返回实现指定摘要算法的 MessageDigest 对象
 			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+
+			// 先将盐值加入摘要计算 (修改点2)
+			digest.update(salt);
+
 			do {
 				numRead = fis.read(buffer);
 				if (numRead > 0) {
@@ -795,9 +812,19 @@ public class FileUtil {
 					digest.update(buffer, 0, numRead);
 				}
 			} while (numRead != -1);
-			value = new String(
-					org.apache.tomcat.util.codec.binary.Base64.encodeBase64(digest.digest()));
+
+			// 计算最终哈希值
+			byte[] hashBytes = digest.digest();
+
+			// 将盐值和哈希值合并 (修改点3)
+			byte[] hashWithSalt = new byte[salt.length + hashBytes.length];
+			System.arraycopy(salt, 0, hashWithSalt, 0, salt.length);
+			System.arraycopy(hashBytes, 0, hashWithSalt, salt.length, hashBytes.length);
+
+			// Base64编码结果 (修改点4)
+			value = new String(Base64.encodeBase64(hashWithSalt));
 		}
+
 		return value;
 	}
 

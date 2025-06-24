@@ -502,8 +502,6 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	@Override
 	public String getCyberToken() {
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("account", "super");
-		jsonObject.put("password", "123456");
         return HttpClientUtil.post(CYBER_LOGIN_URL, jsonObject);
 	}
 

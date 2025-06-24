@@ -98,7 +98,6 @@ public class FilterConfig {
 	public FilterRegistrationBean myFilter() {
 		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
 		filterRegistrationBean.setOrder(105);
-		filterRegistrationBean.setFilter(new MyFilter());
 		filterRegistrationBean.setName("myFilter");
 		filterRegistrationBean.addUrlPatterns("/*");
 		return filterRegistrationBean;

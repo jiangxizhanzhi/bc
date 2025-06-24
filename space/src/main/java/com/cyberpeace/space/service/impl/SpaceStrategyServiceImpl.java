@@ -455,7 +455,7 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 	 * @see String
 	 */
 	public String dumpStrategyPath(List<String> strategyIds) {
-		String destPdfPath;
+		String destPdfPath = null;
 		JSONObject data = getStrategyJsonObject(strategyIds);
 		String basePath = AttachmentPath.STRATEGY.getDesc();
 		String timestamp = String.valueOf(System.currentTimeMillis());

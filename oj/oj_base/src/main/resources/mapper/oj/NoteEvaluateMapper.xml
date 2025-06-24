@@ -39,7 +39,7 @@
             #{noteId}
         </foreach>
         <if test="isPublic != null and isPublic">
-            and `public` = #{isPublic}
+            and `public` = 1
         </if>
     </select>
 </mapper>

@@ -29,7 +29,7 @@
             <if test="difficulty != null">
                 and difficulty = #{difficulty}
             </if>
-            and `public` = true
+            and `public` =
         </where>
         order by id desc
     </select>
@@ -109,7 +109,7 @@
                 and content like #{pattern}
             </if>
             <if test="isPublic != null and isPublic">
-                and `public` = #{isPublic}
+                and `public` = 1
             </if>
         </where>
     </select>
@@ -121,7 +121,7 @@
             #{setId}
         </foreach>
         <if test="isPublic != null and isPublic">
-            and `public` = #{isPublic}
+            and `public` = 1
         </if>
         order by `update_time` desc,`id`
     </select>
@@ -133,7 +133,7 @@
             #{categoryId}
         </foreach>
         <if test="isPublic != null and isPublic">
-            and `public` = #{isPublic}
+            and `public` = 1
         </if>
     </select>
 
@@ -176,7 +176,7 @@
                 and content like #{pattern}
             </if>
             <if test="isPublic != null and isPublic">
-                and `public` = #{isPublic}
+                and `public` = 1
             </if>
         </where>
         order by id asc
@@ -235,7 +235,7 @@
                 and a.theory_type = #{listQuery.questionType}
             </if>
             <if test="isPublic != null and isPublic">
-                and a.`public` = #{isPublic}
+                and a.`public` = 1
             </if>
         </where>
         GROUP BY a.category_id
@@ -256,7 +256,7 @@
                 and a.theory_type = #{listQuery.questionType}
             </if>
             <if test="isPublic != null and isPublic">
-                and a.`public` = #{isPublic}
+                and a.`public` = 1
             </if>
         </where>
         GROUP BY a.difficulty

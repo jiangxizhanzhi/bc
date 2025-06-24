@@ -54,7 +54,7 @@
                 </if>
             </if>
             <if test="isPublic != null and isPublic">
-                and `public` = #{isPublic}
+                and `public` = 1
             </if>
         </where>
     </select>
@@ -66,7 +66,7 @@
                 practice_type = #{practiceType}
             </if>
             <if test="isPublic != null and isPublic">
-                and `public` = #{isPublic}
+                and `public` = 1
             </if>
         </where>
     </select>
@@ -120,7 +120,7 @@
                 </if>
             </if>
             <if test="isPublic != null and isPublic">
-                and `public` = #{isPublic}
+                and `public` = 1
             </if>
         </where>
     </select>
@@ -151,7 +151,7 @@
                 </choose>
             </if>
             <if test="null != isPublic and isPublic">
-                and `public` = #{isPublic}
+                and `public` = 1
             </if>
         </where>
     </select>
@@ -184,7 +184,7 @@
             <if test="setType != null">
                 and practice_type = #{setType}
             </if>
-            and `public` = true
+            and `public` = 1
         </where>
     </select>
 

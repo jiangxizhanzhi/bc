@@ -146,22 +146,6 @@ public class StaticResourceFilter implements Filter {
             String element = requestURI.replace(sourceUri, redirectUri);
             String redirectUrl = MP_HOST + element;
             log.info("静态资源源路径{}转发路径：{}", requestURI, element);
-            if (redirectStatus) {
-                //cookie中获取jwt，jwt不存在是抛出异常
-                Cookie[] requestCookies = httpRequest.getCookies();
-                String cookie = null;
-                if (requestCookies != null && requestCookies.length > 0) {
-                    for (Cookie requestCookie : requestCookies) {
-                        if (JWT_KEY.equals(requestCookie.getName())) {
-                            cookie = requestCookie.getValue();
-                        }
-                    }
-                }
-                if (StringUtils.isEmpty(cookie)) {
-                    log.error("cookie is null , cookie = [{}]", cookie);
-                    throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
-                }
-            }
             httpResponse.sendRedirect(redirectUrl);
         }
         chain.doFilter(request, response);

@@ -42,7 +42,7 @@
     </sql>
 
     <sql id="filterByPublic">
-        public = True
+        `public` = 1
     </sql>
 
 
@@ -130,7 +130,7 @@
     </select>
 
     <select id="selectLessonByAuth" resultType="java.lang.String">
-        select resource_id from oj_course_lesson where public = True
+        select resource_id from oj_course_lesson where `public` = 1
         and course_id in
         <if test="courseIds != null and courseIds.size() != 0">
             <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
@@ -144,7 +144,7 @@
 
     <select id="selectExpLessonByAuth" resultType="java.lang.String">
         select resource_id from oj_course_lesson
-        where public = True and type = 1
+        where `public` = 1 and type = 1
         and course_id in
         <if test="courseIds != null and courseIds.size() != 0">
             <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">

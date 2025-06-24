@@ -98,7 +98,7 @@ public class Tool extends BaseTable {
 	 * 工具 public
 	 */
 	@Deprecated
-	@TableField("public")
+	@TableField("`public`")
 	private Integer toolPublic;
 
 	/**

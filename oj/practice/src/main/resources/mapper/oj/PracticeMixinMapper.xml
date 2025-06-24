@@ -3,7 +3,7 @@
 
 <mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeMixinMapper">
     <update id="batchPublic">
-        update ${table} set public = #{public} where status = 1 and resource_id in
+        update ${table} set `public` = #{public} where status = 1 and resource_id in
         <foreach collection="resource_ids" item="id" separator="," open="(" close=")">
             #{id}
         </foreach>

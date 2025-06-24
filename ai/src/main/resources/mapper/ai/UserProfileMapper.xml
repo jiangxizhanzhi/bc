@@ -8,7 +8,7 @@
         <foreach item="setId" collection="practiceIds" separator="," open="(" close=")">
             #{setId}
         </foreach>
-        and t.public = 1 and s.submit_user_id = #{userId}
+        and t.`public` = 1 and s.submit_user_id = #{userId}
         group by t.category_id
     </select>
 </mapper>

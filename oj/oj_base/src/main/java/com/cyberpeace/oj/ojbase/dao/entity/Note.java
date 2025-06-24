@@ -61,7 +61,7 @@ public class Note extends AuthTable {
 	/**
 	 * 是否公开
 	 */
-	@TableField("public")
+	@TableField("`public`")
 	@ApiModelProperty("是否公开")
 	private Boolean isPublic;
 

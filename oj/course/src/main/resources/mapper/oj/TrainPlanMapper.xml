@@ -92,7 +92,7 @@
         SELECT
             c.train_plan_id as resource_id,
             tp.name,
-            group_concat(c.resource_id SEPARATOR ',') as room_ids,
+            WM_CONCAT(c.resource_id) as room_ids,
             MIN(c.start_time) AS first_start_time,
             MAX(c.end_time) AS last_end_time,
             CASE

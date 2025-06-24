@@ -41,7 +41,7 @@ public class Attachment extends BaseTable {
 	/**
 	 * 是否公共
 	 */
-	@TableField("public")
+	@TableField("`public`")
 	private Boolean isPublic;
 
 }

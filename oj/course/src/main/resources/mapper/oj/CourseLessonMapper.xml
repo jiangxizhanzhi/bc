@@ -15,7 +15,7 @@
                 #{courseId}
             </foreach>
             <if test="isPublic != null and isPublic">
-                and `public` = #{isPublic}
+                and `public` = 1
             </if>
         </where>
     </select>
@@ -25,7 +25,7 @@
         <where>
             course_id = #{courseId}
             <if test="isPublic != null and isPublic">
-                and `public` = #{isPublic}
+                and `public` = 1
             </if>
         </where>
     </select>
@@ -47,7 +47,7 @@
                 and `name` like #{context.pattern}
             </if>
             <if test="isPublic != null and isPublic">
-                and `public` = #{isPublic}
+                and `public` = 1
             </if>
         </where>
     </select>
@@ -56,7 +56,7 @@
         select * from oj_course_lesson
         where resource_id = #{resourceId}
         <if test="isPublic != null and isPublic">
-            and `public` = #{isPublic}
+            and `public` = 1
         </if>
     </select>
 

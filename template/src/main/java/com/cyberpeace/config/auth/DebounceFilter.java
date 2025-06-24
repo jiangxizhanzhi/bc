@@ -103,7 +103,7 @@ public class DebounceFilter implements Filter {
 				String requestUri = requestWrapper.getRequestURI();
 
 				// 用token+path+body识别请求是否重复，多个用户启动同一个场景的情况由数据库唯一索引来避免
-				String key = getSha256(body) + "_" + requestUri + "_" + token;
+				String key ="_" + requestUri + "_" + token;
 				localCache(key);
 			}
 			filterChain.doFilter(requestWrapper, servletResponse);
@@ -123,16 +123,6 @@ public class DebounceFilter implements Filter {
 
 	}
 
-	private String getSha256(byte[] body) {
-		try {
-			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-			messageDigest.update(body);
-			return Hex.encodeHexString(messageDigest.digest(), true);
-		} catch (NoSuchAlgorithmException e) {
-			log.error("SHA-256 algorithm not available, this should not happen in standard JRE", e);
-			throw new BusinessException(ErrorCode.INTERNAL_ERROR);
-		}
-	}
 }
 
 /**

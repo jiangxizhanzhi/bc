@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.Logical;
@@ -193,8 +194,12 @@ public class WebClassroomController {
 	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
 			logical = Logical.OR)
 	public BaseRsp<ListRsp<ClassRoomExperimentReportBo>> classroomReportPage(@Validated PageReqBase pageReqBase) {
-
-		final IPage<ClassRoomExperimentReportBo> classRoomExperimentReportBoIPage = classroomService.classroomReportPage(pageReqBase, UserInfoContext.getUserContext());
+		List<String> courseIds = courseService.getWebCourseIds();
+		if (courseIds.isEmpty()) {
+			return new BaseRsp<>(new ListRsp<>(Lists.newArrayList(), 0, 1, 1));
+		}
+		final IPage<ClassRoomExperimentReportBo> classRoomExperimentReportBoIPage = classroomService
+				.classroomReportPage(pageReqBase, UserInfoContext.getUserContext(), courseIds);
 		ListRsp<ClassRoomExperimentReportBo> listResult = PageUtil.getListResult(classRoomExperimentReportBoIPage);
 		return new BaseRsp<>(listResult);
 	}

@@ -208,7 +208,7 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	List<TrainPlanLessonReportStatusRsp> selectLessonReportStatus(List<String> lessonIds, String userId);
 
 
-	IPage<ClassRoomExperimentReportBo> selectPageReports(Page<ClassRoomExperimentReportBo> pageReqBase, UserInfo userInfo);
+	IPage<ClassRoomExperimentReportBo> selectPageReports(Page<ClassRoomExperimentReportBo> pageReqBase, UserInfo userInfo, List<String> courseIds);
 
 	IPage<ClassroomPracticeWebBo> classroomPracticeWebIPage(
 			@Param("pageParam") Page<ClassroomPracticeWebBo> pageParam,

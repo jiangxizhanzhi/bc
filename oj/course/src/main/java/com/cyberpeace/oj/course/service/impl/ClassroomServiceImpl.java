@@ -762,10 +762,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @return
      */
     @Override
-    public IPage<ClassRoomExperimentReportBo> classroomReportPage(PageReqBase pageReqBase, UserInfo userInfo) {
+    public IPage<ClassRoomExperimentReportBo> classroomReportPage(PageReqBase pageReqBase, UserInfo userInfo, List<String> courseIds) {
         final Page<ClassRoomExperimentReportBo> pageParam = pageReqBase.toPageParam();
         // 查询出所有实验报告相关的实验
-        final IPage<ClassRoomExperimentReportBo> page = classroomMapper.selectPageReports(pageParam, userInfo);
+        final IPage<ClassRoomExperimentReportBo> page = classroomMapper.selectPageReports(pageParam, userInfo, courseIds);
         final List<String> trainPlanIds = StreamApiUtils.map(page.getRecords(), ClassRoomExperimentReportBo::getTrainPlanId);
         // 批量查询trainplan
 		final List<TrainPlan> trainPlans = trainPlanIds.isEmpty() ? Lists.newArrayList()

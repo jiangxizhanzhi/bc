@@ -81,7 +81,7 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @see AuthContext
 	 * @see List<ClassRoomExperimentReportBo>
 	 */
-	IPage<ClassRoomExperimentReportBo> classroomReportPage(PageReqBase pageReqBase, UserInfo userInfo);
+	IPage<ClassRoomExperimentReportBo> classroomReportPage(PageReqBase pageReqBase, UserInfo userInfo, List<String> courseIds);
 
 
 	/**

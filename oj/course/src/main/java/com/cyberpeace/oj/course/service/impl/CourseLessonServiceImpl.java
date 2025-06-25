@@ -2464,6 +2464,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			int duration = MathUtils.roundDivide(VideoUtil.getVideoDuration(path), 60);
 			courseLesson.setVideoDuration(duration);
 		}
+		log.info("countVideo: {}", lessonList.size());
 		this.updateBatchById(lessonList);
 	}
 }

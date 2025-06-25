@@ -7,12 +7,12 @@
     <select id="selectList" resultMap="baseResultMap">
         select *
         from system_use_status
-        where alter_time &gt; date_sub(now(), interval 12 hour) and alter_time &lt; now()
+        where alter_time &gt; SYSDATE - INTERVAL '12' HOUR and alter_time &lt; now()
     </select>
 
     <delete id="deleteOverdueData">
         delete
         from system_use_status
-        where alter_time &lt; date_sub(now(), interval 36 hour)
+        where alter_time &lt; SYSDATE - INTERVAL '36' HOUR
     </delete>
 </mapper>

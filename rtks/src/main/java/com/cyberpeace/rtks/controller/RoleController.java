@@ -11,12 +11,10 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import org.apache.commons.collections.SetUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.util.CollectionUtils;
@@ -38,7 +36,10 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
@@ -438,7 +439,8 @@ public class RoleController {
 	 */
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
-	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
+	@RequiresPermissions(value = { MenuConstant.CMS_RTKS_NCWF_FRAME, MenuConstant.WEB_OJ_COURSE,
+			MenuConstant.WEB_PERSON_CENTER }, logical = Logical.OR)
 	public BaseRsp<ListRsp<RoleOutput>> list(RoleListReq<Role> listReq) {
 		if (!StringUtils.isBlank(listReq.getKeyword())) {
 

@@ -172,10 +172,8 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 			Collections.shuffle(practiceTheories);
 			if (practiceTheories.size() < count) {
 				practiceTheoryList.addAll(practiceTheories);
-				sum -= practiceTheories.size();
 			}else {
 				practiceTheoryList.addAll(practiceTheories.subList(0, count));
-				sum -= count;
 			}
 			size--;
 		}

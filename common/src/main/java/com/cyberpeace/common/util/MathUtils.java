@@ -292,10 +292,6 @@ public class MathUtils {
 		int ret = dividend / divisor;
 		int mod = dividend % divisor;
 
-		if (mod * 2 >= divisor) {
-			ret++;
-		}
-
 		return ret;
 	}
 

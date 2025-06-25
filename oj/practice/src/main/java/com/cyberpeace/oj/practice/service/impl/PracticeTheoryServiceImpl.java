@@ -1044,9 +1044,6 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				anwserList.add(theoryBaseMd);
 
 			}
-			theoryBaseMd
-					.setTitle(MdTheoryParser.setRelativeFilePath(path, theoryBaseMd.getTitle()));
-
 		}
 		mdTheoryPractice.setSingleList(singleList);
 		mdTheoryPractice.setMultipleList(multipleList);

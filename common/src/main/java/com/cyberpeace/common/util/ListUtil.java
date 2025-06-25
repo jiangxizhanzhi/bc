@@ -177,25 +177,6 @@ public class ListUtil {
 		return builder.toString();
 	}
 
-	/**
-	 * 将列表处理成分页列表里的records
-	 *
-	 * @param list     数据
-	 * @param page     页码
-	 * @param perPage  页尺寸
-	 * @param listSize 数据长度
-	 * @return {@code List<E>}
-	 */
-	public static <E> List<E> pageList(List<E> list, int page, int perPage, int listSize) {
-		int startIndex = (page - 1) * perPage;
-		int endIndex = page * perPage;
-		endIndex = Math.min(endIndex, listSize);
-		startIndex = Math.max(0, startIndex);
-		if (startIndex >= endIndex) {
-			return Lists.newArrayList();
-		}
-		return list.subList(startIndex, endIndex);
-	}
 
 	/**
 	 * 比较两个不重复的列表是否包含的元素一致

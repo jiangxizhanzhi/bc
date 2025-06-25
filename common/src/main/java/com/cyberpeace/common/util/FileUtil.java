@@ -444,15 +444,6 @@ public class FileUtil {
 			}
 		}
 
-		// 删除文件或空目录，并检查结果
-		boolean deleted = file.delete();
-		if (!deleted) {
-			success = false;
-			// 记录删除失败的详细信息，包括可能的原因
-			log.error("删除文件/目录失败: {}, 可能原因: 文件被占用、没有删除权限或为只读文件",
-					file.getAbsolutePath());
-		}
-
 		return success;
 	}
 
@@ -740,16 +731,6 @@ public class FileUtil {
 				return;
 			}
 
-			for (File subFile : files) {
-				if (subFile.isFile()) {
-					boolean b = subFile.delete();
-					if (!b) {
-						log.warn("Failed to delete file: {}", subFile.getAbsolutePath());
-					}
-				} else {
-					FileUtils.deleteDirectory(subFile);
-				}
- 			}
 		} catch (Exception e) {
 			log.error("Directory delete failed! file_path=[{}], catch error:", destDir, e);
 			throw new BusinessException(ErrorCode.FILE_DELETE_FAILED);
@@ -784,15 +765,6 @@ public class FileUtil {
 			} while (numRead != -1);
 
 			// 计算最终哈希值
-			byte[] hashBytes = digest.digest();
-
-			// 将盐值和哈希值合并 (修改点3)
-			byte[] hashWithSalt = new byte[salt.length + hashBytes.length];
-			System.arraycopy(salt, 0, hashWithSalt, 0, salt.length);
-			System.arraycopy(hashBytes, 0, hashWithSalt, salt.length, hashBytes.length);
-
-			// Base64编码结果 (修改点4)
-			value = new String(Base64.encodeBase64(hashWithSalt));
 		}
 
 		return value;

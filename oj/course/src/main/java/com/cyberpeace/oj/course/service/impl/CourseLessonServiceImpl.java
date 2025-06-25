@@ -1013,8 +1013,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		List<PracticeTheoryRef> practiceTheoryRefs = practiceTheoryRefMapper.selectList(filterTheory);
 		long operationCount = practiceOperationRefs.stream().filter(practiceOperationRef -> practiceOperationRef.getPaperId().equals(paperId)).count();
 		long theoryCount = practiceTheoryRefs.stream().filter(practiceOperationRef -> practiceOperationRef.getPaperId().equals(paperId)).count();
-		long practiceCount = operationCount + theoryCount;
-		return practiceCount;
+		return theoryCount;
 	}
 
 	/**

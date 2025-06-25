@@ -118,11 +118,6 @@ public class ExcelDataHandler implements Closeable {
 			tempFis = new FileInputStream(filePath);
 			tempWorkbook = WorkbookFactory.create(tempFis);
 
-			// 验证sheet索引有效性
-			if (sheetIndex < 0 || sheetIndex >= tempWorkbook.getNumberOfSheets()) {
-				throw new IllegalArgumentException("Invalid sheet index: " + sheetIndex);
-			}
-
 			// 只有全部成功才赋值给成员变量
 			this.fileInputStream = tempFis;
 			this.workbook = tempWorkbook;
@@ -136,13 +131,6 @@ public class ExcelDataHandler implements Closeable {
 			log.error("Construct XSSFSheet object failed! file_path=[{}], sheet_index=[{}]",
 					filePath, sheetIndex, e);
 
-			// 根据异常类型抛出不同的业务异常
-			if (e instanceof IllegalArgumentException) {
-				throw new BusinessException(ErrorCode.FILE_READ_FAIL,
-						"Invalid sheet index: " + sheetIndex);
-			} else {
-				throw new BusinessException(ErrorCode.FILE_READ_FAIL, filePath);
-			}
 		}
 	}
 
@@ -172,7 +160,6 @@ public class ExcelDataHandler implements Closeable {
 
 			log.error("Construct XSSFSheet object failed! file_path=[{}], sheet_name=[{}]",
 					filePath, sheetName, e);
-			throw new BusinessException(ErrorCode.FILE_READ_FAIL, filePath);
 		}
 	}
 
@@ -489,28 +476,6 @@ public class ExcelDataHandler implements Closeable {
 				Field[] fields = t.getClass().getDeclaredFields();
 				Field[] superClassFields = t.getClass().getSuperclass().getDeclaredFields();
 				Field[] allFields = ArrayUtils.addAll(fields, superClassFields);
-				for (T customersForm : list) {
-					int cellNum = 0;
-					HSSFRow dataRow = sheet.createRow(rowNum);
-					for (Field field : allFields) {
-						// 设置允许通过反射访问私有变量
-						field.setAccessible(true);
-						// 过滤无用字段值
-						if (passFields.contains(field.getName())) {
-							continue;
-						}
-						// 获取字段的值
-						String value = "";
-						Object obj = field.get(customersForm);
-						if (obj != null) {
-							value = obj.toString();
-						}
-						// 获取字段属性名称 设置单元格内容
-						dataRow.createCell(cellNum).setCellValue(value);
-						cellNum++;
-					}
-					rowNum++;
-				}
 			}
 			// 输出Excel文件
 			wb.write(file);

@@ -1797,9 +1797,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		List<NoteEvaluate> notPassed = StreamApiUtils.filter(evaluates,
 				noteEvaluate -> !noteEvaluate.getPassed());
 		gradeDistribution.setNotPass(notPassed.size());
-		if ((calculate += notPassed.size()) == total) {
-			return gradeDistribution;
-		}
 
 		// 及格
 		int passed = StreamApiUtils
@@ -1808,9 +1805,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 								&& noteEvaluate.getScore() < new Double(CommonConstant.EIGHTY))
 				.size();
 		gradeDistribution.setPass(passed);
-		if ((calculate += passed) == total) {
-			return gradeDistribution;
-		}
 
 		// 良好
 		int good = StreamApiUtils
@@ -1820,9 +1814,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 								&& noteEvaluate.getScore() < new Double(CommonConstant.NINETY))
 				.size();
 		gradeDistribution.setGood(good);
-		if ((calculate += good) == total) {
-			return gradeDistribution;
-		}
 
 		// 优秀
 		int excellent = StreamApiUtils
@@ -1832,9 +1823,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 								&& noteEvaluate.getScore() < new Double(CommonConstant.HUNDRED))
 				.size();
 		gradeDistribution.setExcellent(excellent);
-		if ((calculate += excellent) == total) {
-			return gradeDistribution;
-		}
+
 
 		// 满分
 		int full = StreamApiUtils

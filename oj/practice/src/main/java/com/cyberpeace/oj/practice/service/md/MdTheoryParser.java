@@ -372,42 +372,6 @@ public class MdTheoryParser {
 		return titleMap;
 	}
 
-	/**
-	 * 设置相对文件路径
-	 *
-	 * @param newPath 新建路径
-	 * @param line    线
-	 * @return {@code String }
-	 * @throws
-	 * @see String
-	 * @see String
-	 * @see String
-	 */
-	public static String setRelativeFilePath(String newPath, String line) {
-
-		// match img like ![](./img/1.png) ---> ./img/1.png
-		File imgFile = new File(newPath + File.separator + "img");
-		if (!imgFile.exists()) {
-			imgFile.mkdirs();
-		}
-
-		List<String> imgs = LocalStringUtil.getAllMatchStr(line,
-				"!\\[[^]]*]\\((/cpms.+\\.(?:jpg|jpeg|png|bmp|webp|gif))\\)", 1);
-		int j = 0;
-		for (String img : imgs) {
-			if (!img.isEmpty()) {
-
-				String newImg = "./img/" + (j + 1) + "." + FileUtil.getFileSuffix(img);
-				line = line.replace(img, newImg);
-				String s = FileUtil.copyFile(img,
-						imgFile + File.separator + (j + 1) + "." + FileUtil.getFileSuffix(img),
-						false);
-				j++;
-			}
-
-		}
-		return line;
-	}
 
 	/**
 	 * 设置新增功能文件路径

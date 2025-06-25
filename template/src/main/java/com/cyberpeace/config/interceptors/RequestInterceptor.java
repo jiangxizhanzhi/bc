@@ -114,14 +114,6 @@ public class RequestInterceptor implements HandlerInterceptor {
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
 			Object handler, Exception ex) throws Exception {
 
-		// 计算接口响应时间
-		long startTime = (long) request.getAttribute("startTime");
-		long endTime = System.currentTimeMillis();
-
-		// 记录接口访问日志
-		logger.info(REQUEST_LOG_FORMATTER, endTime - startTime, response.getStatus(),
-				request.getMethod(), request.getRequestURI());
-
 		// 记录接口调用参数
 		logger.debug(REQUEST_PARAM_LOG_FORMATTER, JsonUtil.toJsonString(request.getParameterMap()));
 	}

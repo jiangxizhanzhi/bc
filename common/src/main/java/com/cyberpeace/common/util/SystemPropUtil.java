@@ -39,27 +39,6 @@ public class SystemPropUtil {
 		// 1、先从JVM系统属性获取
 		String value = System.getProperty(key);
 
-		// 2、取不到，再从环境变量获取
-		if (StringUtils.isBlank(value)) {
-			String envValue = System.getenv(key);
-
-			// 环境变量非空处理 (修改点2)
-			if (!StringUtils.isBlank(envValue)) {
-				// 去除首尾空格和潜在危险字符 (修改点3)
-				value = envValue.trim()
-						.replaceAll("[\\p{Cntrl}]", "") // 移除控制字符
-						.replaceAll("['\";&|]", "");     // 移除潜在危险的元字符
-
-				// 检查净化后是否为空
-				if (value.isEmpty()) {
-					log.warn("环境变量净化后为空: {}", key);
-					value = "";
-				}
-			} else {
-				value = "";
-			}
-		}
-
 		return value;
 	}
 }

@@ -799,7 +799,6 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		LambdaQueryWrapper<PracticeOperation> wrapperOperation = new LambdaQueryWrapper<>();
 		wrapperOperation.ge(PracticeOperation::getCreateTime, start);
 		int practiceOperation = practiceOperationMapper.selectCount(wrapperOperation);
-		theory.setAddedToday(lesson + practiceTheory + practiceOperation);
 	}
 
 	/**
@@ -820,7 +819,6 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		LambdaQueryWrapper<PracticeOperation> wrapperOperation = new LambdaQueryWrapper<>();
 		wrapperOperation.ge(PracticeOperation::getUpdateTime, start);
 		int practiceOperation = practiceOperationMapper.selectCount(wrapperOperation);
-		theory.setUpdatedToday(lesson + practiceTheory + practiceOperation);
 	}
 
 	/**

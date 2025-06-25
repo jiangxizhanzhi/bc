@@ -145,7 +145,6 @@ public class AdminCourseImportController {
 
 		// 立即复制所有敏感属性 (修改点1)
 		copiedReq.setEnvReqs(courseImportReq.getEnvReqs() != null ? new HashMap<>(courseImportReq.getEnvReqs()) : null);
-		copiedReq.setPath(courseImportReq.getPath());
 		copiedReq.setOperationEnvReqs(courseImportReq.getOperationEnvReqs() != null ? new HashMap<>(courseImportReq.getOperationEnvReqs()) : null);
 
 		try {

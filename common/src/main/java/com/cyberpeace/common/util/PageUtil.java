@@ -196,18 +196,5 @@ public class PageUtil {
 
 	}
 
-	/**
-	 * 将列表结果分页
-	 *
-	 * @param list    列表
-	 * @param page    页码
-	 * @param perPage 页尺寸
-	 * @return {@code ListRsp<T>}
-	 */
-	public static <T> ListRsp<T> pageList(List<T> list, Integer page, Integer perPage) {
-		IPage<T> resPage = new Page<>(page, perPage, list.size());
-		resPage.setRecords(ListUtil.pageList(list, page, perPage, (int) resPage.getTotal()));
-		return PageUtil.getListResult(resPage);
-	}
 }
 

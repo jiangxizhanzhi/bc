@@ -83,23 +83,6 @@ public class BaseMdParser implements MdContentParser<List<TheoryBaseMd>, String>
 	public String write(List<TheoryBaseMd> theoryBaseMds) {
 		String str = System.lineSeparator();
 		int i = 1;
-		for (TheoryBaseMd theoryBaseMd : theoryBaseMds) {
-
-			str = str + "### 题目" + i++ + System.lineSeparator() + System.lineSeparator();
-			str = str + "- 题目" + System.lineSeparator() + System.lineSeparator();
-			str = str + "  - 难度" + System.lineSeparator() + System.lineSeparator();
-			str = str + "    " + theoryBaseMd.getDifficulty() + System.lineSeparator()
-					+ System.lineSeparator();
-			str = str + "  - 方向" + System.lineSeparator() + System.lineSeparator();
-			str = str + "    " + theoryBaseMd.getCategory() + System.lineSeparator()
-					+ System.lineSeparator();
-			str = str + "  - 题目原文" + System.lineSeparator() + System.lineSeparator();
-			str = str + "    " + theoryBaseMd.getTitle().trim() + System.lineSeparator()
-					+ System.lineSeparator();
-			str = str + "- 答案" + System.lineSeparator() + System.lineSeparator();
-			str = str + "  " + theoryBaseMd.getAnswer().trim() + System.lineSeparator();
-
-		}
 		return LocalStringUtil.frontBackLine(str);
 	}
 }

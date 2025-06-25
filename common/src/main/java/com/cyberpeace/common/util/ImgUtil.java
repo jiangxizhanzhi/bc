@@ -159,7 +159,6 @@ public class ImgUtil {
 
 			g2d.setColor(Color.WHITE);
 			g2d.drawString(line, lineX, y);
-			y += lineHeight;
 		}
 	}
 

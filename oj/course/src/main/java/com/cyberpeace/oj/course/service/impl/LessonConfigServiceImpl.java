@@ -202,14 +202,12 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 				if (lessonConfig.getNodeType().intValue() == LessonConfig.NodeType.NODE_CHAPTER
 						.getCode()) {
 					lessonConfig.setIndex(index);
-					index++;
 				}
 
 				// 重置课时数据
 				if (lessonConfig.getNodeType().intValue() == LessonConfig.NodeType.NODE_LESSON
 						.getCode()) {
 					lessonConfig.setIndex(index);
-					index++;
 				}
 
 				// 递归编排数据

@@ -67,7 +67,6 @@ public class AdminPracticeImportController {
 		try {
 			// 创建防御性副本 (新增代码块)
 			RMImportReq copiedReq = new RMImportReq();
-			copiedReq.setPath(rmImportReq.getPath());
 			// 使用防御性副本执行安全检查和后续操作 (修改点1)
 			log.info("Resource management import start! info=[{}]", copiedReq.getPath());
 			boolean result = practiceSetImportService.importRmTheorySet(copiedReq.getPath());
@@ -94,7 +93,6 @@ public class AdminPracticeImportController {
 
 		// 创建防御性副本 (新增代码块)
 		RmPracticeImportReq copiedReq = new RmPracticeImportReq();
-		copiedReq.setPath(practiceImportReq.getPath());
 
 		// 修正集合类型的防御性复制 (修改点1)
 		if (practiceImportReq.getEnvReqs() != null) {

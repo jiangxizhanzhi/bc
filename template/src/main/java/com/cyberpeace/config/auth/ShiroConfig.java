@@ -73,34 +73,6 @@ public class ShiroConfig {
 		return manager;
 	}
 
-	/**
-	 * 厂
-	 *
-	 * @param securityManager 安全管理器
-	 * @return 白过滤器厂bean
-	 * @throws
-	 * @see DefaultWebSecurityManager
-	 * @see ShiroFilterFactoryBean
-	 */
-	@Bean("shiroFilter")
-	public ShiroFilterFactoryBean factory(DefaultWebSecurityManager securityManager) {
-
-		FinalShiroFilterFactoryBean factoryBean = new FinalShiroFilterFactoryBean();
-
-		Map<String, Filter> filterMap = new HashMap<>();
-		filterMap.put("jwt", new JwtFilter());
-		factoryBean.setFilters(filterMap);
-
-		factoryBean.setSecurityManager(securityManager);
-		factoryBean.setUnauthorizedUrl("/401");
-
-		Map<String, String> filterRuleMap = new HashMap<>();
-		filterRuleMap.put("/**", "jwt");
-
-		factoryBean.setFilterChainDefinitionMap(filterRuleMap);
-		return factoryBean;
-	}
-
 	final class FinalShiroFilterFactoryBean extends ShiroFilterFactoryBean {
 
 	}
@@ -133,22 +105,6 @@ public class ShiroConfig {
 		return new LifecycleBeanPostProcessor();
 	}
 
-	/**
-	 * 授权属性源顾问
-	 *
-	 * @param securityManager 安全管理器
-	 * @return 授权属性源顾问
-	 * @throws
-	 * @see DefaultWebSecurityManager
-	 * @see AuthorizationAttributeSourceAdvisor
-	 */
-	@Bean
-	public AuthorizationAttributeSourceAdvisor
-			authorizationAttributeSourceAdvisor(DefaultWebSecurityManager securityManager) {
-		FinalAuthorizationAttributeSourceAdvisor advisor = new FinalAuthorizationAttributeSourceAdvisor();
-		advisor.setSecurityManager(securityManager);
-		return advisor;
-	}
 	final class FinalAuthorizationAttributeSourceAdvisor extends AuthorizationAttributeSourceAdvisor {
 
 	}

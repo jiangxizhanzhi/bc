@@ -36,10 +36,8 @@ public class SqlInterceptor implements Interceptor {
             return invocation.proceed();
         } finally {
             long endTime = System.currentTimeMillis();
-            long sqlCost = endTime - startTime;
             BoundSql boundSql = statementHandler.getBoundSql();
             String sql = boundSql.getSql();
-            log.info("SQL：[" + sql + "]执行耗时[" + sqlCost + "ms]");
 
         }
     }

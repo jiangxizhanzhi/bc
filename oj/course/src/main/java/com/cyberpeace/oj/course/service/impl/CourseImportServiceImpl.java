@@ -750,8 +750,6 @@ public class CourseImportServiceImpl implements CourseImportService {
 					.index(index).build();
 			lessonConfigs.add(chapterConfig);
 
-			// 索引加1
-			index++;
 
 			// 课时数据组装
 			List<String> lessonPathList = FileUtil.listDirs(chapterPath, false);
@@ -778,9 +776,6 @@ public class CourseImportServiceImpl implements CourseImportService {
 						.nodeType(LessonConfig.NodeType.NODE_LESSON.getCode()).name(name)
 						.lessonId(lessonNameMap.get(name)).index(index).build();
 				lessonConfigs.add(lessonConfig);
-
-				// 索引加一
-				index++;
 			}
 		}
 
@@ -1265,8 +1260,6 @@ public class CourseImportServiceImpl implements CourseImportService {
 						.index(index).build();
 				lessonConfigs.add(chapterConfig);
 
-				index++;
-
 				chapterMap.put(chapterName, chapterConfig);
 			}
 
@@ -1284,9 +1277,6 @@ public class CourseImportServiceImpl implements CourseImportService {
 					.nodeType(LessonConfig.NodeType.NODE_LESSON.getCode()).name(lessonName)
 					.lessonId(lessonNameMap.get(lessonName)).index(index).build();
 			lessonConfigs.add(lessonConfig);
-
-			// 索引加一
-			index++;
 
 		}
 

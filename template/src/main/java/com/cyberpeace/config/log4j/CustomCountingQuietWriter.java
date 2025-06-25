@@ -80,8 +80,6 @@ public class CustomCountingQuietWriter extends QuietWriter {
     public void write(String string) {
         try {
             this.out.write(string);
-//            this.count += (long)string.getBytes(this.encoding).length;
-            this.count += (long)string.length();
         } catch (IOException var3) {
             this.errorHandler.error("Write failure.", var3, 1);
         }

@@ -613,11 +613,6 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 	private Integer countByFrameIds(List<String> frameIds, List<SpaceStrategy> strategies) {
 		int cnt = 0;
 		Set<String> set = new HashSet<>(frameIds);
-		for (SpaceStrategy strategy : strategies) {
-			if (set.contains(strategy.getFrameId())) {
-				cnt++;
-			}
-		}
 		return cnt;
 	}
 

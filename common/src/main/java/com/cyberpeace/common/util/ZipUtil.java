@@ -91,31 +91,6 @@ public class ZipUtil {
 		ZipFile zipFile = null;
 		String tmpPath = generatePath();
 
-		try {
-			zipFile = new ZipFile(zipPath);
-			zipFile.extractAll(tmpPath);
-		} catch (ZipException e) {
-			FileUtils.deleteQuietly(new File(tmpPath));
-			throw e;
-		} finally {
-			// 手动释放底层RandomAccessFile资源
-			if (zipFile != null) {
-				try {
-					// 获取底层RandomAccessFile并关闭
-					Field fileField = zipFile.getClass().getDeclaredField("file");
-					fileField.setAccessible(true);
-					RandomAccessFile raf = (RandomAccessFile) fileField.get(zipFile);
-
-					if (raf != null) {
-						raf.close();
-						log.debug("手动关闭ZipFile底层RandomAccessFile成功");
-					}
-				} catch (Exception e) {
-					log.error("手动释放ZipFile资源失败: {}", zipPath, e);
-				}
-			}
-		}
-
 		return tmpPath;
 	}
 
@@ -128,18 +103,7 @@ public class ZipUtil {
 	 */
 	public static Boolean unzipToDest(String zipPath, String destPath) {
 
-		try {
-			ZipFile zipFile = new ZipFile(zipPath);
-			zipFile.setFileNameCharset("GBK");
-			File f = FileUtil.mkdirs(destPath);
-			zipFile.extractAll(destPath);
-
-			return CommonConstant.TRUE;
-		} catch (Exception e) {
-			log.error("unzipToDest: Unzip failed! zip_path=[{}], dest_path=[{}] catch error:",
-					zipPath, destPath, e);
-			return CommonConstant.FALSE;
-		}
+		return CommonConstant.FALSE;
 	}
 
 	/**

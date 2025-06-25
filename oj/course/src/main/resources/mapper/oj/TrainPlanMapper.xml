@@ -103,7 +103,7 @@
         FROM oj_classroom c
         LEFT JOIN oj_train_plan tp ON c.train_plan_id = tp.resource_id
         LEFT JOIN oj_course_lesson cl ON c.lesson_id = cl.resource_id
-        where 1=1
+        where cl.public = 1
         <if test="courseIds != null and courseIds.size() != 0">
             and c.course_id in
             <foreach collection="courseIds" open="(" close=")" separator="," item="courseId">

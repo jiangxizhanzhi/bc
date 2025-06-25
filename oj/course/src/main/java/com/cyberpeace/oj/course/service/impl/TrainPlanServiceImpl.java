@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.service.impl;
 
 import java.util.*;
 
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -237,7 +238,7 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 			int experimentReportCount = 0;
 
 			int coursePracticeCount = 0;
-			int coursePracticeCountTotal = 0;
+			int coursePracticeCountTotal = releaseSet.size();
 
 			for (TrainPlanLessonRsp trainPlanLessonRsp : lessons) {
 				final TrainPlanLessonExerciseStatusRsp trainPlanLessonExerciseStatusRsp = lessonExerciseStatusRspMap.get(trainPlanLessonRsp.getLessonId());
@@ -248,7 +249,6 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 					if (LessonPaperEvaluate.LevelType.isPass(trainPlanLessonExerciseStatusRsp.getLevel())) {
 						coursePracticeCount += 1;
 					}
-					coursePracticeCountTotal += 1;
 				}
 
 				final TrainPlanLessonReportStatusRsp trainPlanLessonReportStatusRsp = stringTrainPlanLessonReportStatusRspMap.get(trainPlanLessonRsp.getLessonId());
@@ -256,12 +256,13 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 					trainPlanLessonRsp.setReportPassedStatus(trainPlanLessonReportStatusRsp.getReportPassedStatus());
 					trainPlanLessonRsp.setReportScore(trainPlanLessonReportStatusRsp.getReportScore());
 					trainPlanLessonRsp.setReportStatus(trainPlanLessonReportStatusRsp.getReportStatus());
-					if (trainPlanLessonReportStatusRsp.getReportPassedStatus() !=null && trainPlanLessonReportStatusRsp.getReportPassedStatus()) {
-						coursePracticeCount += 1;
+					if (CourseLesson.LessonType.EXPERIMENT.getCode().equals(trainPlanLessonRsp.getLessonType())){
+						if (Boolean.TRUE.equals(trainPlanLessonReportStatusRsp.getReportPassedStatus())) {
+							experimentReportCount += 1;
+						}
+						experimentReportCountTotal += 1;
 					}
-					experimentReportCountTotal += 1;
 				}
-
 			}
 
 			trainPlanRsp.setExperimentReportCount(experimentReportCount);

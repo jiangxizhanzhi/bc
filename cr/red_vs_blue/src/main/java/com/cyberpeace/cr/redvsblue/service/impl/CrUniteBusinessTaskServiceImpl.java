@@ -184,7 +184,7 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
                     rbRoomService.create(rbRoomContext);
                 }
             //        上报内容
-                networkTopoVO = extracted(networkTopoVO.getTask_id());
+                networkTopoVO = retrieveNetworkTopologyByTaskId(networkTopoVO.getTask_id());
                 businessTemplate.setReportStatus(true);
                 businessTemplateMapper.updateById(businessTemplate);
                 return networkTopoVO;

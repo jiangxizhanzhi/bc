@@ -95,8 +95,8 @@
                T1.difficulty,
                T1.logo,
                (select count(*) from oj_course_lesson where course_id = T1.resource_id) as lesson_count,
-               count(if(T2.type = #{theory_type}, TRUE, NULL)) as learned_theory,
-               count(if(T2.type = #{exp_type}, TRUE, NULL)) as learned_exp,
+               count(case when T2.type = #{theory_type} then 1 end) as learned_theory,
+               count(case when T2.type = #{exp_type} then 1 end) as learned_exp,
                count(T3.id) as learned_exp_report,
                count(T4.id) as learned_after_class_practice,
                T5.lesson_id,
@@ -108,13 +108,18 @@
         left join oj_course_lesson T2 on T1.resource_id = T2.course_id
         left join oj_note T3 on T2.resource_id = T3.business_id and T3.note_type = #{report_code} and T3.user_id = #{user_id}
         left join oj_lesson_paper_evaluate T4 on T2.resource_id = T4.lesson_id and T4.submit_user_id = #{user_id} and (T4.level = 1 or T4.level = 2)
-        left join (select  t.course_id, t.lesson_id, t.update_time, t.learned_type, t.room_id as room_id from (
-                     select a.*, row_number() over(partition by course_id order by update_time desc) rw
-                     from oj_lesson_record a where user_id = #{user_id} ) t
-                     where t.rw = 1) T5 on T5.course_id = T1.resource_id
+        left join (
+            select r.course_id, r.lesson_id, r.update_time, r.learned_type, r.room_id
+            from oj_lesson_record r
+            where r.user_id = #{user_id} and r.update_time = (
+                select max(r2.update_time)
+                from oj_lesson_record r2
+                where r2.user_id = r.user_id and r2.course_id = r.course_id limit 1
+            )
+        ) T5 on T5.course_id = T1.resource_id
         where T2.resource_id
         in (select lesson_id from oj_lesson_record where user_id = #{user_id})
-        group by T1.name
+        group by T1.resource_id, T1.name, R1.name, T1.difficulty, T1.logo, T5.lesson_id, T5.learned_type, T5.room_id, T5.update_time
     </select>
 
     <select id="afterClassIntegral" resultType="com.alibaba.fastjson.JSONObject">

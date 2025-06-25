@@ -368,6 +368,10 @@
                            ON e.lesson_id = l.resource_id
                            AND e.submit_user_id = #{userInfo.userId}
         WHERE l.paper_id IS NOT NULL
+        AND c.course_id in
+        <foreach collection="courseIds" item="courseId" separator="," open="(" close=")">
+            #{courseId}
+        </foreach>
         <if test="userInfo.organizationId != null">
             <bind name="likeOrg" value="'%' + userInfo.organizationId + '%'"/>
             and c.organization_ids like #{likeOrg}

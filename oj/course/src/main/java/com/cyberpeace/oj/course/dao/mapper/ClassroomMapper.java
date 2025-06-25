@@ -210,5 +210,7 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 
 	IPage<ClassRoomExperimentReportBo> selectPageReports(Page<ClassRoomExperimentReportBo> pageReqBase, UserInfo userInfo);
 
-	IPage<ClassroomPracticeWebBo> classroomPracticeWebIPage(Page<ClassroomPracticeWebBo> pageParam, UserInfo userInfo);
+	IPage<ClassroomPracticeWebBo> classroomPracticeWebIPage(
+			@Param("pageParam") Page<ClassroomPracticeWebBo> pageParam,
+			@Param("userInfo") UserInfo userInfo, @Param("courseIds") List<String> courseIds);
 }

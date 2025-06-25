@@ -95,7 +95,7 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @see AuthContext
 	 * @see List<ClassroomPracticeWebBo>
 	 */
-	IPage<ClassroomPracticeWebBo> classroomPracticeWebIPage(PageReqBase pageReqBase, UserInfo userInfo);
+	IPage<ClassroomPracticeWebBo> classroomPracticeWebIPage(PageReqBase pageReqBase, UserInfo userInfo, List<String> courseIds);
 
 	/**
 	 * 分页查询课时表信息

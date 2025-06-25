@@ -787,10 +787,16 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
     }
 
     @Override
-    public IPage<ClassroomPracticeWebBo> classroomPracticeWebIPage(PageReqBase pageReqBase, UserInfo userInfo) {
+	public IPage<ClassroomPracticeWebBo> classroomPracticeWebIPage(PageReqBase pageReqBase,
+			UserInfo userInfo, List<String> courseIds) {
+
         Page<ClassroomPracticeWebBo> pageParam = pageReqBase.toPageParam();
+		if (courseIds.isEmpty()) {
+			return new Page<>(pageParam.getCurrent(), pageParam.getSize(), 0);
+		}
         // 查询出所有课后练习相关的课堂
-        IPage<ClassroomPracticeWebBo> page = classroomMapper.classroomPracticeWebIPage(pageParam, userInfo);
+		IPage<ClassroomPracticeWebBo> page = classroomMapper.classroomPracticeWebIPage(pageParam,
+				userInfo, courseIds);
         // 查询出相关联的计划id
         final List<String> trainPlanIds = StreamApiUtils.map(page.getRecords(), ClassroomPracticeWebBo::getTrainPlanId);
         List<TrainPlan> trainPlans = Lists.newArrayList();

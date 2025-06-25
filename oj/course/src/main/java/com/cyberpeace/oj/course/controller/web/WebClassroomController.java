@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.Logical;
@@ -31,6 +30,7 @@ import com.cyberpeace.oj.course.controller.req.RemoteHelpReq;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
+import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.*;
 
 import io.swagger.annotations.Api;
@@ -69,8 +69,12 @@ public class WebClassroomController {
 	@Autowired
 	private ClassroomSignService classroomSignService;
 
+	@Autowired
+	private CourseService courseService;
+
 	/**
 	 * 列表课程附表
+	 * 我的日程
 	 *
 	 * @param month 月
 	 * @return {@code BaseRsp<List<TimeScheduleBo>> }
@@ -200,8 +204,11 @@ public class WebClassroomController {
 	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
 			logical = Logical.OR)
 	public BaseRsp<ListRsp<ClassroomPracticeWebBo>> classroomPracticePage(@Validated PageReqBase pageReqBase) {
+		List<String> courseIds = courseService.getWebCourseIds();
 
-		final IPage<ClassroomPracticeWebBo> classroomPracticeWebtBoIPage = classroomService.classroomPracticeWebIPage(pageReqBase, UserInfoContext.getUserContext());
+		final IPage<ClassroomPracticeWebBo> classroomPracticeWebtBoIPage = classroomService
+				.classroomPracticeWebIPage(pageReqBase, UserInfoContext.getUserContext(),
+						courseIds);
 		ListRsp<ClassroomPracticeWebBo> listResult = PageUtil.getListResult(classroomPracticeWebtBoIPage);
 		return new BaseRsp<>(listResult);
 

@@ -271,6 +271,7 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 			trainPlanRsp.setCoursePracticeCount(coursePracticeCount);
 			trainPlanRsp.setCoursePracticeCountTotal(coursePracticeCountTotal);
 
+			lessons.sort(Comparator.comparing(TrainPlanLessonRsp::getStartTime));
 			trainPlanRsp.setLessons(lessons);
 		}
 		return result;

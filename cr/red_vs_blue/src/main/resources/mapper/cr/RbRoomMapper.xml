@@ -174,5 +174,12 @@
         from cr_rb_room
         where (training_status = ${PAUSE_STATUS_CODE} or training_status = ${RUNNING_STATUS_CODE} or training_status = ${RECOVERY_STATUS_CODE})
     </select>
+    <select id="getRbRoomByUniteTaskId" resultType="com.cyberpeace.cr.redvsblue.entity.RbRoom">
+        select *
+        from cr_rb_room crr
+                 inner join cr_rb_template crt on crt.resource_id = crr.template_id
+                 inner join cr_business_template cbt on cbt.resource_id = crt.business_template_id
+        where cbt.unite_task_id = #{taskId}
+    </select>
 
 </mapper>

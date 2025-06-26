@@ -269,4 +269,5 @@ public interface RbRoomService extends IService<RbRoom> {
 	 */
 	void updateReplaySceneId(String resourceId, String replaySceneId, String sceneIdRecord);
 
+    RbRoom getRbRoomByUniteTaskId(String taskId);
 }

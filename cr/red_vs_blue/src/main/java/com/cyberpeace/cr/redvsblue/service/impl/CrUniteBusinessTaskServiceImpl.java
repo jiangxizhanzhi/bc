@@ -16,10 +16,8 @@ import com.cyberpeace.cr.redvsblue.dao.entity.CrUniteBusinessTask;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.dao.mapper.CrUniteBusinessTaskMapper;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbTemplateMapper;
-import com.cyberpeace.cr.redvsblue.service.CrUniteBusinessLinkService;
-import com.cyberpeace.cr.redvsblue.service.CrUniteBusinessNodeService;
-import com.cyberpeace.cr.redvsblue.service.CrUniteBusinessTaskService;
-import com.cyberpeace.cr.redvsblue.service.RbRoomService;
+import com.cyberpeace.cr.redvsblue.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.service.*;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.vo.CrUniteBusinessTaskVO;
 import com.cyberpeace.cr.redvsblue.vo.NetworkTaskVO;
@@ -53,6 +51,8 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
     private CrUniteBusinessLinkService crUniteBusinessLinkService;
     @Autowired
     private RbRoomService rbRoomService;
+    @Autowired
+    private RbSceneService rbSceneService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -92,8 +92,9 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         rbTemplateMapper.insert(rbTemplate);
 //        判断是否已有该任务的设备信息下发 已下发转到生成拓扑方法生成拓扑
         NetworkTopoVO networkTopoVO = retrieveNetworkTopologyByTaskId(businessTemplate.getUniteTaskId());
-
-        sceneRelease(networkTopoVO);
+        if(networkTopoVO.getNodes() != null && networkTopoVO.getNodes().size()>0){
+            sceneRelease(networkTopoVO);
+        }
     }
 
 
@@ -191,6 +192,22 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
             }
         }
         return null;
+    }
+
+    @Override
+    public String start(NetworkTopoVO networkTopoVO) {
+        String taskId = networkTopoVO.getTask_id();
+        RbRoom rbRoom = rbRoomService.getRbRoomByUniteTaskId(taskId);
+        String sceneId = rbSceneService.startScene(rbRoom.getResourceId(), null);
+        return sceneId;
+    }
+
+    @Override
+    public Boolean stop(NetworkTopoVO networkTopoVO) {
+        String taskId = networkTopoVO.getTask_id();
+        RbRoom rbRoom = rbRoomService.getRbRoomByUniteTaskId(taskId);
+        Boolean result = rbSceneService.stopScene(rbRoom.getResourceId());
+        return result;
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.cr.crbase.service.context.score.StartSceneRsp;
 import com.cyberpeace.cr.redvsblue.service.CrUniteBusinessTaskService;
 import com.cyberpeace.cr.redvsblue.vo.CrUniteBusinessTaskVO;
 import com.cyberpeace.cr.redvsblue.vo.NetworkTaskVO;
@@ -47,9 +48,23 @@ public class CrUniteBusinessController {
 
     @ApiOperation("构建结果上报")
     @PostMapping("/business/report_build_result")
-    public BaseRsp<NetworkTopoVO> saveUniteBusinessT(@RequestBody NetworkTopoVO networkTopoVO) {
+    public BaseRsp<NetworkTopoVO> reportBuildResult(@RequestBody NetworkTopoVO networkTopoVO) {
         networkTopoVO = crUniteBusinessTaskService.reportBuildResult(networkTopoVO);
         return new BaseRsp<>(networkTopoVO);
+    }
+
+    @ApiOperation("启动场景")
+    @PostMapping("/business/start")
+    public BaseRsp<StartSceneRsp> startUniteBusines(@RequestBody NetworkTopoVO networkTopoVO) {
+        String sceneId = crUniteBusinessTaskService.start(networkTopoVO);
+        return new BaseRsp<>(new StartSceneRsp(sceneId));
+    }
+
+    @ApiOperation("关闭场景")
+    @PostMapping("/business/stop")
+    public BaseRsp<Boolean> stopUniteBusines(@RequestBody NetworkTopoVO networkTopoVO) {
+        Boolean result = crUniteBusinessTaskService.stop(networkTopoVO);
+        return new BaseRsp<>(result);
     }
 
 }

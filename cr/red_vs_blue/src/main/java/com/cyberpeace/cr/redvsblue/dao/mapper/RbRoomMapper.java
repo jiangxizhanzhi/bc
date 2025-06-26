@@ -127,4 +127,6 @@ public interface RbRoomMapper extends BaseMapper<RbRoom> {
 	void updateReplaySceneId(@Param("resourceId") String resourceId,
 			@Param("replaySceneId") String replaySceneId,
 			@Param("sceneIdRecord") String sceneIdRecord);
+
+    RbRoom getRbRoomByUniteTaskId(@Param("taskId") String taskId);
 }

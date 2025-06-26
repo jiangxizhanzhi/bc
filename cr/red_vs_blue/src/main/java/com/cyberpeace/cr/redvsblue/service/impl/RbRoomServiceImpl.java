@@ -891,6 +891,11 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		rbRoomMapper.updateReplaySceneId(resourceId, replaySceneId, sceneIdRecord);
 	}
 
+	@Override
+	public RbRoom getRbRoomByUniteTaskId(String taskId) {
+		return rbRoomMapper.getRbRoomByUniteTaskId(taskId);
+	}
+
 	/**
 	 * 列表室
 	 *

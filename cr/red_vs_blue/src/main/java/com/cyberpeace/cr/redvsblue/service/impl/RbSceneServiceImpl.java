@@ -137,10 +137,12 @@ public class RbSceneServiceImpl implements RbSceneService {
      */
     @Override
     public String startScene(String roomId, String userId) {
-        // 1、权限校验，学员是不可以启动场景的
-        rbRoomService.checkTeacherPermission(roomId, userId);
-
         RbRoom room = rbRoomService.getById(roomId);
+        if(!UNITE_TRAIN.getCode().equals(room.getBusinessType())) {
+            // 1、权限校验，学员是不可以启动场景的
+            rbRoomService.checkTeacherPermission(roomId, userId);
+        }
+
         // 训练暂停状态不能启动场景
         RbTimeManagement management = rbTimeManagementService.getByRoomId(roomId);
         if (management != null && management.isPaused()) {
@@ -278,10 +280,13 @@ public class RbSceneServiceImpl implements RbSceneService {
     @Override
     public Boolean stopScene(String roomId) {
         String userId = UserInfoContext.getUserContext().getUserId();
-        // 1、只有教员角色可以操作场景
-        rbRoomService.checkTeacherPermission(roomId, userId);
 
         RbRoom room = rbRoomService.getById(roomId);
+//        联合场景不限制操作人
+        if (!UNITE_TRAIN.getCode().equals(room.getBusinessType())) {
+            // 1、只有教员角色可以操作场景
+            rbRoomService.checkTeacherPermission(roomId, userId);
+        }
 
         // 2、如果场景已经停止，返回成功
         if (StringUtils.isBlank(room.getLocalSceneId())) {

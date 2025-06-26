@@ -732,5 +732,10 @@ public interface CrBusinessErrorCode {
 	 * 模板删除或未授权
 	 */
 	String TEMPLATE_DELETED_OR_NOT_PERMITTED = "101141";
+
+	/**
+	 * 发布时间错误
+	 */
+	String INVALID_PUBLISH_TIME = "101142";
 }
 

@@ -3,6 +3,8 @@ package com.cyberpeace.common.util;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -42,6 +44,20 @@ public class DateUtil {
 		}
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 		return simpleDateFormat.format(date);
+	}
+
+	public static boolean isDateValid(String dateStr) {
+		// 定义日期格式
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+		// 解析目标日期
+		LocalDate inputDate = LocalDate.parse(dateStr, formatter);
+
+		// 获取当前日期（不含时间）
+		LocalDate today = LocalDate.now();
+
+		// 判断是否超过当前日期
+		return !inputDate.isAfter(today);  // true 表示合法，false 表示非法
 	}
 }
 

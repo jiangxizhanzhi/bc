@@ -56,6 +56,12 @@ public class MybatisConfig {
 	private String NOT_DELETE = "1";
 
 	/**
+	 * 达梦数据库标识
+	 * @see String
+	 */
+	private String DM_MODE = "dm";
+
+	/**
 	 * SQL会话厂
 	 *
 	 * @return {@code SqlSessionFactory }
@@ -90,8 +96,18 @@ public class MybatisConfig {
 	@Bean
 	public MybatisPlusInterceptor paginationInterceptor() {
 		MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-		// 指定数据库方言为 MYSQL
-		PaginationInnerInterceptor pageInterceptor = new PaginationInnerInterceptor(DbType.MYSQL);
+		// 指定数据库方言
+		String dbType = System.getenv("BC_DB_TYPE");
+		PaginationInnerInterceptor pageInterceptor;
+
+		if (DM_MODE.equals(dbType)) {
+			// 达梦数据库
+			pageInterceptor = new PaginationInnerInterceptor(DbType.DM);
+		} else {
+			// mysql数据库
+			pageInterceptor = new PaginationInnerInterceptor(DbType.MYSQL);
+		}
+
 		// 单页分页条数限制
 		pageInterceptor.setMaxLimit(10000L);
 		interceptor.addInnerInterceptor(pageInterceptor);

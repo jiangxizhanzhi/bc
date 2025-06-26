@@ -40,7 +40,7 @@
                 </if>
             </if>
             <if test="isPublic != null and isPublic">
-                and `public` = #{isPublic}
+                and `public` = 1
             </if>
         </where>
     </select>
@@ -52,7 +52,7 @@
             #{setId}
         </foreach>
         <if test="isPublic != null and isPublic">
-            and `public` = #{isPublic}
+            and `public` = 1
         </if>
         order by update_time desc, id
     </select>
@@ -64,7 +64,7 @@
             #{categoryId}
         </foreach>
         <if test="isPublic != null and isPublic">
-            and `public` = #{isPublic}
+            and `public` = 1
         </if>
     </select>
 
@@ -145,7 +145,7 @@
                 </if>
             </if>
             <if test="isPublic != null and isPublic">
-                and `public` = #{isPublic}
+                and `public` = 1
             </if>
         </where>
     </select>

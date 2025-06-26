@@ -48,7 +48,7 @@
                 </if>
             </if>
             <if test="null != isPublic and isPublic">
-                and L1.`public` = #{isPublic}
+                and L1.`public` = 1
             </if>
         </where>
         group by L1.resource_id
@@ -138,7 +138,7 @@
                 </foreach>
             </if>
             <if test="isPublic != null and isPublic">
-                and `public` = #{isPublic}
+                and `public` = 1
             </if>
         </where>
     </select>

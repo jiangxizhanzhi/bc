@@ -104,7 +104,7 @@
                 </if>
             </if>
             <if test="null != isPublic and isPublic">
-                and oj_course.`public` = #{isPublic}
+                and oj_course.`public` = 1
             </if>
         </where>
     </select>

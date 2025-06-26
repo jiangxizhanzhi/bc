@@ -2,7 +2,9 @@ package com.cyberpeace.space.controller;
 
 import com.cyberpeace.common.constant.CallType;
 import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
@@ -158,6 +160,11 @@ public class SpaceAptReportController extends SpaceControllerBase<SpaceAptReport
         }
         if (!StringUtils.isEmpty(entity.getPublicCompany())) {
             CrCommonValidator.validateNameLen(entity.getPublicCompany(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+        }
+        if(!StringUtils.isEmpty(entity.getPublicTime())) {
+            if(!DateUtil.isDateValid(entity.getPublicTime())){
+                throw new BusinessException(CrBusinessErrorCode.INVALID_PUBLISH_TIME);
+            }
         }
     }
 

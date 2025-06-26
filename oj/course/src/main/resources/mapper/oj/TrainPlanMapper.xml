@@ -92,7 +92,14 @@
         SELECT
             c.train_plan_id as resource_id,
             tp.name,
-            group_concat(c.resource_id SEPARATOR ',') as room_ids,
+            <choose>
+                <when test="@com.cyberpeace.config.db.MybatisConfig@DB_TYPE == 'dm'">
+                    WM_CONCAT(c.resource_id) as room_ids,
+                </when>
+                <otherwise>
+                    group_concat(c.resource_id SEPARATOR ',') as room_ids,
+                </otherwise>
+            </choose>
             MIN(c.start_time) AS first_start_time,
             MAX(c.end_time) AS last_end_time,
             CASE

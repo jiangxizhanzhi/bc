@@ -312,6 +312,10 @@
             <groupId>com.dameng</groupId>
             <artifactId>Dm8JdbcDriver18</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.mengweijin</groupId>
+            <artifactId>db-migration</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

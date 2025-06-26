@@ -6,7 +6,7 @@
         select * from cr_tool_tool
         <where>
             <if test="isAdmin == false">
-                and visible is true
+                and visible = 1
             </if>
             <if test="listQuery.pattern != null and listQuery.pattern != ''">
                 <bind name="pattern" value="'%' + listQuery.pattern + '%'"/>

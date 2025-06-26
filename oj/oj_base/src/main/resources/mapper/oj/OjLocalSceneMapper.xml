@@ -27,7 +27,7 @@
         select count(id)
         from oj_local_scene
         where user_id = #{userId}
-          and from_web is true
+          and from_web = 1
     </select>
 
     <select id="selectByBusiness" resultMap="ojScene">

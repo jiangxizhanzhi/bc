@@ -1,13 +1,11 @@
 package com.cyberpeace.config.db;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import javax.sql.DataSource;
+
+import com.cyberpeace.common.util.SystemPropUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.mapping.DatabaseIdProvider;
+import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -19,7 +17,16 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.sql.DataSource;
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+
+import java.util.Properties;
 
 /**
  * mybatis 配置
@@ -60,6 +67,13 @@ public class MybatisConfig {
 	 * @see String
 	 */
 	private String DM_MODE = "dm";
+	/**
+	 * MySql数据库标识
+	 * @see String
+	 */
+	private String MYSQL_MODE = "mysql";
+
+	public static String DB_TYPE;
 
 	/**
 	 * SQL会话厂
@@ -75,6 +89,12 @@ public class MybatisConfig {
 		MybatisConfiguration configuration = new MybatisConfiguration();
 		configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
 		configuration.setJdbcTypeForNull(JdbcType.NULL);
+		// 达梦或mysql
+		String dbType = SystemPropUtil.getProp("BC_DB_TYPE");
+		if (StringUtils.isBlank(dbType)) {
+			dbType = "mysql";
+		}
+		configuration.getVariables().put("dbType", dbType);
 
 		// 自定义session，需要手动添加拦截器
 		configuration.addInterceptor(paginationInterceptor());
@@ -97,15 +117,17 @@ public class MybatisConfig {
 	public MybatisPlusInterceptor paginationInterceptor() {
 		MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
 		// 指定数据库方言
-		String dbType = System.getenv("BC_DB_TYPE");
+		String dbType = SystemPropUtil.getProp("BC_DB_TYPE");
 		PaginationInnerInterceptor pageInterceptor;
 
 		if (DM_MODE.equals(dbType)) {
 			// 达梦数据库
 			pageInterceptor = new PaginationInnerInterceptor(DbType.DM);
+			DB_TYPE = DM_MODE;
 		} else {
 			// mysql数据库
 			pageInterceptor = new PaginationInnerInterceptor(DbType.MYSQL);
+			DB_TYPE = MYSQL_MODE;
 		}
 
 		// 单页分页条数限制

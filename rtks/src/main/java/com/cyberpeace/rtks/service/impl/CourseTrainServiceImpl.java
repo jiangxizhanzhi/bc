@@ -1,5 +1,6 @@
 package com.cyberpeace.rtks.service.impl;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,15 +16,18 @@ import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
+import com.cyberpeace.rtks.controller.course.CourseConfigOutput;
 import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.service.CourseTrainService;
 import com.cyberpeace.rtks.service.KnowledgeService;
+import com.cyberpeace.rtks.service.RoleService;
 import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.bo.CourseKnowledgeSkillBo;
 import com.cyberpeace.rtks.service.bo.RoleCourseBo;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * 课程训练Service实现
@@ -44,6 +48,9 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 	 */
 	@Autowired
 	private RoleMapper roleMapper;
+
+	@Autowired
+	private RoleService roleService;
 
 	/**
 	 * 知识点Service
@@ -133,6 +140,14 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 
 					return knowledgeBo;
 				}).collect(Collectors.toList());
+		// order by role course order
+		List<CourseConfigOutput> courseOrder = roleService.getCourseList(roleId);
+		Map<String, Integer> courseOrderMap = Maps.newHashMap();
+		for (int i = 0; i < courseOrder.size(); i++) {
+			courseOrderMap.put(courseOrder.get(i).getResourceId(), i);
+		}
+		boList.sort(Comparator
+				.comparing(o -> courseOrderMap.getOrDefault(o.getResourceId(), Integer.MAX_VALUE)));
 		return boList;
 	}
 

@@ -106,6 +106,6 @@
         <foreach item="courseId" collection="courseIds" separator="," open="(" close=")" index="">
             #{courseId}
         </foreach>
-        AND (ocl.public = 1 OR (olc.lesson_id IS NULL AND olc.node_type IN (0, 1)));
+        AND (ocl.`public` = 1 OR (olc.lesson_id IS NULL AND olc.node_type IN (0, 1)));
     </select>
 </mapper>

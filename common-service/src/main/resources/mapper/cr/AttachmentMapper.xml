@@ -8,7 +8,7 @@
     <insert id="batchInsert">
         insert into attachment
         (resource_id, file_name, file_path, create_time,
-        update_time, public)
+        update_time, `public`)
         values
         <foreach collection="attachments" item="attachment" separator=",">
             (#{attachment.resourceId}, #{attachment.fileName}, #{attachment.filePath}, now(),

@@ -85,7 +85,7 @@
                  FROM oj_lesson_record olr
                           INNER JOIN oj_course_lesson ocl ON olr.lesson_id = ocl.resource_id
                           INNER JOIN oj_lesson_config olc ON olr.lesson_id = olc.lesson_id
-                 WHERE ocl.public = 1
+                 WHERE ocl.`public` = 1
                    AND olr.user_id = #{userId}
                    AND ocl.course_id IN
                        <foreach item="item" collection="webCourseIds" separator="," open="(" close=")">

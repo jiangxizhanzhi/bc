@@ -55,7 +55,7 @@ public class Paper extends AuthTable {
 	/**
 	 * 是否公开
 	 */
-	@TableField("public")
+	@TableField("`public`")
 	private Boolean isPublic;
 
 	/**

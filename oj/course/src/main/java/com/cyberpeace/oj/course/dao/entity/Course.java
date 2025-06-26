@@ -110,7 +110,7 @@ public class Course extends AuthTable {
 	 *
 	 * @see Boolean
 	 */
-	@TableField("public")
+	@TableField("`public`")
 	@ApiModelProperty("是否公开")
 	private Boolean isPublic;
 

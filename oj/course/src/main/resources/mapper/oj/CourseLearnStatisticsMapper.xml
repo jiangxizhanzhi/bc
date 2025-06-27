@@ -151,11 +151,11 @@
         from oj_lesson_record
         left join (select * from oj_lesson_paper_evaluate where lesson_id = #{lessonId}) practice on
                     practice.submit_user_id = oj_lesson_record.user_id
-        left join (select oj_note_evaluate.score ,oj_note.user_id as user,oj_note_evaluate.evaluate_time as
+        left join (select oj_note_evaluate.score ,oj_note.user_id as `user`,oj_note_evaluate.evaluate_time as
                     evaluate_time ,oj_note.update_time as update_time from  oj_note
                     left join oj_note_evaluate on oj_note_evaluate.note_id = oj_note.resource_id
                     where oj_note.business_id = #{lessonId} and oj_note.note_type = 2 ) report
-            on oj_lesson_record.user_id = report.user
+            on oj_lesson_record.user_id = report.`user`
         where oj_lesson_record.lesson_id = #{lessonId}
         <if test="userIds != null and userIds.size() != 0">
             and user_id in

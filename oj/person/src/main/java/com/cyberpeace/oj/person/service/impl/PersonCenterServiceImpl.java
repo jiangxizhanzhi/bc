@@ -153,7 +153,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         // 获取用户完成课后练习的排名、得分、数量
         List<String> users = personCenterMapper.selectDistinctUser();
         if (users.contains(userId)) {
-            StudyRecord practiceRecord = personCenterMapper.selectPracticeByUser(userId, lessonIds);
+            StudyRecord practiceRecord = this.getPracticeRecord(userId, lessonIds);
             if (null != practiceRecord) {
                 int practiceCount = Integer.parseInt(practiceRecord.getRecord());
                 studyRecord.setPracticeFinishCount(practiceCount);
@@ -173,6 +173,19 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         rsp.setData(studyRecord);
         return rsp;
     }
+    
+	private StudyRecord getPracticeRecord(String userId, List<String> lessonIds) {
+		List<StudyRecord> practiceRecords = personCenterMapper.selectPracticeByUser(lessonIds);
+		int ranking = 1;
+		for (StudyRecord record : practiceRecords) {
+			record.setPracticeRanking(ranking);
+			if (record.getUserId().equals(userId)) {
+				return record;
+			}
+			ranking++;
+		}
+		return null;
+	}
 
     @Override
     public BaseRsp<BrokenLine> studyPeriodRecords(String userId, Date startTime, Date endTime,

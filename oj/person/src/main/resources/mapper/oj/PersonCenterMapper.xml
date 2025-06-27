@@ -297,10 +297,8 @@
     </select>
 
     <select id="selectPracticeByUser" resultMap="studyRecord">
-        select submit_user_id,sum(score) as score,
-        row_number() over (order by score desc) as practice_ranking, count(`record`) as `record`
+        select submit_user_id as user_id, sum(score) as score, count(`record`) as `record`
         from oj_lesson_paper_evaluate
-        where submit_user_id = #{userId}
         <if test="lessonIds != null and lessonIds.size() != 0">
             and oj_lesson_paper_evaluate.lesson_id in
             <foreach collection="lessonIds" item="lessonId" open="(" close=")" separator=",">
@@ -308,6 +306,7 @@
             </foreach>
         </if>
         group by submit_user_id
+        order by score desc
     </select>
 
     <select id="selectSlovedPracticeByUser" resultMap="studyRecord">

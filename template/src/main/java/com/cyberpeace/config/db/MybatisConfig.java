@@ -89,13 +89,6 @@ public class MybatisConfig {
 		MybatisConfiguration configuration = new MybatisConfiguration();
 		configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
 		configuration.setJdbcTypeForNull(JdbcType.NULL);
-		// 达梦或mysql
-		String dbType = SystemPropUtil.getProp("BC_DB_TYPE");
-		if (StringUtils.isBlank(dbType)) {
-			dbType = "mysql";
-		}
-		configuration.getVariables().put("dbType", dbType);
-
 		// 自定义session，需要手动添加拦截器
 		configuration.addInterceptor(paginationInterceptor());
 		configuration.addInterceptor(demonstrationWhiteInterceptor());

@@ -135,7 +135,7 @@
     </select>
 
     <select id="listLessonPractice" resultType="com.cyberpeace.oj.course.dao.entity.LessonPaperEvaluate">
-        select lesson_id, record from oj_lesson_paper_evaluate
+        select lesson_id, `record` from oj_lesson_paper_evaluate
         <if test="lessonIds != null and lessonIds.size() != 0">
             where lesson_id in
             <foreach collection="lessonIds" item="lessonId" separator="," open="(" close=")">
@@ -147,7 +147,7 @@
     <select id="listLessonLearnedRecord" resultMap="lessonDetailMap">
         select distinct oj_lesson_record.id, oj_lesson_record.user_id as submit_user_id,report.score as score,
                         report.evaluate_time as marking_time,report.update_time as report_update_time,
-        (case when report.update_time is null then false else true end) as is_report,practice.record
+        (case when report.update_time is null then false else true end) as is_report,practice.`record`
         from oj_lesson_record
         left join (select * from oj_lesson_paper_evaluate where lesson_id = #{lessonId}) practice on
                     practice.submit_user_id = oj_lesson_record.user_id
@@ -166,7 +166,7 @@
     </select>
 
     <select id="detailLessonByPage" resultMap="lessonDetailMap">
-        select oj_lesson_paper_evaluate.submit_user_id as submit_user_id,record from oj_lesson_paper_evaluate
+        select oj_lesson_paper_evaluate.submit_user_id as submit_user_id,`record` from oj_lesson_paper_evaluate
         where oj_lesson_paper_evaluate.lesson_id = #{lessonId}
         <if test="userIds != null and userIds.size() != 0">
             and oj_lesson_paper_evaluate.submit_user_id in

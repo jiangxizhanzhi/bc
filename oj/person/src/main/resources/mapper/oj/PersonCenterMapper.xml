@@ -298,7 +298,7 @@
 
     <select id="selectPracticeByUser" resultMap="studyRecord">
         select submit_user_id,sum(score) as score,
-        row_number() over (order by score desc) as practice_ranking, count(record) as record
+        row_number() over (order by score desc) as practice_ranking, count(`record`) as `record`
         from oj_lesson_paper_evaluate
         where submit_user_id = #{userId}
         <if test="lessonIds != null and lessonIds.size() != 0">

@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
@@ -26,6 +27,7 @@ public class EvalResult extends BaseTable {
 	/**
 	 * 评估运行实例id
 	 */
+	@TableField("`record`")
 	private String record;
 
 	/**

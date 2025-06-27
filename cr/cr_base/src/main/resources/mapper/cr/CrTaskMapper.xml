@@ -201,7 +201,7 @@
         a.resource_id as task_id,
         a.score as score,
         a.mission_template_id as mission_template_id,
-        tem.score as full
+        tem.score as `full`
         from cr_task as a
         inner join
         (select max(id) as id from cr_task where

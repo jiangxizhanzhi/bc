@@ -7,12 +7,26 @@
     <select id="selectList" resultMap="baseResultMap">
         select *
         from system_use_status
-        where alter_time &gt; date_sub(now(), interval 12 hour) and alter_time &lt; now()
+        <choose>
+            <when test="@com.cyberpeace.config.db.MybatisConfig@DB_TYPE == 'dm'">
+                where alter_time &gt; SYSDATE - INTERVAL '12' HOUR and alter_time &lt; now()
+            </when>
+            <otherwise>
+                where alter_time &gt; date_sub(now(), interval 12 hour) and alter_time &lt; now()
+            </otherwise>
+        </choose>
     </select>
 
     <delete id="deleteOverdueData">
         delete
         from system_use_status
-        where alter_time &lt; date_sub(now(), interval 36 hour)
+        <choose>
+            <when test="@com.cyberpeace.config.db.MybatisConfig@DB_TYPE == 'dm'">
+                where alter_time &lt; SYSDATE - INTERVAL '36' HOUR
+            </when>
+            <otherwise>
+                where alter_time &lt; date_sub(now(), interval 36 hour)
+            </otherwise>
+        </choose>
     </delete>
 </mapper>

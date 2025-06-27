@@ -12,7 +12,7 @@
                training_percentage,
                skill_percentage,
                skill_score,
-               comment,
+               `comment`,
                final_score
         from cr_score
         where 1 = 1
@@ -28,7 +28,7 @@
         training_percentage,
         skill_percentage,
         skill_score,
-        comment,
+        `comment`,
         final_score
         from cr_score
         where 1 = 1

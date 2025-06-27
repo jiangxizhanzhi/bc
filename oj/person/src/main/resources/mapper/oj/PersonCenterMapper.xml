@@ -300,7 +300,7 @@
         select submit_user_id as user_id, sum(score) as score, count(`record`) as `record`
         from oj_lesson_paper_evaluate
         <if test="lessonIds != null and lessonIds.size() != 0">
-            and oj_lesson_paper_evaluate.lesson_id in
+            where oj_lesson_paper_evaluate.lesson_id in
             <foreach collection="lessonIds" item="lessonId" open="(" close=")" separator=",">
                 #{lessonId}
             </foreach>

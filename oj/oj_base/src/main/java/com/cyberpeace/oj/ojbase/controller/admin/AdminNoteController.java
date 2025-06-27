@@ -103,13 +103,17 @@ public class AdminNoteController {
 	public BaseRsp<Boolean>
 			evaluateReport(@RequestBody @Validated EvaluateNoteReq evaluateNoteReq) {
 
+		// 查询当前笔记评估
+		NoteEvaluate currentNoteEvaluate = noteEvaluateMapper
+				.selectByNote(evaluateNoteReq.getNoteId());
+
 		NoteEvaluate noteEvaluate = BeanUtils.copy(evaluateNoteReq, NoteEvaluate.class);
 		noteEvaluate.setEvaluateTime(new Date());
 		noteEvaluate.setEvaluatorId(UserInfoContext.getUserContext().getUserId());
 
-		try {
+		if (null == currentNoteEvaluate) {
 			noteEvaluateMapper.insert(noteEvaluate);
-		} catch (DuplicateKeyException e) {
+		} else {
 			noteEvaluateMapper.updateByNote(noteEvaluate);
 		}
 

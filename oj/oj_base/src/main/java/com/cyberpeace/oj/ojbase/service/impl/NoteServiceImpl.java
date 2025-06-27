@@ -87,14 +87,19 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 	 */
 	@Override
 	public Note addNote(NoteAddContext noteAddContext) {
+
+		Note currentNote = noteMapper.selectByUnique(noteAddContext.getUserId(), noteAddContext.getNoteType(),
+				noteAddContext.getBusinessType(), noteAddContext.getBusinessId());
+
 		Note note = BeanUtils.copy(noteAddContext, Note.class);
 		note.setReadAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		note.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		note.setIsPublic(CommonConstant.TRUE);
-		try {
-			noteMapper.insert(note);
-		} catch (DuplicateKeyException e) {
+
+		if (null != currentNote) {
 			noteMapper.updateNote(note);
+		} else {
+			noteMapper.insert(note);
 		}
 
 		return note;

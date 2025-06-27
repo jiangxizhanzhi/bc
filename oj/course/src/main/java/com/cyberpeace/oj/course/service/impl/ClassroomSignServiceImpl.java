@@ -3,11 +3,8 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.Date;
 import java.util.Map;
 
-import com.cyberpeace.common.enums.SceneStatusEnum;
-import com.cyberpeace.oj.ojbase.constant.ClassroomRole;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
@@ -16,6 +13,7 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -34,6 +32,7 @@ import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.bo.HelpStatusBo;
+import com.cyberpeace.oj.ojbase.constant.ClassroomRole;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
@@ -170,15 +169,23 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 
 		// 仅存储该课堂组织下的用户签到信息
 		if (classroom.getOrganizationIds().contains(authContext.getOrganization())) {
-			ClassroomSign sign = ClassroomSign.builder().signIn(CommonConstant.TRUE)
-					.classroomId(classroomId).resourceId(IDGeneratorUtil.getID())
-					.signInTime(new Date()).userId(authContext.getUserId()).build();
-			try {
-				return classroomSignMapper.insert(sign) > 0;
-			} catch (DuplicateKeyException e) {
+
+			// 获取该课堂组织下的用户签到信息
+			ClassroomSign currentSign = classroomSignMapper.selectByRoomAndUser(classroomId,
+					authContext.getUserId());
+
+			// 如果存在则返回
+			if (null != currentSign) {
 				log.info("课堂 {} 中的用户 {} 重复签到", classroomId, authContext.getUserId());
 				return true;
 			}
+
+			ClassroomSign sign = ClassroomSign.builder().signIn(CommonConstant.TRUE)
+					.classroomId(classroomId).resourceId(IDGeneratorUtil.getID())
+					.signInTime(new Date()).userId(authContext.getUserId()).build();
+
+			return classroomSignMapper.insert(sign) > 0;
+
 		}
 
 		return true;

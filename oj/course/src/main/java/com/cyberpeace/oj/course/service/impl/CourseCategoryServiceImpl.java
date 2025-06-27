@@ -4,17 +4,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.cyberpeace.common.constant.ErrorCode;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
@@ -24,7 +23,6 @@ import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.bo.CategoryAddBo;
 import com.cyberpeace.oj.course.service.bo.CourseCategoryBo;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
@@ -237,15 +235,20 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	 */
 	@Override
 	public CourseCategory getOrCreate(String categoryName) {
-		String resourceId = IDGeneratorUtil.getID();
-		CourseCategory category = CourseCategory.builder()
-				.courseType(CourseCategory.CourseType.BASE.getCode()).code(resourceId)
-				.name(categoryName).resourceId(resourceId).build();
-		try {
-			courseCategoryMapper.insert(category);
-		} catch (DuplicateKeyException e) {
-			return courseCategoryMapper.selectByName(categoryName);
+
+		// 查询已有的类型
+		CourseCategory category = courseCategoryMapper.selectByName(categoryName);
+
+		if (null != category) {
+			return category;
 		}
+
+		// 如果不存在，则创建
+		String resourceId = IDGeneratorUtil.getID();
+		category = CourseCategory.builder().courseType(CourseCategory.CourseType.BASE.getCode())
+				.code(resourceId).name(categoryName).resourceId(resourceId).build();
+
+		courseCategoryMapper.insert(category);
 
 		return category;
 	}

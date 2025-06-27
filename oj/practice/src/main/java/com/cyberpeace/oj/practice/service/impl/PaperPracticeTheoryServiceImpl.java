@@ -183,15 +183,13 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 					practiceMistakeService.addIncorrect(userId, paperPracticeTheory.getOriginId(), PracticeCategory.PracticeType.THEORY.getCode());
 				}
 				//当原题目为未开始或尝试过的状态时更新题目状态
-				if (originPracticeSolved == null || !originPracticeSolved.getSolved()) {
-
-					if (originPracticeSolved == null) {
-						practiceSolvedMapper.insert(practiceSolved);
-					} else {
-						practiceSolved.setIsPaper(false);
-						practiceSolvedMapper.updateSolved(practiceSolved);
-					}
+				if (originPracticeSolved == null) {
+					practiceSolvedMapper.insert(practiceSolved);
+				} else if (!originPracticeSolved.getSolved()) {
+					practiceSolved.setIsPaper(false);
+					practiceSolvedMapper.updateSolved(practiceSolved);
 				}
+
 				paperPracticeTheoryMapper.updateById(paperPracticeTheory);
 			}
 		});

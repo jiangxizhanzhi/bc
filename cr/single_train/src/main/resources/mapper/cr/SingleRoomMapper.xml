@@ -31,7 +31,18 @@
     </resultMap>
 
     <select id="singleTrainSearch" resultMap="listResultMap">
-        select *
+        select
+            T1.resource_id,
+            T1.name,
+            T1.description,
+            T1.difficulty,
+            T2.sub_type,
+            T2.pre_skills,
+            T2.train_skills,
+            T2.duration_time,
+            R1.start_time,
+            R1.training_record,
+            T1.topo_id
         from cr_business_template T1
         left join cr_single_template T2 on T1.resource_id = T2.business_template_id
         left join cr_single_room R1 on T1.resource_id = R1.business_template_id and R1.user_id = #{user_id}

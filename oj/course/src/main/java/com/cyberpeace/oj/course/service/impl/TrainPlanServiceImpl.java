@@ -172,11 +172,9 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 	 * @see IPage<TrainPlanRsp>
 	 */
 	@Override
-	public IPage<TrainPlanWebRsp> page(TrainPlanWebReq trainPlanReq, UserInfo userInfo) {
+	public IPage<TrainPlanWebRsp> page(TrainPlanWebReq trainPlanReq, UserInfo userInfo, List<String> courseIds) {
 
 		Page<TrainPlanWebRsp> page = trainPlanReq.toPageParam();
-		List<String> courseIds = courseMapper.selectByAuth(AuthContextUtils.constructAuth(userInfo,
-				true));
 		// 查询已授权的课程，计划状态和当前时间进行比较，未开始、进行中、已开始的计划
 		IPage<TrainPlanWebRsp> result = trainPlanMapper.listTrainWebPlan(page, trainPlanReq.getPattern(), userInfo.getOrganizationId(),
 				courseIds, trainPlanReq.getPlanStatus(), TrainPlan.defaultTaskSetName());

@@ -1,18 +1,7 @@
 package com.cyberpeace.oj.course.controller.web;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.oj.course.controller.req.TrainPlanWebReq;
-import com.cyberpeace.oj.course.controller.res.TrainPlanWebRsp;
-import com.cyberpeace.oj.course.dao.entity.TrainPlan;
-import com.cyberpeace.oj.course.service.TrainPlanService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.StringUtils;
+import java.util.List;
+
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -21,6 +10,21 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.oj.course.controller.req.TrainPlanWebReq;
+import com.cyberpeace.oj.course.controller.res.TrainPlanWebRsp;
+import com.cyberpeace.oj.course.service.CourseService;
+import com.cyberpeace.oj.course.service.TrainPlanService;
+import com.google.common.collect.Lists;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "oj-训练计划相关api")
 @RequiresAuthentication
@@ -35,6 +39,9 @@ public class TrainPlanController {
      */
     @Autowired
     private TrainPlanService trainPlanService;
+    
+    @Autowired
+    private CourseService courseService;
 
 
     /**
@@ -52,9 +59,13 @@ public class TrainPlanController {
     @RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
             logical = Logical.OR)
     public BaseRsp<ListRsp<TrainPlanWebRsp>> page(@Validated TrainPlanWebReq trainPlanReq) {
-
+    
+        List<String> courseIds = courseService.getWebCourseIds();
+		if (courseIds.isEmpty()) {
+			return new BaseRsp<>(new ListRsp<>(Lists.newArrayList(), 0, 1, 1));
+		}
         IPage<TrainPlanWebRsp> data = trainPlanService.page(trainPlanReq,
-                UserInfoContext.getUserContext());
+                UserInfoContext.getUserContext(), courseIds);
 
         ListRsp<TrainPlanWebRsp> listResult = PageUtil.getListResult(data);
         return new BaseRsp<>(listResult);

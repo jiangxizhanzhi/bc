@@ -54,7 +54,7 @@ public interface TrainPlanService extends IService<TrainPlan> {
 	 * @param userInfo
 	 * @return
 	 */
-    IPage<TrainPlanWebRsp> page(TrainPlanWebReq trainPlanReq, UserInfo userInfo);
+    IPage<TrainPlanWebRsp> page(TrainPlanWebReq trainPlanReq, UserInfo userInfo, List<String> courseIds);
 
     /**
 	 * 检查名称重复

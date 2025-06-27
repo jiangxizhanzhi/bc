@@ -3,21 +3,4 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.CrNoticeMapper">
-
-    <resultMap id="BaseResultMap" type="com.cyberpeace.cr.crbase.dao.entity.CrNotice">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
-            <result property="createUserId" column="create_user_id" jdbcType="VARCHAR"/>
-            <result property="context" column="context" jdbcType="VARCHAR"/>
-            <result property="role" column="role" jdbcType="TINYINT"/>
-            <result property="roomId" column="room_id" jdbcType="VARCHAR"/>
-            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-    </resultMap>
-
-    <sql id="Base_Column_List">
-        id,resource_id,create_user_id,
-        context,role,room_id,
-        create_time,update_time
-    </sql>
 </mapper>

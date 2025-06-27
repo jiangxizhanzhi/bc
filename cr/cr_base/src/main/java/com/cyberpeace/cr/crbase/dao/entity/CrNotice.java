@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.dao.entity;
 import java.util.List;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
@@ -35,6 +36,7 @@ public class CrNotice extends BaseTable {
     /**
      * 公告内容
      */
+    @TableField("`context`")
     private String context;
     /**
      * 公告对象

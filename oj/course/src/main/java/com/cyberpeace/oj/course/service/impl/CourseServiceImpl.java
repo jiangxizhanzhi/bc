@@ -991,8 +991,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 //		最近在学
 //		原数据
 		List<String> webCourseIds = StreamApiUtils.map(boListRsp.getList(), CourseWebBo::getResourceId);
-		List<LessonRecord> lessonRecords = webCourseIds.isEmpty() ? Lists.newArrayList()
-				: lessonRecordMapper.selectLatestByUserId(authContext.getUserId(), webCourseIds);
+		List<LessonRecord> lessonRecords = this.getLatest4LessonRecord(authContext.getUserId(),
+				webCourseIds);
+
         List<String> courseIds = lessonRecords.stream().map(LessonRecord::getCourseId).collect(Collectors.toList());
         List<Course> courses = Lists.newArrayList();
 		if (CollectionUtils.isNotEmpty(courseIds)) {
@@ -1035,6 +1036,26 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
         return courseStatisticsRes;
     }
+
+	private List<LessonRecord> getLatest4LessonRecord(String userId, List<String> courseIds) {
+		if (courseIds.isEmpty()) {
+			return Lists.newArrayList();
+		}
+		List<LessonRecord> lessonRecords = lessonRecordMapper.selectLatestByUserId(userId,
+				courseIds);
+		Map<String, List<LessonRecord>> lessonRecordMap = Maps.newHashMap();
+		for (LessonRecord record : lessonRecords) {
+			lessonRecordMap.putIfAbsent(record.getCourseId(), Lists.newArrayList());
+			lessonRecordMap.get(record.getCourseId()).add(record);
+		}
+		List<LessonRecord> latestByCourse = StreamApiUtils.map(lessonRecordMap.keySet(),
+				courseId -> lessonRecordMap.get(courseId).get(0));
+		latestByCourse.sort(Comparator.comparing(LessonRecord::getUpdateTime).reversed());
+		if (latestByCourse.size() > 4) {
+			latestByCourse = latestByCourse.subList(0, 4);
+		}
+		return latestByCourse;
+	}
 
 	@Override
 	public List<String> getWebCourseIds() {

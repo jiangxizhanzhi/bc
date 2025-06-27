@@ -1,5 +1,18 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -37,21 +50,8 @@ import com.cyberpeace.oj.practice.service.md.MdTheoryParser;
 import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 import com.cyberpeace.oj.practice.service.md.TheoryBaseMd;
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 练习理论Service实现
@@ -401,9 +401,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
                     practiceMistakeService.addIncorrect(userId, practiceTheory.getResourceId(), PracticeCategory.PracticeType.THEORY.getCode());
                 }
                 //更新题目状态
-                try {
+                if (null == solvedPractice) {
                     practiceSolvedMapper.insert(practiceSolved);
-                } catch (DuplicateKeyException e) {
+                } else {
                     practiceSolvedMapper.updateSolved(practiceSolved);
                 }
             }

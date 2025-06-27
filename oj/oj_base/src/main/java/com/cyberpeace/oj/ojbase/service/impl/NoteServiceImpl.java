@@ -1,5 +1,13 @@
 package com.cyberpeace.oj.ojbase.service.impl;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -25,15 +33,8 @@ import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.NoteListBo;
 import com.cyberpeace.oj.ojbase.service.context.AdminNoteListQuery;
 import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 笔记Service实现
@@ -170,19 +171,27 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 	 */
 	@Override
 	public Note addAndUpdateReport(ReportAddReq reportAddReq) {
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+		Integer noteType = Note.NoteType.REPORT.getCode();
+		Integer businessType = Note.NoteResourceType.LESSON.getCode();
+
+		Note currentNote = noteMapper.selectByUnique(userId, noteType, businessType, reportAddReq.getBusinessId());
+
 		NoteAddContext noteAddContext = BeanUtils.copy(reportAddReq, NoteAddContext.class);
-		noteAddContext.setNoteType(Note.NoteType.REPORT.getCode());
-		noteAddContext.setBusinessType(Note.NoteResourceType.LESSON.getCode());
-		noteAddContext.setUserId(UserInfoContext.getUserContext().getUserId());
+		noteAddContext.setNoteType(noteType);
+		noteAddContext.setBusinessType(businessType);
+		noteAddContext.setUserId(userId);
 
 		Note note = BeanUtils.copy(noteAddContext, Note.class);
 		note.setReadAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		note.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		note.setIsPublic(CommonConstant.TRUE);
 		note.setIsSubmit(reportAddReq.getOperate());
-		try {
+
+		if (null == currentNote){
 			noteMapper.insert(note);
-		} catch (DuplicateKeyException e) {
+		} else {
 			Note report = noteMapper.selectByUnique(note.getUserId(), note.getNoteType(), note.getBusinessType(), note.getBusinessId());
 			//已经提交过的无法再存草稿
 			if (report.getIsSubmit() != null && report.getIsSubmit() && Boolean.FALSE.equals(reportAddReq.getOperate())) {

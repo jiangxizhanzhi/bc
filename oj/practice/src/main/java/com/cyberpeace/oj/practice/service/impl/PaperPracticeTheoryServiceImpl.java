@@ -1,5 +1,17 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -26,18 +38,8 @@ import com.cyberpeace.oj.practice.service.bo.BlankAnswer;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResultTheory;
 import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 试卷练习理论Service实现
@@ -182,9 +184,10 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 				}
 				//当原题目为未开始或尝试过的状态时更新题目状态
 				if (originPracticeSolved == null || !originPracticeSolved.getSolved()) {
-					try {
+
+					if (originPracticeSolved == null) {
 						practiceSolvedMapper.insert(practiceSolved);
-					} catch (DuplicateKeyException e) { // 如果存在解题记录，则设置isPaper false，防止自由练习的解题记录被过滤掉
+					} else {
 						practiceSolved.setIsPaper(false);
 						practiceSolvedMapper.updateSolved(practiceSolved);
 					}

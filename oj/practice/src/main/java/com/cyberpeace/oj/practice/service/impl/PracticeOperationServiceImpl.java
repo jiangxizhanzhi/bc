@@ -7,15 +7,11 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import com.cyberpeace.oj.ojbase.dao.entity.Note;
-import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
-import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -63,8 +59,11 @@ import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
+import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
+import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
+import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
@@ -915,12 +914,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		practiceSolved.setCollection(resourceCollectionService.selectByUnique(userId,
 				ResourceCollection.BusinessType.OPERATION.getCode(), operation.getResourceId()));
-		try {
+		
+		if (null == solved) {
 			practiceSolvedMapper.insert(practiceSolved);
-		} catch (DuplicateKeyException e) {
+		} else {
 			practiceSolvedMapper.updateSolved(practiceSolved);
 		}
-
+		
 		return evaluateResult;
 	}
 

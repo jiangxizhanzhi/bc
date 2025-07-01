@@ -110,5 +110,7 @@ public class UserInfo implements Serializable {
      */
     private Set<String> permissions;
 
+    private String menusContent;
+
 }
 

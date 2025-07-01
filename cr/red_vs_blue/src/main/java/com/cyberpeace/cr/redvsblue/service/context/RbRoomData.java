@@ -128,4 +128,6 @@ public class RbRoomData implements Serializable {
 	 * 业务模板id
 	 */
 	private String businessTemplateId;
+
+	private String trainTarget;
 }

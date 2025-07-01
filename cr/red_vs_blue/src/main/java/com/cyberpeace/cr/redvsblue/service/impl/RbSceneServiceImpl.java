@@ -257,7 +257,7 @@ public class RbSceneServiceImpl implements RbSceneService {
             ret.setMpSceneId(sceneData.getString(CrCommonConstants.MP_SCENE_ID_KEY));
 
             // 4. 场景角色资产配置，用于动态编辑,只有教员有权限
-            if (selfRole.isRvbStaff() && !UNITE_TRAIN.getCode().equals(room.getBusinessType())) {
+            if (selfRole != null && selfRole.isRvbStaff() && !UNITE_TRAIN.getCode().equals(room.getBusinessType())) {
 				crSceneService.setRbNodeConfig(ret, roleList);
             }
             return ret;

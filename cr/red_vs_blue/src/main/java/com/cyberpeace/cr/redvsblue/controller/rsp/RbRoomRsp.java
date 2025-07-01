@@ -197,4 +197,10 @@ public class RbRoomRsp {
 	 */
 	@ApiModelProperty(value = "拓扑中占用的授权节点数量")
 	private Integer resourceOccupiedNums;
+
+	/**
+	 * 联合-训练目标
+	 */
+	@ApiModelProperty(value = "联合-训练目标")
+	private String trainTarget;
 }

@@ -46,6 +46,8 @@
             <if test="listQuery.category != null and listQuery.category != ''">
                 and cr_rb_template.sub_type = #{listQuery.category}
             </if>
+--         过滤联合训练数据
+            and cr_business_template.business_type !=8
         </where>
     </select>
 

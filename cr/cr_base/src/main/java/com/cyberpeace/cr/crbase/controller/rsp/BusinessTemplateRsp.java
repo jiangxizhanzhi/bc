@@ -97,4 +97,6 @@ public class BusinessTemplateRsp implements Serializable {
 
 	private String trainTarget;
 
+	private String topoId;
+
 }

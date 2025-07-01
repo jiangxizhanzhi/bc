@@ -263,7 +263,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 
 				save(rbRoom);
-				if(!rbRoomContext.getBusinessType().equals(UNITE_TRAIN.getCode())) {
+				if(rbRoomContext.getBusinessType()==null || !rbRoomContext.getBusinessType().equals(UNITE_TRAIN.getCode())) {
 					List<CrRole> crRoles = getCrRoleByRbTemplate(template, rbRoom.getResourceId());
 
 					List<RoomRole> users = rbRoomContext.getRoleConfig();
@@ -676,11 +676,13 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 
-		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
-		if (!crRole.isInGroup(roleGroup)) {
-			log.error("user does not have RbRoom Permission！roomId=[{}], userId=[{}], role=[{}]",
-					roomId, userId, roleGroup.getDesc());
-			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		if(!UNITE_TRAIN.getCode().equals(rbRoom.getBusinessType())) {
+			CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+			if (!crRole.isInGroup(roleGroup)) {
+				log.error("user does not have RbRoom Permission！roomId=[{}], userId=[{}], role=[{}]",
+						roomId, userId, roleGroup.getDesc());
+				throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+			}
 		}
 	}
 

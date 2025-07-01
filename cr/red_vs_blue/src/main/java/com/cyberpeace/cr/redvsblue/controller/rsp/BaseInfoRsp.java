@@ -116,6 +116,11 @@ public class BaseInfoRsp implements Serializable {
 		this.preSkill = JsonUtil.toJsonObjectArray(template.getPreSkill(), String.class);
 		this.trainSkill = JsonUtil.toJsonObjectArray(template.getTrainSkill(), String.class);
 		this.logo = businessTemplate.getLogo();
+//		联合
+		this.uniteTaskId = businessTemplate.getUniteTaskId();
+		this.startTime = businessTemplate.getStartTime();
+		this.endTime = businessTemplate.getEndTime();
+		this.trainTarget = businessTemplate.getTrainTarget();
 	}
 
 	public BaseInfoRsp(RbTemplateData rbTemplateData) {

@@ -82,6 +82,7 @@
         cr_rb_room.local_scene_id,
         cr_rb_room.copyed_topo_id,
         cr_rb_room.training_status,
+        cr_rb_room.train_target,
         cr_rb_template.duration_time,
         cr_rb_template.business_template_id,
         local_scene.start_time scene_start_time,

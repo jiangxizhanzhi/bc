@@ -22,9 +22,11 @@ import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.vo.CrUniteBusinessTaskVO;
 import com.cyberpeace.cr.redvsblue.vo.NetworkTaskVO;
 import com.cyberpeace.cr.redvsblue.vo.NetworkTopoVO;
+import com.cyberpeace.cr.redvsblue.ws.WebSocketClientService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,14 +84,6 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         businessTemplate.setDifficulty(1);
         businessTemplate.setCreateUserId("3f655d87112f4ae094bbaf70830e20aa");
         businessTemplateMapper.insert(businessTemplate);
-        RbTemplate rbTemplate = new RbTemplate();
-        rbTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
-        rbTemplate.setPreSkill("[]");
-        rbTemplate.setTrainSkill("[]");
-        rbTemplate.setRoleConfig("{}");
-        rbTemplate.setSubType(1);
-        rbTemplate.setDurationTime(4);
-        rbTemplateMapper.insert(rbTemplate);
 //        判断是否已有该任务的设备信息下发 已下发转到生成拓扑方法生成拓扑
         NetworkTopoVO networkTopoVO = retrieveNetworkTopologyByTaskId(businessTemplate.getUniteTaskId());
         if(networkTopoVO.getNodes() != null && networkTopoVO.getNodes().size()>0){
@@ -119,6 +113,10 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         return networkTopoVO;
     }
 
+    @Lazy
+    @Autowired
+    private WebSocketClientService webSocketClientService;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveUniteBusinessTopo(NetworkTopoVO networkTopoVO) {
@@ -134,7 +132,9 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
             link.setTaskId(networkTopoVO.getTask_id());
         });
         crUniteBusinessLinkService.saveBatch(links);
-
+//        TODO 测试ws
+        String message = "测试";
+        webSocketClientService.sendMessage(message);
         sceneRelease(networkTopoVO);
     }
 
@@ -182,6 +182,8 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
                     rbRoomContext.setDifficult(1);
                     rbRoomContext.setPreSkill(new ArrayList<>());
                     rbRoomContext.setTrainSkill(new ArrayList<>());
+//
+                    businessTemplate.getTrainTarget();
                     rbRoomService.create(rbRoomContext);
                 }
             //        上报内容
@@ -219,10 +221,20 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         String jsonString = JSON.toJSONString(networkTopoVO);
         JSONObject scene = remoteSceneService.sceneRelease(jsonString);
         String id = scene.getString("id");
-        UpdateWrapper<BusinessTemplate> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.lambda().eq(BusinessTemplate::getUniteTaskId, networkTopoVO.getTask_id());
-        BusinessTemplate businessTemplate = new BusinessTemplate();
+
+        QueryWrapper<BusinessTemplate> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(BusinessTemplate::getUniteTaskId, networkTopoVO.getTask_id());
+        BusinessTemplate businessTemplate = businessTemplateMapper.selectOne(queryWrapper);
         businessTemplate.setTopoId(id);
-        businessTemplateMapper.update(businessTemplate, updateWrapper);
+        businessTemplateMapper.updateById(businessTemplate);
+
+        RbTemplate rbTemplate = new RbTemplate();
+        rbTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
+        rbTemplate.setPreSkill("[]");
+        rbTemplate.setTrainSkill("[]");
+        rbTemplate.setRoleConfig("{}");
+        rbTemplate.setSubType(1);
+        rbTemplate.setDurationTime(4);
+        rbTemplateMapper.insert(rbTemplate);
     }
 }

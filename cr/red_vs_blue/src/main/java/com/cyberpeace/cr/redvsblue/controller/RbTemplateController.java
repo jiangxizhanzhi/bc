@@ -159,7 +159,7 @@ public class RbTemplateController {
 
 		rbTemplateRoleRsps.add(new RbTemplateRoleRsp(RbRoleGroup.REFEREE));
 
-		if(rbTemplateData.getBusinessType().equals(UNITE_TRAIN.getCode())) {
+		if(!rbTemplateData.getBusinessType().equals(UNITE_TRAIN.getCode())) {
 			RbTemplateRoleRsp rbTemplateRoleRsp3 = new RbTemplateRoleRsp(RbRoleGroup.RED);
 
 			JSONArray redRoles = (JSONArray) rolejsonObject.get("red_roles");

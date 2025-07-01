@@ -59,6 +59,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.cyberpeace.common.enums.BusinessType.UNITE_TRAIN;
+
 /**
  * 红蓝对抗模板管理Controller
  *
@@ -180,9 +182,10 @@ public class RbTemplateAdminController {
 			throw new ResourceNotFoundException(resourceId);
 		}
 		String oldRoleConfig = rbTemplate.getRoleConfig();
-		// update
-		reqToRbTemplate(modifyReq, rbTemplate);
-
+		if(!UNITE_TRAIN.getCode().equals(businessTemplate.getBusinessType())) {
+			// update
+			reqToRbTemplate(modifyReq, rbTemplate);
+		}
 		// save
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -240,7 +243,7 @@ public class RbTemplateAdminController {
 		extracted(resourceId, businessTemplate);
 
 		RbTemplate template = rbTemplateMapper.selectByBusinessTemplateId(resourceId);
-		if (Objects.equals(businessTemplate.getBusinessType(), BusinessType.UNITE_TRAIN.getCode())) {
+		if (Objects.equals(businessTemplate.getBusinessType(), UNITE_TRAIN.getCode())) {
 			if(template == null){
 				BaseInfoRsp baseInfoRsp = new BaseInfoRsp(businessTemplate);
 				// 获取返回对象
@@ -255,7 +258,7 @@ public class RbTemplateAdminController {
 		List<JSONObject> redRoleRsps = null;
 		List<JSONObject> blueRoleRsps  = null;
 
-		if (businessTemplate.getBusinessType() != BusinessType.UNITE_TRAIN.getCode()
+		if (businessTemplate.getBusinessType() != UNITE_TRAIN.getCode()
 				&& StringUtils.isBlank(businessTemplate.getUniteTaskId())) {
 			// 获取红蓝角色
 			String roleString = template.getRoleConfig();

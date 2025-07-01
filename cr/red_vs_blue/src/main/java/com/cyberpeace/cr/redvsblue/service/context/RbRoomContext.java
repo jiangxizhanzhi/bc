@@ -111,4 +111,9 @@ public class RbRoomContext {
 	private String logo;
 
 	private Integer businessType;
+
+	/**
+	 * 训练目标
+	 */
+	private String trainTarget;
 }

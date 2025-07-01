@@ -9,7 +9,7 @@
         SET `read_count` = `read_count` + 1
         WHERE `resource_id` IN
         <foreach collection="commentIds" item="commentId" separator="," open="(" close=")">
-            #{id}
+            #{commentId}
         </foreach>
     </update>
 

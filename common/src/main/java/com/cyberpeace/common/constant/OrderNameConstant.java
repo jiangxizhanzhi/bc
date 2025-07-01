@@ -41,5 +41,7 @@ public interface OrderNameConstant {
 	 */
 	String CREATE_TIME = "create_time";
 
+	String ID = "id";
+
 }
 

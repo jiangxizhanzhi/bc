@@ -1,12 +1,13 @@
 package com.cyberpeace.cs.aspect;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.service.YXLogService;
-import com.cyberpeace.integratation.service.YXUserService;
 import com.cyberpeace.integratation.service.bo.mp.YXLogRequest;
 import com.cyberpeace.integratation.service.bo.mp.YXLogUrlEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -18,11 +19,9 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * ThirdLogAspect
@@ -75,6 +74,7 @@ public class ThirdLogAspect {
                 yxLogService.uploadLog(request);
             }
         }catch (Exception e){
+            log.error("uploadLog catch error:", e);
             // 不处理
         }
 
@@ -113,13 +113,15 @@ public class ThirdLogAspect {
                 yxLogRequest.setIp(clientIp);
                 yxLogRequest.setTime("" + System.currentTimeMillis()/1000);
                 yxLogRequest.setResult(isSuccess? "1":"0");
-                yxLogRequest.setUsername(UserInfoContext.getUserContext().getName());
-                yxLogRequest.setRoleId(UserInfoContext.getUserContext().getRoleId());
+                UserInfo userInfo = UserInfoContext.getUserContext();
+                yxLogRequest.setUsername(userInfo.getUserName());
+                JSONObject menu = JsonUtil.toJsonObjectArray(userInfo.getMenusContent(), JSONObject.class).get(0);
+                yxLogRequest.setRoleId(menu.getString("role_id"));
 
                 return yxLogRequest;
             }
         }catch (Exception e){
-            // 不处理
+            log.error("getYXLogRequest catch error:", e);
         }
 
         return null;

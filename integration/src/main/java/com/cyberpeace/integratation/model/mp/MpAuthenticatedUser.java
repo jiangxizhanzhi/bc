@@ -1,10 +1,10 @@
 package com.cyberpeace.integratation.model.mp;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * mp token校验返回的用户模型
@@ -125,5 +125,7 @@ public class MpAuthenticatedUser implements Serializable {
 	 * 加入日期
 	 */
 	private Date dateJoined;
+
+	private String menusContent;
 }
 

@@ -1,6 +1,9 @@
 package com.cyberpeace.cs.aspect;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
@@ -8,12 +11,12 @@ import com.cyberpeace.integratation.service.YXLogService;
 import com.cyberpeace.integratation.service.bo.mp.YXLogRequest;
 import com.cyberpeace.integratation.service.bo.mp.YXLogUrlEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -21,6 +24,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,9 +64,8 @@ public class ThirdLogAspect {
 
             // 如果返回的是ResponseEntity，可以从中获取HTTP状态码
             boolean isSuccess = false;
-            if (result instanceof org.springframework.http.ResponseEntity) {
-                int httpStatus = ((org.springframework.http.ResponseEntity<?>) result).getStatusCodeValue();
-                if (HttpStatus.OK.value() == httpStatus){
+            if (result instanceof BaseRsp) {
+                if ("OJ-000000".equals(((BaseRsp)result).getCode())){
                     isSuccess = true;
                 }
             }
@@ -115,8 +118,12 @@ public class ThirdLogAspect {
                 yxLogRequest.setResult(isSuccess? "1":"0");
                 UserInfo userInfo = UserInfoContext.getUserContext();
                 yxLogRequest.setUsername(userInfo.getUserName());
-                JSONObject menu = JsonUtil.toJsonObjectArray(userInfo.getMenusContent(), JSONObject.class).get(0);
-                yxLogRequest.setRoleId(menu.getString("role_id"));
+                List<JSONObject> menuList = JsonUtil.toJsonObjectArray(userInfo.getMenusContent(), JSONObject.class);
+                if (CollectionUtils.isEmpty(menuList)) {
+                    throw new BusinessException(ErrorCode.NO_ROLE);
+                }
+                JSONObject menu = menuList.get(0);
+                yxLogRequest.setRoleId(menu.getString("roleId"));
 
                 return yxLogRequest;
             }

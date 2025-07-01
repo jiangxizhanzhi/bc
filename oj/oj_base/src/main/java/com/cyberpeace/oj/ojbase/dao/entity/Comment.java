@@ -29,6 +29,8 @@ public class Comment extends BaseTable {
 
 	private String rootId;
 
+	private Integer readCount;
+
 	public enum CommentType implements GenericEnum {
 
 		COURSE(1, "课程"),

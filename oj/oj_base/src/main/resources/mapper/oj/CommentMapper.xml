@@ -4,6 +4,16 @@
 <mapper namespace="com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper">
     <resultMap id="base" type="com.cyberpeace.oj.ojbase.dao.entity.Comment"/>
 
+    <update id="addReadCount">
+        UPDATE `oj_comment`
+        SET `read_count` = `read_count` + 1
+        WHERE `resource_id` IN
+        <foreach collection="commentIds" item="commentId" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
+
+
     <select id="firstByResource" resultMap="base">
         select * from oj_comment
         <where>

@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
 import com.cyberpeace.common.model.DeleteReq;
+import com.cyberpeace.common.util.StreamApiUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -28,6 +29,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+import java.util.List;
+
 @Api(tags = "oj-前台评论相关api")
 @RestController
 @RequestMapping("/oj/comment/")
@@ -49,6 +52,9 @@ public class WebCommentController {
 		}
 		ListRsp<CommentBo> listRsp = commentService.pageComment(page,
 				pageCommentReq.getBusinessId(), pageCommentReq.getBusinessType(), true);
+		// 统计查看数
+		List<String> rootCommentIds = StreamApiUtils.map(listRsp.getList(), CommentBo::getResourceId);
+		commentService.addReadCount(rootCommentIds);
 
 		return new BaseRsp(listRsp);
 	}

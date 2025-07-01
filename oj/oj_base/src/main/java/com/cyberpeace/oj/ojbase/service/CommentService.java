@@ -70,4 +70,13 @@ public interface CommentService {
 	 * @return
 	 */
 	Integer adminAddNewComment(Comment comment);
+
+	/**
+	 * 增加阅读量
+	 *
+	 * @param rootCommentIds 根评论id列表
+	 * @throws
+	 * @see List<String>
+	 */
+	void addReadCount(List<String> rootCommentIds);
 }

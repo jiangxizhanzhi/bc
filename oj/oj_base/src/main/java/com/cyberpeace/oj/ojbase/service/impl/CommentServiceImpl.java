@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -61,6 +62,14 @@ public class CommentServiceImpl implements CommentService {
 			throw new BusinessException(OjBusinessErrorCode.COMMENT_NOT_EXIST);
 		}
 		return commentMapper.insert(comment);
+	}
+
+	@Override
+	public void addReadCount(List<String> rootCommentIds) {
+		if(CollectionUtils.isEmpty(rootCommentIds)){
+			return;
+		}
+		commentMapper.addReadCount(rootCommentIds);
 	}
 
 	@Override

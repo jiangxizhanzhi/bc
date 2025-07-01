@@ -67,4 +67,7 @@ public class CommentBo implements Serializable {
 	@ApiModelProperty("最近回帖时间")
 	private Date lastReplyTime;
 
+	@ApiModelProperty("查看数")
+	private Integer readCount;
+
 }

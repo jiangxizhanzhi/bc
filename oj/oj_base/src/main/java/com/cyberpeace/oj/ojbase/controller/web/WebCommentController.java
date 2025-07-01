@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
+import com.cyberpeace.common.model.DeleteReq;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -78,6 +79,15 @@ public class WebCommentController {
 
 		Integer result = commentService.addNewComment(comment);
 		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("留言删除")
+	@DeleteMapping("")
+	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+
+		commentService.bathDeleteComment(deleteReq.getIds());
+
+		return new BaseRsp<>();
 	}
 
 }

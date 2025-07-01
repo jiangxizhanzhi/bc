@@ -346,7 +346,7 @@ public interface CrBusinessErrorCode {
 
 	/**
 	 * 无效标签数量
-	 */// 标签个数在1~4之间
+	 */
 	String INVALID_TAGS_NUM = "101064";
 
 	/**

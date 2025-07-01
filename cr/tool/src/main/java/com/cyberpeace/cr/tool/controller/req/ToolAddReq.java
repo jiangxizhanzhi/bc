@@ -7,10 +7,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.util.CollectionUtils;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -154,6 +156,9 @@ public class ToolAddReq implements Serializable {
 	public void validate() {
 		if (!StringUtils.isEmpty(this.name)){
 			CrCommonValidator.validateNameLen(this.name,  CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		}
+		if (!CollectionUtils.isEmpty(this.tag)){
+			CrCommonValidator.validateListMaxSize(this.tag,0,8, CrBusinessErrorCode.INVALID_TAGS_NUM);
 		}
 	}
 }

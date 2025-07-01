@@ -9,6 +9,7 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.util.CollectionUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -185,6 +186,30 @@ public class CrCommonValidator {
 	public static void validateNameLen(String target, String errorCode) {
 		validateLength(target, 1, 255,
 				errorCode);
+	}
+
+	/**
+	 * 校验列表个数
+	 *
+	 * @param target    目标
+	 * @param errorCode 错误代号
+	 */
+	public static void validateListMaxSize(List target, int minSize, int maxSize, String errorCode) {
+
+		if (CollectionUtils.isEmpty(target)) {
+			if (minSize == 0) {
+				return;
+			} else {
+				log.warn("target = null and minSize != 0");
+				return;
+			}
+		}
+
+		int size = target.size();
+		if (size < minSize || size > maxSize) {
+			log.error("list's size = [{}], it < [{}] or it > [{}]", size, minSize, maxSize);
+			throw new BusinessException(errorCode, minSize, maxSize);
+		}
 	}
 
 	/**

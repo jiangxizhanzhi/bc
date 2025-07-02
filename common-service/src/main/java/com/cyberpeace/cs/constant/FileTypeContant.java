@@ -15,7 +15,7 @@ public interface FileTypeContant {
 	String MD_ATTACHMENT_TYPE = "ZIP,RAR";
 
 	/** 课时附件上传限制类型*/
-	String LESSON_ATTACHMENT = "ZIP,RAR";
+	String LESSON_ATTACHMENT = "ZIP,RAR,XLS,XLSX";
 
 	/** 实操附件上传限制类型*/
 	String OPERATION_PRACTICE_ATTACHMENT = "ZIP";

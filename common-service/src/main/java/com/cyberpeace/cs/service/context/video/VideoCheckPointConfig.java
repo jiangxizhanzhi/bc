@@ -27,4 +27,8 @@ public class VideoCheckPointConfig {
 	 */
 	@ApiModelProperty(value = "自定义检查点列表")
 	private List<VideoCheckPointItem> customPoints = Lists.newArrayList();
+
+	public boolean isEmpty() {
+		return points.isEmpty() && customPoints.isEmpty();
+	}
 }

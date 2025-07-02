@@ -465,7 +465,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			if (StringUtils.isNotBlank(lesson.getVideoCheckPoint())) {
 				infoBo.setVideoCheckPointConfig(JsonUtil.toJsonObject(lesson.getVideoCheckPoint(),
 						VideoCheckPointConfig.class));
-			} else {
+			}
+			if (StringUtils.isBlank(lesson.getVideoCheckPoint())
+					|| infoBo.getVideoCheckPointConfig().isEmpty()) {
 				infoBo.setVideoCheckPointConfig(getDefaultCheckPointConfig(lesson));
 			}
 		}
@@ -662,6 +664,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 					BusinessCode.LESSON.getCode());
 			courseLesson.setTopoId(topoId);
 		}
+		// 不允许没有视频检查点
+		this.setDefaultVideoCheckPoint(courseLesson);
 
 		// 执行数据插入
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -743,6 +747,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			comment.setBusinessType(Comment.CommentType.LESSON.getCode());
 			comment.setBusinessId(courseLesson.getResourceId());
 		}
+
+		// 不允许没有视频检查点
+		this.setDefaultVideoCheckPoint(courseLesson);
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -2324,7 +2331,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	 * @see VideoCheckPointConfig
 	 */
 	private VideoCheckPointConfig getDefaultCheckPointConfig(CourseLesson lesson) {
-		int duration = VideoUtil.getVideoDuration(utilService.handlerFileUrl(lesson.getVideoUrl()));
+		VideoCheckPointConfig config = this.getDefaultCheckPointConfig(lesson.getVideoUrl());
+		lesson.setVideoCheckPoint(JsonUtil.toJsonString(config));
+		this.updateById(lesson);
+		return config;
+	}
+
+	private VideoCheckPointConfig getDefaultCheckPointConfig(String videoUrl) {
+		int duration = VideoUtil.getVideoDuration(utilService.handlerFileUrl(videoUrl));
 		if (duration == 0) {
 			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
 		}
@@ -2339,8 +2353,19 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		item.setTime(duration);
 		config.getPoints().add(item);
 
-		lesson.setVideoCheckPoint(JsonUtil.toJsonString(config));
-		this.updateById(lesson);
 		return config;
+	}
+
+	private void setDefaultVideoCheckPoint(CourseLesson lesson) {
+		if (StringUtils.isBlank(lesson.getVideoUrl())) {
+			return;
+		}
+		VideoCheckPointConfig config = JsonUtil.toJsonObject(lesson.getVideoCheckPoint(),
+				VideoCheckPointConfig.class);
+		if (!config.isEmpty()) {
+			return;
+		}
+		config = this.getDefaultCheckPointConfig(lesson.getVideoUrl());
+		lesson.setVideoCheckPoint(JsonUtil.toJsonString(config));
 	}
 }

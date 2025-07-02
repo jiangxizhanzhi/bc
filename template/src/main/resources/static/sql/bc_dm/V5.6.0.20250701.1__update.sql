@@ -11,3 +11,9 @@ update init_rtks_role set avatar = '/cpms/rtks_role/SecurityForensicsEngineer.pn
 update init_rtks_role set avatar = '/cpms/rtks_role/ReverseAnalysisEngineer.png' where resource_id = 'f7753c4236c6b6981a577118a686aeb3';
 update init_rtks_role set avatar = '/cpms/rtks_role/SecurityOperationMaintenanceEngineer.png' where resource_id = '542fc3e2caf0fa9b4935432ffe4daafa';
 COMMIT;
+
+ALTER TABLE "cr_train_record" ADD  CONSTRAINT "CRCHECKBTYPE" CHECK("business_type" >= 0) ENABLE ;
+ALTER TABLE "cr_rb_time_management" ADD  CONSTRAINT "CRCHECKRATE" CHECK("rate" >= 0) ENABLE ;
+ALTER TABLE "cr_rb_time_management" ADD  CONSTRAINT "CRCHECKSTATUS" CHECK("status" >= 0) ENABLE ;
+ALTER TABLE "cr_single_template" ADD  CONSTRAINT "CRCHECKDURATION" CHECK("duration_time" >= 0) ENABLE ;
+COMMIT;

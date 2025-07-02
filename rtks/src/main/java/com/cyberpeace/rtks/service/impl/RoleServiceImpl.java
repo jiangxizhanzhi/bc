@@ -153,8 +153,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 	 */
 	@Override
 	public void initDefaultFromPreset(String table) {
+
 		roleMapper.removeAll(table);
-		roleMapper.copyFromPreset(table);
+		String columns = roleMapper.getTableColumns(table);
+		roleMapper.copyFromPreset(table, columns);
 	}
 
 	/**

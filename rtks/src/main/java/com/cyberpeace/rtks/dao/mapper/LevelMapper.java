@@ -100,7 +100,9 @@ public interface LevelMapper extends BaseMapper<Level> {
 	 *
 	 * @throws
 	 */
-	void copyFromPreset();
+	void copyFromPreset(String columns);
+
+	String getTableColumns();
 
 	/**
 	 * 根据level name获取level id

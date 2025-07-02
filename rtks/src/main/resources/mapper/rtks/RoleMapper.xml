@@ -4,10 +4,25 @@
 <mapper namespace="com.cyberpeace.rtks.dao.mapper.RoleMapper">
 
     <insert id="copyFromPreset">
-        insert into rtks_${table}
-        select *
+        insert into rtks_${table} (${columns})
+        select ${columns}
         from init_rtks_${table};
     </insert>
+
+    <select id="getTableColumns" resultType="java.lang.String">
+        <choose>
+            <when test="@com.cyberpeace.config.db.MybatisConfig@DB_TYPE == 'dm'">
+                select listagg(column_name, ',') as columns
+                from ALL_TAB_COLUMNS
+            </when>
+            <otherwise>
+                select GROUP_CONCAT(column_name) as columns
+                from information_schema.columns
+            </otherwise>
+        </choose>
+        where table_name = 'rtks_${table}'
+        and column_name != 'id'
+    </select>
 
     <delete id="removeAll">
         delete

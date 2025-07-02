@@ -100,7 +100,16 @@ public interface RoleMapper extends BaseMapper<Role> {
 	 * @throws
 	 * @see String
 	 */
-	void copyFromPreset(String table);
+	void copyFromPreset(String table, String columns);
+
+	/**
+	 * 获取表字段
+	 *
+	 * @param table 表明
+	 * @throws
+	 * @see String
+	 */
+	String getTableColumns(String table);
 
 	/**
 	 * 查询岗位列表由id列表

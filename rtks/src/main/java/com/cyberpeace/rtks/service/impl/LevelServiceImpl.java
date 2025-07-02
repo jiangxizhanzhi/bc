@@ -109,7 +109,8 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	@Override
 	public void initDefaultFromPreset() {
 		levelMapper.clearAll();
-		levelMapper.copyFromPreset();
+		String columns = levelMapper.getTableColumns();
+		levelMapper.copyFromPreset(columns);
 	}
 
 	/**

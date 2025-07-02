@@ -64,9 +64,24 @@
         from rtks_level;
     </delete>
 
+    <select id="getTableColumns" resultType="java.lang.String">
+        <choose>
+            <when test="@com.cyberpeace.config.db.MybatisConfig@DB_TYPE == 'dm'">
+                select listagg(column_name, ',') as columns
+                from ALL_TAB_COLUMNS
+            </when>
+            <otherwise>
+                select GROUP_CONCAT(column_name) as columns
+                from information_schema.columns
+            </otherwise>
+        </choose>
+        where table_name = 'rtks_level'
+        and column_name != 'id'
+    </select>
+
     <insert id="copyFromPreset">
-        INSERT INTO rtks_level
-        SELECT *
+        INSERT INTO rtks_level (${columns})
+        SELECT ${columns}
         FROM init_rtks_level;
     </insert>
 </mapper>

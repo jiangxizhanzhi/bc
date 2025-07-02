@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.enums.BusinessType;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
@@ -182,8 +184,7 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
                     rbRoomContext.setDifficult(1);
                     rbRoomContext.setPreSkill(new ArrayList<>());
                     rbRoomContext.setTrainSkill(new ArrayList<>());
-//
-                    businessTemplate.getTrainTarget();
+                    businessTemplate.setTrainTarget(businessTemplate.getTrainTarget());
                     rbRoomService.create(rbRoomContext);
                 }
             //        上报内容
@@ -191,6 +192,8 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
                 businessTemplate.setReportStatus(true);
                 businessTemplateMapper.updateById(businessTemplate);
                 return networkTopoVO;
+            }else {
+                throw new BusinessException(ErrorCode.UNITE_REPORT);
             }
         }
         return null;

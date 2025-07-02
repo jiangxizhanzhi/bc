@@ -245,6 +245,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		BusinessTemplate businessTemplate = businessTemplateService
 				.getById(template.getBusinessTemplateId());
 
+		rbRoomContext.setBusinessType(businessTemplate.getBusinessType());
+
 		RbRoom rbRoom = new RbRoom(rbRoomContext, template);
 		rbRoom.setCreateUserId(userId);
 		rbRoom.setCopyedTopoId(localSceneService.copyTopo(businessTemplate.getTopoId(), rbRoom.getName()));

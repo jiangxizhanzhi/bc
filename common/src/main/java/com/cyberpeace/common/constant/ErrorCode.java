@@ -219,4 +219,9 @@ public final class ErrorCode {
 	 * 分片丢失，请重新上传
 	 */
 	public static final String CHUNK_MISSING = "100065";
+
+	/**
+	 * 训练已上报
+	 */
+	public static final String UNITE_REPORT = "100066";
 }

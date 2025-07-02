@@ -94,7 +94,7 @@
             tp.name,
             <choose>
                 <when test="@com.cyberpeace.config.db.MybatisConfig@DB_TYPE == 'dm'">
-                    WM_CONCAT(c.resource_id) as room_ids,
+                    LISTAGG(c.resource_id, ',') as room_ids,
                 </when>
                 <otherwise>
                     group_concat(c.resource_id SEPARATOR ',') as room_ids,

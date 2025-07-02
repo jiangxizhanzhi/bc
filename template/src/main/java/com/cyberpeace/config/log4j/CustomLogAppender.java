@@ -226,26 +226,26 @@ public class CustomLogAppender extends FileAppender {
     @Override
     public void activateOptions() {
         super.activateOptions();
-        if (fileName != null) {
-            sdf = new SimpleDateFormat(datePattern);
-            File file = new File(fileName);
-            // 获取最后更新时间拼成的文件名
-            scheduledFilename = fileName.substring(0, fileName.lastIndexOf(".")) + "_" + sdf.format(new Date(file.lastModified())) + "." + FileUtil.getFileSuffix(fileName);
-        } else {
-            log.error("File is not set for appender [" + name + "].");
-        }
-        if (maxBackupIndex <= 0) {
-            log.error("maxBackupIndex reset to default 5,original value is:" + maxBackupIndex);
-            maxBackupIndex = 5;
-        }
-        if (maxDaysIndex <= 0) {
-            log.error("maxDaysIndex reset to default 15,original value is:" + maxDaysIndex);
-            maxDaysIndex = 15;
-        }
-        if (maxFileSize <= 0) {
-            log.error("maxFileSize reset to default 20MB,original value is:" + maxFileSize);
-            maxFileSize = 20971520L;
-        }
+//        if (fileName != null) {
+//            sdf = new SimpleDateFormat(datePattern);
+//            File file = new File(fileName);
+//            // 获取最后更新时间拼成的文件名
+//            scheduledFilename = fileName.substring(0, fileName.lastIndexOf(".")) + "_" + sdf.format(new Date(file.lastModified())) + "." + FileUtil.getFileSuffix(fileName);
+//        } else {
+//            log.error("File is not set for appender [" + name + "].");
+//        }
+//        if (maxBackupIndex <= 0) {
+//            log.error("maxBackupIndex reset to default 5,original value is:" + maxBackupIndex);
+//            maxBackupIndex = 5;
+//        }
+//        if (maxDaysIndex <= 0) {
+//            log.error("maxDaysIndex reset to default 15,original value is:" + maxDaysIndex);
+//            maxDaysIndex = 15;
+//        }
+//        if (maxFileSize <= 0) {
+//            log.error("maxFileSize reset to default 20MB,original value is:" + maxFileSize);
+//            maxFileSize = 20971520L;
+//        }
     }
 
     /**

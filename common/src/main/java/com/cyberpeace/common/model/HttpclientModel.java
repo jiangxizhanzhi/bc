@@ -104,8 +104,8 @@ public class HttpclientModel {
 	 * @param e e
 	 */
 	public void doRemoteException(Exception e) {
-		callTime = System.currentTimeMillis() - startTime;
-		LOG.error(LOG_FORMATTER, new Object[] { callTime, method, url, null }, e);
+//		callTime = System.currentTimeMillis() - startTime;
+//		LOG.error(LOG_FORMATTER, new Object[] { callTime, method, url, null }, e);
 	}
 
 	/**
@@ -114,14 +114,14 @@ public class HttpclientModel {
 	 * @param httpResponse HTTP 响应
 	 */
 	public void addLog(String httpResponse) {
-		callTime = System.currentTimeMillis() - startTime;
-		// debug的时候才输出接口返回， 正常情况下输出调用时间，结果可以忽略
-		if (LOG.isDebugEnabled()) {
-			LOG.debug(LOG_FORMATTER, new Object[] { callTime, method, url, httpResponse });
-		}
-		if (LOG.isInfoEnabled()) {
-			LOG.info(LOG_FORMATTER, new Object[] { callTime, method, url, "success" });
-		}
+//		callTime = System.currentTimeMillis() - startTime;
+//		// debug的时候才输出接口返回， 正常情况下输出调用时间，结果可以忽略
+//		if (LOG.isDebugEnabled()) {
+//			LOG.debug(LOG_FORMATTER, new Object[] { callTime, method, url, httpResponse });
+//		}
+//		if (LOG.isInfoEnabled()) {
+//			LOG.info(LOG_FORMATTER, new Object[] { callTime, method, url, "success" });
+//		}
 	}
 }
 

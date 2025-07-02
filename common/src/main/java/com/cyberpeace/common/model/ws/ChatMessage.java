@@ -90,12 +90,12 @@ public class ChatMessage {
 	 */
 	private long timestamp;
 
-	/**
-	 * 设置时间戳
-	 */
-	public void setTimestamp() {
-		timestamp = System.currentTimeMillis();
-	}
+//	/**
+//	 * 设置时间戳
+//	 */
+//	public void setTimestamp() {
+//		timestamp = System.currentTimeMillis();
+//	}
 
 	/**
 	 * uuid

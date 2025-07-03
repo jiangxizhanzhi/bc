@@ -1,12 +1,12 @@
 package com.cyberpeace.oj.course.service.bo;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 @Data
 @ApiModel
@@ -71,5 +71,8 @@ public class ClassroomBo implements Serializable {
 
 	@ApiModelProperty(value = "是否展示任务指导")
 	private Boolean showGuidance;
+
+	@ApiModelProperty(value = "是否可以跳转")
+	private Boolean accessible = true;
 
 }

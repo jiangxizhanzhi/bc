@@ -1,20 +1,5 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.oj.course.service.bo.classroom.ClassroomConclusionBo;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -57,6 +42,7 @@ import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
 import com.cyberpeace.oj.course.service.ClassroomSceneRecordService;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.*;
+import com.cyberpeace.oj.course.service.bo.classroom.ClassroomConclusionBo;
 import com.cyberpeace.oj.course.service.bo.classroom.ClassroomStatisticsBo;
 import com.cyberpeace.oj.ojbase.constant.*;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
@@ -81,8 +67,20 @@ import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -2254,9 +2252,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				inaccessible.add(classroomList.get(i).getResourceId());
 			}
 		}
-		
-		List<Classroom> filtered = StreamApiUtils.filter(classrooms,
-				c -> !inaccessible.contains(c.getResourceId()));
+
+		List<Classroom> filtered = classrooms;
+
+//		List<Classroom> filtered = StreamApiUtils.filter(classrooms,
+//				c -> !inaccessible.contains(c.getResourceId()));
 		List<Course> courseList = courseMapper
 				.selectBatchIds(StreamApiUtils.map(filtered, Classroom::getCourseId));
 		Map<String, Course> courseMap = StreamApiUtils.toMap(courseList, Course::getResourceId,
@@ -2276,6 +2276,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		for (Classroom classroom : filtered) {
 			ClassroomBo classroomBo = BeanUtils.copy(classroom, ClassroomBo.class);
+			if (inaccessible.contains(classroom.getResourceId())) {
+				classroomBo.setAccessible(false);
+			}
 
 			// 课程数据组装
 			Course course = courseMap.get(classroom.getCourseId());

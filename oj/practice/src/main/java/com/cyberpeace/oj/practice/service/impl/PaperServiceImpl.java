@@ -167,6 +167,10 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		List<PracticeOperationRef> operationRefs = Lists.newArrayList();
 		setPaperRelateData(paper, theoryRefList, operationRefs, paperContext.getPracticeList());
 
+		// 清除所有PracticeTheoryRef和PracticeOperationRef的ID
+		theoryRefList.forEach(item -> item.setId(null));
+		operationRefs.forEach(item -> item.setId(null));
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override

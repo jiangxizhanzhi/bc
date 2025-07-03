@@ -239,6 +239,9 @@ public class CrRole extends BaseTable {
 		return isInGroup(RbRoleGroup.ADMIN) || isInGroup(RbRoleGroup.DIRECTOR) || isInGroup(RbRoleGroup.REFEREE);
 	}
 
+	public boolean isRvbTeacher() {
+		return isInGroup(RbRoleGroup.DIRECTOR) || isInGroup(RbRoleGroup.REFEREE);
+	}
 
 	/**
 	 * 单兵训练

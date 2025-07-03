@@ -1,5 +1,15 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -30,21 +40,14 @@ import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
 import com.cyberpeace.cs.service.context.BadgeBo;
 import com.cyberpeace.cs.service.context.IdNameType;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.service.SituationHandlerService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 团队训练教员Controller
@@ -117,6 +120,9 @@ public class TeamTrainTeacherController {
 	 */
 	@Autowired
 	private SituationHandlerService situationHandlerService;
+
+	@Autowired
+	private RemoteSceneService remoteSceneService;
 
 	/**
 	 * 获取会话
@@ -390,6 +396,21 @@ public class TeamTrainTeacherController {
 		nodeList.addAll(areaList);
 		playbackOptionRsp.setNodeList(nodeList);
 		return new BaseRsp<>(playbackOptionRsp);
+	}
+
+	@ApiOperation("获取录屏列表")
+	@GetMapping("/screenrecord/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<JSONObject> getScreenRecordList(
+			@ApiParam(name = "page", value = "页号") @RequestParam("page") String page,
+			@ApiParam(name = "per_page", value = "每页大小") @RequestParam("per_page") String perPage,
+			@ApiParam(name = "csceneId", value = "场景ID") @RequestParam("csceneId") String csceneId,
+			@ApiParam(name = "userId", value = "用户ID") @RequestParam("userId") String userId,
+			@ApiParam(name = "resource_id", value = "训练ID") @RequestParam("resource_id") String resourceId) {
+
+		// 校验业务权限
+		teamRoomService.checkTeacherPermission(resourceId, UserInfoContext.getUserContext().getUserId());
+		return new BaseRsp<>(remoteSceneService.getScreenRecord(page, perPage, csceneId, userId));
 	}
 
 }

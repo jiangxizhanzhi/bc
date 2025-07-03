@@ -397,6 +397,13 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	private String GET_BY_AREA_URL;
 
 	/**
+	 * 获取场景录屏列表网址
+	 *
+	 * @see String
+	 */
+	private String SCENE_RECORD_LIST_URL;
+
+	/**
 	 * 初始化
 	 *
 	 * @throws
@@ -503,6 +510,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		HOST_EVENT_LIST = MP_HOST + ConfigUtil.getContextProperty("host.event.list");
 
 		GET_BY_AREA_URL = MP_HOST + ConfigUtil.getContextProperty("scene.by.area");
+
+		SCENE_RECORD_LIST_URL = MP_HOST + ConfigUtil.getContextProperty("scene.record.list");
 	}
 
 	/**
@@ -1420,6 +1429,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public JSONObject getByArea(String sceneId, String areaId) {
 		String requestUrl = String.format(GET_BY_AREA_URL, sceneId, areaId);
+		return HttpClientUtil.rawGet(requestUrl, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject getScreenRecord(String page, String perPage, String csceneId, String userId){
+		String requestUrl = String.format(SCENE_RECORD_LIST_URL, page, perPage, csceneId, userId);
 		return HttpClientUtil.rawGet(requestUrl, JSONObject.class);
 	}
 

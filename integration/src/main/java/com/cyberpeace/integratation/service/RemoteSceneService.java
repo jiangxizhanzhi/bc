@@ -600,4 +600,14 @@ public interface RemoteSceneService {
 	 * @see JSONObject
 	 */
 	JSONObject getByArea(String sceneId, String areaId);
+	
+	/**
+	 * 获取场景下录屏数据
+	 *
+	 * @param page 页号
+	 * @param perPage 每页大小
+	 * @param csceneId 场景id
+	 * @param userId 用户id
+	 */
+	JSONObject getScreenRecord(String page, String perPage, String csceneId, String userId);
 }

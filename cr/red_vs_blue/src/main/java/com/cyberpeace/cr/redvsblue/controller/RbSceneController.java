@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.entity.CrRole;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -52,6 +53,7 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -121,6 +123,10 @@ public class RbSceneController {
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+
+	@Autowired
+	private RemoteSceneService remoteSceneService;
 
 	/**
 	 * 场景不启动日志
@@ -658,5 +664,25 @@ public class RbSceneController {
 			}
 		}
 		return commonDeviceContexts;
+	}
+
+	@ApiOperation("获取录屏列表")
+	@GetMapping("/screenrecord/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<JSONObject> getScreenRecordList(
+			@ApiParam(name = "page", value = "页号") @RequestParam("page") String page,
+			@ApiParam(name = "per_page", value = "每页大小") @RequestParam("per_page") String perPage,
+			@ApiParam(name = "csceneId", value = "场景ID") @RequestParam("csceneId") String csceneId,
+			@ApiParam(name = "userId", value = "用户ID") @RequestParam("userId") String userId,
+			@ApiParam(name = "resource_id", value = "训练ID") @RequestParam("resource_id") String resourceId) {
+
+		// 校验业务权限
+		CrRole role = rbRoomService.checkRoomPermission(resourceId, UserInfoContext.getUserContext().getUserId());
+		if (!role.isRvbTeacher()) {
+			log.error("user does not have RbRoom teacher Permission！roomId=[{}], userId=[{}]",
+					resourceId, userId);
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
+		return new BaseRsp<>(remoteSceneService.getScreenRecord(page, perPage, csceneId, userId));
 	}
 }

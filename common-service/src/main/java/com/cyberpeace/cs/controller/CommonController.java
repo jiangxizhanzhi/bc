@@ -1,6 +1,8 @@
 package com.cyberpeace.cs.controller;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -10,12 +12,14 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ExtractBase;
@@ -72,15 +76,29 @@ public class CommonController {
 		MD_UPLOAD_NAME_LEN = ConfigUtil.getContextProperty("md.upload.name.len.max");
 	}
 
+	@ApiOperation("前台图片上传")
+	@PostMapping("/web/image_upload")
+	public BaseRsp<AttachmentBo> webImageUpload(FileCommonUploadReq fileCommonUploadReq) {
+		return imageUpload(fileCommonUploadReq);
+	}
+
+	@ApiOperation("后台图片上传")
+	@PostMapping("/admin/image_upload")
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_THEORY_PRACTICE,
+			MenuConstant.CMS_PRACTICE_OPERATION, MenuConstant.CMS_EXERCISES, MenuConstant.CMS_TOOL,
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_TEAM_TRAIN,
+			MenuConstant.CMS_RED_VS_BLUE })
+	public BaseRsp<AttachmentBo> adminImageUpload(FileCommonUploadReq fileCommonUploadReq) {
+		return imageUpload(fileCommonUploadReq);
+	}
+
 	/**
 	 * 图片上传
 	 *
 	 * @param fileCommonUploadReq 文件常见上传请求体
 	 * @return {@code BaseRsp<AttachmentBo> }
 	 */
-	@ApiOperation("图片上传")
-	@PostMapping("/image_upload")
-	public BaseRsp<AttachmentBo> imageUpload(FileCommonUploadReq fileCommonUploadReq) {
+	protected BaseRsp<AttachmentBo> imageUpload(FileCommonUploadReq fileCommonUploadReq) {
 		String fileName = fileCommonUploadReq.getFile().getOriginalFilename();
 		if (null != fileCommonUploadReq.getType()) {
 			// 获取需要校验的数据
@@ -111,15 +129,29 @@ public class CommonController {
 		return new BaseRsp<>(attachmentBo);
 	}
 
+
+	@ApiOperation("前台附件上传")
+	@PostMapping("/web/attachment_upload")
+	public BaseRsp<AttachmentBo> webAttachmentUpload(FileCommonUploadReq fileCommonUploadReq) {
+		return attachmentUpload(fileCommonUploadReq);
+	}
+
+	@ApiOperation("后台附件上传")
+	@PostMapping("/admin/attachment_upload")
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_THEORY_PRACTICE,
+			MenuConstant.CMS_PRACTICE_OPERATION, MenuConstant.CMS_CR_MISSION_SCHEME,
+			MenuConstant.CMS_TOOL })
+	public BaseRsp<AttachmentBo> adminAttachmentUpload(FileCommonUploadReq fileCommonUploadReq) {
+		return attachmentUpload(fileCommonUploadReq);
+	}
+
 	/**
 	 * 附件上传
 	 *
 	 * @param fileCommonUploadReq 文件常见上传请求体
 	 * @return {@code BaseRsp<AttachmentBo> }
 	 */
-	@ApiOperation("附件上传")
-	@PostMapping("/attachment_upload")
-	public BaseRsp<AttachmentBo> attachmentUpload(FileCommonUploadReq fileCommonUploadReq) {
+	protected BaseRsp<AttachmentBo> attachmentUpload(FileCommonUploadReq fileCommonUploadReq) {
 
 		// 获取需要校验的数据
 		UploadAttachmentPermission filePermission = EnumUtils

@@ -1137,14 +1137,15 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
                 true);
         List<String> orgUserIds = StreamApiUtils.map(userInfos, UserInfo::getUserId);
         List<ClassroomSign> signList = classroomSignMapper.selectByRoom(classroom.getResourceId());
+        // 5.6.0 update: 统计访问过课堂的用户，不仅仅是手动签到过的用户
         List<ClassroomSign> signIns = StreamApiUtils.filter(signList,
                 classroomSign -> orgUserIds.contains(classroomSign.getUserId())
-                        && classroomSign.getSignIn());
+                        );
         List<String> signUsers = StreamApiUtils.map(signIns, ClassroomSign::getUserId);
 
         // 查询所有笔记
         List<Note> notes = new ArrayList<>();
-        // 仅统计签到过的用户
+        // 5.6.0 update: 统计访问过课堂的用户，不仅仅是手动签到过的用户
         if (!signUsers.isEmpty()) {
             NoteListQuery listQuery = NoteListQuery.builder()
                     .noteType(Note.NoteType.REPORT.getCode())
@@ -2465,7 +2466,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
         SignInfoBo signInfoBo = new SignInfoBo();
 
-        // 签到数量
+        // 签到数量; 5.6.0 update:signIn 可能为false
+        signIns = StreamApiUtils.filter(signIns, ClassroomSign::getSignIn);
         signInfoBo.setIsSign(signIns.size());
         signInfoBo.setNotSign(orgUserIds.size() - signIns.size());
 
@@ -2628,20 +2630,20 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @see Map<String, ClassroomSign>
      * @see ClassroomMonitorBo
      */
-    private ClassroomMonitorBo userToMonitorBo(UserInfo userInfo,
-                                               Map<String, ClassroomSign> userSignMap) {
+	private ClassroomMonitorBo userToMonitorBo(UserInfo userInfo,
+			Map<String, ClassroomSign> userSignMap) {
 
-        ClassroomMonitorBo monitorBo = BeanUtils.copy(userInfo, ClassroomMonitorBo.class);
+		ClassroomMonitorBo monitorBo = BeanUtils.copy(userInfo, ClassroomMonitorBo.class);
 
-        // 签到数据
-        ClassroomSign classroomSign = userSignMap.get(userInfo.getUserId());
-        monitorBo.setSignIn(null != classroomSign);
-        monitorBo.setNeedHelp(
-                null != classroomSign && StringUtils.isNotBlank(classroomSign.getNodeId()));
-        monitorBo.setSignInTime(null != classroomSign ? classroomSign.getSignInTime() : null);
-
-        return monitorBo;
-    }
+		// 签到数据
+		ClassroomSign classroomSign = userSignMap.get(userInfo.getUserId());
+		monitorBo.setSignIn(null != classroomSign && classroomSign.getSignIn());
+		monitorBo.setNeedHelp(
+				null != classroomSign && StringUtils.isNotBlank(classroomSign.getNodeId()));
+		monitorBo.setSignInTime(
+				null != classroomSign && classroomSign.getSignIn() ? classroomSign.getSignInTime() : null);
+		return monitorBo;
+	}
 
     /**
      * 获取信息

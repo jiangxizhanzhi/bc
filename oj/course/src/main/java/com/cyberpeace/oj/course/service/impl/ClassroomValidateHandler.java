@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
@@ -121,7 +120,7 @@ public class ClassroomValidateHandler {
 		ClassroomSign classroomSign = classroomSignMapper.selectByRoomAndUser(classroomId, userId);
 		if (null == classroomSign) {
 			log.error("classroomId:[{}] user:[{}] doesn't sign",classroomId, userId);
-			throw new BusinessException(OjBusinessErrorCode.CLASS_NOT_SIGN);
+			throw new BusinessException(OjBusinessErrorCode.CLASS_NOT_ACCESS);
 		}
 
 		return classroomSign;

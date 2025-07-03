@@ -120,9 +120,9 @@ public final class OjBusinessErrorCode {
 	public static final String LESSON_DIR_NAME_ERROR = "102020";
 
 	/**
-	 * 课堂未签到
+	 * 课堂未访问，查看课堂详情视为访问
 	 */
-	public static final String CLASS_NOT_SIGN = "102021";
+	public static final String CLASS_NOT_ACCESS = "102021";
 
 	/**
 	 * 其他机器正在进行远程协助

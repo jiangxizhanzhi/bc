@@ -380,6 +380,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	 */
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
+	
+	@Autowired
+	private ClassroomSignService classroomSignService;
 
 	/**
 	 * 获取课时详情
@@ -495,6 +498,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 					&& current.before(classroom.getEndTime())) {
 				infoBo.setRoomId(roomId);
 			}
+			
+			// 如果是课堂，且未签到，则创建签到为 false 的签到。不然求助流程无法进行
+			classroomSignService.access(roomId);
 		}
 
 		// 查询课时场景信息
@@ -538,7 +544,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			// 存在学习记录 则更新学习时间
 			lessonRecordMapper.updateLearnedTime(lessonId, courseId, authContext.getUserId(), learnedType, StringUtils.isBlank(roomId) ? "" : roomId);
 		}
-
+		
 		return infoBo;
 	}
 

@@ -344,7 +344,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 			List<String> userIds = JsonUtil.toJsonObjectArray(groupInfo.getGroupUserIds(),
 					String.class);
 
-			// 获取签到信息
+			// 获取访问信息
 			List<ClassroomSign> signList = StreamApiUtils.map(userIds, userId -> {
 				ClassroomSign classroomSign = classroomSignMapper
 						.selectByRoomAndUser(groupInfo.getClassroomId(), userId);

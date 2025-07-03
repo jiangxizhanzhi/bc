@@ -176,8 +176,14 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 
 			// 如果存在则返回
 			if (null != currentSign) {
-				log.info("课堂 {} 中的用户 {} 重复签到", classroomId, authContext.getUserId());
-				return true;
+				if (Boolean.TRUE.equals(currentSign.getSignIn())) {
+					log.info("课堂 {} 中的用户 {} 重复签到", classroomId, authContext.getUserId());
+					return true;
+				} else {
+					currentSign.setSignIn(true);
+					currentSign.setSignInTime(new Date());
+					return classroomSignMapper.updateById(currentSign) > 0;
+				}
 			}
 
 			ClassroomSign sign = ClassroomSign.builder().signIn(CommonConstant.TRUE)
@@ -216,7 +222,7 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 				classroom.getResourceId(), UserInfoContext.getUserContext().getUserId());
 		if (null == classroomSign) {
 			log.error("classroom:[{}] userId[{}]  doesn't sign", classroom.getResourceId(), UserInfoContext.getUserContext().getUserId());
-			throw new BusinessException(OjBusinessErrorCode.CLASS_NOT_SIGN);
+			throw new BusinessException(OjBusinessErrorCode.CLASS_NOT_ACCESS);
 		}
 
 		// 不能同时两台虚拟机都远程协助
@@ -420,6 +426,23 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		}
 
 		return assistanceMap.get(userId);
+	}
+
+	@Override
+	public void access(String classroomId) {
+		// 查看课堂详情接口已经检查过权限，此处不做权限校验
+		ClassroomSign currentSign = classroomSignMapper.selectByRoomAndUser(classroomId,
+				UserInfoContext.getUserContext().getUserId());
+
+		// 如果存在则返回
+		if (null == currentSign) {
+			ClassroomSign sign = ClassroomSign.builder().signIn(CommonConstant.FALSE)
+					.classroomId(classroomId).resourceId(IDGeneratorUtil.getID())
+					.signInTime(new Date()).userId(UserInfoContext.getUserContext().getUserId())
+					.build();
+
+			classroomSignMapper.insert(sign);
+		}
 	}
 
 	/**

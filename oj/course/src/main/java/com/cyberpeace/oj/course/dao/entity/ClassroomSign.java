@@ -12,6 +12,9 @@ import lombok.*;
 
 /**
  * 教室标志
+ * 5.6 update: 5.6自动签到取消，而该表实际上也和协助、监控功能相关，导致未签到情况下无法请求协助；所以将原先的自动签到功能移动到访问课堂接口中
+ * 见CourseLessonService.getLessonDetail
+ * 手动签到功能signIn=true，自动签到signIn=false
  *
  * @author SN
  * @version 1.0.0

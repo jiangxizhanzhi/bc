@@ -92,4 +92,13 @@ ClassroomSignService extends IService<ClassroomSign> {
 	 * @see String
 	 */
 	String getHelpUrl(String classroomId, String userId);
+
+	/**
+	 * 生成访问记录
+	 *
+	 * @param classroomId classroomid
+	 * @throws
+	 * @see String
+	 */
+	void access(String classroomId);
 }

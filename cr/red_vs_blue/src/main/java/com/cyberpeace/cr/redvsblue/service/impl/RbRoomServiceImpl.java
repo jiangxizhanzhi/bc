@@ -1341,7 +1341,15 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 					.equals(rbTimeManagement.getStatus())) {
 				endTime = rbTimeManagement.getUpdateTime();
 			} else {
-				endTime = new Date();
+				long startToEnd = rbRoom.getEndTime().getTime() - rbRoom.getStartTime().getTime();
+				Date now = new Date();
+				long sceneStartToNow = now.getTime() - startTime.getTime();
+				// 训练时长大于实际开始时间到当前时间的时长，时间间隔取训练时长,否则取当前时间
+				if (startToEnd >= sceneStartToNow) {
+					endTime = new Date(startToEnd + startTime.getTime());
+				} else {
+					endTime = now;
+				}
 			}
 		}
 		timeLineData.setStartTime(startTime);

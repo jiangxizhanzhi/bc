@@ -155,7 +155,7 @@ public class ToolAddReq implements Serializable {
 			CrCommonValidator.validateNameLen(this.name,  CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		}
 		if (StringUtils.isNotBlank(this.introduction)){
-			CrCommonValidator.validateLength(this.introduction, 1, 960,
+			CrCommonValidator.validateLength(this.introduction, 1, 2048,
 					CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		}
 		if (!CollectionUtils.isEmpty(this.tag)){

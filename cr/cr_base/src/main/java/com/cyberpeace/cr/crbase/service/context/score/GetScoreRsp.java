@@ -210,11 +210,11 @@ public class GetScoreRsp implements Serializable {
 						&& missionMap.get(a.getMissionId()).isObjective() && a.getScore() != null)
 				.mapToInt(CrTask::getScore).sum();
 		CrScore crScore = scoreMap.getOrDefault(userId, new CrScore());
-		this.abilityScore = JsonUtil.toJsonObjectArray(crScore.getSkillScore(), Integer.class)
-				.stream().filter(Objects::nonNull).mapToInt(Integer::intValue).sum() * SCORE_PER_STAR;
 		List<Integer> scoreList = JsonUtil.toJsonObjectArray(crScore.getSkillScore(), Integer.class);
 		scoreList = CollectionUtils.isEmpty(scoreList) ? Arrays.asList(0, 0, 0, 0, 0) : scoreList;
-		this.abilityScoreList = scoreList.stream().map(item -> item * SCORE_PER_STAR).collect(Collectors.toList());
+		this.abilityScore = scoreList
+				.stream().filter(Objects::nonNull).mapToInt(Integer::intValue).sum() * SCORE_PER_STAR;
+		this.abilityScoreList = scoreList;
 		this.scoreRemark = crScore.getComment();
 		this.synthesisScore = scoreMap.containsKey(userId) ? scoreMap.get(userId).getFinalScore()
 				: 0;

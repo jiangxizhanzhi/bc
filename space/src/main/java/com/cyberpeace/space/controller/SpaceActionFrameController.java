@@ -178,6 +178,10 @@ public class SpaceActionFrameController extends SpaceActionFrameBaseController<S
     @ApiOperation("保存框架")
     @PostMapping("/frame")
     public BaseRsp saveFrame(@RequestBody ActionFrameArrangeBo req) {
+        SpaceActionFrame frame = baseService.getById(req.getResourceId());
+        if ( frame!= null && frame.getBuiltin()) {
+            throw new BusinessException(SpaceError.BUILTIN_CANNOT_UPDATE);
+        }
         req.checkTacticDuplication();
         service.saveFrame(req);
         return new BaseRsp<>();
@@ -223,6 +227,9 @@ public class SpaceActionFrameController extends SpaceActionFrameBaseController<S
 
     @Override
     public void checkValue(SpaceActionFrame entity) {
+        if (entity.getBuiltin()) {
+            throw new BusinessException(SpaceError.BUILTIN_CANNOT_UPDATE);
+        }
         if (!org.apache.commons.lang3.StringUtils.isEmpty(entity.getAnalyze())) {
             CrCommonValidator.validateLength(entity.getAnalyze(), 1, 960,
                     CrBusinessErrorCode.ILLEGAL_NAME_LEN);

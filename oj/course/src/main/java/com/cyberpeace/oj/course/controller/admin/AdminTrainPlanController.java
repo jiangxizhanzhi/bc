@@ -1,7 +1,26 @@
 package com.cyberpeace.oj.course.controller.admin;
 
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.model.*;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.integratation.service.RemoteOrganizationService;
+import com.cyberpeace.oj.course.controller.req.TrainPlanAddReq;
+import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
+import com.cyberpeace.oj.course.controller.req.TrainPlanUpdateReq;
+import com.cyberpeace.oj.course.controller.res.ListRspWithS;
+import com.cyberpeace.oj.course.controller.res.TrainPlanRsp;
+import com.cyberpeace.oj.course.dao.entity.TrainPlan;
+import com.cyberpeace.oj.course.service.ClassroomService;
+import com.cyberpeace.oj.course.service.TrainPlanService;
+import com.cyberpeace.oj.course.service.bo.TrainPlanBo;
+import com.cyberpeace.oj.course.service.bo.TrainPlanContext;
+import com.cyberpeace.oj.course.service.bo.classroom.PlanProgressBo;
+import com.cyberpeace.oj.course.service.impl.ClassroomValidateHandler;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -12,27 +31,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.*;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.integratation.service.RemoteOrganizationService;
-import com.cyberpeace.oj.course.controller.req.TrainPlanAddReq;
-import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
-import com.cyberpeace.oj.course.controller.req.TrainPlanUpdateReq;
-import com.cyberpeace.oj.course.controller.res.TrainPlanRsp;
-import com.cyberpeace.oj.course.dao.entity.TrainPlan;
-import com.cyberpeace.oj.course.service.ClassroomService;
-import com.cyberpeace.oj.course.service.TrainPlanService;
-import com.cyberpeace.oj.course.service.bo.TrainPlanBo;
-import com.cyberpeace.oj.course.service.bo.TrainPlanContext;
-import com.cyberpeace.oj.course.service.bo.classroom.PlanProgressBo;
-import com.cyberpeace.oj.course.service.impl.ClassroomValidateHandler;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import java.util.List;
 
 @Api(tags = "oj-后台训练计划相关api")
 @RequiresAuthentication
@@ -186,7 +185,7 @@ public class AdminTrainPlanController {
 
 	@ApiOperation("课程进度查看")
 	@GetMapping("/progress")
-	public BaseRsp<ListRsp<PlanProgressBo>> getProgress(
+	public BaseRsp<ListRspWithS> getProgress(
 			@ApiParam(value = "教学课程id", name = "plan_id") String plan_id,
 			@ApiParam(value = "搜索学号、姓名、小组", name = "search") String search, PageReqBase pageReq) {
 		List<PlanProgressBo> res = trainPlanService.getProgress(plan_id);
@@ -195,8 +194,12 @@ public class AdminTrainPlanController {
 			res = StreamApiUtils.filter(res, bo -> bo.getUsername().contains(search)
 					|| bo.getName().contains(search) || bo.getOrgName().contains(search));
 		}
+		int finishedStudentCount = StreamApiUtils.filter(res, bo -> bo.getFinished() > 0 && bo.getUnfinished() == 0).size();
 		ListRsp<PlanProgressBo> rsp = PageUtil.pageList(res, pageReq.getPage(),
 				pageReq.getPerPage());
-		return new BaseRsp<>(rsp);
+		ListRspWithS rspWithS = new ListRspWithS(rsp);
+		rspWithS.setFinishedStudentCount(finishedStudentCount);
+		rspWithS.setUnfinishedStudentCount(res.size() - finishedStudentCount);
+		return new BaseRsp<>(rspWithS);
 	}
 }

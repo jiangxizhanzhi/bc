@@ -1,13 +1,15 @@
 package com.cyberpeace.space.controller;
 
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.space.constant.SpaceError;
 import com.cyberpeace.space.dao.entity.SpaceActionFrame;
-import com.cyberpeace.space.dao.entity.SpaceRoundMechanismRule;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.controller.SpaceActionFrameBaseController;
 import com.cyberpeace.space.service.SpaceActionFrameEventTypeService;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 空间动作帧控制器
@@ -231,6 +234,16 @@ public class SpaceActionFrameController extends SpaceActionFrameBaseController<S
 
         if (!org.apache.commons.lang3.StringUtils.isEmpty(entity.getTag())) {
             CrCommonValidator.validateNameLen(entity.getTag(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+        }
+    }
+
+    @Override
+    protected void checkReference(List<String> ids) {
+        List<SpaceActionFrame> actionFrameList = baseService.listByIds(ids);
+        List<String> names = actionFrameList.stream().filter(SpaceActionFrame::getBuiltin).map(SpaceActionFrame::getName).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(names)) {
+            String name = String.join(",", names);
+            throw new BusinessException(SpaceError.BUILTIN_CANNOT_DELETE, name);
         }
     }
 

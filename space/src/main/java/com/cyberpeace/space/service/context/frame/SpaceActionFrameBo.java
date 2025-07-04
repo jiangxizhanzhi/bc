@@ -72,6 +72,9 @@ public class SpaceActionFrameBo extends SpaceFrameBoBase {
 	@ApiModelProperty(value = "攻防动作解析")
 	private String analyze;
 
+	@ApiModelProperty(value = "是否内置")
+	private Boolean builtin;
+
 	public SpaceActionFrame bo2Entity() {
 		SpaceActionFrame entity = BeanUtils.copy(this, SpaceActionFrame.class);
 		entity.setTag(JsonUtil.arrayToString(this.tag));

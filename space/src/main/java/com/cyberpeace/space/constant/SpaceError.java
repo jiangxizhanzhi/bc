@@ -91,5 +91,7 @@ public class SpaceError {
     public static final String TACTIC_DUPLICATED = "105009";
 
     public static final String BUILTIN_CANNOT_DELETE = "105010";
+
+    public static final String BUILTIN_CANNOT_UPDATE = "105011";
 }
 

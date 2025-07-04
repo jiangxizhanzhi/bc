@@ -1,7 +1,9 @@
 package com.cyberpeace.cr.redvsblue.dao.entity;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
@@ -34,4 +36,10 @@ public class CrUniteBusinessNode extends BaseTable {
 
     @JSONField(name = "node_type")
     private Integer nodeType;
+
+    @TableField(exist = false)
+    private JSONArray attackTools;
+
+    @TableField(exist = false)
+    private Boolean isAttacker;
 }

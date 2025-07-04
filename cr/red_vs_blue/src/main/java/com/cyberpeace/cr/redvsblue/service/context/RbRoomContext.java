@@ -116,4 +116,9 @@ public class RbRoomContext {
 	 * 训练目标
 	 */
 	private String trainTarget;
+
+	/**
+	 * 任务id
+	 */
+	private String taskId;
 }

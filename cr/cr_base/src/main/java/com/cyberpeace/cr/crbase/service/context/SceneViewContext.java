@@ -51,4 +51,11 @@ public class SceneViewContext implements Serializable {
 	 */
 	@ApiModelProperty("场景数据")
 	private JSONObject sceneData;
+
+	/**
+	 * 联合训练任务id
+	 */
+	@ApiModelProperty("联合训练任务id")
+	private String taskId;
+
 }

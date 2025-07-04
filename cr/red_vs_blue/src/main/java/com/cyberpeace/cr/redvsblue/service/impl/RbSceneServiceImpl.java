@@ -235,6 +235,7 @@ public class RbSceneServiceImpl implements RbSceneService {
             log.error("Room not exist, roomId:{}", roomId);
             throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
         }
+        ret.setTaskId(room.getTaskId());
         // 1. 获取用户可见节点
         String userId = UserInfoContext.getUserContext().getUserId();
         List<CrRole> roleList = crRoleService.getRolesByRoomId(roomId);

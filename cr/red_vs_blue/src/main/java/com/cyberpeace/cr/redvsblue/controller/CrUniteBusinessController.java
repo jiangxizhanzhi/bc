@@ -67,4 +67,12 @@ public class CrUniteBusinessController {
         return new BaseRsp<>(result);
     }
 
+    @ApiOperation("构建结果上报")
+    @GetMapping("/business/test_report_result")
+    public BaseRsp<NetworkTopoVO> testReportBuildResult(@RequestParam(value ="task_id") String taskId,
+                                                        @RequestParam(value = "topo_id") String topoId) {
+        NetworkTopoVO networkTopoVO = crUniteBusinessTaskService.retrieveNetworkTopologyByTaskId(taskId,topoId);
+        return new BaseRsp<>(networkTopoVO);
+    }
+
 }

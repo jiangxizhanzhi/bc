@@ -137,6 +137,11 @@ public class RbRoom extends BaseTable {
 	 */
 	private String trainTarget;
 
+	/**
+	 * 任务id
+	 */
+	private String taskId;
+
 	public RbRoom() {
 
 	}
@@ -157,6 +162,7 @@ public class RbRoom extends BaseTable {
 		this.logo = input.getLogo();
 		this.businessType = input.getBusinessType();
 		this.trainTarget = input.getTrainTarget();
+		this.taskId = input.getTaskId();
 	}
 
 	public boolean isUnopened() {

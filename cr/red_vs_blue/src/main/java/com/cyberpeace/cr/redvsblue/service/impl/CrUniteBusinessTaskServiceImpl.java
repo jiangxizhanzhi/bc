@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -10,6 +11,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.redvsblue.dao.entity.CrUniteBusinessLink;
@@ -25,15 +27,21 @@ import com.cyberpeace.cr.redvsblue.vo.CrUniteBusinessTaskVO;
 import com.cyberpeace.cr.redvsblue.vo.NetworkTaskVO;
 import com.cyberpeace.cr.redvsblue.vo.NetworkTopoVO;
 import com.cyberpeace.cr.redvsblue.ws.WebSocketClientService;
+import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author SN
@@ -57,6 +65,11 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
     private RbRoomService rbRoomService;
     @Autowired
     private RbSceneService rbSceneService;
+    /**
+     * 当地场景Service
+     */
+    @Autowired
+    private LocalSceneService localSceneService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -87,7 +100,7 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         businessTemplate.setCreateUserId("3f655d87112f4ae094bbaf70830e20aa");
         businessTemplateMapper.insert(businessTemplate);
 //        判断是否已有该任务的设备信息下发 已下发转到生成拓扑方法生成拓扑
-        NetworkTopoVO networkTopoVO = retrieveNetworkTopologyByTaskId(businessTemplate.getUniteTaskId());
+        NetworkTopoVO networkTopoVO = retrieveNetworkTopologyByTaskId(businessTemplate.getUniteTaskId(),null);
         if(networkTopoVO.getNodes() != null && networkTopoVO.getNodes().size()>0){
             sceneRelease(networkTopoVO);
         }
@@ -99,7 +112,8 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
      * @param taskId
      * @return
      */
-    private NetworkTopoVO retrieveNetworkTopologyByTaskId(String taskId) {
+    @Override
+    public NetworkTopoVO retrieveNetworkTopologyByTaskId(String taskId, String topoId) {
         NetworkTopoVO networkTopoVO = new NetworkTopoVO();
         networkTopoVO.setTask_id(taskId);
         QueryWrapper<CrUniteBusinessNode> nodeQueryWrapper = new QueryWrapper<>();
@@ -108,12 +122,42 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         QueryWrapper<CrUniteBusinessLink> linkQueryWrapper = new QueryWrapper<>();
         linkQueryWrapper.lambda().eq(CrUniteBusinessLink::getTaskId, taskId);
         List<CrUniteBusinessLink> links = crUniteBusinessLinkService.list();
+//        组装工具信息
+        HashMap<String, JSONArray> attackToolsMap = new HashMap<>();
+        HashMap<String, Boolean> isAttackerMap = new HashMap<>();
+        if(StringUtils.isNotBlank(topoId)){
+            JSONObject topoData = localSceneService.getTopoData(topoId)
+                    .getJSONObject(CrCommonConstants.TOPO_DATA_KEY);
+            JSONArray jsonArray = topoData.getJSONObject("topology").getJSONArray("elements");
+            Map<String, String> uniteIdMap = jsonArray.toJavaList(JSONObject.class)
+                    .stream()
+                    .filter(jsonObject -> StringUtils.isNotBlank(jsonObject.getString("unite_number_id")))
+                    .collect(Collectors.toMap(o -> o.getString("id"), o -> o.getString("unite_number_id")));
+            JSONObject jsonObject = topoData.getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("elements");
+            jsonObject.entrySet().forEach(entry -> {
+                String key = entry.getKey();
+                JSONObject value = (JSONObject) entry.getValue();
+                String uniteId = uniteIdMap.get(key);
+                if(uniteId!=null){
+                    attackToolsMap.put(uniteId,value.getJSONArray("attack_tools"));
+                    isAttackerMap.put(uniteId,value.getBoolean("is_attacker"));
+                }
+            });
+        }
+        nodes.forEach(node -> {
+            String numberId = node.getNumberId();
+            JSONArray jsonArray = attackToolsMap.get(numberId);
+            node.setAttackTools(jsonArray);
+            node.setIsAttacker(isAttackerMap.get(numberId));
+        });
+
         if(nodes.size()>0||links.size()>0){
             networkTopoVO.setNodes(nodes);
             networkTopoVO.setLinks(links);
         }
         return networkTopoVO;
     }
+
 
     @Lazy
     @Autowired
@@ -184,11 +228,12 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
                     rbRoomContext.setDifficult(1);
                     rbRoomContext.setPreSkill(new ArrayList<>());
                     rbRoomContext.setTrainSkill(new ArrayList<>());
-                    businessTemplate.setTrainTarget(businessTemplate.getTrainTarget());
+                    rbRoomContext.setTrainTarget(businessTemplate.getTrainTarget());
+                    rbRoomContext.setTaskId(networkTopoVO.getTask_id());
                     rbRoomService.create(rbRoomContext);
                 }
-            //        上报内容
-                networkTopoVO = retrieveNetworkTopologyByTaskId(networkTopoVO.getTask_id());
+            //        上报内容 TODO ws上报320
+                networkTopoVO = retrieveNetworkTopologyByTaskId(networkTopoVO.getTask_id(), businessTemplate.getTopoId());
                 businessTemplate.setReportStatus(true);
                 businessTemplateMapper.updateById(businessTemplate);
                 return networkTopoVO;

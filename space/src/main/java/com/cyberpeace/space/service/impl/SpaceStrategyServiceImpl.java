@@ -504,6 +504,9 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 			boJson.put("route", bo.getRoute());
 			boJson.put("example",bo.getExample());
 			boJson.put("content",bo.getContent());
+			if (bo.getGauge() == null) {
+				bo.setGauge("");
+			}
 			boJson.put("gauge",bo.getGauge());
 			dataArray.add(boJson);
 		}

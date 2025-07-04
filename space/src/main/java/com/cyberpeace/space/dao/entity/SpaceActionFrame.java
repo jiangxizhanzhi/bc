@@ -73,6 +73,8 @@ public class SpaceActionFrame extends SpaceFrameBaseTable {
 	@TableField(value = "`analyze`")
 	private String analyze;
 
+	private Boolean builtin;
+
 	public SpaceActionFrameBo entity2Bo(Map<String, List<IdAndName>> relatedMap) {
 		SpaceActionFrameBo bo = BeanUtils.copy(this, SpaceActionFrameBo.class);
 		bo.setTag(JsonUtil.toJsonObjectArray(this.tag, String.class));

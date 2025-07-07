@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.redvsblue.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.redvsblue.controller.req.UniteAttackReq;
 import com.cyberpeace.cr.redvsblue.dao.entity.CrUniteBusinessTask;
 import com.cyberpeace.cr.redvsblue.vo.CrUniteBusinessTaskVO;
 import com.cyberpeace.cr.redvsblue.vo.NetworkTaskVO;
@@ -9,6 +10,8 @@ import com.cyberpeace.cr.redvsblue.vo.NetworkTopoVO;
 public interface CrUniteBusinessTaskService extends IService<CrUniteBusinessTask> {
 
     void saveUniteBusinessTask(NetworkTaskVO networkTaskVO);
+
+    void saveUniteBusinessTopo(String jsonString);
 
     void saveUniteBusinessTopo(NetworkTopoVO networkTopoVO);
 
@@ -21,4 +24,6 @@ public interface CrUniteBusinessTaskService extends IService<CrUniteBusinessTask
     Boolean stop(NetworkTopoVO networkTopoVO);
 
     NetworkTopoVO retrieveNetworkTopologyByTaskId(String taskId, String topoId);
+
+    Boolean attack(UniteAttackReq uniteAttackReq);
 }

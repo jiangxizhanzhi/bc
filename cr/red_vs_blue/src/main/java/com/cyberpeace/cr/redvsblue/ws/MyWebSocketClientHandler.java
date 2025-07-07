@@ -32,14 +32,15 @@ public class MyWebSocketClientHandler implements WebSocketHandler {
             JSONObject jsonObject = JSON.parseObject(payload);
             // 根据type字段调用不同的方法
 //        int type = payloadObj.getType();
-            String type = jsonObject.getString("type");
-            switch (type) {
+            String function = jsonObject.getString("Function");
+            String data = jsonObject.getString("Data");
+            switch (function) {
 //                设备下发
-                case "/api/topo/release":
-                    crUniteBusinessTaskService.saveUniteBusinessTopo(null);
+                case "Interaction1":
+                    crUniteBusinessTaskService.saveUniteBusinessTopo(data);
                     break;
                 default:
-                    log.warn("未知的320消息类型: " + type);
+                    log.warn("未知的320消息类型: " + function);
                     break;
             }
         } catch (Exception e) {

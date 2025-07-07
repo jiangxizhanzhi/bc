@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.enums.BusinessType;
@@ -14,6 +13,8 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
+import com.cyberpeace.cr.crbase.service.context.scene.RbSceneViewContext;
+import com.cyberpeace.cr.redvsblue.controller.req.UniteAttackReq;
 import com.cyberpeace.cr.redvsblue.dao.entity.CrUniteBusinessLink;
 import com.cyberpeace.cr.redvsblue.dao.entity.CrUniteBusinessNode;
 import com.cyberpeace.cr.redvsblue.dao.entity.CrUniteBusinessTask;
@@ -29,10 +30,12 @@ import com.cyberpeace.cr.redvsblue.vo.NetworkTopoVO;
 import com.cyberpeace.cr.redvsblue.ws.WebSocketClientService;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +44,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * @author SN
@@ -65,15 +67,36 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
     private RbRoomService rbRoomService;
     @Autowired
     private RbSceneService rbSceneService;
-    /**
-     * 当地场景Service
-     */
     @Autowired
     private LocalSceneService localSceneService;
+
+    //调用预处理方法
+    @KafkaListener(topics = "topic_network")
+    public void geojsonProcess(byte[] message) {
+        try {
+            log.info("训练任务开始接收");
+            ObjectMapper objectMapper = new ObjectMapper();
+            NetworkTaskVO networkTaskVO = objectMapper.readValue(message, NetworkTaskVO.class);
+            saveUniteBusinessTask(networkTaskVO);
+            String jsonString = JSONObject.toJSONString(networkTaskVO);
+            log.info("接收到训练任务: "+jsonString);
+        }
+        catch (Exception e){
+            log.error("接收训练任务  ===> 发生异常:", e.getMessage());
+        }
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveUniteBusinessTask(NetworkTaskVO networkTaskVO) {
+        log.info("开始保存训练任务");
+        // 校验任务id是否已存在
+        String taskId = networkTaskVO.getId();
+        CrUniteBusinessTask existingTask = getBaseMapper().selectById(taskId);
+        if (existingTask != null) {
+            log.warn("训练任务ID已存在，不进行新增操作: {}", taskId);
+            return;
+        }
         CrUniteBusinessTask crUniteBusinessTask = new CrUniteBusinessTask();
         crUniteBusinessTask.setTaskId(networkTaskVO.getId());
         crUniteBusinessTask.setTaskName(networkTaskVO.getTaskName());
@@ -83,6 +106,7 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
 
 //        保存任务表
         getBaseMapper().insert(crUniteBusinessTask);
+        log.info("保存训练任务记录");
 //        保存任务模板 type 6
         BusinessTemplate businessTemplate = new BusinessTemplate();
         businessTemplate.setUniteTaskId(crUniteBusinessTask.getTaskId());
@@ -99,9 +123,11 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         businessTemplate.setDifficulty(1);
         businessTemplate.setCreateUserId("3f655d87112f4ae094bbaf70830e20aa");
         businessTemplateMapper.insert(businessTemplate);
+        log.info("保存训练任务-联合训练模板");
 //        判断是否已有该任务的设备信息下发 已下发转到生成拓扑方法生成拓扑
         NetworkTopoVO networkTopoVO = retrieveNetworkTopologyByTaskId(businessTemplate.getUniteTaskId(),null);
         if(networkTopoVO.getNodes() != null && networkTopoVO.getNodes().size()>0){
+            log.info("保存训练任务-生成拓扑");
             sceneRelease(networkTopoVO);
         }
     }
@@ -158,10 +184,32 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         return networkTopoVO;
     }
 
+    @Override
+    public Boolean attack(UniteAttackReq uniteAttackReq) {
+
+//        场景id 源节点id 目标节点id 攻击id 工具参数
+        String taskId = uniteAttackReq.getTaskId();
+        RbRoom room = rbRoomService.getRbRoomByUniteTaskId(taskId);
+        RbSceneViewContext rbSceneViewContext = rbSceneService.viewScene(room.getResourceId(), null);
+        JSONObject sceneData = rbSceneViewContext.getSceneData();
+//        TODO sceneData已查
+        return null;
+    }
+
 
     @Lazy
     @Autowired
     private WebSocketClientService webSocketClientService;
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void saveUniteBusinessTopo(String jsonString) {
+//       TODO 处理多层data  处理中文乱码
+        NetworkTopoVO networkTopoVO = JSON.parseObject(jsonString, NetworkTopoVO.class);
+        saveUniteBusinessTopo(networkTopoVO);
+    }
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)

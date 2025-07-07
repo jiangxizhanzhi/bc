@@ -2,6 +2,7 @@ package com.cyberpeace.cr.redvsblue.controller;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.crbase.service.context.score.StartSceneRsp;
+import com.cyberpeace.cr.redvsblue.controller.req.UniteAttackReq;
 import com.cyberpeace.cr.redvsblue.service.CrUniteBusinessTaskService;
 import com.cyberpeace.cr.redvsblue.vo.CrUniteBusinessTaskVO;
 import com.cyberpeace.cr.redvsblue.vo.NetworkTaskVO;
@@ -73,6 +74,13 @@ public class CrUniteBusinessController {
                                                         @RequestParam(value = "topo_id") String topoId) {
         NetworkTopoVO networkTopoVO = crUniteBusinessTaskService.retrieveNetworkTopologyByTaskId(taskId,topoId);
         return new BaseRsp<>(networkTopoVO);
+    }
+
+    @ApiOperation("发起攻击指令")
+    @PostMapping("/business/attack")
+    public BaseRsp<Boolean> attack(@RequestBody UniteAttackReq uniteAttackReq) {
+        Boolean result = crUniteBusinessTaskService.attack(uniteAttackReq);
+        return new BaseRsp<>();
     }
 
 }

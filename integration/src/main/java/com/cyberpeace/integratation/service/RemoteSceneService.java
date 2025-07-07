@@ -602,4 +602,10 @@ public interface RemoteSceneService {
 	JSONObject getByArea(String sceneId, String areaId);
 
 	JSONObject sceneRelease(String jsonString);
+
+	/**
+	 * 发送攻击指令
+	 * @param jsonObject
+	 */
+	JSONObject attack(String jsonString);
 }

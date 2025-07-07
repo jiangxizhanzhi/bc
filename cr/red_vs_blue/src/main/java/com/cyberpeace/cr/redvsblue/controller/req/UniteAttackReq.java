@@ -30,7 +30,7 @@ public class UniteAttackReq implements Serializable {
 	 * 目的id
 	 */
 	@ApiModelProperty(value = "目的id")
-	private Integer targetNumberId;
+	private String targetNumberId;
 
 	@ApiModelProperty(value = "使用的工具")
 	private String toolId;

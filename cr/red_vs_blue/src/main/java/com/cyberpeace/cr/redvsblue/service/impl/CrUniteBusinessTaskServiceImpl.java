@@ -193,6 +193,37 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         RbSceneViewContext rbSceneViewContext = rbSceneService.viewScene(room.getResourceId(), null);
         JSONObject sceneData = rbSceneViewContext.getSceneData();
 //        TODO sceneData已查
+        List<JSONObject> elements = sceneData.getJSONObject("topology")
+                .getJSONArray("elements")
+                .toJavaList(JSONObject.class);
+        Map<String, String> map = elements.stream()
+                .filter(element -> StringUtils.isNotBlank(element.getString("unite_number_id")))
+                .collect(Collectors.toMap(o -> o.getString("unite_number_id"), o -> o.getString("id")));
+        JSONObject pluginElements = sceneData.getJSONObject("plugins")
+                .getJSONObject("cpcloud")
+                .getJSONObject("elements");
+        String sourceNode = map.get(uniteAttackReq.getSourceNumberId());
+        String targetNode = map.get(uniteAttackReq.getTargetNumberId());
+        if(sourceNode!=null&&targetNode!=null){
+            JSONArray attackTools = pluginElements.getJSONObject(map.get(uniteAttackReq.getTargetNumberId()))
+                    .getJSONArray("attack_tools");
+            if(null!=attackTools && attackTools.size()>0){
+                Map<String, JSONArray> paramsMap = attackTools.toJavaList(JSONObject.class)
+                        .stream().collect(Collectors.toMap(o -> o.getString("id"), o -> o.getJSONArray("params")));
+                JSONArray jsonArray = paramsMap.get(uniteAttackReq.getToolId());
+                System.out.println("asd");
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id",rbSceneViewContext.getMpSceneId());
+                jsonObject.put("source_node",sourceNode);
+                jsonObject.put("target_node",targetNode);
+                jsonObject.put("tool_id",uniteAttackReq.getToolId());
+                jsonObject.put("params",jsonArray);
+                String jsonString = jsonObject.toJSONString();
+                remoteSceneService.attack(jsonString);
+            }
+
+        }
+
         return null;
     }
 

@@ -398,6 +398,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SCENE_RELEASE_URL;
 
+	private String UNITE_ATTACK_URL;
+
 	/**
 	 * 初始化
 	 *
@@ -507,6 +509,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		GET_BY_AREA_URL = MP_HOST + ConfigUtil.getContextProperty("scene.by.area");
 
 		SCENE_RELEASE_URL =  MP_HOST + ConfigUtil.getContextProperty("scene.release");
+
+		UNITE_ATTACK_URL =  MP_HOST + ConfigUtil.getContextProperty("unite.attack");
 	}
 
 	/**
@@ -1432,4 +1436,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		JSONObject jsonObject = HttpClientUtil.post(SCENE_RELEASE_URL, jsonString, JSONObject.class);
 		return jsonObject;
 	}
+
+	@Override
+	public JSONObject attack(String jsonString) {
+		JSONObject jsonObject = HttpClientUtil.post(UNITE_ATTACK_URL, jsonString, JSONObject.class);
+		return jsonObject;
+	}
+
 }

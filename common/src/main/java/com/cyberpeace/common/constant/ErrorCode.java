@@ -468,5 +468,7 @@ public interface ErrorCode {
      * @see String
      */
     String RELATED_DATA_EXIST = "104026";
+
+    String NO_ROLE = "104027";
 }
 

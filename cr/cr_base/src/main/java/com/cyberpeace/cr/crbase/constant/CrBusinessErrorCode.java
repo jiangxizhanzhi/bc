@@ -346,7 +346,7 @@ public interface CrBusinessErrorCode {
 
 	/**
 	 * 无效标签数量
-	 */// 标签个数在1~4之间
+	 */
 	String INVALID_TAGS_NUM = "101064";
 
 	/**
@@ -732,5 +732,10 @@ public interface CrBusinessErrorCode {
 	 * 模板删除或未授权
 	 */
 	String TEMPLATE_DELETED_OR_NOT_PERMITTED = "101141";
+
+	/**
+	 * 发布时间错误
+	 */
+	String INVALID_PUBLISH_TIME = "101142";
 }
 

@@ -92,12 +92,6 @@ public class CommonController {
 		return imageUpload(fileCommonUploadReq);
 	}
 
-	@ApiOperation("图片上传")
-	@PostMapping("/image_upload")
-	public BaseRsp<AttachmentBo> tmpImageUpload(FileCommonUploadReq fileCommonUploadReq) {
-		return imageUpload(fileCommonUploadReq);
-	}
-
 	/**
 	 * 图片上传
 	 *
@@ -148,12 +142,6 @@ public class CommonController {
 			MenuConstant.CMS_PRACTICE_OPERATION, MenuConstant.CMS_CR_MISSION_SCHEME,
 			MenuConstant.CMS_TOOL })
 	public BaseRsp<AttachmentBo> adminAttachmentUpload(FileCommonUploadReq fileCommonUploadReq) {
-		return attachmentUpload(fileCommonUploadReq);
-	}
-
-	@ApiOperation("附件上传")
-	@PostMapping("/attachment_upload")
-	public BaseRsp<AttachmentBo> tmpattachmentUpload(FileCommonUploadReq fileCommonUploadReq) {
 		return attachmentUpload(fileCommonUploadReq);
 	}
 

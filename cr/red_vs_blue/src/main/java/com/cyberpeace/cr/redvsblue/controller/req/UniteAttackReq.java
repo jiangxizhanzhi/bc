@@ -34,4 +34,7 @@ public class UniteAttackReq implements Serializable {
 
 	@ApiModelProperty(value = "使用的工具")
 	private String toolId;
+
+	@ApiModelProperty(value = "攻击持续时间")
+	private Integer attackDuration;
 }

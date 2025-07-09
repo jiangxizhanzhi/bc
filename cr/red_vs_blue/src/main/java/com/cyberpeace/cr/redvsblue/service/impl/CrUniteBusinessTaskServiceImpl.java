@@ -181,6 +181,17 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
             networkTopoVO.setNodes(nodes);
             networkTopoVO.setLinks(links);
         }
+        JSONObject jsonObject = new JSONObject();
+        JSONObject dataJsonObject = new JSONObject();
+        dataJsonObject.put("data", networkTopoVO);
+        jsonObject.put("Data", dataJsonObject.toJSONString());
+        jsonObject.put("Function", "NetworkTopoData");
+        jsonObject.put("ReceiveObjectName", "");
+        jsonObject.put("SendObjectName", "");
+//        发送构建数据
+        String jsonString = jsonObject.toJSONString();
+
+        webSocketClientService.sendMessage(jsonString);
         return networkTopoVO;
     }
 
@@ -211,13 +222,13 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
                 Map<String, JSONArray> paramsMap = attackTools.toJavaList(JSONObject.class)
                         .stream().collect(Collectors.toMap(o -> o.getString("id"), o -> o.getJSONArray("params")));
                 JSONArray jsonArray = paramsMap.get(uniteAttackReq.getToolId());
-                System.out.println("asd");
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("id",rbSceneViewContext.getMpSceneId());
                 jsonObject.put("source_node",sourceNode);
                 jsonObject.put("target_node",targetNode);
                 jsonObject.put("tool_id",uniteAttackReq.getToolId());
                 jsonObject.put("params",jsonArray);
+                jsonObject.put("attack_duration",uniteAttackReq.getAttackDuration());
                 String jsonString = jsonObject.toJSONString();
                 remoteSceneService.attack(jsonString);
             }
@@ -226,7 +237,6 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
 
         return null;
     }
-
 
     @Lazy
     @Autowired

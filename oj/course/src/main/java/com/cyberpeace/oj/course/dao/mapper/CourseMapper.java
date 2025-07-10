@@ -42,8 +42,8 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 * @see Boolean
 	 * @see IPage<Course>
 	 */
-	IPage<Course> listByPage(Page<Course> page, @Param("courseContext") CourseContext courseContext,
-			@Param("courseIds") List<String> courseIds, @Param("isPublic") Boolean isPublic);
+	IPage<Course> listByPage(@Param("page") Page<Course> page, @Param("courseContext") CourseContext courseContext,
+							 @Param("courseIds") List<String> courseIds, @Param("isPublic") Boolean isPublic, @Param("lowerIds") List<String> lowerIds);
 
 	/**
 	 * 不删除id列表由id列表

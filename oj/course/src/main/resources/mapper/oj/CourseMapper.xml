@@ -51,7 +51,14 @@
                 and L1.public = #{isPublic}
             </if>
         </where>
-        group by L1.resource_id
+        group by L1.resource_id, L1.category_id
+        order by case
+        when L1.category_id in
+        <foreach collection="lowerIds" item="lowerId" close=")" open="(" separator=",">
+            #{lowerId}
+        </foreach> then 1
+        else 0
+        end asc
     </select>
 
     <select id="notDeleteIdsByIds" resultType="java.lang.String">

@@ -1,23 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.oj.practice.entity.Paper;
-import com.cyberpeace.oj.practice.entity.PracticeOperation;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -47,15 +30,32 @@ import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.ResourceCollectionMapper;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
-import com.cyberpeace.oj.practice.dao.entity.*;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperationRef;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheoryRef;
 import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
+import com.cyberpeace.oj.practice.entity.Paper;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.*;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 课程Service实现
@@ -438,6 +438,15 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 				return PageUtil.getNullResult();
 			}
 		}
+		// 信息科学技术基础领域 放最后
+		LambdaQueryWrapper<CourseCategory> categoryWrapper = new LambdaQueryWrapper<>();
+		categoryWrapper.like(CourseCategory::getName, "信息科学技术基础领域");
+		List<CourseCategory> courseCategories = courseCategoryMapper.selectList(categoryWrapper);
+		List<String> lowerIds = StreamApiUtils.map(courseCategories,
+				CourseCategory::getResourceId);
+		if (lowerIds.isEmpty()) {
+			lowerIds.add("");
+		}
 
 		if(isWeb){
 			// 常规条件过滤
@@ -445,7 +454,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			pageTmp.setSize(courseIds.size());
 			pageTmp.setCurrent(1);
 			IPage<Course> iPage = courseMapper.listByPage(pageTmp, courseContext, courseIds,
-					authContext.getIsWeb());
+					authContext.getIsWeb(), lowerIds);
 			//该用户可见的课程列表
 			List<Course> allCourseList = iPage.getRecords();
 			//学习历史
@@ -462,6 +471,19 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			allCourseList.removeAll(studyCourseList);
 			studyCourseList.addAll(allCourseList);
 
+			List<Course> lower = Lists.newArrayList();
+			int i = 0;
+			while (i < studyCourseList.size()) {
+				Course course = studyCourseList.get(i);
+				if (lowerIds.contains(course.getCategoryId())) {
+					lower.add(course);
+					studyCourseList.remove(course);
+				} else {
+					i++;
+				}
+			}
+			studyCourseList.addAll(lower);
+
 			// 提取用户名映射
 			Map<String, String> userNameMap = remoteUserService.getIdNameMap(studyCourseList,
 					Course::getCreateUserId);
@@ -472,7 +494,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		}
 		// 常规条件过滤
 		IPage<Course> iPage = courseMapper.listByPage(page, courseContext, courseIds,
-				authContext.getIsWeb());
+				authContext.getIsWeb(), lowerIds);
 
 		// 提取用户名映射
 		Map<String, String> userNameMap = remoteUserService.getIdNameMap(iPage.getRecords(),

@@ -19,11 +19,22 @@ public interface CrUniteBusinessTaskService extends IService<CrUniteBusinessTask
 
     NetworkTopoVO reportBuildResult(NetworkTopoVO networkTopoVO);
 
+    void start(String data);
+
     String start(NetworkTopoVO networkTopoVO);
+
+    void stop(String data);
 
     Boolean stop(NetworkTopoVO networkTopoVO);
 
     NetworkTopoVO retrieveNetworkTopologyByTaskId(String taskId, String topoId);
 
     Boolean attack(UniteAttackReq uniteAttackReq);
+
+    Boolean attack(String jsonString);
+
+    void flowStart(String data);
+
+    void linkStatus();
+
 }

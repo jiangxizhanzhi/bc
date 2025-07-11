@@ -83,4 +83,12 @@ public class CrUniteBusinessController {
         return new BaseRsp<>();
     }
 
+//        1. ojj定时任务五秒执行一次判断已启动的联合训练
+    @ApiOperation("查联合训练链路状态")
+    @GetMapping("/business/link_status")
+    public BaseRsp<Boolean> linkStatus() {
+        crUniteBusinessTaskService.linkStatus();
+        return new BaseRsp<>();
+    }
+
 }

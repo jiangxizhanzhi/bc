@@ -37,8 +37,29 @@ public class MyWebSocketClientHandler implements WebSocketHandler {
             switch (function) {
 //                设备下发
                 case "Interaction1":
+                    log.info("Interaction1 data:{}",data);
                     crUniteBusinessTaskService.saveUniteBusinessTopo(data);
                     break;
+                case "AttackData":
+//                    七种类型攻击
+                    log.info("AttackData data:{}",data);
+                    crUniteBusinessTaskService.attack(data);
+                    break;
+                case "UniteFlowData":
+//                    流量指令攻击
+                    log.info("UniteFlowData data:{}",data);
+                    crUniteBusinessTaskService.flowStart(data);
+                case "UniteStartData":
+//                    联合场景启动
+                    log.info("UniteStartData data:{}",data);
+                    crUniteBusinessTaskService.start(data);
+                    break;
+                case "UniteStopData":
+//                    联合场景启动
+                    log.info("UniteStopData data:{}",data);
+                    crUniteBusinessTaskService.stop(data);
+                    break;
+//                    链路通信信息
                 default:
                     log.warn("未知的320消息类型: " + function);
                     break;

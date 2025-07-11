@@ -605,7 +605,9 @@ public interface RemoteSceneService {
 
 	/**
 	 * 发送攻击指令
-	 * @param jsonObject
+	 * @param jsonString
 	 */
 	JSONObject attack(String jsonString);
+
+	void uniteLinkStatus(String string);
 }

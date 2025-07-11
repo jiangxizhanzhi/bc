@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 联合训练攻击请求体
@@ -24,17 +25,20 @@ public class UniteAttackReq implements Serializable {
 	 * 源id
 	 */
 	@ApiModelProperty(value = "源id")
-	private String sourceNumberId;
+	private String attackerId;
 
 	/**
 	 * 目的id
 	 */
 	@ApiModelProperty(value = "目的id")
-	private String targetNumberId;
+	private String targetId;
 
 	@ApiModelProperty(value = "使用的工具")
 	private String toolId;
 
-	@ApiModelProperty(value = "攻击持续时间")
-	private Integer attackDuration;
+	@ApiModelProperty(value = "开始攻击时间")
+	private Date attackStarttime;
+
+	@ApiModelProperty(value = "攻击结束时间")
+	private Date attackEndtime;
 }

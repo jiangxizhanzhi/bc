@@ -28,6 +28,7 @@ import com.cyberpeace.cr.redvsblue.vo.CrUniteBusinessTaskVO;
 import com.cyberpeace.cr.redvsblue.vo.NetworkTaskVO;
 import com.cyberpeace.cr.redvsblue.vo.NetworkTopoVO;
 import com.cyberpeace.cr.redvsblue.ws.WebSocketClientService;
+import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -69,6 +70,10 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
     private RbSceneService rbSceneService;
     @Autowired
     private LocalSceneService localSceneService;
+    @Lazy
+    @Autowired
+    private WebSocketClientService webSocketClientService;
+
 
     //调用预处理方法
     @KafkaListener(topics = "topic_network")
@@ -80,8 +85,7 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
             saveUniteBusinessTask(networkTaskVO);
             String jsonString = JSONObject.toJSONString(networkTaskVO);
             log.info("接收到训练任务: "+jsonString);
-        }
-        catch (Exception e){
+        } catch (Exception e){
             log.error("接收训练任务  ===> 发生异常:", e.getMessage());
         }
     }
@@ -131,7 +135,6 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
             sceneRelease(networkTopoVO);
         }
     }
-
 
     /**
      * （CrUniteBusinessNode）和链接（CrUniteBusinessLink），并将它们封装到 NetworkTopoVO 对象中返回
@@ -197,13 +200,11 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
 
     @Override
     public Boolean attack(UniteAttackReq uniteAttackReq) {
-
 //        场景id 源节点id 目标节点id 攻击id 工具参数
         String taskId = uniteAttackReq.getTaskId();
         RbRoom room = rbRoomService.getRbRoomByUniteTaskId(taskId);
         RbSceneViewContext rbSceneViewContext = rbSceneService.viewScene(room.getResourceId(), null);
         JSONObject sceneData = rbSceneViewContext.getSceneData();
-//        TODO sceneData已查
         List<JSONObject> elements = sceneData.getJSONObject("topology")
                 .getJSONArray("elements")
                 .toJavaList(JSONObject.class);
@@ -213,10 +214,10 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         JSONObject pluginElements = sceneData.getJSONObject("plugins")
                 .getJSONObject("cpcloud")
                 .getJSONObject("elements");
-        String sourceNode = map.get(uniteAttackReq.getSourceNumberId());
-        String targetNode = map.get(uniteAttackReq.getTargetNumberId());
+        String sourceNode = map.get(uniteAttackReq.getAttackerId());
+        String targetNode = map.get(uniteAttackReq.getTargetId());
         if(sourceNode!=null&&targetNode!=null){
-            JSONArray attackTools = pluginElements.getJSONObject(map.get(uniteAttackReq.getTargetNumberId()))
+            JSONArray attackTools = pluginElements.getJSONObject(map.get(uniteAttackReq.getTargetId()))
                     .getJSONArray("attack_tools");
             if(null!=attackTools && attackTools.size()>0){
                 Map<String, JSONArray> paramsMap = attackTools.toJavaList(JSONObject.class)
@@ -228,26 +229,78 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
                 jsonObject.put("target_node",targetNode);
                 jsonObject.put("tool_id",uniteAttackReq.getToolId());
                 jsonObject.put("params",jsonArray);
-                jsonObject.put("attack_duration",uniteAttackReq.getAttackDuration());
+                jsonObject.put("task_id",uniteAttackReq.getTaskId());
+                jsonObject.put("target_id",uniteAttackReq.getTargetId());
+                jsonObject.put("attack_starttime",uniteAttackReq.getAttackStarttime());
+                jsonObject.put("attack_endtime",uniteAttackReq.getAttackEndtime());
                 String jsonString = jsonObject.toJSONString();
                 remoteSceneService.attack(jsonString);
             }
-
         }
-
         return null;
     }
 
-    @Lazy
-    @Autowired
-    private WebSocketClientService webSocketClientService;
+    @Override
+    public Boolean attack(String jsonString) {
+        log.info("接收到攻击指令：{}", jsonString);
+        UniteAttackReq uniteAttackReq = JSON.parseObject(jsonString, UniteAttackReq.class);
+//        attack(uniteAttackReq);
+        return true;
+    }
 
+    @Override
+    public void flowStart(String data) {
+
+    }
+
+    @Override
+    public void linkStatus() {
+//        2. 拿到场景信息、需要判断的链路信息发送mp请求
+        QueryWrapper<RbRoom> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+//                .eq(RbRoom::getBusinessType,BusinessType.UNITE_TRAIN.getCode())
+                .isNotNull(RbRoom::getTaskId)
+                .ne(RbRoom::getLocalSceneId,"")
+                .isNotNull(RbRoom::getLocalSceneId);
+//        启动的联合训练场景
+        List<RbRoom> list = rbRoomService.list(queryWrapper);
+        List<String> localSceneIds = list.stream().map(RbRoom::getLocalSceneId).collect(Collectors.toList());
+//        mp场景数据
+        Map<String, LocalScene> LocalSceneMap = localSceneService.listByIds(localSceneIds)
+                .stream()
+                .collect(Collectors.toMap(LocalScene::getResourceId, localScene -> localScene, (a, b) -> a));
+        List<String> taskIds = list.stream().map(RbRoom::getTaskId).collect(Collectors.toList());
+        LambdaQueryWrapper<CrUniteBusinessLink> linkLambdaQueryWrapper = new QueryWrapper<CrUniteBusinessLink>().lambda();
+        linkLambdaQueryWrapper.in(CrUniteBusinessLink::getTaskId, taskIds);
+        List<CrUniteBusinessLink> links = crUniteBusinessLinkService.list(linkLambdaQueryWrapper);
+//        数实下发的链路信息
+        Map<String, List<CrUniteBusinessLink>> linkMap = links.stream().collect(Collectors.groupingBy(CrUniteBusinessLink::getTaskId));
+
+        ArrayList<JSONObject> jsonObjects = new ArrayList<>();
+        for (RbRoom rbRoom : list) {
+            JSONObject jsonObject = new JSONObject();
+//        查 任务id 链路id 设备id
+            String taskId = rbRoom.getTaskId();
+            String localSceneId = rbRoom.getLocalSceneId();
+            LocalScene localScene = LocalSceneMap.get(localSceneId);
+            String mpSceneId = localScene.getMpSceneId();
+            List<CrUniteBusinessLink> linksByTask = linkMap.get(taskId);
+            jsonObject.put("taskId",taskId);
+            jsonObject.put("mpSceneId",mpSceneId);
+            jsonObject.put("links",linksByTask);
+            jsonObjects.add(jsonObject);
+        }
+//        发送mp处理
+//        3. mp处理信息后，包装数据发送320
+        remoteSceneService.uniteLinkStatus(jsonObjects.toString());
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveUniteBusinessTopo(String jsonString) {
 //       TODO 处理多层data  处理中文乱码
-        NetworkTopoVO networkTopoVO = JSON.parseObject(jsonString, NetworkTopoVO.class);
+        JSONObject jsonObject = JSON.parseObject(jsonString);
+        NetworkTopoVO networkTopoVO = JSON.parseObject(jsonObject.getString("data"), NetworkTopoVO.class);
         saveUniteBusinessTopo(networkTopoVO);
     }
 
@@ -267,9 +320,6 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
             link.setTaskId(networkTopoVO.getTask_id());
         });
         crUniteBusinessLinkService.saveBatch(links);
-//        TODO 测试ws
-        String message = "测试";
-        webSocketClientService.sendMessage(message);
         sceneRelease(networkTopoVO);
     }
 
@@ -321,7 +371,7 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
                     rbRoomContext.setTaskId(networkTopoVO.getTask_id());
                     rbRoomService.create(rbRoomContext);
                 }
-            //        上报内容 TODO ws上报320
+            //        上报内容
                 networkTopoVO = retrieveNetworkTopologyByTaskId(networkTopoVO.getTask_id(), businessTemplate.getTopoId());
                 businessTemplate.setReportStatus(true);
                 businessTemplateMapper.updateById(businessTemplate);
@@ -333,18 +383,41 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         return null;
     }
 
+
+    @Override
+    public void start(String jsonString) {
+        log.info("unite start scene begin");
+        JSONObject jsonObject = JSON.parseObject(jsonString);
+        NetworkTopoVO networkTopoVO = JSON.parseObject(jsonObject.getString("data"), NetworkTopoVO.class);
+        log.info("unite start scene taskId:{}",networkTopoVO.getTask_id());
+        start(networkTopoVO);
+        log.info("unite start scene end");
+    }
+
     @Override
     public String start(NetworkTopoVO networkTopoVO) {
         String taskId = networkTopoVO.getTask_id();
         RbRoom rbRoom = rbRoomService.getRbRoomByUniteTaskId(taskId);
+        log.info("unite start scene roomId:{}",rbRoom.getResourceId());
         String sceneId = rbSceneService.startScene(rbRoom.getResourceId(), null);
         return sceneId;
+    }
+
+    @Override
+    public void stop(String jsonString) {
+        log.info("unite stop scene begin");
+        JSONObject jsonObject = JSON.parseObject(jsonString);
+        NetworkTopoVO networkTopoVO = JSON.parseObject(jsonObject.getString("data"), NetworkTopoVO.class);
+        log.info("unite stop scene taskId:{}",networkTopoVO.getTask_id());
+        stop(networkTopoVO);
+        log.info("unite stop scene end");
     }
 
     @Override
     public Boolean stop(NetworkTopoVO networkTopoVO) {
         String taskId = networkTopoVO.getTask_id();
         RbRoom rbRoom = rbRoomService.getRbRoomByUniteTaskId(taskId);
+        log.info("unite stop scene roomId:{}",rbRoom.getResourceId());
         Boolean result = rbSceneService.stopScene(rbRoom.getResourceId());
         return result;
     }

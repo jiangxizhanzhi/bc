@@ -37,6 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,7 +75,6 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
     @Autowired
     private WebSocketClientService webSocketClientService;
 
-
     //调用预处理方法
     @KafkaListener(topics = "topic_network")
     public void geojsonProcess(byte[] message) {
@@ -82,9 +82,9 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
             log.info("训练任务开始接收");
             ObjectMapper objectMapper = new ObjectMapper();
             NetworkTaskVO networkTaskVO = objectMapper.readValue(message, NetworkTaskVO.class);
-            saveUniteBusinessTask(networkTaskVO);
             String jsonString = JSONObject.toJSONString(networkTaskVO);
-            log.info("接收到训练任务: "+jsonString);
+            log.info("接收到训练任务信息: "+jsonString);
+            saveUniteBusinessTask(networkTaskVO);
         } catch (Exception e){
             log.error("接收训练任务  ===> 发生异常:", e.getMessage());
         }
@@ -106,7 +106,7 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         crUniteBusinessTask.setTaskName(networkTaskVO.getTaskName());
         crUniteBusinessTask.setTaskDescription(networkTaskVO.getTaskContent());
         crUniteBusinessTask.setTrainTarget(networkTaskVO.getTaskContent());
-        crUniteBusinessTask.setStartTime(networkTaskVO.getTaskTime());
+        crUniteBusinessTask.setStartTime(networkTaskVO.getStartDt());
 
 //        保存任务表
         getBaseMapper().insert(crUniteBusinessTask);
@@ -243,8 +243,8 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
     @Override
     public Boolean attack(String jsonString) {
         log.info("接收到攻击指令：{}", jsonString);
-        UniteAttackReq uniteAttackReq = JSON.parseObject(jsonString, UniteAttackReq.class);
-//        attack(uniteAttackReq);
+        UniteAttackReq uniteAttackReq = JSON.parseObject(jsonString, JSONObject.class).getJSONObject("data").toJavaObject(UniteAttackReq.class);
+        attack(uniteAttackReq);
         return true;
     }
 
@@ -254,6 +254,7 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
     }
 
     @Override
+    @Scheduled(fixedRate = 5000)
     public void linkStatus() {
 //        2. 拿到场景信息、需要判断的链路信息发送mp请求
         QueryWrapper<RbRoom> queryWrapper = new QueryWrapper<>();
@@ -285,6 +286,9 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
             LocalScene localScene = LocalSceneMap.get(localSceneId);
             String mpSceneId = localScene.getMpSceneId();
             List<CrUniteBusinessLink> linksByTask = linkMap.get(taskId);
+            if(linksByTask==null){
+                continue;
+            }
             jsonObject.put("taskId",taskId);
             jsonObject.put("mpSceneId",mpSceneId);
             jsonObject.put("links",linksByTask);
@@ -299,6 +303,7 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
     @Transactional(rollbackFor = Exception.class)
     public void saveUniteBusinessTopo(String jsonString) {
 //       TODO 处理多层data  处理中文乱码
+        log.info("接收到任务设备拓扑：{}", jsonString);
         JSONObject jsonObject = JSON.parseObject(jsonString);
         NetworkTopoVO networkTopoVO = JSON.parseObject(jsonObject.getString("data"), NetworkTopoVO.class);
         saveUniteBusinessTopo(networkTopoVO);

@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.redvsblue.controller.req;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -37,8 +38,10 @@ public class UniteAttackReq implements Serializable {
 	private String toolId;
 
 	@ApiModelProperty(value = "开始攻击时间")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	private Date attackStarttime;
 
 	@ApiModelProperty(value = "攻击结束时间")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	private Date attackEndtime;
 }

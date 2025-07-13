@@ -55,7 +55,7 @@ public class MyWebSocketClientHandler implements WebSocketHandler {
                     crUniteBusinessTaskService.start(data);
                     break;
                 case "UniteStopData":
-//                    联合场景启动
+//                    联合场景停止
                     log.info("UniteStopData data:{}",data);
                     crUniteBusinessTaskService.stop(data);
                     break;

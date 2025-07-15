@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -89,6 +90,39 @@ public class EvalTaskFlowController {
 				.getCrFlowList(evalSceneService.getElementFlowListContext(query, evalTask));
 
 		return new BaseRsp<>(flowListRsp);
+	}
+
+	/**
+	 * 获取流量列表
+	 * 该接口在获取流量列表的状态后，将其中指定的一个或多个状态转化成进行中
+	 * 是为了在页面触发流量启动后给个固定的“进行中”展示（前端因为组件封装原因不方便改）
+	 *
+	 * @param query 查询
+	 * @return {@code BaseRsp<ListRsp<ElementFlow>> }
+	 */
+	@ApiOperation("获取任务流量列表")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+	@GetMapping("/list/running")
+	public BaseRsp<ListRsp<ElementFlow>> getFlowListForRunning(@Validated EvalTaskFlowListQuery query) {
+
+		// 获取流量列表
+		BaseRsp<ListRsp<ElementFlow>> result = getFlowList(query);
+
+		// 更换返回的流量状态为运行中
+		if (null != result && null != result.getData()){
+			for (ElementFlow elementFlow : result.getData().getList()){
+				if (null != query.getIsAllFlow() && query.getIsAllFlow()){
+					elementFlow.setCommonStatus(0);
+					elementFlow.setStatus(1);
+				}
+				if (StringUtils.isNotBlank(query.getFlowId())
+						&& query.getFlowId().equals(elementFlow.getId())){
+					elementFlow.setCommonStatus(0);
+					elementFlow.setStatus(1);
+				}
+			}
+		}
+		return result;
 	}
 
 	/**

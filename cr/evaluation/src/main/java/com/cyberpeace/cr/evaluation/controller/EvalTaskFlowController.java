@@ -68,7 +68,7 @@ public class EvalTaskFlowController {
 	 */
 	@ApiOperation("获取任务流量列表")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
-	@GetMapping("/list")
+	@GetMapping("/list/old")
 	public BaseRsp<ListRsp<ElementFlow>> getFlowList(@Validated EvalTaskFlowListQuery query) {
 
 		ListRsp<ElementFlow> flowListRsp = PageUtil.getNullResult();
@@ -88,21 +88,12 @@ public class EvalTaskFlowController {
 
 		flowListRsp = crSceneService
 				.getCrFlowList(evalSceneService.getElementFlowListContext(query, evalTask));
-
-		// 数量为0时状态为未运行
-		for (ElementFlow flow : flowListRsp.getList()){
-			if (null == flow.getCount() || flow.getCount() < 1){
-				flow.setCommonStatusReal(ElementFlow.CommonStatusEnum.FREE.getCode());
-				flow.setStatus(ElementFlow.TaskStatusEnum.INIT.getCode());
-			}
-		}
-
 		return new BaseRsp<>(flowListRsp);
 	}
 
 	/**
 	 * 获取流量列表
-	 * 该接口在获取流量列表的状态后，将其中指定的一个或多个状态转化成进行中
+	 * 该接口flow_id和is_all_flow参数是为了在获取流量列表的状态后，将其中指定的一个或多个状态强制转化成进行中
 	 * 是为了在页面触发流量启动后给个固定的“进行中”展示（前端因为组件封装原因不方便改）
 	 *
 	 * @param query 查询
@@ -110,7 +101,7 @@ public class EvalTaskFlowController {
 	 */
 	@ApiOperation("获取任务流量列表")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
-	@GetMapping("/list/running")
+	@GetMapping("/list")
 	public BaseRsp<ListRsp<ElementFlow>> getFlowListForRunning(@Validated EvalTaskFlowListQuery query) {
 
 		// 获取流量列表

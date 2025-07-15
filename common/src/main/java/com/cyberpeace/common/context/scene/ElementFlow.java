@@ -131,4 +131,7 @@ public class ElementFlow implements Serializable {
 		this.commonStatus = statusCode;
 	}
 
+	public void setCommonStatusReal(Integer commonStatus) {
+		this.commonStatus = commonStatus;
+	}
 }

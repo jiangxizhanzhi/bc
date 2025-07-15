@@ -89,6 +89,14 @@ public class EvalTaskFlowController {
 		flowListRsp = crSceneService
 				.getCrFlowList(evalSceneService.getElementFlowListContext(query, evalTask));
 
+		// 数量为0时状态为未运行
+		for (ElementFlow flow : flowListRsp.getList()){
+			if (null == flow.getCount() || flow.getCount() < 1){
+				flow.setCommonStatusReal(ElementFlow.CommonStatusEnum.FREE.getCode());
+				flow.setStatus(ElementFlow.TaskStatusEnum.INIT.getCode());
+			}
+		}
+
 		return new BaseRsp<>(flowListRsp);
 	}
 
@@ -108,17 +116,23 @@ public class EvalTaskFlowController {
 		// 获取流量列表
 		BaseRsp<ListRsp<ElementFlow>> result = getFlowList(query);
 
-		// 更换返回的流量状态为运行中
 		if (null != result && null != result.getData()){
 			for (ElementFlow elementFlow : result.getData().getList()){
+				// 执行数量为null或0时状态为未运行
+				if (null == elementFlow.getCount() || elementFlow.getCount() < 1){
+					elementFlow.setCommonStatusReal(ElementFlow.CommonStatusEnum.FREE.getCode());
+					elementFlow.setStatus(ElementFlow.TaskStatusEnum.INIT.getCode());
+				}
+
+				// 更换指定的流量状态为运行中，优先级大于上面的
 				if (null != query.getIsAllFlow() && query.getIsAllFlow()){
-					elementFlow.setCommonStatus(0);
-					elementFlow.setStatus(1);
+					elementFlow.setCommonStatusReal(ElementFlow.CommonStatusEnum.ACTIVE.getCode());
+					elementFlow.setStatus(ElementFlow.TaskStatusEnum.RUNNING.getCode());
 				}
 				if (StringUtils.isNotBlank(query.getFlowId())
 						&& query.getFlowId().equals(elementFlow.getId())){
-					elementFlow.setCommonStatus(0);
-					elementFlow.setStatus(1);
+					elementFlow.setCommonStatusReal(ElementFlow.CommonStatusEnum.ACTIVE.getCode());
+					elementFlow.setStatus(ElementFlow.TaskStatusEnum.RUNNING.getCode());
 				}
 			}
 		}

@@ -43,6 +43,7 @@ public class OJApplication {
 	 * @see String[]
 	 */
 	public static void main(String[] args) {
+		System.setProperty("org.bytedeco.javacpp.logger.debug", "true");
 		SpringApplication.run(OJApplication.class, args);
 	}
 

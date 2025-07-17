@@ -15,6 +15,7 @@ public class OJStartupRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         log.info("OJStartupRunner run");
+        System.setProperty("org.bytedeco.javacpp.logger.debug", "true");
         courseLessonService.countVideo();
         log.info("OJStartupRunner run end");
     }

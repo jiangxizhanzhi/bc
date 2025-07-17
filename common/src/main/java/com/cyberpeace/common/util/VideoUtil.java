@@ -75,6 +75,8 @@ public class VideoUtil {
             log.error("video file not exist or not readable: [{}]", path);
             return 0;
         }
+        log.info("platform: {}, loadLib: {}", org.bytedeco.javacpp.Loader.getPlatform(), org.bytedeco.javacpp.Loader.getLoadedLibraries());
+
         try(FFmpegFrameGrabber ff = new FFmpegFrameGrabber(file)) {
             ff.start();
             duration = ff.getLengthInTime();

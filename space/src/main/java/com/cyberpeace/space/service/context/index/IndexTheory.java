@@ -120,6 +120,9 @@ public class IndexTheory {
 	@ApiModelProperty(value = "课程视频时长")
 	private Integer videoDuration = 0;
 
+	@ApiModelProperty(value = "APT报告数")
+	private Integer reportCount = 0;
+
 	/**
 	 * 和
 	 *

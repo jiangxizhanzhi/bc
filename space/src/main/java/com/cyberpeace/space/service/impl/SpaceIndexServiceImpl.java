@@ -153,6 +153,9 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	@Autowired
 	private SpaceViolationJudgeRuleService spaceViolationJudgeRuleService;
 
+	@Autowired
+	private SpaceAptReportService spaceAptReportService;
+
 	/**
 	 * 获取知识点存储 库统计学
 	 *
@@ -253,12 +256,13 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		theory.setVideoCount(videoList.size());
 		int videoDuration = 0;
 		for (CourseLesson lesson : videoList) {
-			if (null != lesson.getDuration())
-				videoDuration += lesson.getDuration();
+			if (null != lesson.getVideoDuration())
+				videoDuration += lesson.getVideoDuration();
 		}
 		theory.setVideoDuration(MathUtils.roundDivide(videoDuration, 60));
 
 		theory.calSum();
+		theory.setReportCount(spaceAptReportService.count());
 		return theory;
 	}
 

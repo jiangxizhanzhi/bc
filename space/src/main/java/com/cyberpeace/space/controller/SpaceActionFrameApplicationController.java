@@ -328,6 +328,15 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 		return new BaseRsp<>();
 	}
 
+	@ApiOperation("批量下发战法指令")
+	@PostMapping("/orders")
+	public BaseRsp releaseOrders(@RequestBody @Valid List<SpaceActionFrameOrderReq> reqs) {
+		for (SpaceActionFrameOrderReq req : reqs) {
+			orderService.create(req);
+		}
+		return new BaseRsp<>();
+	}
+
 	/**
 	 * 工位线查询分配到的战法指令
 	 *

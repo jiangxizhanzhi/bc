@@ -263,10 +263,11 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
                 .isNotNull(RbRoom::getTaskId)
                 .ne(RbRoom::getLocalSceneId,"")
                 .isNotNull(RbRoom::getLocalSceneId);
-//        启动的联合训练场景
+//        启动/正在启动的联合训练场景，在mp中再判断是否真正启动
         List<RbRoom> list = rbRoomService.list(queryWrapper);
         List<String> localSceneIds = list.stream().map(RbRoom::getLocalSceneId).collect(Collectors.toList());
 //        mp场景数据
+        if (localSceneIds.size() == 0) return;
         Map<String, LocalScene> LocalSceneMap = localSceneService.listByIds(localSceneIds)
                 .stream()
                 .collect(Collectors.toMap(LocalScene::getResourceId, localScene -> localScene, (a, b) -> a));
@@ -313,19 +314,25 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveUniteBusinessTopo(NetworkTopoVO networkTopoVO) {
+        LambdaQueryWrapper<CrUniteBusinessNode> nodeLambdaQueryWrapper = new QueryWrapper<CrUniteBusinessNode>().lambda().eq(CrUniteBusinessNode::getTaskId, networkTopoVO.getTask_id());
+        List<CrUniteBusinessNode> crUniteBusinessNodeList = crUniteBusinessNodeService.list(nodeLambdaQueryWrapper);
+        LambdaQueryWrapper<CrUniteBusinessLink> linkLambdaQueryWrapper = new QueryWrapper<CrUniteBusinessLink>().lambda().eq(CrUniteBusinessLink::getTaskId, networkTopoVO.getTask_id());
+        List<CrUniteBusinessLink> crUniteBusinessLinkList = crUniteBusinessLinkService.list(linkLambdaQueryWrapper);
+        if (crUniteBusinessNodeList.size() == 0 && crUniteBusinessLinkList.size() == 0) {
 //        保存设备信息
-        List<CrUniteBusinessNode> nodes = networkTopoVO.getNodes();
-        nodes.forEach(node -> {
-            node.setTaskId(networkTopoVO.getTask_id());
-        });
-        crUniteBusinessNodeService.saveBatch(nodes);
+            List<CrUniteBusinessNode> nodes = networkTopoVO.getNodes();
+            nodes.forEach(node -> {
+                node.setTaskId(networkTopoVO.getTask_id());
+            });
+            crUniteBusinessNodeService.saveBatch(nodes);
 //        保存链路信息
-        List<CrUniteBusinessLink> links = networkTopoVO.getLinks();
-        links.forEach(link -> {
-            link.setTaskId(networkTopoVO.getTask_id());
-        });
-        crUniteBusinessLinkService.saveBatch(links);
-        sceneRelease(networkTopoVO);
+            List<CrUniteBusinessLink> links = networkTopoVO.getLinks();
+            links.forEach(link -> {
+                link.setTaskId(networkTopoVO.getTask_id());
+            });
+            crUniteBusinessLinkService.saveBatch(links);
+            sceneRelease(networkTopoVO);
+        }
     }
 
     @Override
@@ -343,6 +350,19 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         List<CrUniteBusinessLink> links = crUniteBusinessLinkService.list(linkLambdaQueryWrapper);
         crUniteBusinessTaskVO.setLinks(links);
         return crUniteBusinessTaskVO;
+    }
+
+//    TODO 临时给数实测试用
+    @Scheduled(fixedRate = 5000)
+    public void reportBuildResult1() {
+        NetworkTopoVO networkTopoVO = new NetworkTopoVO();
+        networkTopoVO.setTask_id("193623183164072302");
+        LambdaQueryWrapper<BusinessTemplate> queryWrapper = new QueryWrapper<BusinessTemplate>().lambda()
+                .eq(BusinessTemplate::getUniteTaskId,networkTopoVO.getTask_id());
+        List<BusinessTemplate> businessTemplates = businessTemplateMapper.selectList(queryWrapper);
+        for (BusinessTemplate businessTemplate : businessTemplates) {
+            retrieveNetworkTopologyByTaskId(networkTopoVO.getTask_id(), businessTemplate.getTopoId());
+        }
     }
 
     @Override
@@ -450,6 +470,7 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         rbTemplate.setRoleConfig("{}");
         rbTemplate.setSubType(1);
         rbTemplate.setDurationTime(4);
+
         rbTemplateMapper.insert(rbTemplate);
     }
 }

@@ -46,6 +46,8 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+import static com.cyberpeace.common.constant.MpSceneStatusConstant.MP_SCENE_DELETE_EVENT_CODE;
+import static com.cyberpeace.common.constant.MpSceneStatusConstant.MP_SCENE_PROGRESS_FINISH_CODE;
 import static com.cyberpeace.common.enums.BusinessType.UNITE_TRAIN;
 
 /**
@@ -201,7 +203,6 @@ public class RbSceneServiceImpl implements RbSceneService {
      */
     private LocalScene createLocalScene(RbRoom room, String topoId) {
         LocalScene localScene = new LocalScene();
-
         localScene.setBusinessCode(BusinessCode.RED_VS_BLUE.getCode());
         localScene.setUserId(UserInfoContext.getUserContext().getUserId());
         localScene.setBusinessInstanceId(room.getResourceId());
@@ -604,8 +605,12 @@ public class RbSceneServiceImpl implements RbSceneService {
             return null;
         }
         // 场景实际已被删除，清除本地脏数据
-        SceneData data = sceneData.toJavaObject(SceneDataImpl.class);
-		if (Boolean.TRUE.equals(data.isStopped())) {
+//        TODO 太复杂 不在同模块 无法获取topo报错
+//        SceneData data = sceneData.toJavaObject(SceneDataImpl.class);
+        Boolean isStopped = sceneData.getJSONObject("topology").getJSONObject("scene").getString("event").equals("MP_SCENE_DELETE_EVENT_CODE") &&
+                sceneData.getJSONObject("topology").getJSONObject("scene").getString("event_status").equals(MP_SCENE_PROGRESS_FINISH_CODE);
+
+		if (Boolean.TRUE.equals(isStopped)) {
             clearLocal(room);
             return null;
         }

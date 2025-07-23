@@ -2,13 +2,17 @@ package com.cyberpeace.cr.redvsblue.ws;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.redvsblue.service.CrUniteBusinessTaskService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.*;
-
-import java.io.IOException;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.WebSocketMessage;
+import org.springframework.web.socket.WebSocketSession;
 
 @Slf4j
 @Component
@@ -16,6 +20,17 @@ public class MyWebSocketClientHandler implements WebSocketHandler {
 
     @Autowired
     private CrUniteBusinessTaskService crUniteBusinessTaskService;
+    /**
+     * 远程用户Service
+     *
+     * @see RemoteUserService
+     */
+    @Autowired
+    private RemoteUserService remoteUserService;
+    /**
+     * 内置导入超级管理员编号
+     */
+    public static final String SUPER_ADMIN_HASH = "3f655d87112f4ae094bbaf70830e20aa";
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -34,6 +49,9 @@ public class MyWebSocketClientHandler implements WebSocketHandler {
 //        int type = payloadObj.getType();
             String function = jsonObject.getString("Function");
             String data = jsonObject.getString("Data");
+            UserInfo userInfo = remoteUserService.getById(SUPER_ADMIN_HASH);
+            UserInfoContext.setUserContext(userInfo);
+
             switch (function) {
 //                设备下发
                 case "Interaction1":

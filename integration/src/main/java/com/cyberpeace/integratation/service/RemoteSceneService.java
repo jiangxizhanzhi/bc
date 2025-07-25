@@ -608,6 +608,11 @@ public interface RemoteSceneService {
 	 * @param jsonString
 	 */
 	JSONObject attack(String jsonString);
+	/**
+	 * 发送流量攻击指令
+	 * @param jsonString
+	 */
+	JSONObject flowStart(String jsonString);
 
 	void uniteLinkStatus(String string);
 }

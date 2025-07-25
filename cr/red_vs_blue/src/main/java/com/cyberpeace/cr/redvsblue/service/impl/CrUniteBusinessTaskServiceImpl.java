@@ -15,6 +15,7 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.context.scene.RbSceneViewContext;
 import com.cyberpeace.cr.redvsblue.controller.req.UniteAttackReq;
+import com.cyberpeace.cr.redvsblue.controller.req.UniteFlowAttackReq;
 import com.cyberpeace.cr.redvsblue.dao.entity.CrUniteBusinessLink;
 import com.cyberpeace.cr.redvsblue.dao.entity.CrUniteBusinessNode;
 import com.cyberpeace.cr.redvsblue.dao.entity.CrUniteBusinessTask;
@@ -76,7 +77,7 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
     private WebSocketClientService webSocketClientService;
 
     //调用预处理方法
-    @KafkaListener(topics = "topic_network")
+    @KafkaListener  (topics = "topic_network")
     public void geojsonProcess(byte[] message) {
         try {
             log.info("训练任务开始接收");
@@ -250,7 +251,45 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
 
     @Override
     public void flowStart(String data) {
-
+        log.info("接受到流量攻击指令：{}",data);
+        UniteFlowAttackReq uniteFlowAttackReq = JSON.parseObject(data, JSONObject.class).getJSONObject("data").toJavaObject(UniteFlowAttackReq.class);
+        flowStart(uniteFlowAttackReq);
+    }
+    @Override
+    public void flowStart(UniteFlowAttackReq uniteFlowAttackReq) {
+        String taskId = uniteFlowAttackReq.getTaskId();
+        RbRoom room = rbRoomService.getRbRoomByUniteTaskId(taskId);
+        RbSceneViewContext rbSceneViewContext = rbSceneService.viewScene(room.getResourceId(), null);
+        JSONObject sceneData = rbSceneViewContext.getSceneData();
+        List<JSONObject> elements = sceneData.getJSONObject("topology")
+                .getJSONArray("elements")
+                .toJavaList(JSONObject.class);
+        Map<String, String> map = elements.stream()
+                .filter(element -> StringUtils.isNotBlank(element.getString("unite_number_id")))
+                .collect(Collectors.toMap(o -> o.getString("unite_number_id"), o -> o.getString("id")));
+        JSONObject pluginElements = sceneData.getJSONObject("plugins")
+                .getJSONObject("cpcloud")
+                .getJSONObject("elements");
+        String sourceNode = map.get(uniteFlowAttackReq.getAttackerId());
+        String targetNode = map.get(uniteFlowAttackReq.getTargetId());
+        if(sourceNode!=null&&targetNode!=null){
+            JSONArray attackTools = pluginElements.getJSONObject(map.get(uniteFlowAttackReq.getTargetId()))
+                    .getJSONArray("attack_tools");
+            if(null!=attackTools && attackTools.size()>0){
+                Map<String, JSONArray> paramsMap = attackTools.toJavaList(JSONObject.class)
+                        .stream().collect(Collectors.toMap(o -> o.getString("id"), o -> o.getJSONArray("params")));
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id",rbSceneViewContext.getMpSceneId());
+                jsonObject.put("source_node",sourceNode);
+                jsonObject.put("target_node",targetNode);
+                jsonObject.put("task_id",uniteFlowAttackReq.getTaskId());
+                jsonObject.put("target_id",uniteFlowAttackReq.getTargetId());
+                jsonObject.put("size",uniteFlowAttackReq.getSize());
+                jsonObject.put("type",uniteFlowAttackReq.getType());
+                String jsonString = jsonObject.toJSONString();
+                remoteSceneService.flowStart(jsonString);
+            }
+        }
     }
 
     @Override

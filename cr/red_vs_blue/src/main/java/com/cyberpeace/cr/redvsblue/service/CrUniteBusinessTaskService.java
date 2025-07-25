@@ -2,6 +2,7 @@ package com.cyberpeace.cr.redvsblue.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.redvsblue.controller.req.UniteAttackReq;
+import com.cyberpeace.cr.redvsblue.controller.req.UniteFlowAttackReq;
 import com.cyberpeace.cr.redvsblue.dao.entity.CrUniteBusinessTask;
 import com.cyberpeace.cr.redvsblue.vo.CrUniteBusinessTaskVO;
 import com.cyberpeace.cr.redvsblue.vo.NetworkTaskVO;
@@ -36,5 +37,7 @@ public interface CrUniteBusinessTaskService extends IService<CrUniteBusinessTask
     void flowStart(String data);
 
     void linkStatus();
+
+    void flowStart(UniteFlowAttackReq uniteFlowAttackReq);
 
 }

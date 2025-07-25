@@ -402,6 +402,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String UNITE_LINK_STATUS;
 
+	private String UNITE_FLOW_URL;
 	/**
 	 * 初始化
 	 *
@@ -515,6 +516,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		UNITE_ATTACK_URL =  MP_HOST + ConfigUtil.getContextProperty("unite.attack");
 
 		UNITE_LINK_STATUS =  MP_HOST + ConfigUtil.getContextProperty("unite.link.status");
+
+		UNITE_FLOW_URL =  MP_HOST + ConfigUtil.getContextProperty("unite.flow");
 	}
 
 	/**
@@ -1444,6 +1447,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public JSONObject attack(String jsonString) {
 		JSONObject jsonObject = HttpClientUtil.post(UNITE_ATTACK_URL, jsonString, JSONObject.class);
+		return jsonObject;
+	}
+	@Override
+	public JSONObject flowStart(String jsonString) {
+		JSONObject jsonObject = HttpClientUtil.post(UNITE_FLOW_URL, jsonString, JSONObject.class);
 		return jsonObject;
 	}
 

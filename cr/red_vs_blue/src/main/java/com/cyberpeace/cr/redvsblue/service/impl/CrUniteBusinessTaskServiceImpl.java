@@ -284,6 +284,7 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
                 jsonObject.put("target_node",targetNode);
                 jsonObject.put("task_id",uniteFlowAttackReq.getTaskId());
                 jsonObject.put("target_id",uniteFlowAttackReq.getTargetId());
+                jsonObject.put("attacker_id",uniteFlowAttackReq.getAttackerId());
                 jsonObject.put("size",uniteFlowAttackReq.getSize());
                 jsonObject.put("type",uniteFlowAttackReq.getType());
                 String jsonString = jsonObject.toJSONString();

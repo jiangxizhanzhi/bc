@@ -83,7 +83,6 @@ public interface TrainPlanMapper extends BaseMapper<TrainPlan> {
 	IPage<TrainPlanRsp> listTrainPlan(@Param("page") Page<TrainPlanRsp> page,
 			@Param("pattern") String pattern, @Param("organizationId") String organizationId,
 			@Param("userId") String userId, @Param("isSuperUser") boolean isSuperUser,
-			@Param("isAdmin") boolean isAdmin, @Param("courseIds") List<String> courseIds,
 			@Param("status") Integer status,
 			@Param("defaultTaskSetName") String defaultTaskSetName);
 

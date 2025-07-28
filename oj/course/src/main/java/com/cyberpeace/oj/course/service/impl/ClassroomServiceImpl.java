@@ -999,21 +999,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
     public List<ClassroomBo> selectList(ClassRoomListQuery roomListQuery, AuthContext authContext) {
 
 		List<Classroom> classrooms = classroomMapper.selectListByListQuery(roomListQuery);
-        Set<String> existClassroom = classrooms.stream().map(Classroom::getResourceId).collect(Collectors.toSet());
-        //管理员用户增加admin用户在自己创建的计划中的创建的计划
-        if (Boolean.TRUE.equals(authContext.getIsAdmin())) {
-            roomListQuery.setUserId(null);
-            List<Classroom> superAdminClassrooms = classroomMapper.selectAdminList(roomListQuery);
-            for (Classroom classroom : superAdminClassrooms) {
-                if (classroom.getTrainPlanId() != null&&classroom.getTrainPlan() != null
-                        && classroom.getTrainPlan().getCreateUserId().equals(authContext.getUserId())
-                        && existClassroom.add(classroom.getResourceId())) {
-                    classrooms.add(classroom);
-
-                }
-            }
-        }
-
         // 过滤已删除组织关联数据
         Set<String> orgIds = remoteOrganizationService.getAllOrgIds();
         classrooms = classrooms.stream().filter(classroom -> orgIds.contains(classroom.getOrganizationId())).collect(Collectors.toList());
@@ -1650,9 +1635,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
     public IPage<ClassroomBo> selectPage(ClassRoomPageQuery roomListQuery,
                                          AuthContext authContext) {
         Page<Classroom> page = roomListQuery.toPageParam();
-        List<String> courseIds = courseMapper.selectByAuth(authContext);
         IPage<Classroom> result = classroomMapper.page(page, roomListQuery.getUserId(),
-                roomListQuery.getTrainPlanId(), roomListQuery.getChildrenOrg(), authContext.getIsAdmin(), courseIds);
+                roomListQuery.getTrainPlanId(), roomListQuery.getChildrenOrg());
 		ClassroomInfo info = getInfo(result.getRecords());
 		return result.convert(classroom -> entityToBo(classroom, info));
 

@@ -126,10 +126,8 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 	public IPage<TrainPlanRsp> page(TrainPlanReq trainPlanReq, UserInfo userInfo) {
 
 		Page<TrainPlanRsp> page = trainPlanReq.toPageParam();
-		List<String> courseIds = courseMapper.selectByAuth(AuthContextUtils.constructAuth(userInfo,
-				false));
 		IPage<TrainPlanRsp> result = trainPlanMapper.listTrainPlan(page, trainPlanReq.getPattern(), trainPlanReq.getOrganizationId(),
-				userInfo.getUserId(), userInfo.isSuperuser(), userInfo.isAdmin(), courseIds,
+				userInfo.getUserId(), userInfo.isSuperuser(),
 				trainPlanReq.getStatus(), TrainPlan.defaultTaskSetName());
 
 		// set status

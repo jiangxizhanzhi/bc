@@ -139,8 +139,6 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 * @param userId      用户id
 	 * @param trainPlanId 训练计划id
 	 * @param childrenOrg 子级组织
-	 * @param isAdmin     是否管理
-	 * @param courseIds   课程id列表
 	 * @return {@code IPage<Classroom> }
 	 * @throws
 	 * @see Page<Classroom>
@@ -151,7 +149,7 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 * @see List<String>
 	 * @see IPage<Classroom>
 	 */
-	IPage<Classroom> page(Page<Classroom> listQuery, String userId, String trainPlanId, List<String> childrenOrg, boolean isAdmin, List<String> courseIds);
+	IPage<Classroom> page(Page<Classroom> listQuery, String userId, String trainPlanId, List<String> childrenOrg);
 
 	/**
 	 * 查询id列表由计划id列表

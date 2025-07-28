@@ -36,18 +36,7 @@
         FROM   oj_classroom
         where 1=1
         <if test="isSuperUser != null and 'false'.toString() == isSuperUser.toString()">
-            and (create_user_id = #{userId}
-            <if test="isAdmin != null and 'true'.toString == isAdmin.toString()">
-                or (create_user_id = '3f655d87112f4ae094bbaf70830e20aa'
-                <if test="courseIds != null and courseIds.size() != 0">
-                    and course_id in
-                    <foreach collection="courseIds" open="(" close=")" separator="," item="courseId">
-                        #{courseId}
-                    </foreach>
-                </if>
-                )
-            </if>
-            )
+            and create_user_id = #{userId}
         </if>
         group by train_plan_id) b
         on a.resource_id = b.train_plan_id

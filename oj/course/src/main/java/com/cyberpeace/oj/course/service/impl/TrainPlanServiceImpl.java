@@ -313,6 +313,12 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 		List<Classroom> classroomList = classroomMapper.selectByPlan(reuseReq.getResourceId());
 		String userId = UserInfoContext.getUserContext().getUserId();
 		for (Classroom classroom : classroomList) {
+
+			// 如果原有课程表的创建用户不为当前用户且当前用户不为超级管理员，则忽略
+			if (!classroom.getCreateUserId().equals(userId) && !UserInfoContext.getUserContext().isSuperuser()) {
+				continue;
+			}
+
 			classroom.setCreateUserId(userId);
 			classroom.setId(null);
 			classroom.setCreateTime(null);

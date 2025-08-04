@@ -311,6 +311,7 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 		trainPlan.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		// classrooms
 		List<Classroom> classroomList = classroomMapper.selectByPlan(reuseReq.getResourceId());
+		List<Classroom> reuseClassroomList = Lists.newArrayList();
 		String userId = UserInfoContext.getUserContext().getUserId();
 		for (Classroom classroom : classroomList) {
 
@@ -330,13 +331,14 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 			// 组织为空
 			classroom.setOrganizationId(CommonConstant.EMPTY_STRING);
 			classroom.setOrganizationIds(CommonConstant.EMPTY_LIST_JSON);
+			reuseClassroomList.add(classroom);
 		}
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				save(trainPlan);
-				classroomService.saveBatch(classroomList);
+				classroomService.saveBatch(reuseClassroomList);
 			}
 		});
 	}

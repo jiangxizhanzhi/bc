@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodesOpsReq;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -355,6 +356,24 @@ public class RbSceneController {
 		return new BaseRsp<>();
 	}
 
+	@ApiOperation("批量重启节点")
+	@PostMapping("/nodes/restart")
+	public BaseRsp<Boolean> restartNodes(@RequestBody SceneNodesOpsReq nodesOpsReq) {
+		RbRoom room = rbRoomService.getById(nodesOpsReq.getResourceId());
+		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
+			log.error(SCENE_NOT_START_LOG, nodesOpsReq.getResourceId());
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		Boolean result = localSceneService.restartNodes(room.getLocalSceneId(),
+				nodesOpsReq.getNodeIds());
+		if (Boolean.FALSE.equals(result)) {
+			log.error("restart node failed, room id is {}, node id is {}",
+					nodesOpsReq.getResourceId(), StringUtils.join(nodesOpsReq.getNodeIds(), ","));
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RESTART_NODE);
+		}
+		return new BaseRsp<>();
+	}
+
 	/**
 	 * 重新创建节点
 	 *
@@ -374,6 +393,24 @@ public class RbSceneController {
 		if (Boolean.FALSE.equals(result)) {
 			log.error("recreate node failed, room id is {}, node id is {}",
 					nodeOpsReq.getResourceId(), nodeOpsReq.getNodeId());
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
+		}
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("批量重建节点")
+	@PostMapping("/nodes/recreate")
+	public BaseRsp<Boolean> recreateNodes(@RequestBody SceneNodesOpsReq nodesOpsReq) {
+		RbRoom room = rbRoomService.getById(nodesOpsReq.getResourceId());
+		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
+			log.error(SCENE_NOT_START_LOG, nodesOpsReq.getResourceId());
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		Boolean result = localSceneService.recreateNodes(room.getLocalSceneId(),
+				nodesOpsReq.getNodeIds());
+		if (Boolean.FALSE.equals(result)) {
+			log.error("recreate node failed, room id is {}, node id is {}",
+					nodesOpsReq.getResourceId(), StringUtils.join(nodesOpsReq.getNodeIds(), ","));
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
 		}
 		return new BaseRsp<>();

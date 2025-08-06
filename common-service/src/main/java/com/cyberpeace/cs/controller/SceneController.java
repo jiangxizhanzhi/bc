@@ -2,6 +2,7 @@ package com.cyberpeace.cs.controller;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.cs.controller.req.scene.NodesOpsReq;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -152,6 +153,17 @@ public class SceneController {
 		return new BaseRsp<>(result);
 	}
 
+	@PostMapping("/nodes/start")
+	@ApiOperation("节点批量开机")
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
+			MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.WEB_CR_SINGLE_TRAIN,
+			MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE }, logical = Logical.OR)
+	public BaseRsp<Boolean> startNodes(@Valid @RequestBody NodesOpsReq req) {
+		Boolean result = localSceneService.startNodes(req.getMpSceneId(), req.getNodeIds());
+		return new BaseRsp<>(result);
+	}
+
 
 	/**
 	 * 停止节点
@@ -167,6 +179,17 @@ public class SceneController {
 			MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE }, logical = Logical.OR)
 	public BaseRsp<Boolean> stopNode(@Valid @RequestBody NodeOpsReq req) {
 		Boolean result = localSceneService.stopNode(req.getMpSceneId(), req.getNodeId());
+		return new BaseRsp<>(result);
+	}
+
+	@PostMapping("/nodes/stop")
+	@ApiOperation("节点批量关机")
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
+			MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.WEB_CR_SINGLE_TRAIN,
+			MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE }, logical = Logical.OR)
+	public BaseRsp<Boolean> stopNodes(@Valid @RequestBody NodesOpsReq req) {
+		Boolean result = localSceneService.stopNodes(req.getMpSceneId(), req.getNodeIds());
 		return new BaseRsp<>(result);
 	}
 

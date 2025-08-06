@@ -1,5 +1,6 @@
 package com.cyberpeace.cs.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -243,6 +244,24 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return true;
 	}
 
+	@Override
+	public Boolean restartNodes(String localSceneId, List<String> nodeIds) {
+		LocalScene localScene = getById(localSceneId);
+		if (localScene == null || StringUtils.isBlank(localScene.getMpSceneId())) {
+			log.error("invalid localScene: {}", localSceneId);
+			throw new BusinessException(ErrorCode.FAILED_TO_RESTART_NODE);
+		}
+		for (String nodeId : nodeIds) {
+			Boolean result = remoteSceneService.recreateNode(getNodeOpsContext(localScene, nodeId));
+			if (!result) {
+				log.error("failed to restart node [{}] in scene [{}]", nodeId,
+						localScene.getMpSceneId());
+				throw new BusinessException(ErrorCode.FAILED_TO_RESTART_NODE);
+			}
+		}
+		return true;
+	}
+
 	/**
 	 * 重新创建节点
 	 *
@@ -263,6 +282,25 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			log.error("failed to recreate node [{}] in scene [{}]", nodeId,
 					localScene.getMpSceneId());
 			throw new BusinessException(ErrorCode.FAILED_TO_RECREATE_NODE);
+		}
+		return true;
+	}
+
+	@Override
+	public Boolean recreateNodes(String localSceneId, List<String> nodeIds) {
+		LocalScene localScene = getById(localSceneId);
+		if (localScene == null || StringUtils.isBlank(localScene.getMpSceneId())) {
+			log.error("invalid localScene, id: [{}]", localSceneId);
+			throw new BusinessException(ErrorCode.FAILED_TO_RECREATE_NODE);
+		}
+		for (String nodeId : nodeIds) {
+			NodeOpsContext nodeOpsContext = getNodeOpsContext(localScene, nodeId);
+			Boolean result = remoteSceneService.recreateNode(nodeOpsContext);
+			if (!result) {
+				log.error("failed to recreate node [{}] in scene [{}]", nodeId,
+						localScene.getMpSceneId());
+				throw new BusinessException(ErrorCode.FAILED_TO_RECREATE_NODE);
+			}
 		}
 		return true;
 	}
@@ -938,6 +976,15 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return remoteSceneService.startNode(context);
 	}
 
+	@Override
+	public Boolean startNodes(String mpSceneId, List<String> nodeIds) {
+		LocalScene localScene = getOrExceptionByMpSceneId(mpSceneId);
+		for (String nodeId : nodeIds) {
+			remoteSceneService.startNode(getNodeOpsContext(localScene, nodeId));
+		}
+		return true;
+	}
+
 	/**
 	 * 停止节点
 	 *
@@ -950,6 +997,15 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		LocalScene localScene = getOrExceptionByMpSceneId(mpSceneId);
 		NodeOpsContext context = getNodeOpsContext(localScene, nodeId);
 		return remoteSceneService.stopNode(context);
+	}
+
+	@Override
+	public Boolean stopNodes(String mpSceneId, List<String> nodeIds) {
+		LocalScene localScene = getOrExceptionByMpSceneId(mpSceneId);
+		for (String nodeId : nodeIds) {
+			remoteSceneService.stopNode(getNodeOpsContext(localScene, nodeId));
+		}
+		return true;
 	}
 
 	/**

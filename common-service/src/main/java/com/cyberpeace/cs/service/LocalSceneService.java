@@ -205,6 +205,8 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 */
 	Boolean restartNode(String localSceneId, String nodeId);
 
+	Boolean restartNodes(String localSceneId, List<String> nodeIds);
+
 	/**
 	 * 重新创建节点
 	 *
@@ -213,6 +215,8 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @return {@code Boolean }
 	 */
 	Boolean recreateNode(String localSceneId, String nodeId);
+
+	Boolean recreateNodes(String localSceneId, List<String> nodeIds);
 
 	/**
 	 * 开始流量
@@ -375,6 +379,8 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 */
 	Boolean startNode(String mpSceneId, String nodeId);
 
+	Boolean startNodes(String mpSceneId, List<String> nodeIds);
+
 	/**
 	 * 单个节点关机
 	 *
@@ -383,6 +389,8 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @return {@code Boolean}
 	 */
 	Boolean stopNode(String mpSceneId, String nodeId);
+
+	Boolean stopNodes(String mpSceneId, List<String> nodeIds);
 
 	/**
 	 * 通过场景id重新启动节点

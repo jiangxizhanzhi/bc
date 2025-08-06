@@ -89,13 +89,27 @@
     </select>
 
     <select id="countByTime" resultType="com.cyberpeace.cr.crbase.service.context.guide.AttackTimeCountGroup">
-        SELECT
-        date_format(create_time, '%Y-%m-%d %H:00:00' ) createTime,
-        COUNT(1) AS `count`
-        FROM situation_guide_history
-        WHERE  room_id = #{roomId}
-        AND create_time  &gt;= #{startDate}
-        GROUP BY createTime
+        <choose>
+            <when test="@com.cyberpeace.config.db.MybatisConfig@DB_TYPE == 'dm'">
+                SELECT
+                TRUNC(create_time, 'HH') AS createTime,
+                COUNT(1) AS "count"
+                FROM
+                situation_guide_history
+                WHERE room_id = #{roomId}
+                AND create_time >= TO_DATE(#{startDate}, 'YYYY-MM-DD HH24:MI:SS')
+                GROUP BY TRUNC(create_time, 'HH')
+            </when>
+            <otherwise>
+                SELECT
+                date_format(create_time, '%Y-%m-%d %H:00:00' ) createTime,
+                COUNT(1) AS `count`
+                FROM situation_guide_history
+                WHERE  room_id = #{roomId}
+                AND create_time  &gt;= #{startDate}
+                GROUP BY createTime
+            </otherwise>
+        </choose>
     </select>
 
     <select id="getSceneIdsByRoom" resultType="java.lang.String">

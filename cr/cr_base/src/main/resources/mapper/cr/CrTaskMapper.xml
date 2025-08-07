@@ -248,7 +248,14 @@
         </foreach>
         and user_id in
         <foreach collection="user_ids" separator="," open="(" close=")" item="user_id">#{user_id}</foreach>
-        group by user_id order by total_score is null, total_score desc
+        <choose>
+            <when test="@com.cyberpeace.config.db.MybatisConfig@DB_TYPE == 'dm'">
+                group by user_id order by total_score is null, total_score desc
+            </when>
+            <otherwise>
+                group by user_id order by total_score desc
+            </otherwise>
+        </choose>
         <if test="limit != null">
             limit #{limit}
         </if>
@@ -263,7 +270,14 @@
         <foreach collection="statusList" item="status" separator="," open="(" close=")">
             #{status}
         </foreach>
-        group by user_id order by total_score is null, total_score desc
+        <choose>
+            <when test="@com.cyberpeace.config.db.MybatisConfig@DB_TYPE == 'dm'">
+                group by user_id order by total_score is null, total_score desc
+            </when>
+            <otherwise>
+                group by user_id order by total_score desc
+            </otherwise>
+        </choose>
         <if test="limit != null">
             limit #{limit}
         </if>

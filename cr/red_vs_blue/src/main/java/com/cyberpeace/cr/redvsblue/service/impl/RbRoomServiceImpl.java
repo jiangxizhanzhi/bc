@@ -232,7 +232,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	@Override
 	public RbRoom create(RbRoomContext rbRoomContext) {
 		String userId = UserInfoContext.getUserContext().getUserId();
-
+		//验证名称是否重复
 		validateName(rbRoomContext.getName());
 
 		RbTemplate template = rbTemplateService.getById(rbRoomContext.getTemplate());
@@ -249,16 +249,18 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		RbRoom rbRoom = new RbRoom(rbRoomContext, template);
 		rbRoom.setCreateUserId(userId);
+		//异步调用 mp中台获得topo接口
 		rbRoom.setCopyedTopoId(localSceneService.copyTopo(businessTemplate.getTopoId(), rbRoom.getName()));
 
 		// 复制完topo后修改部分启动状态
+		//调用中台接口 保存
 		remoteTopoService.setSupportPartialStart(rbRoom.getCopyedTopoId(),
 				rbRoomContext.getSupportPartialStart());
 		rbRoom.setSupportPartialStart(rbRoomContext.getSupportPartialStart());
 
 		rbRoom.setTemplateName(businessTemplate.getName());
 		rbRoom.setTrainingStatus(RbRoom.TrainingStatusCode.UNOPENED.getCode());
-
+		//Spring 提供的事务模板，确保 doInTransactionWithoutResult 内的所有操作在同一个事务中执行
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -870,6 +872,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
 
 		RbRoomRsp rbRoomRsp = BeanUtils.copy(rbRoomData, RbRoomRsp.class);
+		//先获取实例列表中自己的角色，再获取所有角色(查看列表用到)
 		rbRoomRsp.setRolePermission(this.getSelfRoleUsers(crRoles,
 				UserInfoContext.getUserContext().getUserId(), userInfoMap));
 		rbRoomRsp.setRolesData(this.getRbRoomRoleRes(crRoles, userInfoMap));
@@ -1128,7 +1131,6 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			if (crRole.containsUser(userId)) {
 				baseRole.setResourceId(crRole.getResourceId());
 				baseRole.setName(crRole.getName());
-				// ???
 				baseRole.setParentHash(crRole.getRoleGroup());
 				baseRole.setDescription(crRole.getDescription());
 				baseRole.setRoleGroup(crRole.getRoleGroup());
@@ -1137,6 +1139,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			RoleUsers roleUsers = new RoleUsers();
 			roleUsers.setRoleName(crRole.getName());
 			roleUsers.setRoleGroup(crRole.getRoleGroup());
+			//通过id找info 再通过info找到name
 			roleUsers.setUsers(
 					CrCommonUtil.getUserNamesByUserIds(crRole.getUserIdList(), userInfoMap));
 			List<UserData> userInfoList = CrCommonUtil.getUserDataList(crRole.getUserIdList(),

@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 网络攻防任务信息VO
@@ -136,5 +137,11 @@ public class NetworkTaskVO implements Serializable {
      */
     @JsonProperty("attachmentStream")
     private byte[] attachmentStream;
+
+    /**
+     * 席位配置信息
+     */
+    @ApiModelProperty(value = "席位配置信息", name = "seatConfigList")
+    private List<BusSeatConfigInfoVO> seatConfigList;
 
 }

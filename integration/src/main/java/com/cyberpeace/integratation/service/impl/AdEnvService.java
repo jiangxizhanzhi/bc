@@ -35,11 +35,8 @@ public class AdEnvService {
 	 * @see String
 	 */
 	public String getAdHost() {
-		if (StringUtils.isBlank(AD_URL)) {
-			log.warn("compose yml AD_HOST not set");
-			return CommonConstant.EMPTY_STRING;
-		}
-		return AD_URL;
+
+		return "";
 	}
 
 	/**
@@ -51,10 +48,10 @@ public class AdEnvService {
 	public void init() {
 		String AD_HOST = SystemPropUtil.getProp("AD_HOST");
 		// 竞赛模块不一定要存在
-		if (!StringUtils.isBlank(AD_HOST) && !AD_HOST.startsWith("http")) {
-			log.error("AD_HOST [{}] not starts with http!", AD_HOST);
-			throw new Error();
-		}
+//		if (!StringUtils.isBlank(AD_HOST) && !AD_HOST.startsWith("http")) {
+//			log.error("AD_HOST [{}] not starts with http!", AD_HOST);
+//			throw new Error();
+//		}
 		// 5.5+ 版本修改，和drm变量共用
 		AD_URL = AD_HOST;
 

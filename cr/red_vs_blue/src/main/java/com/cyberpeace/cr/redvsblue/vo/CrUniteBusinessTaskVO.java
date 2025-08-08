@@ -16,4 +16,6 @@ public class CrUniteBusinessTaskVO extends CrUniteBusinessTask {
 
     @ApiModelProperty(value = "链路信息", name = "links")
     private List<CrUniteBusinessLink> links;
+
+    private List<BusSeatConfigInfoVO> seatConfigListData;
 }

@@ -1,0 +1,44 @@
+{
+  "seatConfigList": [
+    {
+      "seatName": "分析评估组",
+      "id": "1951174966402560002",
+      "parentId": null,
+      "taskId": "1951174719672627202",
+      "seatUserName": null,
+      "childrens": [
+        {
+          "id":  "1951174966402560003",
+          "parentId": "1951174966402560002",
+          "taskId": "1951174719672627202",
+          "seatName": "分析评估席位1",
+          "seatUserName": "shushijiaozhan1"
+        },
+        {
+          "id":  "1951174966402560004",
+          "parentId": "1951174966402560002",
+          "taskId": "1951174719672627202",
+          "seatName": "分析评估席位2",
+          "seatUserName": "shushijiaozhan2"
+        }
+      ]
+    },
+    {
+      "seatName": "红方筹划组",
+      "id": "1951174966402560014",
+      "parentId": null,
+      "taskId": "1951174719672627202",
+      "seatUserName": null,
+      "childrens": [
+        {
+          "id":  "1951174966402560013",
+          "parentId": "1951174966402560014",
+          "taskId": "1951174719672627202",
+          "seatName": " 红方筹划席位1",
+          "seatUserName": "shushijiaozhan3"
+        }
+      ]
+    }
+  ]
+}
+

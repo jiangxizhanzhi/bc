@@ -38,7 +38,7 @@ public class WebSocketClientService {
 
     public void connectToServer() {
         // 指定服务器URL，例如 ws://localhost:8080/my-websocket
-        String url = "ws://127.0.0.1:1234";
+        String url = "ws://192.168.3.67:1234";
         try {
             // 连接到服务器并获取会话对象
             SESSION = webSocketClient.doHandshake(handler, url).get();

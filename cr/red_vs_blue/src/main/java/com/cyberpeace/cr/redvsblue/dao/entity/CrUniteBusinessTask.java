@@ -32,4 +32,6 @@ public class CrUniteBusinessTask extends BaseTable {
     private Date endTime;
 
     private String trainTarget;
+
+    private String seatConfigList;
 }

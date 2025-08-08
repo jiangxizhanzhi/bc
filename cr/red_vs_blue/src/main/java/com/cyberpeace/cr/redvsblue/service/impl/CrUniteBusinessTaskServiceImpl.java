@@ -108,6 +108,7 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         crUniteBusinessTask.setTaskDescription(networkTaskVO.getTaskContent());
         crUniteBusinessTask.setTrainTarget(networkTaskVO.getTaskContent());
         crUniteBusinessTask.setStartTime(networkTaskVO.getStartDt());
+        crUniteBusinessTask.setSeatConfigList(networkTaskVO.getSeatConfigList().toString());
 
 //        保存任务表
         getBaseMapper().insert(crUniteBusinessTask);

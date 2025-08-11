@@ -3,6 +3,7 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -10,6 +11,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
@@ -25,6 +27,7 @@ import com.cyberpeace.cr.redvsblue.dao.mapper.RbTemplateMapper;
 import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.*;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
+import com.cyberpeace.cr.redvsblue.vo.BusSeatConfigInfoVO;
 import com.cyberpeace.cr.redvsblue.vo.CrUniteBusinessTaskVO;
 import com.cyberpeace.cr.redvsblue.vo.NetworkTaskVO;
 import com.cyberpeace.cr.redvsblue.vo.NetworkTopoVO;
@@ -108,7 +111,8 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         crUniteBusinessTask.setTaskDescription(networkTaskVO.getTaskContent());
         crUniteBusinessTask.setTrainTarget(networkTaskVO.getTaskContent());
         crUniteBusinessTask.setStartTime(networkTaskVO.getStartDt());
-        crUniteBusinessTask.setSeatConfigList(networkTaskVO.getSeatConfigList().toString());
+        crUniteBusinessTask.setSeatConfigList(JsonUtil.toJsonString(
+                networkTaskVO.getSeatConfigList()));
 
 //        保存任务表
         getBaseMapper().insert(crUniteBusinessTask);
@@ -390,6 +394,8 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
                 new QueryWrapper<CrUniteBusinessLink>().lambda().eq(CrUniteBusinessLink::getTaskId, taskId);
         List<CrUniteBusinessLink> links = crUniteBusinessLinkService.list(linkLambdaQueryWrapper);
         crUniteBusinessTaskVO.setLinks(links);
+        crUniteBusinessTaskVO.setSeatConfigListData(JsonUtil.toJsonTObject(crUniteBusinessTask.getSeatConfigList(),
+                new TypeReference<List<BusSeatConfigInfoVO>>(){}));
         return crUniteBusinessTaskVO;
     }
 

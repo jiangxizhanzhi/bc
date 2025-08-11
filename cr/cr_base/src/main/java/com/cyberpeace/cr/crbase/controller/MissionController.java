@@ -134,8 +134,6 @@ public class MissionController {
 	 */
 	@ApiOperation("获取学员技能点雷达图")
 	@GetMapping("/missions/radar")
-	@RequiresPermissions(value = { MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL },
-			logical = Logical.OR)
 	public BaseRsp<List<Integer>> getRadar(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {

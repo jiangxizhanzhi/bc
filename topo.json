@@ -1,0 +1,662 @@
+{
+  "base_info": {
+    "name": "gstrget",
+    "category": 1,
+    "description": "gtrgh",
+    "create_user": "3f655d87112f4ae094bbaf70830e20aa",
+    "create_time": "2025-07-07 17:19:40",
+    "difficult": 1,
+    "duration_time": 4,
+    "pre_skill": [
+      "gerger"
+    ],
+    "train_skill": [
+      "greger"
+    ],
+    "scene_manager_id": "",
+    "scene_config_data": {
+      "auth_type": 1,
+      "reference_meta_data": "",
+      "roles": [
+        {
+          "asset_nodes": [],
+          "children": [
+            {
+              "asset_nodes": [],
+              "id": "c25fbac7-1a0f-4d3a-90e2-c6cd0ff374e2",
+              "name": "hong1",
+              "type": "red",
+              "visible_nodes": [],
+              "missions_scheme": {
+                "template": 1,
+                "color": 1,
+                "scheme_data": [
+                  {
+                    "stage": "drgse",
+                    "missions": [
+                      {
+                        "description": "grse",
+                        "resource_id": "a4dc0013523441bd9d363b5c0469aacd",
+                        "title": "fer4fe4fter4tfe4"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "asset_nodes": [],
+              "id": "c559ce8c-e36e-461f-a9b8-159ca3f88ab4",
+              "name": "hong2",
+              "type": "red",
+              "visible_nodes": [],
+              "missions_scheme": {
+                "template": 1,
+                "color": 1,
+                "scheme_data": []
+              }
+            }
+          ],
+          "id": "b36fc314-2e78-4c33-8136-61efcec99218",
+          "name": "红队",
+          "type": "red",
+          "visible_nodes": []
+        },
+        {
+          "asset_nodes": [],
+          "children": [
+            {
+              "asset_nodes": [],
+              "id": "c129d9a9-8bb0-4294-a8e4-79c8cd9ceffd",
+              "name": "lan1",
+              "type": "blue",
+              "visible_nodes": [],
+              "missions_scheme": {
+                "template": 1,
+                "color": 1,
+                "scheme_data": []
+              }
+            }
+          ],
+          "id": "2d9a7186-22d7-4220-94fd-39f1c1e164ee",
+          "name": "蓝队",
+          "type": "blue",
+          "visible_nodes": []
+        }
+      ],
+      "type": 0,
+      "reference_type": 214,
+      "scene_config": {
+        "plugins": {
+          "cpcloud": {
+            "element_ports": {
+              "port_a98109d9ddba46ed8572d94bc6aa8a27_electrical_1": {
+                "access_modes": [],
+                "firewall_rules": [],
+                "connect_mode": null,
+                "resource_id": ""
+              },
+              "port_a98109d9ddba46ed8572d94bc6aa8a27_electrical_2": {
+                "access_modes": [],
+                "firewall_rules": [],
+                "connect_mode": null,
+                "resource_id": ""
+              },
+              "port_a98109d9ddba46ed8572d94bc6aa8a27_electrical_3": {
+                "access_modes": [],
+                "firewall_rules": [],
+                "connect_mode": null,
+                "resource_id": ""
+              },
+              "port_a98109d9ddba46ed8572d94bc6aa8a27_electrical_4": {
+                "access_modes": [],
+                "firewall_rules": [],
+                "connect_mode": null,
+                "resource_id": ""
+              },
+              "port_e5913a3cdde94265908f35b2d73abb33_1": {
+                "access_modes": [
+                  {
+                    "proxy": true,
+                    "protocol": "ssh",
+                    "password": "NHiOJiZTD4K ",
+                    "port": 22,
+                    "username": "root",
+                    "desc": ""
+                  }
+                ],
+                "firewall_rules": [],
+                "connect_mode": null,
+                "resource_id": ""
+              }
+            },
+            "elements": {
+              "a98109d9ddba46ed8572d94bc6aa8a27": {
+                "resource_id": "",
+                "role": 22,
+                "image_type": "simple",
+                "image_uuid": "66e6244c-90d1-48d6-a615-0762af79e4f2",
+                "is_build_in": true,
+                "image": "Switch Simple",
+                "platform": "",
+                "electric_port_number": 4,
+                "electric_port_type": "E",
+                "optical_port_number": 0,
+                "optical_port_type": "sfp",
+                "init_support": false,
+                "firewall_rules": [],
+                "static_routes": [],
+                "category": 3,
+                "category2": 50,
+                "category3": 0,
+                "cidr": "192.168.1.0/24",
+                "gateway": "192.168.1.254",
+                "dns_nameservers": [
+                  "8.8.8.8",
+                  "114.114.114.114"
+                ],
+                "vlan_id": "",
+                "dhcp": true,
+                "allocation_pools": [],
+                "wan_port_number": 0,
+                "wan_port_type": "E",
+                "lan_port_number": 0,
+                "lan_port_type": "E",
+                "quick_create_params": [],
+                "ospf_router_id": "",
+                "rip_loopback": "",
+                "iso_attach_filename": "",
+                "iso_tmpdir_uuid": "",
+                "virtual_usbs": [],
+                "entity_usbs": [],
+                "docker_params": {
+                  "environment": {},
+                  "environment_str": ""
+                },
+                "attack_tools": [],
+                "is_attacker": false
+              },
+              "e5913a3cdde94265908f35b2d73abb33": {
+                "resource_id": "",
+                "role": 4,
+                "image_type": "vm",
+                "image_uuid": "76e1cb7c-a7fc-46c7-bc9f-5cf66d7ac6a5",
+                "is_build_in": false,
+                "image": "CentOS-8.0.1905-x64-server",
+                "platform": "",
+                "electric_port_number": 0,
+                "electric_port_type": "E",
+                "optical_port_number": 0,
+                "optical_port_type": "sfp",
+                "init_support": true,
+                "firewall_rules": [],
+                "static_routes": [],
+                "category": 1,
+                "category2": 2,
+                "category3": 306,
+                "cidr": "",
+                "gateway": "",
+                "dns_nameservers": [],
+                "vlan_id": "",
+                "dhcp": true,
+                "allocation_pools": [],
+                "wan_port_number": 0,
+                "wan_port_type": "E",
+                "lan_port_number": 0,
+                "lan_port_type": "E",
+                "quick_create_params": [],
+                "ospf_router_id": "",
+                "rip_loopback": "",
+                "iso_attach_filename": "",
+                "iso_tmpdir_uuid": "",
+                "virtual_usbs": [],
+                "entity_usbs": [],
+                "docker_params": {
+                  "environment": {},
+                  "environment_str": ""
+                },
+                "attack_tools": [],
+                "is_attacker": false
+              }
+            },
+            "scene": {
+              "dns_nameservers": []
+            }
+          },
+          "cpcollection": {
+            "element_ports": {},
+            "elements": {
+              "e5913a3cdde94265908f35b2d73abb33": {
+                "edited": false,
+                "probes": [
+                  {
+                    "common": true,
+                    "output_format": "none",
+                    "os_type": "0,1,2,3",
+                    "name": "硬件信息",
+                    "interval": 180,
+                    "disabled": false,
+                    "exec_type": 0,
+                    "id": "001",
+                    "type": "0",
+                    "desc": "主板序列号、CPU名称、CPU核数、CPU主频、内存总大小、内存剩余、内存使用率、硬盘总大小、硬盘使用率"
+                  },
+                  {
+                    "common": true,
+                    "output_format": "none",
+                    "os_type": "0,1,2,3",
+                    "name": "操作系统信息",
+                    "interval": 180,
+                    "disabled": false,
+                    "exec_type": 0,
+                    "id": "002",
+                    "type": "0",
+                    "desc": "主机名、架构、系统名称、系统版本、平台、发布版本"
+                  },
+                  {
+                    "common": true,
+                    "output_format": "none",
+                    "os_type": "0,1,2,3",
+                    "name": "网络接口信息",
+                    "interval": 180,
+                    "disabled": false,
+                    "exec_type": 0,
+                    "id": "003",
+                    "type": "0",
+                    "desc": "名称、适配器、类型、状态、MTU、MAC地址、IP地址、发包数、收包数、发送字节数、接收字节数"
+                  },
+                  {
+                    "common": true,
+                    "output_format": "none",
+                    "os_type": "0,1,2,3",
+                    "name": "端口信息",
+                    "interval": 180,
+                    "disabled": false,
+                    "exec_type": 0,
+                    "id": "004",
+                    "type": "0",
+                    "desc": "协议类型、本地IP、本地端口、对端ip、对端端口、inode、状态、PID、进程"
+                  },
+                  {
+                    "common": true,
+                    "output_format": "none",
+                    "os_type": "0,1,2,3",
+                    "name": "进程信息",
+                    "interval": 180,
+                    "disabled": false,
+                    "exec_type": 0,
+                    "id": "005",
+                    "type": "0",
+                    "desc": "PID、进程名、状态、PPID、utime、stime"
+                  },
+                  {
+                    "common": true,
+                    "output_format": "none",
+                    "os_type": "0,1,2,3",
+                    "name": "文件变更事件",
+                    "interval": 180,
+                    "disabled": false,
+                    "exec_type": 2,
+                    "id": "006",
+                    "type": "1",
+                    "collect_path": [
+                      ""
+                    ],
+                    "desc": "包含大小、权限、所有者、最后修改日期、校验和目录文件的变更（当监控目录时监控到3级子目录）"
+                  },
+                  {
+                    "common": true,
+                    "output_format": "none",
+                    "os_type": "0,1,2,3",
+                    "name": "注册表变更事件",
+                    "interval": 180,
+                    "disabled": false,
+                    "exec_type": 3,
+                    "id": "007",
+                    "type": "1",
+                    "collect_path": [
+                      ""
+                    ],
+                    "desc": "包含size、mtime、inode、md5、sha1、sha256的变更（当监控目录时监控到5级子目录，不支持 HKEY_CURRENT_USER目录）"
+                  },
+                  {
+                    "common": true,
+                    "output_format": "none",
+                    "os_type": "0,1,2,3",
+                    "name": "日志文件",
+                    "interval": 180,
+                    "disabled": false,
+                    "exec_type": 1,
+                    "id": "011",
+                    "type": "2",
+                    "collect_path": [
+                      ""
+                    ],
+                    "desc": "日志文件"
+                  },
+                  {
+                    "common": true,
+                    "output_format": "none",
+                    "os_type": "0,1,2,3",
+                    "name": "安全软件",
+                    "interval": 180,
+                    "disabled": false,
+                    "exec_type": 1,
+                    "id": "010",
+                    "type": "2",
+                    "desc": "安全软件"
+                  },
+                  {
+                    "common": true,
+                    "output_format": "none",
+                    "os_type": "0,1,2,3",
+                    "name": "操作系统",
+                    "interval": 180,
+                    "disabled": false,
+                    "exec_type": 1,
+                    "id": "008",
+                    "type": "2",
+                    "desc": "操作系统"
+                  },
+                  {
+                    "common": true,
+                    "output_format": "none",
+                    "os_type": "0,1,2,3",
+                    "name": "应用系统日志",
+                    "interval": 180,
+                    "disabled": false,
+                    "exec_type": 1,
+                    "id": "009",
+                    "type": "2",
+                    "desc": "应用系统日志"
+                  }
+                ],
+                "enable_probe_collect": false
+              }
+            },
+            "scene": {
+              "enable_flow_collect": false,
+              "enable_flow_mirror": false
+            }
+          },
+          "cpflow": {
+            "element_ports": {},
+            "elements": {
+              "e5913a3cdde94265908f35b2d73abb33": {
+                "flows": [
+                  {
+                    "desc": "Trickbot sat75 感染 Powershell Empire 流量",
+                    "id": "1f88ab1756dc48ce92e522d20fffc58b",
+                    "name": "Trickbot_traffic1",
+                    "status": "",
+                    "status_text": "",
+                    "type": 2,
+                    "interactive_type": 1,
+                    "script_param_models": null,
+                    "category": 2
+                  },
+                  {
+                    "desc": "仅限 Pcap：Cobalt Strike 感染 Trickbot",
+                    "id": "68197d935652414a869052c61ade0b8a",
+                    "name": "Trickbot_Strike",
+                    "status": "",
+                    "status_text": "",
+                    "type": 2,
+                    "interactive_type": 1,
+                    "script_param_models": null,
+                    "category": 2
+                  }
+                ]
+              }
+            },
+            "scene": {}
+          }
+        },
+        "topology": {
+          "area_id": "",
+          "areas": [],
+          "connections": [
+            {
+              "id": "7afff5054fe24dceab185b88cc75ac25",
+              "source": "port_e5913a3cdde94265908f35b2d73abb33_1",
+              "target": "port_a98109d9ddba46ed8572d94bc6aa8a27_electrical_1",
+              "name": "{\"source\":\"eth0/1\",\"target\":\"E0/1\"}",
+              "unidirectional": false,
+              "vertices": [],
+              "type": "straight",
+              "display_context": "{\"line\":{\"stroke\":\"var(--neutral7)\",\"zIndex\":1,\"strokeWidth\":1,\"strokeDasharray\":0,\"animationDirections\":\"uniDirectional\",\"opacity\":1},\"labels\":{\"body\":{\"fill\":\"rgba(255,255,255,1)\",\"refWidth\":\"100%\",\"rx\":0,\"ry\":0,\"refHeight\":\"100%\",\"refX\":\"0%\",\"refY\":\"0%\",\"opacity\":1},\"text\":{\"fill\":\"rgba(0,0,0,1)\",\"fontSize\":12,\"fontWeight\":400,\"opacity\":1}}}",
+              "info": "{\"source\":\"设备1\",\"target\":\"设备3\"}"
+            }
+          ],
+          "node_connections": [],
+          "elements": [
+            {
+              "unite_number_id": "2234",
+              "attack_tools": [],
+              "is_attacker": false,
+              "area": "",
+              "outer_position2": {
+                "": "{\"x\":840,\"y\":380}"
+              },
+              "display_context": "{\"size\":40,\"zIndex\":2,\"text\":{\"fontSize\":12,\"fill\":\"var(--neutral9)\",\"refY\":53,\"transform\":\"rotate(0)\",\"fontWeight\":400,\"text\":\"设备3\",\"opacity\":1,\"class\":\"node-label original\"}}",
+              "eid": "901c5537ec72406585a0ba05067b7843",
+              "id": "a98109d9ddba46ed8572d94bc6aa8a27",
+              "name": "设备3",
+              "type": 1,
+              "icon2": "/api/mp/file/639/162/85ce8f4bcad3948c390f774d2916fee2.png",
+              "icon3": "",
+              "system_language": "other",
+              "system_architecture": "other",
+              "system_type": "other",
+              "max_port_number": 0,
+              "cpu": 0,
+              "ram": 0,
+              "disk": 0,
+              "init_commands": [
+                ""
+              ],
+              "ports": [
+                {
+                  "id": "port_a98109d9ddba46ed8572d94bc6aa8a27_electrical_1",
+                  "name": "E0/1",
+                  "ip": "",
+                  "egress": -1,
+                  "ingress": -1,
+                  "access_modes": [],
+                  "firewall_rules": [],
+                  "loss": 0,
+                  "delay": 0,
+                  "resource_id": "",
+                  "connect_mode": "",
+                  "port_connect_net_cidr": "",
+                  "usable": true
+                },
+                {
+                  "id": "port_a98109d9ddba46ed8572d94bc6aa8a27_electrical_2",
+                  "name": "E0/2",
+                  "ip": "",
+                  "egress": -1,
+                  "ingress": -1,
+                  "access_modes": [],
+                  "firewall_rules": [],
+                  "loss": 0,
+                  "delay": 0,
+                  "resource_id": "",
+                  "connect_mode": "",
+                  "port_connect_net_cidr": "",
+                  "usable": true
+                },
+                {
+                  "id": "port_a98109d9ddba46ed8572d94bc6aa8a27_electrical_3",
+                  "name": "E0/3",
+                  "ip": "",
+                  "egress": -1,
+                  "ingress": -1,
+                  "access_modes": [],
+                  "firewall_rules": [],
+                  "loss": 0,
+                  "delay": 0,
+                  "resource_id": "",
+                  "connect_mode": "",
+                  "port_connect_net_cidr": "",
+                  "usable": true
+                },
+                {
+                  "id": "port_a98109d9ddba46ed8572d94bc6aa8a27_electrical_4",
+                  "name": "E0/4",
+                  "ip": "",
+                  "egress": -1,
+                  "ingress": -1,
+                  "access_modes": [],
+                  "firewall_rules": [],
+                  "loss": 0,
+                  "delay": 0,
+                  "resource_id": "",
+                  "connect_mode": "",
+                  "port_connect_net_cidr": "",
+                  "usable": true
+                }
+              ],
+              "file": "",
+              "node_command": "",
+              "position2": "{\"x\":840,\"y\":380}"
+            },
+            {
+              "unite_number_id": "1234",
+              "attack_tools": [],
+              "is_attacker": false,
+              "area": "",
+              "outer_position2": {
+                "": "{\"x\":460,\"y\":380}"
+              },
+              "display_context": "{\"size\":40,\"zIndex\":2,\"text\":{\"fontSize\":12,\"fill\":\"var(--neutral9)\",\"refY\":53,\"transform\":\"rotate(0)\",\"fontWeight\":400,\"text\":\"设备1\",\"opacity\":1,\"class\":\"node-label original\"}}",
+              "eid": "d332e7d171e245f0b9ee7b9eeff041e1",
+              "id": "e5913a3cdde94265908f35b2d73abb33",
+              "name": "设备1",
+              "type": 4,
+              "icon2": "/api/mp/file/727/701/a4aade52f418bc39965d76b6b6dca305.png",
+              "icon3": "",
+              "system_language": "cn",
+              "system_architecture": "64",
+              "system_type": "306",
+              "max_port_number": 1,
+              "cpu": 1,
+              "ram": 1024,
+              "disk": 10,
+              "init_commands": [
+                ""
+              ],
+              "ports": [
+                {
+                  "id": "port_e5913a3cdde94265908f35b2d73abb33_1",
+                  "name": "eth0/1",
+                  "ip": "",
+                  "egress": 10,
+                  "ingress": 10,
+                  "access_modes": [
+                    {
+                      "proxy": true,
+                      "protocol": "ssh",
+                      "password": "NHiOJiZTD4K ",
+                      "port": 22,
+                      "username": "root",
+                      "desc": ""
+                    }
+                  ],
+                  "firewall_rules": [],
+                  "loss": 0,
+                  "delay": 0,
+                  "resource_id": "",
+                  "connect_mode": "",
+                  "port_connect_net_cidr": "",
+                  "usable": true
+                }
+              ],
+              "file": "",
+              "node_command": "",
+              "position2": "{\"x\":460,\"y\":380}"
+            }
+          ],
+          "pieces": [],
+          "scene": {
+            "display_context": "{\"active\":\"background\",\"enable_flow_collect\":false,\"enable_flow_mirror\":false,\"dns_nameservers\":[],\"showLineLabels\":false,\"backgroundList\":[{\"key\":\"background\",\"value\":\"\"},{\"key\":\"background2\",\"value\":\"\"},{\"key\":\"background3\",\"value\":\"\"}],\"simpleModeToEdge\":true,\"graphTranslate\":{\"tx\":0,\"ty\":0},\"graphZoom\":1,\"showGraphToolbar\":true,\"showNodeLimitTip\":true,\"layoutType\":\"none\",\"backgroundType\":\"background-image\",\"backgroundColor\":\"var(--bg-color-1)\",\"showGrid\":true}",
+            "description": "",
+            "name": "gstrget",
+            "file": "",
+            "type": ""
+          }
+        }
+      },
+      "create_username": "admin",
+      "total_cpu": 1,
+      "update_time": "2025-07-08 15:07:41",
+      "total_disk": 10,
+      "resource_occupied_nums": 1,
+      "name": "gstrget",
+      "logo": "/api/mp/file/789/504/9bc7d6cf64621a3de68d5f37b767c843.png",
+      "support_partial_start": false,
+      "id": "efbba9b3149349f8b9a6793138b9871d",
+      "create_user": "3f655d87112f4ae094bbaf70830e20aa",
+      "enable_recording": false,
+      "total_ram": 1024
+    },
+    "logo": "",
+    "topo": "/api/mp/file/882/725/0bf9f7e3265a508c91d2c4cc3dddafcc.png",
+    "unite_task_id": null,
+    "start_time": null,
+    "end_time": null,
+    "train_target": null
+  },
+  "red_roles": [
+    {
+      "asset_nodes": [],
+      "id": "c25fbac7-1a0f-4d3a-90e2-c6cd0ff374e2",
+      "name": "hong1",
+      "type": "red",
+      "visible_nodes": [],
+      "missions_scheme": {
+        "template": 1,
+        "color": 1,
+        "scheme_data": [
+          {
+            "stage": "drgse",
+            "missions": [
+              {
+                "description": "grse",
+                "resource_id": "a4dc0013523441bd9d363b5c0469aacd",
+                "title": "fer4fe4fter4tfe4"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "asset_nodes": [],
+      "id": "c559ce8c-e36e-461f-a9b8-159ca3f88ab4",
+      "name": "hong2",
+      "type": "red",
+      "visible_nodes": [],
+      "missions_scheme": {
+        "template": 1,
+        "color": 1,
+        "scheme_data": []
+      }
+    }
+  ],
+  "blue_roles": [
+    {
+      "asset_nodes": [],
+      "id": "c129d9a9-8bb0-4294-a8e4-79c8cd9ceffd",
+      "name": "lan1",
+      "type": "blue",
+      "visible_nodes": [],
+      "missions_scheme": {
+        "template": 1,
+        "color": 1,
+        "scheme_data": []
+      }
+    }
+  ],
+  "resource_id": "3c353d06c9d96b00c59e4803c3603c2e"
+}

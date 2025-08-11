@@ -66,12 +66,12 @@
         # 有start_time 有end_time： 1 + 1； 有start_time，没有end_time：1 + count(nullif(0,0)) = 1+count(null) = 1+0 = 1;
         # 没有start_time和end_time：count(null) +　count(nullif(null, 0) = count(null) + count(null) = 0
         -->
-        (count(train_record.start) + count(nullif(train_record.end, 0))) as training_status
+        (count(train_record.start) + count(nullif(train_record.`end`, 0))) as training_status
         from cr_business_template
         inner join cr_single_template
         on cr_business_template.resource_id = cr_single_template.business_template_id
         left join
-        (select count(start_time) as start, count(end_time) as end, business_template_id from cr_train_record where
+        (select count(start_time) as start, count(end_time) as `end`, business_template_id from cr_train_record where
         user_id = #{userId}
         and business_template_id in
         <foreach collection="businessTemplateIds" item="businessTemplateId" open="(" close=")" separator=",">

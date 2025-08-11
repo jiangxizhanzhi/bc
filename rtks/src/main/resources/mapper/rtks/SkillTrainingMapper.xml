@@ -62,8 +62,10 @@
         cr_single_template.pre_skills as pre_skill,
         cr_single_template.train_skills as train_skill,
         cr_business_template.logo,
+        <!--
         # 有start_time 有end_time： 1 + 1； 有start_time，没有end_time：1 + count(nullif(0,0)) = 1+count(null) = 1+0 = 1;
         # 没有start_time和end_time：count(null) +　count(nullif(null, 0) = count(null) + count(null) = 0
+        -->
         (count(train_record.start) + count(nullif(train_record.end, 0))) as training_status
         from cr_business_template
         inner join cr_single_template

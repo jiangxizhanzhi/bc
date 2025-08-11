@@ -62,8 +62,8 @@
     <select id="learnNumStats" resultType="com.alibaba.fastjson.JSONObject">
         select
                count(distinct T1.course_id) as finish_course_count,
-               count(if(T2.type = #{theory_type}, TRUE, NULL )) as finish_theory_count,
-               count(if(T2.type = #{exp_type}, TRUE, NULL )) as finish_exp_count
+               count(if(T2.type = #{theory_type}, 1, NULL )) as finish_theory_count,
+               count(if(T2.type = #{exp_type}, 1, NULL )) as finish_exp_count
         from oj_lesson_record T1
         left join oj_course_lesson T2 on T1.lesson_id = T2.resource_id
         where T1.user_id = #{user_id} and T1.lesson_id in (select resource_id from oj_course_lesson);
@@ -72,15 +72,15 @@
     <select id="courseNumStats" resultType="com.alibaba.fastjson.JSONObject">
         select
                count(distinct T1.resource_id) as course_count,
-               count(if(T2.type = #{theory_type}, TRUE, NULL )) as theory_count,
-               count(if(T2.type = #{exp_type}, TRUE, NULL )) as exp_count
+               count(if(T2.type = #{theory_type}, 1, NULL )) as theory_count,
+               count(if(T2.type = #{exp_type}, 1, NULL )) as exp_count
         from oj_course T1 left join oj_course_lesson T2 on T1.resource_id = T2.course_id;
     </select>
     
     <select id="practiceNumStats" resultType="com.alibaba.fastjson.JSONObject">
         select
         count(T1.resource_id) as practice_count,
-        count(if(T3.id, TRUE ,NULL )) as finish_practice_count
+        count(if(T3.id, 1 ,NULL )) as finish_practice_count
         from oj_paper T1
         left join oj_course_lesson T2 on T1.resource_id = T2.paper_id
         left join oj_lesson_paper_evaluate T3 on T2.resource_id = T3.lesson_id and T3.submit_user_id = #{user_id} and (T3.level = 1 or T3.level = 2)

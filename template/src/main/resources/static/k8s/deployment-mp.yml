@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mp-deployment  # Deployment 名称 , 通过  kubectl get deployment <名称> 查看, 同一个 namespace 里 不能重复， 资源本身叫啥
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mp    #  匹配所有 app=mp 的 Pod， 进行管理， 我认哪些 Pod 是我的
+  template:
+    metadata:
+      labels:
+        app: mp   # 新建 Pod 自动打这个标签， service根据标签选pod， 我生的 Pod 会带啥标签
+    spec:
+      containers:
+        # ------------------- mp  容器 -------------------
+        - name: mp
+          image: docker.io/library/mp:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: volume-apps
+              mountPath: /home/mp/mp.jar
+              subPath: mp/mp_app/jar/mp.jar
+            - name: volume-apps
+              mountPath: /home/mp/config/license
+              subPath: mp/mp_app/license
+            - name: volume-apps
+              mountPath: /home/mp/config/mp.properties
+              subPath: mp/config/mp.properties
+              readOnly: true
+            - name: volume-apps
+              mountPath: /root/.mp/resources/
+              subPath: mp/mp_app/resources/
+            - name: volume-apps
+              mountPath: /root/.mp/files
+              subPath: mp/mp_app/resources/fileserver
+            - name: volume-log
+              mountPath: /home/mp/logs
+              subPath: mp
+            - name: volume-resource
+              mountPath: /data/resource/
+            - name: localtime
+              mountPath: /etc/localtime
+              readOnly: true
+            - name: timezone
+              mountPath: /etc/timezone
+              readOnly: true
+
+      # ------------------- 所有共享卷定义 -------------------
+      volumes:
+        - name: volume-apps
+          persistentVolumeClaim:
+            claimName: pvc-apps
+        - name: volume-cpms
+          persistentVolumeClaim:
+            claimName: pvc-cpms
+        - name: volume-log
+          persistentVolumeClaim:
+            claimName: pvc-log
+        - name: volume-resource
+          persistentVolumeClaim:
+            claimName: pvc-resource
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+        - name: timezone
+          hostPath:
+            path: /etc/timezone
+        - name: volume-start
+          persistentVolumeClaim:
+            claimName: pvc-start

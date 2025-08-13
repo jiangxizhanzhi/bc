@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        # ------------------- Nginx 容器 -------------------
+        - name: nginx-web
+          image: m.daocloud.io/docker.io/nginx:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+            - containerPort: 83
+          volumeMounts:
+            # 静态资源
+            - name: volume-apps
+              mountPath: /home/apps/
+
+            - name: volume-cpms
+              mountPath: /cpms/
+
+            - name: volume-nginx
+              mountPath: /etc/nginx
+      # ------------------- 所有共享卷定义 -------------------
+      volumes:
+        - name: volume-apps
+          persistentVolumeClaim:
+            claimName: pvc-apps
+        - name: volume-cpms
+          persistentVolumeClaim:
+            claimName: pvc-cpms
+        - name: volume-nginx
+          persistentVolumeClaim:
+            claimName: pvc-nginx

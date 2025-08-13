@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drm-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: drm
+  template:
+    metadata:
+      labels:
+        app: drm
+    spec:
+      containers:
+        # ------------------- Tomcat bc  容器 -------------------
+        - name: drm
+          image: docker.io/library/app:5.4c
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: CATALINA_OPTS
+              value: "-javaagent:/cpms/classfinal-fatjar-1.2.1.jar='-pwd bc-3b0fa6d402e34949997272131ad23dfb'"
+            - name: TZ
+              value: "Asia/Shanghai"
+            - name: BC_DB_HOST
+              value: "10.4.1.37"
+            - name: BC_DB_PORT
+              value: "9306"
+            - name: BC_DB_NAME
+              value: "drm"
+            - name: BC_DB_USER
+              value: "root"
+            - name: BC_DB_PASSWORD
+              value: "cyberpeace@NzM1M"
+            - name: MP_HOST
+              value: "http://mp-service:8001"
+            - name: CP_HOST
+              value: "http://10.4.1.37:11111"
+            - name: OJ_HOST
+              value: "http://bc-service:8996"
+            - name: DRM_HOST
+              value: "http://drm-service:8007"
+            - name: CR_HOST
+              value: "http://bc-service:8996"
+            - name: AD_HOST
+              value: "http://10.4.1.37:8377"
+            - name: OPS_HOST
+              value: "http://10.4.1.37:8377"
+            - name: VULN_HOST
+              value: "http://vuln-service:8988"
+            - name: DATA_RESOURCE
+              value: "/data/mnt"
+            - name: MP_SECRET
+              value: "84261d495c414e,2112f4b855264ad7b1a4209737fc7836"
+            # 连接宿主机的配置用不到, 但是要配置
+            - name: HOST_IP
+              value: "10.4.1.37"
+            - name: HOST_PORT
+              value: "22"
+            - name: HOST_USER_NAME
+              value: "root"
+            - name: HOST_PASSWORD
+              value: "CPYmMAMTAuNC123#"
+          volumeMounts:
+            - name: volume-cpms
+              mountPath: /cpms/
+            - name: volume-apps
+              mountPath: /usr/local/tomcat/webapps
+              subPath: drm/webapps
+            - name: volume-log
+              mountPath: /usr/local/tomcat/logs
+              subPath: drm
+            - name: volume-resource
+              mountPath: /data/resource
+            - name: localtime
+              mountPath: /etc/localtime
+              readOnly: true
+            - name: timezone
+              mountPath: /etc/timezone
+              readOnly: true
+            - name: volume-apps
+              mountPath: /home/start.sh
+              subPath: drm/start.sh
+              readOnly: true
+      # ------------------- 所有共享卷定义 -------------------
+      volumes:
+        - name: volume-apps
+          persistentVolumeClaim:
+            claimName: pvc-apps
+        - name: volume-cpms
+          persistentVolumeClaim:
+            claimName: pvc-cpms
+        - name: volume-log
+          persistentVolumeClaim:
+            claimName: pvc-log
+        - name: volume-resource
+          persistentVolumeClaim:
+            claimName: pvc-resource
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+        - name: timezone
+          hostPath:
+            path: /etc/timezone

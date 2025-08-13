@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bc-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bc
+  template:
+    metadata:
+      labels:
+        app: bc
+    spec:
+      containers:
+        # ------------------- Tomcat bc  容器 -------------------
+        - name: bc
+          image: docker.io/library/app:5.4c
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+            - containerPort: 5005
+          env:
+            - name: CATALINA_OPTS
+              value: "-javaagent:/cpms/classfinal-fatjar-1.2.1.jar='-pwd bc-3b0fa6d402e34949997272131ad23dfb'"
+            - name: TZ
+              value: "Asia/Shanghai"
+            - name: BC_DB_HOST
+              value: "10.4.1.37"
+            - name: BC_DB_PORT
+              value: "9306"
+            - name: BC_DB_NAME
+              value: "bc"
+            - name: BC_DB_USER
+              value: "root"
+            - name: BC_DB_PASSWORD
+              value: "cyberpeace@NzM1M"
+            - name: BC_HOST
+              value: "10.100.1.88"
+            - name: MP_HOST
+              value: "mp-service"
+            - name: MP_PORT
+              value: "8001"
+            - name: MP_SECRET
+              value: "84261d495c414e,2112f4b855264ad7b1a4209737fc7836"
+            - name: OFFICE_SERVER_HOST
+              value: "10.4.1.37"
+            - name: OFFICE_SERVER_PORT
+              value: "9080"
+            - name: FILE_SERVER_HOST
+              value: "10.4.1.37"
+            - name: FILE_SERVER_PORT
+              value: "80"
+            - name: PROJECT_NAME   # MQ 组件被删除，不用引用
+              value: "BC_JAVA"
+            - name: INIT_SQL_PATH
+              value: "static/sql/data_zh-cn"
+            - name: PY_HOST
+              value: "10.4.1.37"
+            - name: PY_PORT
+              value: "5996"
+            - name: CYBER_MP_HOST  # 30所中台地址
+              value: "10.4.1.36"
+            - name: CYBER_MP_PORT
+              value: "80"
+            - name: UPLOAD_LOG
+              value: "true"
+            - name: LOG_LEVEL
+              value: "INFO"
+          volumeMounts:
+            - name: volume-cpms
+              mountPath: /cpms/
+            - name: volume-apps
+              mountPath: /usr/local/tomcat/webapps
+              subPath: bc/webapps
+            - name: volume-log
+              mountPath: /usr/local/tomcat/logs
+              subPath: bc
+            - name: volume-resource
+              mountPath: /data/resource
+            - name: localtime
+              mountPath: /etc/localtime
+              readOnly: true
+            - name: timezone
+              mountPath: /etc/timezone
+              readOnly: true
+            - name: volume-apps
+              mountPath: /home/start.sh
+              subPath: bc/start.sh
+              readOnly: true
+      # ------------------- 所有共享卷定义 -------------------
+      volumes:
+        - name: volume-apps
+          persistentVolumeClaim:
+            claimName: pvc-apps
+        - name: volume-cpms
+          persistentVolumeClaim:
+            claimName: pvc-cpms
+        - name: volume-log
+          persistentVolumeClaim:
+            claimName: pvc-log
+        - name: volume-resource
+          persistentVolumeClaim:
+            claimName: pvc-resource
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+        - name: timezone
+          hostPath:
+            path: /etc/timezone

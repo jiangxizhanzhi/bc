@@ -45,10 +45,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -111,8 +108,10 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         crUniteBusinessTask.setTaskDescription(networkTaskVO.getTaskContent());
         crUniteBusinessTask.setTrainTarget(networkTaskVO.getTaskContent());
         crUniteBusinessTask.setStartTime(networkTaskVO.getStartDt());
-        crUniteBusinessTask.setSeatConfigList(JsonUtil.toJsonString(
-                networkTaskVO.getSeatConfigList()));
+        if (Objects.nonNull(networkTaskVO.getSeatConfigList())) {
+            crUniteBusinessTask.setSeatConfigList(JsonUtil.toJsonString(
+                    networkTaskVO.getSeatConfigList()));
+        }
 
 //        保存任务表
         getBaseMapper().insert(crUniteBusinessTask);
@@ -156,7 +155,7 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         List<CrUniteBusinessNode> nodes = crUniteBusinessNodeService.list(nodeQueryWrapper);
         QueryWrapper<CrUniteBusinessLink> linkQueryWrapper = new QueryWrapper<>();
         linkQueryWrapper.lambda().eq(CrUniteBusinessLink::getTaskId, taskId);
-        List<CrUniteBusinessLink> links = crUniteBusinessLinkService.list();
+        List<CrUniteBusinessLink> links = crUniteBusinessLinkService.list(linkQueryWrapper);
 //        组装工具信息
         HashMap<String, JSONArray> attackToolsMap = new HashMap<>();
         HashMap<String, Boolean> isAttackerMap = new HashMap<>();

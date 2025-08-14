@@ -509,14 +509,17 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         businessTemplate.setTopoId(id);
         businessTemplateMapper.updateById(businessTemplate);
 
-        RbTemplate rbTemplate = new RbTemplate();
-        rbTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
-        rbTemplate.setPreSkill("[]");
-        rbTemplate.setTrainSkill("[]");
-        rbTemplate.setRoleConfig("{}");
-        rbTemplate.setSubType(1);
-        rbTemplate.setDurationTime(4);
+        RbTemplate template = rbTemplateMapper.selectByBusinessTemplateId(businessTemplate.getResourceId());
+        if (Objects.isNull(template)) {
+            RbTemplate rbTemplate = new RbTemplate();
+            rbTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
+            rbTemplate.setPreSkill("[]");
+            rbTemplate.setTrainSkill("[]");
+            rbTemplate.setRoleConfig("{}");
+            rbTemplate.setSubType(1);
+            rbTemplate.setDurationTime(4);
 
-        rbTemplateMapper.insert(rbTemplate);
+            rbTemplateMapper.insert(rbTemplate);
+        }
     }
 }

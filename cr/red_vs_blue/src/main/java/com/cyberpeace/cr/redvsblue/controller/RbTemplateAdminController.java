@@ -3,6 +3,13 @@ package com.cyberpeace.cr.redvsblue.controller;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.redvsblue.dao.SeatSelectDto;
+import com.cyberpeace.cr.redvsblue.dao.entity.CrUniteBusinessTask;
+import com.cyberpeace.cr.redvsblue.dao.mapper.CrUniteBusinessTaskMapper;
+import com.cyberpeace.cr.redvsblue.vo.BusSeatConfigInfoVO;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -124,6 +131,55 @@ public class RbTemplateAdminController {
 
 	@Autowired
 	private RbTemplateMapper rbTemplateMapper;
+	@Autowired
+	private CrUniteBusinessTaskMapper crUniteBusinessTaskMapper;
+
+	@ApiOperation("查询席位")
+	@GetMapping("/seat/list")
+	public BaseRsp<List<SeatSelectDto>> listSeat(@RequestParam("resource_id") String resourceId) {
+		LambdaQueryWrapper<BusinessTemplate> queryWrapper = new LambdaQueryWrapper<BusinessTemplate>()
+				.eq(BusinessTemplate::getResourceId, resourceId);
+		List<BusinessTemplate> businessTemplates = businessTemplateMapper.selectList(queryWrapper);
+		if (CollectionUtils.isEmpty(businessTemplates)) {
+			throw new BusinessException("场景不存在");
+		} else {
+			BusinessTemplate businessTemplate = businessTemplates.get(0);
+			String unitTaskId = businessTemplate.getUniteTaskId();
+			List<CrUniteBusinessTask> crUniteBusinessTasks = crUniteBusinessTaskMapper.selectList(new LambdaQueryWrapper<CrUniteBusinessTask>()
+					.eq(CrUniteBusinessTask::getTaskId, unitTaskId));
+			if (CollectionUtils.isEmpty(crUniteBusinessTasks)) {
+				throw new BusinessException("联合训练任务不存在");
+			} else {
+				List<BusSeatConfigInfoVO> busSeatConfigInfoVOList = JsonUtil.toJsonObjectArray(
+						crUniteBusinessTasks.get(0).getSeatConfigList(), BusSeatConfigInfoVO.class);
+				if (CollectionUtils.isEmpty(busSeatConfigInfoVOList)) {
+					return new BaseRsp<>(new ArrayList<>());
+				} else {
+					List<SeatSelectDto> seatSelectDtos = new ArrayList<>();
+					for (BusSeatConfigInfoVO busSeatConfigInfoVO : busSeatConfigInfoVOList) {
+						if (CollectionUtils.isEmpty(
+								busSeatConfigInfoVO.getChildrens())) {
+							for (BusSeatConfigInfoVO child : busSeatConfigInfoVO.getChildrens()) {
+								SeatSelectDto seatSelectDto = new SeatSelectDto();
+								seatSelectDto.setSeatName(child.getSeatName());
+								seatSelectDto.setSeatId(child.getId());
+								seatSelectDto.setUserName(child.getSeatUserName());
+								seatSelectDtos.add(seatSelectDto);
+							}
+						}
+					}
+					return new BaseRsp<>(seatSelectDtos);
+				}
+
+			}
+		}
+	}
+
+
+
+
+
+
     /**
      * 创建
      *

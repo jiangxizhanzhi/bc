@@ -41,6 +41,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,7 +79,7 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
 
     //调用预处理方法
     @KafkaListener  (topics = "topic_network")
-    public void geojsonProcess(byte[] message) {
+    public void geojsonProcess(byte[] message, Acknowledgment acknowledgment) {
         try {
             log.info("训练任务开始接收");
             ObjectMapper objectMapper = new ObjectMapper();
@@ -86,8 +87,12 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
             String jsonString = JSONObject.toJSONString(networkTaskVO);
             log.info("接收到训练任务信息: "+jsonString);
             saveUniteBusinessTask(networkTaskVO);
+            acknowledgment.acknowledge();
+            log.info("训练消息消费成功，提交偏移量");
         } catch (Exception e){
+            log.error(e.getMessage(), e);
             log.error("接收训练任务  ===> 发生异常:", e.getMessage());
+            acknowledgment.nack(10000);
         }
     }
 
@@ -221,9 +226,11 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
                 .getJSONObject("elements");
         String sourceNode = map.get(uniteAttackReq.getAttackerId());
         String targetNode = map.get(uniteAttackReq.getTargetId());
+        log.info("sourceNode is {}, targetNode is {}", sourceNode, targetNode);
         if(sourceNode!=null&&targetNode!=null){
             JSONArray attackTools = pluginElements.getJSONObject(map.get(uniteAttackReq.getTargetId()))
                     .getJSONArray("attack_tools");
+            log.info("attack tools is {}", attackTools);
             if(null!=attackTools && attackTools.size()>0){
                 Map<String, JSONArray> paramsMap = attackTools.toJavaList(JSONObject.class)
                         .stream().collect(Collectors.toMap(o -> o.getString("id"), o -> o.getJSONArray("params")));
@@ -239,7 +246,8 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
                 jsonObject.put("attack_starttime",uniteAttackReq.getAttackStarttime());
                 jsonObject.put("attack_endtime",uniteAttackReq.getAttackEndtime());
                 String jsonString = jsonObject.toJSONString();
-                remoteSceneService.attack(jsonString);
+                JSONObject attackResult = remoteSceneService.attack(jsonString);
+                log.info("attack result is {}", attackResult);
             }
         }
         return null;

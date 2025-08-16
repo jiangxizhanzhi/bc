@@ -81,11 +81,10 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
     @KafkaListener  (topics = "topic_network")
     public void geojsonProcess(byte[] message, Acknowledgment acknowledgment) {
         try {
-            log.info("训练任务开始接收");
-            ObjectMapper objectMapper = new ObjectMapper();
-            NetworkTaskVO networkTaskVO = objectMapper.readValue(message, NetworkTaskVO.class);
-            String jsonString = JSONObject.toJSONString(networkTaskVO);
-            log.info("接收到训练任务信息: "+jsonString);
+            log.info("训练任务开始接收 {}", message);
+            String messageString = new String(message);
+            NetworkTaskVO networkTaskVO = JsonUtil.toJsonObject(messageString, NetworkTaskVO.class);
+            log.info("接收到训练任务信息: "+networkTaskVO);
             saveUniteBusinessTask(networkTaskVO);
             acknowledgment.acknowledge();
             log.info("训练消息消费成功，提交偏移量");

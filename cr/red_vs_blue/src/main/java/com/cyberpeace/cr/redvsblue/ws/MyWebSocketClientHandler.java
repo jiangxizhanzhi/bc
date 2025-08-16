@@ -83,6 +83,7 @@ public class MyWebSocketClientHandler implements WebSocketHandler {
                     break;
             }
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             log.error("320消息解析出错,message:{}", message.getPayload());
         }
     }

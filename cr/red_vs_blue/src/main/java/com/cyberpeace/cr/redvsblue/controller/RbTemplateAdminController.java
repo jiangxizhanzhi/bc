@@ -157,7 +157,7 @@ public class RbTemplateAdminController {
 				} else {
 					List<SeatSelectDto> seatSelectDtos = new ArrayList<>();
 					for (BusSeatConfigInfoVO busSeatConfigInfoVO : busSeatConfigInfoVOList) {
-						if (CollectionUtils.isEmpty(
+						if (CollectionUtils.isNotEmpty(
 								busSeatConfigInfoVO.getChildrens())) {
 							for (BusSeatConfigInfoVO child : busSeatConfigInfoVO.getChildrens()) {
 								SeatSelectDto seatSelectDto = new SeatSelectDto();

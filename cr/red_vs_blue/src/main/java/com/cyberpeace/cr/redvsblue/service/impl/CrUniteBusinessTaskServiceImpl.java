@@ -495,6 +495,9 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
     public Boolean stop(NetworkTopoVO networkTopoVO) {
         String taskId = networkTopoVO.getTask_id();
         RbRoom rbRoom = rbRoomService.getRbRoomByUniteTaskId(taskId);
+        if (Objects.isNull(rbRoom)) {
+            throw new BusinessException("unite task {} not exist", networkTopoVO.getTask_id());
+        }
         log.info("unite stop scene roomId:{}",rbRoom.getResourceId());
         Boolean result = rbSceneService.stopScene(rbRoom.getResourceId());
         return result;

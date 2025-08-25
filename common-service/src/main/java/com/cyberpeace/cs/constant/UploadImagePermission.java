@@ -93,7 +93,7 @@ public enum UploadImagePermission implements GenericEnum {
 	 *
 	 * @see UploadImagePermission
 	 */
-	WEB_COURSE_IMAGE(12, "前台课程", FileTypeContant.PICTURE_TYPE, new String[] {MenuConstant.WEB_OJ_COURSE}),
+	WEB_COURSE_IMAGE(12, "前台课程", FileTypeContant.PICTURE_TYPE, new String[] {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}),
 	/**
 	 * CMS 系列理论图像
 	 *

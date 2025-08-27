@@ -26,6 +26,8 @@ public interface CrUniteBusinessTaskService extends IService<CrUniteBusinessTask
 
     void stop(String data);
 
+    void reportInfo(String jsonString);
+
     Boolean stop(NetworkTopoVO networkTopoVO);
 
     NetworkTopoVO retrieveNetworkTopologyByTaskId(String taskId, String topoId);

@@ -615,4 +615,6 @@ public interface RemoteSceneService {
 	JSONObject flowStart(String jsonString);
 
 	void uniteLinkStatus(String string);
+
+    JSONArray uniteAttackHistoryList(String csceneId);
 }

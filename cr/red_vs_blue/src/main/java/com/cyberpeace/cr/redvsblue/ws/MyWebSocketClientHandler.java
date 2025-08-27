@@ -76,6 +76,8 @@ public class MyWebSocketClientHandler implements WebSocketHandler {
 //                    联合场景停止
                     log.info("UniteStopData data:{}",data);
                     crUniteBusinessTaskService.stop(data);
+                    // 场景结束后，通过kafka给数据采集系统，上报席位迷雾信息/拓扑结构信息/工具指令执行记录信息
+                    crUniteBusinessTaskService.reportInfo(data);
                     break;
 //                    链路通信信息
                 default:

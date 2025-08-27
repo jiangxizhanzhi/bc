@@ -26,6 +26,11 @@ public class BusinessException extends RuntimeException {
 		errorMessage = String.format(getMessageByLanguage(code), args);
 	}
 
+	public BusinessException(String code, String message) {
+		super(code);
+		errorMessage = message;
+	}
+
 	public BusinessException() {
 		super();
 	}

@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.service.context.score.StartSceneRsp;
 import com.cyberpeace.cr.redvsblue.controller.req.UniteAttackReq;
 import com.cyberpeace.cr.redvsblue.service.CrUniteBusinessTaskService;
@@ -15,6 +16,8 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 
 @Api(tags = "联合演训相关接口")
 @RestController
@@ -90,6 +93,18 @@ public class CrUniteBusinessController {
     public BaseRsp<Boolean> linkStatus() {
         crUniteBusinessTaskService.linkStatus();
         return new BaseRsp<>();
+    }
+
+    @ApiOperation("调试上报数据给采集系统")
+    @GetMapping("/business/report_info")
+    public BaseRsp<String> getReportInfo(@RequestParam(value = "task_id") String taskId) {
+        HashMap<String, Object> stringObjectHashMap = new HashMap<>();
+        HashMap<String, String> stringHashMap = new HashMap<>();
+        stringHashMap.put("task_id", taskId);
+        stringObjectHashMap.put("data", stringHashMap);
+        String taskInfo = JsonUtil.toJsonString(stringObjectHashMap);
+        crUniteBusinessTaskService.reportInfo(taskInfo);
+        return new BaseRsp<>("send kafka ok");
     }
 
 }

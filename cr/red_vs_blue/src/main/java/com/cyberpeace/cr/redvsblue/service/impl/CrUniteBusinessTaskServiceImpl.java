@@ -34,8 +34,8 @@ import com.cyberpeace.cr.redvsblue.vo.NetworkTopoVO;
 import com.cyberpeace.cr.redvsblue.ws.WebSocketClientService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.impl.KafkaProducerService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +77,9 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
     @Autowired
     private WebSocketClientService webSocketClientService;
 
+    @Autowired
+    private KafkaProducerService kafkaProducerService;
+
     //调用预处理方法
     @KafkaListener  (topics = "topic_network")
     public void geojsonProcess(byte[] message, Acknowledgment acknowledgment) {
@@ -90,7 +93,7 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
             log.info("训练消息消费成功，提交偏移量");
         } catch (Exception e){
             log.error(e.getMessage(), e);
-            log.error("接收训练任务  ===> 发生异常:", e.getMessage());
+            log.error("接收训练任务  ===> 发生异常: {}", e.getMessage());
             acknowledgment.nack(10000);
         }
     }
@@ -492,11 +495,50 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
     }
 
     @Override
+    public void reportInfo(String jsonString) {
+        // 上报数据给采集系统
+        log.info("unite reportInfo scene begin");
+        JSONObject jsonObject = JSON.parseObject(jsonString);
+        NetworkTopoVO networkTopoVO = JSON.parseObject(jsonObject.getString("data"), NetworkTopoVO.class);
+        String taskId = networkTopoVO.getTask_id();
+        RbRoom rbRoom = rbRoomService.getRbRoomByUniteTaskId(taskId);
+        if (Objects.isNull(rbRoom)) {
+            log.error("unite reportInfo scene taskId:{}", taskId);
+            throw new BusinessException(ErrorCode.ANY_ERROR, "unite task " + networkTopoVO.getTask_id() + " not exist");
+        }
+        // 上报席位信息数据 todo
+
+        // 上报拓扑结构数据
+        JSONObject topoData = localSceneService.getTopoData(rbRoom.getCopyedTopoId());
+        if (!Objects.isNull(topoData)) {
+            topoData.put("task_id", taskId);
+            kafkaProducerService.sendTopoMessage(topoData);
+            log.info("unite reportInfo topoData taskId:{}",taskId);
+        }
+        // 上报攻击工具指令数据
+        if (rbRoom.getReplaySceneId() != null) {
+            JSONArray jsonArray = remoteSceneService.uniteAttackHistoryList(rbRoom.getReplaySceneId());
+            if (jsonArray != null && !jsonArray.isEmpty()) {
+                jsonArray.forEach(item -> {
+                    if(item instanceof JSONObject) {
+                        ((JSONObject) item).put("task_id", taskId);
+                    }
+                });
+            }
+            kafkaProducerService.sendToolMessage(jsonArray);
+            log.info("unite reportInfo toolList taskId:{}",taskId);
+        }
+
+        log.info("unite reportInfo scene end:{}",taskId);
+    }
+
+    @Override
     public Boolean stop(NetworkTopoVO networkTopoVO) {
         String taskId = networkTopoVO.getTask_id();
         RbRoom rbRoom = rbRoomService.getRbRoomByUniteTaskId(taskId);
         if (Objects.isNull(rbRoom)) {
-            throw new BusinessException("unite task {} not exist", networkTopoVO.getTask_id());
+            log.error("unite stop scene taskId:{}", taskId);
+            throw new BusinessException(ErrorCode.ANY_ERROR, "unite task " + networkTopoVO.getTask_id() + "not exist");
         }
         log.info("unite stop scene roomId:{}",rbRoom.getResourceId());
         Boolean result = rbSceneService.stopScene(rbRoom.getResourceId());

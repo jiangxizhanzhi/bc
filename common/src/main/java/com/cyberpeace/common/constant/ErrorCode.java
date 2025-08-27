@@ -26,6 +26,8 @@ public final class ErrorCode {
 
 	public static final String INTERNAL_ERROR = "099999";
 
+	public static final String ANY_ERROR = "088888";
+
 	// 文件上传失败
 	public static final String FILE_UPLOAD_FAIL = "100011";
 

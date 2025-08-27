@@ -45,7 +45,7 @@ public class WebSocketClientService {
             log.info("320 WebSocket连接成功");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("320 WebSocket error, url[{}], error msg {}", url, e.getMessage());
         }
     }
 

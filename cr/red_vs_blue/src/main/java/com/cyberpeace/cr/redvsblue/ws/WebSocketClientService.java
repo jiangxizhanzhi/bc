@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.redvsblue.ws;
 
+import com.cyberpeace.common.util.SystemPropUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -38,7 +39,10 @@ public class WebSocketClientService {
 
     public void connectToServer() {
         // 指定服务器URL，例如 ws://localhost:8080/my-websocket
-        String url = "ws://192.168.3.67:1234";
+        String url = SystemPropUtil.getProp("WS_URL");
+        if (url == null || url.isEmpty()) {
+            url = "ws://192.168.3.67:1234";
+        }
         try {
             // 连接到服务器并获取会话对象
             SESSION = webSocketClient.doHandshake(handler, url).get();
@@ -50,7 +54,7 @@ public class WebSocketClientService {
     }
 
     // 定期检查连接状态并尝试重连
-    @Scheduled(fixedRate = 5000) // 每5秒检查一次连接状态。可以根据实际需求调整时间间隔。
+    @Scheduled(fixedRate = 60 * 1000) // 每60秒检查一次连接状态。可以根据实际需求调整时间间隔。
     public void checkAndReconnect() {
         if (SESSION == null || !SESSION.isOpen()) { // 如果session为null或已关闭，则尝试重新连接。
             log.info("320 WebSocket连接已断开，尝试重新连接...");

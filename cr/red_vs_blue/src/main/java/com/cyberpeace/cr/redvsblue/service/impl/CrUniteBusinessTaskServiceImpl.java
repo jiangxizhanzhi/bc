@@ -230,10 +230,10 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         String targetNode = map.get(uniteAttackReq.getTargetId());
         log.info("sourceNode is {}, targetNode is {}", sourceNode, targetNode);
         if(sourceNode!=null&&targetNode!=null){
-            JSONArray attackTools = pluginElements.getJSONObject(map.get(uniteAttackReq.getTargetId()))
+            JSONArray attackTools = pluginElements.getJSONObject(targetNode)
                     .getJSONArray("attack_tools");
             log.info("attack tools is {}", attackTools);
-            if(null!=attackTools && attackTools.size()>0){
+            if(null!=attackTools && !attackTools.isEmpty()){
                 Map<String, JSONArray> paramsMap = attackTools.toJavaList(JSONObject.class)
                         .stream().collect(Collectors.toMap(o -> o.getString("id"), o -> o.getJSONArray("params")));
                 JSONArray jsonArray = paramsMap.get(uniteAttackReq.getToolId());

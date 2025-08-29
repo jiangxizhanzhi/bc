@@ -27,16 +27,6 @@ public class DemonstrationWhiteInterceptor implements Interceptor {
 
 	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
-		MappedStatement statement = (MappedStatement) invocation.getArgs()[0];
-		SqlCommandType sqlCommandType = statement.getSqlCommandType();
-		RemoteUserService remoteUserService= SpringContextUtil
-				.getBeanByClass(RemoteUserService.class);
-		demoOpen= remoteUserService.isDemoOpen();
-		if ((Boolean.TRUE.equals(demoOpen)||"open".equals(demo))
-				&& Boolean.FALSE.equals(ThreadLocalContext.whiteUpdateThreadLocal.get())
-				&& !SqlCommandType.SELECT.equals(sqlCommandType)) {
-			throw new BusinessException(ErrorCode.DEMONSTRATION_FORBID_UPDATE);
-		}
 		return invocation.proceed();
 	}
 

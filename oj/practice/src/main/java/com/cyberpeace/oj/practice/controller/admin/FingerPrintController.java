@@ -98,7 +98,7 @@ public class FingerPrintController {
                         fingerPrint.setUpdateTime(LocalDateTime.now());
                         fingerPrint.setDeletedFlag(false);
                         fingerPrint.setCompany(fingerPrintDto.getCompany());
-                        fingerPrint.setCategory(fingerPrint.getCategory());
+                        fingerPrint.setCategory(fingerPrintDto.getCategory());
                         fingerPrint.setParentCategory(fingerPrintDto.getParentCategory());
                         fingerPrint.setProduct(fingerPrintDto.getProduct());
                         fingerPrint.setRules(JsonUtil.toJsonString(fingerPrintDto.getRules()));
@@ -147,7 +147,7 @@ public class FingerPrintController {
     public BaseRsp query(FingerPrintReq fingerPrintReq) {
         IPage<FingerPrint> page = new Page<>();
         page.setCurrent(fingerPrintReq.getPage());
-        page.setPages(fingerPrintReq.getPerPage());
+        page.setSize(fingerPrintReq.getPerPage());
         LambdaQueryWrapper<FingerPrint> fingerPrintLambdaQueryWrapper = new LambdaQueryWrapper<FingerPrint>()
                 .eq(FingerPrint::getDeletedFlag, false).likeLeft(StringUtils.isNotEmpty(fingerPrintReq.getParentCategory()),
                         FingerPrint::getParentCategory, fingerPrintReq.getParentCategory())

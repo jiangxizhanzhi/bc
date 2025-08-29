@@ -352,6 +352,7 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
 //        发送mp处理
 //        3. mp处理信息后，包装数据发送320
         remoteSceneService.uniteLinkStatus(jsonObjects.toString());
+        log.info("定时5秒通过mp上报已启动场景链路状态信息");
     }
 
     @Override
@@ -386,6 +387,8 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
             });
             crUniteBusinessLinkService.saveBatch(links);
             sceneRelease(networkTopoVO);
+        } else {
+            log.warn("数实设备已下发，不要重复发送 {}",  networkTopoVO.getTask_id());
         }
     }
 

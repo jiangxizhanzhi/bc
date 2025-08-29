@@ -97,7 +97,7 @@ public class FingerPrintController {
 
     @ApiOperation("指纹信息修改")
     @PostMapping("")
-    public BaseRsp<Boolean> update(FingerPrint fingerPrint) {
+    public BaseRsp<Boolean> update(@RequestBody FingerPrint fingerPrint) {
         fingerPrint.setUpdateTime(LocalDateTime.now());
         fingerPrintMapper.updateById(fingerPrint);
 

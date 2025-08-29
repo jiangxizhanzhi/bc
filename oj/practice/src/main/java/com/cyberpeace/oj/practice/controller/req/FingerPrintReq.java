@@ -16,4 +16,9 @@ public class FingerPrintReq extends PageReqBase {
     private String category;
 
     private String rules;
+
+
+    public void setParent_category(String parent_category) {
+        this.parentCategory = parent_category;
+    }
 }

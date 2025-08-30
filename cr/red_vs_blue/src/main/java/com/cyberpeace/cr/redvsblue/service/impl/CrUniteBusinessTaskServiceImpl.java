@@ -215,6 +215,10 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
 //        场景id 源节点id 目标节点id 攻击id 工具参数
         String taskId = uniteAttackReq.getTaskId();
         RbRoom room = rbRoomService.getRbRoomByUniteTaskId(taskId);
+        if (room == null) {
+            log.error("room not found by taskId {}", taskId);
+            throw new RuntimeException("room not found by taskId " + taskId);
+        }
         RbSceneViewContext rbSceneViewContext = rbSceneService.viewScene(room.getResourceId(), null);
         JSONObject sceneData = rbSceneViewContext.getSceneData();
         List<JSONObject> elements = sceneData.getJSONObject("topology")

@@ -411,19 +411,6 @@ public class CrUniteBusinessTaskServiceImpl extends ServiceImpl<CrUniteBusinessT
         return crUniteBusinessTaskVO;
     }
 
-//    TODO 临时给数实测试用
-    @Scheduled(fixedRate = 5000)
-    public void reportBuildResult1() {
-        NetworkTopoVO networkTopoVO = new NetworkTopoVO();
-        networkTopoVO.setTask_id("193623183164072302");
-        LambdaQueryWrapper<BusinessTemplate> queryWrapper = new QueryWrapper<BusinessTemplate>().lambda()
-                .eq(BusinessTemplate::getUniteTaskId,networkTopoVO.getTask_id());
-        List<BusinessTemplate> businessTemplates = businessTemplateMapper.selectList(queryWrapper);
-        for (BusinessTemplate businessTemplate : businessTemplates) {
-            retrieveNetworkTopologyByTaskId(networkTopoVO.getTask_id(), businessTemplate.getTopoId());
-        }
-    }
-
     @Override
     public NetworkTopoVO reportBuildResult(NetworkTopoVO networkTopoVO) {
 //        创建拓扑

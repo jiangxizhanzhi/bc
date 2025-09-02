@@ -394,7 +394,12 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 
 	@ApiOperation("框架列表")
 	@GetMapping("/frame_list")
-	public BaseRsp<List<FrameListRes>> frameList(SpaceFramePBListReq req) {
+	public BaseRsp<List<FrameListRes>> frameList(
+			@ApiParam(value = "框架类型:0=面向流程，1=面向目标", name = "type") @RequestParam("type") Integer type,
+			@ApiParam(value = "名称搜索", name = "name") @RequestParam("name") String name,
+			@ApiParam(value = "目标类型", name = "category_id") @RequestParam("category_id") String categoryId,
+			@ApiParam(value = "人机对抗id", name = "rvb_id") @RequestParam("rvb_id") String rvbId) {
+		SpaceFramePBListReq req = new SpaceFramePBListReq(type, name, categoryId, rvbId);
 		return new BaseRsp<>(frameService.defenseFrameList(req));
 	}
 

@@ -7,6 +7,13 @@ import java.io.Serializable;
 
 @Data
 public class SpaceFramePBListReq implements Serializable {
+    public SpaceFramePBListReq(Integer type, String name, String categoryId, String rvbId) {
+        this.type = type;
+        this.name = name;
+        this.categoryId = categoryId;
+        this.rvbId = rvbId;
+    }
+
 
     @ApiModelProperty("框架类型")
     private Integer type;

@@ -55,8 +55,8 @@ public class SpaceActionFrameOrderPBBo {
 //	@ApiModelProperty("步骤id")
 //	private String stepId;
 
-//	@ApiModelProperty("战法id")
-//	private String tacticId;
+	@ApiModelProperty("战法id")
+	private String tacticId;
 //
 //	@ApiModelProperty("战法类型")
 //	private Integer tacticType;

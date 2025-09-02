@@ -9,6 +9,8 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
+import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.constant.SpaceError;
 import com.cyberpeace.space.dao.entity.*;
@@ -95,6 +97,9 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 
 	@Autowired
 	private SpaceTacticDefenseSystemMapper defenseSystemMapper;
+
+	@Autowired
+	private CrConstantsService crConstantsService;
 
 	@Override
 	public void create(SpaceActionFrameOrderReq req) {
@@ -271,12 +276,11 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 			defenseSystemWrapper.in(SpaceTacticDefenseSystem::getResourceId, defenseSystemIds);
 		}
 
-
-
-
-
 		List<SpaceTacticDefenseSystem> systemList = defenseSystemMapper.selectList(defenseSystemWrapper);
-		Map<String, String> defenseNameMap = systemList.stream().collect(Collectors.toMap(SpaceTacticDefenseSystem::getResourceId, SpaceTacticDefenseSystem::getName));
+		Map<String, SpaceTacticDefenseSystem> defenseSystemMap = systemList.stream().collect(Collectors.toMap(SpaceTacticDefenseSystem::getResourceId, s -> s));
+
+		List<CrConstantsConfig> constants = crConstantsService.getByType(48);
+		Map<Integer, String> constantMap = constants.stream().collect(Collectors.toMap(CrConstantsConfig::getCode, CrConstantsConfig::getCnName));
 
 
 //		List<String> tacticIds = orderList.stream().map(SpaceActionFrameOrder::getTacticId).collect(Collectors.toList());
@@ -299,10 +303,13 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 //			}
 			SpaceTacticDefense defense = defenseMap.get(order.getTacticId());
 			if (defense != null) {
-				bo.setTacticName(defenseNameMap.get(defense.getSystemId()));
+				SpaceTacticDefenseSystem system = defenseSystemMap.get(defense.getSystemId());
+				bo.setTacticName(system.getName());
+				bo.setTacticId(defense.getResourceId());
 
 				bo.setActionCount(JsonUtil.stringToArray(defense.getAction()).size());
 				bo.setToolCount(JsonUtil.toJsonObjectArray(defense.getTool(), String.class).size());
+				bo.setStep(constantMap.get(system.getStage()));
 			}
 
 			res.add(bo);

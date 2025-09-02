@@ -4,11 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.cyberpeace.space.dao.entity.SpaceActionFrameOrder;
 import com.cyberpeace.space.model.req.SpacePageReqBase;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * 空间行动框架次序列表请求体
@@ -39,7 +40,7 @@ import lombok.Setter;
  * 该类主要用于封装空间行动框架次序列表的请求数据，并提供将请求数据转换为查询条件的功能。它结合了 MyBatis-Plus 的查询能力，支持灵活的条件过滤和排序。 
 **/
 @ApiModel
-public class SpaceActionFrameOrderPBListReq extends SpacePageReqBase {
+public class SpaceActionFrameOrderPBListReq implements Serializable {
 
 	@ApiModelProperty(value = "人机对抗id，必传")
 	@Getter
@@ -56,7 +57,7 @@ public class SpaceActionFrameOrderPBListReq extends SpacePageReqBase {
 //	@Setter
 //	private Integer status;
 
-	@Override
+//	@Override
 	public LambdaQueryWrapper req2QueryWrapper() {
 		LambdaQueryWrapper<SpaceActionFrameOrder> wrapper = new LambdaQueryWrapper<>();
 		wrapper.orderByAsc(SpaceActionFrameOrder::getId);

@@ -286,8 +286,9 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 	@ApiOperation("指挥、中位线查看下发情况")
 	@GetMapping("/tactics")
 	public BaseRsp<List<SpaceActionFrameOrderBo>> getTactics(
-	        @ApiParam(value = "框架应用id", name = "application_id") String application_id) {
-	    List<SpaceActionFrameOrderBo> res = releaseService.getTactics(application_id);
+	        @ApiParam(value = "框架应用id", name = "application_id") String application_id,
+			@ApiParam(value = "名称", name = "name") String name) {
+	    List<SpaceActionFrameOrderBo> res = releaseService.getTactics(application_id, name);
 	    return new BaseRsp<>(res);
 	}
 
@@ -384,7 +385,7 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 		return new BaseRsp<>(true);
 	}
 
-	@ApiOperation("工位线查询分配到的战法指令")
+	@ApiOperation("非指挥查询分配到的战法指令")
 	@GetMapping("/pb_order")
 	public BaseRsp<List<SpaceActionFrameOrderPBBo>> myPBOrders(SpaceActionFrameOrderPBListReq req) {
 		List<SpaceActionFrameOrderPBBo> res = orderService.listMyPBOrders(req);

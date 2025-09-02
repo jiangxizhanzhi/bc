@@ -149,7 +149,7 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 	 * @see List<SpaceActionFrameOrderBo>
 	 */
 	@Override
-	public List<SpaceActionFrameOrderBo> getTactics(String applicationId) {
+	public List<SpaceActionFrameOrderBo> getTactics(String applicationId, String name) {
 		List<SpaceActionFrameOrderBo> res = Lists.newArrayList();
 		SpaceActionFrameApplication application = applicationMapper.selectById(applicationId);
 		if(null == application){
@@ -173,6 +173,9 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 			Map<String, SpaceActionFrameOrder> map = StreamApiUtils.toMap(orderList,
 					SpaceActionFrameOrder::getTacticId, a -> a);
 			for (ActionFrameTactic tactic : step.getTactics()) {
+				if (!tactic.getName().contains(name)) {
+					continue;
+				}
 				SpaceActionFrameOrderBo bo = new SpaceActionFrameOrderBo();
 				bo.setFrameName(application.getName());
 				bo.setTacticName(tacticNameMap.containsKey(tactic.getResourceId())? tacticNameMap.get(tactic.getResourceId()):tactic.getName());
@@ -181,6 +184,7 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 				bo.setStepName(step.getName());
 				bo.setStepId(step.getResourceId());
 				bo.setApplicationId(applicationId);
+				bo.setCreateTime(application.getCreateTime());
 				if(map.containsKey(tactic.getResourceId())){
 					bo.setResourceId(map.get(tactic.getResourceId()).getResourceId());
 					bo.setUserId(map.get(tactic.getResourceId()).getUserId());

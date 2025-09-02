@@ -25,6 +25,7 @@ import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -227,45 +228,53 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 		LambdaQueryWrapper<SpaceActionFrameOrder> wrapper = req.req2QueryWrapper();
 		List<SpaceActionFrameOrderPBBo> res = Lists.newArrayList();
 		Map<String, String> tacticNameMap = Maps.newHashMap();
-		if (StringUtils.isNotBlank(req.getPattern())) {
-			LambdaQueryWrapper<SpaceTacticAttack> attackLambdaQueryWrapper = new LambdaQueryWrapper<>();
-			attackLambdaQueryWrapper.like(SpaceTacticAttack::getName, req.getPattern());
-			List<SpaceTacticAttack> attackList = attackMapper.selectList(attackLambdaQueryWrapper);
-			for (SpaceTacticAttack attack : attackList) {
-				tacticNameMap.put(attack.getResourceId(), attack.getName());
-			}
-			LambdaQueryWrapper<SpaceTacticDefense> defenseLambdaQueryWrapper = new LambdaQueryWrapper<>();
-			defenseLambdaQueryWrapper.like(SpaceTacticDefense::getName, req.getPattern());
-			List<SpaceTacticDefense> defenseList = defenseMapper
-					.selectList(defenseLambdaQueryWrapper);
-			for (SpaceTacticDefense defense : defenseList) {
-				tacticNameMap.put(defense.getResourceId(), defense.getName());
-			}
-			if (tacticNameMap.isEmpty()) {
-				return res;
-			} else {
-				wrapper.in(SpaceActionFrameOrder::getTacticId, tacticNameMap.keySet());
-			}
-		}
+//		if (StringUtils.isNotBlank(req.getPattern())) {
+//			LambdaQueryWrapper<SpaceTacticAttack> attackLambdaQueryWrapper = new LambdaQueryWrapper<>();
+//			attackLambdaQueryWrapper.like(SpaceTacticAttack::getName, req.getPattern());
+//			List<SpaceTacticAttack> attackList = attackMapper.selectList(attackLambdaQueryWrapper);
+//			for (SpaceTacticAttack attack : attackList) {
+//				tacticNameMap.put(attack.getResourceId(), attack.getName());
+//			}
+//			LambdaQueryWrapper<SpaceTacticDefense> defenseLambdaQueryWrapper = new LambdaQueryWrapper<>();
+//			defenseLambdaQueryWrapper.like(SpaceTacticDefense::getName, req.getPattern());
+//			List<SpaceTacticDefense> defenseList = defenseMapper
+//					.selectList(defenseLambdaQueryWrapper);
+//			for (SpaceTacticDefense defense : defenseList) {
+//				tacticNameMap.put(defense.getResourceId(), defense.getName());
+//			}
+//			if (tacticNameMap.isEmpty()) {
+//				return res;
+//			} else {
+//				wrapper.in(SpaceActionFrameOrder::getTacticId, tacticNameMap.keySet());
+//			}
+//		}
 //		Map<String, String> userMap = applicationService.getUserMap(req.getRvb_id(),
 //				SpaceCommonConstant.RvbUserGroup.STAFF);
 		List<SpaceActionFrameOrder> orderList = mapper.selectList(wrapper);
 		List<String> tacticIds = StreamApiUtils.map(orderList, SpaceActionFrameOrder::getTacticId);
-		if (StringUtils.isBlank(req.getPattern()) && !tacticIds.isEmpty()) {
+
+		LambdaQueryWrapper<SpaceTacticDefenseSystem> defenseSystemWrapper = new LambdaQueryWrapper<>();
+		Map<String, SpaceTacticDefense> defenseMap = new HashMap<>();
+
+		if (!tacticIds.isEmpty()) {
 			List<SpaceTacticAttack> attackList = attackMapper.selectBatchIds(tacticIds);
 			for (SpaceTacticAttack attack : attackList) {
 				tacticNameMap.put(attack.getResourceId(), attack.getName());
 			}
-		}
-		List<SpaceTacticDefense> defenseList = defenseMapper.selectBatchIds(tacticIds);
-		Map<String, SpaceTacticDefense> defenseMap = defenseList.stream().collect(Collectors.toMap(SpaceTacticDefense::getResourceId, d -> d));
-		for (SpaceTacticDefense defense : defenseList) {
-			tacticNameMap.put(defense.getResourceId(), defense.getName());
+
+			List<SpaceTacticDefense> defenseList = defenseMapper.selectBatchIds(tacticIds);
+			defenseMap = defenseList.stream().collect(Collectors.toMap(SpaceTacticDefense::getResourceId, d -> d));
+			for (SpaceTacticDefense defense : defenseList) {
+				tacticNameMap.put(defense.getResourceId(), defense.getName());
+			}
+			List<String> defenseSystemIds = defenseList.stream().map(SpaceTacticDefense::getSystemId).collect(Collectors.toList());
+			defenseSystemWrapper.in(SpaceTacticDefenseSystem::getResourceId, defenseSystemIds);
 		}
 
-		List<String> defenseSystemIds = defenseList.stream().map(SpaceTacticDefense::getSystemId).collect(Collectors.toList());
-		LambdaQueryWrapper<SpaceTacticDefenseSystem> defenseSystemWrapper = new LambdaQueryWrapper<>();
-		defenseSystemWrapper.in(SpaceTacticDefenseSystem::getResourceId, defenseSystemIds);
+
+
+
+
 		List<SpaceTacticDefenseSystem> systemList = defenseSystemMapper.selectList(defenseSystemWrapper);
 		Map<String, String> defenseNameMap = systemList.stream().collect(Collectors.toMap(SpaceTacticDefenseSystem::getResourceId, SpaceTacticDefenseSystem::getName));
 

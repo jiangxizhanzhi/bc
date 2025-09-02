@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.space.dao.entity.SpaceActionFrameRelease;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameApplicationBo;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderBo;
-import com.cyberpeace.space.service.context.frame.SpaceActionFrameReleaseBo;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameReleaseReq;
 
 import java.util.List;
@@ -62,6 +61,6 @@ public interface SpaceActionFrameReleaseService extends IService<SpaceActionFram
      * @see String
      * @see List<SpaceActionFrameOrderBo>
      */
-    List<SpaceActionFrameOrderBo> getTactics(String applicationId);
+    List<SpaceActionFrameOrderBo> getTactics(String applicationId, String name);
 }
 

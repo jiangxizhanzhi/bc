@@ -147,9 +147,7 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	public ListRsp<DefenseListBo> page(SpaceTacticPageReq req) {
 
 		Page page = req.toPageParam();
-		LambdaQueryWrapper<SpaceTacticDefense> wrapper = req.req2QueryWrapper();
-		wrapper.eq(SpaceTacticDefense::getTmp, false);
-		IPage<SpaceTacticDefense> iPage = mapper.selectPage(page, wrapper);
+		IPage<SpaceTacticDefense> iPage = mapper.pageNoTmp(page);
 		List<String> categoryIds = StreamApiUtils.map(iPage.getRecords(),
 				SpaceTacticDefense::getCategoryId);
 		Map<String, String> categoryMap = Maps.newHashMap();

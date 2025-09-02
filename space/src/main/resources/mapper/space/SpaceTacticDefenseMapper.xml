@@ -9,4 +9,7 @@
             #{id}
         </foreach>
     </select>
+    <select id="pageNoTmp" resultType="com.cyberpeace.space.dao.entity.SpaceTacticDefense">
+        select * from space_tactic_defense where tmp = 0
+    </select>
 </mapper>

@@ -3,8 +3,7 @@ package com.cyberpeace.space.dao.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 /**
  * 空间战法防御
@@ -28,8 +27,7 @@ import lombok.Setter;
  * - 该类继承自 `SpaceTacticAttack`，可能包含一些通用的属性或方法。 
  * 总体而言，这个类是一个数据访问对象（DAO）实体类，主要用于操作数据库中 `space_tactic_defense` 表的数据。 
 **/
-@Getter
-@Setter
+@Data
 @TableName("space_tactic_defense")
 public class SpaceTacticDefense extends SpaceTacticAttack {
 

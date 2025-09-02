@@ -238,10 +238,11 @@ public class RbTemplateAdminController {
 			throw new ResourceNotFoundException(resourceId);
 		}
 		String oldRoleConfig = rbTemplate.getRoleConfig();
-		if(!UNITE_TRAIN.getCode().equals(businessTemplate.getBusinessType())) {
-			// update
-			reqToRbTemplate(modifyReq, rbTemplate);
-		}
+		//todo 只有非联合的情况才保存红蓝模板信息？
+		reqToRbTemplate(modifyReq, rbTemplate);
+//		if(!UNITE_TRAIN.getCode().equals(businessTemplate.getBusinessType())) {
+//			// update
+//		}
 		// save
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -314,19 +315,24 @@ public class RbTemplateAdminController {
 		List<JSONObject> redRoleRsps = null;
 		List<JSONObject> blueRoleRsps  = null;
 
-		if (businessTemplate.getBusinessType() != UNITE_TRAIN.getCode()
-				&& StringUtils.isBlank(businessTemplate.getUniteTaskId())) {
-			// 获取红蓝角色
-			String roleString = template.getRoleConfig();
-			JSONObject roleObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
+//		if (businessTemplate.getBusinessType() != UNITE_TRAIN.getCode()
+//				&& StringUtils.isBlank(businessTemplate.getUniteTaskId())) {
+//		}
+		// 获取红蓝角色
+		String roleString = template.getRoleConfig();
+		JSONObject roleObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
 
-			Map<String, MissionTemplate> mapping = missionTemplateService
-					.getMappingBySchemeJson(roleString);
+		Map<String, MissionTemplate> mapping = missionTemplateService
+				.getMappingBySchemeJson(roleString);
+		if(Objects.nonNull(roleObject.getJSONArray("red_roles"))){
 			redRoleRsps = getRoles(roleObject.getJSONArray("red_roles"), mapping);
-			blueRoleRsps = getRoles(roleObject.getJSONArray("blue_roles"), mapping);
-			dealAssetNodesMap(redRoleRsps);
-			dealAssetNodesMap(blueRoleRsps);
 		}
+		if(Objects.nonNull(roleObject.getJSONArray("blue_roles"))){
+			blueRoleRsps = getRoles(roleObject.getJSONArray("blue_roles"), mapping);
+		}
+
+		dealAssetNodesMap(redRoleRsps);
+		dealAssetNodesMap(blueRoleRsps);
 		// 获取基本信息
 		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(template, businessTemplate);
 
@@ -346,7 +352,10 @@ public class RbTemplateAdminController {
 
 		// 获取返回对象
 		RbTemplateRsp teamTrainTemplateRsp = new RbTemplateRsp();
-
+		if(Objects.nonNull(roleObject.getJSONArray("white_role"))){
+			List<String> whiteRole = JSONObject.parseArray(roleObject.getJSONArray("white_role").toString(), String.class);
+			teamTrainTemplateRsp.setWhiteRole(whiteRole);
+		}
 		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
 		teamTrainTemplateRsp.setResourceId(template.getResourceId());
 		teamTrainTemplateRsp.setRedRoles(redRoleRsps);
@@ -368,6 +377,9 @@ public class RbTemplateAdminController {
 	 * @param roleRsps 岗位RSP
 	 */
 	public void dealAssetNodesMap(List<JSONObject> roleRsps ) {
+		if(CollectionUtils.isEmpty(roleRsps)){
+			return;
+		}
 		for (JSONObject roleRsp : roleRsps) {
 			List<Object> assetNodes = roleRsp.getObject("asset_nodes", ArrayList.class);
 			Map<String,Integer>  assetMap = new HashMap<>();
@@ -397,12 +409,14 @@ public class RbTemplateAdminController {
 		roleArray.forEach(role -> {
 			CrRoleConfig roleRsp = ((JSONObject) role).toJavaObject(CrRoleConfig.class);
 			roleRsp.setId(IDGeneratorUtil.getID());
-			roleRsp.getMissionsScheme().getSchemeData()
-					.forEach(datum -> datum.getMissions().forEach(mission -> {
-						MissionTemplate template = mapping.get(mission.getResourceId());
-						mission.setTitle(template.getTitle());
-						mission.setDescription(template.getDescription());
-					}));
+			if(Objects.nonNull(roleRsp.getMissionsScheme()) && CollectionUtils.isNotEmpty(roleRsp.getMissionsScheme().getSchemeData())){
+				roleRsp.getMissionsScheme().getSchemeData()
+						.forEach(datum -> datum.getMissions().forEach(mission -> {
+							MissionTemplate template = mapping.get(mission.getResourceId());
+							mission.setTitle(template.getTitle());
+							mission.setDescription(template.getDescription());
+						}));
+			}
 			// 转为蛇形
 			result.add(JsonUtil.java2JsonObject(roleRsp, PropertyNamingStrategy.SnakeCase));
 		});
@@ -423,8 +437,9 @@ public class RbTemplateAdminController {
 		// validate role config
 		crCommonService.validateRbRoleConfig(roleConfigRb);
 		// validate tag
-		rbTemplate.setPreSkill(CrCommonUtil.handleTrainingTag(baseInfo.getPreSkill()));
-		rbTemplate.setTrainSkill(CrCommonUtil.handleTrainingTag(baseInfo.getTrainSkill()));
+		//暂不校验训练tag，兼容联合红蓝对抗
+//		rbTemplate.setPreSkill(CrCommonUtil.handleTrainingTag(baseInfo.getPreSkill()));
+//		rbTemplate.setTrainSkill(CrCommonUtil.handleTrainingTag(baseInfo.getTrainSkill()));
 		rbTemplate.setSubType(baseInfo.getCategory());
 		rbTemplate.setDurationTime(baseInfo.getDurationTime());
 		rbTemplate.setRoleConfig(CrCommonUtil.roleConfig2DbJson(roleConfigRb));

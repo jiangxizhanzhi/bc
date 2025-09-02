@@ -308,7 +308,7 @@ public class CrCommonUtil {
 		SimplePropertyPreFilter schemeFilter = new SimplePropertyPreFilter(
 				CrRoleConfigSchemeStage.class, "stage", "missions");
 		SimplePropertyPreFilter roleFilter = new SimplePropertyPreFilter(CrRoleConfig.class, "name",
-				"asset_nodes", "visible_nodes", "missions_scheme");
+				"asset_nodes", "visible_nodes", "missions_scheme","seats_info");
 		SerializeConfig config = new SerializeConfig();
 		config.setPropertyNamingStrategy(PropertyNamingStrategy.SnakeCase);
 		return JSON.toJSONString(roleConfig, config,

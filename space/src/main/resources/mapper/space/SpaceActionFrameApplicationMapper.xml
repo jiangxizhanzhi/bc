@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.space.dao.mapper.SpaceActionFrameApplicationMapper">
+
+
+    <select id="selectChooseName" resultType="com.cyberpeace.space.model.IdAndName">
+        select resource_id, `name`
+        from space_action_frame_application
+        where rvb_id = #{rvb_id}
+    </select>
+</mapper>

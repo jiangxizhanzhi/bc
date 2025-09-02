@@ -16,10 +16,9 @@ import com.cyberpeace.cr.tool.service.ToolService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.constant.SpaceKTypeEnum;
-import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
-import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
-import com.cyberpeace.space.dao.entity.SpaceTacticDefenseCategory;
-import com.cyberpeace.space.dao.entity.SpaceTacticDefenseSystem;
+import com.cyberpeace.space.controller.res.SystemTreeRes;
+import com.cyberpeace.space.controller.res.TacticDefenseRes;
+import com.cyberpeace.space.dao.entity.*;
 import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseCategoryMapper;
 import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseMapper;
 import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseSystemMapper;
@@ -36,11 +35,14 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 空间策略防御Service实现
@@ -146,6 +148,7 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 
 		Page page = req.toPageParam();
 		LambdaQueryWrapper<SpaceTacticDefense> wrapper = req.req2QueryWrapper();
+		wrapper.eq(SpaceTacticDefense::getTmp, false);
 		IPage<SpaceTacticDefense> iPage = mapper.selectPage(page, wrapper);
 		List<String> categoryIds = StreamApiUtils.map(iPage.getRecords(),
 				SpaceTacticDefense::getCategoryId);
@@ -188,11 +191,20 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 * @see DefenseAddReq
 	 */
 	@Override
-	public void add(DefenseAddReq req) {
+	public void add(DefenseAddReq req, boolean tmp) {
 		SpaceTacticDefense defense = this.req2Entity(req);
 		defense.setResourceId(IDGeneratorUtil.getID());
+		defense.setTmp(tmp);
 		CrCommonValidator.validateNameLen(defense.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		mapper.insert(defense);
+	}
+
+	@Override
+	public void tmpAdd(DefenseTmpAddReq req) {
+
+		add(req, true);
+
+		//todo 对接永信接口新增
 	}
 
 	/**
@@ -454,6 +466,41 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
     public List<String> listByCategoryids(List<String> ids) {
 		return spaceTacticDefenseMapper.idsByCategoryids(ids);
     }
+
+    @Override
+	public List<SystemTreeRes> tree(String systemId) {
+		LambdaQueryWrapper<SpaceTacticDefenseSystem> systemWrapper = new LambdaQueryWrapper<>();
+		systemWrapper.orderByDesc(SpaceTacticDefenseSystem::getCreateTime);
+		LambdaQueryWrapper<SpaceTacticDefense> defenseWrapper = new LambdaQueryWrapper<>();
+		if (StringUtils.isNotEmpty(systemId)) {
+			systemWrapper.eq(SpaceTacticDefenseSystem::getResourceId, systemId);
+			defenseWrapper.eq(SpaceTacticDefense::getSystemId, systemId);
+		}
+		List<SpaceTacticDefenseSystem> systemList = systemMapper.selectList(systemWrapper);
+		List<SpaceTacticDefense> defenseList = spaceTacticDefenseMapper.selectList(defenseWrapper);
+		Map<String, List<SpaceTacticDefense>> defenseMap = defenseList.stream()
+				.collect(Collectors.groupingBy(
+						SpaceTacticDefense::getSystemId,
+						Collectors.toList()
+				));
+		List<SystemTreeRes> treeResList = new ArrayList<>();
+		for (SpaceTacticDefenseSystem system: systemList) {
+			SystemTreeRes treeRes = new SystemTreeRes();
+			treeRes.setSystemId(system.getResourceId());
+			treeRes.setName(system.getName());
+			List<SpaceTacticDefense> defenses = defenseMap.getOrDefault(system.getResourceId(), new ArrayList<>());
+			List<TacticDefenseRes> defenseResList = new ArrayList<>();
+			for (SpaceTacticDefense defense : defenses) {
+				TacticDefenseRes defenseRes = new TacticDefenseRes();
+				defenseRes.setName(defense.getName());
+				defenseRes.setDefenseId(defense.getResourceId());
+				defenseResList.add(defenseRes);
+			}
+			treeRes.setTacticDefenseList(defenseResList);
+			treeResList.add(treeRes);
+		}
+		return treeResList;
+	}
 
 	/**
 	 * 获取阶段框架

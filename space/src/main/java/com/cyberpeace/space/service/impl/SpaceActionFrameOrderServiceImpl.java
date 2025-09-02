@@ -7,16 +7,15 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.constant.SpaceError;
-import com.cyberpeace.space.dao.entity.SpaceActionFrameApplication;
-import com.cyberpeace.space.dao.entity.SpaceActionFrameOrder;
-import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
-import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
+import com.cyberpeace.space.dao.entity.*;
 import com.cyberpeace.space.dao.mapper.SpaceActionFrameOrderMapper;
 import com.cyberpeace.space.dao.mapper.SpaceTacticAttackMapper;
 import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseMapper;
+import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseSystemMapper;
 import com.cyberpeace.space.service.SpaceActionFrameApplicationService;
 import com.cyberpeace.space.service.SpaceActionFrameOrderService;
 import com.cyberpeace.space.service.context.frame.*;
@@ -28,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * ### 代码分析与总结 
@@ -91,6 +91,9 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 
 	@Autowired
 	private SpaceActionFrameApplicationService applicationService;
+
+	@Autowired
+	private SpaceTacticDefenseSystemMapper defenseSystemMapper;
 
 	@Override
 	public void create(SpaceActionFrameOrderReq req) {
@@ -208,6 +211,94 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 		}
 
 		this.remove(queryWrapper);
+	}
+
+	@Override
+	public void report(SpaceActionFrameOrderReportReq reportReq) {
+		SpaceActionFrameOrder entity = BeanUtils.copy(reportReq, SpaceActionFrameOrder.class);
+		entity.setResourceId(IDGeneratorUtil.getID());
+		entity.setStatus(SpaceCommonConstant.OrderStatus.FINISHED);
+		this.save(entity);
+	}
+
+	@Override
+	public List<SpaceActionFrameOrderPBBo> listMyPBOrders(SpaceActionFrameOrderPBListReq req) {
+
+		LambdaQueryWrapper<SpaceActionFrameOrder> wrapper = req.req2QueryWrapper();
+		List<SpaceActionFrameOrderPBBo> res = Lists.newArrayList();
+		Map<String, String> tacticNameMap = Maps.newHashMap();
+		if (StringUtils.isNotBlank(req.getPattern())) {
+			LambdaQueryWrapper<SpaceTacticAttack> attackLambdaQueryWrapper = new LambdaQueryWrapper<>();
+			attackLambdaQueryWrapper.like(SpaceTacticAttack::getName, req.getPattern());
+			List<SpaceTacticAttack> attackList = attackMapper.selectList(attackLambdaQueryWrapper);
+			for (SpaceTacticAttack attack : attackList) {
+				tacticNameMap.put(attack.getResourceId(), attack.getName());
+			}
+			LambdaQueryWrapper<SpaceTacticDefense> defenseLambdaQueryWrapper = new LambdaQueryWrapper<>();
+			defenseLambdaQueryWrapper.like(SpaceTacticDefense::getName, req.getPattern());
+			List<SpaceTacticDefense> defenseList = defenseMapper
+					.selectList(defenseLambdaQueryWrapper);
+			for (SpaceTacticDefense defense : defenseList) {
+				tacticNameMap.put(defense.getResourceId(), defense.getName());
+			}
+			if (tacticNameMap.isEmpty()) {
+				return res;
+			} else {
+				wrapper.in(SpaceActionFrameOrder::getTacticId, tacticNameMap.keySet());
+			}
+		}
+//		Map<String, String> userMap = applicationService.getUserMap(req.getRvb_id(),
+//				SpaceCommonConstant.RvbUserGroup.STAFF);
+		List<SpaceActionFrameOrder> orderList = mapper.selectList(wrapper);
+		List<String> tacticIds = StreamApiUtils.map(orderList, SpaceActionFrameOrder::getTacticId);
+		if (StringUtils.isBlank(req.getPattern()) && !tacticIds.isEmpty()) {
+			List<SpaceTacticAttack> attackList = attackMapper.selectBatchIds(tacticIds);
+			for (SpaceTacticAttack attack : attackList) {
+				tacticNameMap.put(attack.getResourceId(), attack.getName());
+			}
+		}
+		List<SpaceTacticDefense> defenseList = defenseMapper.selectBatchIds(tacticIds);
+		Map<String, SpaceTacticDefense> defenseMap = defenseList.stream().collect(Collectors.toMap(SpaceTacticDefense::getResourceId, d -> d));
+		for (SpaceTacticDefense defense : defenseList) {
+			tacticNameMap.put(defense.getResourceId(), defense.getName());
+		}
+
+		List<String> defenseSystemIds = defenseList.stream().map(SpaceTacticDefense::getSystemId).collect(Collectors.toList());
+		LambdaQueryWrapper<SpaceTacticDefenseSystem> defenseSystemWrapper = new LambdaQueryWrapper<>();
+		defenseSystemWrapper.in(SpaceTacticDefenseSystem::getResourceId, defenseSystemIds);
+		List<SpaceTacticDefenseSystem> systemList = defenseSystemMapper.selectList(defenseSystemWrapper);
+		Map<String, String> defenseNameMap = systemList.stream().collect(Collectors.toMap(SpaceTacticDefenseSystem::getResourceId, SpaceTacticDefenseSystem::getName));
+
+
+//		List<String> tacticIds = orderList.stream().map(SpaceActionFrameOrder::getTacticId).collect(Collectors.toList());
+		// get step name
+//		List<String> applicationIds = StreamApiUtils.map(orderList,
+//				SpaceActionFrameOrder::getApplicationId);
+//		Map<String, String> stepMap = this.getStepMapByApplicationIds(applicationIds);
+
+		for (SpaceActionFrameOrder order : orderList) {
+//			SpaceActionFrameOrderBo bo = BeanUtils.copy(order, SpaceActionFrameOrderBo.class);
+			SpaceActionFrameOrderPBBo bo = BeanUtils.copy(order, SpaceActionFrameOrderPBBo.class);
+			bo.setName(tacticNameMap.get(order.getTacticId()));
+			bo.setTime(order.getCreateTime());
+
+//			if (stepMap.containsKey(order.getStep())) {
+//				bo.setStepId(order.getStep());
+//				bo.setStepName(stepMap.get(order.getStep()));
+//			} else {
+//				continue;
+//			}
+			SpaceTacticDefense defense = defenseMap.get(order.getTacticId());
+			if (defense != null) {
+				bo.setTacticName(defenseNameMap.get(defense.getSystemId()));
+
+				bo.setActionCount(JsonUtil.stringToArray(defense.getAction()).size());
+				bo.setToolCount(JsonUtil.toJsonObjectArray(defense.getTool(), String.class).size());
+			}
+
+			res.add(bo);
+		}
+		return res;
 	}
 
 	private Map<String, String> getStepMapByApplicationIds(List<String> applicationIds) {

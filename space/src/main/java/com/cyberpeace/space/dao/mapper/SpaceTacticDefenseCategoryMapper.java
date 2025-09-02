@@ -2,6 +2,7 @@ package com.cyberpeace.space.dao.mapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.service.context.tactic.TacticDefenseCategoryBo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -41,5 +42,7 @@ public interface SpaceTacticDefenseCategoryMapper extends BaseMapper<SpaceTactic
     IPage<TacticDefenseCategoryBo> page(@Param("page") Page page, @Param("pattern") String pattern);
 
     List<TacticDefenseCategoryBo> listAllInOrder();
+
+    List<IdAndName> selectName();
 }
 

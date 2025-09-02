@@ -1,6 +1,8 @@
 package com.cyberpeace.space.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.space.controller.req.SpaceFramePBListReq;
+import com.cyberpeace.space.controller.res.FrameListRes;
 import com.cyberpeace.space.dao.entity.SpaceActionFrame;
 import com.cyberpeace.space.service.context.frame.ActionFrameArrangeBo;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameBo;
@@ -137,4 +139,6 @@ public interface SpaceActionFrameService extends IService<SpaceActionFrame> {
     void add(SpaceActionFrame entity);
 
 //    List<SpaceActionFrameRecBo> getNengliRecFrame(String categoryId, String keyWord);
+
+    List<FrameListRes> defenseFrameList(SpaceFramePBListReq req);
 }

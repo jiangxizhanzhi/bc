@@ -2,10 +2,7 @@ package com.cyberpeace.space.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.space.dao.entity.SpaceActionFrameOrder;
-import com.cyberpeace.space.service.context.frame.ActionFrameArrangeBo;
-import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderBo;
-import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderListReq;
-import com.cyberpeace.space.service.context.frame.SpaceActionFrameOrderReq;
+import com.cyberpeace.space.service.context.frame.*;
 
 import java.util.List;
 
@@ -70,5 +67,9 @@ public interface SpaceActionFrameOrderService extends IService<SpaceActionFrameO
      * @see String
      */
     void deleteReleased(ActionFrameArrangeBo arrangeBo, String applicationId);
+
+    void report(SpaceActionFrameOrderReportReq reportReq);
+
+    List<SpaceActionFrameOrderPBBo> listMyPBOrders(SpaceActionFrameOrderPBListReq req);
 }
     

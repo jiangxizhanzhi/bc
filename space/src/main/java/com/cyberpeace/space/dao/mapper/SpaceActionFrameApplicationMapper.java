@@ -2,8 +2,12 @@ package com.cyberpeace.space.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.space.dao.entity.SpaceActionFrameApplication;
+import com.cyberpeace.space.model.IdAndName;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * 空间行动框架行为依赖Mapper
@@ -46,5 +50,7 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface SpaceActionFrameApplicationMapper extends BaseMapper<SpaceActionFrameApplication> {
+
+    List<IdAndName> selectChooseName(@Param("rvb_id")String rvb_id);
 }
     

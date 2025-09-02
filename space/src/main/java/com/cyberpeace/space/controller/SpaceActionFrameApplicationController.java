@@ -7,7 +7,10 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.space.controller.req.SpaceFramePBListReq;
+import com.cyberpeace.space.controller.res.FrameListRes;
 import com.cyberpeace.space.dao.entity.SpaceActionFrameApplication;
+import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.controller.SpaceControllerBase;
 import com.cyberpeace.space.model.req.IdReq;
 import com.cyberpeace.space.service.SpaceActionFrameApplicationService;
@@ -372,6 +375,32 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 			@ApiParam(value = "红蓝对抗id", name = "rvb_id") String rvb_id,
 			@ApiParam(value = "用户组，指挥1，中位线2，工位线3", name = "group") Integer group) {
 		return new BaseRsp<>(baseService.getUsers(rvb_id, group));
+	}
+
+	@ApiOperation("上报已有战法")
+	@PostMapping("/report")
+	public BaseRsp<Boolean> report(@RequestBody SpaceActionFrameOrderReportReq reportReq) {
+		orderService.report(reportReq);
+		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("工位线查询分配到的战法指令")
+	@GetMapping("/pb_order")
+	public BaseRsp<List<SpaceActionFrameOrderPBBo>> myPBOrders(SpaceActionFrameOrderPBListReq req) {
+		List<SpaceActionFrameOrderPBBo> res = orderService.listMyPBOrders(req);
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("框架列表")
+	@GetMapping("/frame_list")
+	public BaseRsp<List<FrameListRes>> frameList(SpaceFramePBListReq req) {
+		return new BaseRsp<>(frameService.defenseFrameList(req));
+	}
+
+	@ApiOperation("当前应用的行动框架")
+	@GetMapping("/application_list")
+	public BaseRsp<List<IdAndName>> applicationList(@ApiParam(value = "人机对抗id", name = "rvb_id") String rvb_id) {
+		return new BaseRsp<>(baseService.applicationList(rvb_id));
 	}
 }
 

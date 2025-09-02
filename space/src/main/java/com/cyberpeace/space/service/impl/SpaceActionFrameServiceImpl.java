@@ -11,6 +11,8 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
+import com.cyberpeace.space.controller.req.SpaceFramePBListReq;
+import com.cyberpeace.space.controller.res.FrameListRes;
 import com.cyberpeace.space.dao.entity.*;
 import com.cyberpeace.space.dao.mapper.*;
 import com.cyberpeace.space.service.*;
@@ -27,10 +29,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 空间行动框架Service实现
@@ -121,6 +121,12 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 
 	@Autowired
 	private SpaceCallCountService callCountService;
+
+	@Autowired
+	private SpaceTacticDefenseCategoryMapper defenseCategoryMapper;
+
+	@Autowired
+	private SpaceActionFrameApplicationMapper applicationMapper;
 
 
 	/**
@@ -547,6 +553,53 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 				relationService.createRelation(com.google.common.collect.Lists.newArrayList(), entity.getResourceId());
 			}
 		});
+	}
+
+	@Override
+	public List<FrameListRes> defenseFrameList(SpaceFramePBListReq req) {
+		LambdaQueryWrapper<SpaceActionFrameApplication> applicationWrapper = new LambdaQueryWrapper<>();
+		applicationWrapper.eq(SpaceActionFrameApplication::getRvbId, req.getRvbId());
+		List<SpaceActionFrameApplication> applicationList = applicationMapper.selectList(applicationWrapper);
+		List<String> chooseFrameIds = applicationList.stream().map(SpaceActionFrameApplication::getFrameId).collect(Collectors.toList());
+
+		LambdaQueryWrapper<SpaceActionFrame> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(SpaceActionFrame::getType, req.getType());
+		if (StringUtils.isNotBlank(req.getCategoryId())) {
+			wrapper.eq(SpaceActionFrame::getCategoryId, req.getCategoryId());
+		}
+		if (StringUtils.isNotBlank(req.getName())) {
+			wrapper.like(SpaceActionFrame::getName, req.getName());
+		}
+		List<SpaceActionFrame> frameList = baseMapper.selectList(wrapper);
+//		List<String> frameIds = frameList.stream().map(SpaceActionFrame::getResourceId).collect(Collectors.toList());
+
+
+//		List<IdAndName> categoryNameList = defenseCategoryMapper.selectName();
+//		Map<String, String>
+		List<FrameListRes> resList = new ArrayList<>();
+		for (SpaceActionFrame frame : frameList) {
+			boolean flag = true;
+			ActionFrameArrangeBo arrangeBo = BeanUtils.copy(frame, ActionFrameArrangeBo.class);
+			outerLoop:
+			for (ActionFrameStep step : arrangeBo.getSteps()) {
+				for (ActionFrameTactic tactic : step.getTactics()) {
+					if (1 == (tactic.getType())) {
+						flag = false;
+						break outerLoop;
+					}
+				}
+			}
+			if (!flag) {
+				continue;
+			}
+
+			FrameListRes res = BeanUtils.copy(frame, FrameListRes.class);
+			res.setFrameId(frame.getResourceId());
+			res.setTag((JsonUtil.toJsonObjectArray(frame.getTag(), String.class)));
+			res.setChoose(chooseFrameIds.contains(frame.getResourceId()));
+			resList.add(res);
+		}
+		return resList;
 	}
 
 	private SpaceActionFrameRecBo entity2RecBo(SpaceActionFrame frame){

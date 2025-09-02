@@ -15,4 +15,8 @@
         from space_tactic_defense_category
         order by `stage`, `id`
     </select>
+    <select id="selectName" resultType="com.cyberpeace.space.model.IdAndName">
+        select resource_id, `name`
+        from space_tactic_defense_category
+    </select>
 </mapper>

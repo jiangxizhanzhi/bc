@@ -9,6 +9,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
+import com.cyberpeace.space.controller.res.SystemTreeRes;
 import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
 import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
 import com.cyberpeace.space.service.SpaceTacticDefenseService;
@@ -105,7 +106,14 @@ public class SpaceTacticDefenseController {
 	@ApiOperation("新增防御战法")
 	@PostMapping("")
 	public BaseRsp addAttack(@RequestBody DefenseAddReq req) {
-		defenseService.add(req);
+		defenseService.add(req, false);
+		return new BaseRsp();
+	}
+
+	@ApiOperation("新增临时防御战法")
+	@PostMapping("/tmp")
+	public BaseRsp addTmpAttack(@RequestBody DefenseTmpAddReq req) {
+		defenseService.tmpAdd(req);
 		return new BaseRsp();
 	}
 
@@ -312,6 +320,12 @@ public class SpaceTacticDefenseController {
 	public BaseRsp<List<SpaceFrameLevel>> getDefenseFrame() {
 		SpaceFrameLevel level = defenseService.getFrame();
 		return new BaseRsp<>(level.getChildren());
+	}
+
+	@ApiOperation("获取所有战法")
+	@GetMapping("/tree")
+	public BaseRsp<List<SystemTreeRes>> getTree(@ApiParam(value = "战法id", name = "system_id") @RequestParam(value = "system_id", required = false) String systemId) {
+		return new BaseRsp<>(defenseService.tree(systemId));
 	}
 }
 

@@ -2,6 +2,7 @@ package com.cyberpeace.space.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.space.dao.entity.SpaceActionFrameApplication;
+import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.service.context.frame.ApplicationUser;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameApplicationReq;
 
@@ -78,5 +79,7 @@ public interface SpaceActionFrameApplicationService extends IService<SpaceAction
      * @see List<String>
      */
     void deleteByIds(List<String> ids);
+
+    List<IdAndName> applicationList(String id);
 }
     

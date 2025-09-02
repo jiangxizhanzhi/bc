@@ -18,6 +18,7 @@ import com.cyberpeace.space.dao.entity.SpaceActionFrameRelease;
 import com.cyberpeace.space.dao.mapper.SpaceActionFrameApplicationMapper;
 import com.cyberpeace.space.dao.mapper.SpaceActionFrameOrderMapper;
 import com.cyberpeace.space.dao.mapper.SpaceActionFrameReleaseMapper;
+import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.service.SpaceActionFrameApplicationService;
 import com.cyberpeace.space.service.SpaceActionFrameService;
 import com.cyberpeace.space.service.context.frame.ActionFrameArrangeBo;
@@ -277,6 +278,16 @@ public class SpaceActionFrameApplicationServiceImpl extends ServiceImpl<SpaceAct
 	            orderMapper.delete(wrapperOrder);
 	        }
 	    });
+	}
+
+	@Override
+	public List<IdAndName> applicationList(String rvb_id) {
+
+//		LambdaQueryWrapper<SpaceActionFrameApplication> applicationWrapper = new LambdaQueryWrapper<>();
+//		applicationWrapper.eq(SpaceActionFrameApplication::getRvbId, rvb_id);
+//		List<SpaceActionFrameApplication> applicationList = baseMapper.selectList(applicationWrapper);
+
+		return baseMapper.selectChooseName(rvb_id);
 	}
 
 

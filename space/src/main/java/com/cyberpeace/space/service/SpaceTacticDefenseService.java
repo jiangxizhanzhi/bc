@@ -3,6 +3,7 @@ package com.cyberpeace.space.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.space.controller.res.SystemTreeRes;
 import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
 import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
 import com.cyberpeace.space.service.context.index.KnowledgeChart;
@@ -66,7 +67,8 @@ public interface SpaceTacticDefenseService extends IService<SpaceTacticDefense> 
      * @throws
      * @see DefenseAddReq
      */
-    void add(DefenseAddReq req);
+    void add(DefenseAddReq req, boolean tmp);
+    void tmpAdd(DefenseTmpAddReq req);
 
     /**
      * 更新防御
@@ -211,5 +213,7 @@ public interface SpaceTacticDefenseService extends IService<SpaceTacticDefense> 
      * @see List<String>
      */
     List<String> listByCategoryids(List<String> ids);
+
+    List<SystemTreeRes> tree(String systemId);
 }
 

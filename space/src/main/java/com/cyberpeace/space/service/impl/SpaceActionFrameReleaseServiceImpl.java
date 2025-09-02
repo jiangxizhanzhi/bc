@@ -1,6 +1,7 @@
 package com.cyberpeace.space.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -173,7 +174,7 @@ public class SpaceActionFrameReleaseServiceImpl extends ServiceImpl<SpaceActionF
 			Map<String, SpaceActionFrameOrder> map = StreamApiUtils.toMap(orderList,
 					SpaceActionFrameOrder::getTacticId, a -> a);
 			for (ActionFrameTactic tactic : step.getTactics()) {
-				if (!tactic.getName().contains(name)) {
+				if (StringUtils.isNotBlank(name) && !tactic.getName().contains(name)) {
 					continue;
 				}
 				SpaceActionFrameOrderBo bo = new SpaceActionFrameOrderBo();

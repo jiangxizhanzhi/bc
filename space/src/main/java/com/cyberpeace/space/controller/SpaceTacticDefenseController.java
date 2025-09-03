@@ -7,6 +7,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.controller.res.SystemTreeRes;
@@ -106,7 +107,7 @@ public class SpaceTacticDefenseController {
 	@ApiOperation("新增防御战法")
 	@PostMapping("")
 	public BaseRsp addAttack(@RequestBody DefenseAddReq req) {
-		defenseService.add(req, false);
+		defenseService.add(req, false, IDGeneratorUtil.getID());
 		return new BaseRsp();
 	}
 

@@ -19,6 +19,7 @@ import com.cyberpeace.space.constant.SpaceKTypeEnum;
 import com.cyberpeace.space.controller.res.SystemTreeRes;
 import com.cyberpeace.space.controller.res.TacticDefenseRes;
 import com.cyberpeace.space.dao.entity.*;
+import com.cyberpeace.space.dao.mapper.SpaceActionFrameOrderMapper;
 import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseCategoryMapper;
 import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseMapper;
 import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseSystemMapper;
@@ -134,6 +135,9 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	@Autowired
 	private SpaceTacticDefenseMapper spaceTacticDefenseMapper;
 
+	@Autowired
+	private SpaceActionFrameOrderMapper orderMapper;
+
 	/**
 	 * 分页
 	 *
@@ -189,9 +193,9 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 	 * @see DefenseAddReq
 	 */
 	@Override
-	public void add(DefenseAddReq req, boolean tmp) {
+	public void add(DefenseAddReq req, boolean tmp, String id) {
 		SpaceTacticDefense defense = this.req2Entity(req);
-		defense.setResourceId(IDGeneratorUtil.getID());
+		defense.setResourceId(id);
 		defense.setTmp(tmp);
 		CrCommonValidator.validateNameLen(defense.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		mapper.insert(defense);
@@ -199,10 +203,17 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 
 	@Override
 	public void tmpAdd(DefenseTmpAddReq req) {
+		String id = IDGeneratorUtil.getID();
+		add(req, true, id);
 
-		add(req, true);
-
-
+		SpaceActionFrameOrder order = new SpaceActionFrameOrder();
+		order.setRvbId(req.getRvbId());
+		order.setTacticId(id);
+		order.setTacticType(2);
+		order.setUserId(req.getUserId());
+		order.setStatus(1);
+		order.setSender(req.getUserId());
+		orderMapper.insert(order);
 		//todo 对接永信接口新增
 	}
 

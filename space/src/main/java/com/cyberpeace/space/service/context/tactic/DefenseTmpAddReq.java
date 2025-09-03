@@ -10,4 +10,6 @@ public class DefenseTmpAddReq extends DefenseAddReq{
     private List<String> nodes;
 
     private String rvbId;
+
+    private String userId;
 }

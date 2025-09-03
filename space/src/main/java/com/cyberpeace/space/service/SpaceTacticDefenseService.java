@@ -67,7 +67,7 @@ public interface SpaceTacticDefenseService extends IService<SpaceTacticDefense> 
      * @throws
      * @see DefenseAddReq
      */
-    void add(DefenseAddReq req, boolean tmp);
+    void add(DefenseAddReq req, boolean tmp, String id);
     void tmpAdd(DefenseTmpAddReq req);
 
     /**

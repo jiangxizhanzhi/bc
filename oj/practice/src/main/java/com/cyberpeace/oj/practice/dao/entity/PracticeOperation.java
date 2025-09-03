@@ -113,6 +113,9 @@ public class PracticeOperation extends PracticeBase {
 	@ApiModelProperty(value = "关联漏洞")
 	private String vuln;
 
+	@ApiModelProperty("是否是其他题库")
+	private Boolean other;
+
 	public enum DynamicFlag implements GenericEnum {
 
 		STATIC(0, "静态"), DYNAMIC(1, "动态"), RANDOM(2, "随机"), NOT(3, "非Flag");

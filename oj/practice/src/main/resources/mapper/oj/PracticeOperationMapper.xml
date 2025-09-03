@@ -44,6 +44,9 @@
                 <if test="listQuery.dynamicFlag != null">
                     and dynamic_flag = #{listQuery.dynamicFlag}
                 </if>
+                <if test="listQuery.other != null">
+                    and other = #{listQuery.other}
+                </if>
             </if>
             <if test="isPublic != null and isPublic">
                 and `public` = #{isPublic}

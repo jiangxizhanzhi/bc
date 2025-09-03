@@ -61,4 +61,6 @@ public class OperationListQuery extends PatternBase {
 	 */
 	private Integer dynamicFlag;
 
+	private Boolean other;
+
 }

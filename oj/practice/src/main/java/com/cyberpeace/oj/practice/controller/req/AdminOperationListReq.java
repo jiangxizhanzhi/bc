@@ -56,6 +56,8 @@ public class AdminOperationListReq extends PageReqBase {
     @ApiModelProperty(value = "是否使用动态FLAG,type=52", name = "dynamic_flag")
     private Integer dynamicFlag;
 
+    @ApiModelProperty(name = "other",value = "是否是其他试题库")
+    private Boolean other;
 
     public void setPractice_set_id(String practiceSetId) {
         this.practiceSetId = practiceSetId;

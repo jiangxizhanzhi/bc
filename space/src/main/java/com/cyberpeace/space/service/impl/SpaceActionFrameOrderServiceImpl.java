@@ -21,6 +21,7 @@ import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseSystemMapper;
 import com.cyberpeace.space.service.SpaceActionFrameApplicationService;
 import com.cyberpeace.space.service.SpaceActionFrameOrderService;
 import com.cyberpeace.space.service.context.frame.*;
+import com.cyberpeace.space.service.context.tactic.NodeAddReq;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
@@ -294,6 +295,7 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 			SpaceActionFrameOrderPBBo bo = BeanUtils.copy(order, SpaceActionFrameOrderPBBo.class);
 			bo.setName(tacticNameMap.get(order.getTacticId()));
 			bo.setTime(order.getCreateTime());
+			bo.setNodes(JsonUtil.toJsonObjectArray(order.getNodes(), NodeAddReq.class));
 
 //			if (stepMap.containsKey(order.getStep())) {
 //				bo.setStepId(order.getStep());

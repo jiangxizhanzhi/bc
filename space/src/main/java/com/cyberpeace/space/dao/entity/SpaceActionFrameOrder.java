@@ -72,6 +72,8 @@ public class SpaceActionFrameOrder extends BaseTable {
 
 	private Integer status;
 
+	private String nodes;
+
 	public SpaceActionFrameOrderBo entity2Bo(Map<String, IdAndName> relatedMap) {
 		SpaceActionFrameOrderBo bo = BeanUtils.copy(this, SpaceActionFrameOrderBo.class);
 		return bo;

@@ -213,8 +213,8 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 		order.setUserId(req.getUserId());
 		order.setStatus(1);
 		order.setSender(req.getUserId());
+		order.setNodes(JsonUtil.toJsonString(req.getNodes()));
 		orderMapper.insert(order);
-		//todo 对接永信接口新增
 	}
 
 	/**

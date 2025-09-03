@@ -2,10 +2,12 @@ package com.cyberpeace.space.service.context.frame;
 
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.space.dao.entity.SpaceActionFrameOrder;
+import com.cyberpeace.space.service.context.tactic.NodeAddReq;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 空间行动框架次序Bo
@@ -90,6 +92,9 @@ public class SpaceActionFrameOrderPBBo {
 
 	@ApiModelProperty("时间")
 	private Date time;
+
+	@ApiModelProperty("目标资产")
+	private List<NodeAddReq> nodes;
 
 //	@ApiModelProperty("是否下发")
 //	private Boolean released = false;

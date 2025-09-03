@@ -1,5 +1,6 @@
 package com.cyberpeace.space.service.context.tactic;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
@@ -7,7 +8,8 @@ import java.util.List;
 @Data
 public class DefenseTmpAddReq extends DefenseAddReq{
 
-    private List<String> nodes;
+    @ApiModelProperty("目标资产")
+    private List<NodeAddReq> nodes;
 
     private String rvbId;
 

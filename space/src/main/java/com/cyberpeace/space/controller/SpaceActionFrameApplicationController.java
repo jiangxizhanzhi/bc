@@ -7,6 +7,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.space.controller.req.ApplicationDeleteReq;
 import com.cyberpeace.space.controller.req.SpaceFramePBListReq;
 import com.cyberpeace.space.controller.res.FrameListRes;
 import com.cyberpeace.space.dao.entity.SpaceActionFrameApplication;
@@ -407,6 +408,13 @@ public class SpaceActionFrameApplicationController extends SpaceControllerBase<S
 	@GetMapping("/application_list")
 	public BaseRsp<List<IdAndName>> applicationList(@ApiParam(value = "人机对抗id", name = "rvb_id") String rvb_id) {
 		return new BaseRsp<>(baseService.applicationList(rvb_id));
+	}
+
+	@ApiOperation("人机对抗删除行动框架")
+	@DeleteMapping("/delete")
+	public BaseRsp<Boolean> deleteRBApplication(@RequestBody ApplicationDeleteReq deleteReq) {
+		baseService.deleteRBApplication(deleteReq.getRvbId(), deleteReq.getFrameId());
+		return new BaseRsp(true);
 	}
 }
 

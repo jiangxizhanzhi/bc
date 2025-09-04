@@ -290,6 +290,30 @@ public class SpaceActionFrameApplicationServiceImpl extends ServiceImpl<SpaceAct
 		return baseMapper.selectChooseName(rvb_id);
 	}
 
+	@Override
+	public void deleteRBApplication(String rvbId, String frameId){
+
+		LambdaQueryWrapper<SpaceActionFrameApplication> applicationWrapper = new LambdaQueryWrapper<>();
+		applicationWrapper.eq(SpaceActionFrameApplication::getFrameId, frameId);
+		applicationWrapper.eq(SpaceActionFrameApplication::getRvbId, rvbId);
+		SpaceActionFrameApplication application = baseMapper.selectOne(applicationWrapper);
+
+		LambdaQueryWrapper<SpaceActionFrameOrder> wrapperOrder = new LambdaQueryWrapper<>();
+		wrapperOrder.eq(SpaceActionFrameOrder::getApplicationId, application.getResourceId());
+
+		// 执行事务，确保所有删除操作要么全部成功，要么全部失败
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				// 删除应用表中的记录
+				removeById(application.getResourceId());
+				// 删除订单表中的相关记录
+				orderMapper.delete(wrapperOrder);
+			}
+		});
+	}
+
 
 	/**
 	 * 检查RVB框架是否已被使用

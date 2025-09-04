@@ -81,5 +81,7 @@ public interface SpaceActionFrameApplicationService extends IService<SpaceAction
     void deleteByIds(List<String> ids);
 
     List<IdAndName> applicationList(String id);
+
+    void deleteRBApplication(String rvbId, String frameId);
 }
     

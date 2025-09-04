@@ -203,12 +203,11 @@ public class SpaceTacticDefenseServiceImpl extends ServiceImpl<SpaceTacticDefens
 
 	@Override
 	public void tmpAdd(DefenseTmpAddReq req) {
-		String id = IDGeneratorUtil.getID();
-		add(req, true, id);
+		add(req, true, req.getResourceId());
 
 		SpaceActionFrameOrder order = new SpaceActionFrameOrder();
 		order.setRvbId(req.getRvbId());
-		order.setTacticId(id);
+		order.setTacticId(req.getResourceId());
 		order.setTacticType(2);
 		order.setUserId(req.getUserId());
 		order.setStatus(1);

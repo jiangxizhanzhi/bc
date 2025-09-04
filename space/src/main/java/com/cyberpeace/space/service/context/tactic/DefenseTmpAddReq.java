@@ -14,4 +14,7 @@ public class DefenseTmpAddReq extends DefenseAddReq{
     private String rvbId;
 
     private String userId;
+
+    @ApiModelProperty("id")
+    private String resourceId;
 }

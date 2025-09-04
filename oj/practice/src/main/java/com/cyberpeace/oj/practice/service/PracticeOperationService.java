@@ -483,5 +483,5 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @see String
 	 * @see Boolean
 	 */
-	Boolean loadBatchSlim(String realPath, String userId);
+	Boolean loadBatchSlim(String realPath, String userId, Boolean other);
 }

@@ -16,7 +16,6 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
-import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
@@ -574,7 +573,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		// 文件加载
 		Boolean result;
 		try {
-			result = practiceOperationService.loadBatchSlim(realPath, UserInfoContext.getUserContext().getUserId());
+			result = practiceOperationService.loadBatchSlim(realPath, UserInfoContext.getUserContext().getUserId(), loadReq.getOther());
 		} catch (Exception e) {
 			if (e instanceof BusinessException) {
 				throw e;

@@ -2418,7 +2418,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public Boolean loadBatchSlim(String realPath, String userId) {
+	public Boolean loadBatchSlim(String realPath, String userId, Boolean other) {
 		String destPath = realPath.substring(0, realPath.lastIndexOf(CommonConstant.PERIOD));
 		ZipUtil.unzipToDest(realPath, destPath);
 
@@ -2429,6 +2429,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		List<PracticeOperationTarget> targetList = bo.getTargetList();
 		for (PracticeOperation operation : operationList) {
 			operation.setCreateUserId(userId);
+			operation.setOther(other);
 		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

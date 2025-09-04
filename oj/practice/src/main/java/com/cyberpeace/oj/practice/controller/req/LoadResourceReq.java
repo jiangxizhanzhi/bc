@@ -32,4 +32,7 @@ public class LoadResourceReq implements Serializable {
 	@NotNull
 	private MultipartFile file;
 
+	@ApiModelProperty("是否其他试题库")
+	private Boolean other;
+
 }

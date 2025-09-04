@@ -9,6 +9,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.redvsblue.dao.SeatSelectDto;
 import com.cyberpeace.cr.redvsblue.dao.entity.CrUniteBusinessTask;
 import com.cyberpeace.cr.redvsblue.dao.mapper.CrUniteBusinessTaskMapper;
+import com.cyberpeace.cr.redvsblue.service.RbTemplateAdminService;
 import com.cyberpeace.cr.redvsblue.vo.BusSeatConfigInfoVO;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
@@ -112,10 +113,10 @@ public class RbTemplateAdminController {
 	private TransactionTemplate transactionTemplate;
 
     /**
-     * 当地场景Service
+     * 红蓝模板信息Service
      */
     @Autowired
-	private LocalSceneService localSceneService;
+	private RbTemplateAdminService rbTemplateAdminService;
 
     /**
      * 远程日志Service
@@ -129,8 +130,6 @@ public class RbTemplateAdminController {
     @Autowired
 	private BusinessTemplateMapper businessTemplateMapper;
 
-	@Autowired
-	private RbTemplateMapper rbTemplateMapper;
 	@Autowired
 	private CrUniteBusinessTaskMapper crUniteBusinessTaskMapper;
 
@@ -293,135 +292,12 @@ public class RbTemplateAdminController {
 
 		businessTemplateService.checkPermission(resourceId,
 				UserInfoContext.getUserContext().getUserId());
-
-
-		BusinessTemplate businessTemplate = businessTemplateService
-				.getById(resourceId);
-		extracted(resourceId, businessTemplate);
-
-		RbTemplate template = rbTemplateMapper.selectByBusinessTemplateId(resourceId);
-		if (Objects.equals(businessTemplate.getBusinessType(), UNITE_TRAIN.getCode())) {
-			if(template == null){
-				BaseInfoRsp baseInfoRsp = new BaseInfoRsp(businessTemplate);
-				// 获取返回对象
-				RbTemplateRsp teamTrainTemplateRsp = new RbTemplateRsp();
-				teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
-				return new BaseRsp<>(teamTrainTemplateRsp);
-			}
-		} else {
-			extracted(resourceId, template);
-		}
-
-		List<JSONObject> redRoleRsps = null;
-		List<JSONObject> blueRoleRsps  = null;
-
-//		if (businessTemplate.getBusinessType() != UNITE_TRAIN.getCode()
-//				&& StringUtils.isBlank(businessTemplate.getUniteTaskId())) {
-//		}
-		// 获取红蓝角色
-		String roleString = template.getRoleConfig();
-		JSONObject roleObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
-
-		Map<String, MissionTemplate> mapping = missionTemplateService
-				.getMappingBySchemeJson(roleString);
-		if(Objects.nonNull(roleObject.getJSONArray("red_roles"))){
-			redRoleRsps = getRoles(roleObject.getJSONArray("red_roles"), mapping);
-		}
-		if(Objects.nonNull(roleObject.getJSONArray("blue_roles"))){
-			blueRoleRsps = getRoles(roleObject.getJSONArray("blue_roles"), mapping);
-		}
-
-		dealAssetNodesMap(redRoleRsps);
-		dealAssetNodesMap(blueRoleRsps);
-		// 获取基本信息
-		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(template, businessTemplate);
-
-		baseInfoRsp.setSceneConfigData(localSceneService.getTopoData(businessTemplate.getTopoId()));
-		String sceneManagerId = "";
-		LocalScene localScene = localSceneService
-				.getByBusinessInstanceId(businessTemplate.getResourceId());
-		if (localScene != null) {
-			sceneManagerId = localScene.getResourceId();
-		}
-		baseInfoRsp.setSceneManagerId(sceneManagerId);
-
-		// 如果场景信息不为null，提取logo参数（默认为空字符串）
-		if (baseInfoRsp.getSceneConfigData() != null) {
-			baseInfoRsp.setTopo(baseInfoRsp.getSceneConfigData().getString("logo"));
-		}
-
-		// 获取返回对象
-		RbTemplateRsp teamTrainTemplateRsp = new RbTemplateRsp();
-		if(Objects.nonNull(roleObject.getJSONArray("white_role"))){
-			List<String> whiteRole = JSONObject.parseArray(roleObject.getJSONArray("white_role").toString(), String.class);
-			teamTrainTemplateRsp.setWhiteRole(whiteRole);
-		}
-		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
-		teamTrainTemplateRsp.setResourceId(template.getResourceId());
-		teamTrainTemplateRsp.setRedRoles(redRoleRsps);
-		teamTrainTemplateRsp.setBlueRoles(blueRoleRsps);
-
+		RbTemplateRsp teamTrainTemplateRsp = rbTemplateAdminService.getRbTemplate(resourceId);
 		return new BaseRsp<>(teamTrainTemplateRsp);
 	}
 
-	private static void extracted(String resourceId, Object object) {
-		if (object == null) {
-			log.error("business template not found, businessId:{}", resourceId);
-			throw new ResourceNotFoundException(resourceId);
-		}
-	}
 
-	/**
-	 * 交易资产节点映射
-	 *
-	 * @param roleRsps 岗位RSP
-	 */
-	public void dealAssetNodesMap(List<JSONObject> roleRsps ) {
-		if(CollectionUtils.isEmpty(roleRsps)){
-			return;
-		}
-		for (JSONObject roleRsp : roleRsps) {
-			List<Object> assetNodes = roleRsp.getObject("asset_nodes", ArrayList.class);
-			Map<String,Integer>  assetMap = new HashMap<>();
-			if (CollectionUtils.isEmpty(assetNodes)) {
-				roleRsp.put("assetMap",assetMap);
-				continue;
-			}
-			List<CrRoleNode> crRoleNodes = BeanUtils.deepCopyList(assetNodes, CrRoleNode.class);
-			Map<Integer, List<CrRoleNode>> nodeMap = crRoleNodes.stream().collect(Collectors.groupingBy(CrRoleNode::getCategory));
-			for (CrRoleNode.CategoryGroup value : CrRoleNode.CategoryGroup.values()) {
-				assetMap.put(value.getEnglish(),nodeMap.getOrDefault(value.getCode(),new ArrayList<>()).size());
-			}
-			roleRsp.put("assetMap",assetMap);
-		}
-	}
 
-	/**
-	 * 获取角色
-	 *
-	 * @param roleArray 岗位数组
-	 * @param mapping   映射
-	 * @return {@code List<JSONObject> }
-	 */
-	private List<JSONObject> getRoles(JSONArray roleArray, Map<String, MissionTemplate> mapping) {
-		List<JSONObject> result = Lists.newArrayList();
-		// 逐角色逐阶段读取任务信息
-		roleArray.forEach(role -> {
-			CrRoleConfig roleRsp = ((JSONObject) role).toJavaObject(CrRoleConfig.class);
-			roleRsp.setId(IDGeneratorUtil.getID());
-			if(Objects.nonNull(roleRsp.getMissionsScheme()) && CollectionUtils.isNotEmpty(roleRsp.getMissionsScheme().getSchemeData())){
-				roleRsp.getMissionsScheme().getSchemeData()
-						.forEach(datum -> datum.getMissions().forEach(mission -> {
-							MissionTemplate template = mapping.get(mission.getResourceId());
-							mission.setTitle(template.getTitle());
-							mission.setDescription(template.getDescription());
-						}));
-			}
-			// 转为蛇形
-			result.add(JsonUtil.java2JsonObject(roleRsp, PropertyNamingStrategy.SnakeCase));
-		});
-		return result;
-	}
 
 	/**
 	 * 请求体自红蓝对抗模板

@@ -225,6 +225,8 @@ public class SpaceActionFrameOrderServiceImpl extends ServiceImpl<SpaceActionFra
 		SpaceActionFrameOrder entity = BeanUtils.copy(reportReq, SpaceActionFrameOrder.class);
 		entity.setResourceId(IDGeneratorUtil.getID());
 		entity.setStatus(SpaceCommonConstant.OrderStatus.FINISHED);
+		entity.setSender(reportReq.getUserId());
+		entity.setTacticType(2);
 		this.save(entity);
 	}
 

@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 /**
  * 空间行动框架次序请求体
@@ -63,9 +62,9 @@ public class SpaceActionFrameOrderReportReq {
     @NotBlank
     private String tacticId;
 
-    @ApiModelProperty("战法类型")
-    @NotNull
-    private Integer tacticType;
+//    @ApiModelProperty("战法类型")
+//    @NotNull
+//    private Integer tacticType;
 
     @ApiModelProperty("用户id")
     @NotBlank
@@ -74,8 +73,8 @@ public class SpaceActionFrameOrderReportReq {
 //    @ApiModelProperty("用户名称")
 //    private String userName;
 
-    @ApiModelProperty("当前用户的user_id")
-    @NotBlank
-    private String sender;
+//    @ApiModelProperty("当前用户的user_id")
+//    @NotBlank
+//    private String sender;
 }
 

@@ -315,7 +315,7 @@ public class RbTemplateAdminController {
 		// validate tag
 		//暂不校验训练tag，兼容联合红蓝对抗
 		//判断请求中是否有席位，有席位不校验训练tag
-		if (!(hasSeat(req.getRedRoles()) && hasSeat(req.getBlueRoles()))) {
+		if (hasSeat(req.getRedRoles()) && hasSeat(req.getBlueRoles())) {
             rbTemplate.setPreSkill(CrCommonUtil.handleTrainingTag(baseInfo.getPreSkill()));
             rbTemplate.setTrainSkill(CrCommonUtil.handleTrainingTag(baseInfo.getTrainSkill()));
         }

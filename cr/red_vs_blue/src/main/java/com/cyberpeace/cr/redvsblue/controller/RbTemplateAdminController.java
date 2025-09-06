@@ -314,13 +314,26 @@ public class RbTemplateAdminController {
 		crCommonService.validateRbRoleConfig(roleConfigRb);
 		// validate tag
 		//暂不校验训练tag，兼容联合红蓝对抗
-//		rbTemplate.setPreSkill(CrCommonUtil.handleTrainingTag(baseInfo.getPreSkill()));
-//		rbTemplate.setTrainSkill(CrCommonUtil.handleTrainingTag(baseInfo.getTrainSkill()));
-		rbTemplate.setSubType(baseInfo.getCategory());
+		//判断请求中是否有席位，有席位不校验训练tag
+		if (!(hasSeat(req.getRedRoles()) && hasSeat(req.getBlueRoles()))) {
+            rbTemplate.setPreSkill(CrCommonUtil.handleTrainingTag(baseInfo.getPreSkill()));
+            rbTemplate.setTrainSkill(CrCommonUtil.handleTrainingTag(baseInfo.getTrainSkill()));
+        }
+        rbTemplate.setSubType(baseInfo.getCategory());
 		rbTemplate.setDurationTime(baseInfo.getDurationTime());
 		rbTemplate.setRoleConfig(CrCommonUtil.roleConfig2DbJson(roleConfigRb));
 
 		return rbTemplate;
 	}
 
+	//判断请求中是否有席位
+
+	private Boolean hasSeat(List<CrRoleConfig> Roles) {
+		for (CrRoleConfig crRoleConfig : Roles) {
+			if (crRoleConfig.getSeatsInfo() != null) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

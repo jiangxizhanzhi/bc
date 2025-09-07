@@ -1,0 +1,1 @@
+mvn install:install-file -Dfile="slf4j-log4j12-1.7.28-cp1.jar" -DgroupId="org.slf4j" -DartifactId="slf4j-log4j12" -Dversion="1.7.28-cp1" -Dpackaging=jar -DpomFile="slf4j-log4j12-1.7.28-cp1.pom"

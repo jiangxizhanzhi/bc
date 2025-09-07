@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-parent</artifactId>
+    <version>1.7.28</version>
+  </parent>
+
+  <artifactId>slf4j-log4j12</artifactId>
+  <version>1.7.28-cp1</version>
+
+  <packaging>jar</packaging>
+  <name>SLF4J LOG4J-12 Binding</name>
+  <description>SLF4J LOG4J-12 Binding</description>
+  <url>http://www.slf4j.org</url>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.28</version>
+    </dependency>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <type>test-jar</type>
+      <version>1.7.28</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <distributionManagement>
+    <repository>
+      <id>releases</id>
+      <url>http://172.29.100.191:8081/repository/maven-release/</url>
+    </repository>
+    <snapshotRepository>
+      <id>snapshots</id>
+      <url>http://172.29.100.191:8081/repository/maven-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+</project>

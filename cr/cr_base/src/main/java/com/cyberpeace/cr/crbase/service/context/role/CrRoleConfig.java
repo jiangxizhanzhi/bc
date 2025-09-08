@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.service.context.role;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.cyberpeace.common.context.role.CrRoleNodesData;
 import io.swagger.annotations.ApiModelProperty;
@@ -32,4 +33,11 @@ public class CrRoleConfig extends CrRoleNodesData implements Serializable {
 	 */
 	@ApiModelProperty(value = "任务配置")
 	private CrRoleConfigMissionsScheme missionsScheme;
+
+
+	/**
+	 * 当前角色关联席位id
+	 */
+	@ApiModelProperty(value = "当前角色关联席位id列表")
+	private List<String> seatsInfo;
 }

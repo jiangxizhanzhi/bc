@@ -33,4 +33,10 @@ public class RbTemplateAddReq extends BasicTemplate {
 	@NotNull
 	private List<CrRoleConfig> blueRoles;
 
+	/**
+	 * 白方角色关联的席位id列表
+	 */
+	@ApiModelProperty(value = "白方角色关联的席位id列表")
+	private List<String> whiteRole;
+
 }

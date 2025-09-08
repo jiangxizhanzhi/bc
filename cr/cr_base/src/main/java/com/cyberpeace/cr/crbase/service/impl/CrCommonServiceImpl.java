@@ -1,7 +1,9 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -160,7 +162,15 @@ public class CrCommonServiceImpl implements CrCommonService {
 		List<String> missionTemplateIds = Lists.newArrayList();
 		for (CrRoleConfig config : roleConfigs) {
 			roleNames.add(config.getName());
-			missionTemplateIds.addAll(validateMissionsScheme(config.getMissionsScheme()));
+			//临时兼容联合模式没有sn任务方案的情况
+			CrRoleConfigMissionsScheme missionsScheme = config.getMissionsScheme();
+			if(Objects.isNull(missionsScheme)){
+				missionsScheme = new CrRoleConfigMissionsScheme();
+				missionsScheme.setTemplate(1);
+				missionsScheme.setColor(1);
+				missionsScheme.setSchemeData(new ArrayList<>());
+			}
+			missionTemplateIds.addAll(validateMissionsScheme(missionsScheme));
 		}
 		// 校验角色名称是否重复
 		CrCommonValidator.checkStringListDuplicate(roleNames,

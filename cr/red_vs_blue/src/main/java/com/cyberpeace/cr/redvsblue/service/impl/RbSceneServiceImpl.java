@@ -1,9 +1,19 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.redvsblue.controller.rsp.RbTemplateRsp;
+import com.cyberpeace.cr.redvsblue.dao.SeatSelectDto;
+import com.cyberpeace.cr.redvsblue.dao.entity.CrUniteBusinessTask;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
+import com.cyberpeace.cr.redvsblue.dao.mapper.CrUniteBusinessTaskMapper;
+import com.cyberpeace.cr.redvsblue.service.bo.RbRoleDataBo;
+import com.cyberpeace.cr.redvsblue.service.bo.UniteTaskSeatBo;
+import com.cyberpeace.cr.redvsblue.vo.BusSeatConfigInfoVO;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -131,6 +141,22 @@ public class RbSceneServiceImpl implements RbSceneService {
     private RbCommonDeviceService rbCommonDeviceService;
 
     /**
+     * 联合训练任务信息
+     */
+    @Autowired
+    private CrUniteBusinessTaskMapper crUniteBusinessTaskMapper;
+
+    @Autowired
+    private RbTemplateAdminService rbTemplateAdminService;
+
+
+    /**
+     * 红蓝对抗模板Service
+     */
+    @Autowired
+    private RbTemplateService rbTemplateService;
+
+    /**
      * 启动场景
      *
      * @param roomId 房间id
@@ -241,6 +267,7 @@ public class RbSceneServiceImpl implements RbSceneService {
         String userId = UserInfoContext.getUserContext().getUserId();
         List<CrRole> roleList = crRoleService.getRolesByRoomId(roomId);
         CrRole selfRole = CrRole.findRoleByUserId(roleList, userId);
+        ///todo 需要包含联合模式角色处理
         if (null == selfRole && !UNITE_TRAIN.getCode().equals(room.getBusinessType())) {
             log.error("user [{}] has no permission to access rvb training [{}]", userId, roomId);
             throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
@@ -252,8 +279,10 @@ public class RbSceneServiceImpl implements RbSceneService {
 
         // 2、尝试获取启动的远程场景
         JSONObject sceneData = getMpSceneData(room);
+        String userName = UserInfoContext.getUserContext().getUserName();
         if (sceneData != null) {
             sceneFilterService.filterVisibleTopo(sceneData, nodes);
+            filterUnitVisibleTopo(room,userName,sceneData,nodes);
             ret.setSceneData(sceneData);
             ret.setLocalSceneId(room.getLocalSceneId());
             ret.setMpSceneId(sceneData.getString(CrCommonConstants.MP_SCENE_ID_KEY));
@@ -268,9 +297,92 @@ public class RbSceneServiceImpl implements RbSceneService {
         JSONObject topoData = localSceneService.getTopoData(room.getCopyedTopoId())
                 .getJSONObject(CrCommonConstants.TOPO_DATA_KEY);
         sceneFilterService.filterVisibleTopo(topoData, nodes);
+        filterUnitVisibleTopo(room,userName,topoData,nodes);
         ret.setTopoId(room.getCopyedTopoId());
         ret.setTopoData(topoData);
         return ret;
+    }
+
+    private void filterUnitVisibleTopo(RbRoom room, String userName,JSONObject topoData, CrRoleNodesData nodes){
+        // 联合联合训练可见节点处理
+        if(!UNITE_TRAIN.getCode().equals(room.getBusinessType())){
+            return;
+        }
+        List<CrUniteBusinessTask> crUniteBusinessTasks = crUniteBusinessTaskMapper.selectList(new LambdaQueryWrapper<CrUniteBusinessTask>()
+                .eq(CrUniteBusinessTask::getTaskId, room.getTaskId()));
+        if(CollectionUtils.isEmpty(crUniteBusinessTasks)){
+            throw new BusinessException("联合训练任务不存在");
+        }
+        //获取席位相关信息
+        List<BusSeatConfigInfoVO> busSeatConfigInfoVOList = JsonUtil.toJsonObjectArray(
+                crUniteBusinessTasks.get(0).getSeatConfigList(), BusSeatConfigInfoVO.class);
+        List<UniteTaskSeatBo> uniteTaskSeatBoList = new ArrayList<>();
+        //无席位信息，则不额外处理节点可见性
+        if(CollectionUtils.isEmpty(busSeatConfigInfoVOList)){
+            return;
+        }
+        if(Objects.isNull(nodes)){
+            nodes = new CrRoleNodesData();
+            nodes.setVisibleNodes(new ArrayList<>());
+            nodes.setAssetNodes(new ArrayList<>());
+        }
+        for (BusSeatConfigInfoVO busSeatConfigInfoVO : busSeatConfigInfoVOList) {
+            if (CollectionUtils.isNotEmpty(busSeatConfigInfoVO.getChildrens())) {
+                List<UniteTaskSeatBo> uniteTaskSeatBos = busSeatConfigInfoVO.getChildrens().stream().map(child -> {
+                    return UniteTaskSeatBo.builder().taskId(child.getTaskId())
+                            .seatId(child.getId())
+                            .seatName(child.getSeatName())
+                            .seatUserId(child.getSeatUserId())
+                            .seatUserName(child.getSeatUserName())
+                            .build();
+                }).collect(Collectors.toList());
+                uniteTaskSeatBoList.addAll(uniteTaskSeatBos);
+            }
+        }
+        if(CollectionUtils.isNotEmpty(uniteTaskSeatBoList) && StringUtils.isNotEmpty(userName)){
+            //获取当前用户拥有的席位id
+            List<String> seatIds = uniteTaskSeatBoList.stream().filter(uniteTaskSeatBo -> userName.equals(uniteTaskSeatBo.getSeatUserName()))
+                    .map(UniteTaskSeatBo::getSeatId).collect(Collectors.toList());
+            if(CollectionUtils.isNotEmpty(seatIds)){
+                RbTemplate rbTemplateData = rbTemplateService.getById(room.getTemplateId());
+                if(Objects.isNull(rbTemplateData)){
+                    log.warn("rbTemplateData is null! room id is {}", room.getId());
+                    return;
+                }
+                //查询对应训练模板中的角色下的座位信息，可见节点信息
+                RbTemplateRsp rbTemplate = rbTemplateAdminService.getRbTemplate(rbTemplateData.getBusinessTemplateId());
+                //优先查询白方，如果白方存在对应席位，则正常开放所有节点
+                List<String> whiteRole = rbTemplate.getWhiteRole();
+                if(CollectionUtils.isNotEmpty(whiteRole) && whiteRole.stream().filter(wr->seatIds.contains(wr)).findAny().isPresent()){
+                    //存在白方席位，则直接返回原始所有数据，不做其他筛选处理，且优先级最高
+                    return;
+                }
+                //如果红方和蓝方存在，则直接使用对应下面的visible_nodes中的节点信息，可叠加（业务上不应该叠加，但是数据做兼容处理）
+                //红方
+                if(CollectionUtils.isNotEmpty(rbTemplate.getRedRoles())){
+                    CrRoleNodesData finalNodes = nodes;
+                    rbTemplate.getRedRoles().forEach(redRole -> {
+                        RbRoleDataBo rbRoleDataBo = JSON.parseObject(redRole.toJSONString(), RbRoleDataBo.class);
+                        if(rbRoleDataBo.getSeatsInfo().stream().filter(wr->seatIds.contains(wr)).findAny().isPresent()){
+                            finalNodes.getAssetNodes().addAll(rbRoleDataBo.getAssetNodes());
+                            finalNodes.getVisibleNodes().addAll(rbRoleDataBo.getVisibleNodes());
+                        }
+                    });
+                }
+                //蓝方
+                if(CollectionUtils.isNotEmpty(rbTemplate.getBlueRoles())){
+                    CrRoleNodesData finalNodes = nodes;
+                    rbTemplate.getBlueRoles().forEach(redRole -> {
+                        RbRoleDataBo rbRoleDataBo = JSON.parseObject(redRole.toJSONString(), RbRoleDataBo.class);
+                        if(rbRoleDataBo.getSeatsInfo().stream().filter(wr->seatIds.contains(wr)).findAny().isPresent()){
+                            finalNodes.getAssetNodes().addAll(rbRoleDataBo.getAssetNodes());
+                            finalNodes.getVisibleNodes().addAll(rbRoleDataBo.getVisibleNodes());
+                        }
+                    });
+                }
+                sceneFilterService.filterVisibleTopo(topoData, nodes);
+            }
+        }
     }
 
     /**

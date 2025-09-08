@@ -23,4 +23,9 @@ public class CrRoleConfigRb implements Serializable {
 	 * 蓝色角色
 	 */
 	private List<CrRoleConfig> blueRoles;
+
+	/**
+	 * 白方角色关联的席位id列表
+	 */
+	private List<String> whiteRole;
 }

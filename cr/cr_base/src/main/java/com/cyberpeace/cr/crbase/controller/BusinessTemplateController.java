@@ -139,6 +139,10 @@ public class BusinessTemplateController {
 			businessTemplateRsp.setShare(businessTemplateData.getOperationAuthType());
 			businessTemplateRsp.setShareTeachers(JsonUtil
 					.toJsonObjectArray(businessTemplateData.getOperationAuthIds(), String.class));
+            businessTemplateRsp.setPublishedFlag(businessTemplateData.getPublishedFlag());
+            businessTemplateRsp.setXdTemplateType(businessTemplateData.getXdTemplateType());
+            businessTemplateRsp.setLogo(businessTemplateData.getLogo());
+
 			SceneConfigRsp sceneConfigInfo = new SceneConfigRsp();
 			sceneConfigInfo.setNodeCount(businessTemplateData.getNodesNum());
 			sceneConfigInfo.setResourceOccupiedNums(businessTemplateData.getResourceOccupiedNums());

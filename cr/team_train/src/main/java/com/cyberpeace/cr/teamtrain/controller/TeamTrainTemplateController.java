@@ -1,10 +1,16 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.util.StringUtil;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -138,6 +144,84 @@ public class TeamTrainTemplateController {
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+
+    @ApiOperation("复制")
+    @PostMapping("/copy")
+    @RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
+    public BaseRsp<Void> copy(@RequestParam("resource_id") String resourceId) {
+
+        //1. 团队模板
+        TeamTemplate template = teamTemplateService.getByTemplateBusinessId(resourceId);
+
+        //2. 通用业务模板
+        BusinessTemplate businessTemplate = businessTemplateService
+                .getById(template.getBusinessTemplateId());
+
+        // 5.topo信息
+        String csceneTopoId = businessTemplate.getTopoId();
+        String copiedCsceneTopoId = localSceneService.copyTopo(csceneTopoId, businessTemplate.getName()+"_复制");
+
+        //6. 清空localScene相关信息
+        BusinessTemplate copiedBusinessTemplate = new BusinessTemplate();
+        BeanUtils.copyProperties(businessTemplate, copiedBusinessTemplate);
+        copiedBusinessTemplate.setLocalSceneId(null);
+        copiedBusinessTemplate.setResourceId(null);
+        copiedBusinessTemplate.setName(businessTemplate.getName() + "_复制");
+        copiedBusinessTemplate.setTopoId(copiedCsceneTopoId);
+        copiedBusinessTemplate.setId(null);
+        copiedBusinessTemplate.setCreateTime(null);
+        copiedBusinessTemplate.setUpdateTime(null);
+
+        TeamTemplate copiedTeamTemplate = new TeamTemplate();
+        BeanUtils.copyProperties(template, copiedTeamTemplate);
+        template.setId(null);
+        template.setResourceId(null);
+        template.setCreateTime(null);
+        template.setUpdateTime(null);
+
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                // save business template
+                businessTemplateService.save(copiedBusinessTemplate);
+
+                // save team template
+                copiedTeamTemplate.setBusinessTemplateId(copiedBusinessTemplate.getResourceId());
+                String roleString = template.getRoleConfig();
+                //3.任务阶段信息
+                List<TeamTrainTemplateRoleRsp> teamTrainTemplateRoleRsps = JsonUtil
+                        .toJsonObjectArray(roleString, TeamTrainTemplateRoleRsp.class);
+                for (TeamTrainTemplateRoleRsp teamTrainTemplateRoleRsp : teamTrainTemplateRoleRsps) {
+                    for (MissionSchemeObject<AddTemplateMission> schemeDatum : teamTrainTemplateRoleRsp.getMissionsScheme().getSchemeData()) {
+                        for (AddTemplateMission mission : schemeDatum.getMissions()) {
+                            MissionTemplate missionTemplate = missionTemplateService.getById(mission.getResourceId());
+                            if (Objects.nonNull(missionTemplate)) {
+                                MissionTemplate copiedMission = new MissionTemplate();
+                                BeanUtils.copyProperties(mission, copiedMission);
+                                copiedMission.setTemplateId(null);
+                                copiedMission.setId(null);
+                                copiedMission.setCreateTime(null);
+                                copiedMission.setUpdateTime(null);
+                                copiedMission.setResourceId(null);
+                                copiedMission.setBusinessTemplateId(copiedBusinessTemplate.getResourceId());
+                                missionTemplateService.save(copiedMission);
+                                mission.setResourceId(copiedMission.getResourceId());
+                            } else {
+                                throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+                            }
+                        }
+                    }
+                }
+                copiedTeamTemplate.setRoleConfig(JsonUtil.toJsonString(teamTrainTemplateRoleRsps));
+                teamTemplateService.save(copiedTeamTemplate);
+            }
+        });
+
+        return new BaseRsp<>();
+    }
+
+
 	/**
 	 * 创建
 	 *
@@ -150,6 +234,9 @@ public class TeamTrainTemplateController {
 	public BaseRsp<Void> create(@RequestBody @Validated TeamTrainTemplateAddReq addReq) {
 		// set type
 		addReq.getBaseInfo().setType(BusinessType.TRAINING_TEAM.getCode());
+        if (StringUtils.isEmpty(addReq.getBaseInfo().getLogo())) {
+            addReq.getBaseInfo().setLogo(addReq.getBaseInfo().getSceneConfigData().getLogo());
+        }
 		// create team template
 		TeamTemplate teamTemplate = reqToTeamTemplate(addReq, new TeamTemplate());
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

@@ -41,7 +41,11 @@ public class BusinessTemplateQuery extends PageReqBase {
 	@ApiModelProperty(value = "名称")
 	private String name;
 
-	/**
+
+    @ApiModelProperty(value = "xd项目模板类型")
+    private Integer xdTemplateType;
+
+    /**
 	 * id列表
 	 */
 	private List<String> ids;

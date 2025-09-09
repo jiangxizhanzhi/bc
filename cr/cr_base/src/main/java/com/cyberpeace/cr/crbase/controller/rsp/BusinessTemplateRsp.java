@@ -3,9 +3,12 @@ package com.cyberpeace.cr.crbase.controller.rsp;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
+import com.cyberpeace.common.model.AuthTable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.shiro.util.CollectionUtils;
 
 /**
  * 靶场模板公共信息类
@@ -39,6 +42,9 @@ public class BusinessTemplateRsp implements Serializable {
 	 */
 	@ApiModelProperty(value = "模板名称")
 	private String name;
+
+    @ApiModelProperty(value = "logo Url")
+    private String logo;
 
 	/**
 	 * 描述
@@ -87,5 +93,15 @@ public class BusinessTemplateRsp implements Serializable {
 	 */
 	@ApiModelProperty(value = "场景编排")
 	private SceneConfigRsp sceneConfigInfo;
+
+
+    @ApiModelProperty(value = "是否发布")
+    private Boolean publishedFlag;
+
+    /**
+     * xd项目给团队训练又细分了type
+     */
+    private Integer xdTemplateType;
+
 
 }

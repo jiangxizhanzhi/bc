@@ -1,0 +1,1 @@
+alter table cr_business_template add column xd_template_type int not null default 1 comment 'xd项目模板类型';

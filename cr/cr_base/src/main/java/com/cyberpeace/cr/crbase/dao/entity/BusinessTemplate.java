@@ -5,7 +5,12 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.AuthTable;
 
+import com.cyberpeace.common.util.JsonUtil;
 import lombok.Data;
+import org.apache.shiro.util.CollectionUtils;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 靶场模板公共信息模型
@@ -64,5 +69,26 @@ public class BusinessTemplate extends AuthTable {
 	 * 用于关联后台测试场景
 	 */
 	private String localSceneId;
+
+
+    /**
+     * xd项目给团队训练又细分了type
+     */
+    private Integer xdTemplateType;
+
+
+
+    public Boolean getPublishedFlag() {
+
+        if (Objects.nonNull(this.getOperationAuthType()) && this.getOperationAuthType().equals(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode())) {
+            List<String> shareTeachers = JsonUtil
+                    .toJsonObjectArray(this.getOperationAuthIds(), String.class);
+            if (CollectionUtils.isEmpty(shareTeachers)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
 }

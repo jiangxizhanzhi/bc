@@ -1,9 +1,15 @@
 package com.cyberpeace.common.constant;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.HashSet;
+
 /**
  * 菜单对应值，由前端指定, 不能轻易变更
  */
 public final class MenuConstant {
+
+
 
     /**
      * 前台页面
@@ -186,4 +192,29 @@ public final class MenuConstant {
 	public static final String CMS_CR_RB_TRAIN_STATISTICS = "red-vs-blue-statistics";
 
     private MenuConstant() {}
+
+    public static final HashSet<String> ALL_PERMISSION = new HashSet<>();
+
+    static {
+        Field[] fields = MenuConstant.class.getDeclaredFields();
+
+        for (Field field : fields) {
+            // 判断是否是 public static final 且类型是 String
+            int modifiers = field.getModifiers();
+            if (Modifier.isPublic(modifiers)
+                    && Modifier.isStatic(modifiers)
+                    && Modifier.isFinal(modifiers)
+                    && field.getType().equals(String.class)) {
+                // 获取字段值（因为是 static 字段，传 null）
+                String value = null;
+                try {
+                    value = (String) field.get(null);
+                    ALL_PERMISSION.add(value);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
 }

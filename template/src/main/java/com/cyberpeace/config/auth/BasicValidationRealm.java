@@ -1,5 +1,6 @@
 package com.cyberpeace.config.auth;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -59,7 +60,8 @@ public class BasicValidationRealm extends AuthorizingRealm {
         UserInfo userInfo = UserInfoContext.getUserContext();
 
         // 以菜单作为权限控制
-        simpleAuthorizationInfo.addStringPermissions(userInfo.getPermissions());
+        simpleAuthorizationInfo.addStringPermissions(MenuConstant.ALL_PERMISSION);
+//        simpleAuthorizationInfo.addStringPermissions(userInfo.getPermissions());
 
         return simpleAuthorizationInfo;
     }

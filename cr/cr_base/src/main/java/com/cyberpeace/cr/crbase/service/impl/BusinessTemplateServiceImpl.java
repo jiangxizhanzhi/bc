@@ -171,6 +171,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		businessTemplate.setDescription(baseInfo.getDescription());
 		businessTemplate.setDifficulty(baseInfo.getDifficult());
 		businessTemplate.setLogo(baseInfo.getLogo());
+        businessTemplate.setXdTemplateType(baseInfo.getXdTemplateType());
 		// validate name
 		validateName(businessTemplate.getName(), businessTemplate.getBusinessType(), "");
 

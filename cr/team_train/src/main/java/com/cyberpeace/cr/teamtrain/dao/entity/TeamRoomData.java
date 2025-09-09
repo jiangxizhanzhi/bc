@@ -24,6 +24,8 @@ public class TeamRoomData implements Serializable {
 	 */
 	private String name;
 
+    private Integer xdType;
+
 	/**
 	 * 描述
 	 */

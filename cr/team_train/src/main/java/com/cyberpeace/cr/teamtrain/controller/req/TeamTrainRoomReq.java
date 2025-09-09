@@ -28,6 +28,10 @@ public class TeamTrainRoomReq {
 	@NotNull
 	private String template;
 
+    @ApiModelProperty(value = "xd type id", required = true)
+    @NotNull
+    private Integer xdType;
+
 	/**
 	 * 类别
 	 */

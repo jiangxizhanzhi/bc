@@ -29,7 +29,10 @@ public class TeamRoom extends BaseTable {
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
-	/**
+
+    private Integer xdType;
+
+    /**
 	 * 团队模板id
 	 */
 	private String teamTemplateId;
@@ -150,6 +153,7 @@ public class TeamRoom extends BaseTable {
 		this.timeLineConfig = template.getTimeLineConfig();
 		this.enableRecording = input.getEnableRecording();
 		this.logo = input.getLogo();
+        this.xdType = input.getXdType();
 	}
 
 	public boolean isUnopened() {

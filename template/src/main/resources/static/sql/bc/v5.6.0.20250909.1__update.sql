@@ -1,0 +1,1 @@
+alter table cr_team_room add column xd_type int not null default 1 comment 'xd团队训练子类型';

@@ -56,6 +56,7 @@
 
         select cr_team_room.resource_id,
         cr_team_room.team_template_id,
+        cr_team_room.xd_type,
         cr_team_room.NAME,
         cr_team_room.description,
         cr_team_room.sub_type,
@@ -98,6 +99,9 @@
             </if>
             <if test="listQuery.ids.size() == 0">
                 ('')
+            </if>
+            <if test="listQuery.xdType != null">
+                and cr_team_room.xd_type = #{listQuery.xdType}
             </if>
             <if test="listQuery.search != null and listQuery.search != ''">
                 <bind name="search" value="'%' + listQuery.search + '%'"/>

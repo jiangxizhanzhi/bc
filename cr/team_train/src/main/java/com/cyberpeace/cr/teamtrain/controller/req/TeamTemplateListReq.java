@@ -47,4 +47,12 @@ public class TeamTemplateListReq extends PageReqBase {
 	 */
 	private List<String> ids;
 
+
+    private Integer xdTemplateType;
+
+
+    public void setXd_template_type(Integer xdTemplateType) {
+        this.xdTemplateType = xdTemplateType;
+    }
+
 }

@@ -26,6 +26,12 @@ public class TeamTrainRoomContext  {
 	@NotNull
 	private String resourceId;
 
+
+
+    @ApiModelProperty(required = true)
+    @NotNull
+    private Integer xdType;
+
 	/**
 	 * 模板
 	 */

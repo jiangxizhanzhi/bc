@@ -8,6 +8,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * 团队房间列表请求体
  *
@@ -23,6 +25,11 @@ public class TeamRoomListReq extends PageReqBase {
 	 */
 	@ApiModelProperty(value = "类别ID")
 	private String category;
+
+
+    @ApiModelProperty(value = "xd type id", required = true)
+    @NotNull
+    private Integer xdType;
 
 	/**
 	 * 检索参数
@@ -47,5 +54,10 @@ public class TeamRoomListReq extends PageReqBase {
 	 */
 	@ApiModelProperty(value = "id列表")
 	private List<String> ids;
+
+
+    public void setXd_type(Integer xdType) {
+        this.xdType = xdType;
+    }
 
 }

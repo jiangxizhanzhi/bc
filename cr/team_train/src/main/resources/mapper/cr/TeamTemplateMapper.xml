@@ -36,6 +36,9 @@
                 <bind name="search" value="'%' + listQuery.search + '%'"/>
                 and cr_business_template.name like #{search}
             </if>
+            <if test="listQuery.xdTemplateType != null">
+                and cr_business_template.xd_template_type = #{listQuery.xdTemplateType}
+            </if>
             <if test="listQuery.difficult != null and listQuery.difficult != ''">
                 and cr_business_template.difficulty = #{listQuery.difficult}
             </if>

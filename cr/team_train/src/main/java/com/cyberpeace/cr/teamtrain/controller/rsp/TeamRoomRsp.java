@@ -31,7 +31,11 @@ public class TeamRoomRsp  {
 	@ApiModelProperty(value = "名称")
 	private String name;
 
-	/**
+    @ApiModelProperty(value = "xd类型")
+    private Integer xdType;
+
+
+    /**
 	 * 描述
 	 */
 	@ApiModelProperty(value = "描述")

@@ -1,9 +1,11 @@
 package com.cyberpeace.oj.course.controller.res;
 
+import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Web课程结果
@@ -120,5 +122,18 @@ public class WebCourseRes implements Serializable {
 	 */
 	@ApiModelProperty("访问量")
 	private Integer heat;
+
+
+    @ApiModelProperty("学生人数")
+    private Integer studentNum;
+
+    @ApiModelProperty("课程附件")
+    private String attachment;
+
+    @ApiModelProperty("组成课程的实验/科目/演训")
+    private List<String> lessons;
+
+
+    private List<TeamRoomRsp> teamRoomRsps;
 
 }

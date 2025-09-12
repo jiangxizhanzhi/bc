@@ -4,6 +4,18 @@ import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
+import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRoleRes;
+import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
+import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
+import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
+import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +79,12 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> implements CourseService {
+
+    @Autowired
+    private TeamRoomService teamRoomService;
+
+    @Autowired
+    private CrRoleService crRoleService;
 
 	/**
 	 * 课程Mapper
@@ -344,37 +362,107 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 */
 	private CourseInfoBo courseToBo(Course course, Boolean isWeb) {
 
-		// 转换类别
-		CourseCategory courseDirection = courseCategoryMapper.selectById(course.getCategoryId());
+        CourseInfoBo courseInfoBo = BeanUtils.copy(course, CourseInfoBo.class);
 
-		CourseInfoBo courseInfoBo = BeanUtils.copy(course, CourseInfoBo.class);
-		courseInfoBo.setDirectionName(courseDirection.getName());
 
-		// 计算课时数量
-		List<CourseLesson> courseLessons = courseLessonMapper.selectByCourse(course.getResourceId(),
-				isWeb);
-		courseInfoBo.setLessonCount(courseLessons.size());
+        if (StringUtils.isNotBlank(course.getCategoryId())) {
+            // 转换类别
+            CourseCategory courseDirection = courseCategoryMapper.selectById(course.getCategoryId());
+            if (Objects.nonNull(courseDirection)) {
+                courseInfoBo.setDirectionName(courseDirection.getName());
+            }
+        }
+
+        List<String> lessonIds = JsonUtil.toJsonObjectArray(course.getLessons(), String.class);
+		courseInfoBo.setLessonCount(lessonIds.size());
 
 		// 计算课程时长
-		int sum = courseLessons.stream().mapToInt(CourseLesson::getDuration).sum();
-		courseInfoBo.setCourseDuration(sum);
+        Integer durationSum = 0;
+        Integer studentSum = 0;
+        Set<String> allStudents = new HashSet<>();
+        List<TeamRoomRsp> teamRoomRsps = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(lessonIds)) {
+            for (String lessonId : lessonIds) {
 
-		// 计算实验课和理论课数量
-		List<CourseLesson> theoryCount = courseLessons.stream()
-				.filter(courseLesson -> courseLesson.getType()
-						.intValue() == CourseLesson.LessonType.THEORY.getCode().intValue())
-				.collect(Collectors.toList());
+                TeamRoomData teamRoomData = teamRoomService.getTeamRoomDataByRoomId(lessonId);
+                RoleQuery roleQuery = new RoleQuery();
+                roleQuery.setRoomId(teamRoomData.getResourceId());
+                List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 
-		courseInfoBo.setTheoryCount(theoryCount.size());
-		courseInfoBo
-				.setExerciseCount(courseInfoBo.getLessonCount() - courseInfoBo.getTheoryCount());
+                durationSum = durationSum + teamRoomData.getDurationTime();
+                Set<String> userIds = crRoles.stream().map(CrRole::getUserIds).map(str -> JsonUtil.toJsonObjectArray(str, String.class))
+                        .flatMap(List::stream).collect(Collectors.toSet());
+                allStudents.addAll(userIds);
+
+
+                TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
+                String userId = UserInfoContext.getUserContext().getUserId();
+                teamRoomRsp.setTrainingRoleData(getSelfRole(crRoles, userId));
+
+                teamRoomRsp.setRolesData(getTeamRoomRoleRes(crRoles));
+
+                teamRoomRsp
+                        .setPreSkill(JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
+                teamRoomRsp.setTrainSkill(
+                        JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
+                teamRoomRsps.add(teamRoomRsp);
+            }
+        }
+        studentSum = allStudents.size();
+        courseInfoBo.setCourseDuration(durationSum);
+        courseInfoBo.setStudentNum(studentSum);
+        courseInfoBo.setLessons(lessonIds);
+        courseInfoBo.setTeamRoomRsps(teamRoomRsps);
 
 		// logo数据地址转换
 		courseInfoBo.setLogo(utilService.handlerFileUrl(course.getLogo()));
 		return courseInfoBo;
 	}
 
-	/**
+    /**
+     * 获取自我岗位
+     *
+     * @param crRoles 靶场角色
+     * @param userId  用户id
+     * @return {@code BaseRole }
+     */// 获取单个实例中自己的角色信息，只包括自己角色的基本信息
+    private BaseRole getSelfRole(List<CrRole> crRoles, String userId) {
+        BaseRole baseRole = new BaseRole();
+        crRoles.forEach(crRole -> {
+            if (crRole.containsUser(userId)) {
+                baseRole.setResourceId(crRole.getResourceId());
+                baseRole.setName(crRole.getName());
+
+                baseRole.setDescription(crRole.getDescription());
+                baseRole.setRoleGroup(crRole.getRoleGroup());
+            }
+        });
+
+        return baseRole;
+    }
+
+
+    /**
+     * 获取团队房间岗位结果
+     *
+     * @param crRoles 靶场角色
+     * @return {@code List<TeamRoomRoleRes> }
+     */
+    private List<TeamRoomRoleRes> getTeamRoomRoleRes(List<CrRole> crRoles) {
+        List<TeamRoomRoleRes> teamRoomRoleResList = Lists.newArrayList();
+        for (CrRole crRole : crRoles) {
+            TeamRoomRoleRes teamRoomRoleRes = BeanUtils.copy(crRole, TeamRoomRoleRes.class);
+            teamRoomRoleRes.setUsersData(crRoleService.getUserDatas(crRole.getUserIdList()));
+            teamRoomRoleRes.setUsers(crRole.getUserIdList());
+
+            teamRoomRoleRes.setTrainingTeam(crRole.getRoomId());
+            teamRoomRoleResList.add(teamRoomRoleRes);
+        }
+        return teamRoomRoleResList;
+    }
+
+
+    /**
 	 * 查询由id列表
 	 *
 	 * @param ids id列表
@@ -430,67 +518,6 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 				return PageUtil.getNullResult();
 			}
 		}
-
-		if (authContext.getIsWeb()) {
-			courseIds = StreamApiUtils.filter(courseIds, courseId -> CollectionUtils.isNotEmpty(
-					courseLessonMapper.selectByCourse(courseId, authContext.getIsWeb())));
-			if (CollectionUtils.isEmpty(courseIds)) {
-				return PageUtil.getNullResult();
-			}
-		}
-
-		// 我的课程 系统课程 共享课程过滤
-		SpecialCourseContext specialContext = BeanUtils.copy(courseContext,
-				SpecialCourseContext.class);
-		if (!specialContext.getMyCourse() && !specialContext.getSystemCourse()
-				&& !specialContext.getShareCourse()) {
-			return PageUtil.getNullResult();
-		}
-		if (!specialContext.getMyCourse() || !specialContext.getShareCourse()
-				|| !specialContext.getSystemCourse()) {
-			courseIds = courseMapper.selectSpecial(courseIds, specialContext);
-			if (CollectionUtils.isEmpty(courseIds)) {
-				return PageUtil.getNullResult();
-			}
-		}
-
-//		进度
-        List<CourseStudyProcessBo> processBos = courseStatisticsService.statisticByIds(courseIds,
-                authContext.getUserId());
-        Map<String, CourseStudyProcessBo> processBoMap = processBos.stream()
-                .collect(Collectors.toMap(CourseStudyProcessBo::getCourseId, bo -> bo));
-
-        if (isWeb) {
-            // 常规条件过滤
-            Page<Course> pageTmp = BeanUtils.copy(page, Page.class);
-            pageTmp.setSize(courseIds.size());
-            pageTmp.setCurrent(1);
-            IPage<Course> iPage = courseMapper.listByPage(pageTmp, courseContext, courseIds,
-                    authContext.getIsWeb());
-            //该用户可见的课程列表
-            List<Course> allCourseList = iPage.getRecords();
-            //学习历史
-            List<CourseStudyHistory> courseStudyHistoryList = courseStudyHistoryMapper.selectByUserId(authContext.getUserId());
-            //将学习历史中的课程顺序提前
-            List<Course> studyCourseList = new ArrayList<>();
-            for (CourseStudyHistory courseStudyHistory : courseStudyHistoryList) {
-                for (Course course : allCourseList) {
-                    if (courseStudyHistory.getCourseId().equals(course.getCourseNum())) {
-                        studyCourseList.add(course);
-                    }
-                }
-            }
-            allCourseList.removeAll(studyCourseList);
-            studyCourseList.addAll(allCourseList);
-
-            // 提取用户名映射
-            Map<String, String> userNameMap = remoteUserService.getIdNameMap(studyCourseList,
-                    Course::getCreateUserId);
-            List<CourseWebBo> courseWebBoList = studyCourseList.stream()
-                    .map(course -> transferToBo(course, authContext, userNameMap, processBoMap))
-                    .collect(Collectors.toList());
-            return PageUtil.getListResult(courseWebBoList, page, studyCourseList.size());
-        }
         // 常规条件过滤
         IPage<Course> iPage = courseMapper.listByPage(page, courseContext, courseIds,
                 authContext.getIsWeb());
@@ -500,7 +527,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 				Course::getCreateUserId);
 
         IPage<CourseWebBo> webBoIPage = iPage
-                .convert(course -> transferToBo(course, authContext, userNameMap, processBoMap));
+                .convert(course -> transferToBo(course, authContext, userNameMap, Collections.emptyMap()));
         return PageUtil.getListResult(webBoIPage);
     }
 
@@ -521,48 +548,17 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     private CourseWebBo transferToBo(Course course, AuthContext authContext,
                                      Map<String, String> userNameMap, Map<String, CourseStudyProcessBo> processBoMap) {
 
-		if (null != authContext && !authContext.getIsWeb()) {
-			CourseInfoBo courseInfoBo = courseToBo(course, authContext.getIsWeb());
-			CourseAdminBo courseAdminBo = BeanUtils.copy(courseInfoBo, CourseAdminBo.class);
-			courseAdminBo.setAuth(course.getReadAuthType());
-			courseAdminBo.setShare(course.getOperationAuthType());
-			courseAdminBo.setEbook(course.getCourseType());
-			if (course.getReadAuthType().intValue() == AuthTable.AuthType.CUSTOM_SHARE_MODE
-					.getCode().intValue()) {
-				List<String> orgs = JsonUtil.toJsonObjectArray(course.getReadAuthIds(),
-						String.class);
-				courseAdminBo.setAuthCount(orgs.size());
-			}
-			if (course.getOperationAuthType().intValue() == AuthTable.AuthType.CUSTOM_SHARE_MODE
-					.getCode().intValue()) {
-				List<String> shares = JsonUtil.toJsonObjectArray(course.getOperationAuthIds(),
-						String.class);
-				courseAdminBo.setShareCount(shares.size());
-			}
+        CourseInfoBo courseInfoBo = courseToBo(course, true);
+        CourseWebBo courseWebBo = BeanUtils.copy(courseInfoBo, CourseWebBo.class);
+        courseWebBo.setEbook(course.getCourseType());
 
-            courseAdminBo.setCreateUserName(userNameMap.getOrDefault(course.getCreateUserId(), ""));
-
-//			进度
-            if (processBoMap != null && processBoMap.get(course.getResourceId()) != null) {
-                CourseStudyProcessBo bo = processBoMap.get(course.getResourceId());
-                courseAdminBo.setProcess(MathUtils.ceil(bo.getProcess()));
-            }
-
-            return courseAdminBo;
-
-        } else {
-            CourseInfoBo courseInfoBo = courseToBo(course, true);
-            CourseWebBo courseWebBo = BeanUtils.copy(courseInfoBo, CourseWebBo.class);
-            courseWebBo.setEbook(course.getCourseType());
-
-            //			进度
-            if (processBoMap != null && processBoMap.get(course.getResourceId()) != null) {
-                CourseStudyProcessBo bo = processBoMap.get(course.getResourceId());
-                courseWebBo.setProcess(MathUtils.ceil(bo.getProcess()));
-            }
-
-            return courseWebBo;
+        //			进度
+        if (processBoMap != null && processBoMap.get(course.getResourceId()) != null) {
+            CourseStudyProcessBo bo = processBoMap.get(course.getResourceId());
+            courseWebBo.setProcess(MathUtils.ceil(bo.getProcess()));
         }
+
+        return courseWebBo;
 
 	}
 

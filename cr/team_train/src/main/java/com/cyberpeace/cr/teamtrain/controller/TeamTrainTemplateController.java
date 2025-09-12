@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.teamtrain.controller.req.*;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.util.StringUtil;
@@ -43,10 +44,6 @@ import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTemplateListReq;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateAddReq;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateModifyReq;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.BaseInfoRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTemplateRoleRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTemplateRsp;
@@ -65,6 +62,8 @@ import com.cyberpeace.integratation.service.RemoteTopoService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
+import javax.validation.Valid;
 
 /**
  * 团队训练模板Controller
@@ -148,8 +147,9 @@ public class TeamTrainTemplateController {
     @ApiOperation("复制")
     @PostMapping("/copy")
     @RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
-    public BaseRsp<Void> copy(@RequestParam("resource_id") String resourceId) {
+    public BaseRsp<Void> copy(@Valid @RequestBody TeamTrainTemplateCopyReq teamTrainTemplateCopyReq) {
 
+        String resourceId = teamTrainTemplateCopyReq.getResourceId();
         //1. 团队模板
         TeamTemplate template = teamTemplateService.getByTemplateBusinessId(resourceId);
 
@@ -174,10 +174,10 @@ public class TeamTrainTemplateController {
 
         TeamTemplate copiedTeamTemplate = new TeamTemplate();
         BeanUtils.copyProperties(template, copiedTeamTemplate);
-        template.setId(null);
-        template.setResourceId(null);
-        template.setCreateTime(null);
-        template.setUpdateTime(null);
+        copiedTeamTemplate.setId(null);
+        copiedTeamTemplate.setResourceId(null);
+        copiedTeamTemplate.setCreateTime(null);
+        copiedTeamTemplate.setUpdateTime(null);
 
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -198,7 +198,7 @@ public class TeamTrainTemplateController {
                             MissionTemplate missionTemplate = missionTemplateService.getById(mission.getResourceId());
                             if (Objects.nonNull(missionTemplate)) {
                                 MissionTemplate copiedMission = new MissionTemplate();
-                                BeanUtils.copyProperties(mission, copiedMission);
+                                BeanUtils.copyProperties(missionTemplate, copiedMission);
                                 copiedMission.setTemplateId(null);
                                 copiedMission.setId(null);
                                 copiedMission.setCreateTime(null);

@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 管理课程结果
@@ -50,6 +51,12 @@ public class AdminCourseRes implements Serializable {
 	 */
 	@ApiModelProperty("课程封面")
 	private String logo;
+
+    @ApiModelProperty("附件")
+    private String attachment;
+
+    @ApiModelProperty("构成课程的实验和科目")
+    private List<String> lessons;
 
 	/**
 	 * 学分

@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.alibaba.fastjson.TypeReference;
+import com.cyberpeace.common.util.JsonUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +69,10 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 */
 	private String USERINFO_BY_ID_URL;
 
-	/**
+    private String USERINFO_ONLINE;
+
+
+    /**
 	 * userinfo 列表 URL
 	 *
 	 * @see String
@@ -145,6 +150,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 				+ ConfigUtil.getContextProperty("token.authenticate");
 		USERINFO_BY_ID_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("userinfo.by.id");
+        USERINFO_ONLINE = mpEnvService.getMpHost()
+                + ConfigUtil.getContextProperty("userinfo.online");
 		USERINFO_LIST_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("userinfo.list");
 		ORG_INFO_LIST_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.org.user");
@@ -193,8 +200,19 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		if (null == jsonObject || jsonObject.isEmpty()) {
 			return null;
 		}
-		return userInfoFromJsonObject(jsonObject);
+        return userInfoFromJsonObject(jsonObject);
 	}
+
+    @Override
+    public List<String> getOnlineIds(List<String> searchedIds) {
+        String targetUrl = USERINFO_ONLINE;
+        JSONObject jsonObject = HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+
+        if (null == jsonObject || jsonObject.isEmpty()) {
+            return null;
+        }
+        return jsonObject.toJavaObject(new TypeReference<List<String>>() {});
+    }
 
 	/**
 	 * 获取列表

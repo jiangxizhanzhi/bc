@@ -1,7 +1,9 @@
 package com.cyberpeace.oj.course.service.bo;
 
 import java.io.Serializable;
+import java.util.List;
 
+import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -73,6 +75,19 @@ public class CourseInfoBo implements Serializable {
 	 */
 	@ApiModelProperty("课程海报")
 	private String logo;
+
+    @ApiModelProperty("学生人数")
+    private Integer studentNum;
+
+    @ApiModelProperty("课程附件")
+    private String attachment;
+
+    @ApiModelProperty("组成课程的实验/科目/演训")
+    private List<String> lessons;
+
+
+    private List<TeamRoomRsp> teamRoomRsps;
+
 
 	/**
 	 * 课程大纲

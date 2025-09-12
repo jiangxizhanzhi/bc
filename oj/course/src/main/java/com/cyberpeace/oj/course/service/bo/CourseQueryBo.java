@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.course.service.bo;
 
 import com.cyberpeace.oj.course.dao.context.CourseContext;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -42,5 +43,10 @@ public class CourseQueryBo extends CourseContext {
 	 * @see String
 	 */
 	private String userId;
+
+
+
+    @ApiModelProperty("是否发布")
+    private Integer publish;
 
 }

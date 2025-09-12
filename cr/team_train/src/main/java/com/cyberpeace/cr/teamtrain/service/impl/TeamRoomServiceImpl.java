@@ -884,6 +884,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			List<CrRole> crRoles = roomRoleMap.get(teamRoomData.getResourceId());
 
 			TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
+            XdBusinessType xdBusinessType = XdBusinessType.getByCode(teamRoomRsp.getXdType());
+            teamRoomRsp.setTrainXdType(xdBusinessType.getType());
+            teamRoomRsp.setTrainXdSubType(xdBusinessType.getDesc());
 			teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId, userInfoMap));
 			teamRoomRsp.setRolesData(Lists.newArrayList());
 			// node count ,differs by role

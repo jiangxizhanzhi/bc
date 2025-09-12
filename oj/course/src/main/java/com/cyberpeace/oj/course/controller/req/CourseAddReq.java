@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.course.controller.req;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -44,22 +45,29 @@ public class CourseAddReq implements Serializable {
 	@ApiModelProperty("课程描述")
 	private String description;
 
+    /**
+     * 课程封面
+     *
+     * @see String
+     */
+    @ApiModelProperty("课程封面")
+    private String logo;
+
+    @ApiModelProperty("附件")
+    private String attachment;
+
+    @ApiModelProperty("构成课程的实验和科目")
+    private List<String> lessons;
+
 	/**
 	 * 课程方向
 	 *
 	 * @see String
 	 */
 	@ApiModelProperty("课程方向")
-	@NotBlank(groups = { Create.class })
 	private String categoryId;
 
-	/**
-	 * 课程封面
-	 *
-	 * @see String
-	 */
-	@ApiModelProperty("课程封面")
-	private String logo;
+
 
 	/**
 	 * 课程大纲
@@ -74,7 +82,6 @@ public class CourseAddReq implements Serializable {
 	 *
 	 * @see Integer
 	 */
-	@NotNull(groups = { Create.class })
 	@ApiModelProperty("难度")
 	private Integer difficulty;
 
@@ -84,7 +91,6 @@ public class CourseAddReq implements Serializable {
 	 * @see Boolean
 	 */
 	@ApiModelProperty("是否公开")
-	@NotNull(groups = { Create.class })
 	private Boolean isPublic;
 
 	/**

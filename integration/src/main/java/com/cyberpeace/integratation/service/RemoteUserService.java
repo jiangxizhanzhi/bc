@@ -41,6 +41,9 @@ public interface RemoteUserService {
 	 */
 	UserInfo getById(String userId);
 
+
+    List<String> getOnlineIds(List<String> searchedIds);
+
 	/**
 	 * 获取列表
 	 *

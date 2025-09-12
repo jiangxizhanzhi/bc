@@ -69,4 +69,11 @@ public class StudentScoreListRsp implements Serializable {
 	@ApiModelProperty(value = "评分时间")
 	private Date scoreTime;
 
+
+    @ApiModelProperty(value = "学习时长")
+    private String timeCost;
+
+    @ApiModelProperty(value = "当前进度")
+    private Integer processPercentage;
+
 }

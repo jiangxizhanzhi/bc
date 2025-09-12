@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
+import java.util.List;
+
 /**
  * 课程
  *
@@ -72,6 +74,25 @@ public class Course extends AuthTable {
 	 */
 	@ApiModelProperty("图片路径")
 	private String logo;
+
+
+    private String attachment;
+
+    private String lessons;
+
+
+    @TableField(exist = false)
+    @ApiModelProperty("课程总时长")
+    private Integer lessonHours;
+
+    /**
+     * 课时数量
+     *
+     * @see Integer
+     */
+    @TableField(exist = false)
+    @ApiModelProperty("课时数量")
+    private Integer lessonCount;
 
 	/**
 	 * 大纲
@@ -154,14 +175,7 @@ public class Course extends AuthTable {
 	@ApiModelProperty("课程编号")
 	private String courseNum;
 
-	/**
-	 * 课时数量
-	 *
-	 * @see Integer
-	 */
-	@TableField(exist = false)
-	@ApiModelProperty("课时数量")
-	private Integer lessonCount;
+
 
 	public enum Difficulty implements GenericEnum {
 

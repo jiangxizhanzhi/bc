@@ -115,6 +115,9 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 	@Autowired
 	private MpEnvService mpEnvService;
 
+    @Autowired
+    private TrainRecordService trainRecordService;
+
 	/**
 	 * 获取由房间id和用户
 	 *
@@ -271,6 +274,16 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 				res.add(rsp);
 			}
 		}
+
+        for (StudentScoreListRsp re : res) {
+
+            StudentScoreRsp rsp = this.getStudentScore(roomId, re.getUserId());
+            re.setProcessPercentage(100 - rsp.getTaskStatistics().getUnfinishedPercentage());
+            // 训练时间
+            String timeCost = trainRecordService.getTimeCost(roomId);
+            re.setTimeCost(timeCost);
+        }
+
 		return res;
 	}
 

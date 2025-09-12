@@ -221,18 +221,21 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		Course course = BeanUtils.copy(addReq, Course.class);
-		course.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		course.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		course.setOperationAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
 		course.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
-		course.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		course.setReadAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		course.setCourseType(CommonConstant.ZERO);
+        course.setLessons(JsonUtil.arrayToString(addReq.getLessons()));
 
-		CourseCategory courseCategory = courseCategoryMapper.selectById(addReq.getCategoryId());
-		if (null == courseCategory) {
-			log.error("When add course but category not found! category_id=[{}]",
-					addReq.getCategoryId());
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
+        if (StringUtils.isNotBlank(addReq.getCategoryId())) {
+            CourseCategory courseCategory = courseCategoryMapper.selectById(addReq.getCategoryId());
+            if (null == courseCategory) {
+                log.error("When add course but category not found! category_id=[{}]",
+                        addReq.getCategoryId());
+                throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+            }
+        }
 
 		Course courseRsp = courseService.addCourse(userId, course);
 
@@ -260,6 +263,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		Course course = BeanUtils.copy(updateReq, Course.class);
+        course.setLessons(JsonUtil.arrayToString(updateReq.getLessons()));
 
 		Course courseRsp = courseService.updateCourse(userId, course);
 
@@ -293,6 +297,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		}
 		AdminCourseRes adminCourseRes = BeanUtils.copy(course, AdminCourseRes.class);
 		adminCourseRes.setLogo(utilService.handlerFileUrl(course.getLogo()));
+        adminCourseRes.setLessons(JsonUtil.toJsonObjectArray(course.getLessons(), String.class));
 		return new BaseRsp<>(adminCourseRes);
 	}
 

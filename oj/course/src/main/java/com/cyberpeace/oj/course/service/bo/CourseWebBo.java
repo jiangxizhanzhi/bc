@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 课程WebBo
@@ -67,7 +68,18 @@ public class CourseWebBo implements Serializable {
 	@ApiModelProperty("课程海报")
 	private String logo;
 
-	/**
+
+    @ApiModelProperty("课程附件")
+    private String attachment;
+
+    @ApiModelProperty("组成课程的实验/科目/演训")
+    private List<String> lessons;
+
+    @ApiModelProperty("学生人数")
+    private Integer studentNum;
+
+
+    /**
 	 * 课程难度
 	 *
 	 * @see Integer

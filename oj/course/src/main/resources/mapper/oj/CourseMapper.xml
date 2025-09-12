@@ -47,8 +47,8 @@
                     and L1.name like #{pattern}
                 </if>
             </if>
-            <if test="null != isPublic and isPublic">
-                and L1.`public` = 1
+            <if test="null != courseContext.publish">
+                and L1.`public` = #{courseContext.publish}
             </if>
         </where>
         group by L1.resource_id

@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.dao.mapper;
 
 import java.util.List;
 
+import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -42,7 +43,7 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 * @see Boolean
 	 * @see IPage<Course>
 	 */
-	IPage<Course> listByPage(Page<Course> page, @Param("courseContext") CourseContext courseContext,
+	IPage<Course> listByPage(Page<Course> page, @Param("courseContext") CourseQueryBo courseContext,
 			@Param("courseIds") List<String> courseIds, @Param("isPublic") Boolean isPublic);
 
 	/**

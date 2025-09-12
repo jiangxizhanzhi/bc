@@ -34,6 +34,24 @@ public class TeamRoomRsp  {
     @ApiModelProperty(value = "xd类型")
     private Integer xdType;
 
+    /**
+     * 持续时长
+     */
+    @ApiModelProperty(value = "持续时长")
+    private Integer durationTime;
+
+    /**
+     * 难度
+     */
+    @ApiModelProperty(value = "难度")
+    private Integer difficult;
+
+    @ApiModelProperty(value = "训练类别")
+    private String trainXdType;
+
+    @ApiModelProperty(value = "训练子类型")
+    private String trainXdSubType;
+
 
     /**
 	 * 描述
@@ -83,11 +101,7 @@ public class TeamRoomRsp  {
 	@ApiModelProperty(value = "模板名称")
 	private String templateName;
 
-	/**
-	 * 难度
-	 */
-	@ApiModelProperty(value = "难度")
-	private Integer difficult;
+
 
 	/**
 	 * 自己岗位，基本信息，查列表会查询其他学员角色的内容列表
@@ -101,11 +115,7 @@ public class TeamRoomRsp  {
 	@ApiModelProperty(value = "所有岗位(包含教员)，单独查时使用")
 	private List<TeamRoomRoleRes> rolesData;
 
-	/**
-	 * 持续时长
-	 */
-	@ApiModelProperty(value = "持续时长")
-	private Integer durationTime;
+
 
 	/**
 	 * 场景开启时间

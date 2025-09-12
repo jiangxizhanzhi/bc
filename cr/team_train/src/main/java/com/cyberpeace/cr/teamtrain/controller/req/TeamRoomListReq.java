@@ -28,7 +28,6 @@ public class TeamRoomListReq extends PageReqBase {
 
 
     @ApiModelProperty(value = "xd type id", required = true)
-    @NotNull
     private Integer xdType;
 
 	/**

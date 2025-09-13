@@ -1,8 +1,9 @@
 package com.cyberpeace.oj.course.controller.web;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.cyberpeace.oj.course.controller.res.CourseStatisticsRes;
+import com.cyberpeace.oj.course.controller.res.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -29,7 +30,6 @@ import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.course.controller.req.CourseListReq;
-import com.cyberpeace.oj.course.controller.res.WebCourseRes;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.CourseService;
@@ -131,6 +131,31 @@ public class WebCourseController {
 		WebCourseRes courseRes = BeanUtils.copy(course, WebCourseRes.class);
         return new BaseRsp<>(courseRes);
 	}
+
+
+	@GetMapping("/single/statistics")
+	@ApiOperation("单个课程的统计数据")
+	public BaseRsp<SingleCourseStatisticsRes> getSingleCourseStatisticsRes(@ApiParam(name = "resource_id", value = "查询id",
+			required = true) @RequestParam("resource_id") String resourceId) {
+		return new BaseRsp<>(new SingleCourseStatisticsRes());
+	}
+
+
+	@GetMapping("/user/course/statistics")
+	@ApiOperation("用户学习的课程统计数据")
+	public BaseRsp<MultiCourseUserinfoRes> getMultiCourseUserinfoRes() {
+		return new BaseRsp<>(new MultiCourseUserinfoRes());
+	}
+
+
+	@GetMapping("/user/course/progress")
+	@ApiOperation("用户学习课程的进度")
+	public BaseRsp<ListRsp<UserCourseProcessRes>> listUserCourseProcessRes(@RequestParam("name") String courseName, @RequestParam("page") Integer page,
+																		   @RequestParam("per_page") Integer pageSize) {
+		return new BaseRsp<>(new ListRsp<>(new ArrayList<>(), 0, page, pageSize));
+	}
+
+
 
 	/**
 	 * 获取课程

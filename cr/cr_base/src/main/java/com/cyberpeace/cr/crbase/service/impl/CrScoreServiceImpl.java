@@ -275,6 +275,9 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 			}
 		}
 
+        List<String> users = res.stream().map(re -> re.getUserId()).collect(Collectors.toList());
+        Set<String> onlineUsers = new HashSet<>(remoteUserService.getOnlineIds(users));
+
         for (StudentScoreListRsp re : res) {
 
             StudentScoreRsp rsp = this.getStudentScore(roomId, re.getUserId());
@@ -282,6 +285,11 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
             // 训练时间
             String timeCost = trainRecordService.getTimeCost(roomId);
             re.setTimeCost(timeCost);
+            if (onlineUsers.contains(re.getUserId())) {
+                re.setOnline(true);
+            } else {
+                re.setOnline(false);
+            }
         }
 
 		return res;

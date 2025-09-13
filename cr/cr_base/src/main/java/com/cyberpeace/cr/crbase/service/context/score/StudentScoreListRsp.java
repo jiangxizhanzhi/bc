@@ -76,4 +76,7 @@ public class StudentScoreListRsp implements Serializable {
     @ApiModelProperty(value = "当前进度")
     private Integer processPercentage;
 
+    @ApiModelProperty(value = "是否在线")
+    private Boolean online;
+
 }

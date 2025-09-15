@@ -153,5 +153,88 @@
         select case when exists(select 1 from cr_team_room where name = #{name}) then 1 else 0 end as result;
     </select>
 
+    <select id="syNumStatistics" resultType="java.util.Map">
+        select month(start_time) as month, count(*) as num
+        from cr_team_room
+        where xd_type in(1,2,3,4,5,6,7) and YEAR(start_time) = YEAR(CURDATE())
+        group by month;
+    </select>
+
+    <select id="kmNumStatistics" resultType="java.util.Map">
+        select month(start_time) as month, count(*) as num
+        from cr_team_room
+        where xd_type in(8,9,10,11,12,13,14) and YEAR(start_time) = YEAR(CURDATE())
+        group by month;
+    </select>
+
+    <select id="zhyxNumStatistics" resultType="java.util.Map">
+        select month(start_time) as month, count(*) as num
+        from cr_team_room
+        where xd_type in(15) and YEAR(start_time) = YEAR(CURDATE())
+        group by month;
+    </select>
+
+    <select id="syPersonNumStatistics" resultType="java.util.Map">
+        select month(cr_team_room.start_time) as month, sum(JSON_LENGTH(cr_role.user_ids)) AS person_num
+        from cr_team_room,cr_role
+        where cr_team_room.resource_id=cr_role.room_id
+        and xd_type in(1,2,3,4,5,6,7) and YEAR(cr_team_room.start_time) = YEAR(CURDATE())
+        and cr_role.name!='教员' group by month;
+    </select>
+
+    <select id="kmPersonNumStatistics" resultType="java.util.Map">
+        select month(cr_team_room.start_time) as month, sum(JSON_LENGTH(cr_role.user_ids)) AS person_num
+        from cr_team_room,cr_role
+        where cr_team_room.resource_id=cr_role.room_id
+        and xd_type in(8,9,10,11,12,13,14) and YEAR(cr_team_room.start_time) = YEAR(CURDATE())
+        and cr_role.name!='教员' group by month;
+    </select>
+
+    <select id="zhyxPersonNumStatistics" resultType="java.util.Map">
+        select month(cr_team_room.start_time) as month, sum(JSON_LENGTH(cr_role.user_ids)) AS person_num
+        from cr_team_room,cr_role
+        where cr_team_room.resource_id=cr_role.room_id
+        and xd_type in(15) and YEAR(cr_team_room.start_time) = YEAR(CURDATE())
+        and cr_role.name!='教员' group by month;
+    </select>
+
+    <select id="totalScoreStatistics" resultType="java.util.Map">
+        select user_id,sum(cr_score.final_score) as total_score
+        from cr_team_room,cr_score
+        where cr_team_room.resource_id=cr_score.room_id
+        group by user_id
+        order by total_score desc
+        limit 5;
+    </select>
+
+    <select id="totalScoreSyStatistics" resultType="java.util.Map">
+        select user_id,sum(cr_score.final_score) as total_score
+        from cr_team_room,cr_score
+        where cr_team_room.resource_id=cr_score.room_id
+        and xd_type in(1,2,3,4,5,6,7)
+        group by user_id
+        order by total_score desc
+        limit 5;
+    </select>
+
+    <select id="totalScoreKmStatistics" resultType="java.util.Map">
+        select user_id,sum(cr_score.final_score) as total_score
+        from cr_team_room,cr_score
+        where cr_team_room.resource_id=cr_score.room_id
+        and xd_type in(8,9,10,11,12,13,14)
+        group by user_id
+        order by total_score desc
+        limit 5;
+    </select>
+
+    <select id="totalScoreZhyxStatistics" resultType="java.util.Map">
+        select user_id,sum(cr_score.final_score) as total_score
+        from cr_team_room,cr_score
+        where cr_team_room.resource_id=cr_score.room_id
+          and xd_type in(15)
+        group by user_id
+        order by total_score desc
+        limit 5;
+    </select>
 
 </mapper>

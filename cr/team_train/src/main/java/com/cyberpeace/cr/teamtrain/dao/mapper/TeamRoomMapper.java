@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.teamtrain.dao.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -76,4 +77,74 @@ public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 	 * @return
 	 */
 	Boolean existByName(@Param("name") String name);
+
+	/**
+	 * 实验场次统计
+	 *
+	 * @return
+	 */
+	List<Map<String, Object>> syNumStatistics();
+
+	/**
+	 * 科目场次统计
+	 *
+	 * @return
+	 */
+	List<Map<String, Object>> kmNumStatistics();
+
+	/**
+	 * 综合演训场次统计
+	 *
+	 * @return
+	 */
+	List<Map<String, Object>> zhyxNumStatistics();
+
+	/**
+	 * 实验人数统计
+	 *
+	 * @return
+	 */
+	List<Map<String, Object>> syPersonNumStatistics();
+
+	/**
+	 * 科目人数统计
+	 *
+	 * @return
+	 */
+	List<Map<String, Object>> kmPersonNumStatistics();
+
+	/**
+	 * 综合演训人数统计
+	 *
+	 * @return
+	 */
+	List<Map<String, Object>> zhyxPersonNumStatistics();
+
+	/**
+	 * 综合演训训练总分统计
+	 *
+	 * @return
+	 */
+	List<Map<String, Object>> totalScoreStatistics();
+
+	/**
+	 * 综合演训实验总分统计
+	 *
+	 * @return
+	 */
+	List<Map<String, Object>> totalScoreSyStatistics();
+
+	/**
+	 * 综合演训科目总分统计
+	 *
+	 * @return
+	 */
+	List<Map<String, Object>> totalScoreKmStatistics();
+
+	/**
+	 * 综合演训综合演训总分统计
+	 *
+	 * @return
+	 */
+	List<Map<String, Object>> totalScoreZhyxStatistics();
 }

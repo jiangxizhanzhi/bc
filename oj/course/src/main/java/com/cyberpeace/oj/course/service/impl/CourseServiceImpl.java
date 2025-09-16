@@ -389,7 +389,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
                 roleQuery.setRoomId(teamRoomData.getResourceId());
                 List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 
-                durationSum = durationSum + teamRoomData.getDurationTime();
+                durationSum = durationSum + Optional.ofNullable(teamRoomData.getDurationTime()).orElse(0);
                 Set<String> userIds = crRoles.stream().map(CrRole::getUserIds).map(str -> JsonUtil.toJsonObjectArray(str, String.class))
                         .flatMap(List::stream).collect(Collectors.toSet());
                 allStudents.addAll(userIds);

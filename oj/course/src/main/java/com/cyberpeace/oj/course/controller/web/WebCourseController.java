@@ -137,13 +137,22 @@ public class WebCourseController {
 	@ApiOperation("单个课程的统计数据")
 	public BaseRsp<SingleCourseStatisticsRes> getSingleCourseStatisticsRes(@ApiParam(name = "resource_id", value = "查询id",
 			required = true) @RequestParam("resource_id") String resourceId) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				true);
+		CourseInfoBo course = courseService.selectById(resourceId, authContext);
+
+
+
+
+
 		return new BaseRsp<>(new SingleCourseStatisticsRes());
 	}
 
 
 	@GetMapping("/user/course/statistics")
 	@ApiOperation("用户学习的课程统计数据")
-	public BaseRsp<MultiCourseUserinfoRes> getMultiCourseUserinfoRes() {
+	public BaseRsp<MultiCourseUserinfoRes> getMultiCourseUserinfoRes(@RequestParam("user_id") String userId) {
 		return new BaseRsp<>(new MultiCourseUserinfoRes());
 	}
 

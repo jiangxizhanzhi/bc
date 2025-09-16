@@ -557,6 +557,16 @@ public class TimeUtil {
 		return duration2String(sec, null);
 	}
 
+	public static int duration2Hours(long sec) {
+		long hour = sec / (60 * 60);
+		long rest = sec % (60 * 60);
+		if (rest > 0) {
+			hour = hour + 1;
+		}
+
+		return (int) hour;
+	}
+
 	public static String duration2String(long sec, TimeUnitI18n unitI18n) {
 		long min = sec / 60;
 		sec = sec % 60;

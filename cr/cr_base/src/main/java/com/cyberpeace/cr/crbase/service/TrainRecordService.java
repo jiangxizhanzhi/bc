@@ -78,6 +78,8 @@ public interface TrainRecordService extends IService<TrainRecord> {
 	 */
 	String getTimeCost(String roomId);
 
+	int getTimeCostHours(String roomId);
+
 	/**
 	 * 获取训练时长，long型
 	 *

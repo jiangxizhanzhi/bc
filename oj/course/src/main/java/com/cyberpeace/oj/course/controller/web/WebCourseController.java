@@ -1,8 +1,15 @@
 package com.cyberpeace.oj.course.controller.web;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+import com.cyberpeace.cr.crbase.service.CrScoreService;
+import com.cyberpeace.cr.crbase.service.TrainRecordService;
+import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
+import com.cyberpeace.cr.crbase.service.context.score.StudentScoreRsp;
+import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
+import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
+import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.controller.res.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -70,6 +77,24 @@ public class WebCourseController {
 	 */
 	@Autowired
 	private CourseCategoryService courseDirectionService;
+
+	@Autowired
+	private TrainRecordService trainRecordService;
+
+	@Autowired
+	private TeamTeacherService teamTeacherService;
+
+	/**
+	 * 靶场得分Service
+	 */
+	@Autowired
+	private CrScoreService crScoreService;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
+
+
+
 
 	/**
 	 * 获取Web课程
@@ -142,11 +167,54 @@ public class WebCourseController {
 				true);
 		CourseInfoBo course = courseService.selectById(resourceId, authContext);
 
+		SingleCourseStatisticsRes singleCourseStatisticsRes = new SingleCourseStatisticsRes();
+		singleCourseStatisticsRes.setResourceId(resourceId);
+		singleCourseStatisticsRes.setStudentNums(course.getStudentNum());
+
+		List<TeamRoomRsp> teamRoomRsps = course.getTeamRoomRsps();
+		int courseTrainHourSum = 0;
+		int courseSubmitMissionSum = 0;
+		int courseSuccessMissionSum = 0;
+		int courseFinishedPersonNums = 0;
+		List<Integer> scores = new ArrayList<>();
+		Map<String, SingleCourseUserInfoRes> singleCourseUserInfoResMap = new HashMap<>(8);
+		for (TeamRoomRsp teamRoomRsp : teamRoomRsps) {
+			int trainHours = trainRecordService.getTimeCostHours(teamRoomRsp.getResourceId());
+			courseTrainHourSum = courseTrainHourSum + trainHours;
+
+			TaskStatisticsInfo taskStatisticsInfo = teamTeacherService.getTaskStatisticsInfo(teamRoomRsp.getResourceId());
+			courseSubmitMissionSum = courseSubmitMissionSum + taskStatisticsInfo.getSubmitMissionCount();
+			courseSuccessMissionSum = courseSuccessMissionSum + taskStatisticsInfo.getSuccessMissionsCount();
 
 
+			List<StudentScoreListRsp> res = teamTeacherService.getScoreList(teamRoomRsp.getResourceId());
 
+			for (StudentScoreListRsp studentScoreListRsp : res) {
+				StudentScoreRsp rsp = crScoreService.getStudentScore(teamRoomRsp.getResourceId(), studentScoreListRsp.getUserId());
+				if (Boolean.TRUE.equals(studentScoreListRsp.getScored())) {
+					courseFinishedPersonNums = courseFinishedPersonNums + 1;
+				}
+				if (Objects.nonNull(studentScoreListRsp.getScore())) {
+					scores.add(studentScoreListRsp.getScore());
+				}
+				Integer finishedTasks = rsp.getTaskStatistics().getMissionCount() - rsp.getTaskStatistics().getUnfinished();
+				Boolean lessonFinishedFlag = Boolean.TRUE.equals(studentScoreListRsp.getScored());
+				Integer score = studentScoreListRsp.getScore();
+				singleCourseUserInfoResMap.computeIfAbsent(studentScoreListRsp.getUserId(), k -> new SingleCourseUserInfoRes())
+						.addLessonData(studentScoreListRsp.getUserId(), finishedTasks, lessonFinishedFlag, trainHours, score, remoteUserService);
+			}
+		}
 
-		return new BaseRsp<>(new SingleCourseStatisticsRes());
+		singleCourseStatisticsRes.setCourseFinishedNums(courseFinishedPersonNums);
+		singleCourseStatisticsRes.setScoreStatistics(new TrainGradesRes(scores));
+		singleCourseStatisticsRes.setTrainTime(courseTrainHourSum);
+		singleCourseStatisticsRes.setTrainTaskStatistics(new CourseTrainTaskRes(courseSubmitMissionSum, courseSuccessMissionSum));
+
+		List<SingleCourseUserInfoRes> singleCourseUserInfoResList = new ArrayList<>(singleCourseUserInfoResMap.values());
+		singleCourseUserInfoResList.sort(Comparator.comparing(SingleCourseUserInfoRes::getAverageTrainScore));
+		singleCourseStatisticsRes.setPersonStatistics(singleCourseUserInfoResList);
+
+		return new BaseRsp<>(singleCourseStatisticsRes);
 	}
 
 

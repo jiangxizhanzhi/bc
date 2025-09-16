@@ -126,6 +126,15 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 		return TimeUtil.duration2String(getTimeCostLong(roomId).getTimeCost());
 	}
 
+
+	@Override
+	public int getTimeCostHours(String roomId) {
+		return TimeUtil.duration2Hours(getTimeCostLong(roomId).getTimeCost());
+	}
+
+
+
+
 	/**
 	 * 获取时间成本长
 	 *

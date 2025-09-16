@@ -147,4 +147,13 @@ public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 	 * @return
 	 */
 	List<Map<String, Object>> totalScoreZhyxStatistics();
+
+
+	/**
+	 * 根据roomIds查询所有列表
+	 *
+	 * @param roomIds 房间id列表
+	 * @return
+	 */
+	List<TeamRoom> selectAllByIds(@Param("roomIds") List<String> roomIds);
 }

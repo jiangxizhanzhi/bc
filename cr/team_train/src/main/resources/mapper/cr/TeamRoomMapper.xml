@@ -231,10 +231,20 @@
         select user_id,sum(cr_score.final_score) as total_score
         from cr_team_room,cr_score
         where cr_team_room.resource_id=cr_score.room_id
-          and xd_type in(15)
+        and xd_type in(15)
         group by user_id
         order by total_score desc
         limit 5;
+    </select>
+
+    <select id="selectAllByIds" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom">
+        select *
+        from cr_team_room
+        where resource_id
+        in
+        <foreach collection="roomIds" item="roomId" separator="," close=")" open="(">
+            #{roomId}
+        </foreach>
     </select>
 
 </mapper>

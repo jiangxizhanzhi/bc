@@ -1,14 +1,22 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.cr.crbase.controller.req.TrainStatisticsDetailReq;
+import com.cyberpeace.cr.crbase.service.context.statistics.StatisticsDetail;
 import com.cyberpeace.cr.teamtrain.service.XdTeamTrainStatisticsService;
 import com.cyberpeace.cr.teamtrain.service.bo.XdTeamPersonScoreStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.XdTeamPersonStatisticsBo;
+import com.cyberpeace.cr.teamtrain.service.bo.XdTeamPersonalStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.XdTeamTimesStatisticsBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -98,6 +106,20 @@ public class XdTeamTrainStatisticsController {
     @ApiOperation("综合演训个人得分排名TOP5")
     public BaseRsp<List<XdTeamPersonScoreStatisticsBo>> getPersonScoreZhyx() {
         List<XdTeamPersonScoreStatisticsBo> rsp = xdTeamTrainStatisticsService.getPersonScoreZhyx();
+        return new BaseRsp<>(rsp);
+    }
+
+    /**
+     * 获取全部详情
+     *
+     * @param detailReq 详情请求体
+     * @return {@code BaseRsp<ListRsp<StatisticsDetail>> }
+     */
+    @GetMapping("/detail")
+    @ApiOperation("团队训练统计详情")
+    public BaseRsp<ListRsp<XdTeamPersonalStatisticsBo>> getAllDetail(TrainStatisticsDetailReq detailReq) {
+        Page<XdTeamPersonalStatisticsBo> page = detailReq.toPageParam();
+        ListRsp<XdTeamPersonalStatisticsBo> rsp = xdTeamTrainStatisticsService.getAllStatisticsDetail(detailReq, page, BusinessType.TRAINING_TEAM.getCode());
         return new BaseRsp<>(rsp);
     }
 

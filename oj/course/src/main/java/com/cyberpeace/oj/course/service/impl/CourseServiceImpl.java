@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.XdBusinessType;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -398,6 +399,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
                 TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
                 String userId = UserInfoContext.getUserContext().getUserId();
                 teamRoomRsp.setTrainingRoleData(getSelfRole(crRoles, userId));
+
+				XdBusinessType xdBusinessType = XdBusinessType.getByCode(teamRoomRsp.getXdType());
+				teamRoomRsp.setTrainXdType(xdBusinessType.getType());
+				teamRoomRsp.setTrainXdSubType(xdBusinessType.getDesc());
 
                 teamRoomRsp.setRolesData(getTeamRoomRoleRes(crRoles));
 

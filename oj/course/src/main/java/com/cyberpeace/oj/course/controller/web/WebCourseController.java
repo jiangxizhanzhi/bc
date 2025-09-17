@@ -2,12 +2,15 @@ package com.cyberpeace.oj.course.controller.web;
 
 import java.util.*;
 
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.service.CrScoreService;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
+import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.controller.res.*;
@@ -92,6 +95,9 @@ public class WebCourseController {
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private TeamRoomService teamRoomService;
 
 
 
@@ -221,6 +227,19 @@ public class WebCourseController {
 	@GetMapping("/user/course/statistics")
 	@ApiOperation("用户学习的课程统计数据")
 	public BaseRsp<MultiCourseUserinfoRes> getMultiCourseUserinfoRes(@RequestParam("user_id") String userId) {
+
+
+
+
+//		List<CrRole> roleList = teamRoomService.getStudentsRoles(roomId);
+//		List<String> userIds = JsonUtil.toJsonObjectArray(role.getUserIds(), String.class);
+
+
+
+
+
+
+
 		return new BaseRsp<>(new MultiCourseUserinfoRes());
 	}
 

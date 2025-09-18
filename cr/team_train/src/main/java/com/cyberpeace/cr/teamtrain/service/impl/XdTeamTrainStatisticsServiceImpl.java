@@ -17,6 +17,7 @@ import com.cyberpeace.cr.teamtrain.service.bo.XdTeamTimesStatisticsBo;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
  * @date 2025/09/14
  */
 @Service
+@Slf4j
 public class XdTeamTrainStatisticsServiceImpl implements XdTeamTrainStatisticsService {
 
     @Autowired
@@ -323,12 +325,12 @@ public class XdTeamTrainStatisticsServiceImpl implements XdTeamTrainStatisticsSe
             List<String> roomIds = trainTimeMap.keySet().stream().collect(Collectors.toList());
             List<TeamRoom> roomList = teamRoomMapper.selectAllByIds(roomIds);
             if (CollectionUtils.isNotEmpty(roomList)) {
-                Integer syTimes = Math.toIntExact(roomList.stream().filter(obj -> ("1".equals(obj.getXdType()) || "2".equals(obj.getXdType()) || "3".equals(obj.getXdType()) || "4".equals(obj.getXdType()) || "5".equals(obj.getXdType()) || "6".equals(obj.getXdType()) || "7".equals(obj.getXdType()))).count());
+                Integer syTimes = Math.toIntExact(roomList.stream().filter(obj -> (obj.getXdType() == 1 || obj.getXdType() == 2 || obj.getXdType() == 3 || obj.getXdType() == 4 || obj.getXdType() == 5 || obj.getXdType() == 6 || obj.getXdType() == 7)).count());
                 xdTeamPersonalStatisticsBo.setSyTimes(syTimes);
-                Integer kmTimes = Math.toIntExact(roomList.stream().filter(obj -> ("8".equals(obj.getXdType()) || "9".equals(obj.getXdType()) || "10".equals(obj.getXdType()) || "11".equals(obj.getXdType()) || "12".equals(obj.getXdType()) || "13".equals(obj.getXdType()) || "14".equals(obj.getXdType()))).count());
-                xdTeamPersonalStatisticsBo.setSyTimes(kmTimes);
-                Integer zhyxTimes = Math.toIntExact(roomList.stream().filter(obj -> "15".equals(obj.getXdType())).count());
-                xdTeamPersonalStatisticsBo.setSyTimes(zhyxTimes);
+                Integer kmTimes = Math.toIntExact(roomList.stream().filter(obj -> (obj.getXdType() == 8 || obj.getXdType() == 9 || obj.getXdType() == 10 || obj.getXdType() == 11 || obj.getXdType() == 12 || obj.getXdType() == 13 || obj.getXdType() == 14)).count());
+                xdTeamPersonalStatisticsBo.setKmTimes(kmTimes);
+                Integer zhyxTimes = Math.toIntExact(roomList.stream().filter(obj -> (obj.getXdType() == 15)).count());
+                xdTeamPersonalStatisticsBo.setZhyxTimes(zhyxTimes);
             }
 
             Map<Integer, List<CrTask>> groupTaskMap = taskList.stream().collect(Collectors.groupingBy(CrTask::getStatus));

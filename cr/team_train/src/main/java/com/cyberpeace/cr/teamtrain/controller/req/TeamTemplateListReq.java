@@ -50,9 +50,14 @@ public class TeamTemplateListReq extends PageReqBase {
 
     private Integer xdTemplateType;
 
+	private Integer xdTemplateCategory;
+
 
     public void setXd_template_type(Integer xdTemplateType) {
         this.xdTemplateType = xdTemplateType;
     }
 
+	public void setXd_template_category(Integer xdTemplateCategory) {
+		this.xdTemplateCategory = xdTemplateCategory;
+	}
 }

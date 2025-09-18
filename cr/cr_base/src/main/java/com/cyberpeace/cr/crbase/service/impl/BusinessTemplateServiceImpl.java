@@ -172,6 +172,11 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		businessTemplate.setDifficulty(baseInfo.getDifficult());
 		businessTemplate.setLogo(baseInfo.getLogo());
         businessTemplate.setXdTemplateType(baseInfo.getXdTemplateType());
+		if (Objects.nonNull(baseInfo.getXdTemplateCategory())) {
+			businessTemplate.setXdTemplateCategory(baseInfo.getXdTemplateCategory());
+		} else {
+			businessTemplate.setXdTemplateCategory(BusinessTemplate.XdTemplateCategory.OTHER);
+		}
 		// validate name
 		validateName(businessTemplate.getName(), businessTemplate.getBusinessType(), "");
 
@@ -288,6 +293,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		businessTemplate.setDescription(baseInfo.getDescription());
 		businessTemplate.setDifficulty(baseInfo.getDifficult());
 		businessTemplate.setLogo(baseInfo.getLogo());
+		if (Objects.nonNull(baseInfo.getXdTemplateCategory())) {
+			businessTemplate.setXdTemplateCategory(baseInfo.getXdTemplateCategory());
+		}
 		// validate name
 		validateName(businessTemplate.getName(), businessTemplate.getBusinessType(),
 				businessTemplate.getResourceId());

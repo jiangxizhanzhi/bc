@@ -9,6 +9,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import lombok.Data;
 import org.apache.shiro.util.CollectionUtils;
 
+import java.net.Inet4Address;
 import java.util.List;
 import java.util.Objects;
 
@@ -91,6 +92,13 @@ public class BusinessTemplate extends AuthTable {
         }
         return true;
     }
+
+
+	public static class XdTemplateCategory {
+		public static final Integer EXPERIMENT = 1;
+		public static final Integer SUBJECT = 2;
+		public static final Integer OTHER = 3;
+	}
 
 
 }

@@ -35,7 +35,11 @@ public class BaseInfo {
 	private Integer type;
 
     @ApiModelProperty(value = "xd项目模板类型", required = true)
-    @NotNull Integer xdTemplateType;
+    @NotNull
+	private Integer xdTemplateType;
+
+	@ApiModelProperty(value = "xd项目模板类别", required = true)
+	private Integer xdTemplateCategory;
 
 	/**
 	 * 类别

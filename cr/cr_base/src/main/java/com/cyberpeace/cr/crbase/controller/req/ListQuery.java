@@ -51,10 +51,16 @@ public class ListQuery extends PageReqBase {
 
     private Integer xdType;
 
+	private Integer xdTemplateCategory;
+
 
     public void setXd_template_type(Integer xdTemplateType) {
         this.xdTemplateType = xdTemplateType;
     }
+
+	public void setXd_template_category(Integer xdTemplateCategory) {
+		this.xdTemplateCategory = xdTemplateCategory;
+	}
 
     public void setXd_type(Integer xdType) {
         this.xdType = xdType;

@@ -1,8 +1,12 @@
 package com.cyberpeace.oj.course.controller.web;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.service.CrScoreService;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
@@ -10,12 +14,15 @@ import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
+import com.cyberpeace.cr.teamtrain.dao.entity.CourseLessonUserRelation;
+import com.cyberpeace.cr.teamtrain.dao.mapper.CourseLessonUserRelationMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.controller.res.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.DateUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +105,9 @@ public class WebCourseController {
 
 	@Autowired
 	private TeamRoomService teamRoomService;
+
+	@Autowired
+	private CourseLessonUserRelationMapper courseLessonUserRelationMapper;
 
 
 
@@ -228,27 +238,118 @@ public class WebCourseController {
 	@ApiOperation("用户学习的课程统计数据")
 	public BaseRsp<MultiCourseUserinfoRes> getMultiCourseUserinfoRes(@RequestParam("user_id") String userId) {
 
+		List<CourseLessonUserRelation> courseLessonUserRelations = courseLessonUserRelationMapper
+				.selectList(new LambdaQueryWrapper<CourseLessonUserRelation>()
+				.eq(CourseLessonUserRelation::getUserId, userId));
+
+		if (CollectionUtils.isNotEmpty(courseLessonUserRelations)) {
+			Map<String, List<CourseLessonUserRelation>> courseToLessonsMap = courseLessonUserRelations.stream().collect(Collectors.groupingBy(CourseLessonUserRelation::getCourseId, Collectors.toList()));
+
+			MultiCourseUserinfoRes multiCourseUserinfoRes = new MultiCourseUserinfoRes();
+
+			UserInfo userInfo = remoteUserService.getById(userId);
+			multiCourseUserinfoRes.setUserId(userId);
+			multiCourseUserinfoRes.setName(userInfo.getName());
+			multiCourseUserinfoRes.setUserName(userInfo.getUserName());
+			multiCourseUserinfoRes.setAvatarUrl(userInfo.getAvatarUrl());
+
+			multiCourseUserinfoRes.setCourseNums(courseToLessonsMap.size());
+			multiCourseUserinfoRes.setFinishedCourseNums(finishedCourseNum(courseToLessonsMap));
+
+			multiCourseUserinfoRes.setLessonNums(courseLessonUserRelations.size());
+			multiCourseUserinfoRes.setFinishedLessonNums((int) courseLessonUserRelations.stream()
+					.filter(info -> !Boolean.TRUE.equals(info.getScoredFlag()))
+					.count());
+
+			List<Integer> scores = new ArrayList<>();
+			int taskNums = 0;
+			int finishedTaskNums = 0;
 
 
+			for (CourseLessonUserRelation courseLessonUserRelation : courseLessonUserRelations) {
+				StudentScoreRsp rsp = crScoreService.getStudentScore(courseLessonUserRelation.getLessonId(), courseLessonUserRelation.getUserId());
+				taskNums = taskNums + Optional.ofNullable(rsp.getTaskStatistics().getMissionCount()).orElse(0);
+				finishedTaskNums = finishedTaskNums + Optional.ofNullable(rsp.getTaskStatistics().getSuccessful()).orElse(0) +
+						Optional.ofNullable(rsp.getTaskStatistics().getFailed()).orElse(0);
+				scores.add(Optional.ofNullable(rsp.getFinalScore()).orElse(0));
+			}
 
-//		List<CrRole> roleList = teamRoomService.getStudentsRoles(roomId);
-//		List<String> userIds = JsonUtil.toJsonObjectArray(role.getUserIds(), String.class);
+			multiCourseUserinfoRes.setTaskNums(taskNums);
+			multiCourseUserinfoRes.setFinishedTaskNums(finishedTaskNums);
+			multiCourseUserinfoRes.setScoreStatistics(new TrainGradesRes(scores));
+			return new BaseRsp<>(multiCourseUserinfoRes);
+		} else {
+			return new BaseRsp<>(new MultiCourseUserinfoRes());
+		}
+	}
 
-
-
-
-
-
-
-		return new BaseRsp<>(new MultiCourseUserinfoRes());
+	private int finishedCourseNum(Map<String, List<CourseLessonUserRelation>> courseToLessonsMap) {
+		int sum = courseToLessonsMap.size();
+		for (List<CourseLessonUserRelation> lessons : courseToLessonsMap.values()) {
+			for (CourseLessonUserRelation lesson : lessons) {
+				if (!Boolean.TRUE.equals(lesson.getScoredFlag())) {
+					sum = sum - 1;
+					break;
+				}
+			}
+		}
+		return sum;
 	}
 
 
 	@GetMapping("/user/course/progress")
 	@ApiOperation("用户学习课程的进度")
 	public BaseRsp<ListRsp<UserCourseProcessRes>> listUserCourseProcessRes(@RequestParam("name") String courseName, @RequestParam("page") Integer page,
-																		   @RequestParam("per_page") Integer pageSize) {
-		return new BaseRsp<>(new ListRsp<>(new ArrayList<>(), 0, page, pageSize));
+																		   @RequestParam("per_page") Integer pageSize, @RequestParam("user_id") String userId) {
+
+		Page<CourseLessonUserRelation> courseLessonUserRelationPage = new Page<>(page, pageSize);
+		LambdaQueryWrapper<CourseLessonUserRelation> lambdaQueryWrapper = new LambdaQueryWrapper<CourseLessonUserRelation>()
+				.eq(CourseLessonUserRelation::getUserId, userId).like(StringUtils.isNoneBlank(courseName), CourseLessonUserRelation::getCourseName, courseName);
+
+		courseLessonUserRelationPage = courseLessonUserRelationMapper.selectPage(courseLessonUserRelationPage, lambdaQueryWrapper);
+
+		List<CourseLessonUserRelation> relations = courseLessonUserRelationPage.getRecords();
+
+		Map<String, List<CourseLessonUserRelation>> courseToUserLessonsMap = relations.stream()
+				.collect(Collectors.groupingBy(CourseLessonUserRelation::getCourseId, Collectors.toList()));
+
+		List<UserCourseProcessRes> resultRecords = new ArrayList<>();
+		courseToUserLessonsMap.forEach((courseId, userRelations) -> {
+			UserCourseProcessRes userCourseProcessRes = new UserCourseProcessRes();
+			userCourseProcessRes.setCourseName(userRelations.get(0).getCourseName());
+			userCourseProcessRes.setCourseNo(userRelations.get(0).getCourseId());
+
+
+
+			userCourseProcessRes.setLearnedLessons(userRelations.size());
+			userCourseProcessRes.setStartTime(userRelations.get(0).getCreateTime());
+
+			int learnTime = 0;
+			Date finishedTime = userRelations.get(0).getCreateTime();
+			for (CourseLessonUserRelation userRelation : userRelations) {
+				int trainHours = trainRecordService.getTimeCostHours(userRelation.getLessonId());
+				learnTime = trainHours + learnTime;
+
+				if (Objects.nonNull(userRelation.getUpdateTime())) {
+					if (finishedTime.before(userRelation.getUpdateTime())) {
+						finishedTime = userRelation.getUpdateTime();
+					}
+				}
+			}
+
+			int progress = (int) userRelations.stream().filter(CourseLessonUserRelation::getScoredFlag).count() * 100 / userRelations.size();
+
+
+
+			userCourseProcessRes.setLearnTime(learnTime);
+			userCourseProcessRes.setProgress(progress);
+			userCourseProcessRes.setFinishedTime(progress == 100 ? finishedTime : null);
+
+			resultRecords.add(userCourseProcessRes);
+		});
+
+		return new BaseRsp<>(new ListRsp<>(resultRecords, courseLessonUserRelationPage.getTotal(),
+				courseLessonUserRelationPage.getCurrent(), courseLessonUserRelationPage.getSize()));
 	}
 
 

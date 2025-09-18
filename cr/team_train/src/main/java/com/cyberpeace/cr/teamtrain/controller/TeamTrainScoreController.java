@@ -10,9 +10,12 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.cyberpeace.common.enums.TeamRoleGroup;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.service.*;
+import com.cyberpeace.cr.teamtrain.dao.entity.CourseLessonUserRelation;
+import com.cyberpeace.cr.teamtrain.dao.mapper.CourseLessonUserRelationMapper;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -117,6 +120,9 @@ public class TeamTrainScoreController {
 	 */
 	@Autowired
 	private TrainRecordService trainRecordService;
+
+	@Autowired
+	private CourseLessonUserRelationMapper courseLessonUserRelationMapper;
 
 	/**
 	 * 导出训练记录2PDF格式
@@ -284,6 +290,15 @@ public class TeamTrainScoreController {
 		teamRoomService.checkRoomOpening(studentScoreReq.getRoomId());
 
 		crScoreController.updateStudentScore(studentScoreReq);
+
+
+		LambdaUpdateWrapper<CourseLessonUserRelation> updateWrapper = new LambdaUpdateWrapper<>();
+		updateWrapper.set(CourseLessonUserRelation::getScoredFlag, true)
+						.set(CourseLessonUserRelation::getUpdateTime, new Date())
+								.eq(CourseLessonUserRelation::getUserId, userId)
+										.eq(CourseLessonUserRelation::getLessonId, studentScoreReq.getRoomId());
+
+		courseLessonUserRelationMapper.update(null, updateWrapper);
 
 		return new BaseRsp<>();
 	}

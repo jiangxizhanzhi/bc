@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.controller.admin;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
@@ -12,6 +13,8 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
+import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
@@ -24,11 +27,12 @@ import com.cyberpeace.oj.course.controller.res.AdminCourseRes;
 import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
+import com.cyberpeace.cr.teamtrain.dao.entity.CourseLessonUserRelation;
 import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
+import com.cyberpeace.cr.teamtrain.dao.mapper.CourseLessonUserRelationMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.CourseService;
-import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
@@ -51,6 +55,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -124,6 +129,12 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
+
+	@Autowired
+	private TeamTeacherService teamTeacherService;
+
+	@Autowired
+	private CourseLessonUserRelationMapper courseLessonUserRelationMapper;
 
 	/**
 	 * 获取列表
@@ -239,6 +250,31 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 		Course courseRsp = courseService.addCourse(userId, course);
 
+
+		Thread t = new Thread(() -> {
+			List<String> lessonIds = addReq.getLessons();
+			if (org.apache.commons.collections.CollectionUtils.isNotEmpty(lessonIds)) {
+				for (String lessonId : lessonIds) {
+					List<StudentScoreListRsp> res = teamTeacherService.getScoreList(lessonId);
+					for (StudentScoreListRsp student : res) {
+						CourseLessonUserRelation courseLessonUserRelation = new CourseLessonUserRelation();
+						courseLessonUserRelation.setCourseName(course.getName());
+						courseLessonUserRelation.setCourseId(course.getResourceId());
+						courseLessonUserRelation.setLessonId(lessonId);
+						courseLessonUserRelation.setUserId(student.getUserId());
+						courseLessonUserRelation.setScoredFlag(false);
+						courseLessonUserRelation.setCreateTime(new Date());
+						courseLessonUserRelation.setUpdateTime(new Date());
+						courseLessonUserRelationMapper.insert(courseLessonUserRelation);
+					}
+
+				}
+
+			}
+		});
+		t.start();
+
+
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
 				OperationType.CREATE, courseRsp.getName());
 
@@ -270,6 +306,34 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		course = courseService.getById(updateReq.getResourceId());
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
 				OperationType.UPDATE, course.getName());
+
+
+		Thread t = new Thread(() -> {
+			courseLessonUserRelationMapper.delete(new LambdaQueryWrapper<CourseLessonUserRelation>()
+					.eq(CourseLessonUserRelation::getCourseId, updateReq.getResourceId()));
+
+
+			List<String> lessonIds = updateReq.getLessons();
+			if (org.apache.commons.collections.CollectionUtils.isNotEmpty(lessonIds)) {
+				for (String lessonId : lessonIds) {
+					List<StudentScoreListRsp> res = teamTeacherService.getScoreList(lessonId);
+					for (StudentScoreListRsp student : res) {
+						CourseLessonUserRelation courseLessonUserRelation = new CourseLessonUserRelation();
+						courseLessonUserRelation.setCourseId(updateReq.getResourceId());
+						courseLessonUserRelation.setCourseName(updateReq.getName());
+						courseLessonUserRelation.setLessonId(lessonId);
+						courseLessonUserRelation.setUserId(student.getUserId());
+						courseLessonUserRelation.setScoredFlag(false);
+						courseLessonUserRelation.setCreateTime(new Date());
+						courseLessonUserRelation.setUpdateTime(new Date());
+						courseLessonUserRelationMapper.insert(courseLessonUserRelation);
+					}
+
+				}
+
+			}
+		});
+		t.start();
 
 		return new BaseRsp<>(courseRsp);
 	}

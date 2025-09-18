@@ -141,6 +141,7 @@ public class BusinessTemplateController {
 					.toJsonObjectArray(businessTemplateData.getOperationAuthIds(), String.class));
             businessTemplateRsp.setPublishedFlag(businessTemplateData.getPublishedFlag());
             businessTemplateRsp.setXdTemplateType(businessTemplateData.getXdTemplateType());
+			businessTemplateRsp.setXdTemplateCategory(businessTemplateData.getXdTemplateCategory());
             businessTemplateRsp.setLogo(businessTemplateData.getLogo());
 
 			SceneConfigRsp sceneConfigInfo = new SceneConfigRsp();

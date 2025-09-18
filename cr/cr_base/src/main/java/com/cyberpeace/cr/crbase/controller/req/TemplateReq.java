@@ -25,6 +25,9 @@ public class TemplateReq extends PageReqBase {
     @ApiModelProperty(value = "xd项目模板类型")
     private Integer xdTemplateType;
 
+	@ApiModelProperty(value = "xd项目模板类别")
+	private Integer xdTemplateCategory;
+
 	/**
 	 * 搜索
 	 */
@@ -47,5 +50,9 @@ public class TemplateReq extends PageReqBase {
     public void setXd_template_type(Integer xdTemplateType) {
         this.xdTemplateType = xdTemplateType;
     }
+
+	public void setXd_template_category(Integer xdTemplateCategory) {
+		this.xdTemplateCategory = xdTemplateCategory;
+	}
 
 }

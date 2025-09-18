@@ -45,7 +45,11 @@ public class BusinessTemplateQuery extends PageReqBase {
     @ApiModelProperty(value = "xd项目模板类型")
     private Integer xdTemplateType;
 
-    /**
+	@ApiModelProperty(value = "xd项目模板类别")
+	private Integer xdTemplateCategory;
+
+
+	/**
 	 * id列表
 	 */
 	private List<String> ids;

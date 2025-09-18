@@ -68,6 +68,10 @@ public class SingleCourseUserInfoRes {
         this.finishedLessonNums = Optional.ofNullable(this.finishedLessonNums).orElse(0) + lessonFinished;
         this.finishedTaskNums = Optional.ofNullable(this.finishedTaskNums).orElse(0) + Optional.ofNullable(finishedTasks).orElse(0);
         this.trainScoreSum = Optional.ofNullable(this.trainScoreSum).orElse(0) + Optional.ofNullable(score).orElse(0);
-        this.averageTrainScore = trainScoreSum / finishedLessonNums;
+        if (finishedLessonNums == 0) {
+            this.averageTrainScore = 0;
+        } else {
+            this.averageTrainScore = trainScoreSum / finishedLessonNums;
+        }
     }
 }

@@ -76,6 +76,8 @@ public class BusinessTemplate extends AuthTable {
      */
     private Integer xdTemplateType;
 
+	private Integer xdTemplateCategory;
+
 
 
     public Boolean getPublishedFlag() {

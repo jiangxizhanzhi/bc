@@ -103,5 +103,7 @@ public class BusinessTemplateRsp implements Serializable {
      */
     private Integer xdTemplateType;
 
+	private Integer xdTemplateCategory;
+
 
 }

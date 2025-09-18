@@ -209,7 +209,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
         JSONObject jsonObject = HttpClientUtil.rawGet(targetUrl, JSONObject.class);
 
         if (null == jsonObject || jsonObject.isEmpty()) {
-            return null;
+            return new ArrayList<>();
         }
         return jsonObject.toJavaObject(new TypeReference<List<String>>() {});
     }

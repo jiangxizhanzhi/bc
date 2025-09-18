@@ -9,5 +9,5 @@ CREATE TABLE `course_lesson_user_relation` (
                            `update_time` datetime NOT NULL COMMENT '更新时间',
                            `create_time` datetime NOT NULL COMMENT '创建时间',
                            PRIMARY KEY (`id`) USING BTREE,
-                           UNIQUE KEY (`resource_id`),
+                           UNIQUE KEY (`resource_id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT='课程-课时-用户关系记录';

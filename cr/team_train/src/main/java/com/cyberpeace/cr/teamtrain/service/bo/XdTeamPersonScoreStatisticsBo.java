@@ -36,5 +36,5 @@ public class XdTeamPersonScoreStatisticsBo {
      * 累计得分
      */
     @ApiModelProperty("累计得分")
-    private Integer totalScore;
+    private Double totalScore;
 }

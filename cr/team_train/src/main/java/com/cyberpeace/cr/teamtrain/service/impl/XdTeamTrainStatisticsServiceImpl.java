@@ -139,114 +139,136 @@ public class XdTeamTrainStatisticsServiceImpl implements XdTeamTrainStatisticsSe
 
     @Override
     public List<XdTeamPersonScoreStatisticsBo> getPersonScore() {
-        List<XdTeamPersonScoreStatisticsBo> rtn = new ArrayList<>();
-        List<Map<String, Object>> totalScoreList = teamRoomMapper.totalScoreStatistics();
-        if (CollectionUtils.isEmpty(totalScoreList)) {
-            return rtn;
-        }
-        List<String> userIds = new ArrayList<>();
-        for (Map<String, Object> temp : totalScoreList) {
-            userIds.add((String)temp.get("user_id"));
-        }
-        List<UserInfo> remoteUserInfos = remoteUserService.getByIdList(userIds);
-        Map<String, UserInfo> userid2infos = remoteUserInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
+        try {
+            List<XdTeamPersonScoreStatisticsBo> rtn = new ArrayList<>();
 
-        for (Map<String, Object> temp : totalScoreList) {
-            XdTeamPersonScoreStatisticsBo xdTeamPersonScoreStatisticsBo = new XdTeamPersonScoreStatisticsBo();
-            xdTeamPersonScoreStatisticsBo.setUserId((String)temp.get("user_id"));
-            xdTeamPersonScoreStatisticsBo.setTotalScore((Integer) temp.get("total_score"));
-            UserInfo userInfo = userid2infos.get((String)temp.get("user_id"));
-            if (userInfo != null) {
-                xdTeamPersonScoreStatisticsBo.setUsername(userInfo.getUserName());
-                xdTeamPersonScoreStatisticsBo.setName(userInfo.getName());
+            List<Map<String, Object>> totalScoreList = teamRoomMapper.totalScoreStatistics();
+            if (CollectionUtils.isEmpty(totalScoreList)) {
+                return rtn;
             }
-            rtn.add(xdTeamPersonScoreStatisticsBo);
+            List<String> userIds = new ArrayList<>();
+            for (Map<String, Object> temp : totalScoreList) {
+                userIds.add((String)temp.get("user_id"));
+            }
+            List<UserInfo> remoteUserInfos = remoteUserService.getByIdList(userIds);
+            Map<String, UserInfo> userid2infos = remoteUserInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
+
+            for (Map<String, Object> temp : totalScoreList) {
+                XdTeamPersonScoreStatisticsBo xdTeamPersonScoreStatisticsBo = new XdTeamPersonScoreStatisticsBo();
+                xdTeamPersonScoreStatisticsBo.setUserId((String)temp.get("user_id"));
+                xdTeamPersonScoreStatisticsBo.setTotalScore((Double) temp.get("total_score"));
+                UserInfo userInfo = userid2infos.get((String)temp.get("user_id"));
+                if (userInfo != null) {
+                    xdTeamPersonScoreStatisticsBo.setUsername(userInfo.getUserName());
+                    xdTeamPersonScoreStatisticsBo.setName(userInfo.getName());
+                }
+                rtn.add(xdTeamPersonScoreStatisticsBo);
+            }
+
+            return rtn;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ArrayList<>();
         }
-        return rtn;
     }
 
     @Override
     public List<XdTeamPersonScoreStatisticsBo> getPersonScoreSy() {
-        List<XdTeamPersonScoreStatisticsBo> rtn = new ArrayList<>();
-        List<Map<String, Object>> totalScoreList = teamRoomMapper.totalScoreSyStatistics();
-        if (CollectionUtils.isEmpty(totalScoreList)) {
-            return rtn;
-        }
-        List<String> userIds = new ArrayList<>();
-        for (Map<String, Object> temp : totalScoreList) {
-            userIds.add((String)temp.get("user_id"));
-        }
-        List<UserInfo> remoteUserInfos = remoteUserService.getByIdList(userIds);
-        Map<String, UserInfo> userid2infos = remoteUserInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
-
-        for (Map<String, Object> temp : totalScoreList) {
-            XdTeamPersonScoreStatisticsBo xdTeamPersonScoreStatisticsBo = new XdTeamPersonScoreStatisticsBo();
-            xdTeamPersonScoreStatisticsBo.setUserId((String)temp.get("user_id"));
-            xdTeamPersonScoreStatisticsBo.setTotalScore((Integer) temp.get("total_score"));
-            UserInfo userInfo = userid2infos.get((String)temp.get("user_id"));
-            if (userInfo != null) {
-                xdTeamPersonScoreStatisticsBo.setUsername(userInfo.getUserName());
-                xdTeamPersonScoreStatisticsBo.setName(userInfo.getName());
+        try {
+            List<XdTeamPersonScoreStatisticsBo> rtn = new ArrayList<>();
+            List<Map<String, Object>> totalScoreList = teamRoomMapper.totalScoreSyStatistics();
+            if (CollectionUtils.isEmpty(totalScoreList)) {
+                return rtn;
             }
-            rtn.add(xdTeamPersonScoreStatisticsBo);
+            List<String> userIds = new ArrayList<>();
+            for (Map<String, Object> temp : totalScoreList) {
+                userIds.add((String)temp.get("user_id"));
+            }
+            List<UserInfo> remoteUserInfos = remoteUserService.getByIdList(userIds);
+            Map<String, UserInfo> userid2infos = remoteUserInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
+
+            for (Map<String, Object> temp : totalScoreList) {
+                XdTeamPersonScoreStatisticsBo xdTeamPersonScoreStatisticsBo = new XdTeamPersonScoreStatisticsBo();
+                xdTeamPersonScoreStatisticsBo.setUserId((String)temp.get("user_id"));
+                xdTeamPersonScoreStatisticsBo.setTotalScore((Double) temp.get("total_score"));
+                UserInfo userInfo = userid2infos.get((String)temp.get("user_id"));
+                if (userInfo != null) {
+                    xdTeamPersonScoreStatisticsBo.setUsername(userInfo.getUserName());
+                    xdTeamPersonScoreStatisticsBo.setName(userInfo.getName());
+                }
+                rtn.add(xdTeamPersonScoreStatisticsBo);
+            }
+            return rtn;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ArrayList<>();
         }
-        return rtn;
     }
 
     @Override
     public List<XdTeamPersonScoreStatisticsBo> getPersonScoreKm() {
-        List<XdTeamPersonScoreStatisticsBo> rtn = new ArrayList<>();
-        List<Map<String, Object>> totalScoreList = teamRoomMapper.totalScoreKmStatistics();
-        if (CollectionUtils.isEmpty(totalScoreList)) {
-            return rtn;
-        }
-        List<String> userIds = new ArrayList<>();
-        for (Map<String, Object> temp : totalScoreList) {
-            userIds.add((String)temp.get("user_id"));
-        }
-        List<UserInfo> remoteUserInfos = remoteUserService.getByIdList(userIds);
-        Map<String, UserInfo> userid2infos = remoteUserInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
-
-        for (Map<String, Object> temp : totalScoreList) {
-            XdTeamPersonScoreStatisticsBo xdTeamPersonScoreStatisticsBo = new XdTeamPersonScoreStatisticsBo();
-            xdTeamPersonScoreStatisticsBo.setUserId((String)temp.get("user_id"));
-            xdTeamPersonScoreStatisticsBo.setTotalScore((Integer) temp.get("total_score"));
-            UserInfo userInfo = userid2infos.get((String)temp.get("user_id"));
-            if (userInfo != null) {
-                xdTeamPersonScoreStatisticsBo.setUsername(userInfo.getUserName());
-                xdTeamPersonScoreStatisticsBo.setName(userInfo.getName());
+        try {
+            List<XdTeamPersonScoreStatisticsBo> rtn = new ArrayList<>();
+            List<Map<String, Object>> totalScoreList = teamRoomMapper.totalScoreKmStatistics();
+            if (CollectionUtils.isEmpty(totalScoreList)) {
+                return rtn;
             }
-            rtn.add(xdTeamPersonScoreStatisticsBo);
+            List<String> userIds = new ArrayList<>();
+            for (Map<String, Object> temp : totalScoreList) {
+                userIds.add((String)temp.get("user_id"));
+            }
+            List<UserInfo> remoteUserInfos = remoteUserService.getByIdList(userIds);
+            Map<String, UserInfo> userid2infos = remoteUserInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
+
+            for (Map<String, Object> temp : totalScoreList) {
+                XdTeamPersonScoreStatisticsBo xdTeamPersonScoreStatisticsBo = new XdTeamPersonScoreStatisticsBo();
+                xdTeamPersonScoreStatisticsBo.setUserId((String)temp.get("user_id"));
+                xdTeamPersonScoreStatisticsBo.setTotalScore((Double) temp.get("total_score"));
+                UserInfo userInfo = userid2infos.get((String)temp.get("user_id"));
+                if (userInfo != null) {
+                    xdTeamPersonScoreStatisticsBo.setUsername(userInfo.getUserName());
+                    xdTeamPersonScoreStatisticsBo.setName(userInfo.getName());
+                }
+                rtn.add(xdTeamPersonScoreStatisticsBo);
+            }
+            return rtn;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ArrayList<>();
         }
-        return rtn;
     }
 
     @Override
     public List<XdTeamPersonScoreStatisticsBo> getPersonScoreZhyx() {
-        List<XdTeamPersonScoreStatisticsBo> rtn = new ArrayList<>();
-        List<Map<String, Object>> totalScoreList = teamRoomMapper.totalScoreZhyxStatistics();
-        if (CollectionUtils.isEmpty(totalScoreList)) {
-            return rtn;
-        }
-        List<String> userIds = new ArrayList<>();
-        for (Map<String, Object> temp : totalScoreList) {
-            userIds.add((String)temp.get("user_id"));
-        }
-        List<UserInfo> remoteUserInfos = remoteUserService.getByIdList(userIds);
-        Map<String, UserInfo> userid2infos = remoteUserInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
-
-        for (Map<String, Object> temp : totalScoreList) {
-            XdTeamPersonScoreStatisticsBo xdTeamPersonScoreStatisticsBo = new XdTeamPersonScoreStatisticsBo();
-            xdTeamPersonScoreStatisticsBo.setUserId((String)temp.get("user_id"));
-            xdTeamPersonScoreStatisticsBo.setTotalScore((Integer) temp.get("total_score"));
-            UserInfo userInfo = userid2infos.get((String)temp.get("user_id"));
-            if (userInfo != null) {
-                xdTeamPersonScoreStatisticsBo.setUsername(userInfo.getUserName());
-                xdTeamPersonScoreStatisticsBo.setName(userInfo.getName());
+        try {
+            List<XdTeamPersonScoreStatisticsBo> rtn = new ArrayList<>();
+            List<Map<String, Object>> totalScoreList = teamRoomMapper.totalScoreZhyxStatistics();
+            if (CollectionUtils.isEmpty(totalScoreList)) {
+                return rtn;
             }
-            rtn.add(xdTeamPersonScoreStatisticsBo);
+            List<String> userIds = new ArrayList<>();
+            for (Map<String, Object> temp : totalScoreList) {
+                userIds.add((String)temp.get("user_id"));
+            }
+            List<UserInfo> remoteUserInfos = remoteUserService.getByIdList(userIds);
+            Map<String, UserInfo> userid2infos = remoteUserInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
+
+            for (Map<String, Object> temp : totalScoreList) {
+                XdTeamPersonScoreStatisticsBo xdTeamPersonScoreStatisticsBo = new XdTeamPersonScoreStatisticsBo();
+                xdTeamPersonScoreStatisticsBo.setUserId((String)temp.get("user_id"));
+                xdTeamPersonScoreStatisticsBo.setTotalScore((Double) temp.get("total_score"));
+                UserInfo userInfo = userid2infos.get((String)temp.get("user_id"));
+                if (userInfo != null) {
+                    xdTeamPersonScoreStatisticsBo.setUsername(userInfo.getUserName());
+                    xdTeamPersonScoreStatisticsBo.setName(userInfo.getName());
+                }
+                rtn.add(xdTeamPersonScoreStatisticsBo);
+            }
+            return rtn;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ArrayList<>();
         }
-        return rtn;
     }
 
 

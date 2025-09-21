@@ -55,10 +55,12 @@ import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomModifyReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRoleRes;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
+import com.cyberpeace.cr.teamtrain.controller.rsp.TrainQueueRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
+import com.cyberpeace.cr.teamtrain.dao.mapper.TrainQueueMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
@@ -199,10 +201,22 @@ public class TeamTrainRoomController {
 	@Autowired
 	private MpEnvService mpEnvService;
 
+	@Autowired
+	private TrainQueueMapper trainQueueMapper;
+
 	/**
 	 * 失踪日志
 	 */
 	private static final String MISSING_LOG = "resource_id_missing";
+
+
+
+
+	@ApiOperation("训练队列查询接口")
+	@GetMapping("/start_queue/list")
+	public BaseRsp<List<TrainQueueRsp>> listTrainQueue(@RequestParam("room_id") String roomId) {
+		return new BaseRsp<>(Collections.emptyList());
+	}
 
 	/**
 	 * 启动场景

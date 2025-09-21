@@ -60,6 +60,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	 */
 	private String SCENE_START_URL;
 
+	private String SCENE_ENTITY_DEVICE_LIST_URL;
+
 	/**
 	 * 场景启动测试网址
 	 *

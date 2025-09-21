@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.*;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
@@ -14,6 +15,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
+import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
@@ -55,8 +57,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.io.File;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 管理课程Controller
@@ -135,6 +136,12 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@Autowired
 	private CourseLessonUserRelationMapper courseLessonUserRelationMapper;
+
+	/**
+	 * 团队房间Service
+	 */
+	@Autowired
+	private TeamRoomService teamRoomService;;
 
 	/**
 	 * 获取列表
@@ -255,13 +262,20 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 			List<String> lessonIds = addReq.getLessons();
 			if (org.apache.commons.collections.CollectionUtils.isNotEmpty(lessonIds)) {
 				for (String lessonId : lessonIds) {
-					List<StudentScoreListRsp> res = teamTeacherService.getScoreList(lessonId);
-					for (StudentScoreListRsp student : res) {
+					List<CrRole> roleList = teamRoomService.getStudentsRoles(lessonId);
+					Set<String> allUsers = new HashSet<>();
+					for (CrRole role : roleList) {
+						List<String> userIds = JsonUtil.toJsonObjectArray(role.getUserIds(), String.class);
+						allUsers.addAll(userIds);
+					}
+					log.info("添加用户课程学习记录: {}", allUsers);
+
+					for (String user : allUsers) {
 						CourseLessonUserRelation courseLessonUserRelation = new CourseLessonUserRelation();
 						courseLessonUserRelation.setCourseName(course.getName());
 						courseLessonUserRelation.setCourseId(course.getResourceId());
 						courseLessonUserRelation.setLessonId(lessonId);
-						courseLessonUserRelation.setUserId(student.getUserId());
+						courseLessonUserRelation.setUserId(user);
 						courseLessonUserRelation.setScoredFlag(false);
 						courseLessonUserRelation.setCreateTime(new Date());
 						courseLessonUserRelation.setUpdateTime(new Date());
@@ -316,13 +330,22 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 			List<String> lessonIds = updateReq.getLessons();
 			if (org.apache.commons.collections.CollectionUtils.isNotEmpty(lessonIds)) {
 				for (String lessonId : lessonIds) {
-					List<StudentScoreListRsp> res = teamTeacherService.getScoreList(lessonId);
-					for (StudentScoreListRsp student : res) {
+					List<CrRole> roleList = teamRoomService.getStudentsRoles(lessonId);
+					Set<String> allUsers = new HashSet<>();
+					for (CrRole role : roleList) {
+						List<String> userIds = JsonUtil.toJsonObjectArray(role.getUserIds(), String.class);
+						allUsers.addAll(userIds);
+					}
+
+					log.info("添加用户课程学习记录: {}", allUsers);
+
+
+					for (String user : allUsers) {
 						CourseLessonUserRelation courseLessonUserRelation = new CourseLessonUserRelation();
 						courseLessonUserRelation.setCourseId(updateReq.getResourceId());
 						courseLessonUserRelation.setCourseName(updateReq.getName());
 						courseLessonUserRelation.setLessonId(lessonId);
-						courseLessonUserRelation.setUserId(student.getUserId());
+						courseLessonUserRelation.setUserId(user);
 						courseLessonUserRelation.setScoredFlag(false);
 						courseLessonUserRelation.setCreateTime(new Date());
 						courseLessonUserRelation.setUpdateTime(new Date());

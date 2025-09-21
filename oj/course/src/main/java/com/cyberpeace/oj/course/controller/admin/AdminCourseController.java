@@ -271,15 +271,19 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 					log.info("添加用户课程学习记录: {}", allUsers);
 
 					for (String user : allUsers) {
-						CourseLessonUserRelation courseLessonUserRelation = new CourseLessonUserRelation();
-						courseLessonUserRelation.setCourseName(course.getName());
-						courseLessonUserRelation.setCourseId(course.getResourceId());
-						courseLessonUserRelation.setLessonId(lessonId);
-						courseLessonUserRelation.setUserId(user);
-						courseLessonUserRelation.setScoredFlag(false);
-						courseLessonUserRelation.setCreateTime(new Date());
-						courseLessonUserRelation.setUpdateTime(new Date());
-						courseLessonUserRelationMapper.insert(courseLessonUserRelation);
+						try {
+							CourseLessonUserRelation courseLessonUserRelation = new CourseLessonUserRelation();
+							courseLessonUserRelation.setCourseName(course.getName());
+							courseLessonUserRelation.setCourseId(course.getResourceId());
+							courseLessonUserRelation.setLessonId(lessonId);
+							courseLessonUserRelation.setUserId(user);
+							courseLessonUserRelation.setScoredFlag(false);
+							courseLessonUserRelation.setCreateTime(new Date());
+							courseLessonUserRelation.setUpdateTime(new Date());
+							courseLessonUserRelationMapper.insert(courseLessonUserRelation);
+						} catch (Exception e) {
+							log.error(e.getMessage(), e);
+						}
 					}
 
 				}
@@ -322,6 +326,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 				OperationType.UPDATE, course.getName());
 
 
+		Course finalCourse = course;
 		Thread t = new Thread(() -> {
 			courseLessonUserRelationMapper.delete(new LambdaQueryWrapper<CourseLessonUserRelation>()
 					.eq(CourseLessonUserRelation::getCourseId, updateReq.getResourceId()));
@@ -341,19 +346,21 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 
 					for (String user : allUsers) {
-						CourseLessonUserRelation courseLessonUserRelation = new CourseLessonUserRelation();
-						courseLessonUserRelation.setCourseId(updateReq.getResourceId());
-						courseLessonUserRelation.setCourseName(updateReq.getName());
-						courseLessonUserRelation.setLessonId(lessonId);
-						courseLessonUserRelation.setUserId(user);
-						courseLessonUserRelation.setScoredFlag(false);
-						courseLessonUserRelation.setCreateTime(new Date());
-						courseLessonUserRelation.setUpdateTime(new Date());
-						courseLessonUserRelationMapper.insert(courseLessonUserRelation);
+						try {
+							CourseLessonUserRelation courseLessonUserRelation = new CourseLessonUserRelation();
+							courseLessonUserRelation.setCourseId(updateReq.getResourceId());
+							courseLessonUserRelation.setCourseName(finalCourse.getName());
+							courseLessonUserRelation.setLessonId(lessonId);
+							courseLessonUserRelation.setUserId(user);
+							courseLessonUserRelation.setScoredFlag(false);
+							courseLessonUserRelation.setCreateTime(new Date());
+							courseLessonUserRelation.setUpdateTime(new Date());
+							courseLessonUserRelationMapper.insert(courseLessonUserRelation);
+						} catch (Exception e) {
+							log.error(e.getMessage(), e);
+						}
 					}
-
 				}
-
 			}
 		});
 		t.start();

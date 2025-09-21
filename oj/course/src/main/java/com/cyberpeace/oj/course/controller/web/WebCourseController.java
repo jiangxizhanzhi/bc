@@ -299,7 +299,7 @@ public class WebCourseController {
 
 	@GetMapping("/user/course/progress")
 	@ApiOperation("用户学习课程的进度")
-	public BaseRsp<ListRsp<UserCourseProcessRes>> listUserCourseProcessRes(@RequestParam("name") String courseName, @RequestParam("page") Integer page,
+	public BaseRsp<ListRsp<UserCourseProcessRes>> listUserCourseProcessRes(@RequestParam(value = "name", required = false) String courseName, @RequestParam("page") Integer page,
 																		   @RequestParam("per_page") Integer pageSize, @RequestParam("user_id") String userId) {
 
 		Page<CourseLessonUserRelation> courseLessonUserRelationPage = new Page<>(page, pageSize);

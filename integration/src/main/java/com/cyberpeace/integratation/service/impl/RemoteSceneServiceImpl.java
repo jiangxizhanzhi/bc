@@ -413,6 +413,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
+		SCENE_ENTITY_DEVICE_LIST_URL = MP_HOST + ConfigUtil.getContextProperty("scene.entity_device.list");
+
 		SCENE_START_URL = MP_HOST + ConfigUtil.getContextProperty("scene.start.app");
 
 		SCENE_START_TEST_URL = MP_HOST + ConfigUtil.getContextProperty("scene.start.test");
@@ -558,6 +560,13 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		String targetUrl = SCENE_DELETE_URL;
 
 		return HttpClientUtil.delete(targetUrl, sceneOpsContext, Boolean.class);
+	}
+
+
+	@Override
+	public List<String> getSceneEntityDeviceIds(String csceneId) {
+		String targetUrl = SCENE_ENTITY_DEVICE_LIST_URL + "?id=" + csceneId;
+		return HttpClientUtil.rawGet(targetUrl, List.class);
 	}
 
 	/**

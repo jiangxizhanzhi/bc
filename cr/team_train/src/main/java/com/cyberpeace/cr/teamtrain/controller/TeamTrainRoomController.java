@@ -2,6 +2,7 @@ package com.cyberpeace.cr.teamtrain.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.annoations.BehaviorRecord;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -21,10 +22,8 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.HtmlToPdfUtil;
-import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.constant.BaseI18nErrorMsg;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.FlowOpsReq;
@@ -59,6 +58,7 @@ import com.cyberpeace.cr.teamtrain.controller.rsp.TrainQueueRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
+import com.cyberpeace.cr.teamtrain.dao.entity.TrainQueue;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TrainQueueMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
@@ -72,6 +72,7 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.impl.MpEnvService;
 import com.google.common.collect.Lists;
@@ -96,6 +97,8 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 /**
@@ -110,6 +113,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/cr/team_train/room")
 @RequiresAuthentication
 public class TeamTrainRoomController {
+
+
 
 	/**
 	 * 团队房间Service
@@ -201,8 +206,7 @@ public class TeamTrainRoomController {
 	@Autowired
 	private MpEnvService mpEnvService;
 
-	@Autowired
-	private TrainQueueMapper trainQueueMapper;
+
 
 	/**
 	 * 失踪日志
@@ -215,7 +219,15 @@ public class TeamTrainRoomController {
 	@ApiOperation("训练队列查询接口")
 	@GetMapping("/start_queue/list")
 	public BaseRsp<List<TrainQueueRsp>> listTrainQueue(@RequestParam("room_id") String roomId) {
-		return new BaseRsp<>(Collections.emptyList());
+		return new BaseRsp<>(teamSceneService.getTrainQueueList(roomId));
+	}
+
+	@ApiOperation("取消排队")
+	@PostMapping("/start_queue/cancel")
+	public BaseRsp<Boolean> cancelTrainQueue(@RequestBody ResourceIdReq resourceIdReq) {
+		String roomId = resourceIdReq.getResourceId();
+		teamSceneService.cancelTrainQueue(roomId);
+		return new BaseRsp<>(Boolean.TRUE);
 	}
 
 	/**

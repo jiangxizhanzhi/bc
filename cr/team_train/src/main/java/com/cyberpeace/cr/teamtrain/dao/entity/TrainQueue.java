@@ -31,4 +31,13 @@ public class TrainQueue extends BaseTable {
     private Integer status;
 
     private String operatorUserId;
+
+
+    public static class Status {
+        public static final int WAITING = 0;
+        public static final int RUNNING = 1;
+        public static final int CANCELED = 2;
+        public static final int FINISHED = 3;
+        public static final int ERROR = 4;
+    }
 }

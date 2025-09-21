@@ -7,8 +7,6 @@ import java.util.List;
 
 @Data
 public class TrainQueueRsp {
-    @ApiModelProperty("记录唯一标识")
-    private String resourceId;
 
 
     @ApiModelProperty("团队训练roomId")

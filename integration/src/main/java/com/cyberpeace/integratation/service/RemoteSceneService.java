@@ -51,6 +51,14 @@ public interface RemoteSceneService {
 	 */
 	Boolean stopScene(SceneOpsContext sceneOpsContext);
 
+
+	/**
+	 * 获取场景实体设备节点ids
+	 * @param csceneId
+	 * @return
+	 */
+	List<String> getSceneEntityDeviceIds(String csceneId);
+
 	/**
 	 * 暂停场景
 	 *

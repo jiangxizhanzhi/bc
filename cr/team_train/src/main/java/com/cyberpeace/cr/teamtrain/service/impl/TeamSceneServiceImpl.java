@@ -1,9 +1,26 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.DateTimeFormatUtil;
+import com.cyberpeace.cr.teamtrain.controller.rsp.TrainQueueRsp;
+import com.cyberpeace.cr.teamtrain.dao.entity.TrainQueue;
+import com.cyberpeace.cr.teamtrain.dao.mapper.TrainQueueMapper;
+import com.cyberpeace.integratation.service.RemoteSceneService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,6 +72,11 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class TeamSceneServiceImpl implements TeamSceneService {
 
+	private static final ReentrantLock DEVICE_QUEUE_LOCK = new ReentrantLock();
+
+	private static final ScheduledExecutorService SCHEDULED_EXECUTOR_SERVICE = Executors.newScheduledThreadPool(1);
+
+
 	/**
 	 * 团队房间Service
 	 */
@@ -103,6 +125,69 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	@Autowired
 	private CrSceneService crSceneService;
 
+	@Autowired
+	private TrainQueueMapper trainQueueMapper;
+
+	@Autowired
+	private RemoteSceneService remoteSceneService;
+
+
+	@Override
+	public List<TrainQueueRsp> getTrainQueueList(String roomId) {
+		List<String> deviceIds = getEntityDeviceIds(roomId);
+		return getTrainQueueListByDeviceIds(deviceIds);
+	}
+
+	@Override
+	public void cancelTrainQueue(String roomId) {
+		tryDeviceLock();
+		try {
+			trainQueueMapper.update(null, new LambdaUpdateWrapper<>(TrainQueue.class)
+					.set(TrainQueue::getStatus, TrainQueue.Status.CANCELED)
+					.eq(TrainQueue::getRoomId, roomId));
+		} finally {
+			DEVICE_QUEUE_LOCK.unlock();
+		}
+	}
+
+	private List<String> getEntityDeviceIds(String roomId) {
+		TeamRoom room = teamRoomService.getById(roomId);
+		String topoId = room.getCopyedTopoId();
+		if (StringUtils.isBlank(topoId)) {
+			throw new BusinessException(ErrorCode.DIRECT_MSG_EXCEPTION, "当前训练数据异常，关联的拓扑数据无法获取");
+		}
+		return remoteSceneService.getSceneEntityDeviceIds(topoId);
+	}
+
+	private List<TrainQueueRsp> getTrainQueueListByDeviceIds(List<String> deviceIds) {
+		if (CollectionUtils.isEmpty(deviceIds)) {
+			return Collections.emptyList();
+		} else {
+			List<TrainQueue> trainQueues = trainQueueMapper.selectList(new LambdaQueryWrapper<>(TrainQueue.class)
+					.in(TrainQueue::getStatus, TrainQueue.Status.RUNNING, TrainQueue.Status.WAITING)
+					.in(TrainQueue::getEntityDeviceId, deviceIds).orderByAsc(TrainQueue::getApplyTime));
+			if (CollectionUtils.isEmpty(trainQueues)) {
+				return Collections.emptyList();
+			} else {
+				Map<String, List<TrainQueue>> trainQueueMap = trainQueues.stream().collect(Collectors.groupingBy(TrainQueue::getRoomId));
+				List<TrainQueueRsp> trainQueueRsps = new ArrayList<>();
+				trainQueueMap.forEach((roomKey, trainQueuesValue) -> {
+					TrainQueueRsp trainQueueRsp = new TrainQueueRsp();
+					trainQueueRsp.setRoomId(roomKey);
+					trainQueueRsp.setRoomName(trainQueuesValue.get(0).getRoomName());
+					trainQueueRsp.setStatus(trainQueuesValue.get(0).getStatus());
+					trainQueueRsp.setEntityDeviceIds(trainQueuesValue.stream().map(TrainQueue::getEntityDeviceId).collect(Collectors.toList()));
+					trainQueueRsp.setApplyTime(DateTimeFormatUtil.DATE_FORMATTER.format(trainQueuesValue.get(0).getApplyTime()));
+
+					trainQueueRsps.add(trainQueueRsp);
+				});
+
+				return trainQueueRsps;
+			}
+		}
+	}
+
+
 	/**
 	 * 启动场景
 	 *
@@ -128,38 +213,199 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 			}
 		}
 
-		// 3、构建本地scene对象
-		LocalScene localScene = createLocalScene(BusinessCode.TEAM_TRAINING.getCode(),
-				room, room.getCopyedTopoId());
 
-		// 4、启动mp场景
-		String sceneId = localSceneService.startScene(localScene);
-
+		tryDeviceLock();
 		try {
-			// 5、更新本地数据库数据
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			// 检查是否存在实体设备，以及实体设备排队
+			List<String> deviceIds = getEntityDeviceIds(roomId);
+			List<TrainQueueRsp> trainQueueRsps = getTrainQueueListByDeviceIds(deviceIds);
+			if (!CollectionUtils.isEmpty(trainQueueRsps)) {
+				if (trainQueueRsps.get(0).getRoomId().equals(roomId) && trainQueueRsps.get(0).getStatus() == TrainQueue.Status.RUNNING) {
+					log.info("当前训练排队获取到实体资源，可以开始启动");
+				} else {
+					List<TrainQueueRsp> currentRoomTrainQueueRsps = trainQueueRsps.stream().filter(trainQueueRsp -> trainQueueRsp.getRoomId().equals(roomId))
+							.collect(Collectors.toList());
 
-				@Override
-				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-					// 更新表数据
-					localScene.setMpSceneId(sceneId);
-					localScene.setSceneStatus(SceneStatusEnum.START.getCode());
-					localScene.setStartTime(new Date());
-					room.setLocalSceneId(localScene.getResourceId());
+					// 当前队列中有当前room
+					if (!CollectionUtils.isEmpty(currentRoomTrainQueueRsps)) {
+						//重复排队，异常
+						if (currentRoomTrainQueueRsps.size() > 1) {
+							throw new BusinessException(ErrorCode.DIRECT_MSG_EXCEPTION, "训练启动队列数据异常，当前序列重复排队");
+						} else {
+							// 在等待了，接着等
+							if (currentRoomTrainQueueRsps.get(0).getStatus() == TrainQueue.Status.WAITING) {
+								throw new BusinessException(ErrorCode.DIRECT_MSG_EXCEPTION, "当前训练所需实体设备正在被占用中，系统会在资源释放后再启动当前训练");
+							} else {
+								// 处于运行状态，但是不是第一个。scan有问题
+								throw new BusinessException(ErrorCode.DIRECT_MSG_EXCEPTION, "当前训练队列状态异常，请联系管理员处理");
+							}
+						}
+					} else {
+						//队列中没有当前room，第一次启动，资源被占用，进行排队
+						for (String deviceId : deviceIds) {
+							TrainQueue trainQueue = new TrainQueue();
+							trainQueue.setApplyTime(LocalDateTime.now());
+							trainQueue.setStatus(TrainQueue.Status.WAITING);
+							trainQueue.setRoomId(roomId);
+							trainQueue.setOperatorUserId(userId);
+							trainQueue.setCreateTime(new Date());
+							trainQueue.setUpdateTime(new Date());
+							trainQueue.setOperatorUserId(userId);
+							trainQueue.setRoomName(room.getName());
+							trainQueue.setEntityDeviceId(deviceId);
 
-					// 执行表更新
-					localSceneService.save(localScene);
-					teamRoomService.updateById(room);
+							trainQueueMapper.insert(trainQueue);
+						}
+						throw new BusinessException(ErrorCode.DIRECT_MSG_EXCEPTION, "当前训练所需实体设备正在被占用中，已加入启动等待队列中，资源释放后会自动启动");
+					}
+
 				}
-			});
-			// 5.1 本地保存数据错误，删除已启动的远程场景
-		} catch (Exception e) {
-			localSceneService.stopScene(localScene);
-			log.error("Failed to save local data:", e);
-			throw new BusinessException(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE);
+
+			} else {
+				//插入运行中
+				for (String deviceId : deviceIds) {
+					TrainQueue trainQueue = new TrainQueue();
+					trainQueue.setApplyTime(LocalDateTime.now());
+					trainQueue.setStatus(TrainQueue.Status.RUNNING);
+					trainQueue.setRoomId(roomId);
+					trainQueue.setOperatorUserId(userId);
+					trainQueue.setCreateTime(new Date());
+					trainQueue.setUpdateTime(new Date());
+					trainQueue.setOperatorUserId(userId);
+					trainQueue.setRoomName(room.getName());
+					trainQueue.setEntityDeviceId(deviceId);
+
+					trainQueueMapper.insert(trainQueue);
+				}
+			}
+		} finally {
+			DEVICE_QUEUE_LOCK.unlock();
 		}
 
-		return sceneId;
+
+		try {
+
+
+			// 3、构建本地scene对象
+			LocalScene localScene = createLocalScene(BusinessCode.TEAM_TRAINING.getCode(),
+					room, room.getCopyedTopoId());
+			String sceneId = localSceneService.startScene(localScene);
+
+			try {
+				// 4、启动mp场景
+				// 5、更新本地数据库数据
+				transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+					@Override
+					protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+						// 更新表数据
+						localScene.setMpSceneId(sceneId);
+						localScene.setSceneStatus(SceneStatusEnum.START.getCode());
+						localScene.setStartTime(new Date());
+						room.setLocalSceneId(localScene.getResourceId());
+
+						// 执行表更新
+						localSceneService.save(localScene);
+						teamRoomService.updateById(room);
+					}
+				});
+				// 5.1 本地保存数据错误，删除已启动的远程场景
+			} catch (Exception e) {
+				localSceneService.stopScene(localScene);
+				log.error("Failed to save local data:", e);
+				throw new BusinessException(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE);
+			}
+
+			return sceneId;
+		} catch (Exception e) {
+			log.error("Failed to start scene:", e);
+			tryDeviceLock();
+			try {
+				trainQueueMapper.update(null, new LambdaUpdateWrapper<TrainQueue>().set(TrainQueue::getStatus, TrainQueue.Status.ERROR)
+						.eq(TrainQueue::getRoomId, roomId));
+			} finally {
+				DEVICE_QUEUE_LOCK.unlock();
+			}
+			throw new BusinessException(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE);
+		}
+	}
+
+	private void tryDeviceLock() {
+		try {
+			boolean lockFlag = DEVICE_QUEUE_LOCK.tryLock(60, TimeUnit.SECONDS);
+			if (!lockFlag) {
+				log.error("获取锁失败");
+				throw new BusinessException(ErrorCode.DIRECT_MSG_EXCEPTION, "当前训练启动频繁，请稍后再试");
+			}
+		} catch (InterruptedException e) {
+			log.error(e.getMessage(), e);
+			throw new BusinessException(ErrorCode.DIRECT_MSG_EXCEPTION, "当前训练启动频繁，请稍后再试");
+		}
+	}
+
+
+	/**
+	 * 按照deviceId获取当前所有队列
+	 *
+	 * 扫描所有的数据 wait和running记录。对于每个room来说，还需要有device到room的映射。
+	 *
+	 *
+	 * 判断范围，每个device， apply_time最新的room, 做排序。判断当前room是否可以启动，
+	 */
+	private void scanTrainQueueAndStartTrain() {
+		List<TrainQueue> trainQueues = trainQueueMapper.selectList(new LambdaQueryWrapper<>(TrainQueue.class)
+				.in(TrainQueue::getStatus, TrainQueue.Status.RUNNING, TrainQueue.Status.WAITING)
+				.orderByAsc(TrainQueue::getApplyTime));
+
+		Map<String, Object> deviceLockMap = new HashMap<>();
+		Map<String, List<TrainQueue>> deviceIdToTrainQueueMap = trainQueues.stream().collect(Collectors.groupingBy(TrainQueue::getEntityDeviceId));
+		Set<String> scanTrains = new HashSet<>();
+		for (List<TrainQueue> value : deviceIdToTrainQueueMap.values()) {
+			if (TrainQueue.Status.WAITING == value.get(0).getStatus()) {
+				scanTrains.add(value.get(0).getRoomId());
+			} else {
+				deviceLockMap.put(value.get(0).getEntityDeviceId(), new Object());
+			}
+		}
+
+
+
+		Map<String, List<TrainQueue>> trainQueueMap = trainQueues.stream().collect(Collectors.groupingBy(TrainQueue::getRoomId));
+		List<TrainQueueRsp> trainQueueRsps = new ArrayList<>();
+		trainQueueMap.forEach((roomKey, trainQueuesValue) -> {
+			if (scanTrains.contains(roomKey)) {
+				TrainQueueRsp trainQueueRsp = new TrainQueueRsp();
+				trainQueueRsp.setRoomId(roomKey);
+				trainQueueRsp.setRoomName(trainQueuesValue.get(0).getRoomName());
+				trainQueueRsp.setStatus(trainQueuesValue.get(0).getStatus());
+				trainQueueRsp.setEntityDeviceIds(trainQueuesValue.stream().map(TrainQueue::getEntityDeviceId).collect(Collectors.toList()));
+				trainQueueRsp.setApplyTime(DateTimeFormatUtil.DATE_FORMATTER.format(trainQueuesValue.get(0).getApplyTime()));
+
+				trainQueueRsps.add(trainQueueRsp);
+			}
+		});
+		Collections.sort(trainQueueRsps, Comparator.comparing(TrainQueueRsp::getApplyTime));
+		for (TrainQueueRsp trainQueueRsp : trainQueueRsps) {
+			int lockCount = trainQueueRsp.getEntityDeviceIds().size();
+			for (String entityDeviceId : trainQueueRsp.getEntityDeviceIds()) {
+				if (Objects.nonNull(deviceLockMap.get(entityDeviceId))) {
+					lockCount--;
+				}
+			}
+			if (lockCount == trainQueueRsp.getEntityDeviceIds().size()) {
+				for (String entityDeviceId : trainQueueRsp.getEntityDeviceIds()) {
+					deviceLockMap.put(entityDeviceId, new Object());
+				}
+				trainQueueMapper.update(null, new LambdaUpdateWrapper<TrainQueue>().set(TrainQueue::getStatus, TrainQueue.Status.RUNNING)
+						.eq(TrainQueue::getRoomId, trainQueueRsp.getRoomId()).eq(TrainQueue::getStatus, TrainQueue.Status.WAITING));
+
+				startScene(trainQueueRsp.getRoomId(), UserInfoContext.getUserContext().getUserId());
+			}
+
+		}
+
+
+
 	}
 
 	/**
@@ -229,10 +475,26 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		LocalScene localScene = localSceneService.getById(teamRoom.getLocalSceneId());
 
 		Boolean stopResult = localSceneService.stopScene(localScene);
+
+
+
 		if (stopResult) {
 			// 记录复盘sceneId,
 			// 是否需要更新replay_scene_id。训练未结束，更新；训练已结束，场景开始时间在训练结束之前才更新。
 			// 只有训练已结束且场景开启时间在训练结束之后，才不更新
+			SCHEDULED_EXECUTOR_SERVICE.schedule(() -> {
+				tryDeviceLock();
+				try {
+					trainQueueMapper.update(null, new LambdaUpdateWrapper<TrainQueue>().set(TrainQueue::getStatus, TrainQueue.Status.FINISHED)
+							.eq(TrainQueue::getRoomId, roomId));
+
+					scanTrainQueueAndStartTrain();
+				} finally {
+					DEVICE_QUEUE_LOCK.unlock();
+				}
+			}, 60L, TimeUnit.SECONDS);
+
+
 			if (!(teamRoom.isEnded() && localScene.getCreateTime()
 					.after(trainRecordService.getActualEndTime(roomId)))) {
 				teamRoom.setReplaySceneId(localScene.getMpSceneId());

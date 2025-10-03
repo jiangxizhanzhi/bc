@@ -1,12 +1,17 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,12 +19,38 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.cyberpeace.common.enums.TeamRoleGroup;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.service.*;
+import com.cyberpeace.cr.crbase.service.context.TrainingRecord;
 import com.cyberpeace.cr.teamtrain.dao.entity.CourseLessonUserRelation;
 import com.cyberpeace.cr.teamtrain.dao.mapper.CourseLessonUserRelationMapper;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.FontProvider;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.XMLWorker;
+import com.itextpdf.tool.xml.XMLWorkerFontProvider;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
+import com.itextpdf.tool.xml.css.CssFilesImpl;
+import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
+import com.itextpdf.tool.xml.html.CssAppliers;
+import com.itextpdf.tool.xml.html.CssAppliersImpl;
+import com.itextpdf.tool.xml.html.Tags;
+import com.itextpdf.tool.xml.parser.XMLParser;
+import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
+import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
+import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.ResourceUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -408,6 +439,317 @@ public class TeamTrainScoreController {
 
 		return new BaseRsp<>(missionSchemeList);
 	}
+
+    @ApiOperation("下载用户训练记录")
+    @GetMapping("/download_train_record")
+    public ResponseEntity<Resource> downloadTrainingRecord(@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
+                                                           @ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
+
+        try {
+            // 1. 获取训练记录数据
+            List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList = crScoreController
+                    .getTrainingRecord(resource_id, user_hash);
+
+            // 2. 生成唯一的PDF文件名
+            String fileName = String.format("output-report-%s-%s.pdf", resource_id, user_hash);
+            String pdfOutputPath = "/tmp/" + fileName;
+
+            // 3. 数据转换和PDF生成流程
+            String markdownContent = convertJsonToMarkdown(missionSchemeList);
+            String htmlContent = convertMarkdownToHtml(markdownContent);
+
+            String fullHtml = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\" />"
+                    + "<style>* {\n" +
+                    "    margin: 0;\n" +
+                    "    padding: 0;\n" +
+                    "    box-sizing: border-box;\n" +
+                    "    font-family: YouShe, SimSun, SimHei, sans-serif; \n" +
+                    "}\n" +
+                    "body {\n" +
+                    "    font-size: 12pt;\n" +
+                    "    line-height: 1.5;\n" +
+                    "    color: #333333; \n" +
+                    "    margin: 20pt; \n" +
+                    "    font-family: YouShe, SimSun, SimHei, sans-serif; \n" +
+                    "}\n" +
+                    "\n" +
+                    "\n" +
+                    "h1 {\n" +
+                    "    font-size: 18pt;\n" +
+                    "    font-weight: bold;\n" +
+                    "    margin-top: 16pt;\n" +
+                    "    margin-bottom: 10pt;\n" +
+                    "    color: #2c3e50; \n" +
+                    "    border-bottom: 1pt solid #3498db; \n" +
+                    "    padding-bottom: 3pt;\n" +
+                    "}\n" +
+                    "h2 {\n" +
+                    "    font-size: 16pt;\n" +
+                    "    font-weight: bold;\n" +
+                    "    margin-top: 14pt;\n" +
+                    "    margin-bottom: 8pt;\n" +
+                    "    color: #34495e;\n" +
+                    "}\n" +
+                    "h3 {\n" +
+                    "    font-size: 14pt;\n" +
+                    "    font-weight: bold;\n" +
+                    "    margin-top: 12pt;\n" +
+                    "    margin-bottom: 6pt;\n" +
+                    "    color: #16a085;\n" +
+                    "}\n" +
+                    "h4 {\n" +
+                    "    font-size: 13pt;\n" +
+                    "    font-weight: bold;\n" +
+                    "    margin-top: 10pt;\n" +
+                    "    margin-bottom: 4pt;\n" +
+                    "}\n" +
+                    "h5 {\n" +
+                    "    font-size: 12pt;\n" +
+                    "    font-weight: bold;\n" +
+                    "    margin-top: 8pt;\n" +
+                    "    margin-bottom: 3pt;\n" +
+                    "    font-style: italic; \n" +
+                    "}\n" +
+                    "h6 {\n" +
+                    "    font-size: 12pt;\n" +
+                    "    font-weight: normal;\n" +
+                    "    margin-top: 6pt;\n" +
+                    "    margin-bottom: 2pt;\n" +
+                    "    color: #7f8c8d;\n" +
+                    "}\n" +
+                    "\n" +
+                    "\n" +
+                    "p {\n" +
+                    "    margin-bottom: 8pt;\n" +
+                    "    text-align: justify; \n" +
+                    "}\n" +
+                    "blockquote {\n" +
+                    "    margin: 10pt 0;\n" +
+                    "    padding: 10pt 15pt;\n" +
+                    "    background-color: #f9f9f9;\n" +
+                    "    border-left: 4pt solid #3498db;\n" +
+                    "    font-style: italic;\n" +
+                    "}\n" +
+                    "\n" +
+                    "\n" +
+                    "ul, ol {\n" +
+                    "    margin-left: 20pt; \n" +
+                    "    margin-bottom: 8pt;\n" +
+                    "}\n" +
+                    "li {\n" +
+                    "    margin-bottom: 3pt;\n" +
+                    "    list-style-position: outside; \n" +
+                    "}\n" +
+                    "ul li {\n" +
+                    "    list-style-type: disc;\n" +
+                    "}\n" +
+                    "ol li {\n" +
+                    "    list-style-type: decimal;\n" +
+                    "}\n" +
+                    "\n" +
+                    "\n" +
+                    "table {\n" +
+                    "    width: 100%;\n" +
+                    "    border-collapse: collapse; \n" +
+                    "    margin: 10pt 0;\n" +
+                    "}\n" +
+                    "th, td {\n" +
+                    "    border: 0.75pt solid #95a5a6; \n" +
+                    "    padding: 6pt 8pt;\n" +
+                    "    text-align: left;\n" +
+                    "}\n" +
+                    "th {\n" +
+                    "    background-color: #ecf0f1;\n" +
+                    "    font-weight: bold;\n" +
+                    "}\n" +
+                    "\n" +
+                    "a {\n" +
+                    "    color: #2980b9;\n" +
+                    "    text-decoration: underline;\n" +
+                    "}\n" +
+                    "\n" +
+                    "hr {\n" +
+                    "    border: none;\n" +
+                    "    height: 0.5pt;\n" +
+                    "    background-color: #bdc3c7;\n" +
+                    "    margin: 15pt 0;\n" +
+                    "}\n" +
+                    "\n" +
+                    "code {\n" +
+                    "    font-family: \"Courier New\", monospace;\n" +
+                    "    background-color: #f8f9fa;\n" +
+                    "    padding: 1pt 3pt;\n" +
+                    "    border-radius: 2pt;\n" +
+                    "    font-size: 11pt;\n" +
+                    "}\n" +
+                    "pre {\n" +
+                    "    font-family: \"Courier New\", monospace;\n" +
+                    "    background-color: #f8f9fa;\n" +
+                    "    padding: 10pt;\n" +
+                    "    border-left: 3pt solid #e74c3c;\n" +
+                    "    overflow: auto;\n" +
+                    "    margin: 10pt 0;\n" +
+                    "    white-space: pre-wrap; \n" +
+                    "}\n" +
+                    "\n" +
+                    "strong, b {\n" +
+                    "    font-weight: bold;\n" +
+                    "}\n" +
+                    "em, i {\n" +
+                    "    font-style: italic;\n" +
+                    "}\n" +
+                    "u {\n" +
+                    "    text-decoration: underline;\n" +
+                    "}</style></head><body>"
+                    + htmlContent + "</body></html>";
+
+            // 4. 生成PDF文件
+            log.info("htmlContent: {} fullHtml: {}", htmlContent, fullHtml);
+            convertHtmlToPdf(fullHtml, pdfOutputPath);
+
+            // 5. 检查PDF文件是否生成成功
+            File pdfFile = new File(pdfOutputPath);
+            if (!pdfFile.exists()) {
+                log.error("PDF文件生成失败: {}", pdfOutputPath);
+                throw new BusinessException("PDF文件生成失败");
+            }
+
+            // 6. 创建文件资源并设置下载响应
+            Resource resource = new FileSystemResource(pdfFile);
+
+            // 对文件名进行URL编码，确保中文和特殊字符正确处理
+            String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString())
+                    .replace("+", "%20");
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=\"" + encodedFileName + "\"");
+            headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE);
+            headers.add("X-File-Name", encodedFileName);
+
+            log.info("PDF文件生成成功: {}, 文件大小: {} bytes", pdfOutputPath, pdfFile.length());
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentLength(pdfFile.length())
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(resource);
+
+        } catch (BusinessException e) {
+            log.error("业务逻辑错误: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("PDF生成系统错误: {}", e.getMessage(), e);
+            throw new BusinessException("系统错误，PDF生成失败");
+        }
+
+    }
+
+    /**
+     * 将JSON数据转换为Markdown格式
+     * @return 格式化后的Markdown内容
+     */
+    public static String convertJsonToMarkdown(List<MissionSchemeObject<TrainingRecordMissionRsp>> stages) {
+        StringBuilder markdown = new StringBuilder();
+
+        try {
+            // 添加主标题
+            markdown.append("# 训练报告\n\n");
+
+            // 遍历所有阶段
+            for (MissionSchemeObject<TrainingRecordMissionRsp> stage : stages) {
+
+                String stageName = stage.getStage();
+                // 添加阶段标题
+                markdown.append("## ").append(stageName).append("\n\n");
+
+                List<TrainingRecordMissionRsp> missionsArray = stage.getMissions();
+
+                // 遍历该阶段的所有任务
+                for (TrainingRecordMissionRsp trainingRecordMissionRsp : missionsArray) {
+                    String title = trainingRecordMissionRsp.getTitle();
+                    String description = trainingRecordMissionRsp.getDescription();
+                    String remark = trainingRecordMissionRsp.getRemark();
+
+                    // 获取训练记录信息
+                    TrainingRecord trainingRecord = trainingRecordMissionRsp.getTrainingRecord();
+                    String record = Optional.ofNullable(trainingRecord).map(TrainingRecord::getRecord).orElse("");
+
+                    // 添加任务标题
+                    markdown.append("### ").append(title).append("\n\n");
+
+                    // 添加任务描述
+                    markdown.append("#### 任务描述\n");
+                    markdown.append(description).append("\n\n");
+
+                    // 添加任务回答部分
+                    markdown.append("#### 任务回答\n");
+                    markdown.append("##### 回答答案\n");
+                    markdown.append(record).append("\n\n");
+                    markdown.append("##### 回答描述\n");
+                    markdown.append(remark).append("\n\n");
+
+                    // 添加分隔线（可选）
+                    markdown.append("---\n\n");
+                }
+            }
+
+        } catch (Exception e) {
+            throw new BusinessException("JSON解析错误: " + e.getMessage(), e);
+        }
+
+        return markdown.toString();
+    }
+
+    public static String convertMarkdownToHtml(String markdownContent) {
+        Parser parser = Parser.builder().build();
+        HtmlRenderer renderer = HtmlRenderer.builder().build();
+
+        // 将Markdown文本解析为抽象语法树，然后渲染为HTML字符串
+        return renderer.render(parser.parse(markdownContent));
+    }
+
+    public static void convertHtmlToPdf(String htmlContent, String pdfOutputPath) throws Exception {
+        Document document = new Document();
+        PdfWriter writer = PdfWriter.getInstance(document, Files.newOutputStream(Paths.get(pdfOutputPath)));
+        document.open();
+
+        // 1. 创建并配置字体提供者（关键修改）
+        XMLWorkerFontProvider fontProvider = new XMLWorkerFontProvider();
+
+        // 或者如果字体文件在项目资源目录中：
+         fontProvider.register(ResourceUtils.getFile("classpath:/static/YouSheBiaoTiHei.ttf").getPath(), "YouShe");
+
+        // 启用Unicode支持，确保中文字符正确处理
+        fontProvider.setUseUnicode(true);
+
+        // 2. 创建CSS应用器并关联字体提供者
+        CssAppliers cssAppliers = new CssAppliersImpl(fontProvider);
+
+        // 3. 创建HTML管道上下文并设置CSS应用器
+        HtmlPipelineContext htmlContext = new HtmlPipelineContext(cssAppliers);
+        htmlContext.setTagFactory(Tags.getHtmlTagProcessorFactory());
+        htmlContext.setAcceptUnknown(true).autoBookmark(true);
+
+        // 4. 设置完整的管道链（添加CSS解析器）
+        CssFilesImpl cssFiles = new CssFilesImpl();
+        cssFiles.add(XMLWorkerHelper.getInstance().getDefaultCSS());
+        CSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
+
+        PdfWriterPipeline pdfPipeline = new PdfWriterPipeline(document, writer);
+        HtmlPipeline htmlPipeline = new HtmlPipeline(htmlContext, pdfPipeline);
+        CssResolverPipeline cssPipeline = new CssResolverPipeline(cssResolver, htmlPipeline);
+
+        // 使用 XMLWorkerHelper 进行转换
+        XMLWorker worker = new XMLWorker(cssPipeline, true);
+        XMLParser parser = new XMLParser(worker);
+
+        // 将 HTML 字符串转换为输入流并解析
+        parser.parse(new ByteArrayInputStream(htmlContent.getBytes(StandardCharsets.UTF_8)));
+
+        document.close();
+        writer.close();
+    }
 
 	/**
 	 * 获取训练报告 - 任务信息统计

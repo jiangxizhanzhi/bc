@@ -44,4 +44,7 @@ public class TrainingRecordMissionRsp implements Serializable {
 	 */
 	@ApiModelProperty("训练状态")
 	private Integer traininStatus;
+
+    @ApiModelProperty("学生提交的备注")
+    private String remark;
 }

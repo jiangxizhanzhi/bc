@@ -378,6 +378,7 @@ public class CrScoreController {
 
 						TrainingRecord trainingRecord = new TrainingRecord();
 						if (crTask != null) {
+                            trainingRecordMissionRsp.setRemark(crTask.getRemark());
 							trainingRecord.setRecord(crTask.getUserAnswer());
 							trainingRecordMissionRsp.setTraininStatus(crTask.getStatus());
 							if (crTask.getBusinessType()
@@ -407,6 +408,8 @@ public class CrScoreController {
 
 		return missionSchemeList;
 	}
+
+
 
 	/**
 	 * 获取训练报告

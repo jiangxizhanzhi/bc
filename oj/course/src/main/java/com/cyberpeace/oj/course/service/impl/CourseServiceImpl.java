@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.common.enums.XdBusinessType;
+import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -384,33 +385,36 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         List<TeamRoomRsp> teamRoomRsps = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(lessonIds)) {
             for (String lessonId : lessonIds) {
+				try {
+					TeamRoomData teamRoomData = teamRoomService.getTeamRoomDataByRoomId(lessonId);
+					RoleQuery roleQuery = new RoleQuery();
+					roleQuery.setRoomId(teamRoomData.getResourceId());
+					List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 
-                TeamRoomData teamRoomData = teamRoomService.getTeamRoomDataByRoomId(lessonId);
-                RoleQuery roleQuery = new RoleQuery();
-                roleQuery.setRoomId(teamRoomData.getResourceId());
-                List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
-
-                durationSum = durationSum + Optional.ofNullable(teamRoomData.getDurationTime()).orElse(0);
-                Set<String> userIds = crRoles.stream().map(CrRole::getUserIds).map(str -> JsonUtil.toJsonObjectArray(str, String.class))
-                        .flatMap(List::stream).collect(Collectors.toSet());
-                allStudents.addAll(userIds);
+					durationSum = durationSum + Optional.ofNullable(teamRoomData.getDurationTime()).orElse(0);
+					Set<String> userIds = crRoles.stream().map(CrRole::getUserIds).map(str -> JsonUtil.toJsonObjectArray(str, String.class))
+							.flatMap(List::stream).collect(Collectors.toSet());
+					allStudents.addAll(userIds);
 
 
-                TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
-                String userId = UserInfoContext.getUserContext().getUserId();
-                teamRoomRsp.setTrainingRoleData(getSelfRole(crRoles, userId));
+					TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
+					String userId = UserInfoContext.getUserContext().getUserId();
+					teamRoomRsp.setTrainingRoleData(getSelfRole(crRoles, userId));
 
-				XdBusinessType xdBusinessType = XdBusinessType.getByCode(teamRoomRsp.getXdType());
-				teamRoomRsp.setTrainXdType(xdBusinessType.getType());
-				teamRoomRsp.setTrainXdSubType(xdBusinessType.getDesc());
+					XdBusinessType xdBusinessType = XdBusinessType.getByCode(teamRoomRsp.getXdType());
+					teamRoomRsp.setTrainXdType(xdBusinessType.getType());
+					teamRoomRsp.setTrainXdSubType(xdBusinessType.getDesc());
 
-                teamRoomRsp.setRolesData(getTeamRoomRoleRes(crRoles));
+					teamRoomRsp.setRolesData(getTeamRoomRoleRes(crRoles));
 
-                teamRoomRsp
-                        .setPreSkill(JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
-                teamRoomRsp.setTrainSkill(
-                        JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
-                teamRoomRsps.add(teamRoomRsp);
+					teamRoomRsp
+							.setPreSkill(JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
+					teamRoomRsp.setTrainSkill(
+							JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
+					teamRoomRsps.add(teamRoomRsp);
+				} catch (ResourceNotFoundException e) {
+					log.error(e.getMessage(), e);
+				}
             }
         }
         studentSum = allStudents.size();

@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.enums.XdBusinessType;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.DateTimeFormatUtil;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TrainQueueRsp;
@@ -287,7 +288,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 
 
 			// 3、构建本地scene对象
-			LocalScene localScene = createLocalScene(BusinessCode.TEAM_TRAINING.getCode(),
+			LocalScene localScene = createLocalScene(XdBusinessType.getByCode(room.getXdType()).getBusinessCode(),
 					room, room.getCopyedTopoId());
 			String sceneId = localSceneService.startScene(localScene);
 
@@ -734,6 +735,9 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	 * @return {@code LocalScene }
 	 */
 	private LocalScene createLocalScene(Integer businessCode, TeamRoom teamRoom, String topoId) {
+		if (Objects.isNull(businessCode)) {
+			throw new BusinessException("拓扑的业务类型不能为空");
+		}
 		LocalScene localScene = new LocalScene();
 
 		localScene.setBusinessCode(businessCode);

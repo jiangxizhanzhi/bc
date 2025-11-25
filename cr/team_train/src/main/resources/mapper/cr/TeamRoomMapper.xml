@@ -91,14 +91,15 @@
         left join local_scene on cr_team_room.resource_id = local_scene.business_instance_id
         <where>
 
-            cr_team_room.resource_id in
+
             <if test="listQuery.ids != null and listQuery.ids.size() != 0">
+                cr_team_room.resource_id in
                 <foreach collection="listQuery.ids" item="roomId" separator="," close=")" open="(">
                     #{roomId}
                 </foreach>
             </if>
-            <if test="listQuery.ids.size() == 0">
-                ('')
+            <if test="listQuery.ids != null and listQuery.ids.size() == 0">
+                cr_team_room.resource_id in ('')
             </if>
             <if test="listQuery.xdType != null">
                 and cr_team_room.xd_type = #{listQuery.xdType}

@@ -403,6 +403,11 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	}
 
+	@Override
+	public IPage<TeamRoomData> list(ListQuery listQuery) {
+		return this.list(listQuery, false);
+	}
+
 	/**
 	 * 列表
 	 *
@@ -410,11 +415,14 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 * @return {@code IPage<TeamRoomData> }
 	 */
 	@Override
-	public IPage<TeamRoomData> list(ListQuery listQuery) {
-		String userId = UserInfoContext.getUserContext().getUserId();
-
+	public IPage<TeamRoomData> list(ListQuery listQuery, boolean isOut) {
 		Page<TeamRoomData> page = listQuery.toPageParam();
-		listQuery.setIds(crRoleService.getRoomIdsByUserId(userId));
+		if (!isOut) {
+			String userId = UserInfoContext.getUserContext().getUserId();
+			listQuery.setIds(crRoleService.getRoomIdsByUserId(userId));
+		} else {
+			listQuery.setIds(null);
+		}
 
 		return teamRoomMapper.listTeamRoom(page, listQuery);
 	}
@@ -831,18 +839,22 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	/**
-	 * 列表室
 	 *
-	 * @param listQuery 列表查询
-	 * @return {@code ListRsp<TeamRoomRsp> }
+	 * @param listQuery
+	 * @param isOut 是否外部接口
+	 * @return
 	 */
 	@Override
-	public ListRsp<TeamRoomRsp> listRoom(ListQuery listQuery) {
-		String userId = UserInfoContext.getUserContext().getUserId();
+	public ListRsp<TeamRoomRsp> listRoom(ListQuery listQuery, boolean isOut) {
+		String userId = "";
+		if (!isOut) {
+			userId = UserInfoContext.getUserContext().getUserId();
+		}
+
 		// 默认时间排序
 		listQuery.setSort("-cr_team_room.create_time");
 
-		IPage<TeamRoomData> data = this.list(listQuery);
+		IPage<TeamRoomData> data = this.list(listQuery, isOut);
 
 		// 训练场景拓扑节点数量获取
 		Map<String, TopoDigest> topologyNodesStats = remoteTopoService
@@ -884,19 +896,24 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			List<CrRole> crRoles = roomRoleMap.get(teamRoomData.getResourceId());
 
 			TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
-            XdBusinessType xdBusinessType = XdBusinessType.getByCode(teamRoomRsp.getXdType());
-            teamRoomRsp.setTrainXdType(xdBusinessType.getType());
-            teamRoomRsp.setTrainXdSubType(xdBusinessType.getDesc());
-			teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId, userInfoMap));
+			XdBusinessType xdBusinessType = XdBusinessType.getByCode(teamRoomRsp.getXdType());
+			teamRoomRsp.setTrainXdType(xdBusinessType.getType());
+			teamRoomRsp.setTrainXdSubType(xdBusinessType.getDesc());
+			if (!isOut) {
+				teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId, userInfoMap));
+			}
 			teamRoomRsp.setRolesData(Lists.newArrayList());
 			// node count ,differs by role
-			CrRole selfRole = CrRole.findRoleByUserId(crRoles, userId);
-			if (null == selfRole || selfRole.isTeamTeacher()) {
-				teamRoomRsp.setNodesCount(
-						topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
-			} else {
-				teamRoomRsp.setNodesCount(selfRole.getVisibleNodeCount());
+			if (!isOut) {
+				CrRole selfRole = CrRole.findRoleByUserId(crRoles, userId);
+				if (null == selfRole || selfRole.isTeamTeacher()) {
+					teamRoomRsp.setNodesCount(
+							topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
+				} else {
+					teamRoomRsp.setNodesCount(selfRole.getVisibleNodeCount());
+				}
 			}
+
 			teamRoomRsp.setResourceOccupiedNums(topologyNodesStats
 					.get(teamRoomData.getCopyedTopoId()).getResourceOccupiedNums());
 			teamRoomRsp.setPreSkill(
@@ -926,6 +943,17 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		teamRoomRspListRsp.setCurrentPage(data.getCurrent());
 
 		return teamRoomRspListRsp;
+	}
+
+	/**
+	 * 列表室
+	 *
+	 * @param listQuery 列表查询
+	 * @return {@code ListRsp<TeamRoomRsp> }
+	 */
+	@Override
+	public ListRsp<TeamRoomRsp> listRoom(ListQuery listQuery) {
+		return listRoom(listQuery, false);
 	}
 
 	/**

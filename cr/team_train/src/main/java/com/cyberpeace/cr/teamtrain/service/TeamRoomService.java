@@ -58,6 +58,8 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 */
 	IPage<TeamRoomData> list(ListQuery listQuery);
 
+	IPage<TeamRoomData> list(ListQuery listQuery, boolean isOut);
+
 	/**
 	 * 修改团队训练状态
 	 *
@@ -214,4 +216,5 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 * @return {@code ListRsp<TeamRoomRsp>}
 	 */
 	ListRsp<TeamRoomRsp> listRoom(ListQuery listQuery);
+	ListRsp<TeamRoomRsp> listRoom(ListQuery listQuery, boolean isOut);
 }

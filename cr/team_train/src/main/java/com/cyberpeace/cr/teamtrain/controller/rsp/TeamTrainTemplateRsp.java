@@ -108,4 +108,9 @@ public class TeamTrainTemplateRsp  {
 	@ApiModelProperty(value = "关联 Engage 计数")
 	private List<NameCount> engageCount;
 
+
+	private Integer xdTemplateType;
+
+	private Integer xdTemplateCategory;
+
 }

@@ -383,6 +383,8 @@ public class TeamTrainTemplateController {
 
 		teamTrainTemplateRsp.setRoleList(teamTrainTemplateRoleRsps);
 		teamTrainTemplateRsp.setTimeLineConfig(template.getTimeLineConfig());
+		teamTrainTemplateRsp.setXdTemplateType(businessTemplate.getXdTemplateType());
+		teamTrainTemplateRsp.setXdTemplateCategory(businessTemplate.getXdTemplateCategory());
 		for (TeamTrainTemplateRoleRsp teamTrainTemplateRoleRsp : teamTrainTemplateRsp.getRoleList()) {
 			teamTrainTemplateRoleRsp.initAssetMap();
 		}

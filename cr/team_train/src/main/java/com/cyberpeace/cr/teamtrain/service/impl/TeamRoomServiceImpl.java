@@ -852,7 +852,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		}
 
 		// 默认时间排序
-		listQuery.setSort("-cr_team_room.create_time");
+		listQuery.setSort("cr_team_room.name");
 
 		IPage<TeamRoomData> data = this.list(listQuery, isOut);
 

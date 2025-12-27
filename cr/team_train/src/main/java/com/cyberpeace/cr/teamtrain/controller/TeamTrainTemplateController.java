@@ -418,7 +418,7 @@ public class TeamTrainTemplateController {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
 		// 默认时间排序
-		listQuery.setSort("-cr_business_template.create_time");
+		listQuery.setSort("cr_business_template.name");
 
 		IPage<TeamTemplateData> data = teamTemplateService.page(listQuery);
 		// 训练场景拓扑节点数量获取

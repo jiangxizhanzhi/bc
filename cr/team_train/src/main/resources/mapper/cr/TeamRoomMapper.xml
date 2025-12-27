@@ -119,7 +119,7 @@
             </if>
         </where>
         ORDER BY
-        cr_team_room.update_time desc
+        cr_team_room.name
     </select>
 
     <select id="selectByLocalSceneId" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom">

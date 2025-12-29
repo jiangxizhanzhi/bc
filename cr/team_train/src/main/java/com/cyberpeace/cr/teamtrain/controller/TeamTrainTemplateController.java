@@ -6,9 +6,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.crbase.service.context.ColorMission;
+import com.cyberpeace.cr.crbase.utils.JsonCommon;
+import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
+import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import com.cyberpeace.cr.teamtrain.controller.req.*;
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.util.StringUtil;
@@ -142,6 +149,86 @@ public class TeamTrainTemplateController {
 	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
+
+	@Autowired
+	private SingleTemplateService singleTemplateService;
+
+	@ApiOperation("复制为单兵训练")
+	@PostMapping("/copy_to_single_train")
+	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
+	public BaseRsp<Void> copyToSingleTrain(@Valid @RequestBody TeamTrainTemplateCopyReq req) {
+		String resourceId = req.getResourceId();
+		if (StringUtils.isNotEmpty(resourceId)) {
+			SingleTemplate singleTemplate = singleTemplateService.getByBusinessTemplateId(resourceId + "_single");
+			if (Objects.nonNull(singleTemplate)) {
+				throw new BusinessException(ErrorCode.DIRECT_MSG_EXCEPTION, "关联的单兵训练已发布");
+			}
+		}
+
+		//1. 团队模板
+		TeamTemplate template = teamTemplateService.getByTemplateBusinessId(resourceId);
+
+		//2. 通用业务模板
+		BusinessTemplate businessTemplate = businessTemplateService
+				.getById(template.getBusinessTemplateId());
+
+
+		BusinessTemplate copiedBusinessTemplate = new BusinessTemplate();
+		BeanUtils.copyProperties(businessTemplate, copiedBusinessTemplate);
+		copiedBusinessTemplate.setResourceId(businessTemplate.getResourceId() + "_single");
+		copiedBusinessTemplate.setName(businessTemplate.getName());
+		copiedBusinessTemplate.setId(null);
+		copiedBusinessTemplate.setCreateTime(null);
+		copiedBusinessTemplate.setUpdateTime(null);
+		// 单兵训练
+		copiedBusinessTemplate.setBusinessType(1);
+		copiedBusinessTemplate.setXdTemplateCategory(0);
+		copiedBusinessTemplate.setXdTemplateType(0);
+
+		SingleTemplate singleTemplate = new SingleTemplate();
+		BeanUtils.copyProperties(template, singleTemplate);
+		singleTemplate.setResourceId(template.getResourceId() + "_single");
+		singleTemplate.setCreateTime(null);
+		singleTemplate.setUpdateTime(null);
+		singleTemplate.setSubType(1);
+
+		String roleString = template.getRoleConfig();
+		//3.任务阶段信息
+		List<TeamTrainTemplateRoleRsp> teamTrainTemplateRoleRsps = JsonCommon.snakeParse(roleString,
+						new TypeReference<List<TeamTrainTemplateRoleRsp>>() {
+						});
+		ColorMission<AddTemplateMission> colorMission = new ColorMission<AddTemplateMission>();
+		colorMission.setTemplate(1);
+		colorMission.setColor(1);
+		if (CollectionUtils.isNotEmpty(teamTrainTemplateRoleRsps)) {
+			if (Objects.nonNull(teamTrainTemplateRoleRsps.get(0).getMissionsScheme())) {
+				colorMission.setTemplate(teamTrainTemplateRoleRsps.get(0).getMissionsScheme().getTemplate());
+				colorMission.setColor(teamTrainTemplateRoleRsps.get(0).getMissionsScheme().getColor());
+			}
+			List<MissionSchemeObject<AddTemplateMission>> schemeData = teamTrainTemplateRoleRsps.stream().map(TeamTrainTemplateRoleRsp::getMissionsScheme)
+					.filter(Objects::nonNull).filter(res -> Objects.nonNull(res.getSchemeData()))
+					.flatMap(res -> res.getSchemeData().stream()).collect(Collectors.toList());
+			colorMission.setSchemeData(schemeData);
+		}
+		singleTemplate.setMissionsScheme(JsonCommon.snakeStringify(colorMission));
+
+
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				// save business template
+				businessTemplateService.save(copiedBusinessTemplate);
+
+				// save single template
+				singleTemplate.setBusinessTemplateId(copiedBusinessTemplate.getResourceId());
+				singleTemplateService.save(singleTemplate);
+			}
+		});
+
+		return new BaseRsp<>();
+    }
 
 
     @ApiOperation("复制")

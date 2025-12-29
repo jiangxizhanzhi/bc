@@ -19,6 +19,11 @@
     <dependencies>
         <dependency>
             <groupId>com.cyberpeace.cr</groupId>
+            <artifactId>single_train</artifactId>
+            <version>${cr.single.train.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.cyberpeace.cr</groupId>
             <artifactId>cr_base</artifactId>
             <version>${cr.base.version}</version>
             <scope>provided</scope>

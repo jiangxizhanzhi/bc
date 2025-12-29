@@ -194,9 +194,14 @@ public class TeamTrainTemplateController {
 
 		String roleString = template.getRoleConfig();
 		//3.任务阶段信息
-		List<TeamTrainTemplateRoleRsp> teamTrainTemplateRoleRsps = JsonCommon.snakeParse(roleString,
-						new TypeReference<List<TeamTrainTemplateRoleRsp>>() {
-						});
+		List<TeamTrainTemplateRoleRsp> teamTrainTemplateRoleRsps;
+		if (StringUtils.isEmpty(roleString)) {
+			teamTrainTemplateRoleRsps = Lists.newArrayList();
+		} else {
+			teamTrainTemplateRoleRsps = JsonCommon.snakeParse(roleString,
+					new TypeReference<List<TeamTrainTemplateRoleRsp>>() {
+					});
+		}
 		ColorMission<AddTemplateMission> colorMission = new ColorMission<AddTemplateMission>();
 		colorMission.setTemplate(1);
 		colorMission.setColor(1);

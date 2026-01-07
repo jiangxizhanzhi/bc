@@ -59,7 +59,7 @@
                 and T1.name like #{pattern}
             </if>
         </where>
-        order by R1.start_time is null, R1.start_time desc, T1.id desc
+        order by T1.name
 
     </select>
 

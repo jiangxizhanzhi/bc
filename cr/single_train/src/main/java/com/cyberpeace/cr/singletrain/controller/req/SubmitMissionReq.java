@@ -35,7 +35,6 @@ public class SubmitMissionReq implements Serializable {
     /**
      * 用户提交答案
      */
-    @NotNull
     @ApiModelProperty("用户提交答案")
     private String answer;
 

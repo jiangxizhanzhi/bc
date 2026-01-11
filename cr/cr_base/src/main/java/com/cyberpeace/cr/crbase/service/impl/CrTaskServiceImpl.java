@@ -569,6 +569,9 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			return userChoiceSet.equals(choiceSet);
 		} else if (missionType.equals(MissionBase.MissionType.FILE.getCode())) {
 			return userAnswer.equalsIgnoreCase(missionAnswer);
+		} else if (missionType.equals(MissionBase.MissionType.FAQ.getCode()) ||
+				missionType.equals(MissionBase.MissionType.ATTACK.getCode()) || missionType.equals(MissionBase.MissionType.DEFENCE.getCode())){
+			return true;
 		} else {
 			return userAnswer.equals(missionAnswer);
 		}

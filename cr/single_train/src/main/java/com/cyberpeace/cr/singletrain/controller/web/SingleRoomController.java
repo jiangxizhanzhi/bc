@@ -3,6 +3,7 @@ package com.cyberpeace.cr.singletrain.controller.web;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -199,6 +200,9 @@ public class SingleRoomController {
 	@ApiOperation("任务提交")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<Boolean> submitMission(@RequestBody @Validated SubmitMissionReq requestData) {
+		if (Objects.isNull(requestData.getAnswer())) {
+			requestData.setAnswer(requestData.getTrainingRecord());
+		}
 		CrCommonValidator.checkStringExist(requestData.getAnswer(),
 				CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
 

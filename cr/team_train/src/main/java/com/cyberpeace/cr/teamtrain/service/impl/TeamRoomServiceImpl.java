@@ -195,15 +195,11 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		return teamRoomData;
 	}
 
-	/**
-	 * 创建
-	 *
-	 * @param teamTrainRoomContext 团队训练房间上下文
-	 * @return {@code TeamRoom }
-	 */
 	@Override
-	public TeamRoom create(TeamTrainRoomContext teamTrainRoomContext) {
-		String userId = UserInfoContext.getUserContext().getUserId();
+	public TeamRoom create(TeamTrainRoomContext teamTrainRoomContext, String userId) {
+		if (userId == null) {
+			userId = UserInfoContext.getUserContext().getUserId();
+		}
 
 		TeamTemplate template = teamTemplateService.getById(teamTrainRoomContext.getTemplate());
 		if (template == null) {
@@ -226,6 +222,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			teamRoom.setAreaPath(JsonUtil.arrayToString(config.getStage_path()));
 		}
 
+		String finalUserId = userId;
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -256,7 +253,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 					crRole.setBusinessType(BusinessType.TRAINING_TEAM.getCode());
 					List<MissionStageScheme> copyMission = getNewRoomScheme(
 							JsonUtil.toJsonString(originRole.getMissionsScheme()),
-							teamRoom.getResourceId());
+							teamRoom.getResourceId(), finalUserId);
 					crRole.setMissionStageSchemes(copyMission);
 					// 学员
 					if (crRole.getRoleGroup() == null) {
@@ -281,13 +278,24 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	/**
+	 * 创建
+	 *
+	 * @param teamTrainRoomContext 团队训练房间上下文
+	 * @return {@code TeamRoom }
+	 */
+	@Override
+	public TeamRoom create(TeamTrainRoomContext teamTrainRoomContext) {
+		return create(teamTrainRoomContext, null);
+	}
+
+	/**
 	 * 根据模板的任务id，复制任务并获取新的id，返回新的json字符串
 	 *
 	 * @param missionsScheme
 	 * @param roomId         房间id
 	 * @return
 	 */
-	private List<MissionStageScheme> getNewRoomScheme(String missionsScheme, String roomId) {
+	private List<MissionStageScheme> getNewRoomScheme(String missionsScheme, String roomId, String userId) {
 		ColorMission<AddTemplateMission> colorMission = JSON.parseObject(missionsScheme,
 				new TypeReference<ColorMission<AddTemplateMission>>() {});
 		if (null == colorMission || null == colorMission.getSchemeData()) {
@@ -307,7 +315,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		}
 
 		Map<String, String> originMissionMaps = missionService.copyScheme(originMissionIds,
-				UserInfoContext.getUserContext().getUserId(), roomId);
+				userId, roomId);
 
 		// 遍历每个阶段设置新的任务id
 		for (MissionSchemeObject<AddTemplateMission> schemeDatum : colorMission.getSchemeData()) {

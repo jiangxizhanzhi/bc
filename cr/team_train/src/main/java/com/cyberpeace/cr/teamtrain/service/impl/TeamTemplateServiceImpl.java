@@ -96,6 +96,15 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
         return teamTemplateMapper.listTeamTemplate(page, listQuery);
 	}
 
+	public IPage<TeamTemplateData> page2(ListQuery listQuery, String userId) {
+		Page<TeamTemplateData> page = listQuery.toPageParam();
+		if (listQuery.getIds() == null || listQuery.getIds().isEmpty()) {
+			listQuery.setIds(businessTemplateMapper.selectIdsByUserId(userId));
+		}
+
+		return teamTemplateMapper.listTeamTemplate(page, listQuery);
+	}
+
 	/**
 	 * 创建
 	 *

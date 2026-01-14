@@ -41,6 +41,7 @@ public interface RemoteUserService {
 	 */
 	UserInfo getById(String userId);
 
+	List<String> getUserIdsByRoleName(String roleName);
 
     List<String> getOnlineIds(List<String> searchedIds);
 

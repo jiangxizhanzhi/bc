@@ -590,6 +590,8 @@ public class TeamTrainTemplateController {
 				engageRelCount.containsKey(teamTemplateData.getBusinessTemplateId()));
 		teamTrainTemplateRsp.setEngageCount(engageRelCount
 				.getOrDefault(teamTemplateData.getBusinessTemplateId(), Lists.newArrayList()));
+		teamTrainTemplateRsp.setXdTemplateType(teamTemplateData.getXdTemplateType());
+		teamTrainTemplateRsp.setXdTemplateCategory(teamTemplateData.getXdTemplateCategory());
 
 		return teamTrainTemplateRsp;
 	}

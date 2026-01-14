@@ -26,6 +26,8 @@ public interface TeamTemplateService extends IService<TeamTemplate> {
 	 */
 	IPage<TeamTemplateData> page(ListQuery listQuery);
 
+	IPage<TeamTemplateData> page2(ListQuery listQuery, String userId);
+
 	/**
 	 * 创建团队训练模板实例
 	 *

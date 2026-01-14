@@ -111,26 +111,27 @@ public class TeamTrainRoomReq {
 		CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
 	}
-}
 
-/**
- * 岗位配置
- *
- * @author SN
- * @date 2024/11/14
- */
-@Data
-class RoleConfig {
 
 	/**
-	 * 角色组
+	 * 岗位配置
+	 *
+	 * @author SN
+	 * @date 2024/11/14
 	 */
-	@ApiModelProperty(value = "角色组")
-	private Integer roleGroup;
+	@Data
+    public static class RoleConfig {
 
-	/**
-	 * 用户id列表
-	 */
-	@ApiModelProperty(value = "用户id列表")
-	private List<String> users;
+		/**
+		 * 角色组
+		 */
+		@ApiModelProperty(value = "角色组")
+		private Integer roleGroup;
+
+		/**
+		 * 用户id列表
+		 */
+		@ApiModelProperty(value = "用户id列表")
+		private List<String> users;
+	}
 }

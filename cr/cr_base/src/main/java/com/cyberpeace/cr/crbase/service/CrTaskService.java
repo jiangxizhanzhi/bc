@@ -349,4 +349,6 @@ public interface CrTaskService {
 	void submitAnswer(String missionId, String answer, String userId, String answerExtension,String remark);
 
 	void submitMissions(String roomId, String missionId, String answer,String remark);
+
+	void submitMissions(String roomId, String missionId, String answer,String remark, String userId);
 }

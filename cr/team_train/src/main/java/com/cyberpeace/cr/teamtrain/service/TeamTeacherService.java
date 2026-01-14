@@ -64,4 +64,11 @@ public interface TeamTeacherService {
 	 * @param missionId 任务id
 	 */
 	void notifySubmission(String missionId);
+
+	/**
+	 * 学员提交任务后通知教员,不推送ws
+	 *
+	 * @param missionId 任务id
+	 */
+	void notifySubmission2(String missionId);
 }

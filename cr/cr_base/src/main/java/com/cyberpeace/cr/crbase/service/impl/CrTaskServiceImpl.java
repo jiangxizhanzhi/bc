@@ -1175,6 +1175,14 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		submitAnswer(missionId, answer, UserInfoContext.getUserContext().getUserId(), "",remark);
 	}
 
+	@Override
+	public void submitMissions(String roomId, String missionId, String answer, String remark, String userId) {
+		if (userId == null) {
+			userId = UserInfoContext.getUserContext().getUserId();
+		}
+		submitAnswer(missionId, answer, userId, "",remark);
+	}
+
 	/**
 	 * 推送导调刷新WS
 	 *

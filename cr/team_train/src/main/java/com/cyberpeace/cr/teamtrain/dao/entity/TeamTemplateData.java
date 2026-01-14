@@ -104,4 +104,8 @@ public class TeamTemplateData implements Serializable {
 	 */
 	private String logo;
 
+	private Integer xdTemplateCategory;
+
+	private Integer xdTemplateType;
+
 }

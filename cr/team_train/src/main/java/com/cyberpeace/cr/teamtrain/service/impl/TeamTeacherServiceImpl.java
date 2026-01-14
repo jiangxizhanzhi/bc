@@ -172,6 +172,22 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 	}
 
 	/**
+	 * 通知提交
+	 *
+	 * @param missionId 任务id
+	 */
+	@Override
+	public void notifySubmission2(String missionId) {
+		// get mission
+		Mission mission = missionService.getById(missionId);
+		// get roomId
+		String roomId = mission.getRoomId();
+		// get teacher
+		List<String> teacherIds = this.getTeacherIdsByRoomId(roomId);
+		crBadgeService.createBatch(roomId, CrBadge.BadgeType.NEW_SUBMIT.getCode(), teacherIds);
+	}
+
+	/**
 	 * 获取教员id列表由房间id
 	 *
 	 * @param roomId 房间id

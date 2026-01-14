@@ -69,6 +69,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 */
 	private String USERINFO_BY_ID_URL;
 
+	private String USERIDS_BY_ROLENAME_URL;
+
     private String USERINFO_ONLINE;
 
 
@@ -150,6 +152,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 				+ ConfigUtil.getContextProperty("token.authenticate");
 		USERINFO_BY_ID_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("userinfo.by.id");
+		USERIDS_BY_ROLENAME_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("userids.by.rolename");
         USERINFO_ONLINE = mpEnvService.getMpHost()
                 + ConfigUtil.getContextProperty("userinfo.online");
 		USERINFO_LIST_URL = mpEnvService.getMpHost()
@@ -201,6 +205,19 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 			return null;
 		}
         return userInfoFromJsonObject(jsonObject);
+	}
+
+	@Override
+	public List<String> getUserIdsByRoleName(String roleName) {
+		String targetUrl = USERIDS_BY_ROLENAME_URL + roleName;
+		JSONArray jsonArray = HttpClientUtil.rawGet(targetUrl, JSONArray.class);
+
+		if (CollectionUtils.isEmpty(jsonArray)) {
+			return new ArrayList<>();
+		}
+		List<String> list2 = new ArrayList<>();
+		jsonArray.forEach(item -> list2.add((String) item));
+		return list2;
 	}
 
     @Override

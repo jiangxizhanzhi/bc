@@ -41,6 +41,13 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 * @return 团队训练实例
 	 */
 	TeamRoom create(TeamTrainRoomContext teamTrainRoomContext);
+	/**
+	 * 创建实例
+	 *
+	 * @param teamTrainRoomContext 团队训练实例数据
+	 * @return 团队训练实例
+	 */
+	TeamRoom create(TeamTrainRoomContext teamTrainRoomContext, String userId);
 
 	/**
 	 * 更新实例

@@ -40,4 +40,6 @@ public class SubmitMissionsReq {
 	@ApiModelProperty(required = true, value = "备注")
 	private String remark;
 
+	private String userId;
+
 }

@@ -361,7 +361,7 @@ public class XdAutomaticDataServiceImpl implements XdAutomaticDataService {
             }
         }
         try {
-            Thread.sleep(30 * 1000);  // 等待三十秒
+            Thread.sleep(2 * 60 * 60 * 1000);  // 等待两小时结束训练
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();  // 恢复中断状态
             e.printStackTrace();

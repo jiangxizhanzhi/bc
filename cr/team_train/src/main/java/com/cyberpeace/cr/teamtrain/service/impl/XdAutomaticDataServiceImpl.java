@@ -133,12 +133,17 @@ public class XdAutomaticDataServiceImpl implements XdAutomaticDataService {
     public void automatic() {
         log.info("XdAutomaticDataServiceImpl.automatic begin.");
         //老师列表
-        List<String> laoshiList = remoteUserService.getUserIdsByRoleName("教员");
-        log.info("laoshiList:{}", laoshiList);
-        if (CollectionUtils.isEmpty(laoshiList)) {
-            log.info("laoshiList is empty");
-            return;
-        }
+//        List<String> laoshiList = remoteUserService.getUserIdsByRoleName("教员");
+//        log.info("laoshiList:{}", laoshiList);
+//        if (CollectionUtils.isEmpty(laoshiList)) {
+//            log.info("laoshiList is empty");
+//            return;
+//        }
+        List<String> laoshiList = new ArrayList<>();
+        laoshiList.add("ddfe9c1af2ab46ce94b8a06c80b01d69");
+        laoshiList.add("b6ca56794e604f52880da29a68a5e923");
+        laoshiList.add("3641396de9994051910ac8574aac31d5");
+
         //学员列表
         List<String> xueshengList = remoteUserService.getUserIdsByRoleName("学员");
         log.info("xueshengList:{}", xueshengList);

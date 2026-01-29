@@ -2,7 +2,6 @@ package com.cyberpeace.cr.teamtrain.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.annoations.BehaviorRecord;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -23,7 +22,6 @@ import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.constant.BaseI18nErrorMsg;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.FlowOpsReq;
@@ -52,19 +50,19 @@ import com.cyberpeace.cr.teamtrain.controller.req.ResourceIdReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomListReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomModifyReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomReq;
-import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRoleRes;
-import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
-import com.cyberpeace.cr.teamtrain.controller.rsp.TrainQueueRsp;
+import com.cyberpeace.cr.teamtrain.controller.rsp.*;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
-import com.cyberpeace.cr.teamtrain.dao.entity.TrainQueue;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
-import com.cyberpeace.cr.teamtrain.dao.mapper.TrainQueueMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
+import com.cyberpeace.cr.teamtrain.util.EnhancedPdfToDocxConverter;
+import com.cyberpeace.cr.teamtrain.util.OptimizedPdfToDocxConverter;
+import com.cyberpeace.cr.teamtrain.util.PdfToDocxAllInOne;
+import com.cyberpeace.cr.teamtrain.util.UltimatePdfToDocxConverter;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -72,7 +70,6 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
-import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.impl.MpEnvService;
 import com.google.common.collect.Lists;
@@ -94,11 +91,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 /**
@@ -1045,9 +1041,11 @@ public class TeamTrainRoomController {
 			// 生成html
 			HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.TEAM, destHtmlPath);
 
+			log.info("destHtmlPath===" + destHtmlPath);
 			// 在同目录下生成pdf
 			String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))
 					+ "pdf";
+
 			HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
 
 			FileUtil.setResponse(new File(destPdfPath), false, httpServletResponse);
@@ -1055,6 +1053,89 @@ public class TeamTrainRoomController {
 		} catch (Exception e) {
 			log.error("failed to export pdf: {}", destHtmlPath);
 			throw e;
+        } finally {
+			if (!FileUtil.deleteDir(directory)) {
+				log.error("failed to delete dir: {}", directory);
+			}
+		}
+
+	}
+
+	/**
+	 * 训练报告PDF格式
+	 *
+	 * @param httpServletResponse HTTP Servlet 响应
+	 * @param resource_id         资源id
+	 * @param scoreCount          得分计数
+	 */
+	@ApiOperation("团队对抗-任务导调-训练报告导出")
+	@GetMapping("/mission/TrainReportsDocx")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public void TrainReportsDocx(HttpServletResponse httpServletResponse,
+								@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+								@ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
+		TrainReportContext originData = this.getTrainReports(resource_id, scoreCount).getData();
+		// 导出时，用户头像加上 mp 地址
+		for (UserRole userRole : originData.getUserRoles()) {
+			userRole.setLogo(mpEnvService.getMpHost() + userRole.getLogo());
+		}
+		TrainReportExportContext data = BeanUtils.deepCopy(originData,
+				TrainReportExportContext.class);
+		data.initExport();
+		Path destHtmlPathObj = Paths.get(AttachmentPath.TEAM_HTML_TEMPLATE.getDesc(),
+				String.format("%s-%s", resource_id, UserInfoContext.getUserContext().getUserId()),
+				String.format("%s.html", resource_id));
+		FileUtil.copyDirectory(HtmlTemplateEnum.TEAM.getTemplatePath() + "/img",
+				AttachmentPath.TEAM_HTML_TEMPLATE.getDesc(), true);
+		FileUtil.copyDirectory(HtmlTemplateEnum.TEAM.getTemplatePath() + "/js",
+				AttachmentPath.TEAM_HTML_TEMPLATE.getDesc(), true);
+		// 临时存放目录
+		File directory = destHtmlPathObj.getParent().toFile();
+		if (!directory.exists()) {
+			boolean isCreated = directory.mkdirs();
+			if (!isCreated) {
+				log.error("failed_to_make_dir: Path = [{}]", directory.getPath());
+				throw new BusinessException(ErrorCode.FAILED_TO_MAKE_DIR, directory.getPath());
+			}
+		}
+		String destHtmlPath = destHtmlPathObj.toString();
+		try {
+			// 生成html
+			HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.TEAM, destHtmlPath);
+
+			log.info("destHtmlPath===" + destHtmlPath);
+			// 在同目录下生成pdf
+			String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))
+					+ "pdf";
+
+			HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
+
+			String destDocPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))
+					+ "docx";
+
+			EnhancedPdfToDocxConverter enhancedPdfToDocxConverter = new EnhancedPdfToDocxConverter();
+			enhancedPdfToDocxConverter.convertWithPagination(destPdfPath, destDocPath);
+
+//			String tempPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html")-1)
+//					+ "/";
+//			PdfToDocxAllInOne pdfToDocxAllInOne = new PdfToDocxAllInOne();
+//			pdfToDocxAllInOne.convert(destPdfPath, destDocPath, tempPath);
+
+//			OptimizedPdfToDocxConverter optimizedPdfToDocxConverter = new OptimizedPdfToDocxConverter();
+//			optimizedPdfToDocxConverter.convert(destPdfPath, destDocPath);
+
+//			UltimatePdfToDocxConverter ultimatePdfToDocxConverter = new UltimatePdfToDocxConverter();
+//			ultimatePdfToDocxConverter.convert(destPdfPath, destDocPath);
+
+			FileUtil.setResponse(new File(destDocPath), false, httpServletResponse);
+
+		} catch (Exception e) {
+			log.error("failed to export pdf: {}", destHtmlPath);
+			try {
+				throw e;
+			} catch (IOException ex) {
+				throw new RuntimeException(ex);
+			}
 		} finally {
 			if (!FileUtil.deleteDir(directory)) {
 				log.error("failed to delete dir: {}", directory);

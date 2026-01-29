@@ -11,6 +11,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.CrScoreController;
 import com.cyberpeace.cr.crbase.controller.req.*;
+import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.TrainTaskReleaseInfoRsp;
 import com.cyberpeace.cr.crbase.service.context.UserData;
@@ -171,7 +172,7 @@ public class XdAutomaticDataServiceImpl implements XdAutomaticDataService {
         TeamTrainTemplateRsp teamTrainTemplateRsp = templateDataList.get(randomIndexTemplate);
 //        TeamTrainTemplateRsp teamTrainTemplateRsp = null;
 //        for (TeamTrainTemplateRsp temp : templateDataList) {
-//            if ("222222".equals(temp.getBaseInfo().getName())) {
+//            if ("111111111".equals(temp.getBaseInfo().getName())) {
 //                teamTrainTemplateRsp = temp;
 //            }
 //        }
@@ -265,8 +266,15 @@ public class XdAutomaticDataServiceImpl implements XdAutomaticDataService {
                                     submitMissionsReq.setUserId(userData.getResourceId());
                                     submitMissionsReq.setMissionHash(missionReleaseInfo.getResourceId());
                                     submitMissionsReq.setResourceId(missionReleaseInfo.getRoomId());
-                                    submitMissionsReq.setAnswer(missionReleaseInfo.getAnswer());
-                                    submitMissionsReq.setRemark(missionReleaseInfo.getAnswer());
+                                    if (MissionBase.MissionType.JUDGE.getCode() == missionReleaseInfo.getType()
+                                            || MissionBase.MissionType.SINGLE_CHOICE.getCode() == missionReleaseInfo.getType()
+                                            || MissionBase.MissionType.MULTIPLE_CHOICE.getCode() == missionReleaseInfo.getType()) {
+                                        submitMissionsReq.setAnswer(missionReleaseInfo.getAnswer());
+                                        submitMissionsReq.setRemark(missionReleaseInfo.getAnswer());
+                                    } else {
+                                        submitMissionsReq.setAnswer(missionReleaseInfo.getWriteUp());
+                                        submitMissionsReq.setRemark(missionReleaseInfo.getWriteUp());
+                                    }
                                     submitMissionsReqs.add(submitMissionsReq);
                                 }
                             }
@@ -365,8 +373,17 @@ public class XdAutomaticDataServiceImpl implements XdAutomaticDataService {
                 updateStudentScore(studentScoreReq, laoshiId);
             }
         }
+        long min = 2_400_000L;
+        long max = 7_200_000L;
+        Random random = new Random();
+
+        // 计算范围
+        long range = max - min + 1;
+
+        // 生成 [min, max] 范围内的随机long
+        long randomNumber = min + (long)(random.nextDouble() * range);
         try {
-            Thread.sleep(2 * 60 * 60 * 1000);  // 等待两小时结束训练
+            Thread.sleep(randomNumber);  // 等待40分钟到120分钟结束训练
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();  // 恢复中断状态
             e.printStackTrace();

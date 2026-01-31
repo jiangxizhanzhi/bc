@@ -53,6 +53,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -130,9 +131,17 @@ public class XdAutomaticDataServiceImpl implements XdAutomaticDataService {
     /**
      * 每周二周四上午十点执行造假数据
      */
-    @Scheduled(cron = "0 0 10 ? * TUE,THU")
+    @Scheduled(cron = "0 0 10 ? * MON,WED,FRI")
     public void automatic() {
         log.info("XdAutomaticDataServiceImpl.automatic begin.");
+        LocalDate currentDate = LocalDate.now();
+        // 获取月份（1-12）
+        int monthValue = currentDate.getMonthValue();
+        log.info("monthValue:" + monthValue);
+        if (monthValue != 4 && monthValue != 5 && monthValue != 6 && monthValue != 11 && monthValue != 12) {
+            log.info("该月份无需执行假数据");
+            return;
+        }
         //老师列表
 //        List<String> laoshiList = remoteUserService.getUserIdsByRoleName("教员");
 //        log.info("laoshiList:{}", laoshiList);
@@ -166,7 +175,29 @@ public class XdAutomaticDataServiceImpl implements XdAutomaticDataService {
             log.info("templateListRsp is empty");
             return;
         }
-        List<TeamTrainTemplateRsp> templateDataList = templateListRsp.getData().getRecords();
+        List<TeamTrainTemplateRsp> templateDataListAll = templateListRsp.getData().getRecords();
+        if (CollectionUtils.isEmpty(templateDataListAll)) {
+            log.info("templateDataListAll is empty");
+            return;
+        }
+        List<TeamTrainTemplateRsp> templateDataList = new ArrayList<>();
+        for (TeamTrainTemplateRsp temp : templateDataListAll) {
+            if (monthValue == 4 || monthValue == 5 || monthValue == 6) {
+                if (temp.getXdTemplateType() == 6 || temp.getXdTemplateType() == 7) {
+                    templateDataList.add(temp);
+                }
+            } else if (monthValue == 11 || monthValue == 12) {
+                if (temp.getXdTemplateType() == 1 || temp.getXdTemplateType() == 2 || temp.getXdTemplateType() == 3 || temp.getXdTemplateType() == 4 || temp.getXdTemplateType() == 5) {
+                    templateDataList.add(temp);
+                }
+            }
+        }
+        log.info("templateDataListAll.size:" +  templateDataListAll.size());
+        log.info("templateDataList.size:" +  templateDataList.size());
+        if (CollectionUtils.isEmpty(templateDataList)) {
+            log.info("templateDataList is empty");
+            return;
+        }
         //随机挑选一个模板
         int randomIndexTemplate = ThreadLocalRandom.current().nextInt(templateDataList.size());
         TeamTrainTemplateRsp teamTrainTemplateRsp = templateDataList.get(randomIndexTemplate);

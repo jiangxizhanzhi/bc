@@ -55,6 +55,19 @@ public class TeamRoomListReq extends PageReqBase {
 	private List<String> ids;
 
 
+	/**
+	 * 开始时间
+	 */
+	@ApiModelProperty(value = "开始日期")
+	private String startTime;
+
+	/**
+	 * 结束时间
+	 */
+	@ApiModelProperty(value = "结束日期")
+	private String endTime;
+
+
     public void setXd_type(Integer xdType) {
         this.xdType = xdType;
     }

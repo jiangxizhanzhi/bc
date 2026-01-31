@@ -3,6 +3,7 @@ package com.cyberpeace.cr.teamtrain.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.controller.req.TrainStatisticsDetailReq;
+import com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq;
 import com.cyberpeace.cr.teamtrain.service.bo.XdTeamPersonScoreStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.XdTeamPersonStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.XdTeamPersonalStatisticsBo;
@@ -18,17 +19,17 @@ import java.util.List;
  */
 public interface XdTeamTrainStatisticsService {
 
-    List<XdTeamTimesStatisticsBo> getXdTeamTimes();
+    List<XdTeamTimesStatisticsBo> getXdTeamTimes(XdStatisticsReq request);
 
-    List<XdTeamPersonStatisticsBo> getXdTeamPersonNum();
+    List<XdTeamPersonStatisticsBo> getXdTeamPersonNum(XdStatisticsReq request);
 
-    List<XdTeamPersonScoreStatisticsBo> getPersonScore();
+    List<XdTeamPersonScoreStatisticsBo> getPersonScore(XdStatisticsReq request);
 
-    List<XdTeamPersonScoreStatisticsBo> getPersonScoreSy();
+    List<XdTeamPersonScoreStatisticsBo> getPersonScoreSy(XdStatisticsReq request);
 
-    List<XdTeamPersonScoreStatisticsBo> getPersonScoreKm();
+    List<XdTeamPersonScoreStatisticsBo> getPersonScoreKm(XdStatisticsReq request);
 
-    List<XdTeamPersonScoreStatisticsBo> getPersonScoreZhyx();
+    List<XdTeamPersonScoreStatisticsBo> getPersonScoreZhyx(XdStatisticsReq request);
 
     ListRsp<XdTeamPersonalStatisticsBo> getAllStatisticsDetail(TrainStatisticsDetailReq detailReq, Page page, Integer code);
 }

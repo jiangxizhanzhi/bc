@@ -7,6 +7,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.controller.req.TrainStatisticsDetailReq;
 import com.cyberpeace.cr.crbase.service.context.statistics.StatisticsDetail;
+import com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq;
 import com.cyberpeace.cr.teamtrain.service.XdTeamTrainStatisticsService;
 import com.cyberpeace.cr.teamtrain.service.bo.XdTeamPersonScoreStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.XdTeamPersonStatisticsBo;
@@ -49,8 +50,8 @@ public class XdTeamTrainStatisticsController {
      */
     @GetMapping("/xd_team_times")
     @ApiOperation("训练场次统计")
-    public BaseRsp<List<XdTeamTimesStatisticsBo>> getXdTeamTimes() {
-        List<XdTeamTimesStatisticsBo> rsp = xdTeamTrainStatisticsService.getXdTeamTimes();
+    public BaseRsp<List<XdTeamTimesStatisticsBo>> getXdTeamTimes(XdStatisticsReq request) {
+        List<XdTeamTimesStatisticsBo> rsp = xdTeamTrainStatisticsService.getXdTeamTimes(request);
         return new BaseRsp<>(rsp);
     }
 
@@ -59,9 +60,9 @@ public class XdTeamTrainStatisticsController {
      * @return
      */
     @GetMapping("/xd_team_person_num")
-    @ApiOperation("训练场次统计")
-    public BaseRsp<List<XdTeamPersonStatisticsBo>> getXdTeamPersonNum() {
-        List<XdTeamPersonStatisticsBo> rsp = xdTeamTrainStatisticsService.getXdTeamPersonNum();
+    @ApiOperation("训练人数统计")
+    public BaseRsp<List<XdTeamPersonStatisticsBo>> getXdTeamPersonNum(XdStatisticsReq request) {
+        List<XdTeamPersonStatisticsBo> rsp = xdTeamTrainStatisticsService.getXdTeamPersonNum(request);
         return new BaseRsp<>(rsp);
     }
 
@@ -71,8 +72,8 @@ public class XdTeamTrainStatisticsController {
      */
     @GetMapping("/xd_person_score")
     @ApiOperation("个人得分排名TOP5")
-    public BaseRsp<List<XdTeamPersonScoreStatisticsBo>> getPersonScore() {
-        List<XdTeamPersonScoreStatisticsBo> rsp = xdTeamTrainStatisticsService.getPersonScore();
+    public BaseRsp<List<XdTeamPersonScoreStatisticsBo>> getPersonScore(XdStatisticsReq request) {
+        List<XdTeamPersonScoreStatisticsBo> rsp = xdTeamTrainStatisticsService.getPersonScore(request);
         return new BaseRsp<>(rsp);
     }
 
@@ -82,8 +83,8 @@ public class XdTeamTrainStatisticsController {
      */
     @GetMapping("/xd_person_score_sy")
     @ApiOperation("实验个人得分排名TOP5")
-    public BaseRsp<List<XdTeamPersonScoreStatisticsBo>> getPersonScoreSy() {
-        List<XdTeamPersonScoreStatisticsBo> rsp = xdTeamTrainStatisticsService.getPersonScoreSy();
+    public BaseRsp<List<XdTeamPersonScoreStatisticsBo>> getPersonScoreSy(XdStatisticsReq request) {
+        List<XdTeamPersonScoreStatisticsBo> rsp = xdTeamTrainStatisticsService.getPersonScoreSy(request);
         return new BaseRsp<>(rsp);
     }
 
@@ -93,8 +94,8 @@ public class XdTeamTrainStatisticsController {
      */
     @GetMapping("/xd_person_score_km")
     @ApiOperation("科目个人得分排名TOP5")
-    public BaseRsp<List<XdTeamPersonScoreStatisticsBo>> getPersonScoreKm() {
-        List<XdTeamPersonScoreStatisticsBo> rsp = xdTeamTrainStatisticsService.getPersonScoreKm();
+    public BaseRsp<List<XdTeamPersonScoreStatisticsBo>> getPersonScoreKm(XdStatisticsReq request) {
+        List<XdTeamPersonScoreStatisticsBo> rsp = xdTeamTrainStatisticsService.getPersonScoreKm(request);
         return new BaseRsp<>(rsp);
     }
 
@@ -104,8 +105,8 @@ public class XdTeamTrainStatisticsController {
      */
     @GetMapping("/xd_person_score_zhyx")
     @ApiOperation("综合演训个人得分排名TOP5")
-    public BaseRsp<List<XdTeamPersonScoreStatisticsBo>> getPersonScoreZhyx() {
-        List<XdTeamPersonScoreStatisticsBo> rsp = xdTeamTrainStatisticsService.getPersonScoreZhyx();
+    public BaseRsp<List<XdTeamPersonScoreStatisticsBo>> getPersonScoreZhyx(XdStatisticsReq request) {
+        List<XdTeamPersonScoreStatisticsBo> rsp = xdTeamTrainStatisticsService.getPersonScoreZhyx(request);
         return new BaseRsp<>(rsp);
     }
 

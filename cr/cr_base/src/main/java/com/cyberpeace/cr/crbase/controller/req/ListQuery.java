@@ -47,6 +47,18 @@ public class ListQuery extends PageReqBase {
 	private Integer difficult;
 
 
+	/**
+	 * 开始时间
+	 */
+	@ApiModelProperty(value = "开始日期")
+	private String startTime;
+
+	/**
+	 * 结束时间
+	 */
+	@ApiModelProperty(value = "结束日期")
+	private String endTime;
+
     private Integer xdTemplateType;
 
     private Integer xdType;

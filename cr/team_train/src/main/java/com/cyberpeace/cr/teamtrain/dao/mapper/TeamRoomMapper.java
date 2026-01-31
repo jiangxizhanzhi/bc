@@ -3,6 +3,7 @@ package com.cyberpeace.cr.teamtrain.dao.mapper;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -83,70 +84,70 @@ public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 	 *
 	 * @return
 	 */
-	List<Map<String, Object>> syNumStatistics();
+	List<Map<String, Object>> syNumStatistics(XdStatisticsReq request);
 
 	/**
 	 * 科目场次统计
 	 *
 	 * @return
 	 */
-	List<Map<String, Object>> kmNumStatistics();
+	List<Map<String, Object>> kmNumStatistics(XdStatisticsReq request);
 
 	/**
 	 * 综合演训场次统计
 	 *
 	 * @return
 	 */
-	List<Map<String, Object>> zhyxNumStatistics();
+	List<Map<String, Object>> zhyxNumStatistics(XdStatisticsReq request);
 
 	/**
 	 * 实验人数统计
 	 *
 	 * @return
 	 */
-	List<Map<String, Object>> syPersonNumStatistics();
+	List<Map<String, Object>> syPersonNumStatistics(XdStatisticsReq request);
 
 	/**
 	 * 科目人数统计
 	 *
 	 * @return
 	 */
-	List<Map<String, Object>> kmPersonNumStatistics();
+	List<Map<String, Object>> kmPersonNumStatistics(XdStatisticsReq request);
 
 	/**
 	 * 综合演训人数统计
 	 *
 	 * @return
 	 */
-	List<Map<String, Object>> zhyxPersonNumStatistics();
+	List<Map<String, Object>> zhyxPersonNumStatistics(XdStatisticsReq request);
 
 	/**
 	 * 综合演训训练总分统计
 	 *
 	 * @return
 	 */
-	List<Map<String, Object>> totalScoreStatistics();
+	List<Map<String, Object>> totalScoreStatistics(XdStatisticsReq request);
 
 	/**
 	 * 综合演训实验总分统计
 	 *
 	 * @return
 	 */
-	List<Map<String, Object>> totalScoreSyStatistics();
+	List<Map<String, Object>> totalScoreSyStatistics(XdStatisticsReq request);
 
 	/**
 	 * 综合演训科目总分统计
 	 *
 	 * @return
 	 */
-	List<Map<String, Object>> totalScoreKmStatistics();
+	List<Map<String, Object>> totalScoreKmStatistics(XdStatisticsReq request);
 
 	/**
 	 * 综合演训综合演训总分统计
 	 *
 	 * @return
 	 */
-	List<Map<String, Object>> totalScoreZhyxStatistics();
+	List<Map<String, Object>> totalScoreZhyxStatistics(XdStatisticsReq request);
 
 
 	/**

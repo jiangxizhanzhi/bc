@@ -7,6 +7,7 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.controller.req.TrainStatisticsDetailReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
+import com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cr.teamtrain.service.XdTeamTrainStatisticsService;
@@ -64,23 +65,23 @@ public class XdTeamTrainStatisticsServiceImpl implements XdTeamTrainStatisticsSe
      * @return
      */
     @Override
-    public List<XdTeamTimesStatisticsBo> getXdTeamTimes() {
+    public List<XdTeamTimesStatisticsBo> getXdTeamTimes(XdStatisticsReq request) {
         List<XdTeamTimesStatisticsBo> rtnList = new ArrayList<>();
-        List<Map<String, Object>> syList = teamRoomMapper.syNumStatistics();
+        List<Map<String, Object>> syList = teamRoomMapper.syNumStatistics(request);
         Map<Integer, Long> syMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(syList)) {
             for (Map<String, Object> temp : syList) {
                 syMap.put((Integer)temp.get("month"), (Long)temp.get("num"));
             }
         }
-        List<Map<String, Object>> kmList = teamRoomMapper.kmNumStatistics();
+        List<Map<String, Object>> kmList = teamRoomMapper.kmNumStatistics(request);
         Map<Integer, Long> kmMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(kmList)) {
             for (Map<String, Object> temp : kmList) {
                 kmMap.put((Integer)temp.get("month"), (Long)temp.get("num"));
             }
         }
-        List<Map<String, Object>> zhyxList = teamRoomMapper.zhyxNumStatistics();
+        List<Map<String, Object>> zhyxList = teamRoomMapper.zhyxNumStatistics(request);
         Map<Integer, Long> zhyxMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(zhyxList)) {
             for (Map<String, Object> temp : zhyxList) {
@@ -103,23 +104,23 @@ public class XdTeamTrainStatisticsServiceImpl implements XdTeamTrainStatisticsSe
      * @return
      */
     @Override
-    public List<XdTeamPersonStatisticsBo> getXdTeamPersonNum() {
+    public List<XdTeamPersonStatisticsBo> getXdTeamPersonNum(XdStatisticsReq request) {
         List<XdTeamPersonStatisticsBo> rtnList = new ArrayList<>();
-        List<Map<String, Object>> syList = teamRoomMapper.syPersonNumStatistics();
+        List<Map<String, Object>> syList = teamRoomMapper.syPersonNumStatistics(request);
         Map<Integer, Long> syMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(syList)) {
             for (Map<String, Object> temp : syList) {
                 syMap.put((Integer)temp.get("month"), ((BigDecimal)temp.get("person_num")).longValue());
             }
         }
-        List<Map<String, Object>> kmList = teamRoomMapper.kmPersonNumStatistics();
+        List<Map<String, Object>> kmList = teamRoomMapper.kmPersonNumStatistics(request);
         Map<Integer, Long> kmMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(kmList)) {
             for (Map<String, Object> temp : kmList) {
                 kmMap.put((Integer)temp.get("month"), ((BigDecimal)temp.get("person_num")).longValue());
             }
         }
-        List<Map<String, Object>> zhyxList = teamRoomMapper.zhyxPersonNumStatistics();
+        List<Map<String, Object>> zhyxList = teamRoomMapper.zhyxPersonNumStatistics(request);
         Map<Integer, Long> zhyxMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(zhyxList)) {
             for (Map<String, Object> temp : zhyxList) {
@@ -138,11 +139,11 @@ public class XdTeamTrainStatisticsServiceImpl implements XdTeamTrainStatisticsSe
     }
 
     @Override
-    public List<XdTeamPersonScoreStatisticsBo> getPersonScore() {
+    public List<XdTeamPersonScoreStatisticsBo> getPersonScore(XdStatisticsReq request) {
         try {
             List<XdTeamPersonScoreStatisticsBo> rtn = new ArrayList<>();
 
-            List<Map<String, Object>> totalScoreList = teamRoomMapper.totalScoreStatistics();
+            List<Map<String, Object>> totalScoreList = teamRoomMapper.totalScoreStatistics(request);
             if (CollectionUtils.isEmpty(totalScoreList)) {
                 return rtn;
             }
@@ -173,10 +174,10 @@ public class XdTeamTrainStatisticsServiceImpl implements XdTeamTrainStatisticsSe
     }
 
     @Override
-    public List<XdTeamPersonScoreStatisticsBo> getPersonScoreSy() {
+    public List<XdTeamPersonScoreStatisticsBo> getPersonScoreSy(XdStatisticsReq request) {
         try {
             List<XdTeamPersonScoreStatisticsBo> rtn = new ArrayList<>();
-            List<Map<String, Object>> totalScoreList = teamRoomMapper.totalScoreSyStatistics();
+            List<Map<String, Object>> totalScoreList = teamRoomMapper.totalScoreSyStatistics(request);
             if (CollectionUtils.isEmpty(totalScoreList)) {
                 return rtn;
             }
@@ -206,10 +207,10 @@ public class XdTeamTrainStatisticsServiceImpl implements XdTeamTrainStatisticsSe
     }
 
     @Override
-    public List<XdTeamPersonScoreStatisticsBo> getPersonScoreKm() {
+    public List<XdTeamPersonScoreStatisticsBo> getPersonScoreKm(XdStatisticsReq request) {
         try {
             List<XdTeamPersonScoreStatisticsBo> rtn = new ArrayList<>();
-            List<Map<String, Object>> totalScoreList = teamRoomMapper.totalScoreKmStatistics();
+            List<Map<String, Object>> totalScoreList = teamRoomMapper.totalScoreKmStatistics(request);
             if (CollectionUtils.isEmpty(totalScoreList)) {
                 return rtn;
             }
@@ -239,10 +240,10 @@ public class XdTeamTrainStatisticsServiceImpl implements XdTeamTrainStatisticsSe
     }
 
     @Override
-    public List<XdTeamPersonScoreStatisticsBo> getPersonScoreZhyx() {
+    public List<XdTeamPersonScoreStatisticsBo> getPersonScoreZhyx(XdStatisticsReq request) {
         try {
             List<XdTeamPersonScoreStatisticsBo> rtn = new ArrayList<>();
-            List<Map<String, Object>> totalScoreList = teamRoomMapper.totalScoreZhyxStatistics();
+            List<Map<String, Object>> totalScoreList = teamRoomMapper.totalScoreZhyxStatistics(request);
             if (CollectionUtils.isEmpty(totalScoreList)) {
                 return rtn;
             }

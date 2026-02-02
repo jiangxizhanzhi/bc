@@ -148,6 +148,18 @@ public class TeamRoomRsp  {
 	private Integer nodesCount;
 
 	/**
+	 * 参与人数
+	 */
+	@ApiModelProperty(value = "参与人数")
+	private Integer userCount;
+
+	/**
+	 * 提交任务数
+	 */
+	@ApiModelProperty(value = "提交任务数")
+	private Integer submitMissionCount;
+
+	/**
 	 * 录屏开关
 	 */
 	@ApiModelProperty(value = "录屏开关")

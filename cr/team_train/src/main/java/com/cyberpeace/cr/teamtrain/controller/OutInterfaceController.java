@@ -13,15 +13,14 @@ import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.TrainStatisticsDetailReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
-import com.cyberpeace.cr.crbase.service.CrConstantsService;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.CrScoreService;
-import com.cyberpeace.cr.crbase.service.TrainRecordService;
+import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.RoomBaseInfo;
 import com.cyberpeace.cr.crbase.service.context.TrainReportContext;
 import com.cyberpeace.cr.crbase.service.context.TrainingReport;
+import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
+import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomListReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
@@ -35,6 +34,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,6 +70,11 @@ public class OutInterfaceController {
     private CrConstantsService crConstantsService;
     @Autowired
     private CrRoleService crRoleService;
+    /**
+     * 靶场任务Service
+     */
+    @Autowired
+    private CrTaskService crTaskService;
 
     @AuthOjKey
     @ApiOperation("训练学员统计列表查询")
@@ -87,6 +92,21 @@ public class OutInterfaceController {
         ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
         listQuery.setPer_page(listReq.getPerPage());
         ListRsp<TeamRoomRsp> rsp = teamRoomService.listRoom(listQuery, true);
+        if (CollectionUtils.isNotEmpty(rsp.getList())) {
+            for (TeamRoomRsp temp : rsp.getList()) {
+                TaskStatisticsInfo taskStatisticsInfo = crTaskService.getTaskStatisticsInfoByRoomId(temp.getResourceId());
+                temp.setSubmitMissionCount(taskStatisticsInfo.getSubmitMissionCount() == null ? 0 : taskStatisticsInfo.getSubmitMissionCount());
+                int userCount = 0;
+                if (temp.getTrainingRoleData() != null && CollectionUtils.isNotEmpty(temp.getTrainingRoleData().getRoleDataList())) {
+                    for (RoleUsers roleUsers : temp.getTrainingRoleData().getRoleDataList()) {
+                        if (CollectionUtils.isNotEmpty(roleUsers.getUsers())) {
+                            userCount += roleUsers.getUsers().size();
+                        }
+                    }
+                }
+                temp.setUserCount(userCount);
+            }
+        }
         return new BaseRsp<>(rsp);
     }
 

@@ -907,13 +907,13 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			XdBusinessType xdBusinessType = XdBusinessType.getByCode(teamRoomRsp.getXdType());
 			teamRoomRsp.setTrainXdType(xdBusinessType.getType());
 			teamRoomRsp.setTrainXdSubType(xdBusinessType.getDesc());
-			if (!isOut) {
-				teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId, userInfoMap));
+			if (!isOut || (UserInfoContext.getUserContext()!= null && StringUtils.isNotEmpty(UserInfoContext.getUserContext().getUserId()))) {
+				teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, UserInfoContext.getUserContext().getUserId(), userInfoMap));
 			}
 			teamRoomRsp.setRolesData(Lists.newArrayList());
 			// node count ,differs by role
-			if (!isOut) {
-				CrRole selfRole = CrRole.findRoleByUserId(crRoles, userId);
+			if (!isOut || (UserInfoContext.getUserContext()!= null && StringUtils.isNotEmpty(UserInfoContext.getUserContext().getUserId()))) {
+				CrRole selfRole = CrRole.findRoleByUserId(crRoles, UserInfoContext.getUserContext().getUserId());
 				if (null == selfRole || selfRole.isTeamTeacher()) {
 					teamRoomRsp.setNodesCount(
 							topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());

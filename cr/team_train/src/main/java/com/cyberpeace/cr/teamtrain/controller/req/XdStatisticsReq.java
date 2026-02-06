@@ -18,4 +18,10 @@ public class XdStatisticsReq {
     @ApiModelProperty(name = "endTime", value = "结束日期")
     private String endTime;
 
+    /**
+     * type year、month、day
+     */
+    @ApiModelProperty(name = "type", value = "统计方式")
+    private String type;
+
 }

@@ -1,9 +1,11 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.TrainStatisticsDetailReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
@@ -15,6 +17,7 @@ import com.cyberpeace.cr.teamtrain.service.bo.XdTeamPersonScoreStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.XdTeamPersonStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.XdTeamPersonalStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.XdTeamTimesStatisticsBo;
+import com.cyberpeace.cr.teamtrain.util.DateRangeUtils;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -26,6 +29,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -67,33 +72,76 @@ public class XdTeamTrainStatisticsServiceImpl implements XdTeamTrainStatisticsSe
     @Override
     public List<XdTeamTimesStatisticsBo> getXdTeamTimes(XdStatisticsReq request) {
         List<XdTeamTimesStatisticsBo> rtnList = new ArrayList<>();
-        List<Map<String, Object>> syList = teamRoomMapper.syNumStatistics(request);
-        Map<Integer, Long> syMap = new HashMap<>();
+        List<Map<String, Object>> syList = new ArrayList<>();
+        if ("year".equals(request.getType())) {
+            syList = teamRoomMapper.syNumStatisticsYear(request);
+        } else if ("day".equals(request.getType())) {
+            syList = teamRoomMapper.syNumStatisticsDay(request);
+        } else {
+            syList = teamRoomMapper.syNumStatisticsMonth(request);
+        }
+        Map<String, Long> syMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(syList)) {
             for (Map<String, Object> temp : syList) {
-                syMap.put((Integer)temp.get("month"), (Long)temp.get("num"));
+                syMap.put((String)temp.get("month"), (Long)temp.get("num"));
             }
         }
-        List<Map<String, Object>> kmList = teamRoomMapper.kmNumStatistics(request);
-        Map<Integer, Long> kmMap = new HashMap<>();
+        List<Map<String, Object>> kmList = new ArrayList<>();
+        if ("year".equals(request.getType())) {
+            kmList = teamRoomMapper.kmNumStatisticsYear(request);
+        } else if ("day".equals(request.getType())) {
+            kmList = teamRoomMapper.kmNumStatisticsDay(request);
+        } else {
+            kmList = teamRoomMapper.kmNumStatisticsMonth(request);
+        }
+        Map<String, Long> kmMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(kmList)) {
             for (Map<String, Object> temp : kmList) {
-                kmMap.put((Integer)temp.get("month"), (Long)temp.get("num"));
+                kmMap.put((String)temp.get("month"), (Long)temp.get("num"));
             }
         }
-        List<Map<String, Object>> zhyxList = teamRoomMapper.zhyxNumStatistics(request);
-        Map<Integer, Long> zhyxMap = new HashMap<>();
+        List<Map<String, Object>> zhyxList = new ArrayList<>();
+        if ("year".equals(request.getType())) {
+            zhyxList = teamRoomMapper.zhyxNumStatisticsYear(request);
+        } else if ("day".equals(request.getType())) {
+            zhyxList = teamRoomMapper.zhyxNumStatisticsDay(request);
+        } else {
+            zhyxList = teamRoomMapper.zhyxNumStatisticsMonth(request);
+        }
+        Map<String, Long> zhyxMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(zhyxList)) {
             for (Map<String, Object> temp : zhyxList) {
-                zhyxMap.put((Integer)temp.get("month"), (Long)temp.get("num"));
+                zhyxMap.put((String)temp.get("month"), (Long)temp.get("num"));
             }
         }
-        for (int i=1; i<=12; i++) {
+        String startTime = request.getStartTime();
+        String endTime = request.getEndTime();
+        if (StringUtils.isEmpty(startTime) || StringUtils.isEmpty(endTime)) {
+            LocalDate today = LocalDate.now();
+            // 获取今年第一天
+            LocalDate firstDayOfYear = today.withDayOfYear(1);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            startTime = firstDayOfYear.format(formatter);
+            endTime = today.format(formatter);
+        }
+        List<String> timeList = new ArrayList<>();
+        if ("year".equals(request.getType())) {
+            timeList = DateRangeUtils.getAllYears(startTime, endTime);
+        } else if ("day".equals(request.getType())) {
+            timeList = DateRangeUtils.getAllDays(startTime, endTime);
+        } else {
+            timeList = DateRangeUtils.getAllMonths(startTime, endTime);
+        }
+        if (timeList.size() > 50) {
+            throw new BusinessException(CrBusinessErrorCode.STATISTICS_TOO_BIG);
+        }
+
+        for (String temp : timeList) {
             XdTeamTimesStatisticsBo xdTeamTimesStatisticsBo = new XdTeamTimesStatisticsBo();
-            xdTeamTimesStatisticsBo.setMonth(i);
-            xdTeamTimesStatisticsBo.setSyNum(syMap.get(i) == null ? 0L : syMap.get(i));
-            xdTeamTimesStatisticsBo.setKmNum(kmMap.get(i) == null ? 0L : kmMap.get(i));
-            xdTeamTimesStatisticsBo.setZhyxNum(zhyxMap.get(i) == null ? 0L : zhyxMap.get(i));
+            xdTeamTimesStatisticsBo.setMonth(temp);
+            xdTeamTimesStatisticsBo.setSyNum(syMap.get(temp) == null ? 0L : syMap.get(temp));
+            xdTeamTimesStatisticsBo.setKmNum(kmMap.get(temp) == null ? 0L : kmMap.get(temp));
+            xdTeamTimesStatisticsBo.setZhyxNum(zhyxMap.get(temp) == null ? 0L : zhyxMap.get(temp));
             rtnList.add(xdTeamTimesStatisticsBo);
         }
         return rtnList;
@@ -106,33 +154,76 @@ public class XdTeamTrainStatisticsServiceImpl implements XdTeamTrainStatisticsSe
     @Override
     public List<XdTeamPersonStatisticsBo> getXdTeamPersonNum(XdStatisticsReq request) {
         List<XdTeamPersonStatisticsBo> rtnList = new ArrayList<>();
-        List<Map<String, Object>> syList = teamRoomMapper.syPersonNumStatistics(request);
-        Map<Integer, Long> syMap = new HashMap<>();
+        List<Map<String, Object>> syList = new ArrayList<>();
+        if ("year".equals(request.getType())) {
+            syList = teamRoomMapper.syPersonNumStatisticsYear(request);
+        } else if ("day".equals(request.getType())) {
+            syList = teamRoomMapper.syPersonNumStatisticsDay(request);
+        } else {
+            syList = teamRoomMapper.syPersonNumStatisticsMonth(request);
+        }
+        Map<String, Long> syMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(syList)) {
             for (Map<String, Object> temp : syList) {
-                syMap.put((Integer)temp.get("month"), ((BigDecimal)temp.get("person_num")).longValue());
+                syMap.put((String)temp.get("month"), ((BigDecimal)temp.get("person_num")).longValue());
             }
         }
-        List<Map<String, Object>> kmList = teamRoomMapper.kmPersonNumStatistics(request);
-        Map<Integer, Long> kmMap = new HashMap<>();
+        List<Map<String, Object>> kmList = new ArrayList<>();
+        if ("year".equals(request.getType())) {
+            kmList = teamRoomMapper.kmPersonNumStatisticsYear(request);
+        } else if ("day".equals(request.getType())) {
+            kmList = teamRoomMapper.kmPersonNumStatisticsDay(request);
+        } else {
+            kmList = teamRoomMapper.kmPersonNumStatisticsMonth(request);
+        }
+        Map<String, Long> kmMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(kmList)) {
             for (Map<String, Object> temp : kmList) {
-                kmMap.put((Integer)temp.get("month"), ((BigDecimal)temp.get("person_num")).longValue());
+                kmMap.put((String)temp.get("month"), ((BigDecimal)temp.get("person_num")).longValue());
             }
         }
-        List<Map<String, Object>> zhyxList = teamRoomMapper.zhyxPersonNumStatistics(request);
-        Map<Integer, Long> zhyxMap = new HashMap<>();
+        List<Map<String, Object>> zhyxList = new ArrayList<>();
+        if ("year".equals(request.getType())) {
+            zhyxList = teamRoomMapper.zhyxPersonNumStatisticsYear(request);
+        } else if ("day".equals(request.getType())) {
+            zhyxList = teamRoomMapper.zhyxPersonNumStatisticsDay(request);
+        } else {
+            zhyxList = teamRoomMapper.zhyxPersonNumStatisticsMonth(request);
+        }
+        Map<String, Long> zhyxMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(zhyxList)) {
             for (Map<String, Object> temp : zhyxList) {
-                zhyxMap.put((Integer)temp.get("month"), ((BigDecimal)temp.get("person_num")).longValue());
+                zhyxMap.put((String)temp.get("month"), ((BigDecimal)temp.get("person_num")).longValue());
             }
         }
-        for (int i=1; i<=12; i++) {
+
+        String startTime = request.getStartTime();
+        String endTime = request.getEndTime();
+        if (StringUtils.isEmpty(startTime) || StringUtils.isEmpty(endTime)) {
+            LocalDate today = LocalDate.now();
+            // 获取今年第一天
+            LocalDate firstDayOfYear = today.withDayOfYear(1);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            startTime = firstDayOfYear.format(formatter);
+            endTime = today.format(formatter);
+        }
+        List<String> timeList = new ArrayList<>();
+        if ("year".equals(request.getType())) {
+            timeList = DateRangeUtils.getAllYears(startTime, endTime);
+        } else if ("day".equals(request.getType())) {
+            timeList = DateRangeUtils.getAllDays(startTime, endTime);
+        } else {
+            timeList = DateRangeUtils.getAllMonths(startTime, endTime);
+        }
+        if (timeList.size() > 50) {
+            throw new BusinessException(CrBusinessErrorCode.STATISTICS_TOO_BIG);
+        }
+        for (String temp : timeList) {
             XdTeamPersonStatisticsBo xdTeamPersonStatisticsBo = new XdTeamPersonStatisticsBo();
-            xdTeamPersonStatisticsBo.setMonth(i);
-            xdTeamPersonStatisticsBo.setSyNum(syMap.get(i) == null ? 0L : syMap.get(i));
-            xdTeamPersonStatisticsBo.setKmNum(kmMap.get(i) == null ? 0L : kmMap.get(i));
-            xdTeamPersonStatisticsBo.setZhyxNum(zhyxMap.get(i) == null ? 0L : zhyxMap.get(i));
+            xdTeamPersonStatisticsBo.setMonth(temp);
+            xdTeamPersonStatisticsBo.setSyNum(syMap.get(temp) == null ? 0L : syMap.get(temp));
+            xdTeamPersonStatisticsBo.setKmNum(kmMap.get(temp) == null ? 0L : kmMap.get(temp));
+            xdTeamPersonStatisticsBo.setZhyxNum(zhyxMap.get(temp) == null ? 0L : zhyxMap.get(temp));
             rtnList.add(xdTeamPersonStatisticsBo);
         }
         return rtnList;

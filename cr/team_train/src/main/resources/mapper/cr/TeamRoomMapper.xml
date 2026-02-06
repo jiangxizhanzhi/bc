@@ -158,8 +158,8 @@
         select case when exists(select 1 from cr_team_room where name = #{name}) then 1 else 0 end as result;
     </select>
 
-    <select id="syNumStatistics" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
-        select month(start_time) as month, count(*) as num
+    <select id="syNumStatisticsYear" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
+        select date_format(start_time, '%Y') as month, count(*) as num
         from cr_team_room
         where xd_type in(1,2,3,4,5,6,7)
         <choose>
@@ -173,11 +173,47 @@
                 and YEAR(start_time) = YEAR(CURDATE())
             </otherwise>
         </choose>
-        group by month;
+        group by month order by month;
     </select>
 
-    <select id="kmNumStatistics" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
-        select month(start_time) as month, count(*) as num
+    <select id="syNumStatisticsMonth" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
+        select date_format(start_time, '%Y-%m') as month, count(*) as num
+        from cr_team_room
+        where xd_type in(1,2,3,4,5,6,7)
+        <choose>
+            <!-- 当startTime和endTime都不为空时，查询指定时间范围 -->
+            <when test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and start_time &gt;= #{startTime}
+                and start_time &lt; DATE_ADD(#{endTime}, INTERVAL 1 DAY)
+            </when>
+            <!-- 其他情况都查询当年数据 -->
+            <otherwise>
+                and YEAR(start_time) = YEAR(CURDATE())
+            </otherwise>
+        </choose>
+        group by month order by month;
+    </select>
+
+    <select id="syNumStatisticsDay" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
+        select date_format(start_time, '%Y-%m-%d') as month, count(*) as num
+        from cr_team_room
+        where xd_type in(1,2,3,4,5,6,7)
+        <choose>
+            <!-- 当startTime和endTime都不为空时，查询指定时间范围 -->
+            <when test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and start_time &gt;= #{startTime}
+                and start_time &lt; DATE_ADD(#{endTime}, INTERVAL 1 DAY)
+            </when>
+            <!-- 其他情况都查询当年数据 -->
+            <otherwise>
+                and YEAR(start_time) = YEAR(CURDATE())
+            </otherwise>
+        </choose>
+        group by month order by month;
+    </select>
+
+    <select id="kmNumStatisticsYear" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
+        select date_format(start_time, '%Y') as month, count(*) as num
         from cr_team_room
         where xd_type in(8,9,10,11,12,13,14)
         <choose>
@@ -191,11 +227,47 @@
                 and YEAR(start_time) = YEAR(CURDATE())
             </otherwise>
         </choose>
-        group by month;
+        group by month order by month;
     </select>
 
-    <select id="zhyxNumStatistics" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
-        select month(start_time) as month, count(*) as num
+    <select id="kmNumStatisticsMonth" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
+        select date_format(start_time, '%Y-%m') as month, count(*) as num
+        from cr_team_room
+        where xd_type in(8,9,10,11,12,13,14)
+        <choose>
+            <!-- 当startTime和endTime都不为空时，查询指定时间范围 -->
+            <when test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and start_time &gt;= #{startTime}
+                and start_time &lt; DATE_ADD(#{endTime}, INTERVAL 1 DAY)
+            </when>
+            <!-- 其他情况都查询当年数据 -->
+            <otherwise>
+                and YEAR(start_time) = YEAR(CURDATE())
+            </otherwise>
+        </choose>
+        group by month order by month;
+    </select>
+
+    <select id="kmNumStatisticsDay" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
+        select date_format(start_time, '%Y-%m-%d') as month, count(*) as num
+        from cr_team_room
+        where xd_type in(8,9,10,11,12,13,14)
+        <choose>
+            <!-- 当startTime和endTime都不为空时，查询指定时间范围 -->
+            <when test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and start_time &gt;= #{startTime}
+                and start_time &lt; DATE_ADD(#{endTime}, INTERVAL 1 DAY)
+            </when>
+            <!-- 其他情况都查询当年数据 -->
+            <otherwise>
+                and YEAR(start_time) = YEAR(CURDATE())
+            </otherwise>
+        </choose>
+        group by month order by month;
+    </select>
+
+    <select id="zhyxNumStatisticsYear" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
+        select date_format(start_time, '%Y') as month, count(*) as num
         from cr_team_room
         where xd_type in(15)
         <choose>
@@ -209,11 +281,47 @@
                 and YEAR(start_time) = YEAR(CURDATE())
             </otherwise>
         </choose>
-        group by month;
+        group by month order by month;
     </select>
 
-    <select id="syPersonNumStatistics" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
-        select month(cr_team_room.start_time) as month, sum(JSON_LENGTH(cr_role.user_ids)) AS person_num
+    <select id="zhyxNumStatisticsMonth" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
+        select date_format(start_time, '%Y-%m') as month, count(*) as num
+        from cr_team_room
+        where xd_type in(15)
+        <choose>
+            <!-- 当startTime和endTime都不为空时，查询指定时间范围 -->
+            <when test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and start_time &gt;= #{startTime}
+                and start_time &lt; DATE_ADD(#{endTime}, INTERVAL 1 DAY)
+            </when>
+            <!-- 其他情况都查询当年数据 -->
+            <otherwise>
+                and YEAR(start_time) = YEAR(CURDATE())
+            </otherwise>
+        </choose>
+        group by month order by month;
+    </select>
+
+    <select id="zhyxNumStatisticsDay" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
+        select date_format(start_time, '%Y-%m-%d') as month, count(*) as num
+        from cr_team_room
+        where xd_type in(15)
+        <choose>
+            <!-- 当startTime和endTime都不为空时，查询指定时间范围 -->
+            <when test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and start_time &gt;= #{startTime}
+                and start_time &lt; DATE_ADD(#{endTime}, INTERVAL 1 DAY)
+            </when>
+            <!-- 其他情况都查询当年数据 -->
+            <otherwise>
+                and YEAR(start_time) = YEAR(CURDATE())
+            </otherwise>
+        </choose>
+        group by month order by month;
+    </select>
+
+    <select id="syPersonNumStatisticsYear" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
+        select date_format(cr_team_room.start_time, '%Y') as month, sum(JSON_LENGTH(cr_role.user_ids)) AS person_num
         from cr_team_room,cr_role
         where cr_team_room.resource_id=cr_role.room_id
         and xd_type in(1,2,3,4,5,6,7)
@@ -228,11 +336,49 @@
                 and YEAR(cr_team_room.start_time) = YEAR(CURDATE())
             </otherwise>
         </choose>
-        and cr_role.name!='教员' group by month;
+        and cr_role.name!='教员' group by month order by month;
     </select>
 
-    <select id="kmPersonNumStatistics" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
-        select month(cr_team_room.start_time) as month, sum(JSON_LENGTH(cr_role.user_ids)) AS person_num
+    <select id="syPersonNumStatisticsMonth" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
+        select date_format(cr_team_room.start_time, '%Y-%m') as month, sum(JSON_LENGTH(cr_role.user_ids)) AS person_num
+        from cr_team_room,cr_role
+        where cr_team_room.resource_id=cr_role.room_id
+        and xd_type in(1,2,3,4,5,6,7)
+        <choose>
+            <!-- 当startTime和endTime都不为空时，查询指定时间范围 -->
+            <when test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and cr_team_room.start_time &gt;= #{startTime}
+                and cr_team_room.start_time &lt; DATE_ADD(#{endTime}, INTERVAL 1 DAY)
+            </when>
+            <!-- 其他情况都查询当年数据 -->
+            <otherwise>
+                and YEAR(cr_team_room.start_time) = YEAR(CURDATE())
+            </otherwise>
+        </choose>
+        and cr_role.name!='教员' group by month order by month;
+    </select>
+
+    <select id="syPersonNumStatisticsDay" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
+        select date_format(cr_team_room.start_time, '%Y-%m-%d') as month, sum(JSON_LENGTH(cr_role.user_ids)) AS person_num
+        from cr_team_room,cr_role
+        where cr_team_room.resource_id=cr_role.room_id
+        and xd_type in(1,2,3,4,5,6,7)
+        <choose>
+            <!-- 当startTime和endTime都不为空时，查询指定时间范围 -->
+            <when test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and cr_team_room.start_time &gt;= #{startTime}
+                and cr_team_room.start_time &lt; DATE_ADD(#{endTime}, INTERVAL 1 DAY)
+            </when>
+            <!-- 其他情况都查询当年数据 -->
+            <otherwise>
+                and YEAR(cr_team_room.start_time) = YEAR(CURDATE())
+            </otherwise>
+        </choose>
+        and cr_role.name!='教员' group by month order by month;
+    </select>
+
+    <select id="kmPersonNumStatisticsYear" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
+        select date_format(cr_team_room.start_time, '%Y') as month, sum(JSON_LENGTH(cr_role.user_ids)) AS person_num
         from cr_team_room,cr_role
         where cr_team_room.resource_id=cr_role.room_id
         and xd_type in(8,9,10,11,12,13,14)
@@ -247,11 +393,49 @@
                 and YEAR(cr_team_room.start_time) = YEAR(CURDATE())
             </otherwise>
         </choose>
-        and cr_role.name!='教员' group by month;
+        and cr_role.name!='教员' group by month order by month;
     </select>
 
-    <select id="zhyxPersonNumStatistics" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
-        select month(cr_team_room.start_time) as month, sum(JSON_LENGTH(cr_role.user_ids)) AS person_num
+    <select id="kmPersonNumStatisticsMonth" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
+        select date_format(cr_team_room.start_time, '%Y-%m') as month, sum(JSON_LENGTH(cr_role.user_ids)) AS person_num
+        from cr_team_room,cr_role
+        where cr_team_room.resource_id=cr_role.room_id
+        and xd_type in(8,9,10,11,12,13,14)
+        <choose>
+            <!-- 当startTime和endTime都不为空时，查询指定时间范围 -->
+            <when test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and cr_team_room.start_time &gt;= #{startTime}
+                and cr_team_room.start_time &lt; DATE_ADD(#{endTime}, INTERVAL 1 DAY)
+            </when>
+            <!-- 其他情况都查询当年数据 -->
+            <otherwise>
+                and YEAR(cr_team_room.start_time) = YEAR(CURDATE())
+            </otherwise>
+        </choose>
+        and cr_role.name!='教员' group by month order by month;
+    </select>
+
+    <select id="kmPersonNumStatisticsDay" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
+        select date_format(cr_team_room.start_time, '%Y-%m-%d') as month, sum(JSON_LENGTH(cr_role.user_ids)) AS person_num
+        from cr_team_room,cr_role
+        where cr_team_room.resource_id=cr_role.room_id
+        and xd_type in(8,9,10,11,12,13,14)
+        <choose>
+            <!-- 当startTime和endTime都不为空时，查询指定时间范围 -->
+            <when test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and cr_team_room.start_time &gt;= #{startTime}
+                and cr_team_room.start_time &lt; DATE_ADD(#{endTime}, INTERVAL 1 DAY)
+            </when>
+            <!-- 其他情况都查询当年数据 -->
+            <otherwise>
+                and YEAR(cr_team_room.start_time) = YEAR(CURDATE())
+            </otherwise>
+        </choose>
+        and cr_role.name!='教员' group by month order by month;
+    </select>
+
+    <select id="zhyxPersonNumStatisticsYear" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
+        select date_format(cr_team_room.start_time, '%Y') as month, sum(JSON_LENGTH(cr_role.user_ids)) AS person_num
         from cr_team_room,cr_role
         where cr_team_room.resource_id=cr_role.room_id
         and xd_type in(15)
@@ -266,7 +450,45 @@
                 and YEAR(cr_team_room.start_time) = YEAR(CURDATE())
             </otherwise>
         </choose>
-        and cr_role.name!='教员' group by month;
+        and cr_role.name!='教员' group by month order by month;
+    </select>
+
+    <select id="zhyxPersonNumStatisticsMonth" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
+        select date_format(cr_team_room.start_time, '%Y-%m') as month, sum(JSON_LENGTH(cr_role.user_ids)) AS person_num
+        from cr_team_room,cr_role
+        where cr_team_room.resource_id=cr_role.room_id
+        and xd_type in(15)
+        <choose>
+            <!-- 当startTime和endTime都不为空时，查询指定时间范围 -->
+            <when test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and cr_team_room.start_time &gt;= #{startTime}
+                and cr_team_room.start_time &lt; DATE_ADD(#{endTime}, INTERVAL 1 DAY)
+            </when>
+            <!-- 其他情况都查询当年数据 -->
+            <otherwise>
+                and YEAR(cr_team_room.start_time) = YEAR(CURDATE())
+            </otherwise>
+        </choose>
+        and cr_role.name!='教员' group by month order by month;
+    </select>
+
+    <select id="zhyxPersonNumStatisticsDay" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">
+        select date_format(cr_team_room.start_time, '%Y-%m-%d') as month, sum(JSON_LENGTH(cr_role.user_ids)) AS person_num
+        from cr_team_room,cr_role
+        where cr_team_room.resource_id=cr_role.room_id
+        and xd_type in(15)
+        <choose>
+            <!-- 当startTime和endTime都不为空时，查询指定时间范围 -->
+            <when test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and cr_team_room.start_time &gt;= #{startTime}
+                and cr_team_room.start_time &lt; DATE_ADD(#{endTime}, INTERVAL 1 DAY)
+            </when>
+            <!-- 其他情况都查询当年数据 -->
+            <otherwise>
+                and YEAR(cr_team_room.start_time) = YEAR(CURDATE())
+            </otherwise>
+        </choose>
+        and cr_role.name!='教员' group by month order by month;
     </select>
 
     <select id="totalScoreStatistics" resultType="java.util.Map" parameterType="com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq">

@@ -84,42 +84,54 @@ public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 	 *
 	 * @return
 	 */
-	List<Map<String, Object>> syNumStatistics(XdStatisticsReq request);
+	List<Map<String, Object>> syNumStatisticsYear(XdStatisticsReq request);
+	List<Map<String, Object>> syNumStatisticsMonth(XdStatisticsReq request);
+	List<Map<String, Object>> syNumStatisticsDay(XdStatisticsReq request);
 
 	/**
 	 * 科目场次统计
 	 *
 	 * @return
 	 */
-	List<Map<String, Object>> kmNumStatistics(XdStatisticsReq request);
+	List<Map<String, Object>> kmNumStatisticsYear(XdStatisticsReq request);
+	List<Map<String, Object>> kmNumStatisticsMonth(XdStatisticsReq request);
+	List<Map<String, Object>> kmNumStatisticsDay(XdStatisticsReq request);
 
 	/**
 	 * 综合演训场次统计
 	 *
 	 * @return
 	 */
-	List<Map<String, Object>> zhyxNumStatistics(XdStatisticsReq request);
+	List<Map<String, Object>> zhyxNumStatisticsYear(XdStatisticsReq request);
+	List<Map<String, Object>> zhyxNumStatisticsMonth(XdStatisticsReq request);
+	List<Map<String, Object>> zhyxNumStatisticsDay(XdStatisticsReq request);
 
 	/**
 	 * 实验人数统计
 	 *
 	 * @return
 	 */
-	List<Map<String, Object>> syPersonNumStatistics(XdStatisticsReq request);
+	List<Map<String, Object>> syPersonNumStatisticsYear(XdStatisticsReq request);
+	List<Map<String, Object>> syPersonNumStatisticsMonth(XdStatisticsReq request);
+	List<Map<String, Object>> syPersonNumStatisticsDay(XdStatisticsReq request);
 
 	/**
 	 * 科目人数统计
 	 *
 	 * @return
 	 */
-	List<Map<String, Object>> kmPersonNumStatistics(XdStatisticsReq request);
+	List<Map<String, Object>> kmPersonNumStatisticsYear(XdStatisticsReq request);
+	List<Map<String, Object>> kmPersonNumStatisticsMonth(XdStatisticsReq request);
+	List<Map<String, Object>> kmPersonNumStatisticsDay(XdStatisticsReq request);
 
 	/**
 	 * 综合演训人数统计
 	 *
 	 * @return
 	 */
-	List<Map<String, Object>> zhyxPersonNumStatistics(XdStatisticsReq request);
+	List<Map<String, Object>> zhyxPersonNumStatisticsYear(XdStatisticsReq request);
+	List<Map<String, Object>> zhyxPersonNumStatisticsMonth(XdStatisticsReq request);
+	List<Map<String, Object>> zhyxPersonNumStatisticsDay(XdStatisticsReq request);
 
 	/**
 	 * 综合演训训练总分统计

@@ -733,6 +733,11 @@ public final class CrBusinessErrorCode {
 	public static final String DESC_TOO_LONG = "101144";
 
 	/**
+	 * 统计过于密集，请缩小时间统计范围或修改统计方式
+	 */
+	public static final String STATISTICS_TOO_BIG = "101150";
+
+	/**
 	 * 靶场业务错误代号
 	 */
 	private CrBusinessErrorCode() {}

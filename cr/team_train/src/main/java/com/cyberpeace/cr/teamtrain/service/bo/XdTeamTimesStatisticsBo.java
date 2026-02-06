@@ -18,7 +18,7 @@ public class XdTeamTimesStatisticsBo {
      * 月份
      */
     @ApiModelProperty("月份")
-    private Integer month;
+    private String month;
 
     /**
      * 实验场次

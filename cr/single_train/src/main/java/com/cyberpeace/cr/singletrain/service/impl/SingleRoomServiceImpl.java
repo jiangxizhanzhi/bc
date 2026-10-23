@@ -22,6 +22,7 @@ import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.context.MissionStageScheme;
 import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
 import com.cyberpeace.common.entity.CrRole;
@@ -29,6 +30,7 @@ import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.NameCount;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -927,8 +929,19 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			return null;
 		}
 		// 请求远程场景数据
-		JSONObject sceneData = localSceneService.getSceneData(mpSceneId,
-				UserInfoContext.getUserContext().getUserId());
+		JSONObject sceneData;
+		try {
+			sceneData = localSceneService.getSceneData(mpSceneId,
+					UserInfoContext.getUserContext().getUserId());
+		} catch (RemoteServiceException e) {
+			if (!ErrorCode.SCENE_NOT_EXIST_ZH.equals(e.getMessage())
+					&& !ErrorCode.SCENE_NOT_EXIST_EN.equals(e.getMessage())) {
+				throw e;
+			}
+			log.warn("mp scene does not exist, sceneId=[{}], roomId=[{}]", mpSceneId,
+					room.getResourceId());
+			sceneData = null;
+		}
 		// 场景数据为空，清除本地脏数据
 		if (null == sceneData) {
 			clearLocal(room);

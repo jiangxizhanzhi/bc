@@ -35,6 +35,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -79,6 +80,7 @@ public class OutInterfaceController {
     @AuthOjKey
     @ApiOperation("训练学员统计列表查询")
     @GetMapping("/train_detail")
+    @RequiresAuthentication
     public BaseRsp<ListRsp<XdTeamPersonalStatisticsBo>> getAllDetail(TrainStatisticsDetailReq detailReq) {
         Page<XdTeamPersonalStatisticsBo> page = detailReq.toPageParam();
         ListRsp<XdTeamPersonalStatisticsBo> rsp = xdTeamTrainStatisticsService.getAllStatisticsDetail(detailReq, page, BusinessType.TRAINING_TEAM.getCode());
@@ -88,6 +90,7 @@ public class OutInterfaceController {
     @AuthOjKey
     @ApiOperation("实验列表查询")
     @GetMapping("/team_train_list")
+    @RequiresAuthentication
     public BaseRsp<ListRsp<TeamRoomRsp>> list(@Validated TeamRoomListReq listReq) {
         ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
         listQuery.setPer_page(listReq.getPerPage());
@@ -113,9 +116,11 @@ public class OutInterfaceController {
     @AuthOjKey
     @ApiOperation("实验训练报告")
     @GetMapping("/getTrainReports")
+    @RequiresAuthentication
     public BaseRsp<TrainReportContext> getTrainReports(
             @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
             @ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
+        teamRoomService.checkReadPermission(resource_id);
         TrainRecord trainRecord = trainRecordService.getByRoomId(resource_id);
 
         TeamRoom teamRoom = teamRoomService.getById(resource_id);

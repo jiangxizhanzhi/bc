@@ -14,6 +14,9 @@ import lombok.Data;
 @Data
 public class TeamRoomData implements Serializable {
 
+	/** 演示实验的拓扑摘要快照，不依赖运行场景。 */
+	private String demoTopoDigest;
+
 	/**
 	 * 资源id
 	 */

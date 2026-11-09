@@ -522,7 +522,7 @@ public class TeamTrainRoomController {
 	public BaseRsp<TeamRoomRsp> getTeamRoom(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
-		crRoleService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
+		teamRoomService.checkReadPermission(resource_id);
 
 		TeamRoomData teamRoomData = teamRoomService.getTeamRoomDataByRoomId(resource_id);
 
@@ -972,6 +972,7 @@ public class TeamTrainRoomController {
 	public BaseRsp<TrainReportContext> getTrainReports(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
+		teamRoomService.checkReadPermission(resource_id);
 		TrainRecord trainRecord = trainRecordService.getByRoomId(resource_id);
 
 		TeamRoom teamRoom = teamRoomService.getById(resource_id);

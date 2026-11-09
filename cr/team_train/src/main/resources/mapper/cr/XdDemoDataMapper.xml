@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.teamtrain.dao.mapper.XdDemoDataMapper">
+    <select id="selectSources" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom">
+        select room.* from cr_team_room room
+        join cr_team_template template on template.resource_id = room.team_template_id
+        where room.training_status = 2 and room.xd_type between 1 and 15
+          and not exists (select 1 from cr_demo_data_room demo where demo.room_id = room.resource_id)
+          and exists (select 1 from cr_train_record record where record.room_id = room.resource_id
+                      and record.end_time &gt; record.start_time)
+          and exists (select 1 from cr_task task where task.room_id = room.resource_id)
+          and exists (select 1 from cr_score score where score.room_id = room.resource_id)
+    </select>
+
+    <insert id="insertRun">
+        insert into cr_demo_data_run (business_date, generated_count, create_time)
+        values (#{businessDate}, 0, current_timestamp)
+    </insert>
+
+    <update id="completeRun">
+        update cr_demo_data_run set generated_count = #{count} where business_date = #{businessDate}
+    </update>
+
+    <insert id="insertRoom">
+        insert into cr_demo_data_room (room_id, source_room_id, business_date, topo_digest)
+        values (#{roomId}, #{sourceRoomId}, #{businessDate}, #{topoDigest})
+    </insert>
+</mapper>

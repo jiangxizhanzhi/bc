@@ -26,6 +26,11 @@ import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
  */
 public interface TeamRoomService extends IService<TeamRoom> {
 
+	/** 当前登录人员可访问的实验；管理员返回 null，表示不限制。 */
+	List<String> getReadableRoomIds();
+
+	void checkReadPermission(String roomId);
+
 	/**
 	 * 通过id获取团队训练
 	 *

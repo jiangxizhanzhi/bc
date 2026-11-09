@@ -4,6 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper">
 
+    <select id="selectParticipatingRoomIds" resultType="java.lang.String">
+        select distinct room_id from cr_role
+        where business_type = 3 and role_group in (1, 2)
+          and instr(user_ids, concat(concat('"', #{userId}), '"')) &gt; 0
+    </select>
+
     <resultMap id="TeamRoomData" type="com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData">
         <id property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
         <result property="template" column="team_template_id" jdbcType="VARCHAR"/>
@@ -76,6 +82,7 @@
         local_scene.start_time scene_start_time,
         local_scene.destroy_time scene_end_time,
         local_scene.scene_status,
+        demo.topo_digest as demo_topo_digest,
         (
         CASE
         WHEN cr_team_room.training_status = 1 THEN
@@ -89,6 +96,7 @@
         from cr_team_room
         left join cr_team_template on cr_team_room.team_template_id = cr_team_template.resource_id
         left join local_scene on cr_team_room.resource_id = local_scene.business_instance_id
+        left join cr_demo_data_room demo on demo.room_id = cr_team_room.resource_id
         <where>
 
 

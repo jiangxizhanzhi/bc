@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -429,10 +430,28 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			String userId = UserInfoContext.getUserContext().getUserId();
 			listQuery.setIds(crRoleService.getRoomIdsByUserId(userId));
 		} else {
-			listQuery.setIds(null);
+			listQuery.setIds(getReadableRoomIds());
 		}
 
 		return teamRoomMapper.listTeamRoom(page, listQuery);
+	}
+
+	@Override
+	public List<String> getReadableRoomIds() {
+		UserInfo user = UserInfoContext.getUserContext();
+		if (user == null) {
+			throw new UnauthenticatedException();
+		}
+		return user.isAdmin() || user.isSuperuser() ? null
+				: teamRoomMapper.selectParticipatingRoomIds(user.getUserId());
+	}
+
+	@Override
+	public void checkReadPermission(String roomId) {
+		List<String> roomIds = getReadableRoomIds();
+		if (roomIds != null && !roomIds.contains(roomId)) {
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
 	}
 
 	/**
@@ -865,9 +884,11 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		IPage<TeamRoomData> data = this.list(listQuery, isOut);
 
 		// 训练场景拓扑节点数量获取
-		Map<String, TopoDigest> topologyNodesStats = remoteTopoService
-				.batchGetTopoDigest(data.getRecords().stream().map(TeamRoomData::getCopyedTopoId)
-						.collect(Collectors.toList()));
+		List<String> topoIds = data.getRecords().stream()
+				.filter(room -> room.getDemoTopoDigest() == null)
+				.map(TeamRoomData::getCopyedTopoId).collect(Collectors.toList());
+		Map<String, TopoDigest> topologyNodesStats = topoIds.isEmpty() ? Collections.emptyMap()
+				: remoteTopoService.batchGetTopoDigest(topoIds);
 		ListRsp<TeamRoomRsp> teamRoomRspListRsp = new ListRsp<>();
 
 		List<TeamRoomRsp> teamRoomRspList = Lists.newArrayList();
@@ -898,6 +919,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 		// 填充数据
 		for (TeamRoomData teamRoomData : data.getRecords()) {
+			TopoDigest topoDigest = teamRoomData.getDemoTopoDigest() == null
+					? topologyNodesStats.get(teamRoomData.getCopyedTopoId())
+					: JsonUtil.toJsonObject(teamRoomData.getDemoTopoDigest(), TopoDigest.class);
 			RoleQuery roleQuery = new RoleQuery();
 			roleQuery.setRoomId(teamRoomData.getResourceId());
 
@@ -913,17 +937,17 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			teamRoomRsp.setRolesData(Lists.newArrayList());
 			// node count ,differs by role
 			if (!isOut || (UserInfoContext.getUserContext()!= null && StringUtils.isNotEmpty(UserInfoContext.getUserContext().getUserId()))) {
-				CrRole selfRole = CrRole.findRoleByUserId(crRoles, UserInfoContext.getUserContext().getUserId());
+				CrRole selfRole = crRoles.stream().filter(role -> role.containsUser(
+						UserInfoContext.getUserContext().getUserId())).findFirst().orElse(null);
 				if (null == selfRole || selfRole.isTeamTeacher()) {
 					teamRoomRsp.setNodesCount(
-							topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
+							topoDigest.getNodeCounts());
 				} else {
 					teamRoomRsp.setNodesCount(selfRole.getVisibleNodeCount());
 				}
 			}
 
-			teamRoomRsp.setResourceOccupiedNums(topologyNodesStats
-					.get(teamRoomData.getCopyedTopoId()).getResourceOccupiedNums());
+			teamRoomRsp.setResourceOccupiedNums(topoDigest.getResourceOccupiedNums());
 			teamRoomRsp.setPreSkill(
 					JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
 			teamRoomRsp.setTrainSkill(

@@ -26,6 +26,8 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 @Repository
 public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 
+	List<String> selectParticipatingRoomIds(@Param("userId") String userId);
+
 	/**
 	 * 获取团队房间响应由房间id
 	 *

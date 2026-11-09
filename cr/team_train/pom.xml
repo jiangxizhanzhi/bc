@@ -18,6 +18,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.cyberpeace.cr</groupId>
             <artifactId>single_train</artifactId>
             <version>${cr.single.train.version}</version>

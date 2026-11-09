@@ -26,8 +26,8 @@ public class MybatisFillHandler implements MetaObjectHandler {
 	 */
 	@Override
 	public void insertFill(MetaObject metaObject) {
-		this.setFieldValByName("createTime", new Date(), metaObject);
-		this.setFieldValByName("updateTime", new Date(), metaObject);
+		this.strictInsertFill(metaObject, "createTime", Date.class, new Date());
+		this.strictInsertFill(metaObject, "updateTime", Date.class, new Date());
 	}
 
 	/**

@@ -13,6 +13,7 @@ import com.cyberpeace.cr.teamtrain.controller.req.XdStatisticsReq;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cr.teamtrain.service.XdTeamTrainStatisticsService;
+import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.bo.XdTeamPersonScoreStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.XdTeamPersonStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.XdTeamPersonalStatisticsBo;
@@ -46,6 +47,9 @@ public class XdTeamTrainStatisticsServiceImpl implements XdTeamTrainStatisticsSe
 
     @Autowired
     TeamRoomMapper teamRoomMapper;
+
+    @Autowired
+    private TeamRoomService teamRoomService;
 
     /**
      * 远程用户Service
@@ -366,6 +370,7 @@ public class XdTeamTrainStatisticsServiceImpl implements XdTeamTrainStatisticsSe
 
     @Override
     public ListRsp<XdTeamPersonalStatisticsBo> getAllStatisticsDetail(TrainStatisticsDetailReq detailReq, Page page, Integer code) {
+        List<String> readableRoomIds = teamRoomService.getReadableRoomIds();
         List<XdTeamPersonalStatisticsBo> rsp = Lists.newArrayList();
 
         String userName = detailReq.getPattern();
@@ -384,6 +389,11 @@ public class XdTeamTrainStatisticsServiceImpl implements XdTeamTrainStatisticsSe
         List<CrTask> personalTotalStatistics = crTaskMapper.selectByStatusListAndType(
                 statusList, code
         );
+        if (readableRoomIds != null) {
+            personalTotalStatistics = personalTotalStatistics.stream()
+                    .filter(task -> readableRoomIds.contains(task.getRoomId()))
+                    .collect(Collectors.toList());
+        }
         //时间过滤
         if (StringUtils.isNotEmpty(detailReq.getStartTime()) && StringUtils.isNotEmpty(detailReq.getEndTime())) {
             Date startTime = java.sql.Date.valueOf(detailReq.getStartTime());

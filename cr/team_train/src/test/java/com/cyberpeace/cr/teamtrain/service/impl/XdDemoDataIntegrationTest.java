@@ -32,6 +32,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.CourseLessonUserRelation;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.mapper.*;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
@@ -70,8 +71,9 @@ class XdDemoDataIntegrationTest {
     private RemoteTopoService topoService;
     private RemoteUserService userService;
     private Random random;
-    private final LocalDate day = LocalDate.of(2026, 11, 8);
-    private final Date oldStart = Date.from(LocalDate.of(2026, 10, 1).atTime(9, 0)
+    private Map<String, UserInfo> users;
+    private final LocalDate day = LocalDate.of(2026, 12, 31);
+    private final Date oldStart = Date.from(LocalDate.of(2025, 10, 1).atTime(9, 0)
             .atZone(ZoneId.of("Asia/Shanghai")).toInstant());
 
     @BeforeEach
@@ -80,16 +82,17 @@ class XdDemoDataIntegrationTest {
         ds.setURL("jdbc:h2:mem:" + UUID.randomUUID() + ";MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE");
         jdbc = new JdbcTemplate(ds);
         for (Class<?> type : Arrays.asList(TeamRoom.class, CrRole.class, Mission.class, CrTask.class,
-                CrTaskSubmit.class, CrTaskLog.class, CrScore.class, TrainRecord.class, CourseLessonUserRelation.class)) {
+                CrTaskSubmit.class, CrTaskLog.class, CrScore.class, TrainRecord.class, CourseLessonUserRelation.class,
+                TeamTemplate.class, BusinessTemplate.class, MissionTemplate.class)) {
             createTable(type);
         }
-        jdbc.execute("create table cr_team_template (resource_id varchar(64), business_template_id varchar(64), duration_time int)");
         jdbc.execute("create table local_scene (business_instance_id varchar(64), start_time timestamp, destroy_time timestamp, scene_status int)");
-        new ResourceDatabasePopulator(new FileSystemResource("../../template/src/main/resources/static/sql/bc/V5.6.0.20261109.1__demo_data.sql")).execute(ds);
+        new ResourceDatabasePopulator(new FileSystemResource("../../template/src/main/resources/static/sql/bc/V5.6.0.20261109.1__demo_data.sql"),
+                new FileSystemResource("../../template/src/main/resources/static/sql/bc/V5.6.0.20261110.1__annual_demo_data.sql")).execute(ds);
         MybatisConfiguration config = new MybatisConfiguration();
         config.setMapUnderscoreToCamelCase(true);
         List<Class<?>> mappers = Arrays.asList(TeamRoomMapper.class, XdDemoDataMapper.class, CrRoleMapper.class,
-                MissionMapper.class, CrTaskMapper.class, CrTaskSubmitMapper.class, CrTaskLogMapper.class,
+                MissionMapper.class, MissionTemplateMapper.class, CrTaskMapper.class, CrTaskSubmitMapper.class, CrTaskLogMapper.class,
                 CrScoreMapper.class, TrainRecordMapper.class, CourseLessonUserRelationMapper.class);
         mappers.forEach(config::addMapper);
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
@@ -125,10 +128,13 @@ class XdDemoDataIntegrationTest {
         digest.setNodeCounts(8);
         digest.setResourceOccupiedNums(5);
         when(topoService.batchGetTopoDigest(anyList())).thenReturn(Collections.singletonMap("topo", digest));
-        Map<String, UserInfo> users = new HashMap<>();
-        users.put("teacher", new UserInfo());
-        users.put("student", new UserInfo());
-        when(userService.getIdUserInfoMap(anyList())).thenReturn(users);
+        users = new HashMap<>();
+        addUser("teacher", "liuwenyan");
+        addUser("shen-teacher", "shenjuan");
+        addUser("student", "student");
+        when(userService.getUserIdsByRoleName("教员")).thenReturn(Arrays.asList("teacher", "shen-teacher"));
+        when(userService.getUserIdsByRoleName("学员")).thenReturn(Collections.singletonList("student"));
+        when(userService.getIdUserInfoMap(anyList())).thenAnswer(call -> users);
         Properties properties = new Properties();
         for (String module : Arrays.asList("cr", "rtks")) {
             try (InputStream input = Files.newInputStream(Paths.get("../../template/src/main/resources/modules/" + module + ".properties"))) {
@@ -154,7 +160,7 @@ class XdDemoDataIntegrationTest {
     }
 
     @Test
-    void clonesLinkedBusinessRecordsAndPreservesTheSource() {
+    void createsLinkedBusinessRecordsAndPreservesHistory() {
         service.generate(day);
         String roomId = jdbc.queryForObject("select room_id from cr_demo_data_room", String.class);
         assertNotEquals("source", roomId);
@@ -165,22 +171,21 @@ class XdDemoDataIntegrationTest {
         assertNull(room.getLocalSceneId());
         assertNull(room.getReplaySceneId());
         assertEquals("", room.getCopyedTopoId());
-        assertEquals(day, room.getStartTime().toInstant().atZone(ZoneId.of("Asia/Shanghai")).toLocalDate());
+        assertEquals(XdAutomaticDataServiceImpl.scheduledDate(2026, "template", "student", 3), room.getStartTime().toInstant().atZone(ZoneId.of("Asia/Shanghai")).toLocalDate());
         assertEquals(7_200_000L, room.getEndTime().getTime() - room.getStartTime().getTime());
         assertEquals("topo", session.getMapper(TeamRoomMapper.class).selectById("source").getCopyedTopoId());
         assertEquals(1, jdbc.queryForObject("select count(*) from cr_task where room_id=? and resource_id <> 'task' and mission_id <> 'mission' and role_id <> 'student-role'", Integer.class, roomId));
         assertEquals(1, jdbc.queryForObject("select count(*) from cr_task t join cr_mission m on t.mission_id=m.resource_id join cr_role r on t.role_id=r.resource_id where t.room_id=? and m.room_id=t.room_id and r.room_id=t.room_id", Integer.class, roomId));
         assertEquals(1, jdbc.queryForObject("select count(*) from cr_task_submit s join cr_task t on s.task_id=t.resource_id where s.room_id=? and s.room_id=t.room_id", Integer.class, roomId));
         assertEquals("teacher", jdbc.queryForObject("select evaluator_id from cr_task_submit where room_id=?", String.class, roomId));
-        assertEquals(1, jdbc.queryForObject("select count(*) from cr_task_log l join cr_task t on l.task_id=t.resource_id join cr_mission m on l.mission_id=m.resource_id where l.room_id=? and l.room_id=t.room_id and l.room_id=m.room_id", Integer.class, roomId));
+        assertEquals(3, jdbc.queryForObject("select count(*) from cr_task_log l join cr_task t on l.task_id=t.resource_id join cr_mission m on l.mission_id=m.resource_id where l.room_id=? and l.room_id=t.room_id and l.room_id=m.room_id", Integer.class, roomId));
         CrRole role = session.getMapper(CrRoleMapper.class).getRolesByRoomId(roomId).stream().filter(CrRole::isTeamStudent).findFirst().get();
         String missionId = jdbc.queryForObject("select resource_id from cr_mission where room_id=?", String.class, roomId);
         assertEquals(Collections.singletonList(missionId), role.getMissionStageSchemes().get(0).getMissions());
-        assertEquals("演习文书：保留原文与附件引用", role.getExercisePaper());
         assertEquals("[\"student\"]", role.getUserIds());
-        assertEquals(176, jdbc.queryForObject("select sum(final_score) from cr_score where user_id='student'", Integer.class));
+        assertEquals(163, jdbc.queryForObject("select sum(final_score) from cr_score where user_id='student'", Integer.class));
         assertEquals(2, jdbc.queryForObject("select count(*) from course_lesson_user_relation where user_id='student' and course_id='course'", Integer.class));
-        assertEquals(1, session.getMapper(XdDemoDataMapper.class).selectSources().size());
+        assertEquals(1, session.getMapper(XdDemoDataMapper.class).selectTemplates().size());
         CrTask task = session.getMapper(CrTaskMapper.class).selectList(new QueryWrapper<CrTask>().eq("room_id", roomId)).get(0);
         assertEquals(room.getStartTime().getTime() + 3_600_000L, task.getLastSubmitTime().getTime());
         assertEquals(room.getStartTime(), task.getCreateTime());
@@ -189,12 +194,18 @@ class XdDemoDataIntegrationTest {
     }
 
     @Test
-    void twoRoomDayUsesIndependentIdsAndOneExecutionRecord() {
-        when(random.nextInt(10)).thenReturn(9);
+    void allSevenCategoriesUseTheirTeacherAndSeasonAndExcludeTraining() {
+        for (int type = 1; type <= 7; type++) {
+            if (type != 3) seedTemplate("template" + type, type);
+        }
+        seedTemplate("subject", 1);
+        jdbc.update("update cr_business_template set xd_template_category=2 where resource_id='subject-business'");
+        seedTemplate("exercise", 8);
         service.generate(day);
-        assertEquals(2, jdbc.queryForObject("select generated_count from cr_demo_data_run", Integer.class));
-        assertEquals(2, jdbc.queryForObject("select count(distinct room_id) from cr_demo_data_room", Integer.class));
-        assertEquals(3, jdbc.queryForObject("select count(distinct resource_id) from cr_task", Integer.class));
+        assertEquals(7, count("cr_demo_data_room"));
+        assertEquals(0, jdbc.queryForObject("select count(*) from cr_team_room where resource_id <> 'source' and xd_type not between 1 and 7", Integer.class));
+        assertEquals(0, jdbc.queryForObject("select count(*) from cr_team_room r join cr_train_record t on t.room_id=r.resource_id where r.resource_id <> 'source' and ((r.xd_type between 1 and 5 and (t.user_id <> 'teacher' or month(r.start_time) not between 10 and 12)) or (r.xd_type in (6,7) and (t.user_id <> 'shen-teacher' or month(r.start_time) not between 4 and 6)))", Integer.class));
+        assertEquals(7, jdbc.queryForObject("select count(*) from cr_demo_data_room where source_room_id is null", Integer.class));
     }
 
     @Test
@@ -263,10 +274,10 @@ class XdDemoDataIntegrationTest {
                 new ScoreTrendReq(session.getMapper(TrainRecordMapper.class).getByRoomId(roomId),
                         room.getStartTime(), room.getEndTime(), 10, room.getReplaySceneId()));
         assertEquals(1, report.getGetScoreRsps().get(0).getAllTaskCount());
-        assertEquals(88, report.getGetScoreRsps().get(0).getSynthesisScore());
+        assertEquals(75, report.getGetScoreRsps().get(0).getSynthesisScore());
         TrainReportExportContext export = BeanUtils.deepCopy(report, TrainReportExportContext.class);
         export.initExport();
-        assertEquals(88, export.getGetScoreRsps().get(0).getSynthesisScore());
+        assertEquals(75, export.getGetScoreRsps().get(0).getSynthesisScore());
         assertEquals(1, export.getGetScoreRsps().get(0).getSuccessTaskCount());
         verifyNoInteractions(remoteScenes);
     }
@@ -301,29 +312,32 @@ class XdDemoDataIntegrationTest {
     }
 
     @Test
-    void brokenSamplesDoNotLeaveASuccessMarker() {
-        jdbc.update("update cr_task set mission_id='missing'");
+    void missingTemplateTasksDoNotLeaveASuccessMarker() {
+        jdbc.update("delete from cr_mission_template");
         service.generate(day);
-        assertEquals(0, jdbc.queryForObject("select count(*) from cr_demo_data_run", Integer.class));
-        assertEquals(1, jdbc.queryForObject("select count(*) from cr_team_room", Integer.class));
+        assertEquals(0, count("cr_demo_data_run"));
+        assertEquals(1, count("cr_team_room"));
     }
 
     @Test
-    void documentTextAndStageNamesArePreservedWhileMissionIdsAreRemapped() {
-        jdbc.update("update cr_role set exercise_paper=?, mission_scheme=? where resource_id='student-role'",
-                "mission", "[{\"stage\":\"mission\",\"missions\":[\"mission\"],\"dynamic\":[]}]");
+    void everyStudentCompletesTheUnionOfRoleTasksExactlyOnce() {
+        addUser("other-student", "other");
+        when(userService.getUserIdsByRoleName("学员")).thenReturn(Arrays.asList("student", "other-student", "student"));
+        seedMissionTemplate("second-mission");
+        String first = roleConfig("template-mission");
+        String second = roleConfig("template-mission", "second-mission");
+        jdbc.update("update cr_team_template set role_config=?", first.substring(0, first.length() - 1) + "," + second.substring(1));
         service.generate(day);
-        String roomId = jdbc.queryForObject("select room_id from cr_demo_data_room", String.class);
-        CrRole role = session.getMapper(CrRoleMapper.class).getRolesByRoomId(roomId).stream()
-                .filter(CrRole::isTeamStudent).findFirst().get();
-        assertEquals("mission", role.getExercisePaper());
-        assertEquals("mission", role.getMissionStageSchemes().get(0).getStage());
-        assertNotEquals("mission", role.getMissionStageSchemes().get(0).getMissions().get(0));
+        assertEquals(4, jdbc.queryForObject("select count(*) from cr_task where room_id <> 'source'", Integer.class));
+        assertEquals(4, jdbc.queryForObject("select count(*) from cr_task_submit where room_id <> 'source'", Integer.class));
+        assertEquals(0, jdbc.queryForObject("select count(*) from (select t.user_id,m.mission_template_id,count(*) as n from cr_task t join cr_mission m on m.resource_id=t.mission_id where t.room_id <> 'source' group by t.user_id,m.mission_template_id having count(*) <> 1) duplicates", Integer.class));
+        assertEquals(1, jdbc.queryForObject("select count(*) from course_lesson_user_relation where lesson_id <> 'source'", Integer.class));
+        service.generate(day);
+        assertEquals(4, jdbc.queryForObject("select count(*) from cr_task where room_id <> 'source'", Integer.class));
     }
 
     @Test
-    void missingHistoricalAuditTimesUseTheGeneratedExperimentWindow() {
-        jdbc.update("update cr_role set exercise_paper=null");
+    void generatedTimesStayWithinTheExperimentWithoutChangingHistoricalNulls() {
         jdbc.update("update cr_task set create_time=null, update_time=null where resource_id='task'");
         service.generate(day);
         String roomId = jdbc.queryForObject("select room_id from cr_demo_data_room", String.class);
@@ -331,8 +345,10 @@ class XdDemoDataIntegrationTest {
         CrTask task = session.getMapper(CrTaskMapper.class)
                 .selectList(new QueryWrapper<CrTask>().eq("room_id", roomId)).get(0);
         assertEquals(room.getStartTime(), task.getCreateTime());
-        assertEquals(room.getEndTime(), task.getUpdateTime());
+        assertTrue(task.getUpdateTime().before(room.getEndTime()));
         assertNull(jdbc.queryForObject("select create_time from cr_task where resource_id='task'", Date.class));
+        assertEquals(88, jdbc.queryForObject("select score from cr_task where resource_id='task'", Integer.class));
+        assertEquals("演习文书：保留原文与附件引用", jdbc.queryForObject("select exercise_paper from cr_role where resource_id='student-role'", String.class));
     }
 
     @Test
@@ -352,10 +368,11 @@ class XdDemoDataIntegrationTest {
 
     @Test
     void defaultEnabledJobUsesPreviousDateInConfiguredZone() {
-        ReflectionTestUtils.setField(service, "timeZone", "Pacific/Kiritimati");
-        service.automatic();
-        assertEquals(LocalDate.now(ZoneId.of("Pacific/Kiritimati")).minusDays(1).toString(),
-                jdbc.queryForObject("select business_date from cr_demo_data_run", String.class));
+        XdAutomaticDataServiceImpl job = spy(service);
+        ReflectionTestUtils.setField(job, "timeZone", "Pacific/Kiritimati");
+        doNothing().when(job).generate(any(LocalDate.class));
+        job.automatic();
+        verify(job).generate(LocalDate.now(ZoneId.of("Pacific/Kiritimati")).minusDays(1));
     }
 
     @Test
@@ -376,6 +393,252 @@ class XdDemoDataIntegrationTest {
         assertEquals(0, rooms.listTeamRoom(new Page<>(1, 10), query).getTotal());
     }
 
+    @Test
+    void datesBefore2026DoNotReadOrWriteData() {
+        service.generate(LocalDate.of(2025, 12, 31));
+        verifyNoInteractions(userService, topoService);
+        assertEquals(0, count("cr_demo_data_run"));
+    }
+
+    @Test
+    void onlyDueDatesAreGeneratedAndCalendarDoesNotDependOnRosterOrder() {
+        LocalDate scheduled = XdAutomaticDataServiceImpl.scheduledDate(2026, "template", "student", 3);
+        service.generate(scheduled.minusDays(1));
+        assertEquals(0, count("cr_demo_data_room"));
+        service.generate(scheduled);
+        assertEquals(scheduled, jdbc.queryForObject("select business_date from cr_demo_data_room", java.sql.Date.class).toLocalDate());
+        service.generate(day);
+        assertEquals(1, count("cr_demo_data_room"));
+        assertEquals(0, jdbc.queryForObject("select count(*) from cr_demo_data_room where business_date > ?", Integer.class, scheduled));
+    }
+
+    @Test
+    void completionIsRequiredOnceForEachYear() {
+        service.generate(LocalDate.of(2027, 12, 31));
+        assertEquals(2, count("cr_demo_data_room"));
+        assertEquals(2, jdbc.queryForObject("select count(distinct year(business_date)) from cr_demo_data_room", Integer.class));
+        service.generate(LocalDate.of(2027, 12, 31));
+        assertEquals(2, count("cr_demo_data_room"));
+    }
+
+    @Test
+    void qualifiedHistoricalCompletionCountsEvenOnAnotherDate() {
+        moveSource(LocalDate.of(2026, 11, 1));
+        service.generate(day);
+        assertEquals(0, count("cr_demo_data_room"));
+        assertEquals(0, count("cr_demo_data_run"));
+        assertEquals(88, jdbc.queryForObject("select final_score from cr_score where room_id='source'", Integer.class));
+    }
+
+    @Test
+    void partialHistoricalExperimentIsPreservedAndReplacedWithACompleteExperiment() {
+        moveSource(LocalDate.of(2026, 11, 1));
+        seedMissionTemplate("second-mission");
+        jdbc.update("update cr_team_template set role_config=?", roleConfig("template-mission", "second-mission"));
+        service.generate(day);
+        assertEquals(1, count("cr_demo_data_room"));
+        assertEquals(2, jdbc.queryForObject("select count(*) from cr_task where room_id <> 'source'", Integer.class));
+        assertEquals(1, jdbc.queryForObject("select count(*) from cr_task where room_id='source'", Integer.class));
+        assertEquals(88, jdbc.queryForObject("select final_score from cr_score where room_id='source'", Integer.class));
+    }
+
+    @Test
+    void aScoreWithoutACompletedSubmissionDoesNotCount() {
+        moveSource(LocalDate.of(2026, 11, 1));
+        jdbc.update("update cr_task_submit set evaluate_status=0 where room_id='source'");
+        service.generate(day);
+        assertEquals(1, count("cr_demo_data_room"));
+    }
+
+    @Test
+    void aCompletedTaskWithoutAFinalScoreDoesNotCount() {
+        moveSource(LocalDate.of(2026, 11, 1));
+        jdbc.update("update cr_score set final_score=null where room_id='source'");
+        service.generate(day);
+        assertEquals(1, count("cr_demo_data_room"));
+    }
+
+    @Test
+    void evaluatedFailureAlsoCountsAsCompleted() {
+        moveSource(LocalDate.of(2026, 11, 1));
+        jdbc.update("update cr_task set status=2 where room_id='source'");
+        jdbc.update("update cr_task_submit set evaluate_status=2 where room_id='source'");
+        service.generate(day);
+        assertEquals(0, count("cr_demo_data_room"));
+    }
+
+    @Test
+    void aRecordOutsideTheSeasonDoesNotConsumeTheAnnualCompletion() {
+        moveSource(LocalDate.of(2026, 7, 1));
+        service.generate(day);
+        assertEquals(1, count("cr_demo_data_room"));
+    }
+
+    @Test
+    void aRecordWithTheWrongTeacherDoesNotConsumeTheAnnualCompletion() {
+        moveSource(LocalDate.of(2026, 11, 1));
+        jdbc.update("update cr_role set user_ids='[\"shen-teacher\"]' where resource_id='teacher-role'");
+        service.generate(day);
+        assertEquals(1, count("cr_demo_data_room"));
+    }
+
+    @Test
+    void concurrentExecutionsAlsoSerializeAnExistingDateMarker() throws Exception {
+        LocalDate date = XdAutomaticDataServiceImpl.scheduledDate(2026, "template", "student", 3);
+        session.getMapper(XdDemoDataMapper.class).insertRun(date);
+        ExecutorService workers = Executors.newFixedThreadPool(3);
+        try {
+            List<Future<?>> calls = new ArrayList<>();
+            for (int i = 0; i < 3; i++) calls.add(workers.submit(() -> service.generate(day)));
+            for (Future<?> call : calls) call.get(15, TimeUnit.SECONDS);
+        } finally {
+            workers.shutdownNow();
+        }
+        assertEquals(1, count("cr_demo_data_room"));
+        assertEquals(1, jdbc.queryForObject("select generated_count from cr_demo_data_run", Integer.class));
+    }
+
+    @Test
+    void incrementalMigrationsPreserveOldSourcesAndAllowTemplateSources() {
+        for (String dialect : Arrays.asList("bc", "bc_dm")) {
+            jdbc.update("delete from cr_demo_data_room");
+            jdbc.execute("alter table cr_demo_data_room alter column source_room_id set not null");
+            session.getMapper(XdDemoDataMapper.class).insertRoom("legacy", "source", day, "{}");
+            new ResourceDatabasePopulator(new FileSystemResource("../../template/src/main/resources/static/sql/"
+                    + dialect + "/V5.6.0.20261110.1__annual_demo_data.sql")).execute(jdbc.getDataSource());
+            session.getMapper(XdDemoDataMapper.class).insertRoom("new", null, day, "{}");
+            assertEquals("source", jdbc.queryForObject("select source_room_id from cr_demo_data_room where room_id='legacy'", String.class));
+            assertNull(jdbc.queryForObject("select source_room_id from cr_demo_data_room where room_id='new'", String.class));
+        }
+    }
+
+    @Test
+    void dmMergeStatementSupportsFirstAndRepeatedDateAcquisition() {
+        String previous = System.getProperty("BC_DB_TYPE");
+        System.setProperty("BC_DB_TYPE", "dm");
+        try {
+            service.generate(day);
+            service.generate(day);
+            assertEquals(1, count("cr_demo_data_room"));
+            assertEquals(1, count("cr_demo_data_run"));
+        } finally {
+            if (previous == null) System.clearProperty("BC_DB_TYPE");
+            else System.setProperty("BC_DB_TYPE", previous);
+        }
+    }
+
+    @Test
+    void anExistingDateMarkerStillAllowsNewStudentsAndUpdatesTheCount() {
+        service.generate(day);
+        LocalDate date = XdAutomaticDataServiceImpl.scheduledDate(2026, "template", "student", 3);
+        String newcomer = null;
+        for (int i = 0; i < 1000; i++) {
+            String id = "new-" + i;
+            if (XdAutomaticDataServiceImpl.scheduledDate(2026, "template", id, 3).equals(date)) {
+                newcomer = id;
+                break;
+            }
+        }
+        assertNotNull(newcomer);
+        addUser(newcomer, "new-student");
+        when(userService.getUserIdsByRoleName("学员")).thenReturn(Arrays.asList(newcomer, "student"));
+        service.generate(day);
+        assertEquals(2, count("cr_demo_data_room"));
+        assertEquals(2, jdbc.queryForObject("select generated_count from cr_demo_data_run where business_date=?", Integer.class, date));
+        assertEquals(1, jdbc.queryForObject("select count(*) from cr_task where room_id <> 'source' and user_id='student'", Integer.class));
+        assertEquals(0, jdbc.queryForObject("select count(*) from course_lesson_user_relation where user_id=?", Integer.class, newcomer));
+    }
+
+    @Test
+    void templatesWithoutHistoricalExperimentsStillGenerate() {
+        for (String table : Arrays.asList("cr_task_log", "cr_task_submit", "cr_task", "cr_mission", "cr_role", "cr_score", "cr_train_record", "course_lesson_user_relation", "cr_team_room")) {
+            jdbc.update("delete from " + table);
+        }
+        service.generate(day);
+        assertEquals(1, count("cr_demo_data_room"));
+        assertEquals(1, count("cr_task"));
+        assertEquals(0, count("course_lesson_user_relation"));
+    }
+
+    @Test
+    void missingOrAmbiguousTeacherAccountsSkipOnlyTheirGroup() {
+        seedTemplate("new-network", 6);
+        users.get("teacher").setUserName("another-account");
+        users.get("teacher").setName("刘老师");
+        service.generate(day);
+        assertEquals(1, count("cr_demo_data_room"));
+        assertEquals(6, jdbc.queryForObject("select xd_type from cr_team_room where resource_id <> 'source'", Integer.class));
+        users.get("teacher").setUserName("liuwenyan");
+        addUser("duplicate-teacher", "liuwenyan");
+        when(userService.getUserIdsByRoleName("教员")).thenReturn(Arrays.asList("teacher", "duplicate-teacher", "shen-teacher"));
+        service.generate(day);
+        assertEquals(1, count("cr_demo_data_room"));
+    }
+
+    @Test
+    void aMissingTopologyDoesNotCreateAnExecutionMarker() {
+        when(topoService.batchGetTopoDigest(anyList())).thenReturn(Collections.emptyMap());
+        service.generate(day);
+        assertEquals(0, count("cr_demo_data_room"));
+        assertEquals(0, count("cr_demo_data_run"));
+    }
+
+    @Test
+    void personalCourseMembershipIsDeduplicatedAndNewMembershipsAreNotInvented() {
+        jdbc.update("insert into course_lesson_user_relation(resource_id,course_id,course_name,lesson_id,user_id,scored_flag) values ('duplicate','course','renamed-course','source','student',false)");
+        service.generate(day);
+        assertEquals(1, jdbc.queryForObject("select count(*) from course_lesson_user_relation where lesson_id <> 'source'", Integer.class));
+        assertTrue(jdbc.queryForObject("select scored_flag from course_lesson_user_relation where lesson_id <> 'source'", Boolean.class));
+        assertEquals(2, jdbc.queryForObject("select count(*) from course_lesson_user_relation where lesson_id='source'", Integer.class));
+    }
+
+    @Test
+    void allHistoricalBusinessRowsRemainUnchanged() {
+        Map<String, String> filters = new LinkedHashMap<>();
+        filters.put("cr_team_room", "resource_id='source'");
+        for (String table : Arrays.asList("cr_role", "cr_mission", "cr_task", "cr_task_submit", "cr_task_log", "cr_score", "cr_train_record")) {
+            filters.put(table, "room_id='source'");
+        }
+        filters.put("course_lesson_user_relation", "lesson_id='source'");
+        Map<String, List<Map<String, Object>>> before = new HashMap<>();
+        filters.forEach((table, filter) -> before.put(table, jdbc.queryForList("select * from " + table + " where " + filter + " order by id")));
+        service.generate(day);
+        filters.forEach((table, filter) -> assertEquals(before.get(table), jdbc.queryForList("select * from " + table + " where " + filter + " order by id"), table));
+    }
+
+    @Test
+    void finalScoresAreGaussianAndClippedToTheHundredPointScale() {
+        when(random.nextGaussian()).thenReturn(-100.0, 100.0, 0.0);
+        assertEquals(0, service.sampleScore());
+        assertEquals(100, service.sampleScore());
+        assertEquals(75, service.sampleScore());
+        ReflectionTestUtils.setField(service, "random", new Random(34));
+        double sum = 0;
+        double squared = 0;
+        for (int i = 0; i < 10000; i++) {
+            int score = service.sampleScore();
+            assertTrue(score >= 0 && score <= 100);
+            sum += score;
+            squared += score * score;
+        }
+        double mean = sum / 10000;
+        double deviation = Math.sqrt(squared / 10000 - mean * mean);
+        assertEquals(75, mean, 0.5);
+        assertEquals(10, deviation, 0.5);
+    }
+
+    @Test
+    void taskSubmissionAndTrainingScoresShareTheSameActualPoints() {
+        jdbc.update("update cr_mission_template set score=200");
+        when(random.nextGaussian()).thenReturn(1.0);
+        service.generate(day);
+        assertEquals(85, jdbc.queryForObject("select final_score from cr_score where room_id <> 'source'", Integer.class));
+        assertEquals(170, jdbc.queryForObject("select training_score from cr_score where room_id <> 'source'", Integer.class));
+        assertEquals(170, jdbc.queryForObject("select score from cr_task where room_id <> 'source'", Integer.class));
+        assertEquals(170, jdbc.queryForObject("select score from cr_task_submit where room_id <> 'source'", Integer.class));
+        assertEquals(200, jdbc.queryForObject("select mission_score from cr_task_submit where room_id <> 'source'", Integer.class));
+    }
+
     private void createTable(Class<?> type) {
         List<String> columns = new ArrayList<>();
         for (Class<?> current = type; current != Object.class; current = current.getSuperclass()) {
@@ -394,7 +657,7 @@ class XdDemoDataIntegrationTest {
     }
 
     private void seedSource() {
-        jdbc.update("insert into cr_team_template values ('template','business-template',2)");
+        seedTemplate("template", 3);
         TeamRoom room = new TeamRoom();
         room.setResourceId("source"); room.setName("experiment"); room.setTeamTemplateId("template");
         room.setXdType(3); room.setTrainingStatus(2); room.setCopyedTopoId("topo");
@@ -412,7 +675,7 @@ class XdDemoDataIntegrationTest {
         }
         Mission mission = new Mission();
         mission.setResourceId("mission"); mission.setRoomId("source"); mission.setTitle("question"); mission.setScore(100);
-        mission.setType(1); mission.setCategoryId("category");
+        mission.setType(1); mission.setCategoryId("category"); mission.setMissionTemplateId("template-mission");
         stamp(mission); session.getMapper(MissionMapper.class).insert(mission);
         CrTask task = new CrTask();
         task.setResourceId("task"); task.setRoomId("source"); task.setUserId("student");
@@ -441,6 +704,51 @@ class XdDemoDataIntegrationTest {
         relation.setResourceId("relation"); relation.setCourseId("course"); relation.setLessonId("source"); relation.setUserId("student");
         relation.setCourseName("course"); relation.setScoredFlag(true); stamp(relation);
         session.getMapper(CourseLessonUserRelationMapper.class).insert(relation);
+    }
+
+    private void addUser(String id, String account) {
+        UserInfo user = new UserInfo();
+        user.setUserId(id); user.setUserName(account); user.setName("display-" + account);
+        users.put(id, user);
+    }
+
+    private void seedTemplate(String id, int type) {
+        BusinessTemplate business = new BusinessTemplate();
+        business.setResourceId(id + "-business"); business.setName("experiment");
+        business.setBusinessType(3); business.setXdTemplateCategory(1); business.setXdTemplateType(type);
+        business.setTopoId("topo"); stamp(business);
+        // BusinessTemplate is only read by the demo mapper, so seed through JDBC.
+        jdbc.update("insert into cr_business_template(resource_id,name,business_type,xd_template_category,xd_template_type,topo_id) values (?,?,?,?,?,?)",
+                business.getResourceId(), business.getName(), 3, 1, type, "topo");
+        TeamTemplate template = new TeamTemplate();
+        template.setResourceId(id); template.setBusinessTemplateId(business.getResourceId());
+        template.setDurationTime(2); template.setRoleConfig(roleConfig(id + "-mission"));
+        jdbc.update("insert into cr_team_template(resource_id,business_template_id,duration_time,role_config) values (?,?,?,?)",
+                id, template.getBusinessTemplateId(), 2, template.getRoleConfig());
+        seedMissionTemplate(id + "-mission");
+    }
+
+    private void seedMissionTemplate(String id) {
+        MissionTemplate mission = new MissionTemplate();
+        mission.setResourceId(id); mission.setTitle("question"); mission.setScore(100);
+        mission.setType(1); mission.setCategoryId("category"); mission.setAnswer("A");
+        stamp(mission); session.getMapper(MissionTemplateMapper.class).insert(mission);
+    }
+
+    private String roleConfig(String... missions) {
+        String tasks = Arrays.stream(missions).map(id -> "{\"resourceId\":\"" + id + "\"}").collect(Collectors.joining(","));
+        return "[{\"name\":\"student\",\"missionsScheme\":{\"schemeData\":[{\"stage\":\"one\",\"missions\":[" + tasks + "],\"dynamic\":[]}]}}]";
+    }
+
+    private int count(String table) {
+        return jdbc.queryForObject("select count(*) from " + table, Integer.class);
+    }
+
+    private void moveSource(LocalDate date) {
+        Date start = Date.from(date.atTime(9, 0).atZone(ZoneId.of("Asia/Shanghai")).toInstant());
+        Date end = new Date(start.getTime() + 7_200_000L);
+        jdbc.update("update cr_team_room set start_time=?,end_time=? where resource_id='source'", start, end);
+        jdbc.update("update cr_train_record set start_time=?,end_time=? where room_id='source'", start, end);
     }
 
     private void stamp(BaseTable record) {

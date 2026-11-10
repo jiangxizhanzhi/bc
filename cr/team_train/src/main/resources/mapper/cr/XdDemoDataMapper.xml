@@ -1,28 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.cr.teamtrain.dao.mapper.XdDemoDataMapper">
-    <select id="selectSources" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom">
-        select room.* from cr_team_room room
-        join cr_team_template template on template.resource_id = room.team_template_id
-        where room.training_status = 2 and room.xd_type between 1 and 15
-          and not exists (select 1 from cr_demo_data_room demo where demo.room_id = room.resource_id)
-          and exists (select 1 from cr_train_record record where record.room_id = room.resource_id
-                      and record.end_time &gt; record.start_time)
-          and exists (select 1 from cr_task task where task.room_id = room.resource_id)
-          and exists (select 1 from cr_score score where score.room_id = room.resource_id)
+    <select id="selectTemplates" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData">
+        select template.*, business.topo_id, business.name, business.description, business.difficulty,
+               business.logo, business.xd_template_type, business.xd_template_category
+        from cr_team_template template
+        join cr_business_template business on business.resource_id = template.business_template_id
+        where business.business_type = 3 and business.xd_template_category = 1
+          and business.xd_template_type between 1 and 7
+        order by template.resource_id
+    </select>
+
+    <select id="selectCompletedTasks" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTask">
+        select distinct task.room_id, task.user_id, mission.mission_template_id
+        from cr_team_room room
+        join cr_train_record record on record.room_id = room.resource_id
+        join cr_task task on task.room_id = room.resource_id
+        join cr_mission mission on mission.resource_id = task.mission_id and mission.room_id = room.resource_id
+        join cr_role student on student.resource_id = task.role_id and student.room_id = room.resource_id
+        join cr_score score on score.room_id = room.resource_id and score.user_id = task.user_id
+        where room.team_template_id = #{templateId} and room.xd_type = #{type} and room.training_status = 2
+          and room.start_time &gt;= #{start} and room.end_time &lt; #{end}
+          and record.business_type = 3 and record.user_id = #{teacherId}
+          and record.start_time &gt;= #{start} and record.end_time &lt; #{end}
+          and record.end_time &gt; record.start_time
+          and student.business_type = 3 and student.role_group = 2
+          and instr(student.user_ids, concat(concat('"', task.user_id), '"')) &gt; 0
+          and score.final_score is not null and task.status in (1, 2)
+          and exists (select 1 from cr_task_submit submitted
+                      where submitted.room_id = room.resource_id and submitted.task_id = task.resource_id
+                        and submitted.evaluate_status in (1, 2))
+          and exists (select 1 from cr_role teacher
+                      where teacher.room_id = room.resource_id and teacher.business_type = 3 and teacher.role_group = 1
+                        and instr(teacher.user_ids, concat(concat('"', #{teacherId}), '"')) &gt; 0)
+    </select>
+
+    <select id="selectCourseRelations" resultType="com.cyberpeace.cr.teamtrain.dao.entity.CourseLessonUserRelation">
+        select relation.course_id, max(relation.course_name) as course_name, relation.user_id
+        from course_lesson_user_relation relation
+        join cr_team_room room on room.resource_id = relation.lesson_id
+        where room.team_template_id = #{templateId}
+        group by relation.course_id, relation.user_id
     </select>
 
     <insert id="insertRun">
-        insert into cr_demo_data_run (business_date, generated_count, create_time)
-        values (#{businessDate}, 0, current_timestamp)
+        <choose>
+            <when test="'dm'.equals(@com.cyberpeace.common.util.SystemPropUtil@getProp('BC_DB_TYPE'))">
+                merge into cr_demo_data_run target
+                using (select cast(#{businessDate,jdbcType=DATE} as date) as business_date from dual) source
+                on (target.business_date = source.business_date)
+                when matched then update set target.generated_count = target.generated_count
+                when not matched then insert (business_date, generated_count, create_time)
+                    values (source.business_date, 0, current_timestamp)
+            </when>
+            <otherwise>
+                insert into cr_demo_data_run (business_date, generated_count, create_time)
+                values (#{businessDate}, 0, current_timestamp)
+                on duplicate key update generated_count = generated_count
+            </otherwise>
+        </choose>
     </insert>
 
+    <select id="lockRun" resultType="java.lang.Integer">
+        select generated_count from cr_demo_data_run where business_date = #{businessDate} for update
+    </select>
+
     <update id="completeRun">
-        update cr_demo_data_run set generated_count = #{count} where business_date = #{businessDate}
+        update cr_demo_data_run
+        set generated_count = (select count(*) from cr_demo_data_room where business_date = #{businessDate})
+        where business_date = #{businessDate}
     </update>
 
     <insert id="insertRoom">
         insert into cr_demo_data_room (room_id, source_room_id, business_date, topo_digest)
-        values (#{roomId}, #{sourceRoomId}, #{businessDate}, #{topoDigest})
+        values (#{roomId}, #{sourceRoomId,jdbcType=VARCHAR}, #{businessDate}, #{topoDigest})
     </insert>
 </mapper>

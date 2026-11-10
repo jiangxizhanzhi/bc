@@ -4,6 +4,9 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -483,11 +486,20 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
 		String mpSceneId = localScene!=null ?localScene.getMpSceneId() : scoreTrendReq.getReplaySceneId();
 		if (StringUtils.isNotBlank(mpSceneId)) {
-			//中台攻击手法
-			attackTypeCount= remoteSceneService.attackTypeCount(mpSceneId);
-			//中台攻击趋势
-			sceneTrend = remoteSceneService.sceneTrend(mpSceneId);
-			trainReportContext.initMpData(attackTypeCount,sceneTrend);
+			try {
+				//中台攻击手法
+				attackTypeCount= remoteSceneService.attackTypeCount(mpSceneId);
+				//中台攻击趋势
+				sceneTrend = remoteSceneService.sceneTrend(mpSceneId);
+				trainReportContext.initMpData(attackTypeCount,sceneTrend);
+			} catch (RemoteServiceException e) {
+				if (!ErrorCode.SCENE_NOT_EXIST_ZH.equals(e.getMessage())
+						&& !ErrorCode.SCENE_NOT_EXIST_EN.equals(e.getMessage())) {
+					throw e;
+				}
+				log.warn("CrScoreServiceImpl.getTrainReport mp scene does not exist, sceneId=[{}]", mpSceneId);
+			}
+
 		}
 
 

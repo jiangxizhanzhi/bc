@@ -61,7 +61,9 @@ public class SingleSceneEventListener extends MessageListener {
 
 		SingleRoom room = singleRoomService.getByBusinessId(businessId);
 
-		singleRoomService.clearLocal(room);
+		if (room != null) {
+			singleRoomService.clearLocal(room);
+		}
 
 		return true;
 	}

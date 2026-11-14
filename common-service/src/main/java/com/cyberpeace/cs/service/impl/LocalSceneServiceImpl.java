@@ -27,6 +27,7 @@ import com.cyberpeace.common.context.scene.ElementFlow;
 import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cs.constant.Operator;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
@@ -208,11 +209,17 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	 */
 	@Override
 	public Boolean stopScene(LocalScene localScene) {
+		return stopScene(localScene, UserInfoContext.getUserContext().getUserId());
+	}
+
+	@Override
+	public Boolean stopScene(LocalScene localScene, String accessUserId) {
 		checkDemonstration();
 		if (null == localScene) {
 			return false;
 		}
 		SceneOpsContext sceneOpsContext = getSceneOpsContext(localScene);
+		sceneOpsContext.getContext().setAccessUserId(accessUserId);
 		log.info("try to delete mp scene, sceneId:[{}], businessId:[{}]", localScene.getMpSceneId(),
 				localScene.getBusinessInstanceId());
 

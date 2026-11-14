@@ -1,8 +1,11 @@
 package com.cyberpeace.cr.singletrain.controller.admin;
 
+import java.util.List;
+
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -23,9 +26,12 @@ import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainTemplateReq;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainTemplateReqRel;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainTemplateUpdateReqRel;
+import com.cyberpeace.cr.singletrain.controller.req.SingleTemplateDeleteReq;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
 import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import com.cyberpeace.cr.singletrain.service.bo.SingleTemplateBo;
+import com.cyberpeace.cr.singletrain.service.bo.SingleTemplateRoomUser;
+import com.cyberpeace.cr.singletrain.service.impl.SingleBusinessTemplateHandlerImpl;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
@@ -54,6 +60,9 @@ public class SingleTemplateController {
 	@Autowired
 	private SingleTemplateService singleTemplateService;
 
+	@Autowired
+	private SingleBusinessTemplateHandlerImpl singleBusinessTemplateHandler;
+
 	/**
 	 * 常用Service
 	 */
@@ -77,6 +86,22 @@ public class SingleTemplateController {
 	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
+
+	@PostMapping("/delete_rooms")
+	@ApiOperation("查询删除单兵模板需关闭的账号和房间")
+	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
+	public BaseRsp<List<SingleTemplateRoomUser>> deleteRooms(
+			@RequestBody @Validated SingleTemplateDeleteReq req) {
+		return new BaseRsp<>(singleBusinessTemplateHandler.getDeleteRooms(req.getIds()));
+	}
+
+	@DeleteMapping
+	@ApiOperation("关闭已确认的训练房间并删除单兵模板")
+	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
+	public BaseRsp<Boolean> delete(@RequestBody @Validated SingleTemplateDeleteReq req) {
+		singleBusinessTemplateHandler.deleteTemplates(req.getIds(), req.getRoomIds());
+		return new BaseRsp<>(true);
+	}
 
 	/**
 	 * 获取

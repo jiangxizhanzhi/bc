@@ -361,17 +361,47 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		} catch (Exception e) {
 			log.error("Failed to delete mp scene", e);
 		}
+		finishRoom(singleRoom);
+		return true;
+	}
+
+	@Override
+	public void deleteRoomForTemplateDeletion(SingleRoom singleRoom) {
+		LocalScene localScene = localSceneService.getById(singleRoom.getLocalSceneId());
+		if (localScene != null && StringUtils.isNotBlank(localScene.getMpSceneId())) {
+			try {
+				// 已关闭则补清理；关闭返回失败时复核是否已被其他请求关闭。
+				if (!isRoomSceneClosed(localScene, singleRoom.getUserId())
+						&& !Boolean.TRUE.equals(localSceneService.stopScene(localScene, singleRoom.getUserId()))
+						&& !isRoomSceneClosed(localScene, singleRoom.getUserId())) {
+					throw new BusinessException(ErrorCode.FAILED_TO_STOP_SCENE);
+				}
+			} catch (RemoteServiceException e) {
+				if (!ErrorCode.SCENE_NOT_EXIST_ZH.equals(e.getMessage())
+						&& !ErrorCode.SCENE_NOT_EXIST_EN.equals(e.getMessage())) {
+					throw e;
+				}
+			}
+		}
+		finishRoom(singleRoom);
+	}
+
+	private boolean isRoomSceneClosed(LocalScene localScene, String userId) {
+		JSONObject sceneData = localSceneService.getSceneData(localScene.getMpSceneId(), userId);
+		return sceneData == null || Boolean.TRUE.equals(sceneData.toJavaObject(SceneDataImpl.class).isStopped());
+	}
+
+	private void finishRoom(SingleRoom singleRoom) {
 		// 删除单兵训练房间, 记录结束时间
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				localSceneService.removeById(singleRoom.getLocalSceneId());
-				singleRoomMapper.deleteById(singleRoom);
+				singleRoomMapper.deleteById(singleRoom.getResourceId());
 				trainRecordService.updateEndTimeAndExtra(singleRoom.getResourceId(), "");
 			}
 		});
-		return true;
 	}
 
 	/**
@@ -893,12 +923,13 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 */
 	@Override
 	public SingleRoom getByBusinessId(String businessId) {
-		String[] ids = StringUtils.split(businessId, "_", 2);
-		if (ids.length != 2) {
+		int separator = businessId.lastIndexOf('_');
+		if (separator <= 0 || separator == businessId.length() - 1) {
 			log.error(String.format("invalid business id for single training: %s", businessId));
 			return null;
 		}
-		return singleRoomMapper.getSingleRoom(ids[0], ids[1]);
+		return singleRoomMapper.getSingleRoom(businessId.substring(0, separator),
+				businessId.substring(separator + 1));
 	}
 
 	/**
@@ -919,7 +950,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		// localScene不存在，删除room
 		LocalScene localScene = localSceneService.getById(localSceneId);
 		if (null == localScene) {
-			removeById(room.getResourceId());
+			clearLocal(room);
 			return null;
 		}
 		// localScene 的 mpSceneId为空，localScene是脏数据
@@ -964,14 +995,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 */
 	@Override
 	public void clearLocal(SingleRoom room) {
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				localSceneService.removeById(room.getLocalSceneId());
-				removeById(room.getResourceId());
-			}
-		});
+		finishRoom(room);
 	}
 
 	/**

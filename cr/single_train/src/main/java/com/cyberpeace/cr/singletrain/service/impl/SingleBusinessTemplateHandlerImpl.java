@@ -1,6 +1,9 @@
 package com.cyberpeace.cr.singletrain.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,11 +12,14 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
+import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
@@ -25,6 +31,8 @@ import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
 import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
+import com.cyberpeace.cr.singletrain.service.bo.SingleTemplateRoomUser;
+import com.cyberpeace.integratation.service.RemoteUserService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -67,6 +75,69 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
+
+	@Autowired
+	private BusinessTemplateService businessTemplateService;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
+
+	/** 查询删除所选模板会影响的全部账号和房间。 */
+	public List<SingleTemplateRoomUser> getDeleteRooms(List<String> templateIds) {
+		List<SingleTemplateRoomUser> result = new ArrayList<>();
+		for (BusinessTemplate template : getDeletableTemplates(templateIds)) {
+			for (SingleRoom room : singleRoomService.getByBusinessTemplateId(template.getResourceId())) {
+				SingleTemplateRoomUser item = new SingleTemplateRoomUser();
+				item.setTemplateName(template.getName());
+				item.setRoomId(room.getResourceId());
+				item.setUserId(room.getUserId());
+				result.add(item);
+			}
+		}
+		List<String> userIds = result.stream().map(SingleTemplateRoomUser::getUserId)
+				.distinct().collect(Collectors.toList());
+		Map<String, UserInfo> users = remoteUserService.getIdUserInfoMap(userIds);
+		for (SingleTemplateRoomUser item : result) {
+			UserInfo user = users.get(item.getUserId());
+			item.setUserName(user == null ? item.getUserId() : user.getUserName());
+			item.setName(user == null ? "" : user.getName());
+		}
+		return result;
+	}
+
+	/** 先关闭已确认的房间，再沿用模板删除流程。 */
+	public void deleteTemplates(List<String> templateIds, List<String> confirmedRoomIds) {
+		List<SingleRoom> rooms = new ArrayList<>();
+		for (BusinessTemplate template : getDeletableTemplates(templateIds)) {
+			rooms.addAll(singleRoomService.getByBusinessTemplateId(template.getResourceId()));
+		}
+		// 确认后新增的房间需要重新展示，不能关闭用户尚未确认的账号。
+		for (SingleRoom room : rooms) {
+			if (!confirmedRoomIds.contains(room.getResourceId())) {
+				throw new BusinessException(CrBusinessErrorCode.SINGLE_TRAIN_TEMPLATE_IN_USE);
+			}
+		}
+		for (SingleRoom room : rooms) {
+			singleRoomService.deleteRoomForTemplateDeletion(room);
+		}
+		businessTemplateService.batchDelete(templateIds);
+	}
+
+	private List<BusinessTemplate> getDeletableTemplates(List<String> templateIds) {
+		List<BusinessTemplate> templates = new ArrayList<>();
+		for (String templateId : templateIds) {
+			BusinessTemplate template = businessTemplateService.getById(templateId);
+			if (template == null) {
+				throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NOT_EXIST);
+			}
+			if (!BusinessType.TRAINING_SINGLE.getCode().equals(template.getBusinessType())) {
+				throw new BusinessException(CrBusinessErrorCode.TEMPLATE_TYPE_NOT_SUPPORTED);
+			}
+			businessTemplateService.checkPermission(templateId, UserInfoContext.getUserContext().getUserId());
+			templates.add(template);
+		}
+		return templates;
+	}
 
 	/**
 	 * 设置业务类型

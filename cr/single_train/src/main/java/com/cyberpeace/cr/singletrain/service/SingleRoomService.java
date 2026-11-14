@@ -61,6 +61,9 @@ public interface SingleRoomService extends IService<SingleRoom> {
 	 */
 	Boolean deleteRoom(SingleRoom singleRoom);
 
+	/** 模板删除时严格关闭场景；关闭失败时保留房间并终止删除。 */
+	void deleteRoomForTemplateDeletion(SingleRoom singleRoom);
+
 	/**
 	 * 分页获取单兵训练实例数据
 	 *

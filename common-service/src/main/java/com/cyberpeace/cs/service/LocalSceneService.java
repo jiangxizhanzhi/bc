@@ -70,6 +70,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 */
 	Boolean stopScene(LocalScene localScene);
 
+	/** 使用指定场景访问用户关闭场景，保留场景关闭的业务校验。 */
+	Boolean stopScene(LocalScene localScene, String accessUserId);
+
 	/**
 	 * 暂停场景
 	 *

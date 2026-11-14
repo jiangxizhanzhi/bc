@@ -224,9 +224,9 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 	public void deleteTemplateRelated(BusinessTemplate businessTemplate) {
 		SingleTemplate singleTemplate = singleTemplateService
 				.getByBusinessTemplateId(businessTemplate.getResourceId());
-		// 删除任务, 但不删除图片
-		List<String> missionTemplateIds = singleTemplateService
-				.getMissionTemplateIdsByMissionsScheme(singleTemplate.getMissionsScheme());
+		// 旧版发布会引用源场景任务，只能删除归属于当前单兵模板的任务。
+		List<String> missionTemplateIds = missionTemplateService
+				.getIdsByBusinessTemplateId(businessTemplate.getResourceId());
 		missionTemplateService.batchDelete(missionTemplateIds);
 		// 删除singleTemplate
 		singleTemplateService.removeById(singleTemplate.getResourceId());

@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -175,6 +176,7 @@ public class TeamTrainTemplateController {
 
 		BusinessTemplate copiedBusinessTemplate = new BusinessTemplate();
 		BeanUtils.copyProperties(businessTemplate, copiedBusinessTemplate);
+		copiedBusinessTemplate.setLocalSceneId(null);
 		copiedBusinessTemplate.setResourceId(businessTemplate.getResourceId() + "_single");
 		copiedBusinessTemplate.setName(businessTemplate.getName());
 		copiedBusinessTemplate.setId(null);
@@ -187,6 +189,7 @@ public class TeamTrainTemplateController {
 
 		SingleTemplate singleTemplate = new SingleTemplate();
 		BeanUtils.copyProperties(template, singleTemplate);
+		singleTemplate.setId(null);
 		singleTemplate.setResourceId(template.getResourceId() + "_single");
 		singleTemplate.setCreateTime(null);
 		singleTemplate.setUpdateTime(null);
@@ -205,6 +208,7 @@ public class TeamTrainTemplateController {
 		ColorMission<AddTemplateMission> colorMission = new ColorMission<AddTemplateMission>();
 		colorMission.setTemplate(1);
 		colorMission.setColor(1);
+		colorMission.setSchemeData(new ArrayList<>());
 		if (CollectionUtils.isNotEmpty(teamTrainTemplateRoleRsps)) {
 			if (Objects.nonNull(teamTrainTemplateRoleRsps.get(0).getMissionsScheme())) {
 				colorMission.setTemplate(teamTrainTemplateRoleRsps.get(0).getMissionsScheme().getTemplate());
@@ -215,10 +219,19 @@ public class TeamTrainTemplateController {
 					.flatMap(res -> res.getSchemeData().stream()).collect(Collectors.toList());
 			colorMission.setSchemeData(schemeData);
 		}
-		singleTemplate.setMissionsScheme(JsonCommon.snakeStringify(colorMission));
-
-
-
+		List<String> missionIds = colorMission.getSchemeData().stream()
+				.flatMap(stage -> stage.getMissions().stream())
+				.map(AddTemplateMission::getResourceId).distinct().collect(Collectors.toList());
+		Map<String, MissionTemplate> missions = missionTemplateService.getMappingByIds(missionIds);
+		for (String missionId : missionIds) {
+			if (!missions.containsKey(missionId)) {
+				throw new BusinessException(ErrorCode.DIRECT_MSG_EXCEPTION,
+						"源场景引用的任务不存在（任务ID：" + missionId + "），请先修复任务后再发布单兵训练");
+			}
+		}
+		// 发布独立的任务和拓扑副本，源场景后续修改、删除不会破坏已发布训练。
+		copiedBusinessTemplate.setTopoId(localSceneService.copyTopo(
+				businessTemplate.getTopoId(), businessTemplate.getName()));
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -226,6 +239,28 @@ public class TeamTrainTemplateController {
 				// save business template
 				businessTemplateService.save(copiedBusinessTemplate);
 
+				Map<String, String> copiedMissionIds = new HashMap<>();
+				for (String missionId : missionIds) {
+					MissionTemplate copiedMission = BeanUtils.copy(missions.get(missionId), MissionTemplate.class);
+					copiedMission.setTemplateId(null);
+					copiedMission.setId(null);
+					copiedMission.setResourceId(null);
+					copiedMission.setCreateTime(null);
+					copiedMission.setUpdateTime(null);
+					copiedMission.setBusinessTemplateId(copiedBusinessTemplate.getResourceId());
+					missionTemplateService.save(copiedMission);
+					copiedMissionIds.put(missionId, copiedMission.getResourceId());
+				}
+				for (MissionSchemeObject<AddTemplateMission> stage : colorMission.getSchemeData()) {
+					for (AddTemplateMission mission : stage.getMissions()) {
+						mission.setResourceId(copiedMissionIds.get(mission.getResourceId()));
+					}
+					if (stage.getDynamic() != null) {
+						stage.setDynamic(stage.getDynamic().stream()
+								.map(copiedMissionIds::get).collect(Collectors.toList()));
+					}
+				}
+				singleTemplate.setMissionsScheme(JsonCommon.snakeStringify(colorMission));
 				// save single template
 				singleTemplate.setBusinessTemplateId(copiedBusinessTemplate.getResourceId());
 				singleTemplateService.save(singleTemplate);

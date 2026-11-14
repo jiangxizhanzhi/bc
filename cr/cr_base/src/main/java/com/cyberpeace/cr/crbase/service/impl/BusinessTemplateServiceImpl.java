@@ -24,6 +24,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.enums.BusinessCode;
@@ -352,7 +353,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				i++;
 			}
 		}
-		// delete
+		// 旧版训练可能引用源场景任务，移除引用时只删除当前模板自己的任务。
+		oldMissionTemplateIds.retainAll(missionTemplateService
+				.getIdsByBusinessTemplateId(businessTemplateId));
 		missionTemplateService.batchDelete(oldMissionTemplateIds);
 		// update
 		missionTemplateService.batchUpdateBusinessTemplateId(businessTemplateId,
@@ -904,7 +907,10 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 							.getHandler(businessTemplate.getBusinessType());
 					handler.checkBeforeDel(businessTemplate);
 					// 先删除测试场景
-					if (StringUtils.isNotBlank(businessTemplate.getLocalSceneId())) {
+					if (StringUtils.isNotBlank(businessTemplate.getLocalSceneId())
+							&& count(Wrappers.<BusinessTemplate>lambdaQuery()
+									.eq(BusinessTemplate::getLocalSceneId, businessTemplate.getLocalSceneId())
+									.notIn(BusinessTemplate::getResourceId, businessTemplateIds)) == 0) {
 						LocalScene localScene = localSceneService
 								.getById(businessTemplate.getLocalSceneId());
 
@@ -925,7 +931,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 					}
 					// 删除中台拓扑
 					try {
-						localSceneService.deleteTopo(businessTemplate.getTopoId());
+						// 兼容旧版发布时共用拓扑的单兵训练，保留其他模板仍引用的拓扑。
+						if (count(Wrappers.<BusinessTemplate>lambdaQuery()
+								.eq(BusinessTemplate::getTopoId, businessTemplate.getTopoId())
+								.notIn(BusinessTemplate::getResourceId, businessTemplateIds)) == 0) {
+							localSceneService.deleteTopo(businessTemplate.getTopoId());
+						}
 					} catch (Exception e) {
 						log.error(String.format(
 								"failed to delete topo [%s] of business template [%s]",

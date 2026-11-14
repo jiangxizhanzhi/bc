@@ -13,6 +13,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
@@ -234,6 +236,10 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 		for (CrRoleConfigSchemeStage stage : rspMissionsScheme.getSchemeData()) {
 			for (CrRoleConfigMission mission : stage.getMissions()) {
 				MissionTemplate missionTemplate = mapping.get(mission.getResourceId());
+				if (missionTemplate == null) {
+					throw new BusinessException(ErrorCode.DIRECT_MSG_EXCEPTION,
+							"训练引用的任务不存在（任务ID：" + mission.getResourceId() + "），请联系管理员修复任务后重新发布");
+				}
 				mission.setTitle(missionTemplate.getTitle());
 				mission.setDescription(missionTemplate.getDescription());
 			}
